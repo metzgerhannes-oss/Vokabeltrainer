@@ -17,8 +17,8 @@ function quizUnique(values){
   return out;
 }
 function quizSemanticMatches(answer,targets){
-  const a=normalize(answer);if(!a)return false;
-  return quizUnique(targets).some(t=>a===normalize(t));
+  const a=semanticNormalize(answer);if(!a)return false;
+  return quizUnique(targets).some(t=>a===semanticNormalize(t));
 }
 function quizOrthographyMatches(answer,targets){
   const a=orthographyNormalize(answer);if(!a)return false;
