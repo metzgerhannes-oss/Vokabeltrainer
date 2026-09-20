@@ -2,13 +2,12 @@
 
 const _focusedBaseRenderStudy=renderStudy;
 renderStudy=function(){
-  const progress=$('#sessionProgress');
-  if(progress&&session){
-    progress.max=Math.max(1,session.queue?.length||1);
-    progress.value=Math.min(session.queue?.length||1,Math.max(0,(session.index||0)+1));
-    progress.setAttribute('aria-valuetext',`${Math.min(session.queue?.length||1,(session.index||0)+1)} von ${session.queue?.length||1}`);
+  const result=_focusedBaseRenderStudy();
+  if(session&&session.index<(session.queue?.length||0)){
+    const pill=$('#sessionPill');
+    if(pill)pill.textContent='Aufgabe '+(session.index+1);
   }
-  return _focusedBaseRenderStudy();
+  return result;
 };
 
 const _focusedBaseShowView=showView;
@@ -25,7 +24,7 @@ function focusedConfusionHtml(w){
 function focusedDisableAnswerControls(){
   const input=$('#answerField');if(input)input.disabled=true;
   for(const id of ['answerBtn','hintBtn','grammarHintBtn','chunkCheck','chunkReset']){const el=$('#'+id);if(el)el.disabled=true}
-  $$('[data-answer]').forEach(b=>b.disabled=true);
+  $('[data-answer],.chunk').forEach(b=>b.disabled=true);
 }
 function focusedContinue(ok,w){
   const card=$('#studyArea .study-card');if(!card||$('#continueStudyBtn'))return;
