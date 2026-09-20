@@ -63,5 +63,8 @@ jobs:
       - name: WebKit iPhone UI smoke
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-webkit-ui-smoke.mjs
 
+      - name: WebKit iPhone focused-learning smoke
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-focused-ui-smoke.mjs
+
       - name: Chromium service-worker offline smoke
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-sw-browser-smoke.mjs
