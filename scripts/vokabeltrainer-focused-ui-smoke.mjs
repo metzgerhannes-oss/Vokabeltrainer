@@ -6,7 +6,17 @@ const context=await browser.newContext(devices['iPhone 13']);
 const page=await context.newPage();
 page.setDefaultTimeout(10000);
 
+const pageErrors=[];
+page.on('pageerror',err=>pageErrors.push(String(err?.message||err)));
+page.on('console',msg=>{if(msg.type()==='error')pageErrors.push(msg.text())});
 const assert=(value,message)=>{if(!value)throw new Error('Focused learning smoke failed: '+message)};
+async function waitForContinue(){
+  try{return await page.waitForSelector('#continueStudyBtn',{timeout:3000})}
+  catch(error){
+    const debug=await page.evaluate(()=>({html:document.querySelector('#studyArea')?.innerHTML||'',index:session?.index,locked:session?.locked}));
+    throw new Error('Focused learning continue missing. Browser errors: '+pageErrors.join(' | ')+' DOM: '+JSON.stringify(debug));
+  }
+}
 
 async function seed(term,translation,mode='recall'){
   await page.evaluate(({term,translation,mode})=>{
@@ -48,7 +58,7 @@ try{
 
   await page.fill('#answerField','wrong');
   await page.click('#answerBtn');
-  await page.waitForSelector('#continueStudyBtn');
+  await waitForContinue();
 
   const afterAnswer=await page.evaluate(()=>({
     index:session.index,
@@ -78,7 +88,7 @@ try{
   await seed("can't",'nicht können','spelling');
   await page.fill('#answerField','cant');
   await page.click('#answerBtn');
-  await page.waitForSelector('#continueStudyBtn');
+  await waitForContinue();
   const strictSpelling=await page.evaluate(()=>({
     feedback:document.querySelector('.feedback')?.textContent||'',
     correct:session.correct,
@@ -95,7 +105,7 @@ try{
   }));
   await page.fill('#answerField','cant');
   await page.click('#answerBtn');
-  await page.waitForSelector('#continueStudyBtn');
+  await waitForContinue();
   const softRecall=await page.evaluate(()=>({
     feedback:document.querySelector('.feedback')?.textContent||'',
     correct:session.correct,
