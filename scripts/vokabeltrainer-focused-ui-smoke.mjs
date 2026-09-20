@@ -120,6 +120,13 @@ try{
   assert(softRecall.spelling<=beforeSoft.spelling,'orthographic error must not add spelling credit');
   assert(softRecall.errors===beforeSoft.errors+1,'orthographic error must enter the spelling error profile');
   assert(softRecall.dueDate===await page.evaluate(()=>datePlusDays(1)),'orthographic error must become due again tomorrow');
+  await page.click('#continueStudyBtn');
+  await page.waitForSelector('.session-review');
+  const review=await page.locator('.session-review').textContent();
+  assert(review?.includes('Alle Abfragen dieser Einheit'),'session finish must expose a detailed result overview');
+  assert(review?.includes('nicht können')&&review?.includes('cant')&&review?.includes("can't"),'result overview shows question, learner answer and expected answer');
+  assert(review?.includes('Richtig erinnert · Schreibweise'),'result overview distinguishes semantic recall from spelling accuracy');
+  assert(await page.locator('#copySessionResultsBtn').count()===1,'result overview offers a copyable diagnostic');
 
   console.log('Vokabeltrainer focused learning WebKit smoke: passed');
   console.log('✓ retrieval hides navigation and diagnostics');
