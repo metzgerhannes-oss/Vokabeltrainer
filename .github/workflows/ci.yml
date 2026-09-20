@@ -40,6 +40,9 @@ jobs:
       - name: Library index smoke
         run: node scripts/vokabeltrainer-library-index-smoke.mjs
 
+      - name: OCR pairing safety smoke
+        run: node scripts/vokabeltrainer-ocr-pairing-smoke.mjs
+
       - name: Cache persistence and migration smoke
         run: node scripts/vokabeltrainer-cache-smoke.mjs
 
