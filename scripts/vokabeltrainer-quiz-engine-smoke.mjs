@@ -54,6 +54,8 @@ const passed=vm.runInContext(`
   assert(quizSemanticMatches('to look at sb/sth',punctuationTarget)===true,'slash inside one schoolbook answer stays intact');
   assert(quizSemanticMatches('to look at sb',punctuationTarget)===false,'slash no longer creates accidental partial answers');
   assert(quizSemanticMatches('schauen',['schauen; ansehen'])===false,'semicolon no longer silently invents alternatives');
+  assert(quizSemanticMatches('schon',['schön'])===false,'semantic grading preserves German umlaut distinctions');
+  assert(quizSemanticMatches('wurde',['würde'])===false,'semantic grading does not collapse meaning-changing diacritics');
 
   const strict=makeQuizQuestion(wordA,'spelling',{targets:["can't"]});
   assert(gradeQuizQuestion(strict,"can't").correct===true,'strict spelling accepts exact apostrophe');
