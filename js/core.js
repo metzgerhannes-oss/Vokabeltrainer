@@ -150,10 +150,10 @@ function ensureBookVocabulary(bookId,vocabId,opts={}){
   if(!bookId||!vocabId)return null;const v=(state.vocabulary||[]).find(x=>x.id===vocabId);if(!v)return null;const sense=senseById(v,opts.senseId)||senseMatch(v,opts.translationOverride)||primarySense(v);if(!sense)return null;
   const section=String(opts.section||'Lernset').trim()||'Lernset',verifiedAt=String(opts.verifiedAt||'').trim();let row=(state.bookVocabulary||[]).find(x=>x.bookId===bookId&&x.senseId===sense.id&&x.section===section);
   if(!row){row={id:uid('bv'),bookId,vocabId,senseId:sense.id,section,position:Number(opts.position)||0,termOverride:opts.termOverride||'',translationOverride:opts.translationOverride||'',acceptedTermOverrides:Array.isArray(opts.acceptedTermOverrides)?opts.acceptedTermOverrides.filter(Boolean):[],acceptedTranslationOverrides:Array.isArray(opts.acceptedTranslationOverrides)?opts.acceptedTranslationOverrides.filter(Boolean):[],extraOverride:opts.extraOverride||'',exampleOverride:opts.exampleOverride||'',verifiedAt,createdAt:new Date().toISOString()};state.bookVocabulary.push(row)}
-  else{if(opts.position)row.position=Number(opts.position)||row.position;if(opts.termOverride)row.termOverride=opts.termOverride;if(opts.translationOverride)row.translationOverride=opts.translationOverride;if(opts.acceptedTermOverrides)row.acceptedTermOverrides=[...opts.acceptedTermOverrides];if(opts.acceptedTranslationOverrides)row.acceptedTranslationOverrides=[...opts.acceptedTranslationOverrides];if(opts.extraOverride)row.extraOverride=opts.extraOverride;if(opts.exampleOverride)row.exampleOverride=opts.exampleOverride;if(verifiedAt)row.verifiedAt=verifiedAt}
+  else{if(opts.position)row.position=Number(opts.position)||row.position;if(opts.termOverride)row.termOverride=opts.termOverride;if(opts.translationOverride)row.translationOverride=opts.translationOverride;if(opts.acceptedTermOverrides)row.acceptedTermOverrides=[...opts.acceptedTermOverrides];if(opts.acceptedTranslationOverrides)row.acceptedTranslationOverrides=[...opts.acceptedTranslationOverrides];if(opts.extraOverride)row.extraOverride=opts.extraOverride;if(opts.exampleOverride)row.exampleOverride=opts.exampleOverride;if(verifiedAt){row.verifiedAt=verifiedAt;row.verificationBlocked=false}}
   return row;
 }
-function knownBookSections(bookId){const rows=(state?.bookVocabulary||[]).filter(x=>x.bookId===bookId&&x.verifiedAt);const m=new Map();for(const r of rows){const key=r.section||'Lernset';if(!m.has(key))m.set(key,[]);m.get(key).push(r)}return [...m.entries()].map(([section,items])=>({section,items:items.sort((a,b)=>(a.position||0)-(b.position||0))})).sort((a,b)=>a.section.localeCompare(b.section,'de'))}
+function knownBookSections(bookId){const rows=(state?.bookVocabulary||[]).filter(x=>x.bookId===bookId&&x.verifiedAt&&!x.verificationBlocked);const m=new Map();for(const r of rows){const key=r.section||'Lernset';if(!m.has(key))m.set(key,[]);m.get(key).push(r)}return [...m.entries()].map(([section,items])=>({section,items:items.sort((a,b)=>(a.position||0)-(b.position||0))})).sort((a,b)=>a.section.localeCompare(b.section,'de'))}
 function syncSetToBookVocabulary(setId,verifiedAt=''){
   const set=(state.sets||[]).find(s=>s.id===setId);if(!set?.bookId)return 0;
   if(set.pairReviewRequired&&!verifiedAt)return 0;
@@ -181,7 +181,7 @@ function lexicalKey(term,subject='english'){
     x=contractions[x]||x;
     x=x.replace(/^to\s+([a-z][a-z' -]+)$/,'$1').replace(/\s*\(\s*to\s*\)\s*$/,'');
   }
-  return x.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[.,;:!?()[\]{}"']/g,'').replace(/\s+/g,' ').trim();
+  return x.replace(/[.,;:!?()[\]{}"']/g,'').replace(/\s+/g,' ').trim();
 }
 function meaningKey(value){return String(value||'').normalize('NFKC').toLowerCase().replace(/[’‘`´]/g,"'").trim().replace(/[.,;:!?()[\]{}"']/g,'').replace(/\s+/g,' ').trim()}
 function vocabularyMatch(subject,term,extra='',translation=''){
