@@ -25,6 +25,9 @@ jobs:
         run: |
           for f in js/*.js sw.js scripts/*.mjs; do node --check "$f"; done
 
+      - name: Preflight audit smoke
+        run: node scripts/vokabeltrainer-preflight-smoke.mjs
+
       - name: Sense model smoke
         run: node scripts/vokabeltrainer-sense-smoke.mjs
 
