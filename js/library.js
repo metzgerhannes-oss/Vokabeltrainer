@@ -115,14 +115,14 @@ function globalLibrarySections(subject=state?.activeSubject,bookId=''){
   return [...new Set(rows.filter(r=>idx?.booksById.get(r.bookId)?.subject===subject).map(r=>r.section||'Lernset'))].sort((a,b)=>a.localeCompare(b,'de'));
 }
 function searchGlobalLibrary({subject=state?.activeSubject,query='',bookId='',section='',setId=''}={}){
-  const idx=globalLibraryIndex(),q=normalize(query),sectionNorm=normalize(section);
+  const idx=globalLibraryIndex(),rawQuery=String(query||''),q=normalize(rawQuery),isbnQuery=rawQuery.replace(/[^0-9Xx]/g,'').toUpperCase(),sectionNorm=normalize(section);
   if(!idx)return [];
   return [...idx.docs.values()].filter(doc=>
     doc.subject===subject&&
     (!bookId||doc.bookIds.has(bookId))&&
     (!sectionNorm||doc.sectionKeys.has(sectionNorm))&&
     (!setId||doc.setIds.has(setId))&&
-    (!q||doc.searchText.includes(q))
+    (!q||doc.searchText.includes(q)||(isbnQuery.length>=8&&doc.searchText.includes(isbnQuery.toLowerCase())))
   ).map(doc=>doc.vocab);
 }
 function libraryMatchForContext(subject,term,extra='',translation='',bookId='',section=''){
