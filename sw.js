@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='0.9.19';
+const APP_VERSION='0.9.20';
 const RESOURCE_REVISION='1';
 const SHELL_CACHE=`vokabeltrainer-shell-v${APP_VERSION}`;
 const RESOURCE_CACHE=`vokabeltrainer-resources-v${RESOURCE_REVISION}`;
@@ -10,9 +10,9 @@ const LEGACY_CACHE_PREFIX='vokabeltrainer-v';
 const LEGACY_APP_BASES=['/JohannasGartenwelt/vokabeltrainer/'];
 
 const ASSETS=[
-  './','./index.html','./css/app.css?v=0.9.19','./js/core.js?v=0.9.19','./js/library.js?v=0.9.19','./js/storage.js?v=0.9.19',
-  './js/model.js?v=0.9.19','./js/learning.js?v=0.9.19','./js/translation.js?v=0.9.19',
-  './js/io.js?v=0.9.19','./js/ui.js?v=0.9.19','./js/library-ui.js?v=0.9.19','./js/app.js?v=0.9.19','./manifest.webmanifest',
+  './','./index.html','./css/app.css?v=0.9.20','./js/core.js?v=0.9.20','./js/library.js?v=0.9.20','./js/storage.js?v=0.9.20',
+  './js/model.js?v=0.9.20','./js/learning.js?v=0.9.20','./js/translation.js?v=0.9.20',
+  './js/io.js?v=0.9.20','./js/ui.js?v=0.9.20','./js/library-ui.js?v=0.9.20','./js/app.js?v=0.9.20','./manifest.webmanifest',
   './assets/icons/icon-180.png','./assets/icons/icon-192.png','./assets/icons/icon-512.png'
 ];
 
