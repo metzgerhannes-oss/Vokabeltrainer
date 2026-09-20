@@ -1,5 +1,16 @@
 'use strict';
 
+const _focusedBaseRenderStudy=renderStudy;
+renderStudy=function(){
+  const progress=$('#sessionProgress');
+  if(progress&&session){
+    progress.max=Math.max(1,session.queue?.length||1);
+    progress.value=Math.min(session.queue?.length||1,Math.max(0,(session.index||0)+1));
+    progress.setAttribute('aria-valuetext',`${Math.min(session.queue?.length||1,(session.index||0)+1)} von ${session.queue?.length||1}`);
+  }
+  return _focusedBaseRenderStudy();
+};
+
 const _focusedBaseShowView=showView;
 showView=function(id){
   document.body.classList.toggle('learning-focus',id==='learnView');
