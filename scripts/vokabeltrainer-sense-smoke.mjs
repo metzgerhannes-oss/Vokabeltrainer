@@ -55,6 +55,16 @@ const result=vm.runInContext(`
   migrateSenseModel(corrupt);
   assert(corrupt.sets[0].pairReviewRequired===true,'ambiguous invalid sense mapping is blocked for pair review');
 
+  state=defaultState();
+  const editSet=mkSet('edit_set');editSet.pairReviewRequired=false;editSet.pairVerifiedAt='2026-09-20T12:00:00.000Z';state.sets.push(editSet);
+  const edited=attachVocabularyToSet('edit_set',{term:'nice',translation:'nett',source:'manual',verified:true});
+  const beforeSig=vocabularyPairSignature(edited.vocab);
+  edited.vocab.senses[0].translation='freundlich';
+  assert(vocabularyPairSignature(edited.vocab)!==beforeSig,'quiz-critical vocabulary signature changes when meaning changes');
+  requirePairReviewForVocabulary(edited.vocab.id);
+  assert(editSet.pairReviewRequired===true&&editSet.pairVerifiedAt==='','edited vocabulary invalidates linked set approval');
+
+
 
   const repair=defaultState();delete repair.senseModelVersion;const stamp='2026-09-20T12:00:00.000Z';
   const p1=makeVocabularySense('nett',{id:'sense_a',createdAt:stamp,updatedAt:stamp});
