@@ -20,7 +20,7 @@ try{
     const set={id:'ocr_set',learnerId:'learner_demo',subject:'english',title:'OCR Unit',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:true,pairVerifiedAt:''};
     state.sets.push(set);
     attachVocabularyToSet(set.id,{term:'write',translation:'schreiben',source:'photo-text-import',verified:false});
-    rebuildWordIndexes();renderAll();showView('setsView');
+    rebuildWordIndexes();renderAll();showView('homeView');
   });
 
   const study=page.locator('[data-set-study="ocr_set"]');
@@ -36,7 +36,7 @@ try{
   await page.click('#confirmSetPairsBtn');
   await page.waitForFunction(()=>!document.querySelector('#modal')?.open);
 
-  await page.evaluate(()=>showView('setsView'));
+  await page.evaluate(()=>showView('homeView'));
   assert(!(await page.locator('[data-set-study="ocr_set"]').isDisabled()),'learning unlocks only after explicit pair confirmation');
   assert(await page.evaluate(()=>!!state.vocabulary[0]?.verifiedAt),'pair confirmation marks vocabulary as verified');
 
