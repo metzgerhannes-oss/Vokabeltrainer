@@ -7,7 +7,7 @@ const context=vm.createContext({
   document:{querySelector:()=>null,querySelectorAll:()=>[]},
   window:{},navigator:{},localStorage:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}
 });
-for(const file of ['js/core.js','js/library.js','js/storage.js','js/model.js']){
+for(const file of ['js/core.js','js/library.js','js/storage.js','js/model.js','js/learning.js']){
   vm.runInContext(fs.readFileSync(file,'utf8'),context,{filename:file});
 }
 const passed=vm.runInContext(`
@@ -33,6 +33,10 @@ const passed=vm.runInContext(`
   assert(rp.lastMasteredAt==='2026-09-18T12:00:00.000Z','previous mastery timestamp is retained for history');
   assert(rp.dueDate===today(),'revalidation becomes due immediately');
   assert(!meetsMasteryCriteria(rp),'repaired progress cannot remain mastered');
+  assert(answerMatches('cant',"can't")===true,'general recall stays punctuation tolerant');
+  assert(spellingMatches('cant',"can't")===false,'spelling requires the apostrophe');
+  assert(spellingMatches('cafe','café')===false&&spellingMatches('café','café')===true,'spelling preserves diacritics');
+  session={currentSubmode:'recall'};assert(!skillCredits('retrieval',{orthographyOk:false}).includes('spelling'),'imprecise recall receives no spelling credit');
   return ok;
 })()
 `,context,{filename:'learning-integrity-runtime'});
