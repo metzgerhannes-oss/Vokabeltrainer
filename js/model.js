@@ -14,7 +14,8 @@ function schoolYearWords(subject=state.activeSubject,schoolYear=currentSchoolYea
 function setWords(setId){return (state.setVocabulary||[]).filter(x=>x.setId===setId).sort((a,b)=>(a.position||0)-(b.position||0)).map(x=>wordViewForLink(x)).filter(Boolean);}
 function fortressWins(subject=state.activeSubject,schoolYear=currentSchoolYear()){const l=learner(),key=`${subject}:${schoolYear}`;l.fortressWinsByYear=l.fortressWinsByYear||{};return l.fortressWinsByYear[key]||(l.fortressWinsByYear[key]=[]);}
 
-function normalize(s){return String(s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[.,;:!?()[\]{}"']/g,'').replace(/\s+/g,' ')}
+function semanticNormalize(s){return String(s||'').trim().toLowerCase().normalize('NFKC').replace(/[’‘`´]/g,"'").replace(/[.,;:!?()[\]{}"']/g,'').replace(/\s+/g,' ')}
+function normalize(s){return semanticNormalize(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
 function orthographyNormalize(value){
   return String(value||'').normalize('NFKC').toLowerCase().replace(/[’‘`´]/g,"'").trim().replace(/\s+/g,' ');
 }
@@ -26,8 +27,8 @@ function spellingMatches(answer,target){
 }
 function answerMatches(answer,target){
   if(typeof quizSemanticMatches==='function')return quizSemanticMatches(answer,target);
-  const a=normalize(answer),targets=[...(Array.isArray(target)?target:[target])].map(x=>String(x||'').trim()).filter(Boolean);if(!a)return false;
-  return targets.some(t=>a===normalize(t));
+  const a=semanticNormalize(answer),targets=[...(Array.isArray(target)?target:[target])].map(x=>String(x||'').trim()).filter(Boolean);if(!a)return false;
+  return targets.some(t=>a===semanticNormalize(t));
 }
 function termTargets(w){return [...new Set((w?.acceptedTerms?.length?w.acceptedTerms:[w?.term]).filter(Boolean))]}
 function translationTargets(w){return [...new Set((w?.acceptedTranslations?.length?w.acceptedTranslations:[w?.translation]).filter(Boolean))]}
