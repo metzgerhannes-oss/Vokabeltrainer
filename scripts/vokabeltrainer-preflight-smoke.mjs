@@ -44,6 +44,7 @@ assert(!/setTimeout\s*\(\s*\(\)\s*=>\s*nextStudy/.test(focusUi),'focused feedbac
 assert(focusUi.includes('id="grammarRuleHelp" class="notice subtle hidden"'),'Latin grammar help is opt-in');
 assert(!html.includes('id="sessionProgress"')&&!focusUi.includes('progress.max='),'retrieval has no dynamic progress bar');
 assert(focusUi.includes("pill.textContent='Aufgabe '+(session.index+1)"),'focused learning keeps stable task orientation');
+assert(focusUi.includes("$('[data-answer],.chunk').forEach"),'focused answer controls iterate element lists');
 assert(learning.includes('opts.orthographyOk===false')&&learning.includes('w.errorProfile.spelling'),'orthographic errors remain a separate learning signal');
 
 assert(manifest.start_url==='./'&&manifest.scope==='./','manifest remains repository-path safe');
