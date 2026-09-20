@@ -128,6 +128,12 @@ function parseVocabularyText(text,subject=state.activeSubject){
 function scanStatus(text,type='subtle'){
   const el=$('#scanStatus'); if(!el)return; el.className=`notice ${type}`; el.textContent=text;
 }
+function scanLibraryContext(sectionHint=''){
+  const selected=$('#scanSetSelect')?.value||'',existing=selected&&selected!=='__new__'?(state.sets||[]).find(s=>s.id===selected):null;
+  if(existing)return {bookId:existing.bookId||'',section:existing.bookSection||existing.title||''};
+  const book=currentBook(learner()?.id,state.activeSubject),section=String(sectionHint||$('#scanNewTitle')?.value||scanImportState.titleHint||'').trim();
+  return {bookId:book?.id||'',section};
+}
 function scanOcrProgress(progress=0,label=''){
   const wrap=$('#scanOcrWrap'),bar=$('#scanOcrProgress'),txt=$('#scanOcrLabel');
   if(!wrap||!bar||!txt)return;
@@ -163,7 +169,7 @@ async function analyzeScanText(text,source='Text'){
   }
   const parsed=parseVocabularyText(raw,state.activeSubject);
   scanImportState.rows=parsed.rows; scanImportState.titleHint=parsed.titleHint;
-  await enrichHybridRows(scanImportState.rows);
+  await enrichHybridRows(scanImportState.rows,scanLibraryContext(parsed.titleHint));
   if(parsed.titleHint && ($('#scanNewTitle')?.value==='Foto-Import'||!$('#scanNewTitle')?.value.trim()))$('#scanNewTitle').value=parsed.titleHint;
   renderScanReview();
   const auto=scanImportState.rows.filter(r=>r.confidence==='auto').length;
@@ -356,7 +362,7 @@ async function runTesseractOcr(file){
       $('#scanRawText').value=text; scanImportState.nativeOcr=true; scanOcrProgress(1,'OCR abgeschlossen');
       if(table.rows.length){
         scanImportState.rows=table.rows;
-        await enrichHybridRows(scanImportState.rows);
+        await enrichHybridRows(scanImportState.rows,scanLibraryContext());
         renderScanReview();
         const good=scanImportState.rows.filter(r=>r.confidence==='good'&&r.term&&r.translation).length;
         const auto=scanImportState.rows.filter(r=>r.confidence==='auto'&&r.term&&r.translation).length;
@@ -401,7 +407,7 @@ async function handleScanPhoto(file){
 }
 function importScannedRows(){
   const rows=scanImportState.rows.map((r,i)=>({include:$(`#scanUse_${i}`)?.checked!==false,term:$(`#scanTerm_${i}`)?.value.trim()||'',translation:$(`#scanTrans_${i}`)?.value.trim()||'',extra:$(`#scanExtra_${i}`)?.value.trim()||'',example:$(`#scanExample_${i}`)?.value.trim()||'',confidence:r.confidence||'check',libraryMatchStatus:r.libraryMatchStatus||'',librarySenseId:r.librarySenseId||'',selectedSenseId:$(`#scanSense_${i}`)?.value||r.selectedSenseId||''})).filter(r=>r.include&&r.term&&r.translation);
-  if(!rows.length){scanStatus('Es gibt noch keine vollständige Vokabelzeile zum Importieren.','warn');return;}const unresolved=rows.filter(r=>r.libraryMatchStatus==='sense-choice'&&!r.selectedSenseId);if(unresolved.length){scanStatus(`${unresolved.length} Bedeutung${unresolved.length===1?'':'en'} noch nicht zugeordnet. Bitte „gleiche Bedeutung“ oder „neue Bedeutung“ wählen.`,'warn');return;}for(const r of rows){if(r.libraryMatchStatus!=='sense-choice'||r.selectedSenseId==='__new__')continue;const match=vocabularyMatch(state.activeSubject,r.term,r.extra||'');if(!(match?.senses||[]).some(s=>s.id===r.selectedSenseId)){scanStatus('Eine Bedeutungszuordnung passt nach der Bearbeitung nicht mehr zum Wort. Bitte Foto/Text erneut analysieren.','warn');return;}}
+  if(!rows.length){scanStatus('Es gibt noch keine vollständige Vokabelzeile zum Importieren.','warn');return;}const unresolved=rows.filter(r=>r.libraryMatchStatus==='sense-choice'&&!r.selectedSenseId);if(unresolved.length){scanStatus(`${unresolved.length} Bedeutung${unresolved.length===1?'':'en'} noch nicht zugeordnet. Bitte „gleiche Bedeutung“ oder „neue Bedeutung“ wählen.`,'warn');return;}for(const r of rows){if(r.libraryMatchStatus!=='sense-choice'||r.selectedSenseId==='__new__')continue;const ctx=scanLibraryContext(),match=typeof libraryMatchForContext==='function'?libraryMatchForContext(state.activeSubject,r.term,r.extra||'',r.translation,ctx.bookId,ctx.section):{vocab:vocabularyMatch(state.activeSubject,r.term,r.extra||'')};if(!(match.vocab?.senses||[]).some(s=>s.id===r.selectedSenseId)){scanStatus('Eine Bedeutungszuordnung passt nach der Bearbeitung nicht mehr zum Wort. Bitte Foto/Text erneut analysieren.','warn');return;}}
   let setId=$('#scanSetSelect').value;
   if(setId==='__new__'){const title=$('#scanNewTitle').value.trim()||scanImportState.titleHint||'Foto-Import',schoolYear=$('#scanNewYear').value.trim()||currentSchoolYear(),book=currentBook(learner().id,state.activeSubject);const set={id:uid('set'),learnerId:learner().id,subject:state.activeSubject,title,schoolYear,bookId:book?.id||'',bookSection:book?title:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:''};state.sets.push(set);setId=set.id;rebuildWordIndexes();}
   let linked=0,alreadyLinked=0,newGlobal=0,fromLibrary=0,newMeanings=0;
