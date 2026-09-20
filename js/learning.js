@@ -286,11 +286,11 @@ function sessionResultMode(skill=session?.currentSubmode||session?.mode||''){
 function logSessionResult(w,{answer='',target=[],correct=false,skill='',orthographyOk=true,assisted=false,prompt='',note=''}={}){
   if(!session||session.mode==='practiceTest')return;
   session.results=Array.isArray(session.results)?session.results:[];
-  const set=state.sets.find(s=>s.id===w?.setId),targets=sessionResultTargets(target);
-  const visiblePrompt=String(prompt||$('#studyArea .study-prompt')?.textContent||'').trim();
+  const q=session.currentQuestion,set=state.sets.find(s=>s.id===(q?.setId||w?.setId)),targets=sessionResultTargets(q?.targets?.length?q.targets:target);
+  const visiblePrompt=String(q?.prompt||prompt||$('#studyArea .study-prompt')?.textContent||'').trim();
   session.results.push({
-    order:session.results.length+1,wordId:w?.id||'',vocabId:w?.vocabId||'',senseId:w?.senseId||'',setId:w?.setId||'',setTitle:set?.title||'',
-    mode:sessionResultMode(skill||session.currentSubmode||session.mode),prompt:visiblePrompt,answer:String(answer||'').trim(),targets,correct:!!correct,
+    order:session.results.length+1,questionId:q?.id||'',wordId:q?.progressId||w?.id||'',vocabId:q?.vocabId||w?.vocabId||'',senseId:q?.senseId||w?.senseId||'',setLinkId:q?.setLinkId||w?.setLinkId||'',setId:q?.setId||w?.setId||'',setTitle:set?.title||'',
+    mode:sessionResultMode(q?.mode||skill||session.currentSubmode||session.mode),prompt:visiblePrompt,answer:String(answer||'').trim(),targets,correct:!!correct,
     orthographyOk:orthographyOk!==false,assisted:!!assisted,note:String(note||''),at:new Date().toISOString()
   });
 }
