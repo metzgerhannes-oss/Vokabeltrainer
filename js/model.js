@@ -7,6 +7,15 @@ function gradeScaleText(scale=gradeScaleFor()){return `1 ab ${scale.n1}% · 2 ab
 function actualGradeForPractice(practiceId){return state.grades.find(g=>g.learnerId===state.activeLearnerId&&g.practiceTestId===practiceId)||null;}
 function mySets(subject=state.activeSubject){ return state.sets.filter(s=>s.learnerId===state.activeLearnerId && s.subject===subject); }
 function setNeedsPairReview(set){return !!set?.pairReviewRequired}
+function vocabularyPairSignature(v){
+  if(!v)return '';
+  return JSON.stringify({term:String(v.term||''),termVariants:[...(v.termVariants||[])],senses:(v.senses||[]).map(s=>({id:String(s.id||''),translation:String(s.translation||''),translations:[...(s.translations||[])]}))});
+}
+function requirePairReviewForVocabulary(vocabId){
+  const setIds=new Set((state.setVocabulary||[]).filter(x=>x.vocabId===vocabId).map(x=>x.setId));let changed=0;
+  for(const set of (state.sets||[])){if(!setIds.has(set.id))continue;if(!set.pairReviewRequired||set.pairVerifiedAt)changed++;set.pairReviewRequired=true;set.pairVerifiedAt='';}
+  return changed;
+}
 function learningReadySets(subject=state.activeSubject){return mySets(subject).filter(s=>!setNeedsPairReview(s))}
 function schoolYearSets(subject=state.activeSubject,schoolYear=currentSchoolYear()){ return mySets(subject).filter(s=>s.schoolYear===schoolYear); }
 function myWords(subject=state.activeSubject){const ids=new Set(learningReadySets(subject).map(s=>s.id));return uniqueWords(state.words.filter(w=>ids.has(w.setId)));}
