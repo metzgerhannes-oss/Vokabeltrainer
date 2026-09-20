@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.9.20';
+const VERSION = '0.9.21';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';
@@ -159,7 +159,7 @@ function cloneKnownBookToLearner(bookId,learnerId){const book=bookById(bookId),l
 
 function defaultState(){
   const s={
-    version: VERSION,senseModelVersion:1,
+    version: VERSION,senseModelVersion:1,spellingLeakRepairVersion:1,
     activeLearnerId: 'learner_demo',activeSubject: 'english',
     learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',activeSubjects:['english'],xp:0,lrsMode:false,fontSize:17,letterSpacing:0,flashSpeed:1600,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
     books:[],learnerBooks:[],bookVocabulary:[],sets:[],vocabulary:[],setVocabulary:[],learnerVocabulary:[],grades:[],practiceTests:[],activity:[]
