@@ -239,7 +239,7 @@ function deleteProfile(id){if(id===state.activeLearnerId)return;if(!confirm('Pro
 function modal(html){$('#modalContent').innerHTML=html;$('#modal').showModal()}
 function closeModal(){$('#modal').close()}
 function toast(text,type='subtle'){const el=$('#toastRegion');if(!el)return;clearTimeout(toastTimer);el.className=`toast-region show ${type}`;el.textContent=text;toastTimer=setTimeout(()=>{el.className='toast-region';el.textContent=''},4200)}
-function showView(id){$$('.view').forEach(v=>v.classList.toggle('active',v.id===id));$$('.nav-btn[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===id));window.scrollTo({top:0,behavior:'smooth'})}
+function showView(id){$('.view').forEach(v=>v.classList.toggle('active',v.id===id));$('.nav-btn[data-view]').forEach(b=>{const active=b.dataset.view===id;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;window.scrollTo({top:0,behavior:reduced?'auto':'smooth'})}
 
 function bind(){
   $$('.nav-btn[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view)); $('[data-action="quickLearn"]').onclick=startDailyTodo; $('#quickLearnHeroBtn').onclick=startDailyTodo; $('#todayTestBtn').onclick=openTestDatePlanner; $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
