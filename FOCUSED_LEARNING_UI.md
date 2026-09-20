@@ -53,13 +53,19 @@ Bei Fehlern können anschließend erscheinen:
 
 Diese Informationen erscheinen erst **nach** dem Abruf.
 
-### 4. Lateinische Regelhilfe
+### 4. Inhaltlicher Abruf und Orthographie
+
+Die allgemeine Bedeutungs-/Abrufprüfung bleibt bei unkritischer Zeichensetzung fehlertolerant. Schreibkompetenz wird dagegen separat und streng bewertet: Apostrophe und diakritische Zeichen werden nicht entfernt. Ein inhaltlich richtiger Abruf mit ungenauer Schreibweise kann daher Abrufkompetenz bestätigen, erhält aber keinen zusätzlichen Spelling-Credit. Im direkten Schreibmodus gilt die ungenaue Form als Fehler.
+
+Das verhindert insbesondere, dass Formen wie `cant` als orthographisch gleichwertig zu `can't` gelten, und bereitet die Architektur auf französische Akzente vor.
+
+### 5. Lateinische Regelhilfe
 
 Die Mini-Regel wird bei Latein-Formen nicht mehr automatisch vor der Antwort gezeigt.
 
 Die Schaltfläche **Regelhilfe** blendet sie bei Bedarf ein und markiert den Versuch als unterstützt. Damit bleibt ein zunächst unabhängiger Abruf möglich.
 
-### 5. LRS und Barrierefreiheit
+### 6. LRS und Barrierefreiheit
 
 Bereits im vorgeschalteten Audit ergänzt:
 
