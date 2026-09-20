@@ -75,6 +75,7 @@ assert(manifest.display==='standalone'&&manifest.lang==='de','manifest standalon
 const refs=[...html.matchAll(/(?:src|href)="((?:css|js)\/[^"]+\?v=[^"]+)"/g)].map(m=>m[1]);
 for(const ref of refs)assert(sw.includes("'./"+ref+"'"),'app-shell caches '+ref);
 
+assert(dna.includes('Die fachlich korrekte Vokabelabfrage ist die Daseinsberechtigung der App.')&&dna.includes('Release-Blocker'),'top product DNA keeps vocabulary correctness as release gate');
 assert(dna.includes('LRS und Barrierefreiheit sind Teil des Grunddesigns')&&dna.includes('Lernen fokussiert, Motivation außen herum'),'product DNA accessibility and focus guardrails remain present');
 
 console.log('Vokabeltrainer preflight smoke: '+passed.length+' checks passed');
