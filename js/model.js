@@ -17,12 +17,14 @@ function orthographyNormalize(value){
   return String(value||'').normalize('NFKC').toLowerCase().replace(/[’‘`´]/g,"'").trim().replace(/\s+/g,' ');
 }
 function spellingMatches(answer,target){
-  const a=orthographyNormalize(answer),targets=(Array.isArray(target)?target:[target]).flatMap(x=>String(x||'').split(/\s*[/;]\s*/)).filter(Boolean);
+  if(typeof quizOrthographyMatches==='function')return quizOrthographyMatches(answer,target);
+  const a=orthographyNormalize(answer),targets=[...(Array.isArray(target)?target:[target])].map(x=>String(x||'').trim()).filter(Boolean);
   if(!a)return false;
   return targets.some(t=>a===orthographyNormalize(t));
 }
 function answerMatches(answer,target){
-  const a=normalize(answer),targets=(Array.isArray(target)?target:[target]).flatMap(x=>String(x||'').split(/\s*[/;,]\s*/)).filter(Boolean);if(!a)return false;
+  if(typeof quizSemanticMatches==='function')return quizSemanticMatches(answer,target);
+  const a=normalize(answer),targets=[...(Array.isArray(target)?target:[target])].map(x=>String(x||'').trim()).filter(Boolean);if(!a)return false;
   return targets.some(t=>a===normalize(t));
 }
 function termTargets(w){return [...new Set((w?.acceptedTerms?.length?w.acceptedTerms:[w?.term]).filter(Boolean))]}
