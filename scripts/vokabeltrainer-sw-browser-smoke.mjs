@@ -60,7 +60,7 @@ try{
     return {keys,sentinel:sentinel?await sentinel.text():''};
   },foreignCacheName);
   if(!cacheState.keys.includes(foreignCacheName)||cacheState.sentinel!=='keep-me')throw new Error('foreign cache was touched');
-  if(!cacheState.keys.includes('vokabeltrainer-shell-v0.10.3'))throw new Error('shell cache missing');
+  if(!cacheState.keys.includes('vokabeltrainer-shell-v0.10.4'))throw new Error('shell cache missing');
   if(!cacheState.keys.includes('vokabeltrainer-resources-v1'))throw new Error('resource cache missing');
 
   await context.setOffline(true);
