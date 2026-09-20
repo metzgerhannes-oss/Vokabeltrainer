@@ -28,3 +28,4 @@ Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in diese
 - [CACHE_STRATEGY.md](CACHE_STRATEGY.md)
 - [LIBRARY_INDEX.md](LIBRARY_INDEX.md)
 - [FOCUSED_LEARNING_UI.md](FOCUSED_LEARNING_UI.md)
+- [FINAL_AUDIT.md](FINAL_AUDIT.md)
