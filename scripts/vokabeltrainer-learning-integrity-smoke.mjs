@@ -34,6 +34,7 @@ const passed=vm.runInContext(`
   assert(rp.dueDate===today(),'revalidation becomes due immediately');
   assert(!meetsMasteryCriteria(rp),'repaired progress cannot remain mastered');
   assert(answerMatches('cant',"can't")===true,'general recall stays punctuation tolerant');
+  assert(answerMatches('schon','schön')===false,'general recall preserves meaning-changing umlauts');
   assert(spellingMatches('cant',"can't")===false,'spelling requires the apostrophe');
   assert(spellingMatches('cafe','café')===false&&spellingMatches('café','café')===true,'spelling preserves diacritics');
   session={currentSubmode:'recall'};assert(!skillCredits('retrieval',{orthographyOk:false}).includes('spelling'),'imprecise recall receives no spelling credit');
