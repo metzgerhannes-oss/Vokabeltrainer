@@ -23,7 +23,7 @@ async function seed(){
   });
 }
 async function runText(mode,answer){
-  await page.evaluate(mode=>startSession(mode,'diag_set',null,false),mode);
+  await page.evaluate(mode=>{const w=setWords('diag_set').find(x=>x.term==='look');startSession(mode,'diag_set',[quizQueueRef(w)],false)},mode);
   await page.waitForSelector('#answerField');
   await page.fill('#answerField',answer);
   await page.click('#answerBtn');
@@ -47,10 +47,10 @@ try{
   await seed();
 
   let r=await runText('recall','look');
-  assert(r.targets.includes('look'),'recall target contains canonical foreign term');
+  assert(r.result?.targets?.includes('look'),'recall snapshot contains canonical foreign term');
 
   r=await runText('spelling','look');
-  assert(r.targets.includes('look'),'spelling target contains canonical foreign term');
+  assert(r.result?.targets?.includes('look'),'spelling snapshot contains canonical foreign term');
 
   await page.evaluate(()=>{
     const w=setWords('diag_set')[0];
@@ -66,9 +66,7 @@ try{
   assert(rev.targets.includes('schauen')&&rev.targets.includes('ansehen'),'reverse targets contain canonical and local wording');
   await page.click('#backHomeBtn');
 
-  await page.evaluate(()=>{
-    startSession('recognition','diag_set',null,false);
-  });
+  await page.evaluate(()=>{const w=setWords('diag_set').find(x=>x.term==='look');startSession('recognition','diag_set',[quizQueueRef(w)],false)});
   await page.waitForSelector('[data-answer]');
   const correctTranslation=await page.evaluate(()=>translationTargets(currentWord())[0]);
   await page.locator('[data-answer]').filter({hasText:correctTranslation}).first().click();
@@ -77,7 +75,7 @@ try{
   assert(/Richtig/.test(choice.feedback)&&choice.last?.correct===true,'recognition exact stored choice is correct');
 
   await page.click('#backHomeBtn');
-  await page.evaluate(()=>startSession('recognition','diag_set',null,false));
+  await page.evaluate(()=>{const w=setWords('diag_set').find(x=>x.term==='look');startSession('recognition','diag_set',[quizQueueRef(w)],false)});
   await page.waitForSelector('[data-answer]');
   const wrongAnswer=await page.evaluate(()=>[...document.querySelectorAll('[data-answer]')].map(b=>b.dataset.answer).find(a=>!gradeQuizQuestion(session.currentQuestion,a).correct)||'');
   assert(!!wrongAnswer,'recognition exposes a distractor for wrong-answer diagnostic');
