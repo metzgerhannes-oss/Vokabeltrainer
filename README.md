@@ -17,7 +17,8 @@ Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in diese
 - lokales Tesseract OCR
 - lokales Wikidict
 - Englisch und Latein aktiv; Französisch architektonisch vorbereitet, aber bis zur vollständigen OCR-Ressource deaktiviert
-- automatisierte Sense-, Fachsystem-, Cache-, WebKit- und Chromium-Smoke-Tests
+- automatisierte Preflight-, Sense-, Lernintegritäts-, Bibliotheks-, WebKit/iPhone- und Chromium-Smoke-Tests
+- fokussierter Lernmodus ohne globale Navigation, Kampagne oder Fortschrittsdiagnostik während des Abrufs
 
 ## Zentrale Dokumente
 
@@ -26,3 +27,4 @@ Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in diese
 - [SUBJECT_SYSTEM.md](SUBJECT_SYSTEM.md)
 - [CACHE_STRATEGY.md](CACHE_STRATEGY.md)
 - [LIBRARY_INDEX.md](LIBRARY_INDEX.md)
+- [FOCUSED_LEARNING_UI.md](FOCUSED_LEARNING_UI.md)
