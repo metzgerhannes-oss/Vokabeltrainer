@@ -60,11 +60,48 @@ function renderRecommendations(){
   $('#recommendations').innerHTML=recs.map(r=>`<button class="recommend" data-mode="${r.mode}"><span class="icon">${r.icon}</span><strong>${r.title}</strong><small>${r.sub}</small></button>`).join('');
   $$('#recommendations [data-mode]').forEach(b=>b.onclick=()=>startSession(b.dataset.mode));
 }
+function setPairAuditText(setId){
+  const s=state.sets.find(x=>x.id===setId),words=s?setWords(setId):[];
+  const lines=[`Lernset: ${s?.title||''}`,`Fach: ${subjectLabel(s?.subject||state.activeSubject)}`,''];
+  words.forEach((w,i)=>{lines.push(`${i+1}. ${w.term} = ${w.translation}`);const ta=termTargets(w).filter(x=>x!==w.term),tr=translationTargets(w).filter(x=>x!==w.translation);if(ta.length)lines.push('   weitere Wortformen: '+ta.join(' | '));if(tr.length)lines.push('   weitere Bedeutungen: '+tr.join(' | '))});
+  return lines.join('\n');
+}
+async function copySetPairAudit(setId){
+  const text=setPairAuditText(setId);
+  try{await navigator.clipboard.writeText(text);toast('Vokabelpaare kopiert.','good')}
+  catch(_e){const ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();const ok=document.execCommand?.('copy');ta.remove();toast(ok?'Vokabelpaare kopiert.':'Kopieren nicht möglich.','subtle')}
+}
+function resetSetForReimport(setId){
+  const s=state.sets.find(x=>x.id===setId);if(!s)return false;
+  const links=(state.setVocabulary||[]).filter(x=>x.setId===setId),senseIds=new Set(links.map(x=>x.senseId).filter(Boolean));
+  state.setVocabulary=(state.setVocabulary||[]).filter(x=>x.setId!==setId);
+  const remainingSetIds=new Set((state.sets||[]).filter(x=>x.learnerId===s.learnerId).map(x=>x.id));
+  state.learnerVocabulary=(state.learnerVocabulary||[]).filter(p=>{
+    if(p.learnerId!==s.learnerId||!senseIds.has(p.senseId))return true;
+    return (state.setVocabulary||[]).some(link=>link.senseId===p.senseId&&remainingSetIds.has(link.setId));
+  });
+  (state.vocabulary||[]).forEach(v=>{v.sources=(v.sources||[]).filter(src=>src.setId!==setId)});
+  if(s.bookId&&s.bookSection){
+    const shared=(state.sets||[]).some(x=>x.id!==s.id&&x.bookId===s.bookId&&x.bookSection===s.bookSection);
+    if(!shared)state.bookVocabulary=(state.bookVocabulary||[]).filter(x=>!(x.bookId===s.bookId&&x.section===s.bookSection));
+  }
+  const owner=(state.learners||[]).find(x=>x.id===s.learnerId);if(owner?.dailyPlans){for(const key of Object.keys(owner.dailyPlans)){if(key.endsWith(':'+s.subject))delete owner.dailyPlans[key]}}
+  rebuildWordIndexes();return true;
+}
+function openSetPairAudit(setId){
+  const s=state.sets.find(x=>x.id===setId);if(!s)return;
+  const words=setWords(setId);
+  const rows=words.map((w,i)=>`<tr><td>${i+1}</td><td><strong>${esc(w.term)}</strong></td><td>${esc(w.translation)}</td><td><small>${esc(termTargets(w).join(' · '))}</small></td><td><small>${esc(translationTargets(w).join(' · '))}</small></td></tr>`).join('');
+  modal(`<div class="eyebrow">Lernset prüfen</div><h2>${esc(s.title)}</h2><p>Hier stehen exakt die Wort↔Bedeutung-Paare, die die Abfrage verwendet. Wenn diese Liste falsch ist, liegt der Fehler im Import – nicht in deiner Antwort.</p>${words.length?`<div class="table-wrap set-pair-audit"><table><thead><tr><th>#</th><th>Vokabel</th><th>Lehrwerksbedeutung</th><th>akzeptierte Wortformen</th><th>akzeptierte Bedeutungen</th></tr></thead><tbody>${rows}</tbody></table></div>`:'<div class="notice warn">Dieses Lernset enthält aktuell keine Vokabeln.</div>'}<div class="notice subtle top-space"><strong>Bei einem fehlerhaften Fotoimport:</strong> „Lernset neu einlesen“ entfernt nur die Vokabel-Zuordnungen und den bisherigen Lernstand dieses Lernsets. Profil, Lehrwerk und andere Lernsets bleiben erhalten.</div><div class="modal-actions"><button value="cancel" class="ghost">Schließen</button>${words.length?'<button type="button" id="copySetPairsBtn" class="ghost">Paare kopieren</button>':''}<button type="button" id="reimportSetBtn" class="secondary">Lernset neu einlesen</button></div>`);
+  $('#copySetPairsBtn')?.addEventListener('click',()=>copySetPairAudit(setId));
+  $('#reimportSetBtn').onclick=()=>{if(!confirm(`Vokabel-Zuordnungen und den bisherigen Lernstand von „${s.title}“ löschen und das Lernset neu per Foto einlesen? Andere Lernsets bleiben unverändert.`))return;if(!resetSetForReimport(setId))return;closeModal();save();setTimeout(()=>openScanImport(setId),100)};
+}
+
 function renderSets(){
   const sets=mySets(); if(!sets.length){$('#setList').innerHTML='<div class="empty-state"><strong>Noch kein Lernset</strong><p>Lege zuerst die Lektion an. Danach kannst du Vokabeln per Foto/Text, CSV oder manuell hinzufügen.</p><button id="emptyNewSetBtn" class="primary">Erstes Lernset anlegen</button></div>';$('#emptyNewSetBtn').onclick=()=>openSetEditor();return}
   const series=activeSeries(),pending=seriesScopePending();
-  $('#setList').innerHTML=[...sets].sort((a,b)=>(b.schoolYear===currentSchoolYear())-(a.schoolYear===currentSchoolYear())).map(s=>{const w=setWords(s.id),m=w.filter(isMastered).length,p=w.length?Math.round(m/w.length*100):0;const seriesInfo=series?.setId===s.id?` · <strong>↻ ${WEEKDAYS_SHORT[Number(series.weekday)||0]}${pending?' · Umfang neu festlegen':series.scopeMode==='range'?` · Nr. ${normalizedRange(w.length,series.from,series.to).from}–${normalizedRange(w.length,series.from,series.to).to}`:''}</strong>`:'';return `<div class="set-item ${s.schoolYear===currentSchoolYear()?'current-year':'other-year'}"><div><h3>${esc(s.title)}</h3><p>${esc(s.schoolYear)}${s.bookId&&bookById(s.bookId)?` · ${esc(bookById(s.bookId).title||formatIsbn(bookById(s.bookId).isbn13))}`:''} · ${w.length} Vokabeln · ${p}% gemeistert${s.testDate&&daysUntil(s.testDate)>=0?` · <strong>Test ${formatDateShort(s.testDate)}${s.testScopeMode==='range'?` · Nr. ${normalizedRange(w.length,s.testFrom,s.testTo).from}–${normalizedRange(w.length,s.testFrom,s.testTo).to}`:''}${daysUntil(s.testDate)===0?' heute':daysUntil(s.testDate)===1?' morgen':` in ${daysUntil(s.testDate)} Tagen`}</strong>`:''}${seriesInfo}</p><progress class="set-progress" max="100" value="${p}" aria-label="${esc(s.title)}: ${p}% gemeistert"></progress></div><div class="row gap wrap"><button class="ghost" data-set-study="${s.id}">Lernen</button><button class="ghost" data-set-edit="${s.id}">Bearbeiten</button></div></div>`}).join('');
-  $$('[data-set-study]').forEach(b=>b.onclick=()=>startSession('adaptive',b.dataset.setStudy)); $$('[data-set-edit]').forEach(b=>b.onclick=()=>openSetEditor(b.dataset.setEdit));
+  $('#setList').innerHTML=[...sets].sort((a,b)=>(b.schoolYear===currentSchoolYear())-(a.schoolYear===currentSchoolYear())).map(s=>{const w=setWords(s.id),m=w.filter(isMastered).length,p=w.length?Math.round(m/w.length*100):0;const seriesInfo=series?.setId===s.id?` · <strong>↻ ${WEEKDAYS_SHORT[Number(series.weekday)||0]}${pending?' · Umfang neu festlegen':series.scopeMode==='range'?` · Nr. ${normalizedRange(w.length,series.from,series.to).from}–${normalizedRange(w.length,series.from,series.to).to}`:''}</strong>`:'';return `<div class="set-item ${s.schoolYear===currentSchoolYear()?'current-year':'other-year'}"><div><h3>${esc(s.title)}</h3><p>${esc(s.schoolYear)}${s.bookId&&bookById(s.bookId)?` · ${esc(bookById(s.bookId).title||formatIsbn(bookById(s.bookId).isbn13))}`:''} · ${w.length} Vokabeln · ${p}% gemeistert${s.testDate&&daysUntil(s.testDate)>=0?` · <strong>Test ${formatDateShort(s.testDate)}${s.testScopeMode==='range'?` · Nr. ${normalizedRange(w.length,s.testFrom,s.testTo).from}–${normalizedRange(w.length,s.testFrom,s.testTo).to}`:''}${daysUntil(s.testDate)===0?' heute':daysUntil(s.testDate)===1?' morgen':` in ${daysUntil(s.testDate)} Tagen`}</strong>`:''}${seriesInfo}</p><progress class="set-progress" max="100" value="${p}" aria-label="${esc(s.title)}: ${p}% gemeistert"></progress></div><div class="row gap wrap"><button class="ghost" data-set-study="${s.id}">Lernen</button><button class="ghost" data-set-audit="${s.id}">Paare prüfen</button><button class="ghost" data-set-edit="${s.id}">Bearbeiten</button></div></div>`}).join('');
+  $('[data-set-study]').forEach(b=>b.onclick=()=>startSession('adaptive',b.dataset.setStudy)); $('[data-set-audit]').forEach(b=>b.onclick=()=>openSetPairAudit(b.dataset.setAudit)); $('[data-set-edit]').forEach(b=>b.onclick=()=>openSetEditor(b.dataset.setEdit));
 }
 
 function renderDashboard(){
