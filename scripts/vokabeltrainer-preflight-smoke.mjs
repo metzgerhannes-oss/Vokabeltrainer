@@ -7,6 +7,8 @@ const app=read('js/app.js');
 const sw=read('sw.js');
 const css=read('css/app.css');
 const learning=read('js/learning.js');
+const quiz=read('js/quiz-engine.js');
+const model=read('js/model.js');
 const focusUi=read('js/focus-ui.js');
 const ui=read('js/ui.js');
 const help=read('js/help.js');
@@ -49,6 +51,15 @@ assert(focusUi.includes("pill.textContent='Aufgabe '+(session.index+1)"),'focuse
 assert(focusUi.includes("$$('[data-answer],.chunk').forEach"),'focused answer controls iterate element lists');
 assert(!/(?<!\$)\$\([^)]*\)\.forEach/.test(allJs),'single-element selector is never used as a collection');
 assert(learning.includes('opts.orthographyOk===false')&&learning.includes('w.errorProfile.spelling'),'orthographic errors remain a separate learning signal');
+assert(html.indexOf('js/quiz-engine.js?v='+version)>html.indexOf('js/model.js?v='+version)&&html.indexOf('js/quiz-engine.js?v='+version)<html.indexOf('js/learning.js?v='+version),'quiz engine loads between model and learning logic');
+assert(sw.includes("'./js/quiz-engine.js?v="+version+"'"),'quiz engine is part of the offline app shell');
+assert(quiz.includes('function makeQuizQuestion(')&&quiz.includes('Object.freeze')&&quiz.includes('function gradeQuizQuestion('),'quiz engine creates immutable questions and grades centrally');
+assert(learning.includes('setCurrentQuizQuestion(w,sub)')&&learning.includes('gradeQuizQuestion(q,answer)'),'core learning path uses the central question snapshot and grader');
+assert(focusUi.includes('gradeQuizQuestion(q,answer)'),'focused-learning overrides use the same central grader');
+assert(quiz.includes("issues.push('sense-mismatch')")&&quiz.includes("issues.push('set-mismatch')"),'quiz integrity gate rejects set/sense identity drift');
+assert(!/split\(\/\\s\*\[\/;,\]/.test(model),'answer comparison never invents alternatives by punctuation splitting');
+assert(model.includes('setNeedsPairReview')&&learning.includes('setNeedsPairReview'),'unreviewed OCR sets are blocked from learning');
+
 assert(html.includes('id="helpBtn"')&&html.includes('id="helpPopover"'),'central help and shared help popover exist');
 assert((html.match(/data-help="/g)||[]).length>=10,'main views expose contextual help at the important concepts');
 assert(help.includes("document.addEventListener('mouseover'")&&help.includes("document.addEventListener('focusin'")&&help.includes("document.addEventListener('click'"),'context help supports mouse, keyboard focus and touch/click');
