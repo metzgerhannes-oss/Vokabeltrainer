@@ -7,7 +7,7 @@ const context=vm.createContext({
   document:{querySelector:()=>null,querySelectorAll:()=>[]},
   window:{},navigator:{},localStorage:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}
 });
-for(const file of ['vokabeltrainer/js/core.js','vokabeltrainer/js/storage.js','vokabeltrainer/js/model.js','vokabeltrainer/js/learning.js']){
+for(const file of ['js/core.js','js/storage.js','js/model.js','js/learning.js']){
   vm.runInContext(fs.readFileSync(file,'utf8'),context,{filename:file});
 }
 const result=vm.runInContext(`
@@ -31,18 +31,18 @@ const result=vm.runInContext(`
 })()
 `,context,{filename:'subject-smoke'});
 
-const sourceFiles=['vokabeltrainer/js/core.js','vokabeltrainer/js/storage.js','vokabeltrainer/js/model.js','vokabeltrainer/js/learning.js','vokabeltrainer/js/translation.js','vokabeltrainer/js/io.js','vokabeltrainer/js/ui.js'];
+const sourceFiles=['js/core.js','js/storage.js','js/model.js','js/learning.js','js/translation.js','js/io.js','js/ui.js'];
 const all=sourceFiles.map(f=>fs.readFileSync(f,'utf8')).join('\n');
 for(const forbidden of ["subject==='latin'?'latin':'english'","['english','latin'].includes(x.subject)","profileSubEnglish","profileSubLatin"]){
   if(all.includes(forbidden))throw new Error('Subject smoke failed: hardcoded subject pattern remains: '+forbidden);
 }
-if(!fs.readFileSync('vokabeltrainer/js/io.js','utf8').includes('subjectOcrLang(state.activeSubject)'))throw new Error('Subject smoke failed: OCR language is not metadata driven');
-const uiSource=fs.readFileSync('vokabeltrainer/js/ui.js','utf8');
+if(!fs.readFileSync('js/io.js','utf8').includes('subjectOcrLang(state.activeSubject)'))throw new Error('Subject smoke failed: OCR language is not metadata driven');
+const uiSource=fs.readFileSync('js/ui.js','utf8');
 if(!uiSource.includes('data-profile-subject'))throw new Error('Subject smoke failed: profile subjects are not metadata driven');
 if(uiSource.includes('Latein: Genitiv + Genus / Stammformen · sonst Zusatzform'))throw new Error('Subject smoke failed: non-generic extra-field label remains');
-const ioSource=fs.readFileSync('vokabeltrainer/js/io.js','utf8');
+const ioSource=fs.readFileSync('js/io.js','utf8');
 if(ioSource.includes('fehlende Englisch-/Deutsch-Seiten'))throw new Error('Subject smoke failed: English-only OCR copy remains');
-if(!fs.readFileSync('vokabeltrainer/js/translation.js','utf8').includes("subjectHasCapability(state?.activeSubject,'hybridDictionary')"))throw new Error('Subject smoke failed: translation capability is not metadata driven');
+if(!fs.readFileSync('js/translation.js','utf8').includes("subjectHasCapability(state?.activeSubject,'hybridDictionary')"))throw new Error('Subject smoke failed: translation capability is not metadata driven');
 
 console.log('Vokabeltrainer subject smoke: '+result.length+' runtime checks passed');
 for(const name of result)console.log('✓ '+name);

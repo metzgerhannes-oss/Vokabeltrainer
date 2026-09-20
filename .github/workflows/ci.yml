@@ -1,0 +1,58 @@
+name: Vokabeltrainer CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: JavaScript syntax
+        run: |
+          for f in js/*.js sw.js scripts/*.mjs; do node --check "$f"; done
+
+      - name: Sense model smoke
+        run: node scripts/vokabeltrainer-sense-smoke.mjs
+
+      - name: Subject system smoke
+        run: node scripts/vokabeltrainer-subject-smoke.mjs
+
+      - name: Cache persistence and migration smoke
+        run: node scripts/vokabeltrainer-cache-smoke.mjs
+
+      - name: Install Playwright browsers
+        run: |
+          npm init -y
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps webkit chromium
+
+      - name: Start local server
+        run: |
+          python3 -m http.server 4173 >/tmp/vokabeltrainer-http.log 2>&1 &
+          echo $! > /tmp/vokabeltrainer-http.pid
+          for i in {1..30}; do
+            curl -fsS http://127.0.0.1:4173/index.html >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/vokabeltrainer-http.log
+          exit 1
+
+      - name: WebKit iPhone UI smoke
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-webkit-ui-smoke.mjs
+
+      - name: Chromium service-worker offline smoke
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-sw-browser-smoke.mjs

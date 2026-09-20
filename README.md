@@ -1,3 +1,27 @@
 # Vokabeltrainer
 
-Eigenständiges Repository des Vokabeltrainers.
+Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konservativer Mastery-Logik und LRS-Unterstützung.
+
+## Aktueller Stand
+
+App-Version: **v0.9.18**
+
+Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
+
+## Architektur
+
+- statische Web-App ohne Serverzwang
+- IndexedDB für lokale Lerndaten
+- Service Worker für Offline-Fähigkeit
+- langlebiger OCR-/Wörterbuch-Ressourcencache
+- lokales Tesseract OCR
+- lokales Wikidict
+- Englisch und Latein aktiv; Französisch architektonisch vorbereitet, aber bis zur vollständigen OCR-Ressource deaktiviert
+- automatisierte Sense-, Fachsystem-, Cache-, WebKit- und Chromium-Smoke-Tests
+
+## Zentrale Dokumente
+
+- [PRODUCT_DNA.md](PRODUCT_DNA.md)
+- [SENSE_MODEL.md](SENSE_MODEL.md)
+- [SUBJECT_SYSTEM.md](SUBJECT_SYSTEM.md)
+- [CACHE_STRATEGY.md](CACHE_STRATEGY.md)

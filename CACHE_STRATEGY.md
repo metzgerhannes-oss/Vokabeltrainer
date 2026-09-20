@@ -1,6 +1,6 @@
 # Vokabeltrainer – Cache-Strategie
 
-Stand: 20.09.2026 · App v0.9.17
+Stand: 20.09.2026 · App v0.9.18
 
 Punkt 3 des Pre-v1-Fahrplans trennt kurzlebige App-Dateien von großen, langlebigen Lernressourcen.
 
@@ -14,7 +14,7 @@ Zusätzlich war die bisherige Löschlogik zu breit: Sie konnte CacheStorage-Eint
 
 ### Shell-Cache
 
-`vokabeltrainer-shell-v0.9.17`
+`vokabeltrainer-shell-v0.9.18`
 
 Enthält HTML, CSS, JavaScript, Manifest und Icons. Dieser Cache ist an die App-Version gekoppelt und darf bei einem Release ersetzt werden.
 
@@ -24,16 +24,16 @@ Enthält HTML, CSS, JavaScript, Manifest und Icons. Dieser Cache ist an die App-
 
 Enthält nur on-demand geladene Ressourcen unter:
 
-- `vokabeltrainer/ocr/`
-- `vokabeltrainer/dict/wikidict/`
+- `ocr/`
+- `dict/wikidict/`
 
-Die Ressourcenrevision ist absichtlich unabhängig von der App-Version. Ein Update von v0.9.17 auf eine spätere App-Version behält diesen Cache, solange sich die eigentlichen OCR-/Wörterbuchdaten nicht ändern.
+Die Ressourcenrevision ist absichtlich unabhängig von der App-Version. Ein Update von v0.9.18 auf eine spätere App-Version behält diesen Cache, solange sich die eigentlichen OCR-/Wörterbuchdaten nicht ändern.
 
 Wenn OCR-Engine, Sprachmodelle oder Wikidict-Daten inkompatibel aktualisiert werden, muss `RESOURCE_REVISION` bewusst erhöht werden.
 
 ## Migration
 
-Beim ersten Aktivieren der neuen Cache-Strategie werden passende OCR-/Wörterbuchantworten aus alten `vokabeltrainer-v...`-Caches in den persistenten Ressourcen-Cache kopiert. Erst danach werden die alten Vokabeltrainer-Caches gelöscht.
+Beim ersten Aktivieren der neuen Cache-Strategie werden passende OCR-/Wörterbuchantworten aus alten `vokabeltrainer-v...`-Caches in den persistenten Ressourcen-Cache kopiert. Seit v0.9.18 werden zusätzlich bereits persistierte Ressourcen vom früheren Pfad `/JohannasGartenwelt/vokabeltrainer/` auf den neuen Repository-Pfad `/Vokabeltrainer/` abgebildet. Erst danach werden veraltete Vokabeltrainer-Shell-Caches gelöscht.
 
 Caches anderer Apps oder anderer Präfixe werden nie gelöscht.
 

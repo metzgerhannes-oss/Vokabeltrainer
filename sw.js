@@ -1,22 +1,34 @@
 'use strict';
 
-const APP_VERSION='0.9.17';
+const APP_VERSION='0.9.18';
 const RESOURCE_REVISION='1';
 const SHELL_CACHE=`vokabeltrainer-shell-v${APP_VERSION}`;
 const RESOURCE_CACHE=`vokabeltrainer-resources-v${RESOURCE_REVISION}`;
 const SHELL_CACHE_PREFIX='vokabeltrainer-shell-';
 const RESOURCE_CACHE_PREFIX='vokabeltrainer-resources-';
 const LEGACY_CACHE_PREFIX='vokabeltrainer-v';
+const LEGACY_APP_BASES=['/JohannasGartenwelt/vokabeltrainer/'];
 
 const ASSETS=[
-  './','./index.html','./css/app.css?v=0.9.17','./js/core.js?v=0.9.17','./js/storage.js?v=0.9.17',
-  './js/model.js?v=0.9.17','./js/learning.js?v=0.9.17','./js/translation.js?v=0.9.17',
-  './js/io.js?v=0.9.17','./js/ui.js?v=0.9.17','./js/app.js?v=0.9.17','./manifest.webmanifest',
+  './','./index.html','./css/app.css?v=0.9.18','./js/core.js?v=0.9.18','./js/storage.js?v=0.9.18',
+  './js/model.js?v=0.9.18','./js/learning.js?v=0.9.18','./js/translation.js?v=0.9.18',
+  './js/io.js?v=0.9.18','./js/ui.js?v=0.9.18','./js/app.js?v=0.9.18','./manifest.webmanifest',
   './assets/icons/icon-180.png','./assets/icons/icon-192.png','./assets/icons/icon-512.png'
 ];
 
 function appBasePath(){
   return new URL('./',self.location.href).pathname;
+}
+
+function persistentResourceRelative(url){
+  if(url.origin!==self.location.origin)return '';
+  const bases=[appBasePath(),...LEGACY_APP_BASES];
+  for(const base of bases){
+    if(url.pathname.startsWith(`${base}ocr/`)||url.pathname.startsWith(`${base}dict/wikidict/`)){
+      return url.pathname.slice(base.length);
+    }
+  }
+  return '';
 }
 
 function isPersistentResource(url){
@@ -25,9 +37,34 @@ function isPersistentResource(url){
   return url.pathname.startsWith(`${base}ocr/`)||url.pathname.startsWith(`${base}dict/wikidict/`);
 }
 
+function currentResourceRequest(url){
+  const relative=persistentResourceRelative(url);
+  if(!relative)return null;
+  const target=new URL(relative,self.location.href);
+  target.search=url.search;
+  return new Request(target.href);
+}
+
 function isOwnedObsoleteCache(key){
   if(key===SHELL_CACHE||key===RESOURCE_CACHE)return false;
   return key.startsWith(SHELL_CACHE_PREFIX)||key.startsWith(RESOURCE_CACHE_PREFIX)||key.startsWith(LEGACY_CACHE_PREFIX);
+}
+
+async function migrateCacheEntries(source,target){
+  const requests=await source.keys();
+  for(const request of requests){
+    let url;try{url=new URL(request.url)}catch(_e){continue}
+    const mapped=currentResourceRequest(url);
+    if(!mapped)continue;
+    if(await target.match(mapped))continue;
+    const response=await source.match(request);
+    if(response)await target.put(mapped,response.clone()).catch(()=>{});
+  }
+}
+
+async function migratePersistentResourcePaths(){
+  const target=await caches.open(RESOURCE_CACHE);
+  await migrateCacheEntries(target,target);
 }
 
 async function migrateLegacyResources(){
@@ -36,15 +73,7 @@ async function migrateLegacyResources(){
   if(!legacy.length)return;
   const target=await caches.open(RESOURCE_CACHE);
   for(const name of legacy){
-    const source=await caches.open(name);
-    const requests=await source.keys();
-    for(const request of requests){
-      let url;try{url=new URL(request.url)}catch(_e){continue}
-      if(!isPersistentResource(url))continue;
-      if(await target.match(request))continue;
-      const response=await source.match(request);
-      if(response)await target.put(request,response.clone()).catch(()=>{});
-    }
+    await migrateCacheEntries(await caches.open(name),target);
   }
 }
 
@@ -56,6 +85,7 @@ self.addEventListener('install',event=>event.waitUntil((async()=>{
 })()));
 
 self.addEventListener('activate',event=>event.waitUntil((async()=>{
+  await migratePersistentResourcePaths();
   await migrateLegacyResources();
   const keys=await caches.keys();
   await Promise.all(keys.filter(isOwnedObsoleteCache).map(key=>caches.delete(key)));

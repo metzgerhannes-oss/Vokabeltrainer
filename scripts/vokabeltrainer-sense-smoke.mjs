@@ -8,7 +8,7 @@ const context=vm.createContext({
   window:{},navigator:{},localStorage:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}
 });
 
-for(const file of ['vokabeltrainer/js/core.js','vokabeltrainer/js/storage.js','vokabeltrainer/js/model.js','vokabeltrainer/js/learning.js']){
+for(const file of ['js/core.js','js/storage.js','js/model.js','js/learning.js']){
   vm.runInContext(fs.readFileSync(file,'utf8'),context,{filename:file});
 }
 
