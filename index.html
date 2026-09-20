@@ -8,12 +8,13 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Vokabeltrainer">
-  <title>Vokabeltrainer – Beta v0.9.19</title>
+  <title>Vokabeltrainer – Beta v0.9.20</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
-  <link rel="stylesheet" href="css/app.css?v=0.9.19">
+  <link rel="stylesheet" href="css/app.css?v=0.9.20">
 </head>
 <body>
+  <a class="skip-link" href="#mainContent">Zum Inhalt</a>
   <div id="app" class="app-shell">
     <header class="topbar">
       <div>
@@ -25,7 +26,7 @@
       </div>
     </header>
 
-    <main>
+    <main id="mainContent" tabindex="-1">
       <section id="homeView" class="view active">
         <article class="card today-focus">
           <div class="today-main">
@@ -204,11 +205,11 @@
     </main>
 
     <nav class="bottom-nav" aria-label="Navigation">
-      <button data-view="homeView" class="nav-btn active"><span>⌂</span>Heute</button>
-      <button data-action="quickLearn" class="nav-btn"><span>✦</span>Lernen</button>
-      <button data-view="libraryView" class="nav-btn"><span>▤</span>Vokabeln</button>
-      <button data-view="dashboardView" class="nav-btn"><span>▥</span>Fortschritt</button>
-      <button data-view="settingsView" class="nav-btn"><span>⚙</span>Mehr</button>
+      <button data-view="homeView" class="nav-btn active"><span aria-hidden="true">⌂</span>Heute</button>
+      <button data-action="quickLearn" class="nav-btn"><span aria-hidden="true">✦</span>Lernen</button>
+      <button data-view="libraryView" class="nav-btn"><span aria-hidden="true">▤</span>Vokabeln</button>
+      <button data-view="dashboardView" class="nav-btn"><span aria-hidden="true">▥</span>Fortschritt</button>
+      <button data-view="settingsView" class="nav-btn"><span aria-hidden="true">⚙</span>Mehr</button>
     </nav>
   </div>
 
@@ -217,15 +218,15 @@
   <input id="fileInput" type="file" class="hidden" accept=".csv,.json,text/csv,application/json">
   <input id="photoInput" type="file" class="hidden" accept="image/*">
   <input id="isbnPhotoInput" type="file" class="hidden" accept="image/*" capture="environment">
-  <script src="js/core.js?v=0.9.19" defer></script>
-  <script src="js/library.js?v=0.9.19" defer></script>
-  <script src="js/storage.js?v=0.9.19" defer></script>
-  <script src="js/model.js?v=0.9.19" defer></script>
-  <script src="js/learning.js?v=0.9.19" defer></script>
-  <script src="js/translation.js?v=0.9.19" defer></script>
-  <script src="js/io.js?v=0.9.19" defer></script>
-  <script src="js/ui.js?v=0.9.19" defer></script>
-  <script src="js/library-ui.js?v=0.9.19" defer></script>
-  <script src="js/app.js?v=0.9.19" defer></script>
+  <script src="js/core.js?v=0.9.20" defer></script>
+  <script src="js/library.js?v=0.9.20" defer></script>
+  <script src="js/storage.js?v=0.9.20" defer></script>
+  <script src="js/model.js?v=0.9.20" defer></script>
+  <script src="js/learning.js?v=0.9.20" defer></script>
+  <script src="js/translation.js?v=0.9.20" defer></script>
+  <script src="js/io.js?v=0.9.20" defer></script>
+  <script src="js/ui.js?v=0.9.20" defer></script>
+  <script src="js/library-ui.js?v=0.9.20" defer></script>
+  <script src="js/app.js?v=0.9.20" defer></script>
 </body>
 </html>
