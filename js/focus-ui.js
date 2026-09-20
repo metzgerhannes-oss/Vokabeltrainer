@@ -58,6 +58,7 @@ gradeGrammar=function(w,g,answer){
   const ok=grammarMatches(answer,g.target,g.key),assisted=!!session.hintUsed;
   focusedDisableAnswerControls();
   $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status"><strong>${ok?(assisted?'Richtig mit Hilfe.':'Richtig.'):'Noch nicht richtig.'}</strong><br>${ok?'':`Deine Antwort: ${esc(answer||'–')}<br>`}Richtig: <strong>${esc(g.target)}</strong>${w.example?`<br><small>Im Kontext: ${esc(w.example)}</small>`:''}</div>`);
+  logSessionResult(w,{answer,target:[g.target],correct:ok,skill:'latinGrammar',orthographyOk:ok,assisted,prompt:g.prompt});
   recordGrammarResult(w,g.key,ok,assisted);
   focusedContinue(ok,w);
 };
@@ -69,6 +70,7 @@ gradeChoice=function(btn,w,answer,target,skill,nonEvaluative=false){
   if(!ok)$$('[data-answer]').find(b=>answerMatches(b.dataset.answer,target))?.classList.add('correct');
   focusedDisableAnswerControls();
   if(['recognition','listening'].includes(skill))session.scaffoldedWords[w.id]=true;
+  logSessionResult(w,{answer,target,correct:ok,skill,orthographyOk:true,assisted:false});
   if(nonEvaluative)recordNonEvaluative(w,'flash',ok,skill);else recordResult(w,ok,skill,ok?null:skill);
   const correct=focusedCorrectTarget(target);
   $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status"><strong>${ok?'Richtig.':'Noch nicht richtig.'}</strong>${!ok&&correct?`<br>Richtig: <strong>${esc(correct)}</strong>`:''}${!ok?focusedConfusionHtml(w):''}</div>`);
@@ -85,6 +87,7 @@ gradeText=function(w,answer,target,errorType,skill){
   focusedDisableAnswerControls();
   const spellingNote=softSpelling?`<br>Schreibweise: <strong>${esc(focusedCorrectTarget(target))}</strong>`:'';
   $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status">${ok?`<strong>${detail}</strong>${spellingNote}`:errorFeedbackHtml(answer,target)}${!ok?wordLearningCard(w)+focusedConfusionHtml(w):''}</div>`);
+  logSessionResult(w,{answer,target,correct:ok,skill:session.currentSubmode||skill,orthographyOk,assisted:!!session.hintUsed});
   recordResult(w,ok,skill,ok?null:errorType,{orthographyOk});
   focusedContinue(ok,w);
 };
