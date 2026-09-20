@@ -190,3 +190,23 @@ body.learning-focus .help-popover{display:none!important}
   .help-popover{font-size:.88rem}
   .help-overview>div{padding:9px 10px}
 }
+
+
+/* Session result review */
+.session-finish-card{max-width:820px!important}
+.session-review{margin:24px 0 8px;padding-top:20px;border-top:1px solid var(--line);text-align:left}
+.session-review h3{margin:.15rem 0 .25rem}
+.session-result-list{display:grid;gap:10px;margin-top:14px}
+.session-result{display:grid;gap:8px;padding:13px 14px;border:1px solid var(--line);border-left-width:4px;border-radius:14px;background:#fff}
+.session-result.good{border-left-color:#16a34a}.session-result.warn{border-left-color:#d97706}.session-result.bad{border-left-color:#dc2626}
+.session-result-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.session-result-set,.session-result-note{color:var(--muted)}
+.session-result-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1.3fr);gap:10px}
+.session-result-grid>div{display:grid;gap:2px;min-width:0;padding:8px 10px;border-radius:10px;background:#f8fafc}
+.session-result-grid small{color:var(--muted);font-weight:700}
+.session-result-grid strong,.session-result-grid span{overflow-wrap:anywhere}
+@media(max-width:620px){
+  .session-review>.row{align-items:flex-start}
+  .session-result-grid{grid-template-columns:1fr}
+  .session-result{padding:12px}
+}
