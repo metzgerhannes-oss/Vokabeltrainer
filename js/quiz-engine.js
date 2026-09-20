@@ -146,7 +146,9 @@ function setCurrentQuizQuestion(w,mode,opts={}){
 }
 function currentQuizQuestion(w=null,mode=''){
   const q=session?.currentQuestion;
-  if(q&&(!w||q.setLinkId===w.setLinkId)&&(!mode||q.mode===quizQuestionMode(mode,w)))return q;
+  // Once a question is shown, that snapshot is authoritative until renderStudy
+  // advances and explicitly clears it. Grading must never silently rebuild it.
+  if(q&&(!w||q.setLinkId===w.setLinkId))return q;
   return w?setCurrentQuizQuestion(w,mode||session?.currentSubmode||session?.mode||'recall').question:null;
 }
 function renderQuizIntegrityStop(w,issues=[]){
