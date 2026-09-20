@@ -51,9 +51,11 @@ const result=vm.runInContext(`
   corruptV.senses.push(makeVocabularySense('Quelle',{id:'sense_source'}));
   corrupt.vocabulary=[corruptV];
   corrupt.setVocabulary=[makeSetVocabulary('corrupt_set','v_corrupt','missing_sense',{id:'corrupt_link',position:1})];
+  corrupt.bookVocabulary=[{id:'bv_corrupt',bookId:'book_corrupt',vocabId:'v_corrupt',senseId:'missing_sense',section:'Unit 1',position:1,verifiedAt:'2026-09-20T12:00:00.000Z'}];
   corrupt.learnerVocabulary=[makeLearnerVocabulary('learner_demo','v_corrupt',primarySense(corruptV).id,{id:'corrupt_progress'})];
   migrateSenseModel(corrupt);
   assert(corrupt.sets[0].pairReviewRequired===true,'ambiguous invalid sense mapping is blocked for pair review');
+  assert(corrupt.bookVocabulary[0].verifiedAt===''&&corrupt.bookVocabulary[0].verificationBlocked===true,'ambiguous invalid book mapping loses reusable verification');
 
   state=defaultState();
   const editSet=mkSet('edit_set');editSet.pairReviewRequired=false;editSet.pairVerifiedAt='2026-09-20T12:00:00.000Z';state.sets.push(editSet);
@@ -61,8 +63,10 @@ const result=vm.runInContext(`
   const beforeSig=vocabularyPairSignature(edited.vocab);
   edited.vocab.senses[0].translation='freundlich';
   assert(vocabularyPairSignature(edited.vocab)!==beforeSig,'quiz-critical vocabulary signature changes when meaning changes');
+  state.bookVocabulary.push({id:'bv_edit',bookId:'book_edit',vocabId:edited.vocab.id,senseId:edited.sense.id,section:'edit_set',position:1,verifiedAt:'2026-09-20T12:00:00.000Z'});
   requirePairReviewForVocabulary(edited.vocab.id);
   assert(editSet.pairReviewRequired===true&&editSet.pairVerifiedAt==='','edited vocabulary invalidates linked set approval');
+  assert(state.bookVocabulary[0].verifiedAt==='','edited vocabulary invalidates reusable book approval');
 
 
 
