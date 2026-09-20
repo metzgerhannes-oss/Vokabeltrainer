@@ -19,12 +19,13 @@ try{
     state=defaultState();
     const set={id:'ocr_set',learnerId:'learner_demo',subject:'english',title:'OCR Unit',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:true,pairVerifiedAt:''};
     state.sets.push(set);
-    attachVocabularyToSet(set.id,{term:'write',translation:'schreiben',source:'photo-text-import',verified:true});
+    attachVocabularyToSet(set.id,{term:'write',translation:'schreiben',source:'photo-text-import',verified:false});
     rebuildWordIndexes();renderAll();showView('setsView');
   });
 
   const study=page.locator('[data-set-study="ocr_set"]');
   assert(await study.isDisabled(),'learning is blocked for unreviewed OCR set');
+  assert(await page.evaluate(()=>!state.vocabulary[0]?.verifiedAt),'OCR vocabulary is not verified before pair confirmation');
   const audit=page.locator('[data-set-audit="ocr_set"]');
   assert((await audit.textContent())?.includes('Paare prüfen'),'pair review action is visible');
 
@@ -37,6 +38,7 @@ try{
 
   await page.evaluate(()=>showView('setsView'));
   assert(!(await page.locator('[data-set-study="ocr_set"]').isDisabled()),'learning unlocks only after explicit pair confirmation');
+  assert(await page.evaluate(()=>!!state.vocabulary[0]?.verifiedAt),'pair confirmation marks vocabulary as verified');
 
   await page.evaluate(()=>startSession('recall','ocr_set',null,false));
   await page.waitForSelector('#answerField');
