@@ -1,6 +1,6 @@
 # Focused Learning UI
 
-Stand: 20.09.2026 · App v0.10.0
+Stand: 20.09.2026 · App v0.10.1
 
 ## Ziel
 
@@ -28,7 +28,7 @@ Innerhalb der Lerneinheit bleiben sichtbar:
 - Zurück
 - Lernmodus
 - Position in der Einheit
-- ruhiger Fortschrittsbalken
+- ruhige Aufgabenorientierung ohne veränderlichen Fortschrittsbalken
 - aktuelle Aufgabe
 - notwendige Eingabe- und Hilfselemente
 
@@ -55,7 +55,7 @@ Diese Informationen erscheinen erst **nach** dem Abruf.
 
 ### 4. Inhaltlicher Abruf und Orthographie
 
-Die allgemeine Bedeutungs-/Abrufprüfung bleibt bei unkritischer Zeichensetzung fehlertolerant. Schreibkompetenz wird dagegen separat und streng bewertet: Apostrophe und diakritische Zeichen werden nicht entfernt. Ein inhaltlich richtiger Abruf mit ungenauer Schreibweise kann daher Abrufkompetenz bestätigen, erhält aber keinen zusätzlichen Spelling-Credit. Im direkten Schreibmodus gilt die ungenaue Form als Fehler.
+Die allgemeine Bedeutungs-/Abrufprüfung bleibt bei unkritischer Zeichensetzung fehlertolerant. Schreibkompetenz wird dagegen separat und streng bewertet: Apostrophe und diakritische Zeichen werden nicht entfernt. Ein inhaltlich richtiger Abruf mit ungenauer Schreibweise kann daher Abrufkompetenz bestätigen, erhält aber keinen zusätzlichen Spelling-Credit. Der Schreibfehler wird zusätzlich im Fehlerprofil erfasst, die Spelling-Sicherheit konservativ abgesenkt und die Vokabel am Folgetag erneut fällig. Im direkten Schreibmodus gilt die ungenaue Form als Fehler.
 
 Das verhindert insbesondere, dass Formen wie `cant` als orthographisch gleichwertig zu `can't` gelten, und bereitet die Architektur auf französische Akzente vor.
 
@@ -79,12 +79,13 @@ Bereits im vorgeschalteten Audit ergänzt:
 
 ## Evidenzbasis
 
-Die Umsetzung ist absichtlich konservativ:
+Die Umsetzung ist absichtlich konservativ und wurde vor Abschluss von Punkt 5 erneut gegen aktuelle Literatur geprüft:
 
-- **Retrieval Practice + Feedback:** Eine EFL-Laborstudie von Aljabri (2024) fand Vorteile von Retrieval Practice mit Feedback und in diesem Setting bessere Langzeitwerte bei unmittelbarem gegenüber verzögertem Feedback. Die Stichprobe bestand aus erwachsenen EFL-Lernenden; deshalb wird daraus keine exakte Timing-Regel für Kinder abgeleitet. Für die App folgt daraus lediglich: Rückmeldung direkt nach dem Abruf geben und ausreichend verarbeitbar darstellen. DOI: 10.1057/s41599-024-03983-6
-- **Seductive Details / Ablenkung:** Neuere Arbeiten bestätigen, dass interessante, aber lernirrelevante Details Aufmerksamkeit und Lernen beeinträchtigen können. Die Kampagne bleibt deshalb außerhalb des Abrufbildschirms. Siehe u. a. Kienitz et al. (2023), Instructional Science, DOI 10.1007/s11251-023-09632-w, sowie aktuelle Arbeiten 2024–2026 zum Seductive-Detail-Effekt.
-- **WCAG 2.2:** Fokusdarstellung, nicht verdeckter Fokus und ausreichende Zielgrößen werden an WCAG 2.2 ausgerichtet. Besonders relevant: SC 2.4.11, 2.4.13 und 2.5.8. https://www.w3.org/TR/WCAG22/
-- **Dyslexia Style Guide:** Die British Dyslexia Association empfiehlt u. a. gut lesbare Sans-Serif-Schriften, ausreichende Schriftgröße/Abstände und das Vermeiden längerer Texte in Versalien. https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace/dyslexia-friendly-style-guide
+- **Digitales Feedback:** Brummer et al. (2024) fanden in einer Meta-Analyse digital vermittelten Feedbacks starke positive Effekte sowohl für unmittelbares als auch verzögertes Feedback; verzögertes Feedback war leicht stärker, wichtiger war aber eine konsistente Feedbackstrategie. Daraus folgt für die App keine Behauptung, unmittelbares Feedback sei generell überlegen. Wir geben die Korrektur direkt nach dem Abruf, lassen sie aber sichtbar, bis der Lernende selbst **Weiter** wählt. DOI: 10.1007/s10984-024-09501-4
+- **Digitale Ablenkung:** Martin et al. (2025) fassten 26 Studien zu digitaler Ablenkung im Bildungskontext zusammen. Technologiebedingte Ablenkungen waren ein zentraler Ursachenbereich und Leistungsprobleme die häufigste berichtete Folge. Der Review enthält überwiegend Hochschulstudien und nur wenig K-12-Evidenz; deshalb wird daraus keine kindsspezifische Effektgröße abgeleitet. DOI: 10.1007/s11423-025-10550-6
+- **Gamification während Retrieval Practice:** van den Broek et al. (2026) berichten für adaptive Retrieval Practice, dass Punkte und Fortschrittsbalken Motivation steigerten, aber keinen nachweisbaren Effekt auf Lernverhalten oder verzögerten Abruf hatten. Das stützt unsere Trennung: Kampagne/XP bleiben außerhalb des Abrufs; auch der veränderliche Session-Fortschrittsbalken wurde entfernt. DOI: 10.1016/j.chb.2025.108862
+- **Kognitive Barrierefreiheit:** W3C-COGA empfiehlt kurze kritische Pfade, wenig unnötigen Inhalt, klare Labels und Kontrolle über unerwartete Inhaltsänderungen. Das passt zu unserem statischen Aufgabenbild und dem bewussten **Weiter**. Siehe W3C Cognitive Accessibility: „Help Users Focus“ und „Let Users Control When the Content Moves or Changes“.
+- **LRS-Typografie:** Kleine Erhöhungen des Buchstabenabstands können insbesondere bei jungen Leserinnen und Lesern mit Dyslexie helfen; zugleich werden keine speziellen „Dyslexie-Schriften“ als Heilsversprechen eingesetzt. Die App nutzt gut lesbare Sans-Serif-Schriften und individuell einstellbare Größe/Abstände.
 
 ## Nicht behauptet
 
@@ -103,4 +104,7 @@ Die Umsetzung ist absichtlich konservativ:
 - Feedback erscheint sofort
 - kein automatisches Weiterblättern nach Feedback
 - **Weiter** erhält Fokus
+- keine automatische Weiterleitung
+- strenge Orthographie im Schreibmodus
+- semantisch richtiger Abruf mit Schreibfehler bleibt getrennt bewertet und wird früh erneut fällig
 - Verlassen der Einheit stellt die normale Navigation wieder her
