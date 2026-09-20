@@ -145,7 +145,7 @@ function renderReverseRecall(w){
   $('#answerBtn').onclick=()=>gradeText(w,$('#answerField').value,translationTargets(w),'retrieval','retrieval');$('#answerField').onkeydown=e=>{if(e.key==='Enter')$('#answerBtn').click()};$('#hintBtn').onclick=()=>{session.hintUsed=true;$('#hintBtn').textContent=`${w.translation.slice(0,Math.max(1,Math.ceil(w.translation.length*.3)))}…`};setTimeout(()=>$('#answerField')?.focus(),40);
 }
 function renderSpelling(w){
-  $('#studyArea').innerHTML=`<div class="study-card"><div class="eyebrow">Schreiben</div><button id="speakBtn" class="secondary">🔊 Anhören</button><div class="study-prompt">${esc(w.translation)}</div><div class="study-sub">Hören → erinnern → vollständig schreiben.</div><input id="answerField" class="answer-input" aria-label="Deine Antwort" autocomplete="off" autocapitalize="none"><div class="top-space"><button id="answerBtn" class="primary">Prüfen</button></div>${wordLearningCard(w,true)}${cardExtras(w)}</div>`;
+  $('#studyArea').innerHTML=`<div class="study-card"><div class="eyebrow">Schreiben</div><button id="speakBtn" class="secondary">🔊 Anhören</button><div class="study-prompt">${esc(w.translation)}</div><div class="study-sub">Hören → erinnern → vollständig schreiben.</div><input id="answerField" class="answer-input" aria-label="Deine Antwort" autocomplete="off" autocapitalize="none"><div class="top-space"><button id="answerBtn" class="primary">Prüfen</button></div>${cardExtras(w)}</div>`;
   $('#speakBtn').onclick=()=>speak(w.term); $('#answerBtn').onclick=()=>gradeText(w,$('#answerField').value,termTargets(w),'spelling','spelling'); $('#answerField').onkeydown=e=>{if(e.key==='Enter')$('#answerBtn').click()}; setTimeout(()=>speak(w.term),120);
 }
 
