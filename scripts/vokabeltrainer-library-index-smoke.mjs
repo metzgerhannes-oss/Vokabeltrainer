@@ -30,6 +30,7 @@ const passed=vm.runInContext(`
   assert(indexedBookByIsbn('9780140449136')?.id===book.id,'ISBN resolves through index');
   assert(indexedVocabularyMatch('english','takes')?.id===b.vocab.id,'term variants resolve to existing lexeme');
   assert(searchGlobalLibrary({subject:'english',query:'9780140449136'}).length===2,'ISBN search finds book vocabulary');
+  assert(searchGlobalLibrary({subject:'english',query:'978-0-14-044913-6'}).length===2,'ISBN search tolerates separators');
   assert(searchGlobalLibrary({subject:'english',query:'Unit 1'}).some(v=>v.id===a.vocab.id),'unit search finds matching vocabulary');
   assert(searchGlobalLibrary({subject:'english',query:'nehmen'}).some(v=>v.id===b.vocab.id),'meaning search finds vocabulary');
   assert(searchGlobalLibrary({subject:'english',bookId:book.id,section:'Unit 2'}).length===1,'book and unit filters use index');
