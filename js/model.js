@@ -14,6 +14,7 @@ function vocabularyPairSignature(v){
 function requirePairReviewForVocabulary(vocabId){
   const setIds=new Set((state.setVocabulary||[]).filter(x=>x.vocabId===vocabId).map(x=>x.setId));let changed=0;
   for(const set of (state.sets||[])){if(!setIds.has(set.id))continue;if(!set.pairReviewRequired||set.pairVerifiedAt)changed++;set.pairReviewRequired=true;set.pairVerifiedAt='';}
+  for(const row of (state.bookVocabulary||[])){if(row.vocabId!==vocabId)continue;row.verifiedAt='';}
   return changed;
 }
 function learningReadySets(subject=state.activeSubject){return mySets(subject).filter(s=>!setNeedsPairReview(s))}
