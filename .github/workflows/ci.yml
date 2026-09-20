@@ -31,6 +31,9 @@ jobs:
       - name: Sense model smoke
         run: node scripts/vokabeltrainer-sense-smoke.mjs
 
+      - name: Learning integrity smoke
+        run: node scripts/vokabeltrainer-learning-integrity-smoke.mjs
+
       - name: Subject system smoke
         run: node scripts/vokabeltrainer-subject-smoke.mjs
 
