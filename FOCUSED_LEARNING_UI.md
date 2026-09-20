@@ -1,6 +1,6 @@
 # Focused Learning UI
 
-Stand: 20.09.2026 · App v0.10.1
+Stand: 20.09.2026 · App v0.10.2
 
 ## Ziel
 
