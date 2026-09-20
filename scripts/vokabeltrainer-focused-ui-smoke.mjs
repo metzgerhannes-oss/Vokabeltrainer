@@ -74,7 +74,9 @@ try{
   assert((await page.evaluate(()=>document.activeElement?.id||''))==='continueStudyBtn','continue control should receive focus');
 
   await page.click('#continueStudyBtn');
-  await page.waitForFunction(()=>session.index===1);
+  const afterContinue=await page.evaluate(()=>({index:session?.index??-1,queueLength:session?.queue?.length||0}));
+  assert(afterContinue.index>0,'explicit continue must advance the learning session');
+  assert(pageErrors.length===0,'focused recall must not produce browser errors: '+pageErrors.join(' | '));
   await page.click('#backHomeBtn');
 
   const afterExit=await page.evaluate(()=>({
