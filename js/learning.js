@@ -96,7 +96,7 @@ function finishPracticeTest(){
 
 function startSession(mode='adaptive',setId=null,wordIds=null,isDaily=false){
   const queue=buildQueue(mode,setId,wordIds); if(!queue.length){toast('Noch keine Vokabeln vorhanden.','warn');return}
-  session={mode,setId,queue:queue.map(w=>w.setLinkId||w.id),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false}; showView('learnView'); $('#modePill').textContent=modeLabel(mode); renderStudy();
+  session={mode,setId,queue:queue.map(w=>w.setLinkId||w.id),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString()}; showView('learnView'); $('#modePill').textContent=modeLabel(mode); renderStudy();
 }
 function modeLabel(m){return ({adaptive:'Adaptiv',flash:'Wortblitz',shower:'Vokabeldusche',chunks:'Wortbausteine',handwriting:'Handschrift',recognition:'Erkennen',recall:'Abrufen',reverseRecall:'Bedeutung abrufen',spelling:'Schreiben',listening:'Hören',context:'Kontext',latinGrammar:'Latein Formen',practiceTest:'Prüfung'})[m]||m}
 function currentWord(){const token=session?.queue?.[session.index];return wordByLinkId(token)||wordById(token,session?.setId||'')}
@@ -266,9 +266,47 @@ function nextStudy(ok,w){
   if(ok&&w&&session.mode==='adaptive'&&['recognition','listening','chunks'].includes(session.currentSubmode))scheduleScaffoldFollowup(session,w.setLinkId||w.id);
   session.index++;renderStudy();
 }
+function sessionResultTargets(target){
+  const raw=Array.isArray(target)?target:[target],out=[];
+  for(const value of raw){const clean=String(value||'').trim();if(clean&&!out.includes(clean))out.push(clean)}
+  return out;
+}
+function sessionResultMode(skill=session?.currentSubmode||session?.mode||''){
+  const labels={retrieval:'Abruf',reverseRecall:'Bedeutung',spelling:'Schreiben',recognition:'Erkennen',listening:'Hören',context:'Kontext',chunks:'Wortbausteine',latinGrammar:'Latein-Formen'};
+  return labels[skill]||modeLabel(skill)||String(skill||'Aufgabe');
+}
+function logSessionResult(w,{answer='',target=[],correct=false,skill='',orthographyOk=true,assisted=false,prompt='',note=''}={}){
+  if(!session||session.mode==='practiceTest')return;
+  session.results=Array.isArray(session.results)?session.results:[];
+  const set=state.sets.find(s=>s.id===w?.setId),targets=sessionResultTargets(target);
+  const visiblePrompt=String(prompt||$('#studyArea .study-prompt')?.textContent||'').trim();
+  session.results.push({
+    order:session.results.length+1,wordId:w?.id||'',vocabId:w?.vocabId||'',senseId:w?.senseId||'',setId:w?.setId||'',setTitle:set?.title||'',
+    mode:sessionResultMode(skill||session.currentSubmode||session.mode),prompt:visiblePrompt,answer:String(answer||'').trim(),targets,correct:!!correct,
+    orthographyOk:orthographyOk!==false,assisted:!!assisted,note:String(note||''),at:new Date().toISOString()
+  });
+}
+function sessionResultsText(results=session?.results||[]){
+  const lines=['Vokabeltrainer – Ergebnisübersicht'];
+  for(const r of results){
+    const status=!r.correct?'FALSCH':r.orthographyOk===false?'INHALTLICH RICHTIG · SCHREIBWEISE':'RICHTIG';
+    lines.push('',r.order+'. '+r.mode+' · '+status,(r.setTitle?'Lernset: '+r.setTitle:''),'Frage: '+(r.prompt||'–'),'Meine Antwort: '+(r.answer||'–'),'Erwartet: '+((r.targets||[]).join(' | ')||'–'),r.assisted?'Mit Hilfe: ja':'Mit Hilfe: nein');
+  }
+  return lines.filter((x,i)=>x!==''||i>0).join('\n');
+}
+async function copySessionResults(results=session?.results||[]){
+  const text=sessionResultsText(results);if(!text)return;
+  try{await navigator.clipboard.writeText(text);toast('Ergebnisübersicht kopiert.','good')}
+  catch(_e){const ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();const ok=document.execCommand?.('copy');ta.remove();toast(ok?'Ergebnisübersicht kopiert.':'Kopieren nicht möglich.','subtle')}
+}
+function sessionResultsHtml(results=[]){
+  if(!results.length)return '';
+  return `<section class="session-review" aria-labelledby="sessionReviewTitle"><div class="row spread align-center wrap"><div><div class="eyebrow">Ergebnisübersicht</div><h3 id="sessionReviewTitle">Alle Abfragen dieser Einheit</h3></div><button id="copySessionResultsBtn" class="ghost">Ergebnisse kopieren</button></div><div class="session-result-list">${results.map(r=>{const cls=!r.correct?'bad':r.orthographyOk===false?'warn':'good',status=!r.correct?'Falsch':r.orthographyOk===false?'Richtig erinnert · Schreibweise':'Richtig';return `<article class="session-result ${cls}"><div class="session-result-head"><strong>${r.order}. ${esc(r.mode)}</strong><span class="pill">${esc(status)}</span></div>${r.setTitle?`<small class="session-result-set">${esc(r.setTitle)}</small>`:''}<div class="session-result-grid"><div><small>Frage</small><strong>${esc(r.prompt||'–')}</strong></div><div><small>Deine Antwort</small><span>${esc(r.answer||'–')}</span></div><div><small>Erwartet / akzeptiert</small><span>${esc((r.targets||[]).join(' · ')||'–')}</span></div></div>${r.assisted?'<small class="session-result-note">Mit Hilfe beantwortet</small>':''}</article>`}).join('')}</div></section>`;
+}
+
 function finishSession(){
   if(session?.mode==='practiceTest')return finishPracticeTest();
-  const c=session?.correct||0,a=session?.answered||0,isDaily=!!session?.isDaily,plan=isDaily?buildDailyPlan():null,status=plan?dailyPlanStatus(plan):null; const more=status?.remaining>0;
-  $('#studyArea').innerHTML=`<div class="study-card"><div class="eyebrow">Einheit beendet</div><div class="study-prompt">${a?Math.round(c/a*100):'✓'}${a?'%':''}</div><p>${a?`${c} von ${a} Aufgaben richtig.`:'Training abgeschlossen.'}</p>${isDaily?`<p class="notice ${more?'subtle':'good'}">${more?`Noch ${status.remaining} Vokabel${status.remaining===1?'':'n'} im Tagesziel.`:'Tagesziel für heute geschafft.'}</p>`:''}<div class="row gap center-actions wrap">${more?'<button id="continueDailyBtn" class="primary">Nächste kurze Einheit</button>':''}<button id="doneBtn" class="${more?'secondary':'primary'}">Zur Übersicht</button></div></div>`;
-  $('#sessionPill').textContent='Fertig'; $('#continueDailyBtn')?.addEventListener('click',()=>{session=null;startDailyTodo()}); $('#doneBtn').onclick=()=>{session=null;showView('homeView');renderAll()}; persistOnly();
+  const c=session?.correct||0,a=session?.answered||0,results=[...(session?.results||[])],isDaily=!!session?.isDaily,plan=isDaily?buildDailyPlan():null,status=plan?dailyPlanStatus(plan):null; const more=status?.remaining>0;
+  $('#studyArea').innerHTML=`<div class="study-card session-finish-card"><div class="eyebrow">Einheit beendet</div><div class="study-prompt">${a?Math.round(c/a*100):'✓'}${a?'%':''}</div><p>${a?`${c} von ${a} Aufgaben richtig.`:'Training abgeschlossen.'}</p>${isDaily?`<p class="notice ${more?'subtle':'good'}">${more?`Noch ${status.remaining} Vokabel${status.remaining===1?'':'n'} im Tagesziel.`:'Tagesziel für heute geschafft.'}</p>`:''}${sessionResultsHtml(results)}<div class="row gap center-actions wrap top-space">${more?'<button id="continueDailyBtn" class="primary">Nächste kurze Einheit</button>':''}<button id="doneBtn" class="${more?'secondary':'primary'}">Zur Übersicht</button></div></div>`;
+  $('#sessionPill').textContent='Fertig'; $('#copySessionResultsBtn')?.addEventListener('click',()=>copySessionResults(results)); $('#continueDailyBtn')?.addEventListener('click',()=>{session=null;startDailyTodo()}); $('#doneBtn').onclick=()=>{session=null;showView('homeView');renderAll()}; persistOnly();
 }
