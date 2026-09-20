@@ -21,6 +21,8 @@ const result=vm.runInContext(`
   assert(subjectSpeechLang('french')==='fr-FR','French speech locale configured');
   assert(subjectOcrLang('french')==='fra','French OCR code configured');
   assert(subjectHasCapability('latin','latinGrammar')&&!subjectHasCapability('french','latinGrammar'),'capabilities are metadata driven');
+  assert(lexicalKey('ou','french')!==lexicalKey('où','french'),'French accent can distinguish lexemes');
+  assert(lexicalKey('cote','french')!==lexicalKey('côte','french'),'French circumflex remains part of lexical identity');
   assert(Object.keys(defaultGradeScales()).includes('french')&&Object.keys(defaultTestSeries()).includes('french'),'per-subject state is generated');
   const v=makeVocabulary('french','bonjour','hallo');assert(v.subject==='french','French vocabulary is not collapsed to English');
   const b=makeBook('9780140449136','french',{title:'Test'});assert(b.subject==='french','French books are not collapsed to English');
