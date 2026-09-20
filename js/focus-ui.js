@@ -33,10 +33,7 @@ function focusedContinue(ok,w){
   btn.onclick=()=>nextStudy(ok,w);
   setTimeout(()=>btn?.focus(),0);
 }
-function focusedCorrectTarget(target){
-  const values=(Array.isArray(target)?target:[target]).flatMap(x=>String(x||'').split(/\s*[/;]\s*/)).filter(Boolean);
-  return values[0]||'';
-}
+function focusedCorrectTarget(target){return quizUnique(target)[0]||''}
 
 /* During retrieval, progress diagnostics and confusion warnings stay out of sight.
    Relevant support is shown only after an answer. */
@@ -65,29 +62,27 @@ gradeGrammar=function(w,g,answer){
 
 gradeChoice=function(btn,w,answer,target,skill,nonEvaluative=false){
   if(session.locked)return;session.locked=true;
-  const ok=answerMatches(answer,target);
+  const q=currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct;
   btn.classList.add(ok?'correct':'wrong');
-  if(!ok)$$('[data-answer]').find(b=>answerMatches(b.dataset.answer,target))?.classList.add('correct');
+  if(!ok)$('[data-answer]').find(b=>gradeQuizQuestion(q,b.dataset.answer).correct)?.classList.add('correct');
   focusedDisableAnswerControls();
   if(['recognition','listening'].includes(skill))session.scaffoldedWords[w.id]=true;
-  logSessionResult(w,{answer,target,correct:ok,skill,orthographyOk:true,assisted:false});
-  if(nonEvaluative)recordNonEvaluative(w,'flash',ok,skill);else recordResult(w,ok,skill,ok?null:skill);
-  const correct=focusedCorrectTarget(target);
+  logSessionResult(w,{answer,target:q.targets,correct:ok,skill:q.mode,orthographyOk:grade.orthographyOk,assisted:false,prompt:q.prompt});
+  if(nonEvaluative)recordNonEvaluative(w,'flash',ok,skill);else recordResult(w,ok,skill,ok?null:skill,{orthographyOk:grade.orthographyOk});
+  const correct=focusedCorrectTarget(q.targets);
   $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status"><strong>${ok?'Richtig.':'Noch nicht richtig.'}</strong>${!ok&&correct?`<br>Richtig: <strong>${esc(correct)}</strong>`:''}${!ok?focusedConfusionHtml(w):''}</div>`);
   focusedContinue(ok,w);
 };
 
 gradeText=function(w,answer,target,errorType,skill){
   if(session.locked)return;session.locked=true;
-  const tracksOrthography=skill==='spelling'||skill==='context'||(skill==='retrieval'&&session.currentSubmode!=='reverseRecall');
-  const orthographyOk=tracksOrthography?spellingMatches(answer,target):true;
-  const ok=skill==='spelling'?orthographyOk:answerMatches(answer,target);
-  const softSpelling=ok&&tracksOrthography&&!orthographyOk;
+  const q=currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct,orthographyOk=grade.orthographyOk;
+  const softSpelling=ok&&q.trackOrthography&&!orthographyOk;
   const detail=softSpelling?(session.hintUsed?'Richtig erinnert mit Hinweis. Schreibweise beachten.':'Richtig erinnert. Schreibweise beachten.'):(ok?(session.hintUsed?'Richtig mit Hinweis.':'Richtig.'):'');
   focusedDisableAnswerControls();
-  const spellingNote=softSpelling?`<br>Schreibweise: <strong>${esc(focusedCorrectTarget(target))}</strong>`:'';
-  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status">${ok?`<strong>${detail}</strong>${spellingNote}`:errorFeedbackHtml(answer,target)}${!ok?wordLearningCard(w)+focusedConfusionHtml(w):''}</div>`);
-  logSessionResult(w,{answer,target,correct:ok,skill:session.currentSubmode||skill,orthographyOk,assisted:!!session.hintUsed});
+  const spellingNote=softSpelling?`<br>Schreibweise: <strong>${esc(focusedCorrectTarget(q.targets))}</strong>`:'';
+  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status">${ok?`<strong>${detail}</strong>${spellingNote}`:errorFeedbackHtml(answer,q.targets)}${!ok?wordLearningCard(w)+focusedConfusionHtml(w):''}</div>`);
+  logSessionResult(w,{answer,target:q.targets,correct:ok,skill:q.mode,orthographyOk,assisted:!!session.hintUsed,prompt:q.prompt});
   recordResult(w,ok,skill,ok?null:errorType,{orthographyOk});
   focusedContinue(ok,w);
 };
