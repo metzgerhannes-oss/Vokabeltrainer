@@ -108,7 +108,12 @@ function migrateSenseModel(s){
   }
   const setById=new Map((s.sets||[]).map(x=>[x.id,x]));
   for(const link of (s.setVocabulary||[])){
-    const v=vocabById.get(link.vocabId);if(!v)continue;let sense=senseById(v,link.senseId);if(!sense&&link.translationOverride)sense=senseMatch(v,link.translationOverride);if(!sense)sense=primarySense(v);link.senseId=sense?.id||'';link.acceptedTermOverrides=Array.isArray(link.acceptedTermOverrides)?link.acceptedTermOverrides:[];link.acceptedTranslationOverrides=Array.isArray(link.acceptedTranslationOverrides)?link.acceptedTranslationOverrides:[];
+    const v=vocabById.get(link.vocabId);if(!v)continue;let sense=senseById(v,link.senseId);if(!sense&&link.translationOverride)sense=senseMatch(v,link.translationOverride);
+    if(!sense){
+      if((v.senses||[]).length>1){const set=setById.get(link.setId);if(set){set.pairReviewRequired=true;set.pairVerifiedAt='';}}
+      sense=primarySense(v);
+    }
+    link.senseId=sense?.id||'';link.acceptedTermOverrides=Array.isArray(link.acceptedTermOverrides)?link.acceptedTermOverrides:[];link.acceptedTranslationOverrides=Array.isArray(link.acceptedTranslationOverrides)?link.acceptedTranslationOverrides:[];
   }
   for(const row of (s.bookVocabulary||[])){
     const v=vocabById.get(row.vocabId);if(!v)continue;let sense=senseById(v,row.senseId);if(!sense&&row.translationOverride)sense=senseMatch(v,row.translationOverride);if(!sense)sense=primarySense(v);row.senseId=sense?.id||'';row.acceptedTermOverrides=Array.isArray(row.acceptedTermOverrides)?row.acceptedTermOverrides:[];row.acceptedTranslationOverrides=Array.isArray(row.acceptedTranslationOverrides)?row.acceptedTranslationOverrides:[];
