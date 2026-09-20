@@ -50,6 +50,23 @@ const passed=vm.runInContext(`
   assert(w.skills.spelling===1.5,'soft orthography error reduces spelling confidence');
   assert(w.dueDate===datePlusDays(1),'soft orthography error is due again tomorrow');
   assert(session.correct===1,'semantic retrieval success remains credited');
+
+  state=defaultState();
+  const localSet={id:'local_wording_set',learnerId:'learner_demo',subject:'english',title:'Unit Wortlaut',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:''};
+  state.sets.push(localSet);
+  const local=attachVocabularyToSet(localSet.id,{term:'look',translation:'schauen',source:'integrity',verified:true});
+  local.word.translation='ansehen';
+  rebuildWordIndexes();
+  const localView=setWords(localSet.id)[0];
+  assert(localView.translation==='ansehen','local textbook wording is shown as the prompt/primary wording');
+  assert(translationTargets(localView).includes('ansehen'),'local textbook wording stays accepted');
+  assert(translationTargets(localView).includes('schauen'),'canonical sense wording remains accepted beside the local wording');
+
+  local.word.term='to look';
+  rebuildWordIndexes();
+  const localTermView=setWords(localSet.id)[0];
+  assert(termTargets(localTermView).includes('to look'),'local term wording stays accepted');
+  assert(termTargets(localTermView).includes('look'),'canonical term remains accepted beside the local wording');
   return ok;
 })()
 `,context,{filename:'learning-integrity-runtime'});
