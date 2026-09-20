@@ -37,7 +37,7 @@ assert(css.includes(':focus-visible')&&css.includes('outline:3px solid'),'visibl
 assert(css.includes('min-height:44px'),'primary pointer targets have a 44px minimum height');
 assert(css.includes('prefers-reduced-motion:reduce'),'reduced-motion preference is respected');
 assert(css.includes('.lrs-mode .eyebrow{text-transform:none'),'LRS mode avoids forced uppercase helper labels');
-assert(/function showView\(id\)\{\$\$\('\.view'\)\.forEach/.test(ui)&&/\$\$\('\.nav-btn\[data-view\]'\)\.forEach/.test(ui),'view navigation iterates element lists');
+assert(ui.includes("function showView(id){$('.view').forEach")&&ui.includes("$('.nav-btn[data-view]').forEach"),'view navigation iterates element lists');
 assert(focusUi.includes("cardExtras=function(){return ''}"),'retrieval diagnostics are removed before answering');
 assert(['gradeText=function','gradeChoice=function','gradeGrammar=function'].every(x=>focusUi.includes(x)),'all evaluated feedback paths use focused overrides');
 assert(!/setTimeout\s*\(\s*\(\)\s*=>\s*nextStudy/.test(focusUi),'focused feedback never auto-advances');
