@@ -8,7 +8,7 @@ const context=vm.createContext({
   window:{matchMedia:()=>({matches:false}),scrollTo:()=>{}},
   navigator:{},localStorage:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}
 });
-for(const file of ['js/core.js','js/library.js','js/storage.js','js/model.js','js/learning.js','js/ui.js']){
+for(const file of ['js/core.js','js/library.js','js/storage.js','js/model.js','js/quiz-engine.js','js/learning.js','js/ui.js']){
   vm.runInContext(fs.readFileSync(file,'utf8'),context,{filename:file});
 }
 const passed=vm.runInContext(`
@@ -23,9 +23,15 @@ const passed=vm.runInContext(`
   wrong.word.repetitions=5;wrong.word.failures=5;
   const keep=attachVocabularyToSet(good.id,{term:'write',translation:'schreiben',source:'manual',verified:true});
   keep.word.repetitions=3;
+  const legacy=deepClone(state);legacy.pairAuditVersion=0;legacy.sets.forEach(s=>{delete s.pairReviewRequired;delete s.pairVerifiedAt});
+  const migrated=migrate(legacy),migratedBad=migrated.sets.find(s=>s.id==='bad_set'),migratedGood=migrated.sets.find(s=>s.id==='good_set');
+  assert(migratedBad?.pairReviewRequired===true,'legacy photo-import set is forced into pair review');
+  assert(migratedGood?.pairReviewRequired===false,'manual legacy set stays learning-ready');
+
   const beforeProfile=state.learners.length,beforeSets=state.sets.length;
   assert((state.bookVocabulary||[]).some(x=>x.bookId===book.id&&x.section==='Unit 1'),'bad set created book-section rows');
   assert(resetSetForReimport(bad.id)===true,'repair reset succeeds');
+  assert(state.sets.find(x=>x.id===bad.id)?.pairReviewRequired===true,'reimported set is blocked until pair confirmation');
   assert(state.learners.length===beforeProfile,'profile survives repair');
   assert(state.sets.length===beforeSets&&state.sets.some(x=>x.id===bad.id),'set metadata survives repair');
   assert(!(state.setVocabulary||[]).some(x=>x.setId===bad.id),'bad set links are cleared');
