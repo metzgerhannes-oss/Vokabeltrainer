@@ -33,22 +33,22 @@ try{
   const workerPromise=context.waitForEvent('serviceworker',{timeout:12000});
   await page.goto(base+'/index.html',{waitUntil:'domcontentloaded'});
   const worker=await workerPromise;
-  if(!worker.url().endsWith('/sw.js'))throw new Error('unexpected worker '+worker.url());
+  if(!new URL(worker.url()).pathname.endsWith('/sw.js'))throw new Error('unexpected worker '+worker.url());
 
   await page.evaluate(async()=>{
     const registration=await navigator.serviceWorker.getRegistration('./');
-    if(registration?.active?.state==='activated'&&navigator.serviceWorker.controller?.scriptURL?.endsWith('/sw.js'))return;
+    if(registration?.active?.state==='activated'&&navigator.serviceWorker.controller?.scriptURL&&new URL(navigator.serviceWorker.controller.scriptURL).pathname.endsWith('/sw.js'))return;
     await new Promise((resolve,reject)=>{
       const timer=setTimeout(()=>reject(new Error('controllerchange timeout')),10000);
       navigator.serviceWorker.addEventListener('controllerchange',()=>{clearTimeout(timer);resolve()},{once:true});
     });
   });
   let controller=await page.evaluate(()=>navigator.serviceWorker.controller?.scriptURL||'');
-  if(!controller.endsWith('/sw.js')){
+  if(!controller||!new URL(controller).pathname.endsWith('/sw.js')){
     await page.reload({waitUntil:'domcontentloaded'});
     controller=await page.evaluate(()=>navigator.serviceWorker.controller?.scriptURL||'');
   }
-  if(!controller.endsWith('/sw.js'))throw new Error('service worker does not control app');
+  if(!controller||!new URL(controller).pathname.endsWith('/sw.js'))throw new Error('service worker does not control app');
 
   const online=await fetchWithTimeout('./dict/wikidict/en-de/0_.json?v=1');
   if(!(online.ok&&online.text.includes('"0"')))throw new Error('dictionary shard failed online');
