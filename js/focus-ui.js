@@ -64,7 +64,7 @@ gradeChoice=function(btn,w,answer,target,skill,nonEvaluative=false){
   if(session.locked)return;session.locked=true;
   const q=currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct;
   btn.classList.add(ok?'correct':'wrong');
-  if(!ok)$('[data-answer]').find(b=>gradeQuizQuestion(q,b.dataset.answer).correct)?.classList.add('correct');
+  if(!ok)$$('[data-answer]').find(b=>gradeQuizQuestion(q,b.dataset.answer).correct)?.classList.add('correct');
   focusedDisableAnswerControls();
   if(['recognition','listening'].includes(skill))session.scaffoldedWords[w.id]=true;
   logSessionResult(w,{answer,target:q.targets,correct:ok,skill:q.mode,orthographyOk:grade.orthographyOk,assisted:false,prompt:q.prompt});
