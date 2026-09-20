@@ -30,6 +30,47 @@ const result=vm.runInContext(`
   if(parsed.rows.length!==3)throw new Error('expected 3 OCR pairs, got '+parsed.rows.length+' '+JSON.stringify(parsed.rows));
   const pairs=parsed.rows.map(r=>r.term+'='+r.translation);
   if(!pairs.includes('look=schauen')||!pairs.includes('write=schreiben')||!pairs.includes('house=Haus'))throw new Error('wide right column paired incorrectly: '+pairs.join(' | '));
+
+  const book=upsertBook('9780140449136','english',{title:'Test Book'}).book;
+  const photoSet={id:'photo_set',learnerId:'learner_demo',subject:'english',title:'Unit 1',schoolYear:currentSchoolYear(),bookId:book.id,bookSection:'Unit 1',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:true,pairVerifiedAt:''};
+  state.sets.push(photoSet);
+  const photo=attachVocabularyToSet(photoSet.id,{term:'look',translation:'schauen',source:'photo-text-import',verified:false});
+  if(state.bookVocabulary.length!==0)throw new Error('unreviewed OCR leaked into book library');
+  if(knownBookSections(book.id).length!==0)throw new Error('unreviewed OCR became reusable book content');
+  photoSet.pairReviewRequired=false;photoSet.pairVerifiedAt='2026-09-20T12:00:00.000Z';
+  syncSetToBookVocabulary(photoSet.id,photoSet.pairVerifiedAt);
+  if(state.bookVocabulary.length!==1||!state.bookVocabulary[0].verifiedAt)throw new Error('confirmed OCR was not published as verified book content');
+  if(knownBookSections(book.id)[0]?.items?.length!==1)throw new Error('verified OCR is not reusable after approval');
+
+  state.learners.push({...state.learners[0],id:'learner_two',name:'Zweites Profil',dailyPlans:{},streakDays:[],milestones:{},fortressWinsByYear:{},campaignLog:[]});
+  const copied=cloneKnownBookToLearner(book.id,'learner_two');
+  if(copied.links!==1)throw new Error('verified book content was not cloned to second profile');
+  const copiedSet=state.sets.find(s=>s.learnerId==='learner_two'&&s.bookId===book.id);
+  if(!copiedSet||setNeedsPairReview(copiedSet))throw new Error('verified book content should remain learnable when cloned');
+
+  const legacy=JSON.parse(JSON.stringify(storagePayload(state)));
+  const historicalRow=legacy.bookVocabulary[0];
+  delete historicalRow.verifiedAt;
+  const original=legacy.sets.find(s=>s.id==='photo_set');original.pairReviewRequired=true;original.pairVerifiedAt='';
+  const derivative=legacy.sets.find(s=>s.learnerId==='learner_two'&&s.bookId===book.id);derivative.pairReviewRequired=false;derivative.pairVerifiedAt='';
+  legacy.setVocabulary.find(x=>x.setId==='photo_set').source='photo-text-import';
+  legacy.setVocabulary.find(x=>x.setId===derivative.id).source='book-library';
+  legacy.pairAuditVersion=1;
+  state=migrate(legacy);
+  const migratedDerivative=state.sets.find(s=>s.learnerId==='learner_two'&&s.bookId===book.id);
+  if(!migratedDerivative?.pairReviewRequired)throw new Error('historical clone from unverified OCR was not quarantined');
+  if(knownBookSections(book.id).length!==0)throw new Error('historical unverified OCR stayed reusable after migration');
+
+  state=defaultState();state.activeSubject='english';
+  const trustedBook=upsertBook('9783161484100','english',{title:'Trusted Book'}).book;
+  const manualSet={id:'manual_set',learnerId:'learner_demo',subject:'english',title:'Unit M',schoolYear:currentSchoolYear(),bookId:trustedBook.id,bookSection:'Unit M',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:''};
+  state.sets.push(manualSet);
+  attachVocabularyToSet(manualSet.id,{term:'house',translation:'Haus',source:'manual',verified:true});
+  const trustedLegacy=JSON.parse(JSON.stringify(storagePayload(state)));delete trustedLegacy.bookVocabulary[0].verifiedAt;
+  state=migrate(trustedLegacy);
+  if(!state.bookVocabulary[0]?.verifiedAt)throw new Error('trusted legacy book row was not backfilled as verified');
+  if(knownBookSections(trustedBook.id).length!==1)throw new Error('trusted legacy book content disappeared during migration');
+
   return pairs;
 })()
 `,context,{filename:'ocr-wide-column-runtime'});
@@ -43,3 +84,7 @@ console.log('Vokabeltrainer OCR pairing safety smoke: passed');
 for(const pair of result)console.log('✓ '+pair);
 console.log('✓ wide German column is preserved');
 console.log('✓ automatic dictionary/repair rows require explicit confirmation');
+console.log('✓ unreviewed OCR cannot enter reusable book content');
+console.log('✓ pair approval publishes verified book content');
+console.log('✓ historical unverified OCR clones are quarantined');
+console.log('✓ trusted historical book rows are backfilled');
