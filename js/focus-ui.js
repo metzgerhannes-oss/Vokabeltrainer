@@ -78,9 +78,15 @@ gradeChoice=function(btn,w,answer,target,skill,nonEvaluative=false){
 
 gradeText=function(w,answer,target,errorType,skill){
   if(session.locked)return;session.locked=true;
-  const ok=answerMatches(answer,target),detail=ok?(session.hintUsed?'Richtig mit Hinweis.':'Richtig.'):'';
+  const tracksOrthography=skill==='spelling'||skill==='context'||(skill==='retrieval'&&session.currentSubmode!=='reverseRecall');
+  const orthographyOk=tracksOrthography?spellingMatches(answer,target):true;
+  const ok=skill==='spelling'?orthographyOk:answerMatches(answer,target);
+  const softSpelling=ok&&tracksOrthography&&!orthographyOk;
+  const detail=softSpelling?(session.hintUsed?'Richtig erinnert mit Hinweis. Schreibweise beachten.':'Richtig erinnert. Schreibweise beachten.'):(ok?(session.hintUsed?'Richtig mit Hinweis.':'Richtig.'):'');
   focusedDisableAnswerControls();
-  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status">${ok?`<strong>${detail}</strong>`:errorFeedbackHtml(answer,target)}${!ok?wordLearningCard(w)+focusedConfusionHtml(w):''}</div>`);
-  recordResult(w,ok,skill,ok?null:errorType);
+  const spellingNote=softSpelling?`<br>Schreibweise: <strong>${esc(focusedCorrectTarget(target))}</strong>`:'';
+  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status">${ok?`<strong>${detail}</strong>${spellingNote}`:errorFeedbackHtml(answer,target)}${!ok?wordLearningCard(w)+focusedConfusionHtml(w):''}</div>`);
+  recordResult(w,ok,skill,ok?null:errorType,{orthographyOk});
   focusedContinue(ok,w);
 };
+
