@@ -239,8 +239,11 @@ function tesseractTsvToVocabulary(tsv,subject=state.activeSubject){
   const tolerance=Math.max(13,medianH*.72);
   let left=groupOcrColumnLines(data.filter(w=>w.left<divider),tolerance);
   let right=groupOcrColumnLines(data.filter(w=>w.left>=divider),tolerance);
-  left=left.filter(g=>g.minX<divider*.58&&!ocrUiNoise(g.text));
-  right=right.filter(g=>g.minX<divider+Math.max(180,(pageWidth-divider)*.38)&&!ocrUiNoise(g.text));
+  // The word coordinates already split both columns. Do not impose an additional
+  // absolute x-position filter here: on wide textbook pages it can discard the
+  // complete German column and make the dictionary invent every translation.
+  left=left.filter(g=>!ocrUiNoise(g.text));
+  right=right.filter(g=>!ocrUiNoise(g.text));
 
   const records=[]; const usedRight=new Set(); let consecutiveMissing=0;
   const firstY=left[0]?.yc??0;
