@@ -45,6 +45,17 @@ const result=vm.runInContext(`
   a.sense.examples=['I put my money in the bank.'];
   assert(meaningRecallHasCue(a.word)===true,'context disambiguates sense');
 
+  const corrupt=defaultState();
+  const corruptSet=mkSet('corrupt_set');corrupt.sets.push(corruptSet);
+  const corruptV=makeVocabulary('english','spring','Frühling',{id:'v_corrupt'});
+  corruptV.senses.push(makeVocabularySense('Quelle',{id:'sense_source'}));
+  corrupt.vocabulary=[corruptV];
+  corrupt.setVocabulary=[makeSetVocabulary('corrupt_set','v_corrupt','missing_sense',{id:'corrupt_link',position:1})];
+  corrupt.learnerVocabulary=[makeLearnerVocabulary('learner_demo','v_corrupt',primarySense(corruptV).id,{id:'corrupt_progress'})];
+  migrateSenseModel(corrupt);
+  assert(corrupt.sets[0].pairReviewRequired===true,'ambiguous invalid sense mapping is blocked for pair review');
+
+
   const repair=defaultState();delete repair.senseModelVersion;const stamp='2026-09-20T12:00:00.000Z';
   const p1=makeVocabularySense('nett',{id:'sense_a',createdAt:stamp,updatedAt:stamp});
   const p2=makeVocabularySense('freundlich',{id:'sense_b',createdAt:stamp,updatedAt:stamp});
