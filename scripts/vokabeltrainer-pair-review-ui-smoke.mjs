@@ -14,6 +14,9 @@ try{
   const response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'app loads');
   await page.waitForFunction(()=>typeof attachVocabularyToSet==='function'&&typeof openSetPairAudit==='function'&&typeof startSession==='function');
+  // The app bootstrap loads IndexedDB asynchronously. Wait until it has assigned state
+  // and rendered the profile before replacing state with the isolated test fixture.
+  await page.waitForFunction(()=>state!==null&&document.querySelector('#profileBtn')?.textContent!=='Profil');
 
   await page.evaluate(()=>{
     state=defaultState();
