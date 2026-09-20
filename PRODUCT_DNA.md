@@ -7,11 +7,28 @@ Neue Features werden gegen diese DNA geprüft. Wenn ein Wunsch davon abweicht, s
 Konflikt transparent benannt und – soweit sinnvoll – mit aktueller Lern-, UX- oder
 Barrierefreiheitsforschung gegengeprüft werden.
 
+## Oberstes Produktprinzip
+
+**Die fachlich korrekte Vokabelabfrage ist die Daseinsberechtigung der App.**
+
+Alles andere – OCR, Bibliothek, ISBN, Lernpfade, Spacing, LRS-Hilfen, Kampagne, XP,
+Eltern-/Lehrkraftbereiche, Statistik, Backups und Komfortfunktionen – ist Mittel zum Zweck,
+damit die Vokabelabfrage zuverlässiger, wirksamer oder leichter nutzbar wird.
+
+Daraus folgen verbindliche Konsequenzen:
+
+- Eine falsche Sollantwort, falsche Wort↔Bedeutung-Zuordnung oder falsche Bewertung ist ein **Release-Blocker**.
+- Die Abfrage muss immer exakt nachvollziehbar machen können, **welche Antwort erwartet und warum sie gewertet wurde**.
+- Import-, OCR- und Bibliothekslogik dürfen niemals stillschweigend die fachliche Wahrheit der Abfrage verschlechtern.
+- Bei Konflikten hat die Korrektheit der Abfrage Vorrang vor Komfort, Automatisierung, Gamification oder Featureumfang.
+- Neue Funktionen werden daran gemessen, ob sie die Qualität der Vokabelabfrage verbessern oder zumindest nicht beeinträchtigen.
+
 ## Die 12 Prinzipien
 
 1. **Lernwirkung vor Featuremenge**
-   Jede Funktion muss dem Lernen, der Orientierung oder der Motivation dienen. Kein Feature
-   nur um seiner selbst willen.
+   Jede Funktion muss der fachlich korrekten Vokabelabfrage, dem Lernen, der Orientierung
+   oder der Motivation dienen. Kein Feature nur um seiner selbst willen. Die Abfrage hat
+   bei Zielkonflikten Vorrang.
 
 2. **Aktiver Abruf ist der Kern**
    Retrieval Practice ist der wichtigste Lernmechanismus. Wiedererkennen, Zuhören,
