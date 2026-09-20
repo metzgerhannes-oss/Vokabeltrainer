@@ -31,6 +31,9 @@ jobs:
       - name: Subject system smoke
         run: node scripts/vokabeltrainer-subject-smoke.mjs
 
+      - name: Library index smoke
+        run: node scripts/vokabeltrainer-library-index-smoke.mjs
+
       - name: Cache persistence and migration smoke
         run: node scripts/vokabeltrainer-cache-smoke.mjs
 
