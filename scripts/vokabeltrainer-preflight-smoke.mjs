@@ -42,6 +42,9 @@ assert(focusUi.includes("cardExtras=function(){return ''}"),'retrieval diagnosti
 assert(['gradeText=function','gradeChoice=function','gradeGrammar=function'].every(x=>focusUi.includes(x)),'all evaluated feedback paths use focused overrides');
 assert(!/setTimeout\s*\(\s*\(\)\s*=>\s*nextStudy/.test(focusUi),'focused feedback never auto-advances');
 assert(focusUi.includes('id="grammarRuleHelp" class="notice subtle hidden"'),'Latin grammar help is opt-in');
+assert(!html.includes('id="sessionProgress"')&&!focusUi.includes('progress.max='),'retrieval has no dynamic progress bar');
+assert(focusUi.includes("pill.textContent='Aufgabe '+(session.index+1)"),'focused learning keeps stable task orientation');
+assert(learning.includes('opts.orthographyOk===false')&&learning.includes('w.errorProfile.spelling'),'orthographic errors remain a separate learning signal');
 
 assert(manifest.start_url==='./'&&manifest.scope==='./','manifest remains repository-path safe');
 assert(manifest.display==='standalone'&&manifest.lang==='de','manifest standalone mode and language are explicit');
