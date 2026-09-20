@@ -207,7 +207,10 @@ function hardenState(s){
 function inspectBackup(x){
   if(!x||typeof x!=='object')return 'Keine gültigen App-Daten gefunden.';if(!Array.isArray(x.learners)||x.learners.length<1)return 'Das Backup enthält kein Lernprofil.';if(!Array.isArray(x.sets))return 'Lernsets fehlen.';
   const legacy=Array.isArray(x.words),normalized=Array.isArray(x.vocabulary)&&Array.isArray(x.setVocabulary)&&Array.isArray(x.learnerVocabulary);if(!legacy&&!normalized)return 'Vokabeldaten fehlen.';
-  if(x.learners.length>20)return 'Das Backup enthält ungewöhnlich viele Profile.';if(x.sets.length>10000)return 'Das Backup ist für diese App ungewöhnlich groß.';if(legacy&&x.words.length>100000)return 'Das Backup enthält ungewöhnlich viele Vokabeln.';if(normalized&&(x.vocabulary.length>100000||x.setVocabulary.length>200000||x.learnerVocabulary.length>100000))return 'Das Backup ist für diese App ungewöhnlich groß.';return '';
+  if(x.learners.length>20||x.sets.length>10000)return 'Das Backup ist für diese App ungewöhnlich groß.';
+  if(legacy&&x.words.length>100000)return 'Das Backup enthält ungewöhnlich viele Vokabeln.';
+  if(normalized&&(x.vocabulary.length>100000||x.setVocabulary.length>250000||x.learnerVocabulary.length>150000||(Array.isArray(x.books)&&x.books.length>5000)||(Array.isArray(x.learnerBooks)&&x.learnerBooks.length>10000)||(Array.isArray(x.bookVocabulary)&&x.bookVocabulary.length>250000)))return 'Das Backup ist für diese App ungewöhnlich groß.';
+  return '';
 }
 function migrate(s){
   if(!s||!Array.isArray(s.learners))return defaultState();const sourceVersion=String(s.version||'');s.version=VERSION;s.activeSubject=s.activeSubject||'english';s.grades=s.grades||[];s.practiceTests=s.practiceTests||[];s.activity=s.activity||[];s.books=s.books||[];s.learnerBooks=s.learnerBooks||[];s.bookVocabulary=s.bookVocabulary||[];
