@@ -159,7 +159,7 @@ function scanReviewHtml(){
 function renderScanReview(){
   const el=$('#scanReview'); if(!el)return; el.innerHTML=scanReviewHtml();
   const updateImportCount=()=>{const btn=$('#scanImportSave');if(!btn)return;const count=scanImportState.rows.filter((r,i)=>$(`#scanUse_${i}`)?.checked!==false).length;btn.textContent=`Importieren (${count})`};
-  $('[data-scan-remove]').forEach(b=>b.onclick=()=>{scanImportState.rows.splice(Number(b.dataset.scanRemove),1);renderScanReview();scanStatus(`${scanImportState.rows.length} Zeilen zur Kontrolle.`)});
+  document.querySelectorAll('[data-scan-remove]').forEach(b=>b.onclick=()=>{scanImportState.rows.splice(Number(b.dataset.scanRemove),1);renderScanReview();scanStatus(`${scanImportState.rows.length} Zeilen zur Kontrolle.`)});
   scanImportState.rows.forEach((r,i)=>{
     $(`#scanSense_${i}`)?.addEventListener('change',e=>{r.selectedSenseId=e.target.value;renderScanReview()});
     $(`#scanUse_${i}`)?.addEventListener('change',e=>{r.include=e.target.checked;updateImportCount()});
