@@ -231,13 +231,13 @@ function gradeChoice(btn,w,answer,target,skill,nonEvaluative=false){if(session.l
 function gradeText(w,answer,target,errorType,skill){if(session.locked)return;session.locked=true;const ok=answerMatches(answer,target); const detail=ok?(session.hintUsed?'Richtig mit Hinweis.':'Richtig.'):' '; $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}">${ok?`<strong>${detail}</strong>`:errorFeedbackHtml(answer,target)}${!ok?wordLearningCard(w):''}</div>`); recordResult(w,ok,skill,ok?null:errorType); setTimeout(()=>nextStudy(ok,w),ok?700:2400)}
 function recordNonEvaluative(w,mode,ok,skill){w.modesSeen=[...new Set([...(w.modesSeen||[]),mode])];recordActivity(mode,{wordId:w.id,correct:ok});session.answered++;if(ok)session.correct++}
 function isActiveSkill(skill){return ['retrieval','spelling','context'].includes(skill)}
-function skillCredits(skill){if(skill==='retrieval'&&session?.currentSubmode==='reverseRecall')return ['retrieval'];if(skill==='retrieval')return ['retrieval','spelling'];if(skill==='spelling')return ['spelling','listening'];if(skill==='context')return ['context','retrieval','spelling'];return [skill]}
-function recordResult(w,ok,skill,errorType){
+function skillCredits(skill,opts={}){if(skill==='retrieval'&&session?.currentSubmode==='reverseRecall')return ['retrieval'];if(skill==='retrieval')return opts.orthographyOk===false?['retrieval']:['retrieval','spelling'];if(skill==='spelling')return ['spelling','listening'];if(skill==='context')return opts.orthographyOk===false?['context','retrieval']:['context','retrieval','spelling'];return [skill]}
+function recordResult(w,ok,skill,errorType,opts={}){
   w.repetitions++; w.lastReviewedAt=new Date().toISOString(); w.practiceDays=[...new Set([...(w.practiceDays||[]),today()])]; w.modesSeen=[...new Set([...(w.modesSeen||[]),session.currentSubmode||session.mode])];
   const assisted=!!(ok&&session.hintUsed),active=isActiveSkill(skill),now=new Date().toISOString(),firstActiveToday=active&&!(w.activePracticeDays||[]).includes(today()),cold=active&&!assisted&&skill!=='spelling'&&firstActiveToday&&!session.scaffoldedWords?.[w.id];
   if(active){session.activeAttemptedWords[w.id]=true;if(!assisted)w.activePracticeDays=[...new Set([...(w.activePracticeDays||[]),today()])];w.recentActiveResults=[...(w.recentActiveResults||[]),!!ok].slice(-8)}
   if(ok){
-    w.successes++; w.lastSuccessAt=now; skillCredits(skill).forEach((k,i)=>{const gain=(assisted?.5:1)*(i===0?1:.55);w.skills[k]=clamp((w.skills[k]||0)+gain,0,4)});
+    w.successes++; w.lastSuccessAt=now; skillCredits(skill,opts).forEach((k,i)=>{const gain=(assisted?.5:1)*(i===0?1:.55);w.skills[k]=clamp((w.skills[k]||0)+gain,0,4)});
     if(active&&assisted){w.assistedSuccesses=(w.assistedSuccesses||0)+1;w.intervalDays=Math.min(Math.max(w.intervalDays||0,1),1);w.dueDate=datePlusDays(1);learner().xp+=1;}
     else if(active){
       const previousDay=w.lastActiveSuccessAt?dateKey(new Date(w.lastActiveSuccessAt)):null,gap=previousDay?Math.max(0,dayNumber(today())-dayNumber(previousDay)):0;
@@ -247,7 +247,7 @@ function recordResult(w,ok,skill,errorType){
     }else{learner().xp+=1;session.scaffoldedWords[w.id]=true;}
     session.correct++;
   } else {
-    w.failures++;skillCredits(skill).forEach((k,i)=>{w.skills[k]=clamp((w.skills[k]||0)-(i===0?1:.35),0,4)});if(errorType)w.errorProfile[errorType]=(w.errorProfile[errorType]||0)+1;
+    w.failures++;skillCredits(skill,opts).forEach((k,i)=>{w.skills[k]=clamp((w.skills[k]||0)-(i===0?1:.35),0,4)});if(errorType)w.errorProfile[errorType]=(w.errorProfile[errorType]||0)+1;
     if(active){w.intervalDays=0;w.dueDate=today();}
   }
   session.answered++;refreshMastery(w);recordActivity(session.currentSubmode||session.mode,{wordId:w.id,correct:ok,errorType,assisted,active,cold});persistOnly();
