@@ -171,6 +171,43 @@ function requireLegacyPhotoPairReview(s){
   return s;
 }
 
+function backfillBookVocabularyVerification(s){
+  const sets=Array.isArray(s?.sets)?s.sets:[],links=Array.isArray(s?.setVocabulary)?s.setVocabulary:[],rows=Array.isArray(s?.bookVocabulary)?s.bookVocabulary:[];
+  const setById=new Map(sets.map(set=>[String(set?.id||''),set]));
+  const now=new Date().toISOString();
+
+  for(const row of rows){
+    if(!row||row.verifiedAt)continue;
+    const section=String(row.section||'Lernset');
+    const trustedLink=links.find(link=>{
+      if(!link||link.source==='book-library')return false;
+      if(String(link.vocabId||'')!==String(row.vocabId||'')||String(link.senseId||'')!==String(row.senseId||''))return false;
+      const set=setById.get(String(link.setId||''));if(!set)return false;
+      if(String(set.bookId||'')!==String(row.bookId||''))return false;
+      if(String(set.bookSection||set.title||'Lernset')!==section)return false;
+      if(set.pairReviewRequired===true)return false;
+      if(link.source==='photo-text-import'&&!set.pairVerifiedAt)return false;
+      return true;
+    });
+    if(trustedLink){
+      const set=setById.get(String(trustedLink.setId||''));
+      row.verifiedAt=String(set?.pairVerifiedAt||trustedLink.createdAt||now);
+    }
+  }
+
+  for(const set of sets){
+    const derivativeLinks=links.filter(link=>String(link?.setId||'')===String(set?.id||'')&&link?.source==='book-library');
+    if(!derivativeLinks.length)continue;
+    const section=String(set.bookSection||set.title||'Lernset');
+    const hasUnverified=derivativeLinks.some(link=>{
+      const row=rows.find(r=>String(r?.bookId||'')===String(set.bookId||'')&&String(r?.section||'Lernset')===section&&String(r?.vocabId||'')===String(link.vocabId||'')&&String(r?.senseId||'')===String(link.senseId||''));
+      return !row?.verifiedAt;
+    });
+    if(hasUnverified){set.pairReviewRequired=true;set.pairVerifiedAt='';}
+  }
+  return s;
+}
+
 function hardenState(s){
   if(!s||typeof s!=='object')return defaultState();
   const learnersIn=Array.isArray(s.learners)?s.learners.slice(0,20):[];if(!learnersIn.length)return defaultState();
@@ -195,7 +232,7 @@ function hardenState(s){
     const out={...v,id,subject:normalizeSubjectId(v.subject),term:safeText(v.term,300).trim(),termVariants:(Array.isArray(v.termVariants)?v.termVariants:[]).slice(0,20).map(x=>safeText(x,300).trim()).filter(Boolean),extra:safeText(v.extra,700),mnemonic:safeText(v.mnemonic,1200),chunks:(Array.isArray(v.chunks)?v.chunks:[]).slice(0,30).map(x=>safeText(x,120)).filter(Boolean),sources:(Array.isArray(v.sources)?v.sources:[]).slice(-60).map(x=>{const mappedBook=bookMap.get(String(x?.bookId||''))||String(x?.bookId||'');return {kind:safeText(x?.kind||'unknown',80),setId:safeText(setMap.get(String(x?.setId||''))||x?.setId||'',120),bookId:bookIds.has(mappedBook)?mappedBook:'',at:safeText(x?.at||'',40)}}),verifiedAt:v.verifiedAt?safeText(v.verifiedAt,40):null,createdAt:safeText(v.createdAt||new Date().toISOString(),40),updatedAt:safeText(v.updatedAt||v.createdAt||new Date().toISOString(),40),senses};delete out.translation;delete out.translations;delete out.examples;return attachVocabularySenseApi(out);
   }).filter(v=>v?.term&&v.senses?.length);
   const vocabIds=new Set(s.vocabulary.map(v=>v.id));
-  const bvUsed=new Set(),seenBookVocab=new Set();s.bookVocabulary=(Array.isArray(s.bookVocabulary)?s.bookVocabulary:[]).slice(0,250000).map(raw=>{const x=raw&&typeof raw==='object'?raw:{};const bookId=bookMap.get(String(x.bookId||''))||String(x.bookId||''),vocabId=vocabMap.get(String(x.vocabId||''))||String(x.vocabId||'');if(!bookIds.has(bookId)||!vocabIds.has(vocabId))return null;const v=s.vocabulary.find(z=>z.id===vocabId);let senseId=senseMap.get(String(x.senseId||''))||String(x.senseId||''),sense=senseById(v,senseId);if(!sense&&x.translationOverride)sense=senseMatch(v,x.translationOverride);if(!sense)sense=primarySense(v);if(!sense)return null;senseId=sense.id;const section=safeText(x.section||'Lernset',200)||'Lernset',combo=`${bookId}\u0000${section}\u0000${senseId}`;if(seenBookVocab.has(combo))return null;seenBookVocab.add(combo);return {id:safeId(x.id,'bv',bvUsed),bookId,vocabId,senseId,section,position:Math.max(0,Math.round(safeNumber(x.position,0,100000,0))),termOverride:safeText(x.termOverride,300),translationOverride:safeText(x.translationOverride,700),acceptedTermOverrides:(Array.isArray(x.acceptedTermOverrides)?x.acceptedTermOverrides:[]).slice(0,20).map(y=>safeText(y,300)).filter(Boolean),acceptedTranslationOverrides:(Array.isArray(x.acceptedTranslationOverrides)?x.acceptedTranslationOverrides:[]).slice(0,20).map(y=>safeText(y,700)).filter(Boolean),extraOverride:safeText(x.extraOverride,700),exampleOverride:safeText(x.exampleOverride,2000),createdAt:safeText(x.createdAt||new Date().toISOString(),40)}}).filter(Boolean);
+  const bvUsed=new Set(),seenBookVocab=new Set();s.bookVocabulary=(Array.isArray(s.bookVocabulary)?s.bookVocabulary:[]).slice(0,250000).map(raw=>{const x=raw&&typeof raw==='object'?raw:{};const bookId=bookMap.get(String(x.bookId||''))||String(x.bookId||''),vocabId=vocabMap.get(String(x.vocabId||''))||String(x.vocabId||'');if(!bookIds.has(bookId)||!vocabIds.has(vocabId))return null;const v=s.vocabulary.find(z=>z.id===vocabId);let senseId=senseMap.get(String(x.senseId||''))||String(x.senseId||''),sense=senseById(v,senseId);if(!sense&&x.translationOverride)sense=senseMatch(v,x.translationOverride);if(!sense)sense=primarySense(v);if(!sense)return null;senseId=sense.id;const section=safeText(x.section||'Lernset',200)||'Lernset',combo=`${bookId}\u0000${section}\u0000${senseId}`;if(seenBookVocab.has(combo))return null;seenBookVocab.add(combo);return {id:safeId(x.id,'bv',bvUsed),bookId,vocabId,senseId,section,position:Math.max(0,Math.round(safeNumber(x.position,0,100000,0))),termOverride:safeText(x.termOverride,300),translationOverride:safeText(x.translationOverride,700),acceptedTermOverrides:(Array.isArray(x.acceptedTermOverrides)?x.acceptedTermOverrides:[]).slice(0,20).map(y=>safeText(y,300)).filter(Boolean),acceptedTranslationOverrides:(Array.isArray(x.acceptedTranslationOverrides)?x.acceptedTranslationOverrides:[]).slice(0,20).map(y=>safeText(y,700)).filter(Boolean),extraOverride:safeText(x.extraOverride,700),exampleOverride:safeText(x.exampleOverride,2000),verifiedAt:safeText(x.verifiedAt||'',40),createdAt:safeText(x.createdAt||new Date().toISOString(),40)}}).filter(Boolean);
   const lbUsed=new Set();s.learnerBooks=(Array.isArray(s.learnerBooks)?s.learnerBooks:[]).slice(0,10000).map(raw=>{const x=raw&&typeof raw==='object'?raw:{};const bookId=bookMap.get(String(x.bookId||''))||String(x.bookId||'');if(!bookIds.has(bookId))return null;const learnerId=mapLearner(x.learnerId),book=s.books.find(b=>b.id===bookId);return {id:safeId(x.id,'lb',lbUsed),learnerId,subject:book?.subject||'english',bookId,gradeLevel:/^(?:[1-9]|1[0-3])$/.test(String(x.gradeLevel||''))?String(x.gradeLevel):'',schoolYear:safeText(x.schoolYear||currentSchoolYear(),24),active:!!x.active,createdAt:safeText(x.createdAt||new Date().toISOString(),40)}}).filter(Boolean);
   const activeBookSeen=new Set();for(const x of s.learnerBooks.filter(x=>x.active).sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)))){const k=`${x.learnerId} ${x.subject}`;if(activeBookSeen.has(k))x.active=false;else activeBookSeen.add(k)}
   const progressUsed=new Set(),progressMap=new Map(),progressByCombo=new Map(),cleanProgress=[];
@@ -233,7 +270,7 @@ function migrate(s){
   s.sets=(s.sets||[]).map(x=>({...x,schoolYear:x.schoolYear||currentSchoolYear(),bookId:x.bookId||'',bookSection:x.bookSection||x.title||'',testScopeMode:x.testScopeMode||'set',testFrom:Number(x.testFrom)||1,testTo:Number(x.testTo)||0,testFormat:x.testFormat||'target'}));
   migrateLegacyLibrary(s);
   migrateSenseModel(s);
-  repairV0912AliasSplit(s,sourceVersion);s.senseModelVersion=1;repairPreFocusSpellingLeak(s);requireLegacyPhotoPairReview(s);
+  repairV0912AliasSplit(s,sourceVersion);s.senseModelVersion=1;repairPreFocusSpellingLeak(s);requireLegacyPhotoPairReview(s);backfillBookVocabularyVerification(s);
   s.practiceTests=(s.practiceTests||[]).map(t=>{const subject=normalizeSubjectId(t.subject),owner=s.learners.find(l=>l.id===t.learnerId),scale={...defaultGradeScale(),...((owner?.gradeScales||defaultGradeScales())[subject]||{})};return {...t,gradeScaleSnapshot:t.gradeScaleSnapshot||scale,suggestedGrade:t.suggestedGrade||suggestGradeFromScale(t.percent,scale)}});
   return hardenState(s);
 }
