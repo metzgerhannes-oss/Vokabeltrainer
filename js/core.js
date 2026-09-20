@@ -210,8 +210,8 @@ function wordViewForLink(link,s=state){
     if(prop==='id')return p.id;if(prop==='setId')return link.setId;if(prop==='setLinkId')return link.id;if(prop==='vocabId')return v.id;if(prop==='senseId')return sense.id;if(prop==='learnerId')return p.learnerId;if(prop==='subject')return v.subject;
     if(prop==='term')return link.termOverride||v.term;if(prop==='translation')return link.translationOverride||sense.translation;if(prop==='extra')return link.extraOverride||v.extra||'';if(prop==='example')return link.exampleOverride||(sense.examples||[])[0]||'';
     if(prop==='mnemonic')return v.mnemonic||'';if(prop==='chunks')return v.chunks||[];if(prop==='termVariants')return v.termVariants||[];if(prop==='translations')return sense.translations||[];
-    if(prop==='acceptedTerms')return [...new Set([link.termOverride||v.term,...(v.termVariants||[]),...(link.acceptedTermOverrides||[])].filter(Boolean))];
-    if(prop==='acceptedTranslations')return [...new Set([link.translationOverride||sense.translation,...(sense.translations||[]),...(link.acceptedTranslationOverrides||[])].filter(Boolean))];
+    if(prop==='acceptedTerms')return [...new Set([link.termOverride,v.term,...(v.termVariants||[]),...(link.acceptedTermOverrides||[])].filter(Boolean))];
+    if(prop==='acceptedTranslations')return [...new Set([link.translationOverride,sense.translation,...(sense.translations||[]),...(link.acceptedTranslationOverrides||[])].filter(Boolean))];
     if(prop==='source')return link.source||'';
     if(prop==='toJSON')return ()=>{const o={};for(const k of ['id','setId','setLinkId','vocabId','senseId','learnerId','subject','term','translation','extra','example','mnemonic','chunks','acceptedTerms','acceptedTranslations'])o[k]=getValue(k);Object.assign(o,p);return o;};
     if(prop in p)return p[prop];if(prop in link)return link[prop];if(prop in sense)return sense[prop];if(prop in v)return v[prop];return undefined;
