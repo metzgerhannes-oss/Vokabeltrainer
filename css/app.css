@@ -147,7 +147,6 @@ body.learning-focus #learnView{margin:0}
 body.learning-focus .study-shell{min-height:calc(100dvh - 42px);margin:0 auto;padding:16px clamp(14px,3vw,28px) 28px;border:0;box-shadow:none;background:#fff}
 .study-toolbar{gap:12px}
 .study-toolbar .pill{background:#f8fafc}
-.session-progress{display:block;width:100%;height:6px;margin:12px 0 4px;accent-color:#4f46e5}
 body.learning-focus .study-card{max-width:680px;margin:0 auto;padding:clamp(24px,6vh,54px) 6px 20px}
 body.learning-focus .study-prompt{margin-top:24px}
 body.learning-focus .study-sub{max-width:620px;margin-left:auto;margin-right:auto}
