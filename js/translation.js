@@ -70,11 +70,12 @@ function hybridShardKey(value){
   else if(/[y-z0-9]/.test(second))bucket='y';
   return `${first}${bucket}`;
 }
-function hybridExistingWords(){
+function hybridExistingWords(context={}){
+  if(typeof globalLibraryMemoryEntries==='function')return globalLibraryMemoryEntries(state?.activeSubject,context.bookId||'',context.section||'');
   return globalVocabulary(state?.activeSubject).flatMap(v=>(v.senses||[]).map(s=>({term:v.term,translation:s.translation,termVariants:v.termVariants||[],translations:s.translations||[],senseId:s.id,vocabId:v.id})));
 }
 
-function hybridMemoryLookup(value,direction,scanRows=[]){
+function hybridMemoryLookup(value,direction,scanRows=[],context={}){
   const q=hybridNormalize(value); if(!q)return '';
   const candidates=[];
   for(const r of (scanRows||[])){
@@ -82,7 +83,7 @@ function hybridMemoryLookup(value,direction,scanRows=[]){
     if(direction==='de-en' && hybridNormalize(r.translation)===q)candidates.push(r.term);
     if(direction==='en-de' && hybridNormalize(r.term)===q)candidates.push(r.translation);
   }
-  for(const w of hybridExistingWords()){
+  for(const w of hybridExistingWords(context)){
     if(direction==='de-en' && [w.translation,...(w.translations||[])].some(x=>hybridNormalize(x)===q))candidates.push(w.term);
     if(direction==='en-de' && [w.term,...(w.termVariants||[])].some(x=>hybridNormalize(x)===q))candidates.push(w.translation);
   }
@@ -117,8 +118,8 @@ async function hybridDictionaryLookup(value,direction){
   if(Array.isArray(found))return String(found[0]||'').trim();
   return typeof found==='string'?found.trim():'';
 }
-async function hybridTranslate(value,direction,scanRows=[]){
-  const memory=hybridMemoryLookup(value,direction,scanRows);
+async function hybridTranslate(value,direction,scanRows=[],context={}){
+  const memory=hybridMemoryLookup(value,direction,scanRows,context);
   if(memory)return {text:memory,source:'memory'};
   const core=hybridCoreLookup(value,direction);
   if(core)return {text:core,source:'school'};
@@ -152,44 +153,44 @@ async function repairSuspiciousCompletePair(row){
 }
 
 
-function annotateGlobalLibraryMatch(row){
+function annotateGlobalLibraryMatch(row,context={}){
   if(!row?.term||!row?.translation)return row;
-  const match=vocabularySenseMatch(state?.activeSubject||'english',row.term,row.extra||'',row.translation),v=match.vocab;
-  if(!v){delete row.libraryMatchId;delete row.librarySenseId;delete row.librarySenseOptions;delete row.libraryMatchStatus;delete row.selectedSenseId;return row;}
-  row.libraryMatchId=v.id;row.librarySenseId=match.sense?.id||'';row.librarySenseOptions=(v.senses||[]).map(s=>({id:s.id,translation:s.translation,partOfSpeech:s.partOfSpeech||''}));row.libraryMatchStatus=match.sense?'existing':'sense-choice';if(match.sense)row.selectedSenseId=match.sense.id;return row;
+  const match=typeof libraryMatchForContext==='function'?libraryMatchForContext(state?.activeSubject||'english',row.term,row.extra||'',row.translation,context.bookId||'',context.section||''):vocabularySenseMatch(state?.activeSubject||'english',row.term,row.extra||'',row.translation),v=match.vocab;
+  if(!v){delete row.libraryMatchId;delete row.librarySenseId;delete row.librarySenseOptions;delete row.libraryMatchStatus;delete row.selectedSenseId;delete row.libraryMatchedBy;return row;}
+  row.libraryMatchId=v.id;row.librarySenseId=match.sense?.id||'';row.librarySenseOptions=(match.senseOptions||v.senses||[]).map(s=>({id:s.id,translation:s.translation,partOfSpeech:s.partOfSpeech||''}));row.libraryMatchStatus=match.sense?'existing':'sense-choice';row.libraryMatchedBy=match.matchedBy||'';if(match.sense)row.selectedSenseId=match.sense.id;return row;
 }
-async function enrichHybridRows(rows){
+async function enrichHybridRows(rows,context={}){
   if(!Array.isArray(rows)||!rows.length)return rows||[];
   // Existing complete rows act as translation memory for the same scan, unless the left side is an obvious OCR spillover.
   for(const row of rows){
     if(row.term&&row.translation){
-      if(await repairSuspiciousCompletePair(row)){annotateGlobalLibraryMatch(row);continue;}
+      if(await repairSuspiciousCompletePair(row)){annotateGlobalLibraryMatch(row,context);continue;}
       row.origin=row.origin||'ocr';
       row.confidence=row.confidence==='check'?'check':'good';
-      annotateGlobalLibraryMatch(row);
+      annotateGlobalLibraryMatch(row,context);
       continue;
     }
     if(subjectHasCapability(state?.activeSubject,'hybridDictionary')){
       if(!row.term&&row.translation){
-        const hit=await hybridTranslate(row.translation,'de-en',rows);
+        const hit=await hybridTranslate(row.translation,'de-en',rows,context);
         if(hit.text){row.term=hit.text;row.confidence='auto';row.origin=hit.source;}
       }else if(row.term&&!row.translation){
-        const hit=await hybridTranslate(row.term,'en-de',rows);
+        const hit=await hybridTranslate(row.term,'en-de',rows,context);
         if(hit.text){row.translation=hit.text;row.confidence='auto';row.origin=hit.source;}
       }
     }else{
       // Subjects without a bundled dictionary only reuse known scan/library pairs; they never invent a foreign form.
       if(!row.term&&row.translation){
-        const hit=hybridMemoryLookup(row.translation,'de-en',rows);
+        const hit=hybridMemoryLookup(row.translation,'de-en',rows,context);
         if(hit){row.term=hit;row.confidence='auto';row.origin='memory';}
       }else if(row.term&&!row.translation){
-        const hit=hybridMemoryLookup(row.term,'en-de',rows);
+        const hit=hybridMemoryLookup(row.term,'en-de',rows,context);
         if(hit){row.translation=hit;row.confidence='auto';row.origin='memory';}
       }
     }
     if(!(row.term&&row.translation)){
       row.confidence='check'; row.origin=row.origin||'open';
-    }else annotateGlobalLibraryMatch(row);
+    }else annotateGlobalLibraryMatch(row,context);
   }
   return rows;
 }
