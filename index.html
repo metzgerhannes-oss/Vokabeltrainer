@@ -8,10 +8,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Vokabeltrainer">
-  <title>Vokabeltrainer – Beta v0.9.18</title>
+  <title>Vokabeltrainer – Beta v0.9.19</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
-  <link rel="stylesheet" href="css/app.css?v=0.9.18">
+  <link rel="stylesheet" href="css/app.css?v=0.9.19">
 </head>
 <body>
   <div id="app" class="app-shell">
@@ -163,7 +163,9 @@
             <button id="libraryAddBtn" class="primary compact-action">+ Hinzufügen</button>
           </div>
           <div class="library-filters">
-            <label>Suche<input id="librarySearchInput" type="search" placeholder="Vokabel oder Bedeutung"></label>
+            <label>Suche<input id="librarySearchInput" type="search" placeholder="Vokabel, Bedeutung, ISBN oder Unit"></label>
+            <label>Lehrwerk<select id="libraryBookFilter"><option value="">Alle Lehrwerke</option></select></label>
+            <label>Abschnitt / Unit<select id="librarySectionFilter" disabled><option value="">Alle Abschnitte</option></select></label>
             <label>Verwendung<select id="librarySetFilter"><option value="">Alle Lernsets</option></select></label>
           </div>
           <div id="wordLibrary"></div>
@@ -215,13 +217,15 @@
   <input id="fileInput" type="file" class="hidden" accept=".csv,.json,text/csv,application/json">
   <input id="photoInput" type="file" class="hidden" accept="image/*">
   <input id="isbnPhotoInput" type="file" class="hidden" accept="image/*" capture="environment">
-  <script src="js/core.js?v=0.9.18" defer></script>
-  <script src="js/storage.js?v=0.9.18" defer></script>
-  <script src="js/model.js?v=0.9.18" defer></script>
-  <script src="js/learning.js?v=0.9.18" defer></script>
-  <script src="js/translation.js?v=0.9.18" defer></script>
-  <script src="js/io.js?v=0.9.18" defer></script>
-  <script src="js/ui.js?v=0.9.18" defer></script>
-  <script src="js/app.js?v=0.9.18" defer></script>
+  <script src="js/core.js?v=0.9.19" defer></script>
+  <script src="js/library.js?v=0.9.19" defer></script>
+  <script src="js/storage.js?v=0.9.19" defer></script>
+  <script src="js/model.js?v=0.9.19" defer></script>
+  <script src="js/learning.js?v=0.9.19" defer></script>
+  <script src="js/translation.js?v=0.9.19" defer></script>
+  <script src="js/io.js?v=0.9.19" defer></script>
+  <script src="js/ui.js?v=0.9.19" defer></script>
+  <script src="js/library-ui.js?v=0.9.19" defer></script>
+  <script src="js/app.js?v=0.9.19" defer></script>
 </body>
 </html>
