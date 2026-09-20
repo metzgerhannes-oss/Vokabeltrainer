@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.9.18';
+const VERSION = '0.9.19';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';
@@ -237,7 +237,7 @@ function addVocabularySource(v,source,setId=''){
   if(!v)return;v.sources=Array.isArray(v.sources)?v.sources:[];const set=(state?.sets||[]).find(x=>x.id===setId),item={kind:source||'manual',setId:setId||'',bookId:set?.bookId||'',at:new Date().toISOString()};if(!v.sources.some(x=>x.kind===item.kind&&x.setId===item.setId&&x.bookId===item.bookId))v.sources.push(item);v.updatedAt=new Date().toISOString();
 }
 function upsertVocabulary(subject,term,translation,opts={}){
-  const cleanTerm=String(term||'').trim(),cleanTr=String(translation||'').trim();let v=vocabularyMatch(subject,cleanTerm,opts.extra||''),created=false;
+  const cleanTerm=String(term||'').trim(),cleanTr=String(translation||'').trim();let v=typeof indexedVocabularyMatch==='function'?indexedVocabularyMatch(subject,cleanTerm,opts.extra||''):vocabularyMatch(subject,cleanTerm,opts.extra||''),created=false;
   if(!v){v=makeVocabulary(subject,cleanTerm,cleanTr,{extra:opts.extra||'',mnemonic:opts.mnemonic||'',chunks:opts.chunks||[],verifiedAt:opts.verified?new Date().toISOString():null});state.vocabulary.push(v);created=true;}
   else{attachVocabularySenseApi(v);if(cleanTerm&&cleanTerm!==v.term&&!(v.termVariants||[]).includes(cleanTerm))v.termVariants=[...(v.termVariants||[]),cleanTerm];if(opts.extra&&!v.extra)v.extra=opts.extra;if(opts.mnemonic&&!v.mnemonic)v.mnemonic=opts.mnemonic;if(opts.chunks?.length&&!v.chunks?.length)v.chunks=[...opts.chunks];if(opts.verified&&!v.verifiedAt)v.verifiedAt=new Date().toISOString();v.updatedAt=new Date().toISOString();}
   const aliases=Array.isArray(opts.senseAliases)?opts.senseAliases:(Array.isArray(opts.translations)?opts.translations:(!opts.senseId&&Array.isArray(opts.acceptedTranslations)?opts.acceptedTranslations:[]));
