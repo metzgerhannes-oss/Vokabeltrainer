@@ -9,6 +9,7 @@ const css=read('css/app.css');
 const learning=read('js/learning.js');
 const focusUi=read('js/focus-ui.js');
 const ui=read('js/ui.js');
+const help=read('js/help.js');
 const manifest=JSON.parse(read('manifest.webmanifest'));
 const dna=read('PRODUCT_DNA.md');
 const allJs=fs.readdirSync('js').filter(x=>x.endsWith('.js')).map(x=>read('js/'+x)).join('\n');
@@ -48,6 +49,14 @@ assert(focusUi.includes("pill.textContent='Aufgabe '+(session.index+1)"),'focuse
 assert(focusUi.includes("$$('[data-answer],.chunk').forEach"),'focused answer controls iterate element lists');
 assert(!/(?<!\$)\$\([^)]*\)\.forEach/.test(allJs),'single-element selector is never used as a collection');
 assert(learning.includes('opts.orthographyOk===false')&&learning.includes('w.errorProfile.spelling'),'orthographic errors remain a separate learning signal');
+assert(html.includes('id="helpBtn"')&&html.includes('id="helpPopover"'),'central help and shared help popover exist');
+assert((html.match(/data-help="/g)||[]).length>=10,'main views expose contextual help at the important concepts');
+assert(help.includes("document.addEventListener('mouseover'")&&help.includes("document.addEventListener('focusin'")&&help.includes("document.addEventListener('click'"),'context help supports mouse, keyboard focus and touch/click');
+assert(help.includes('function openAppHelp()')&&help.includes('So funktioniert der Vokabeltrainer'),'central help provides a short orientation');
+const learnMarkup=html.slice(html.indexOf('id="learnView"'),html.indexOf('id="dashboardView"'));
+assert(!learnMarkup.includes('data-help='),'focused retrieval view contains no contextual-help distractions');
+assert(css.includes('body.learning-focus .help-popover{display:none!important}'),'open help cannot cover focused retrieval');
+
 
 assert(manifest.start_url==='./'&&manifest.scope==='./','manifest remains repository-path safe');
 assert(manifest.display==='standalone'&&manifest.lang==='de','manifest standalone mode and language are explicit');
