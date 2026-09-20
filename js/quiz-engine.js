@@ -156,6 +156,6 @@ function renderQuizIntegrityStop(w,issues=[]){
   session.locked=true;
   const set=state.sets.find(s=>s.id===w?.setId);
   $('#studyArea').innerHTML=`<div class="study-card"><div class="eyebrow">Abfrage gestoppt</div><h2>Diese Vokabel ist intern nicht eindeutig zugeordnet.</h2><p>Sie wird deshalb <strong>nicht als falsch gewertet</strong>. Bitte die gespeicherten Wort↔Bedeutung-Paare prüfen.</p><div class="notice warn"><strong>Lernset:</strong> ${esc(set?.title||'unbekannt')}<br><small>Diagnose: ${esc(issues.join(', ')||'unbekannt')}</small></div><div class="row gap center-actions wrap top-space"><button id="quizAuditPairsBtn" class="secondary">Paare prüfen</button><button id="quizStopBtn" class="ghost">Zur Übersicht</button></div></div>`;
-  $('#quizAuditPairsBtn').onclick=()=>{session=null;showView('setsView');renderAll();setTimeout(()=>openSetPairAudit?.(w?.setId),0)};
+  $('#quizAuditPairsBtn').onclick=()=>{session=null;showView('homeView');renderAll();setTimeout(()=>openSetPairAudit?.(w?.setId),0)};
   $('#quizStopBtn').onclick=()=>{session=null;showView('homeView');renderAll()};
 }
