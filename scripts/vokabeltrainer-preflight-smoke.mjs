@@ -49,7 +49,7 @@ assert(focusUi.includes('id="grammarRuleHelp" class="notice subtle hidden"'),'La
 assert(!html.includes('id="sessionProgress"')&&!focusUi.includes('progress.max='),'retrieval has no dynamic progress bar');
 assert(focusUi.includes("pill.textContent='Aufgabe '+(session.index+1)"),'focused learning keeps stable task orientation');
 assert(focusUi.includes("$$('[data-answer],.chunk').forEach"),'focused answer controls iterate element lists');
-assert(!/(?<!\$)\$\([^)]*\)\.forEach/.test(allJs),'single-element selector is never used as a collection');
+assert(!/(?<!\$)\$\([^)]*\)\.(?:forEach|find|map|filter|some|every|reduce)\s*\(/.test(allJs),'single-element selector is never used with array collection methods');
 assert(learning.includes('opts.orthographyOk===false')&&learning.includes('w.errorProfile.spelling'),'orthographic errors remain a separate learning signal');
 assert(html.indexOf('js/quiz-engine.js?v='+version)>html.indexOf('js/model.js?v='+version)&&html.indexOf('js/quiz-engine.js?v='+version)<html.indexOf('js/learning.js?v='+version),'quiz engine loads between model and learning logic');
 assert(sw.includes("'./js/quiz-engine.js?v="+version+"'"),'quiz engine is part of the offline app shell');
