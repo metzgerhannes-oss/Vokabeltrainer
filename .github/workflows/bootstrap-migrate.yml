@@ -1,0 +1,45 @@
+name: Bootstrap Vokabeltrainer migration
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/bootstrap-migrate.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@v4
+        with:
+          path: target
+
+      - name: Checkout tested source snapshot
+        uses: actions/checkout@v4
+        with:
+          repository: metzgerhannes-oss/JohannasGartenwelt
+          ref: f100bb5365603e89a35bbcc7ab40d909207bc0d2
+          path: source
+
+      - name: Copy Vokabeltrainer application
+        run: |
+          rsync -a source/vokabeltrainer/ target/
+          mkdir -p target/scripts
+          cp source/scripts/vokabeltrainer-sense-smoke.mjs target/scripts/
+          cp source/scripts/vokabeltrainer-subject-smoke.mjs target/scripts/
+          cp source/scripts/vokabeltrainer-cache-smoke.mjs target/scripts/
+          cp source/scripts/vokabeltrainer-sw-browser-smoke.mjs target/scripts/
+
+      - name: Commit migration
+        working-directory: target
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Vokabeltrainer v0.9.17 aus Hauptprojekt migrieren"
+          git push
