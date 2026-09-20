@@ -245,12 +245,18 @@ function recordResult(w,ok,skill,errorType,opts={}){
       if(cold){w.coldRecallDays=[...new Set([...(w.coldRecallDays||[]),today()])];w.coldRecallSuccesses=(w.coldRecallSuccesses||0)+1;}
       const seq=[0,1,3,7,14,30,60],acc=recentActiveAccuracy(w);let idx=Math.max(1,(w.independentSuccesses||0)-w.failures);if(cold&&acc!==null&&acc>=.85)idx+=1;if(acc!==null&&acc<.65)idx=Math.min(idx,1);w.intervalDays=seq[Math.min(seq.length-1,idx)];w.dueDate=datePlusDays(w.intervalDays);learner().xp+=3;
     }else{learner().xp+=1;session.scaffoldedWords[w.id]=true;}
+    if(opts.orthographyOk===false){
+      w.errorProfile.spelling=(w.errorProfile.spelling||0)+1;
+      w.skills.spelling=clamp((w.skills.spelling||0)-.5,0,4);
+      w.intervalDays=Math.min(Math.max(Number(w.intervalDays)||1,1),1);
+      w.dueDate=datePlusDays(1);
+    }
     session.correct++;
   } else {
     w.failures++;skillCredits(skill,opts).forEach((k,i)=>{w.skills[k]=clamp((w.skills[k]||0)-(i===0?1:.35),0,4)});if(errorType)w.errorProfile[errorType]=(w.errorProfile[errorType]||0)+1;
     if(active){w.intervalDays=0;w.dueDate=today();}
   }
-  session.answered++;refreshMastery(w);recordActivity(session.currentSubmode||session.mode,{wordId:w.id,correct:ok,errorType,assisted,active,cold});persistOnly();
+  session.answered++;refreshMastery(w);recordActivity(session.currentSubmode||session.mode,{wordId:w.id,correct:ok,errorType,assisted,active,cold,orthographyOk:opts.orthographyOk!==false});persistOnly();
 }
 function scheduleRetry(targetSession,wordId){const n=targetSession.retryCounts[wordId]||0;if(n>=1)return false;targetSession.retryCounts[wordId]=n+1;const pos=Math.min(targetSession.index+3,targetSession.queue.length);targetSession.queue.splice(pos,0,wordId);return true;}
 function scheduleScaffoldFollowup(targetSession,wordId){targetSession.followupCounts=targetSession.followupCounts||{};const n=targetSession.followupCounts[wordId]||0;if(n>=2)return false;targetSession.followupCounts[wordId]=n+1;const pos=Math.min(targetSession.index+3,targetSession.queue.length);targetSession.queue.splice(pos,0,wordId);return true;}
