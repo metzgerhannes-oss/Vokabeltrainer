@@ -200,14 +200,14 @@ function recordHandwriting(w,matched){
   persistOnly();
 }
 function renderListening(w){
-  const pool=schoolYearWords().filter(x=>x.id!==w.id); const opts=uniqueOptions(w.term,shuffle(pool).map(x=>x.term));
+  const q=currentQuizQuestion(w,'listening'),pool=schoolYearWords().filter(x=>x.id!==w.id),primary=q.targets[0]||'',opts=uniqueOptions(primary,shuffle(pool).map(x=>x.term));
   $('#studyArea').innerHTML=`<div class="study-card"><div class="eyebrow">Hören</div><button id="speakBtn" class="secondary">🔊 Wort anhören</button><div class="study-sub top-space-lg">Welches Wort hast du gehört?</div><div class="answer-grid">${opts.map(o=>`<button class="answer-option" data-answer="${esc(o)}">${esc(o)}</button>`).join('')}</div>${cardExtras(w)}</div>`;
-  $('#speakBtn').onclick=()=>speak(w.term); $$('[data-answer]').forEach(b=>b.onclick=()=>gradeChoice(b,w,b.dataset.answer,termTargets(w),'listening')); setTimeout(()=>speak(w.term),200);
+  $('#speakBtn').onclick=()=>speak(q.term); $('[data-answer]').forEach(b=>b.onclick=()=>gradeChoice(b,w,b.dataset.answer,q.targets,'listening')); setTimeout(()=>speak(q.term),200);
 }
 function renderContext(w){
-  const ex=w.example||`${w.term} — ${w.translation}`; const rx=new RegExp(w.term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i'); const cloze=ex.replace(rx,'________');
-  $('#studyArea').innerHTML=`<div class="study-card"><div class="eyebrow">Kontext</div><div class="study-prompt compact-prompt">${esc(cloze)}</div><div class="study-sub">Setze die passende Vokabel ein.</div><input id="answerField" class="answer-input" aria-label="Deine Antwort" autocomplete="off" autocapitalize="none"><div class="top-space"><button id="answerBtn" class="primary">Prüfen</button></div>${cardExtras(w)}</div>`;
-  $('#answerBtn').onclick=()=>gradeText(w,$('#answerField').value,termTargets(w),'context','context'); $('#answerField').onkeydown=e=>{if(e.key==='Enter')$('#answerBtn').click()};
+  const q=currentQuizQuestion(w,'context');
+  $('#studyArea').innerHTML=`<div class="study-card"><div class="eyebrow">Kontext</div><div class="study-prompt compact-prompt">${esc(q.prompt)}</div><div class="study-sub">Setze die passende Vokabel ein.</div><input id="answerField" class="answer-input" aria-label="Deine Antwort" autocomplete="off" autocapitalize="none"><div class="top-space"><button id="answerBtn" class="primary">Prüfen</button></div>${cardExtras(w)}</div>`;
+  $('#answerBtn').onclick=()=>gradeText(w,$('#answerField').value,q.targets,'context','context'); $('#answerField').onkeydown=e=>{if(e.key==='Enter')$('#answerBtn').click()};
 }
 function wordLearningCard(w,compact=false){return `<div class="learning-card"><div><small>Wort</small><strong>${esc(w.term)}</strong>${w.extra?` · ${esc(w.extra)}`:''}</div><div><small>Bedeutung</small>${esc(w.translation)}</div>${w.example?`<div><small>Kontext</small>${esc(w.example)}</div>`:''}${w.mnemonic?`<div><small>Wortkniff / Eselsbrücke</small>${esc(w.mnemonic)}</div>`:''}${!compact?`<div><small>Bausteine</small>${esc((w.chunks?.length?w.chunks:autoChunks(w.term)).join(' · '))}</div>`:''}</div>`}
 function renderChunks(w){
