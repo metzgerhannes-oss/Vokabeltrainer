@@ -34,6 +34,9 @@ jobs:
       - name: Learning integrity smoke
         run: node scripts/vokabeltrainer-learning-integrity-smoke.mjs
 
+      - name: Quiz engine smoke
+        run: node scripts/vokabeltrainer-quiz-engine-smoke.mjs
+
       - name: Subject system smoke
         run: node scripts/vokabeltrainer-subject-smoke.mjs
 
