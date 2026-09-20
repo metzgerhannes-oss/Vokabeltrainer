@@ -21,6 +21,7 @@ const passed=vm.runInContext(`
   assert(practiceAnswerMatches('cant',strict)===false,'testcheck target spelling preserves apostrophes');
   assert(practiceAnswerMatches('cant',tolerant)===true,'semantic comparison remains separately tolerant');
 
+  state=defaultState();
   session={practiceContext:{testFormat:'target'},index:0};
   let d=practiceDirection({term:"can't",translation:'nicht können',acceptedTerms:["can't"],acceptedTranslations:['nicht können']});
   assert(d.strictOrthography===true,'target-direction testcheck is orthographically strict');
