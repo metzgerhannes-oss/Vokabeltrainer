@@ -37,6 +37,19 @@ const passed=vm.runInContext(`
   assert(spellingMatches('cant',"can't")===false,'spelling requires the apostrophe');
   assert(spellingMatches('cafe','café')===false&&spellingMatches('café','café')===true,'spelling preserves diacritics');
   session={currentSubmode:'recall'};assert(!skillCredits('retrieval',{orthographyOk:false}).includes('spelling'),'imprecise recall receives no spelling credit');
+
+  state=defaultState();
+  const set={id:'integrity_set',learnerId:'learner_demo',subject:'english',title:'Integrity',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:''};
+  state.sets.push(set);
+  const linked=attachVocabularyToSet(set.id,{term:"can't",translation:'nicht können',source:'integrity',verified:true});
+  const w=linked.word;
+  w.skills.spelling=2;w.intervalDays=7;w.dueDate=datePlusDays(7);
+  session={mode:'recall',currentSubmode:'recall',hintUsed:false,activeAttemptedWords:{},scaffoldedWords:{},correct:0,answered:0};
+  recordResult(w,true,'retrieval',null,{orthographyOk:false});
+  assert((w.errorProfile.spelling||0)===1,'soft orthography error enters spelling error profile');
+  assert(w.skills.spelling===1.5,'soft orthography error reduces spelling confidence');
+  assert(w.dueDate===datePlusDays(1),'soft orthography error is due again tomorrow');
+  assert(session.correct===1,'semantic retrieval success remains credited');
   return ok;
 })()
 `,context,{filename:'learning-integrity-runtime'});
