@@ -24,7 +24,7 @@ function focusedConfusionHtml(w){
 function focusedDisableAnswerControls(){
   const input=$('#answerField');if(input)input.disabled=true;
   for(const id of ['answerBtn','hintBtn','grammarHintBtn','chunkCheck','chunkReset']){const el=$('#'+id);if(el)el.disabled=true}
-  $('[data-answer],.chunk').forEach(b=>b.disabled=true);
+  $$('[data-answer],.chunk').forEach(b=>b.disabled=true);
 }
 function focusedContinue(ok,w){
   const card=$('#studyArea .study-card');if(!card||$('#continueStudyBtn'))return;
