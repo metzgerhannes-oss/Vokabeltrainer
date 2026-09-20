@@ -7,6 +7,7 @@ const app=read('js/app.js');
 const sw=read('sw.js');
 const css=read('css/app.css');
 const learning=read('js/learning.js');
+const focusUi=read('js/focus-ui.js');
 const manifest=JSON.parse(read('manifest.webmanifest'));
 const dna=read('PRODUCT_DNA.md');
 
@@ -35,6 +36,10 @@ assert(css.includes(':focus-visible')&&css.includes('outline:3px solid'),'visibl
 assert(css.includes('min-height:44px'),'primary pointer targets have a 44px minimum height');
 assert(css.includes('prefers-reduced-motion:reduce'),'reduced-motion preference is respected');
 assert(css.includes('.lrs-mode .eyebrow{text-transform:none'),'LRS mode avoids forced uppercase helper labels');
+assert(focusUi.includes("cardExtras=function(){return ''}"),'retrieval diagnostics are removed before answering');
+assert(['gradeText=function','gradeChoice=function','gradeGrammar=function'].every(x=>focusUi.includes(x)),'all evaluated feedback paths use focused overrides');
+assert(!/setTimeout\s*\(\s*\(\)\s*=>\s*nextStudy/.test(focusUi),'focused feedback never auto-advances');
+assert(focusUi.includes('id="grammarRuleHelp" class="notice subtle hidden"'),'Latin grammar help is opt-in');
 
 assert(manifest.start_url==='./'&&manifest.scope==='./','manifest remains repository-path safe');
 assert(manifest.display==='standalone'&&manifest.lang==='de','manifest standalone mode and language are explicit');
