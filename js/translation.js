@@ -147,6 +147,7 @@ async function repairSuspiciousCompletePair(row){
   if(!candidate||hybridNormalize(candidate)===termKey)return false;
   row.term=candidate;
   row.confidence='auto';
+  row.include=false;
   row.origin='repair';
   row.repairedFrom=termKey;
   return true;
@@ -173,19 +174,19 @@ async function enrichHybridRows(rows,context={}){
     if(subjectHasCapability(state?.activeSubject,'hybridDictionary')){
       if(!row.term&&row.translation){
         const hit=await hybridTranslate(row.translation,'de-en',rows,context);
-        if(hit.text){row.term=hit.text;row.confidence='auto';row.origin=hit.source;}
+        if(hit.text){row.term=hit.text;row.confidence='auto';row.include=false;row.origin=hit.source;}
       }else if(row.term&&!row.translation){
         const hit=await hybridTranslate(row.term,'en-de',rows,context);
-        if(hit.text){row.translation=hit.text;row.confidence='auto';row.origin=hit.source;}
+        if(hit.text){row.translation=hit.text;row.confidence='auto';row.include=false;row.origin=hit.source;}
       }
     }else{
       // Subjects without a bundled dictionary only reuse known scan/library pairs; they never invent a foreign form.
       if(!row.term&&row.translation){
         const hit=hybridMemoryLookup(row.translation,'de-en',rows,context);
-        if(hit){row.term=hit;row.confidence='auto';row.origin='memory';}
+        if(hit){row.term=hit;row.confidence='auto';row.include=false;row.origin='memory';}
       }else if(row.term&&!row.translation){
         const hit=hybridMemoryLookup(row.term,'en-de',rows,context);
-        if(hit){row.translation=hit;row.confidence='auto';row.origin='memory';}
+        if(hit){row.translation=hit;row.confidence='auto';row.include=false;row.origin='memory';}
       }
     }
     if(!(row.term&&row.translation)){
