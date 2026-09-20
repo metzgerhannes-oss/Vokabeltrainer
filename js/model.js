@@ -79,7 +79,7 @@ function rankFor(pct,subject=state.activeSubject){
 function gearFor(pct){return ['I','II','III','IV','V','VI'][Math.min(5,Math.floor(pct/18))]}
 function soldiersFor(pct){return clamp(2+Math.floor(pct/9),2,13)}
 
-const streakActivityTypes=new Set(['adaptive','recognition','recall','spelling','listening','context','chunks','flash','shower']);
+const streakActivityTypes=new Set(['adaptive','recognition','recall','spelling','listening','context','chunks','flash','shower','latinGrammar','handwriting','practiceTest']);
 function recordActivity(type,meta={}){ const l=learner(); if(streakActivityTypes.has(type)&&!l.streakDays.includes(today())) l.streakDays.push(today()); state.activity.push({id:uid('a'),learnerId:l.id,date:new Date().toISOString(),type,...meta}); }
 function streak(){
   const days=new Set(learner().streakDays); let n=0,d=new Date(); d.setHours(12,0,0,0); for(;;){const k=dateKey(d); if(days.has(k)){n++;d.setDate(d.getDate()-1)}else break} return n;
