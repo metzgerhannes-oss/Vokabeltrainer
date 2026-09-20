@@ -29,6 +29,7 @@ Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in diese
 - [LIBRARY_INDEX.md](LIBRARY_INDEX.md)
 - [FOCUSED_LEARNING_UI.md](FOCUSED_LEARNING_UI.md)
 - [FINAL_AUDIT.md](FINAL_AUDIT.md)
+- [QUIZ_ENGINE.md](QUIZ_ENGINE.md)
 
 
 ## v0.10.5 – Abfragekorrektur
@@ -36,3 +37,17 @@ Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in diese
 - Lehrwerks-/Set-Formulierungen und kanonische Sense-Antworten werden gemeinsam akzeptiert.
 - Nach jeder normalen Lerneinheit erscheint eine Einzelübersicht mit Frage, eigener Antwort, erwarteten/akzeptierten Antworten und Bewertung.
 - Die Ergebnisübersicht kann als Text kopiert werden, damit fehlerhafte Zuordnungen nachvollziehbar gemeldet werden können.
+
+
+## v0.11.0 – neuer Abfragekern
+
+Die Vokabelabfrage wurde als Kernprodukt technisch neu aufgebaut.
+
+- jede Aufgabe besitzt einen unveränderlichen Frage-/Sollantwort-Snapshot
+- zentrale Bewertung statt verteilter Vergleichslogik
+- Retry bleibt exakt im selben Lernset und Sense
+- interne Set-/Sense-Abweichungen stoppen die Aufgabe statt sie falsch zu werten
+- Satzzeichen erzeugen keine heimlichen Antwortalternativen mehr
+- Foto-/OCR-Lernsets müssen vor dem Lernen sichtbar als Wort↔Bedeutung-Paare bestätigt werden
+- ältere Fotoimporte werden einmalig ebenfalls zur Paarprüfung gesperrt
+- Ergebnisübersicht ist über Question-ID und Set-Link reproduzierbar
