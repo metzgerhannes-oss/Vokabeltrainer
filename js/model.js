@@ -181,7 +181,7 @@ function startDailyTodo(){
   const plan=buildDailyPlan(),status=dailyPlanStatus(plan);
   if(!myWords().length){
     const blocked=mySets().find(setNeedsPairReview);
-    if(blocked){toast('Vor dem Lernen bitte zuerst die erkannten Vokabelpaare bestätigen.','warn');showView('setsView');renderAll();setTimeout(()=>openSetPairAudit?.(blocked.id),80);return}
+    if(blocked){toast('Vor dem Lernen bitte zuerst die erkannten Vokabelpaare bestätigen.','warn');showView('homeView');renderAll();setTimeout(()=>openSetPairAudit?.(blocked.id),80);return}
     if(!mySets().length)openSetEditor();else openFirstWordsChooser();return;
   }
   if(!status.remaining){toast('Tagesziel erledigt. Weitere Übungen sind optional.','good');return}
