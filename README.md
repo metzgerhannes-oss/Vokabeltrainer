@@ -4,7 +4,7 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.10.4**
+App-Version: **v0.10.5**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
@@ -31,7 +31,7 @@ Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in diese
 - [FINAL_AUDIT.md](FINAL_AUDIT.md)
 
 
-## v0.10.4 – Abfragekorrektur
+## v0.10.5 – Abfragekorrektur
 
 - Lehrwerks-/Set-Formulierungen und kanonische Sense-Antworten werden gemeinsam akzeptiert.
 - Nach jeder normalen Lerneinheit erscheint eine Einzelübersicht mit Frage, eigener Antwort, erwarteten/akzeptierten Antworten und Bewertung.
