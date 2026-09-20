@@ -43,6 +43,9 @@ jobs:
       - name: Cache persistence and migration smoke
         run: node scripts/vokabeltrainer-cache-smoke.mjs
 
+      - name: Final release audit smoke
+        run: node scripts/vokabeltrainer-release-audit-smoke.mjs
+
       - name: Install Playwright browsers
         run: |
           npm init -y
