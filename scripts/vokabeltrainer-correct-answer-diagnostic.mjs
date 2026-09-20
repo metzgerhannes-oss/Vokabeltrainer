@@ -15,6 +15,7 @@ async function seed(){
     const set={id:'diag_set',learnerId:'learner_demo',subject:'english',title:'Diag Unit',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:''};
     state.sets.push(set);
     attachVocabularyToSet(set.id,{term:'look',translation:'schauen',source:'diag',verified:true});
+    attachVocabularyToSet(set.id,{term:'write',translation:'schreiben',source:'diag',verified:true});
     const word=setWords(set.id)[0];
     word.translation='ansehen';
     rebuildWordIndexes();
@@ -74,6 +75,22 @@ try{
   await page.waitForSelector('#continueStudyBtn');
   const choice=await page.evaluate(()=>({feedback:document.querySelector('.feedback')?.textContent||'',last:session.results.at(-1)}));
   assert(/Richtig/.test(choice.feedback)&&choice.last?.correct===true,'recognition exact stored choice is correct');
+
+  await page.click('#backHomeBtn');
+  await page.evaluate(()=>startSession('recognition','diag_set',null,false));
+  await page.waitForSelector('[data-answer]');
+  const wrongAnswer=await page.evaluate(()=>[...document.querySelectorAll('[data-answer]')].map(b=>b.dataset.answer).find(a=>!gradeQuizQuestion(session.currentQuestion,a).correct)||'');
+  assert(!!wrongAnswer,'recognition exposes a distractor for wrong-answer diagnostic');
+  await page.locator('[data-answer]').filter({hasText:wrongAnswer}).first().click();
+  await page.waitForSelector('#continueStudyBtn');
+  const wrongChoice=await page.evaluate(()=>({
+    feedback:document.querySelector('.feedback')?.textContent||'',
+    last:session.results.at(-1),
+    correctMarked:[...document.querySelectorAll('[data-answer].correct')].some(b=>gradeQuizQuestion(session.currentQuestion,b.dataset.answer).correct)
+  }));
+  assert(wrongChoice.last?.correct===false,'wrong recognition answer is logged as false');
+  assert(/Noch nicht richtig/.test(wrongChoice.feedback),'wrong recognition answer shows corrective feedback');
+  assert(wrongChoice.correctMarked===true,'wrong recognition answer marks a valid solution without throwing');
 
   assert(errors.length===0,'no browser errors: '+errors.join(' | '));
   console.log('Vokabeltrainer correct-answer diagnostic: passed');
