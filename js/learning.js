@@ -74,7 +74,7 @@ function openPracticeTestChooser(){
 function startPracticeTest(full=false){
   const ctx=upcomingTestContext(); if(!ctx||!ctx.words.length){toast('Kein Testumfang festgelegt.','warn');return}
   const pool=full?[...ctx.words]:testReadinessForContext(ctx).weak.slice(0,Math.min(10,ctx.words.length));
-  session={mode:'practiceTest',setId:null,queue:pool.map(w=>w.setLinkId||w.id),index:0,correct:0,answered:0,currentSubmode:'practiceTest',locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily:false,testAnswers:[],practiceContext:{date:ctx.date,scopeText:ctx.scopeText||ctx.sets.map(s=>s.title).join(' + '),source:ctx.source,testFormat:ctx.testFormat||'target'},practiceFull:full};
+  session={mode:'practiceTest',setId:null,queue:pool.map(quizQueueRef),index:0,correct:0,answered:0,currentSubmode:'practiceTest',locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily:false,testAnswers:[],practiceContext:{date:ctx.date,scopeText:ctx.scopeText||ctx.sets.map(s=>s.title).join(' + '),source:ctx.source,testFormat:ctx.testFormat||'target'},practiceFull:full,currentQuestion:null,currentQuestionIssues:[]};
   showView('learnView'); $('#modePill').textContent=full?'Prüfung · komplett':'Prüfung · Kurzcheck'; renderStudy();
 }
 function practiceDirection(w){const f=session?.practiceContext?.testFormat||'target';if(f==='source')return {...practiceMeaningDirection(w),strictOrthography:false};if(f==='dictation')return {prompt:'🔊 Diktat',target:w.term,targets:termTargets(w),label:subjectLabel(state.activeSubject),audio:true,strictOrthography:true};if(f==='mixed'){const flip=(session.index%2)===1;return flip?{...practiceMeaningDirection(w),strictOrthography:false}:{prompt:w.translation,target:w.term,targets:termTargets(w),label:subjectLabel(state.activeSubject),strictOrthography:true};}return {prompt:w.translation,target:w.term,targets:termTargets(w),label:subjectLabel(state.activeSubject),strictOrthography:true};}
@@ -96,22 +96,25 @@ function finishPracticeTest(){
 
 function startSession(mode='adaptive',setId=null,wordIds=null,isDaily=false){
   const queue=buildQueue(mode,setId,wordIds); if(!queue.length){toast('Noch keine Vokabeln vorhanden.','warn');return}
-  session={mode,setId,queue:queue.map(w=>w.setLinkId||w.id),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString()}; showView('learnView'); $('#modePill').textContent=modeLabel(mode); renderStudy();
+  session={mode,setId,queue:queue.map(quizQueueRef),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString(),currentQuestion:null,currentQuestionIssues:[]}; showView('learnView'); $('#modePill').textContent=modeLabel(mode); renderStudy();
 }
 function modeLabel(m){return ({adaptive:'Adaptiv',flash:'Wortblitz',shower:'Vokabeldusche',chunks:'Wortbausteine',handwriting:'Handschrift',recognition:'Erkennen',recall:'Abrufen',reverseRecall:'Bedeutung abrufen',spelling:'Schreiben',listening:'Hören',context:'Kontext',latinGrammar:'Latein Formen',practiceTest:'Prüfung'})[m]||m}
-function currentWord(){const token=session?.queue?.[session.index];return wordByLinkId(token)||wordById(token,session?.setId||'')}
+function currentWord(){const token=session?.queue?.[session.index];return resolveQuizQueueRef(token,session?.setId||'')}
 function renderStudy(){
   if(!session||session.index>=session.queue.length){finishSession();return}
   const w=currentWord(); if(!w){session.index++;renderStudy();return}
   $('#sessionPill').textContent=`${session.index+1} / ${session.queue.length}`;
-  session.locked=false; session.hintUsed=false;
+  session.locked=false; session.hintUsed=false;session.currentQuestion=null;session.currentQuestionIssues=[];
   if(session.mode==='practiceTest') return renderPracticeTest(w);
   if(session.mode==='latinGrammar') return renderLatinGrammar(w);
   if(session.mode==='shower') return renderShower(w);
   if(session.mode==='flash') return renderFlash(w);
   if(session.mode==='chunks') return renderChunks(w);
   if(session.mode==='handwriting') return renderHandwriting(w);
-  let sub=session.mode==='adaptive'?chooseAdaptiveMode(w):session.mode;if(sub==='reverseRecall'&&!meaningRecallHasCue(w))sub='recall'; session.currentSubmode=sub; $('#modePill').textContent=session.mode==='adaptive'?`Adaptiv · ${modeLabel(sub)}`:modeLabel(sub);
+  let sub=session.mode==='adaptive'?chooseAdaptiveMode(w):session.mode;if(sub==='reverseRecall'&&!meaningRecallHasCue(w))sub='recall'; session.currentSubmode=sub;
+  const prepared=setCurrentQuizQuestion(w,sub);
+  if(prepared.issues.length){renderQuizIntegrityStop(w,prepared.issues);return}
+  $('#modePill').textContent=session.mode==='adaptive'?`Adaptiv · ${modeLabel(sub)}`:modeLabel(sub);
   if(sub==='recognition')renderRecognition(w); else if(sub==='listening')renderListening(w); else if(sub==='chunks')renderChunks(w); else if(sub==='reverseRecall')renderReverseRecall(w); else if(sub==='spelling')renderSpelling(w); else if(sub==='context')renderContext(w); else renderRecall(w);
 }
 function cardExtras(w){
