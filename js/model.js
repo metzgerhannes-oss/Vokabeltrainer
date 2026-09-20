@@ -13,6 +13,14 @@ function setWords(setId){return (state.setVocabulary||[]).filter(x=>x.setId===se
 function fortressWins(subject=state.activeSubject,schoolYear=currentSchoolYear()){const l=learner(),key=`${subject}:${schoolYear}`;l.fortressWinsByYear=l.fortressWinsByYear||{};return l.fortressWinsByYear[key]||(l.fortressWinsByYear[key]=[]);}
 
 function normalize(s){return String(s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[.,;:!?()[\]{}"']/g,'').replace(/\s+/g,' ')}
+function orthographyNormalize(value){
+  return String(value||'').normalize('NFKC').toLowerCase().replace(/[’‘`´]/g,"'").trim().replace(/\s+/g,' ');
+}
+function spellingMatches(answer,target){
+  const a=orthographyNormalize(answer),targets=(Array.isArray(target)?target:[target]).flatMap(x=>String(x||'').split(/\s*[/;]\s*/)).filter(Boolean);
+  if(!a)return false;
+  return targets.some(t=>a===orthographyNormalize(t));
+}
 function answerMatches(answer,target){
   const a=normalize(answer),targets=(Array.isArray(target)?target:[target]).flatMap(x=>String(x||'').split(/\s*[/;,]\s*/)).filter(Boolean);if(!a)return false;
   return targets.some(t=>a===normalize(t));
