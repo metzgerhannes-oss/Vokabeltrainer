@@ -11,6 +11,7 @@ const focusUi=read('js/focus-ui.js');
 const ui=read('js/ui.js');
 const manifest=JSON.parse(read('manifest.webmanifest'));
 const dna=read('PRODUCT_DNA.md');
+const allJs=fs.readdirSync('js').filter(x=>x.endsWith('.js')).map(x=>read('js/'+x)).join('\n');
 
 const passed=[];
 const assert=(value,name)=>{if(!value)throw new Error('Preflight smoke failed: '+name);passed.push(name)};
@@ -44,7 +45,8 @@ assert(!/setTimeout\s*\(\s*\(\)\s*=>\s*nextStudy/.test(focusUi),'focused feedbac
 assert(focusUi.includes('id="grammarRuleHelp" class="notice subtle hidden"'),'Latin grammar help is opt-in');
 assert(!html.includes('id="sessionProgress"')&&!focusUi.includes('progress.max='),'retrieval has no dynamic progress bar');
 assert(focusUi.includes("pill.textContent='Aufgabe '+(session.index+1)"),'focused learning keeps stable task orientation');
-assert(focusUi.includes("$('[data-answer],.chunk').forEach"),'focused answer controls iterate element lists');
+assert(focusUi.includes("$$('[data-answer],.chunk').forEach"),'focused answer controls iterate element lists');
+assert(!/(?<!\$)\$\([^)]*\)\.forEach/.test(allJs),'single-element selector is never used as a collection');
 assert(learning.includes('opts.orthographyOk===false')&&learning.includes('w.errorProfile.spelling'),'orthographic errors remain a separate learning signal');
 
 assert(manifest.start_url==='./'&&manifest.scope==='./','manifest remains repository-path safe');
