@@ -141,6 +141,21 @@ function repairV0912AliasSplit(s,sourceVersion){
 }
 
 
+function repairPreFocusSpellingLeak(s){
+  if(Number(s?.spellingLeakRepairVersion)>=1)return s;
+  const todayKey=today();
+  for(const p of (s?.learnerVocabulary||[])){
+    p.skills={...defaultSkills(),...(p.skills||{})};
+    const hadSpellingCredit=(Number(p.skills.spelling)||0)>0;
+    if(!hadSpellingCredit)continue;
+    p.skills.spelling=0;
+    if(p.masteredAt){p.lastMasteredAt=p.masteredAt;p.masteredAt=null}
+    p.dueDate=todayKey;
+  }
+  s.spellingLeakRepairVersion=1;
+  return s;
+}
+
 function hardenState(s){
   if(!s||typeof s!=='object')return defaultState();
   const learnersIn=Array.isArray(s.learners)?s.learners.slice(0,20):[];if(!learnersIn.length)return defaultState();
@@ -200,7 +215,7 @@ function migrate(s){
   s.sets=(s.sets||[]).map(x=>({...x,schoolYear:x.schoolYear||currentSchoolYear(),bookId:x.bookId||'',bookSection:x.bookSection||x.title||'',testScopeMode:x.testScopeMode||'set',testFrom:Number(x.testFrom)||1,testTo:Number(x.testTo)||0,testFormat:x.testFormat||'target'}));
   migrateLegacyLibrary(s);
   migrateSenseModel(s);
-  repairV0912AliasSplit(s,sourceVersion);s.senseModelVersion=1;
+  repairV0912AliasSplit(s,sourceVersion);s.senseModelVersion=1;repairPreFocusSpellingLeak(s);
   s.practiceTests=(s.practiceTests||[]).map(t=>{const subject=normalizeSubjectId(t.subject),owner=s.learners.find(l=>l.id===t.learnerId),scale={...defaultGradeScale(),...((owner?.gradeScales||defaultGradeScales())[subject]||{})};return {...t,gradeScaleSnapshot:t.gradeScaleSnapshot||scale,suggestedGrade:t.suggestedGrade||suggestGradeFromScale(t.percent,scale)}});
   return hardenState(s);
 }
