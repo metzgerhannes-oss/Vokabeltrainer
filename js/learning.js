@@ -59,7 +59,7 @@ function chooseAdaptiveMode(w){
   return w.example&&(w.errorProfile?.context||0)>0&&s.context<2?'context':(s.retrieval<=s.spelling?'recall':'spelling');
 }
 function buildQueue(mode,setId=null,wordIds=null){
-  const chosen=Array.isArray(wordIds)?wordIds.map(ref=>{if(ref&&typeof ref==='object')return ref.setLinkId?wordByLinkId(ref.setLinkId):wordById(ref.wordId,setId||'');return wordById(ref,setId||'')}).filter(Boolean):null; const pool=chosen||(setId?setWords(setId):schoolYearWords()); if(chosen)return pool; if(mode==='shower'||mode==='flash') return pool.filter(Boolean);
+  const chosen=Array.isArray(wordIds)?wordIds.map(ref=>{if(ref&&typeof ref==='object')return ref.setLinkId?wordByLinkId(ref.setLinkId):wordById(ref.wordId||ref.progressId,setId||ref.setId||'');return wordById(ref,setId||'')}).filter(Boolean):null; const pool=chosen||(setId?setWords(setId):schoolYearWords()); if(chosen)return pool; if(mode==='shower'||mode==='flash') return pool.filter(Boolean);
   if(mode==='latinGrammar'){const all=pool.filter(latinGrammarEligible),need=all.filter(w=>!grammarReady(w)),src=need.length?need:all;return src.sort((a,b)=>(a.grammarSuccessDays||[]).length-(b.grammarSuccessDays||[]).length||Math.min(...grammarKeys(a).map(k=>(a.grammarSkills||{})[k]||0))-Math.min(...grammarKeys(b).map(k=>(b.grammarSkills||{})[k]||0))).slice(0,learner().lrsMode?6:10);}
   if(mode==='handwriting'){const src=[...pool].filter(Boolean).sort((a,b)=>((b.errorProfile?.spelling||0)-(a.errorProfile?.spelling||0))||((a.skills?.spelling||0)-(b.skills?.spelling||0))||masteryScore(a)-masteryScore(b));return src.slice(0,learner().lrsMode?4:6);}
   let q=pool.filter(w=>!isMastered(w)); if(!q.length)q=pool; const due=q.filter(w=>!w.dueDate||w.dueDate<=today()); const src=due.length?due:q;
