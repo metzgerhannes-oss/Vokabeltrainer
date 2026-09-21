@@ -266,7 +266,7 @@ function startDailyTodo(){
   }
   const plan=buildDailyPlan(),status=dailyPlanStatus(plan),prepared=schoolYearVerifiedWords().length>0;
   if(!prepared){
-    if(parent){if(!mySets().length)openSetEditor();else openFirstWordsChooser()}
+    if(parent){if(!mySets().length)openLearningContentPlanner();else openFirstWordsChooser()}
     else{toast('Heute ist noch nichts vorbereitet. Bitte einen Erwachsenen um Hilfe.','subtle');showView('homeView');renderAll()}
     return;
   }
