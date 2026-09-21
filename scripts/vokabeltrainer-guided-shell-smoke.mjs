@@ -33,7 +33,7 @@ for(const id of ['moreLibraryBtn','moreLearningBtn','moreProgressBtn','moreSetti
 assert(css.includes('v0.13.0 Guided child shell'),'Guided-shell CSS fehlt');
 assert(css.includes('grid-template-columns:repeat(3,1fr)'),'Navigation ist nicht auf drei Spalten reduziert');
 assert(ui.includes("['libraryView','dashboardView','settingsView'].includes(id)?'moreView':id"),'Mehr-Navigation bleibt in Unteransichten nicht aktiv');
-assert(ui.includes("if(id==='homeView')$$('.home-disclosure').forEach"),'Startseite wird beim Zurückkehren nicht aufgeräumt');
+assert(ui.includes("if(id==='homeView')document.querySelectorAll('.home-disclosure').forEach"),'Startseite wird beim Zurückkehren nicht aufgeräumt');
 assert(dna.includes('13. **Ohne Erklärung bedienbar**'),'UX-Release-Kriterium fehlt in PRODUCT_DNA');
 
 console.log('OK: guided child shell');
