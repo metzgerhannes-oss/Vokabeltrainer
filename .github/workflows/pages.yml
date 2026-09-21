@@ -1,7 +1,9 @@
 name: Deploy Vokabeltrainer to GitHub Pages
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Vokabeltrainer CI"]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
@@ -16,13 +18,16 @@ concurrency:
 
 jobs:
   deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout tested revision
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
