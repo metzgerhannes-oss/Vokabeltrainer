@@ -196,6 +196,7 @@ const result=vm.runInContext(`
   if(!g171.bookGuided||g171.bookPage!==171||g171.rows.length!==2)throw new Error('Camden fuzzy page guidance failed: '+JSON.stringify(g171));
   if(!g171.rows.every(r=>r.origin==='verified-book'))throw new Error('Camden guided rows are not marked as verified-book');
 
+  state=defaultState();state.activeSubject='english';
   const book=upsertBook('9780140449136','english',{title:'Test Book'}).book;
   const photoSet={id:'photo_set',learnerId:'learner_demo',subject:'english',title:'Unit 1',schoolYear:currentSchoolYear(),bookId:book.id,bookSection:'Unit 1',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:true,pairVerifiedAt:''};
   state.sets.push(photoSet);
