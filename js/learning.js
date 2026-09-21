@@ -62,6 +62,7 @@ function buildQueue(mode,setId=null,wordIds=null){
   const chosen=Array.isArray(wordIds)?wordIds.map(ref=>{if(ref&&typeof ref==='object')return ref.setLinkId?wordByLinkId(ref.setLinkId):wordById(ref.wordId||ref.progressId,setId||ref.setId||'');return wordById(ref,setId||'')}).filter(Boolean):null; const pool=chosen||(setId?setWords(setId):schoolYearWords()); if(chosen)return pool; if(mode==='shower'||mode==='flash') return pool.filter(Boolean);
   if(mode==='latinGrammar'){const all=pool.filter(latinGrammarEligible),need=all.filter(w=>!grammarReady(w)),src=need.length?need:all;return src.sort((a,b)=>(a.grammarSuccessDays||[]).length-(b.grammarSuccessDays||[]).length||Math.min(...grammarKeys(a).map(k=>(a.grammarSkills||{})[k]||0))-Math.min(...grammarKeys(b).map(k=>(b.grammarSkills||{})[k]||0))).slice(0,learner().lrsMode?6:10);}
   if(mode==='handwriting'){const src=[...pool].filter(Boolean).sort((a,b)=>((b.errorProfile?.spelling||0)-(a.errorProfile?.spelling||0))||((a.skills?.spelling||0)-(b.skills?.spelling||0))||masteryScore(a)-masteryScore(b));return src.slice(0,learner().lrsMode?4:6);}
+  if(mode==='cards'){let src=pool.filter(w=>!isMastered(w));if(!src.length)src=pool;const due=src.filter(w=>!w.dueDate||w.dueDate<=today());if(due.length)src=due;return [...src].sort((a,b)=>leitnerBox(a)-leitnerBox(b)||(a.dueDate||'').localeCompare(b.dueDate||'')||masteryScore(a)-masteryScore(b)).slice(0,learner().lrsMode?6:10);}
   let q=pool.filter(w=>!isMastered(w)); if(!q.length)q=pool; const due=q.filter(w=>!w.dueDate||w.dueDate<=today()); const src=due.length?due:q;
   return src.sort((a,b)=>masteryScore(a)-masteryScore(b)).slice(0,learner().lrsMode?6:10);
 }
@@ -180,7 +181,7 @@ function startSession(mode='adaptive',setId=null,wordIds=null,isDaily=false){
   if(introBlocked){const blockedSet=state.sets.find(s=>s.id===introBlocked.setId),links=queue.filter(w=>w.setId===introBlocked.setId&&!wordFirstContactReady(w)).map(w=>w.setLinkId);toast('Neue Vokabeln werden zuerst kennengelernt und abgeschrieben.','warn');startFirstContact(blockedSet?.id,links,{isDaily});return}
   session={mode,setId,queue:queue.map(quizQueueRef),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString(),currentQuestion:null,currentQuestionIssues:[]}; showView('learnView'); $('#modePill').textContent=modeLabel(mode); renderStudy();
 }
-function modeLabel(m){return ({adaptive:'Adaptiv',flash:'Wortblitz',shower:'Vokabeldusche',chunks:'Wortbausteine',handwriting:'Handschrift',firstContact:'Kennenlernen',recognition:'Erkennen',recall:'Abrufen',reverseRecall:'Bedeutung abrufen',spelling:'Schreiben',listening:'Hören',context:'Kontext',latinGrammar:'Latein Formen',practiceTest:'Prüfung'})[m]||m}
+function modeLabel(m){return ({adaptive:'Adaptiv',flash:'Wortblitz',shower:'Vokabeldusche',chunks:'Wortbausteine',handwriting:'Handschrift',firstContact:'Kennenlernen',recognition:'Erkennen',recall:'Abrufen',reverseRecall:'Bedeutung abrufen',spelling:'Schreiben',listening:'Hören',context:'Kontext',latinGrammar:'Latein Formen',practiceTest:'Prüfung',cards:'Karteikarten'})[m]||m}
 function currentWord(){const token=session?.queue?.[session.index];return resolveQuizQueueRef(token,session?.setId||'')}
 function renderStudy(){
   if(!session||session.index>=session.queue.length){finishSession();return}
@@ -193,6 +194,7 @@ function renderStudy(){
   if(session.mode==='flash') return renderFlash(w);
   if(session.mode==='chunks') return renderChunks(w);
   if(session.mode==='handwriting') return renderHandwriting(w);
+  if(session.mode==='cards') return renderLeitnerCard(w);
   let sub=session.mode==='adaptive'?chooseAdaptiveMode(w):session.mode;if(sub==='reverseRecall'&&!meaningRecallHasCue(w))sub='recall'; session.currentSubmode=sub;
   const prepared=setCurrentQuizQuestion(w,sub);
   if(prepared.issues.length){renderQuizIntegrityStop(w,prepared.issues);return}
@@ -223,6 +225,28 @@ function renderRecognition(w){
   const opts=uniqueOptions(primary,distractors);
   $('#studyArea').innerHTML=`<div class="study-card"><div class="eyebrow">Erkennen</div><div class="study-prompt">${esc(q.prompt)}</div>${reverse?'':meaningCueHtml(w)}<div class="study-sub">${reverse?'Welche Vokabel passt zu dieser Bedeutung?':'Welche Bedeutung passt?'}</div><div class="answer-grid">${opts.map(o=>`<button class="answer-option" data-answer="${esc(o)}">${esc(o)}</button>`).join('')}</div>${cardExtras(w)}</div>`;
   $$('[data-answer]').forEach(b=>b.onclick=()=>gradeChoice(b,w,b.dataset.answer,q.targets,'recognition',false,q));
+}
+function leitnerBoxesHtml(w){
+  const active=leitnerBox(w),counts=leitnerDistribution();
+  return `<div class="leitner-track" aria-label="Karteikartenstufen">${[1,2,3,4,5].map(box=>`<div class="leitner-box ${box===active?'active':''} ${box<active?'passed':''}"><span>${box}</span><small>${esc(leitnerLabel(box))}</small><b>${counts[box]||0}</b></div>`).join('')}</div>`;
+}
+function renderLeitnerCard(w){
+  session.currentSubmode='cards';
+  const q=setCurrentQuizQuestion(w,'recall').question,box=leitnerBox(w);
+  $('#modePill').textContent='Karteikarten';
+  $('#studyArea').innerHTML=`<div class="study-card leitner-card"><div class="eyebrow">Karteikarten · Box ${box} von 5</div>${leitnerBoxesHtml(w)}<div class="study-prompt">${esc(q.prompt)}</div><div class="study-sub">Schreibe die Vokabel vollständig aus dem Gedächtnis. Nur eine automatisch richtige Antwort kann die Karte weiterbewegen.</div><input id="answerField" class="answer-input" aria-label="Deine Antwort" autocomplete="off" autocapitalize="none" spellcheck="false"><div class="top-space"><button id="answerBtn" class="primary">Prüfen</button></div></div>`;
+  const submit=()=>gradeLeitnerCard(w,$('#answerField').value,q);$('#answerBtn').onclick=submit;$('#answerField').onkeydown=e=>{if(e.key==='Enter')submit()};setTimeout(()=>$('#answerField')?.focus(),40);
+}
+function gradeLeitnerCard(w,answer,q){
+  if(session.locked)return;const targetSession=session;session.locked=true;
+  const grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w);
+  recordResult(w,ok,'retrieval',ok?null:'retrieval',{orthographyOk:grade.orthographyOk});
+  const move=session.lastLeitnerMove||{before,after:leitnerBox(w),moved:false,blockedBySpacing:false};
+  const movement=!ok?`Box ${move.before} → Box ${move.after}`:move.moved?`Box ${move.before} → Box ${move.after}`:move.blockedBySpacing?`Bleibt in Box ${move.after}: Für die nächste Stufe braucht es einen richtigen Abruf an einem späteren Tag.`:`Bleibt in Box ${move.after}.`;
+  const mastered=move.after===5&&isMastered(w);
+  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}"><strong>${ok?'Richtig.':'Noch nicht richtig.'}</strong><br>${ok?'':errorFeedbackHtml(answer,q.targets)}<div class="leitner-move ${ok?'forward':'back'}">${esc(movement)}</div>${mastered?'<div class="leitner-mastered">✓ Nachhaltig gemeistert</div>':''}</div>`);
+  logSessionResult(w,{answer,target:q.targets,correct:ok,skill:'cards',orthographyOk:grade.orthographyOk,prompt:q.prompt,note:movement});
+  scheduleSessionAdvance(targetSession,ok,w,ok?1000:2600);
 }
 function renderRecall(w){
   const q=currentQuizQuestion(w,'recall');
@@ -350,7 +374,7 @@ function recordResult(w,ok,skill,errorType,opts={}){
     w.failures++;skillCredits(skill,opts).forEach((k,i)=>{w.skills[k]=clamp((w.skills[k]||0)-(i===0?1:.35),0,4)});if(errorType)w.errorProfile[errorType]=(w.errorProfile[errorType]||0)+1;
     if(active){w.intervalDays=0;w.dueDate=today();}
   }
-  session.answered++;refreshMastery(w);recordActivity(session.currentSubmode||session.mode,{wordId:w.id,correct:ok,errorType,assisted,active,cold,orthographyOk:opts.orthographyOk!==false});persistOnly();
+  session.answered++;refreshMastery(w);session.lastLeitnerMove=updateLeitnerBox(w,ok,{assisted,active,orthographyOk:opts.orthographyOk!==false});recordActivity(session.currentSubmode||session.mode,{wordId:w.id,correct:ok,errorType,assisted,active,cold,orthographyOk:opts.orthographyOk!==false,leitnerBefore:session.lastLeitnerMove.before,leitnerAfter:session.lastLeitnerMove.after});persistOnly();
 }
 function scheduleRetry(targetSession,word){const ref=word&&typeof word==='object'&&('setLinkId' in word)?quizQueueRef(word):word,key=typeof ref==='string'?ref:(ref?.setLinkId||ref?.progressId||'');if(!key)return false;const n=targetSession.retryCounts[key]||0;if(n>=1)return false;targetSession.retryCounts[key]=n+1;const pos=Math.min(targetSession.index+3,targetSession.queue.length);targetSession.queue.splice(pos,0,ref);return true;}
 function scheduleScaffoldFollowup(targetSession,word){targetSession.followupCounts=targetSession.followupCounts||{};const ref=word&&typeof word==='object'&&('setLinkId' in word)?quizQueueRef(word):word,key=typeof ref==='string'?ref:(ref?.setLinkId||ref?.progressId||'');if(!key)return false;const n=targetSession.followupCounts[key]||0;if(n>=2)return false;targetSession.followupCounts[key]=n+1;const pos=Math.min(targetSession.index+3,targetSession.queue.length);targetSession.queue.splice(pos,0,ref);return true;}
@@ -368,7 +392,7 @@ function sessionResultTargets(target){
   return out;
 }
 function sessionResultMode(skill=session?.currentSubmode||session?.mode||''){
-  const labels={retrieval:'Abruf',reverseRecall:'Bedeutung',spelling:'Schreiben',recognition:'Erkennen',listening:'Hören',context:'Kontext',chunks:'Wortbausteine',latinGrammar:'Latein-Formen'};
+  const labels={retrieval:'Abruf',reverseRecall:'Bedeutung',spelling:'Schreiben',recognition:'Erkennen',listening:'Hören',context:'Kontext',chunks:'Wortbausteine',latinGrammar:'Latein-Formen',cards:'Karteikarte'};
   return labels[skill]||modeLabel(skill)||String(skill||'Aufgabe');
 }
 function logSessionResult(w,{answer='',target=[],correct=false,skill='',orthographyOk=true,assisted=false,prompt='',note=''}={}){
@@ -403,7 +427,7 @@ function sessionResultsHtml(results=[]){
 function finishSession(){
   if(session?.mode==='practiceTest')return finishPracticeTest();
   const c=session?.correct||0,a=session?.answered||0,results=[...(session?.results||[])],isDaily=!!session?.isDaily,plan=isDaily?buildDailyPlan():null,status=plan?dailyPlanStatus(plan):null; const more=status?.remaining>0;
-  const battleEarned=a>0&&session?.mode==='adaptive'?grantBattleTicket('lesson'):false;
+  const battleEarned=a>0&&['adaptive','cards'].includes(session?.mode)?grantBattleTicket(session.mode==='cards'?'cards':'lesson'):false;
   $('#studyArea').innerHTML=`<div class="study-card session-finish-card"><div class="eyebrow">Einheit beendet</div><div class="study-prompt">${a?Math.round(c/a*100):'✓'}${a?'%':''}</div><p>${a?`${c} von ${a} Aufgaben richtig.`:'Training abgeschlossen.'}</p>${isDaily?`<p class="notice ${more?'subtle':'good'}">${more?`Noch ${status.remaining} Vokabel${status.remaining===1?'':'n'} im Tagesziel.`:'Tagesziel für heute geschafft.'}</p>`:''}${battleEarned?'<div class="battle-unlock"><strong>⚔ Angriff verdient!</strong><span>Die Lerneinheit ist geschafft. Deine Armee darf jetzt angreifen.</span><button id="rewardBattleBtn" class="battle-unlock-btn" type="button">Zur Schlacht</button></div>':''}${sessionResultsHtml(results)}<div class="row gap center-actions wrap top-space">${more?'<button id="continueDailyBtn" class="primary">Nächste kurze Einheit</button>':''}<button id="doneBtn" class="${more?'secondary':'primary'}">Zur Übersicht</button></div></div>`;
   $('#sessionPill').textContent='Fertig'; $('#copySessionResultsBtn')?.addEventListener('click',()=>copySessionResults(results)); $('#rewardBattleBtn')?.addEventListener('click',()=>{session=null;openBattleView()}); $('#continueDailyBtn')?.addEventListener('click',()=>{session=null;startDailyTodo()}); $('#doneBtn').onclick=()=>{session=null;showView('homeView');renderAll()}; persistOnly();
 }
