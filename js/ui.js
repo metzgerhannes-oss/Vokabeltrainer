@@ -6,7 +6,7 @@ function isParentMode(){return appRole==='parent'}
 
 
 function battleUnitsMarkup(count,large=false){
-  let out='';for(let i=0;i<count;i++)out+=`<div class="${large?'battle-unit':'soldier'} unit-${i%3}" style="--i:${i}"><i class="helmet"></i><i class="body"></i><i class="shield"></i><i class="spear"></i></div>`;return out;
+  let out='';for(let i=0;i<count;i++)out+=`<div class="${large?'battle-unit':'soldier'} unit-${i%3} delay-${i%8}"><i class="helmet"></i><i class="body"></i><i class="shield"></i><i class="spear"></i></div>`;return out;
 }
 function renderBattlefield(){
   const p=subjectProgress(),next=nextFortress(),sea=seasonInfo(),count=soldiersFor(p.pct),tickets=battleTickets();
@@ -28,7 +28,7 @@ function renderBattleView(){
   $('#battleAttackBtn').disabled=!f||tickets<1;$('#battleAttackBtn').textContent=!f?'Kampagne gewonnen':tickets?'Angriff starten':'Nach dem Lernen verfügbar';
   $('#battleMessage').className='battle-message';$('#battleMessage').textContent=tickets?'Die Truppen stehen bereit.':'Noch kein Angriff verfügbar.';
   stage.className='battle-stage';
-  stage.style.setProperty('--damage',damage);
+  stage.dataset.damage=damage>=66?'high':damage>=33?'mid':damage>0?'low':'none';
   stage.innerHTML=`<div class="battle-sky"><i class="battle-sun"></i><i class="battle-cloud cloud-1"></i><i class="battle-cloud cloud-2"></i></div><div class="battle-hills"></div><div class="battle-ground"></div><div class="battle-army"><div class="battle-standard"><i></i></div>${battleUnitsMarkup(count,true)}${p.pct>=35?'<div class="battle-ram"><i></i><b></b></div>':''}</div><div class="battle-projectiles"><i class="arrow a1"></i><i class="arrow a2"></i><i class="arrow a3"></i></div><div class="battle-impact"><i></i><i></i><i></i></div><div class="battle-fortress"><div class="tower tower-left"></div><div class="tower tower-right"></div><div class="wall"><div class="battle-gate"></div><div class="crack c1"></div><div class="crack c2"></div></div><div class="battle-enemy-flag"></div></div><div class="battle-dust"></div>`;
 }
 function openBattleView(){
