@@ -324,9 +324,101 @@ function safeOcrPair(term,translation,subject,confidence='good',profile=''){
   if(profile==='camden-town'){
     const m=a.match(/^(.+\s)\(([^)]+)\)$/);
     if(m&&!/^(?:=|informal\b|formal\b|pl\.?\b|sing\.?\b|ugs\.?\b)/i.test(m[2].trim())){row.term=a;row.extra='';}
+    if(/[A-Za-z]\([A-Za-z]+\)$/.test(a)){row.term=a;row.extra='';}
   }
   return row;
 }
+
+function camdenVerifiedBookRows(){
+  const book=(state?.books||[]).find(b=>b.id==='book_builtin_camden_town_1'||b.builtinSource==='verified-book-photos'&&normalize(b.title).includes('camden town'));
+  if(!book)return [];
+  return (state?.bookVocabulary||[]).filter(r=>r.bookId===book.id&&r.verifiedAt&&!r.verificationBlocked).map(r=>{
+    const v=(state?.vocabulary||[]).find(x=>x.id===r.vocabId),sense=v?(senseById(v,r.senseId)||primarySense(v)):null;
+    const term=String(r.termOverride||v?.term||'').trim(),translation=String(r.translationOverride||sense?.translation||'').trim();
+    return {
+      row:r,page:Number(r.sourcePage)||0,section:r.section||'',position:Number(r.position)||0,
+      term,translation,
+      terms:[term,...(r.acceptedTermOverrides||[]),v?.term,...(v?.termVariants||[])].filter(Boolean),
+      translations:[translation,...(r.acceptedTranslationOverrides||[]),sense?.translation,...(sense?.translations||[])].filter(Boolean)
+    };
+  }).filter(x=>x.term&&x.translation&&x.page>=170&&x.page<=177);
+}
+function ocrFuzzyKey(value){
+  return normalize(stripOcrPronunciation(value)).replace(/…/g,' ').replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();
+}
+function ocrPhraseSimilarity(needle,haystack){
+  const n=ocrFuzzyKey(needle),h=ocrFuzzyKey(haystack);if(!n||!h)return 0;
+  if(n===h||(' '+h+' ').includes(' '+n+' '))return 1;
+  const nt=n.split(' '),ht=h.split(' ');let best=0;
+  const minSize=Math.max(1,nt.length-1),maxSize=Math.min(ht.length,nt.length+1);
+  for(let size=minSize;size<=maxSize;size++){
+    for(let i=0;i+size<=ht.length;i++){
+      const chunk=ht.slice(i,i+size).join(' '),d=levenshtein(n,chunk),score=1-d/Math.max(n.length,chunk.length,1);
+      if(score>best)best=score;
+    }
+  }
+  return clamp(best,0,1);
+}
+function camdenObservedWindows(words,medianH){
+  const lines=groupOcrColumnLines(words,Math.max(13,medianH*.72)).sort((a,b)=>a.yc-b.yc);
+  const windows=[];
+  for(let i=0;i<lines.length;i++){
+    const one=stripOcrPronunciation(lines[i].text);if(one)windows.push({index:i,text:one,y:lines[i].yc});
+    if(i+1<lines.length&&lines[i+1].yc-lines[i].yc<=medianH*2.8){
+      const two=stripOcrPronunciation(lines[i].text+' '+lines[i+1].text);if(two)windows.push({index:i,text:two,y:lines[i].yc});
+    }
+    if(i+2<lines.length&&lines[i+2].yc-lines[i].yc<=medianH*4.2){
+      const three=stripOcrPronunciation(lines[i].text+' '+lines[i+1].text+' '+lines[i+2].text);if(three)windows.push({index:i,text:three,y:lines[i].yc});
+    }
+  }
+  return windows;
+}
+function camdenEvidence(entry,windows){
+  let best=null;
+  for(const w of windows){
+    const termScore=Math.max(0,...entry.terms.map(x=>ocrPhraseSimilarity(x,w.text)));
+    const translationScore=Math.max(0,...entry.translations.map(x=>ocrPhraseSimilarity(x,w.text)));
+    const score=termScore*.56+translationScore*.44;
+    const strong=(termScore>=.78&&translationScore>=.72&&score>=.78)||
+      (termScore>=.91&&translationScore>=.58&&ocrFuzzyKey(entry.term).length>=12)||
+      (translationScore>=.91&&termScore>=.62&&ocrFuzzyKey(entry.translation).length>=12);
+    if(strong&&(!best||score>best.score))best={entry,window:w,termScore,translationScore,score};
+  }
+  return best;
+}
+function camdenVerifiedImportRow(entry){
+  const out=safeOcrPair(entry.term,entry.translation,'english','good','camden-town');
+  out.origin='verified-book';out.sourcePage=entry.page;out.sourceSection=entry.section;out.include=true;
+  return out;
+}
+function reconcileCamdenWithVerifiedBook(words,rows,medianH){
+  const known=camdenVerifiedBookRows();if(!known.length)return {rows,bookGuided:false,bookGuidedCount:0,bookPage:0};
+  const pageNumbers=[...new Set(words.map(w=>String(w.text||'').trim()).filter(x=>/^(?:17[0-7])$/.test(x)).map(Number))];
+  const windows=camdenObservedWindows(words,medianH),hits=known.map(entry=>camdenEvidence(entry,windows)).filter(Boolean);
+  const byPage=new Map();
+  for(const hit of hits){const a=byPage.get(hit.entry.page)||[];a.push(hit);byPage.set(hit.entry.page,a);}
+  let page=pageNumbers.find(p=>known.some(x=>x.page===p))||0;
+  if(!page&&byPage.size){
+    page=[...byPage.entries()].sort((a,b)=>b[1].length-a[1].length||b[1].reduce((s,x)=>s+x.score,0)-a[1].reduce((s,x)=>s+x.score,0))[0][0];
+  }
+  const pageHits=page?(byPage.get(page)||[]):[];
+  const distinctive=pageHits.some(h=>ocrFuzzyKey(h.entry.term).length>=12&&h.score>=.82);
+  const confident=!!page&&(pageNumbers.includes(page)||pageHits.length>=2||distinctive);
+  if(!confident)return {rows,bookGuided:false,bookGuidedCount:0,bookPage:0};
+
+  let selected;
+  if(pageNumbers.includes(page)){
+    selected=known.filter(x=>x.page===page).sort((a,b)=>a.position-b.position);
+  }else{
+    const seen=new Set();
+    selected=pageHits.sort((a,b)=>a.window.y-b.window.y||a.entry.position-b.entry.position).map(h=>h.entry).filter(x=>{
+      const key=x.row.id||x.term+'\u0000'+x.translation;if(seen.has(key))return false;seen.add(key);return true;
+    });
+  }
+  const guided=selected.map(camdenVerifiedImportRow);
+  return {rows:guided,bookGuided:true,bookGuidedCount:guided.length,bookPage:page};
+}
+
 function tesseractTsvToVocabulary(tsv,subject=state.activeSubject,opts={}){
   const words=parseTesseractWords(tsv); if(!words.length)return {rows:[],text:''};
   const profile=opts?.profile||'';
@@ -385,9 +477,12 @@ function tesseractTsvToVocabulary(tsv,subject=state.activeSubject,opts={}){
   });
 
   records.sort((a,b)=>a.y-b.y);
-  const rows=records.map(x=>x.row).filter(r=>r.term||r.translation).slice(0,250);
+  let rows=records.map(x=>x.row).filter(r=>r.term||r.translation).slice(0,250);
+  let guided={rows,bookGuided:false,bookGuidedCount:0,bookPage:0};
+  if(profile==='camden-town')guided=reconcileCamdenWithVerifiedBook(words,rows,medianH);
+  rows=guided.rows;
   const text=rows.map(r=>String(r.term||'')+'\t'+String(r.translation||'')).join('\n');
-  return {rows,text};
+  return {rows,text,bookGuided:guided.bookGuided,bookGuidedCount:guided.bookGuidedCount,bookPage:guided.bookPage};
 }
 function tesseractTsvToText(tsv,opts={}){
   const parsed=tesseractTsvToVocabulary(tsv,state.activeSubject,opts);
@@ -471,7 +566,8 @@ async function runTesseractOcr(file){
         const good=scanImportState.rows.filter(r=>r.confidence==='good'&&r.term&&r.translation).length;
         const auto=scanImportState.rows.filter(r=>r.confidence==='auto'&&r.term&&r.translation).length;
         const open=scanImportState.rows.filter(r=>!(r.term&&r.translation)).length;
-        scanStatus(`OCR${profile==='camden-town'?' · Camden-Town-Profil':''}: ${good} Originalpaare erkannt${auto?` · ${auto} automatisch ergänzt`:''}${open?` · ${open} noch offen`:''}.`,'good');
+        const bookGuide=table.bookGuided?` · Buchseite ${table.bookPage}: ${table.bookGuidedCount} mit geprüfter Bibliothek abgeglichen`:'';
+        scanStatus(`OCR${profile==='camden-town'?' · Camden-Town-Profil':''}: ${good} Originalpaare erkannt${bookGuide}${auto?` · ${auto} automatisch ergänzt`:''}${open?` · ${open} noch offen`:''}.`,'good');
       }else await analyzeScanText(text,'OCR');
     }finally{await worker.terminate().catch(()=>{});}
   }catch(e){
