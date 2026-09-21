@@ -411,6 +411,7 @@ function openTestDatePlanner(){
   const learnerEl=$('#planLearner'),mode=$('#testPlanMode'),date=$('#testPlanDate'),weekday=$('#weeklyTestDay'),bookEl=$('#planBook'),sectionEl=$('#planSection'),picker=$('#planWordPicker'),format=$('#planTestFormat'),counter=$('#planSelectionCount'),preview=$('#planDailyPreview');
   let rows=[];
   const targetLearner=()=>state.learners.find(l=>l.id===learnerEl.value)||activeL;
+  const targetFuture=()=>{const l=targetLearner();return (state.sets||[]).filter(s=>s.learnerId===l.id&&s.subject===subject&&s.testDate&&daysUntil(s.testDate)>=0).sort((a,b)=>a.testDate.localeCompare(b.testDate))[0]||null};
   const selectedRows=()=>rows.filter(r=>picker.querySelector(`[data-plan-row="${CSS.escape(r.id)}"]`)?.checked);
   const plannedDate=()=>mode.value==='weekly'?nextWeeklyDate(Number(weekday.value)):date.value;
   const matchingSet=()=>{const l=targetLearner();return (state.sets||[]).find(s=>s.learnerId===l.id&&s.subject===subject&&s.bookId===bookEl.value&&s.bookSection===sectionEl.value&&((mode.value==='single'&&s.testDate&&daysUntil(s.testDate)>=0)||(mode.value==='weekly'&&l.testSeries?.[subject]?.setId===s.id)))||null};
@@ -430,7 +431,7 @@ function openTestDatePlanner(){
     picker.innerHTML=rows.map((r,i)=>{const d=bookRowDisplay(r),checked=useExisting?existing.has(r.id):true;return `<label class="vocab-picker-row"><input type="checkbox" data-plan-row="${esc(r.id)}" ${checked?'checked':''}><span class="vocab-picker-num">${i+1}</span><span><strong>${esc(d.term)}</strong><small>${esc(d.translation)}</small></span></label>`}).join('');
     picker.querySelectorAll('[data-plan-row]').forEach(x=>x.onchange=updatePreview);updatePreview();
   };
-  const updateSections=()=>{const groups=knownBookSections(bookEl.value),existing=matchingSet();sectionEl.innerHTML=groups.map(g=>`<option value="${esc(g.section)}">${esc(g.section)} · ${g.items.length} Vokabeln</option>`).join('');const preferred=existing?.bookSection||activeFuture?.bookSection;if(preferred&&groups.some(g=>g.section===preferred))sectionEl.value=preferred;renderRows()};
+  const updateSections=()=>{const groups=knownBookSections(bookEl.value),existing=matchingSet();sectionEl.innerHTML=groups.map(g=>`<option value="${esc(g.section)}">${esc(g.section)} · ${g.items.length} Vokabeln</option>`).join('');const preferred=existing?.bookSection||targetFuture()?.bookSection;if(preferred&&groups.some(g=>g.section===preferred))sectionEl.value=preferred;renderRows()};
   const loadLearnerDefaults=()=>{
     const l=targetLearner(),future=(state.sets||[]).filter(s=>s.learnerId===l.id&&s.subject===subject&&s.testDate&&daysUntil(s.testDate)>=0).sort((a,b)=>a.testDate.localeCompare(b.testDate))[0],cfg=l.testSeries?.[subject];
     mode.value=cfg?.enabled?'weekly':'single';date.value=future?.testDate||datePlusDays(7);weekday.value=String(Number(cfg?.weekday??new Date().getDay()));const b=(future?.bookId&&bookById(future.bookId))||currentBook(l.id,subject)||books[0];if(b)bookEl.value=b.id;format.value=cfg?.enabled?(cfg.testFormat||'target'):(future?.testFormat||'target');syncMode();updateSections();
