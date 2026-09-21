@@ -34,6 +34,8 @@ try{
   assert(before.pending===6&&before.completed===0,'all new set links begin pending');
 
   await page.click('#quickLearnHeroBtn');
+  assert((await page.locator('#studyArea').textContent())?.includes('Papier oder ein Heft'),'first contact does not require a dedicated vocabulary notebook');
+  assert(!(await page.locator('#studyArea').textContent())?.includes('Vokabelheft'),'old vocabulary-notebook wording is gone');
   for(let i=0;i<5;i++){
     await page.waitForSelector('#firstContactCopiedBtn');
     await page.click('#firstContactCopiedBtn');
@@ -59,6 +61,8 @@ try{
   assert(after.pending===0&&after.completed===6,'all words in the planned first-contact batch complete');
   const ready=await page.evaluate(()=>schoolYearWords('english').length);
   assert(ready===6,'completed first-contact words become individually available for normal learning');
+  assert(await page.evaluate(()=>battleTickets('english'))===1,'completed daily first-contact unit unlocks exactly one battle attack');
+  assert(await page.locator('#firstContactBattleBtn').count()===1,'daily first-contact completion visibly offers the unlocked battle');
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer first-contact UI smoke: passed');
 }finally{
