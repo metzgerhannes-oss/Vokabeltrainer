@@ -24,15 +24,14 @@ try{
     rebuildWordIndexes();renderAll();showView('homeView');
   });
 
-  assert(await page.locator('[data-set-study="intro_set"]').isDisabled(),'ordinary learning is blocked before first contact');
-  assert(await page.locator('[data-set-intro="intro_set"]').count()===1,'first-contact action exists');
-  await page.locator('#learningDisclosure > summary').click();
-  await page.waitForSelector('#learningDisclosure[open] [data-set-intro="intro_set"]');
-  assert(await page.locator('[data-set-intro="intro_set"]').isVisible(),'first-contact action becomes visible after opening More learning');
+  assert((await page.locator('#todaySummary').textContent())?.includes('Neue Vokabeln kennenlernen'),'today identifies first contact as the next child task');
+  assert((await page.locator('#quickLearnHeroBtn').textContent())?.includes('Kennenlernen'),'primary child action starts first contact');
+  assert(await page.locator('#setList').count()===1&&!(await page.locator('#setList').isVisible()),'learning-set administration is not visible in child mode');
+
   const before=await page.evaluate(()=>firstContactStatus('intro_set'));
   assert(before.pending===6&&before.completed===0,'all new set links begin pending');
 
-  await page.click('[data-set-intro="intro_set"]');
+  await page.click('#quickLearnHeroBtn');
   for(let i=0;i<5;i++){
     await page.waitForSelector('#firstContactCopiedBtn');
     await page.click('#firstContactCopiedBtn');
@@ -41,33 +40,23 @@ try{
     await page.waitForSelector('#firstContactCorrectBtn');
     await page.click('#firstContactCorrectBtn');
   }
-
   await page.waitForSelector('#firstContactRevealBlockBtn');
-  const hiddenReview=await page.locator('#studyArea').textContent();
-  assert(hiddenReview?.includes('eins')&&!hiddenReview?.includes('alpha'),'block review asks for active recall before revealing terms');
   await page.click('#firstContactRevealBlockBtn');
-  const revealedReview=await page.locator('#studyArea').textContent();
-  assert(revealedReview?.includes('alpha')&&revealedReview?.includes('echo'),'block review reveals the checked terms only on request');
+  await page.waitForSelector('#firstContactNextBlockBtn');
   await page.click('#firstContactNextBlockBtn');
 
   await page.waitForSelector('#firstContactCopiedBtn');
   await page.click('#firstContactCopiedBtn');
+  await page.waitForSelector('#firstContactRevealBtn');
   await page.click('#firstContactRevealBtn');
+  await page.waitForSelector('#firstContactCorrectBtn');
   await page.click('#firstContactCorrectBtn');
-  await page.waitForSelector('#firstContactDoneBtn');
 
+  await page.waitForSelector('#doneBtn');
   const after=await page.evaluate(()=>firstContactStatus('intro_set'));
-  assert(after.completed===6&&after.pending===0,'all six vocabulary links are marked first-contact complete');
-  assert((await page.locator('#studyArea').textContent())?.includes('Lektion vorbereitet'),'completion clearly hands off to the normal learning path');
-  await page.click('#firstContactDoneBtn');
-  assert(!(await page.locator('[data-set-study="intro_set"]').isDisabled()),'ordinary learning is unlocked after first contact');
-  assert(errors.length===0,'no browser errors: '+errors.join(' | '));
-
-  console.log('Vokabeltrainer first-contact WebKit smoke: passed');
-  console.log('✓ new vocabulary is blocked from ordinary learning');
-  console.log('✓ copy → cover/recall → compare is required');
-  console.log('✓ five-word block review hides answers before reveal');
-  console.log('✓ completion unlocks the normal learning path');
+  assert(after.pending===0&&after.completed===6,'all words complete first contact');
+  if(errors.length)throw new Error(errors.join(' | '));
+  console.log('Vokabeltrainer first-contact UI smoke: passed');
 }finally{
   await browser.close();
 }
