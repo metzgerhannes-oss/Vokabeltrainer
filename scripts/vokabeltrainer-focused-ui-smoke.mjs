@@ -23,7 +23,7 @@ async function seed(term,translation,mode='recall'){
     state=defaultState();
     const set={id:'focus_set',learnerId:'learner_demo',subject:'english',title:'Unit Fokus',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:''};
     state.sets.push(set);
-    attachVocabularyToSet(set.id,{term,translation,source:'focus-smoke',verified:true});
+    attachVocabularyToSet(set.id,{term,translation,source:'focus-smoke',verified:true,firstContactCopiedAt:'test',firstContactRecalledAt:'test',firstContactCompletedAt:'test'});
     rebuildWordIndexes();
     renderAll();
     startSession(mode,set.id,null,false);
