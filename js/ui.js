@@ -170,7 +170,8 @@ function renderTestCheck(){
   $('#testReadyDetail').textContent=r.ready===r.total?'Alle Wörter sind nach dem Lernmodell testbereit.':`${r.total-r.ready} ${r.total-r.ready===1?'Wort braucht':'Wörter brauchen'} noch Festigung.`;
 }
 function renderToday(){
-  const parent=isParentMode(),reviewSet=mySets().find(setNeedsPairReview);
+  const parent=isParentMode(),reviewSet=mySets().find(setNeedsPairReview),practiceDisclosure=$('#practiceDisclosure');
+  practiceDisclosure?.classList.remove('hidden');
   if(reviewSet){
     const count=setWords(reviewSet.id).length,progressRow=$('#todayProgress')?.closest('.today-progress-row');
     progressRow?.classList.add('hidden');$('#todayProgressText').textContent='';
@@ -200,6 +201,7 @@ function renderToday(){
   }
   progressRow?.classList.remove('hidden');
   if(!hasWords){
+    practiceDisclosure?.classList.add('hidden');
     $('#todaySummary').textContent=parent?'Noch keine Vokabeln':'Heute ist noch nichts vorbereitet';
     $('#todayContext').textContent=parent?'Lege ein Lernset an oder importiere eine Vokabelliste.':'Bitte einen Erwachsenen, neue Vokabeln vorzubereiten.';
     $('#todayEstimate').textContent=parent?'Danach erscheinen die freigegebenen Wörter automatisch im Kindermodus.':'Sobald alles vorbereitet ist, erscheint hier automatisch deine nächste Lernaufgabe.';
