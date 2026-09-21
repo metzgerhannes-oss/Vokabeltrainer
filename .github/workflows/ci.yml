@@ -87,5 +87,8 @@ jobs:
       - name: WebKit OCR pair-review end-to-end
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-pair-review-ui-smoke.mjs
 
+      - name: WebKit first-contact block review
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-first-contact-ui-smoke.mjs
+
       - name: Chromium service-worker offline smoke
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-sw-browser-smoke.mjs
