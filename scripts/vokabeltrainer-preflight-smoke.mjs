@@ -66,7 +66,9 @@ assert(model.includes('setNeedsPairReview')&&learning.includes('setNeedsPairRevi
 assert(model.includes('setNeedsFirstContact')&&learning.includes('startFirstContact')&&learning.includes("mode:'firstContact'"),'new vocabulary must pass the first-contact phase before ordinary learning');
 
 assert(html.includes('id="helpBtn"')&&html.includes('id="helpPopover"'),'central help and shared help popover exist');
-assert((html.match(/data-help="/g)||[]).length>=10,'main views expose contextual help at the important concepts');
+const childHomeMarkup=html.slice(html.indexOf('id="homeView"'),html.indexOf('id="childProgressView"'));
+assert(!childHomeMarkup.includes('data-help="'),'child home is self-explanatory without contextual-help clutter');
+assert((html.match(/data-help="/g)||[]).length>=5,'contextual help remains available in parent and administration views');
 assert(help.includes("document.addEventListener('mouseover'")&&help.includes("document.addEventListener('focusin'")&&help.includes("document.addEventListener('click'"),'context help supports mouse, keyboard focus and touch/click');
 assert(help.includes('function openAppHelp()')&&help.includes('So funktioniert der Vokabeltrainer'),'central help provides a short orientation');
 const learnMarkup=html.slice(html.indexOf('id="learnView"'),html.indexOf('id="parentView"'));
