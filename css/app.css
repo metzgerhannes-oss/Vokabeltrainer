@@ -553,3 +553,14 @@ body.battle-immersive{overflow:hidden;background:#0f172a}.battle-immersive .topb
     grid-template-columns:auto auto minmax(0,1fr) auto;
   }
 }
+
+.content-picker-head{margin-top:10px}
+.vocab-picker{display:grid;gap:7px;max-height:min(42vh,420px);overflow:auto;padding:4px 2px 8px;overscroll-behavior:contain}
+.vocab-picker-row{display:grid;grid-template-columns:24px 28px minmax(0,1fr);align-items:start;gap:8px;padding:10px 12px;border:1px solid #dbe2ea;border-radius:12px;background:#fff;cursor:pointer}
+.vocab-picker-row input{width:20px;height:20px;margin:2px 0 0}
+.vocab-picker-num{color:#64748b;font-size:.82rem;padding-top:2px}
+.vocab-picker-row span:last-child{display:grid;gap:2px;min-width:0}
+.vocab-picker-row strong{font-size:.96rem;overflow-wrap:anywhere}
+.vocab-picker-row small{color:#64748b;font-size:.84rem;line-height:1.25;overflow-wrap:anywhere}
+.vocab-picker-row:has(input:checked){border-color:#a5b4fc;background:#f5f3ff}
+@media(max-width:640px){.vocab-picker{max-height:38vh}.vocab-picker-row{padding:9px 10px}.content-picker-head .compact-action{min-height:38px}}
