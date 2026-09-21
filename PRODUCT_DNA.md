@@ -35,7 +35,7 @@ Die verbindliche Reihenfolge lautet:
 Für den Erstkontakt gilt:
 
 - Nach OCR, Import oder Bibliotheksübernahme werden zuerst die exakten Wort↔Bedeutung-Paare geprüft.
-- Danach schreibt das Kind jede neue Vokabel bewusst in sein **Vokabelheft** ab.
+- Danach schreibt das Kind jede neue Vokabel bewusst **von Hand auf Papier oder in ein beliebiges Heft** ab; die App setzt kein spezielles Vokabelheft voraus.
 - Die Vorlage wird anschließend abgedeckt; die Wortform wird einmal aktiv aus dem Gedächtnis geschrieben.
 - Danach wird mit der fachlich geprüften Wortform verglichen. Die App bewertet die Handschrift nicht automatisch.
 - Kurze Blockwiederholungen unterbrechen lange Abschreibserien und fordern erneut aktiven Abruf.
