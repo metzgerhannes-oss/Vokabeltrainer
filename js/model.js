@@ -85,7 +85,7 @@ function refreshMastery(w){
   w.level=mastered?4:Math.min(3,Math.max(0,Math.floor(masteryScore(w))));
 }
 function subjectProgress(subject=state.activeSubject,schoolYear=currentSchoolYear()){
-  const words=schoolYearVerifiedWords(subject,schoolYear); const mastered=words.filter(w=>w.firstContactCompletedAt&&isMastered(w)).length; const stable=words.filter(w=>w.firstContactCompletedAt&&w.intervalDays>=7 && (w.independentSuccesses||0)>w.failures).length;
+  const words=schoolYearVerifiedWords(subject,schoolYear); const mastered=words.filter(isMastered).length; const stable=words.filter(w=>w.intervalDays>=7 && (w.independentSuccesses||0)>w.failures).length;
   return {schoolYear,total:words.length,mastered,stable,pct:words.length?Math.round(mastered/words.length*100):0};
 }
 function dueWords(subject=state.activeSubject,schoolYear=currentSchoolYear()){return schoolYearWords(subject,schoolYear).filter(w=>!w.dueDate||w.dueDate<=today()).sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||''));}
