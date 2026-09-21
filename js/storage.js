@@ -48,25 +48,67 @@ async function applyOneTimeVocabularyPurge(s,mode='indexeddb'){
 function markFreshVocabularyPurge(){
   if(!localStorage.getItem(VOCABULARY_PURGE_MARKER))localStorage.setItem(VOCABULARY_PURGE_MARKER,new Date().toISOString());
 }
+function familySyncRole(){
+  try{const raw=localStorage.getItem('vokabeltrainer_family_sync_v1'),cfg=raw?JSON.parse(raw):null;return cfg?.enabled?String(cfg.role||'parent'):''}catch(_){return ''}
+}
+function purgeToBuiltinOnly(s){
+  if(!s||typeof s!=='object')return s;
+  s.sets=[];
+  s.vocabulary=[];
+  s.setVocabulary=[];
+  s.learnerVocabulary=[];
+  s.books=[];
+  s.learnerBooks=[];
+  s.bookVocabulary=[];
+  s.practiceTests=[];
+  s.activity=[];
+  s.grades=[];
+  for(const l of (s.learners||[])){
+    l.xp=0;
+    l.streakDays=[];
+    l.milestones={};
+    l.fortressWins=defaultSubjectArrays();
+    l.fortressWinsByYear={};
+    l.battleTickets=defaultSubjectNumbers();
+    l.campaignLog=[];
+    l.dailyPlans={};
+    l.testSeries=defaultTestSeries();
+  }
+  attachRuntimeWordApi(s);rebuildWordIndexes(s);return s;
+}
+async function applyOneTimeBuiltinOnlyReset(s,mode='indexeddb'){
+  if(localStorage.getItem(BUILTIN_ONLY_RESET_MARKER))return s;
+  if(familySyncRole()==='child')return s;
+  purgeToBuiltinOnly(s);
+  startupBuiltinOnlyResetApplied=true;
+  const payload=storagePayload(s);
+  if(mode==='indexeddb')await idbPut(payload);
+  else localStorage.setItem(STORAGE_KEY,JSON.stringify(payload));
+  localStorage.setItem(BUILTIN_ONLY_RESET_MARKER,new Date().toISOString());
+  return s;
+}
+function markFreshBuiltinOnlyReset(){
+  if(!localStorage.getItem(BUILTIN_ONLY_RESET_MARKER))localStorage.setItem(BUILTIN_ONLY_RESET_MARKER,new Date().toISOString());
+}
 
 async function loadState(){
   try{
     const stored=await idbGet();
-    if(stored)return await applyOneTimeVocabularyPurge(migrate(stored),'indexeddb');
+    if(stored){let loaded=await applyOneTimeVocabularyPurge(migrate(stored),'indexeddb');return await applyOneTimeBuiltinOnlyReset(loaded,'indexeddb')}
     const raw=localStorage.getItem(STORAGE_KEY);
     if(raw){
       const migrated=migrate(JSON.parse(raw));
-      const cleaned=await applyOneTimeVocabularyPurge(migrated,'indexeddb');
+      let cleaned=await applyOneTimeVocabularyPurge(migrated,'indexeddb');cleaned=await applyOneTimeBuiltinOnlyReset(cleaned,'indexeddb');
       localStorage.removeItem(STORAGE_KEY);localStorage.setItem(MIGRATION_MARKER,new Date().toISOString());return cleaned;
     }
-    const d=defaultState();markFreshVocabularyPurge();await idbPut(storagePayload(d));return d;
+    const d=defaultState();markFreshVocabularyPurge();markFreshBuiltinOnlyReset();await idbPut(storagePayload(d));return d;
   }catch(e){
     console.warn('IndexedDB nicht verfügbar, localStorage-Fallback aktiv.',e);persistenceMode='localstorage';
     try{
       const raw=localStorage.getItem(STORAGE_KEY);
-      if(raw)return await applyOneTimeVocabularyPurge(migrate(JSON.parse(raw)),'localstorage');
+      if(raw){let loaded=await applyOneTimeVocabularyPurge(migrate(JSON.parse(raw)),'localstorage');return await applyOneTimeBuiltinOnlyReset(loaded,'localstorage')}
     }catch(err){console.warn(err)}
-    const d=defaultState();markFreshVocabularyPurge();return d;
+    const d=defaultState();markFreshVocabularyPurge();markFreshBuiltinOnlyReset();return d;
   }
 }
 function pruneState(){
