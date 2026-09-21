@@ -84,6 +84,22 @@ const passed=vm.runInContext(`
   pacedSet.testDate=datePlusDays(2);learner().dailyPlans={};
   const urgentPlan=buildDailyPlan('english');
   assert(urgentPlan.introCount===7&&urgentPlan.deadlineOverload===true&&urgentPlan.requiredNewPerDay>7,'deadline formula caps new words at seven and flags an impossible pace');
+
+  const card=makeLearnerVocabulary('learner_demo','v_card','sense_card');
+  assert(leitnerBox(card)===1,'new vocabulary starts in Leitner box 1');
+  card.independentSuccesses=1;card.activeSuccessDays=[today()];card.intervalDays=1;
+  let move=updateLeitnerBox(card,true,{active:true,assisted:false,orthographyOk:true,beforeBox:1});
+  assert(move.before===1&&move.after===2,'one correct written recall moves exactly one box back');
+  move=updateLeitnerBox(card,true,{active:true,assisted:false,orthographyOk:true});
+  assert(move.after===2&&move.blockedBySpacing===true,'same-day repetition cannot fake distributed mastery');
+  card.independentSuccesses=2;card.activeSuccessDays=[datePlusDays(-1),today()];card.maxActiveGapDays=1;card.intervalDays=3;
+  move=updateLeitnerBox(card,true,{active:true,assisted:false,orthographyOk:true});
+  assert(move.before===2&&move.after===3,'distributed correct recall unlocks box 3');
+  move=updateLeitnerBox(card,false,{active:true,assisted:false,orthographyOk:true});
+  assert(move.before===3&&move.after===2,'wrong answer moves exactly one box forward');
+  card.leitnerBox=4;card.skills={...defaultSkills(),retrieval:2,spelling:2};card.independentSuccesses=5;card.activeSuccessDays=[datePlusDays(-7),datePlusDays(-3),today()];card.maxActiveGapDays=4;card.coldRecallDays=[datePlusDays(-3),today()];card.intervalDays=7;
+  move=updateLeitnerBox(card,true,{active:true,assisted:false,orthographyOk:true});
+  assert(move.after===5&&isMastered(card),'box 5 requires the existing sustainable mastery criteria');
   return ok;
 })()
 `,context,{filename:'learning-integrity-runtime'});

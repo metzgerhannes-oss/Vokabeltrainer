@@ -62,6 +62,13 @@ Retrieval- und Spacing-Modells.
 3. **Verteiltes Lernen statt kurzfristigem Pauken**
    Spacing und Successive Relearning bestimmen Wiederholungen. Ein Wort gilt erst nach
    erfolgreichen Abrufen über mehrere Tage als nachhaltig gemeistert.
+   Der Karteikartenmodus visualisiert denselben Lernstand in fünf Leitner-Boxen
+   (Neu → Im Lernen → Bekannt → Sicher → Nachhaltig gemeistert). Die Antwort wird
+   geschrieben und automatisch bewertet; Selbstbewertung über „gewusst/nicht gewusst“
+   ersetzt keinen Abruf. Eine falsche aktive Antwort setzt die Karte genau eine Box zurück.
+   Eine richtige unabhängige Antwort kann sie höchstens eine Box weiterbewegen; die höheren
+   Boxen bleiben zusätzlich an zeitlich verteilte Abrufe gebunden. Box 5 ist ausschließlich
+   bei erfüllten Mastery-Kriterien erreichbar.
 
 4. **Feedback direkt nach dem Abruf**
    Fehler werden konkret rückgemeldet und später erneut abgefragt. Falsche Antworten führen
