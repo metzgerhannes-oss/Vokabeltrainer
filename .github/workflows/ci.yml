@@ -68,8 +68,8 @@ jobs:
 
       - name: Install Playwright browsers
         run: |
-          cp .github/browser-ci/package.json package.json
-          cp .github/browser-ci/package-lock.json package-lock.json
+          cp ci/browser/package.json package.json
+          cp ci/browser/package-lock.json package-lock.json
           npm ci --ignore-scripts
           npx playwright install --with-deps webkit chromium
 
