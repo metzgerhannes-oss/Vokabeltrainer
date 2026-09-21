@@ -237,3 +237,9 @@ body.learning-focus .help-popover{display:none!important}
   .first-contact-review-list>div{grid-template-columns:1fr;gap:4px}
   .first-contact-review-list strong{text-align:left}
 }
+
+
+/* Build-Version in der Kopfzeile */
+.app-title-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.version-badge{display:inline-flex;align-items:center;min-height:24px;padding:3px 8px;border:1px solid #cbd5e1;border-radius:999px;background:#f8fafc;color:#64748b;font-size:.72rem;font-weight:800;letter-spacing:.03em;white-space:nowrap}
+@media(max-width:620px){.app-title-row{gap:6px}.version-badge{font-size:.68rem;padding:2px 7px}}
