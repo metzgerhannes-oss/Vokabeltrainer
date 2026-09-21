@@ -31,10 +31,9 @@ function helpIcon(topic,label=''){
 function openAppHelp(){
   modal(`<div class="eyebrow">Kurze Orientierung</div><h2>So funktioniert der Vokabeltrainer</h2>
     <div class="help-overview">
-      <div><strong>1 · Heute</strong><span>Hier startest du normalerweise. Das Tagesziel wählt fällige und wichtige Wörter automatisch aus.</span></div>
-      <div><strong>2 · Neue Vokabeln</strong><span>Neue Listen werden zuerst fachlich geprüft. Danach schreibst du die Vokabeln ins Vokabelheft, deckst sie ab, erinnerst sie einmal und vergleichst. Erst dann beginnt das normale Lernen.</span></div>
-      <div><strong>3 · Fortschritt</strong><span>Hier siehst du Lernstand, Testchecks und Noten. XP sind davon bewusst getrennt.</span></div>
-      <div><strong>4 · Mehr</strong><span>Hier verwaltest du Profile, Lehrwerke, LRS-Einstellungen und Backups.</span></div>
+      <div><strong>1 · Heute</strong><span>Hier startest du. Die große Schaltfläche zeigt immer den nächsten sinnvollen Schritt – zum Beispiel Vokabelpaare prüfen, neue Wörter abschreiben oder fällige Wörter lernen.</span></div>
+      <div><strong>2 · Lernen</strong><span>Damit startest du direkt dieselbe nächste Lernaufgabe. Während des Lernens zeigt die App nur das, was du gerade brauchst.</span></div>
+      <div><strong>3 · Mehr</strong><span>Hier liegen Vokabeln, Lernsets, detaillierter Fortschritt und Einstellungen. Für das tägliche Lernen musst du dort normalerweise nicht hinein.</span></div>
     </div>
     <div class="notice subtle top-space"><strong>Wichtig:</strong> „testbereit“, „langzeitstabil“ und „nachhaltig gemeistert“ sind unterschiedliche Stufen. Die kleinen ?-Symbole erklären Begriffe direkt an der Stelle, an der sie auftauchen.</div>
     <div class="modal-actions"><button value="ok" class="primary">Verstanden</button></div>`);
