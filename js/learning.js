@@ -97,13 +97,83 @@ function finishPracticeTest(){
   $('#sessionPill').textContent='Fertig'; $('#practiceWrongBtn')?.addEventListener('click',()=>{const ids=wrong.map(a=>({wordId:a.wordId,setLinkId:a.setLinkId||''}));session=null;startSession('adaptive',null,ids,false)}); $('#practiceScaleBtn').onclick=()=>openGradeScaleSettings(state.activeSubject); $('#doneBtn').onclick=()=>{session=null;showView('dashboardView');renderAll()};
 }
 
+function firstContactBlockSize(){return learner()?.lrsMode?4:5}
+function firstContactLink(linkId){return (state.setVocabulary||[]).find(x=>x.id===linkId)||null}
+function firstContactPendingWords(setId){return setWords(setId).filter(w=>!w.firstContactCompletedAt)}
+function startFirstContact(setId){
+  const set=state.sets.find(x=>x.id===setId&&x.learnerId===state.activeLearnerId);if(!set)return;
+  if(setNeedsPairReview(set)){toast('Bitte zuerst die Vokabelpaare prüfen.','warn');setTimeout(()=>openSetPairAudit?.(set.id),80);return}
+  const pending=firstContactPendingWords(setId);
+  if(!pending.length){toast('Diese Lektion ist bereits kennengelernt.','good');showView('homeView');renderAll();return}
+  const first=pending[0],link=firstContactLink(first.setLinkId);
+  session={mode:'firstContact',setId,queue:pending.map(w=>w.setLinkId),index:0,phase:link?.firstContactCopiedAt?'recall':'copy',blockSize:firstContactBlockSize(),startedAt:new Date().toISOString()};
+  showView('learnView');renderFirstContact();
+}
+function firstContactWord(){const linkId=session?.queue?.[session?.index||0];return linkId?wordByLinkId(linkId):null}
+function firstContactProgressText(){
+  const status=firstContactStatus(session?.setId||'');return status.total?`${status.completed} von ${status.total} kennengelernt`:'';
+}
+function firstContactHeader(eyebrow){
+  const set=state.sets.find(x=>x.id===session?.setId);return `<div class="first-contact-head"><div><div class="eyebrow">${esc(eyebrow)}</div><h2>${esc(set?.title||'Vokabeln kennenlernen')}</h2></div><span class="pill">${esc(firstContactProgressText())}</span></div>`;
+}
+function renderFirstContact(){
+  if(!session||session.mode!=='firstContact')return;
+  if(session.index>=session.queue.length){renderFirstContactFinish();return}
+  const w=firstContactWord();if(!w){session.index++;renderFirstContact();return}
+  const link=firstContactLink(w.setLinkId);if(link?.firstContactCompletedAt){session.index++;renderFirstContact();return}
+  $('#modePill').textContent='Kennenlernen';
+  const status=firstContactStatus(session.setId);$('#sessionPill').textContent=`${Math.min(status.completed+1,status.total)} / ${status.total}`;
+  if(session.phase==='blockRecall'||session.phase==='blockReveal'){renderFirstContactBlockReview();return}
+  if(session.phase==='recall')return renderFirstContactRecall(w);
+  if(session.phase==='compare')return renderFirstContactCompare(w);
+  renderFirstContactCopy(w);
+}
+function renderFirstContactCopy(w){
+  const lrs=!!learner()?.lrsMode;
+  $('#studyArea').innerHTML=`<div class="study-card first-contact-card">${firstContactHeader('1 · Anschauen & abschreiben')}<div class="first-contact-pair"><strong>${esc(w.term)}</strong><span>${esc(w.translation)}</span>${w.extra?`<small>${esc(w.extra)}</small>`:''}</div><p class="first-contact-instruction">Schreibe die Vokabel jetzt <strong>in dein Vokabelheft</strong>. Schau dabei bewusst auf die genaue Schreibweise.</p>${lrs?'<div class="notice subtle">Nimm dir Zeit. Wichtig ist die genaue Wortform, nicht die Geschwindigkeit.</div>':''}<div class="row gap center-actions wrap top-space"><button id="firstContactSpeakBtn" class="ghost" type="button">🔊 Anhören</button><button id="firstContactCopiedBtn" class="primary" type="button">Im Heft abgeschrieben</button></div></div>`;
+  $('#firstContactSpeakBtn').onclick=()=>speak(w.term);
+  $('#firstContactCopiedBtn').onclick=()=>{const link=firstContactLink(w.setLinkId);if(link&&!link.firstContactCopiedAt)link.firstContactCopiedAt=new Date().toISOString();session.phase='recall';persistOnly();renderFirstContact()};
+}
+function renderFirstContactRecall(w){
+  $('#studyArea').innerHTML=`<div class="study-card first-contact-card">${firstContactHeader('2 · Abdecken & erinnern')}<div class="first-contact-memory"><span>Bedeutung</span><strong>${esc(w.translation)}</strong></div><p class="first-contact-instruction">Decke die Vokabel im Heft ab. Schreibe sie <strong>noch einmal aus dem Kopf</strong>.</p><div class="notice subtle">Die App bewertet deine Handschrift nicht. Du vergleichst gleich selbst mit der geprüften Wortform.</div><div class="row center-actions top-space"><button id="firstContactRevealBtn" class="primary" type="button">Aufdecken & vergleichen</button></div></div>`;
+  $('#firstContactRevealBtn').onclick=()=>{session.phase='compare';renderFirstContact()};
+}
+function renderFirstContactCompare(w){
+  const lrs=!!learner()?.lrsMode;
+  $('#studyArea').innerHTML=`<div class="study-card first-contact-card">${firstContactHeader('3 · Vergleichen')}<div class="first-contact-compare"><span>Geprüfte Wortform</span><strong>${esc(w.term)}</strong><small>${esc(w.translation)}</small></div><p class="first-contact-instruction">Vergleiche Buchstabe für Buchstabe mit deiner zweiten Abschrift.</p><div class="row gap center-actions wrap top-space"><button id="firstContactRetryBtn" class="ghost" type="button">${lrs?'Noch einmal anschauen':'Noch einmal'}</button><button id="firstContactCorrectBtn" class="primary" type="button">Stimmt</button></div></div>`;
+  $('#firstContactRetryBtn').onclick=()=>{session.phase='copy';renderFirstContact()};
+  $('#firstContactCorrectBtn').onclick=()=>{
+    const link=firstContactLink(w.setLinkId),now=new Date().toISOString();if(link){link.firstContactCopiedAt=link.firstContactCopiedAt||now;link.firstContactRecalledAt=now;link.firstContactCompletedAt=now}
+    recordActivity('firstContact',{setId:session.setId,setLinkId:w.setLinkId,vocabId:w.vocabId,senseId:w.senseId});persistOnly();session.index++;
+    if(session.index<session.queue.length&&session.index%session.blockSize===0){session.phase='blockRecall'}else{const next=firstContactWord(),nextLink=next&&firstContactLink(next.setLinkId);session.phase=nextLink?.firstContactCopiedAt?'recall':'copy'}
+    renderFirstContact();
+  };
+}
+function renderFirstContactBlockReview(){
+  const end=session.index,start=Math.max(0,end-session.blockSize),words=session.queue.slice(start,end).map(wordByLinkId).filter(Boolean),revealed=session.phase==='blockReveal';
+  $('#modePill').textContent='Kennenlernen · kurze Wiederholung';$('#sessionPill').textContent=`Block ${Math.ceil(end/session.blockSize)}`;
+  $('#studyArea').innerHTML=`<div class="study-card first-contact-card">${firstContactHeader('Kurze Wiederholung')}<p class="first-contact-instruction">Versuche zu jeder Bedeutung die Vokabel zuerst <strong>im Kopf abzurufen</strong>.</p><div class="first-contact-review-list">${words.map(w=>`<div><span>${esc(w.translation)}</span><strong class="${revealed?'':'first-contact-hidden-word'}">${revealed?esc(w.term):'••••••'}</strong></div>`).join('')}</div><div class="row center-actions top-space">${revealed?'<button id="firstContactNextBlockBtn" class="primary" type="button">Nächster Block</button>':'<button id="firstContactRevealBlockBtn" class="primary" type="button">Antworten aufdecken</button>'}</div></div>`;
+  if(revealed)$('#firstContactNextBlockBtn').onclick=()=>{const next=firstContactWord(),link=next&&firstContactLink(next.setLinkId);session.phase=link?.firstContactCopiedAt?'recall':'copy';renderFirstContact()};
+  else $('#firstContactRevealBlockBtn').onclick=()=>{session.phase='blockReveal';renderFirstContact()};
+}
+function renderFirstContactFinish(){
+  const setId=session?.setId,set=state.sets.find(x=>x.id===setId),status=firstContactStatus(setId);
+  $('#modePill').textContent='Kennenlernen';$('#sessionPill').textContent='Fertig';
+  $('#studyArea').innerHTML=`<div class="study-card first-contact-card first-contact-finish"><div class="eyebrow">Lektion vorbereitet</div><div class="study-prompt">✓</div><h2>${esc(set?.title||'Lernset')}</h2><p><strong>${status.completed} von ${status.total}</strong> Vokabeln wurden abgeschrieben, abgedeckt und aktiv erinnert.</p><div class="notice good">Jetzt ist die Lektion für den normalen Lernpfad freigegeben.</div><div class="row gap center-actions wrap top-space"><button id="firstContactDoneBtn" class="secondary" type="button">Zur Übersicht</button><button id="firstContactLearnBtn" class="primary" type="button">Jetzt lernen</button></div></div>`;
+  renderAll();persistOnly();
+  $('#firstContactDoneBtn').onclick=()=>{session=null;showView('homeView');renderAll()};
+  $('#firstContactLearnBtn').onclick=()=>{session=null;startSession('adaptive',setId,null,false)};
+}
+
 function startSession(mode='adaptive',setId=null,wordIds=null,isDaily=false){
   const queue=buildQueue(mode,setId,wordIds); if(!queue.length){toast('Noch keine geprüften Vokabeln vorhanden.','warn');return}
   const blocked=queue.find(w=>setNeedsPairReview(state.sets.find(s=>s.id===w.setId)));
   if(blocked){const blockedSet=state.sets.find(s=>s.id===blocked.setId);toast('Vor dem Lernen bitte zuerst die erkannten Vokabelpaare bestätigen.','warn');showView('homeView');renderAll();setTimeout(()=>openSetPairAudit?.(blockedSet?.id),80);return}
+  const introBlocked=queue.find(w=>setNeedsFirstContact(state.sets.find(s=>s.id===w.setId)));
+  if(introBlocked){const blockedSet=state.sets.find(s=>s.id===introBlocked.setId);toast('Neue Vokabeln werden zuerst kennengelernt und abgeschrieben.','warn');startFirstContact(blockedSet?.id);return}
   session={mode,setId,queue:queue.map(quizQueueRef),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString(),currentQuestion:null,currentQuestionIssues:[]}; showView('learnView'); $('#modePill').textContent=modeLabel(mode); renderStudy();
 }
-function modeLabel(m){return ({adaptive:'Adaptiv',flash:'Wortblitz',shower:'Vokabeldusche',chunks:'Wortbausteine',handwriting:'Handschrift',recognition:'Erkennen',recall:'Abrufen',reverseRecall:'Bedeutung abrufen',spelling:'Schreiben',listening:'Hören',context:'Kontext',latinGrammar:'Latein Formen',practiceTest:'Prüfung'})[m]||m}
+function modeLabel(m){return ({adaptive:'Adaptiv',flash:'Wortblitz',shower:'Vokabeldusche',chunks:'Wortbausteine',handwriting:'Handschrift',firstContact:'Kennenlernen',recognition:'Erkennen',recall:'Abrufen',reverseRecall:'Bedeutung abrufen',spelling:'Schreiben',listening:'Hören',context:'Kontext',latinGrammar:'Latein Formen',practiceTest:'Prüfung'})[m]||m}
 function currentWord(){const token=session?.queue?.[session.index];return resolveQuizQueueRef(token,session?.setId||'')}
 function renderStudy(){
   if(!session||session.index>=session.queue.length){finishSession();return}
