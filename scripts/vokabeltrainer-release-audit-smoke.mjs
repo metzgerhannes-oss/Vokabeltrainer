@@ -50,6 +50,7 @@ const passed=vm.runInContext(`
 
   assert(streakActivityTypes.has('latinGrammar'),'Latin grammar counts as an active learning day');
   assert(streakActivityTypes.has('handwriting'),'handwriting counts as an active learning day');
+  assert(streakActivityTypes.has('firstContact'),'first contact counts as an active learning day without granting mastery');
   assert(streakActivityTypes.has('practiceTest'),'completed testcheck counts as an active learning day');
 
   return ok;
@@ -62,6 +63,7 @@ const ci=fs.readFileSync('.github/workflows/ci.yml','utf8');
 const pages=fs.readFileSync('.github/workflows/pages.yml','utf8');
 const staticChecks=[
   [learning.includes("recordActivity('practiceTest'"),'testcheck completion records activity'],
+  [learning.includes("recordActivity('firstContact'")&&learning.includes('renderFirstContactBlockReview'),'first contact records preparation and includes block review'],
   [io.includes("JSON.stringify(backupSummary(check))===JSON.stringify(backupSummary(state))"),'restore compares the full persisted summary'],
   [io.includes("persistenceMode==='indexeddb'")&&io.includes("localStorage.getItem(STORAGE_KEY)"),'restore verifies both persistence backends'],
   [ci.includes('actions/checkout@v7')&&ci.includes('actions/setup-node@v7'),'CI uses current Node-24 GitHub Actions'],
