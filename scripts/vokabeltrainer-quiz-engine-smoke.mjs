@@ -60,6 +60,11 @@ const passed=vm.runInContext(`
   const strict=makeQuizQuestion(wordA,'spelling',{targets:["can't"]});
   assert(gradeQuizQuestion(strict,"can't").correct===true,'strict spelling accepts exact apostrophe');
   assert(gradeQuizQuestion(strict,'cant').correct===false,'strict spelling rejects missing apostrophe');
+  const ellipsisStrict=makeQuizQuestion(wordA,'spelling',{targets:['Where is ...?']});
+  assert(gradeQuizQuestion(ellipsisStrict,'Where is…?').correct===true,'ellipsis glyph variant is accepted in sentence spelling');
+  assert(gradeQuizQuestion(ellipsisStrict,'Where is ..... ?').correct===true,'ellipsis length and spacing are ignored in sentence spelling');
+  assert(gradeQuizQuestion(ellipsisStrict,'Where is?').correct===true,'ellipsis placeholder itself is optional in sentence spelling');
+  assert(quizSemanticMatches('How many …?',['How many ...?'])===true,'semantic grading ignores unicode ellipsis variants');
 
   const issues=validateQuizQuestion(qRecall);
   assert(issues.length===0,'valid question passes integrity gate');

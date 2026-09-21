@@ -46,16 +46,24 @@ function spendBattleTicket(subject=state.activeSubject){
   const before=battleTickets(subject);if(before<1)return false;l.battleTickets[subject]=before-1;return true;
 }
 
-function semanticNormalize(s){return String(s||'').trim().toLowerCase().normalize('NFKC').replace(/[’‘`´]/g,"'").replace(/[.,;:!?()[\]{}"']/g,'').replace(/\s+/g,' ')}
+function semanticNormalize(s){return String(s||'').trim().toLowerCase().normalize('NFKC').replace(/[’‘`´]/g,"'").replace(/[….,;:!?()[\]{}"']/g,'').replace(/\s+/g,' ')}
 function normalize(s){return semanticNormalize(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
 function orthographyNormalize(value){
   return String(value||'').normalize('NFKC').toLowerCase().replace(/[’‘`´]/g,"'").trim().replace(/\s+/g,' ');
 }
+function hasEllipsisPlaceholder(value){return /…|\.{2,}/.test(String(value||''))}
+function orthographyNormalizeForTarget(value,target){
+  let out=orthographyNormalize(value);
+  if(hasEllipsisPlaceholder(target)){
+    out=out.replace(/\s*(?:…|\.{2,})\s*/g,' ').replace(/\s+([?!])/g,'$1').replace(/\s+/g,' ').trim();
+  }
+  return out;
+}
 function spellingMatches(answer,target){
   if(typeof quizOrthographyMatches==='function')return quizOrthographyMatches(answer,target);
-  const a=orthographyNormalize(answer),targets=[...(Array.isArray(target)?target:[target])].map(x=>String(x||'').trim()).filter(Boolean);
-  if(!a)return false;
-  return targets.some(t=>a===orthographyNormalize(t));
+  const targets=[...(Array.isArray(target)?target:[target])].map(x=>String(x||'').trim()).filter(Boolean);
+  if(!String(answer||'').trim())return false;
+  return targets.some(t=>orthographyNormalizeForTarget(answer,t)===orthographyNormalizeForTarget(t,t));
 }
 function answerMatches(answer,target){
   if(typeof quizSemanticMatches==='function')return quizSemanticMatches(answer,target);
