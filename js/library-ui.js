@@ -17,7 +17,7 @@ renderLibrary=function(){
   const filtered=searchGlobalLibrary({subject,query,bookId:bookFilter,section:sectionFilter,setId:setFilter});
 
   $('#librarySetFilter').innerHTML='<option value="">Alle Verwendungen</option>'+sets.map(set=>{const owner=state.learners.find(l=>l.id===set.learnerId);return '<option value="'+esc(set.id)+'" '+(setFilter===set.id?'selected':'')+'>'+esc(owner?.name||'Profil')+' · '+esc(set.title)+'</option>'}).join('');
-  if($('#libraryBookFilter'))$('#libraryBookFilter').innerHTML='<option value="">Alle Lehrwerke</option>'+books.map(b=>'<option value="'+esc(b.id)+'" '+(bookFilter===b.id?'selected':'')+'>'+esc(b.title||formatIsbn(b.isbn13))+(b.isbn13?' · '+esc(formatIsbn(b.isbn13)):'')+'</option>').join('');
+  if($('#libraryBookFilter'))$('#libraryBookFilter').innerHTML='<option value="">Alle Lehrwerke</option>'+books.map(b=>'<option value="'+esc(b.id)+'" '+(bookFilter===b.id?'selected':'')+'>'+esc(b.title||formatIsbn(b.isbn13))+(b.builtinSource?' · geprüft':'')+(b.isbn13?' · '+esc(formatIsbn(b.isbn13)):'')+'</option>').join('');
   if($('#librarySectionFilter')){
     $('#librarySectionFilter').disabled=!bookFilter;
     $('#librarySectionFilter').innerHTML='<option value="">Alle Abschnitte</option>'+sections.map(x=>'<option value="'+esc(x)+'" '+(sectionFilter===x?'selected':'')+'>'+esc(x)+'</option>').join('');
