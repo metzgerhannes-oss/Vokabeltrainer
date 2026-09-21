@@ -55,6 +55,8 @@ try{
   assert(await page.evaluate(()=>battleTickets())===0,'attack consumes exactly one earned battle ticket');
   assert(await page.evaluate(()=>learner().campaignLog.length)===1,'battle result is stored in campaign log');
   assert(await page.evaluate(()=>learner().campaignLog[0]?.attack)==='ram','selected attack is stored only as campaign presentation metadata');
+  assert(await page.evaluate(()=>subjectProgress().pct)===100,'battle presentation does not alter academic mastery');
+  await page.waitForFunction(()=>document.querySelector('#battleFortressName')?.textContent?.includes('Wachturm'));
   assert((await page.locator('#battleFortressName').textContent())?.includes('Wachturm'),'winning advances to a visually different fortress');
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer battle UI smoke: passed');
