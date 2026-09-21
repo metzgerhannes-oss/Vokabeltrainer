@@ -72,7 +72,7 @@ const PROGRESS_FIELDS = new Set([
   'skills','level','repetitions','successes','independentSuccesses','assistedSuccesses','failures','intervalDays','dueDate',
   'lastReviewedAt','lastSuccessAt','lastActiveSuccessAt','activeSuccessDays','activePracticeDays','maxActiveGapDays','coldRecallDays',
   'coldRecallSuccesses','recentActiveResults','practiceDays','modesSeen','grammarSkills','grammarSuccessDays','errorProfile',
-  'masteredAt','lastMasteredAt','confusionWith'
+  'masteredAt','lastMasteredAt','confusionWith','leitnerBox','leitnerUpdatedAt'
 ]);
 
 
@@ -89,7 +89,7 @@ function makeLearnerVocabulary(learnerId,vocabId,senseIdOrOpts='',opts={}){
     practiceDays:Array.isArray(opts.practiceDays)?opts.practiceDays:[],modesSeen:Array.isArray(opts.modesSeen)?opts.modesSeen:[],
     grammarSkills:{genitive:0,gender:0,principalParts:0,form:0,...(opts.grammarSkills||{})},grammarSuccessDays:Array.isArray(opts.grammarSuccessDays)?opts.grammarSuccessDays:[],
     errorProfile:{meaning:0,retrieval:0,spelling:0,listening:0,context:0,grammar:0,...(opts.errorProfile||{})},
-    masteredAt:opts.masteredAt||null,lastMasteredAt:opts.lastMasteredAt||null,confusionWith:Array.isArray(opts.confusionWith)?opts.confusionWith:[]
+    masteredAt:opts.masteredAt||null,lastMasteredAt:opts.lastMasteredAt||null,confusionWith:Array.isArray(opts.confusionWith)?opts.confusionWith:[],leitnerBox:clamp(Math.round(Number(opts.leitnerBox)||0),0,5),leitnerUpdatedAt:opts.leitnerUpdatedAt||null
   };
 }
 function makeVocabularySense(translation,opts={}){
