@@ -1,12 +1,14 @@
 'use strict';
 
-const VERSION = '0.18.8';
+const VERSION = '0.18.9';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';
 const DB_KEY = 'main';
 const MIGRATION_MARKER = 'vokabeltrainer_v08_idb_migrated';
 const VOCABULARY_PURGE_MARKER = 'vokabeltrainer_vocab_purge_2026_09_21_v1';
+const BUILTIN_ONLY_RESET_MARKER = 'vokabeltrainer_builtin_only_reset_2026_09_21_v1';
+let startupBuiltinOnlyResetApplied = false;
 let persistenceMode = 'indexeddb';
 let persistChain = Promise.resolve();
 let persistRunning = false;

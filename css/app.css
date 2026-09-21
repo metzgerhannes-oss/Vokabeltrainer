@@ -555,6 +555,11 @@ body.battle-immersive{overflow:hidden;background:#0f172a}.battle-immersive .topb
 }
 
 .content-picker-head{margin-top:10px}
+.vocab-range-picker{display:grid;grid-template-columns:auto 86px 86px auto;gap:8px;align-items:end;margin:8px 0 10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#f8fafc}
+.vocab-range-picker>span{align-self:center;font-weight:800;color:#475569}
+.vocab-range-picker label{display:grid;gap:3px;margin:0!important;font-size:.78rem;color:#64748b}
+.vocab-range-picker input{width:100%;margin:0!important;padding:8px 9px;text-align:center}
+@media(max-width:520px){.vocab-range-picker{grid-template-columns:1fr 1fr}.vocab-range-picker>span{grid-column:1/-1}.vocab-range-picker button{grid-column:1/-1;width:100%}}
 .vocab-picker{display:grid;gap:7px;max-height:min(42vh,420px);overflow:auto;padding:4px 2px 8px;overscroll-behavior:contain}
 .vocab-picker-row{display:grid;grid-template-columns:24px 28px minmax(0,1fr);align-items:start;gap:8px;padding:10px 12px;border:1px solid #dbe2ea;border-radius:12px;background:#fff;cursor:pointer}
 .vocab-picker-row input{width:20px;height:20px;margin:2px 0 0}
