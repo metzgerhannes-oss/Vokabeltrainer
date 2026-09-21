@@ -196,6 +196,7 @@ function dailyPlanStatus(plan=buildDailyPlan()){
   return {total:pairs.length,done:done.length,remaining:remaining.length,remainingIds:remaining.map(x=>x.word.id),remainingRefs:remaining.map(x=>x.ref),units:remaining.length?Math.ceil(remaining.length/plan.sessionSize):0};
 }
 function startDailyTodo(){
+  const reviewSet=mySets().find(setNeedsPairReview);if(reviewSet){showView('homeView');renderAll();setTimeout(()=>openSetPairAudit?.(reviewSet.id),40);return}
   const introSet=mySets().find(s=>!setNeedsPairReview(s)&&setNeedsFirstContact(s));if(introSet){startFirstContact(introSet.id);return}
   const pending=seriesScopePending(),ctx=upcomingTestContext(); if(pending&&(!ctx||pending.date<=ctx.date)){openTestDatePlanner();return}
   const plan=buildDailyPlan(),status=dailyPlanStatus(plan);
