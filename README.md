@@ -10,7 +10,17 @@ Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in diese
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
 
-## v0.18.9 – Testplanung und Lernen ohne Test klar getrennt
+## v0.18.9 – Von-bis-Auswahl & sauberer Daten-Neustart
+
+- in „Test planen“ und „Ohne Test lernen“ können Vokabeln jetzt zusätzlich als inklusiver Bereich **Von–Bis** ausgewählt werden
+- „Nur Bereich“ setzt exakt die gewählte Nummernspanne; Einzelhäkchen sowie „Alle/Keine“ bleiben weiterhin möglich
+- einmaliger Bereinigungsreset entfernt alte Lernbereiche, Tests, Noten, Aktivitäten, Lernstände, Buchzuordnungen und alle nicht fest eingebauten Vokabeln
+- Kinderprofile und ihre Grundeinstellungen bleiben erhalten, damit sie nicht neu eingerichtet werden müssen
+- anschließend wird ausschließlich die fotografisch geprüfte feste Camden-Town-Bibliothek wieder aufgebaut
+- bei aktivem Familiensync wird ein Eltern-Gerät versuchen, den bereinigten Stand kontrolliert in die Cloud zu übernehmen
+- explizit ausgewählte Testvokabeln bleiben nun auch nach Speicherung/Reload als exakte Auswahl erhalten
+
+## v0.18.8 – Testplanung und Lernen ohne Test klar getrennt
 
 - steht ein Test an, ist **„Test planen“** der Standardweg und wird im Elternbereich zuerst angeboten
 - im Testplan werden Termin und konkrete Vokabeln direkt gewählt; die ausgewählten Wörter werden automatisch zum Lernstoff des Kindes
