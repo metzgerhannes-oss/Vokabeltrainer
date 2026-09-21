@@ -217,7 +217,7 @@ function renderToday(){
   const recs=[];
   recs.push({icon:'✦',title:'Adaptiv lernen',sub:due.length?`${Math.min(due.length,l.lrsMode?6:10)} fällige Wörter`:'Schwächste Wörter festigen',mode:'adaptive'});
   const boxes=leitnerDistribution(),cardDue=schoolYearWords().filter(w=>!w.dueDate||w.dueDate<=today()).length;
-  recs.push({icon:'▥',title:'Karteikarten',sub:`schriftlich · 5 Boxen · ${cardDue} fällig`,mode:'cards'});
+  recs.push({icon:'▥',title:'Karteikarten',sub:`schriftlich · 5 Boxen · ${cardDue} fällig · ${boxes[5]} gemeistert`,mode:'cards'});
   recs.push({icon:'⚡',title:'Wortblitz',sub:l.lrsMode?'ruhiges Tempo · Audio zuerst':'Leseflüssigkeit ohne Wertungsdruck',mode:'flash'});
   recs.push({icon:'🔊',title:'Vokabeldusche',sub:'aktiv mit Denkpause oder passiv anhören',mode:'shower'});
   recs.push({icon:'🧩',title:'Wortbausteine',sub:weak.length?'Schreibmuster gezielt festigen':'Bausteine zusammensetzen',mode:'chunks'});
