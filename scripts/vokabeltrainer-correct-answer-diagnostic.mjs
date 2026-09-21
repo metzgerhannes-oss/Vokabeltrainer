@@ -16,6 +16,7 @@ async function seed(){
     state.sets.push(set);
     attachVocabularyToSet(set.id,{term:'look',translation:'schauen',source:'diag',verified:true,firstContactCopiedAt:'test',firstContactRecalledAt:'test',firstContactCompletedAt:'test'});
     attachVocabularyToSet(set.id,{term:'write',translation:'schreiben',source:'diag',verified:true,firstContactCopiedAt:'test',firstContactRecalledAt:'test',firstContactCompletedAt:'test'});
+    attachVocabularyToSet(set.id,{term:'Nice to meet you.',translation:'Nett, dich kennen zu lernen.',source:'diag',verified:true,firstContactCopiedAt:'test',firstContactRecalledAt:'test',firstContactCompletedAt:'test'});
     const word=setWords(set.id)[0];
     word.translation='ansehen';
     rebuildWordIndexes();
@@ -73,6 +74,21 @@ try{
   await page.waitForSelector('#continueStudyBtn');
   const choice=await page.evaluate(()=>({feedback:document.querySelector('.feedback')?.textContent||'',last:session.results.at(-1)}));
   assert(/Richtig/.test(choice.feedback)&&choice.last?.correct===true,'recognition exact stored choice is correct');
+
+  await page.click('#backHomeBtn');
+  await page.evaluate(()=>{const w=setWords('diag_set').find(x=>x.term==='Nice to meet you.');startSession('recognition','diag_set',[quizQueueRef(w)],false)});
+  await page.waitForSelector('[data-answer]');
+  const screenshotCase=page.locator('[data-answer]').filter({hasText:'Nett, dich kennen zu lernen.'}).first();
+  assert(await screenshotCase.count()===1,'screenshot translation is rendered as a recognition option');
+  await screenshotCase.click();
+  await page.waitForSelector('#continueStudyBtn');
+  const screenshotResult=await page.evaluate(()=>({
+    feedback:document.querySelector('.feedback')?.textContent||'',
+    last:session.results.at(-1),
+    question:session.currentQuestion
+  }));
+  assert(/Richtig/.test(screenshotResult.feedback)&&screenshotResult.last?.correct===true,'Nice to meet you screenshot choice must be graded correct');
+  assert(screenshotResult.question?.prompt==='Nice to meet you.'&&screenshotResult.question?.targets?.includes('Nett, dich kennen zu lernen.'),'screenshot question snapshot keeps the displayed pair');
 
   await page.click('#backHomeBtn');
   await page.evaluate(()=>{const w=setWords('diag_set').find(x=>x.term==='look');startSession('recognition','diag_set',[quizQueueRef(w)],false)});
