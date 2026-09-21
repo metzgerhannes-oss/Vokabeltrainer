@@ -25,14 +25,16 @@ try{
   phone.on('pageerror',e=>errors.push(String(e?.message||e)));
   response=await phone.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'mobile app loads');
-  await phone.waitForSelector('[data-help="dailyGoal"]');
-  await phone.click('[data-help="dailyGoal"]');
+  assert(await phone.locator('.today-focus [data-help]').count()===0,'daily child path stays free of contextual-help clutter');
+  await phone.locator('#progressDisclosure > summary').click();
+  await phone.waitForSelector('#progressDisclosure[open] [data-help="mastery"]');
+  await phone.click('#progressDisclosure [data-help="mastery"]');
   await phone.waitForSelector('#helpPopover:not([hidden])');
   text=await phone.locator('#helpPopover').textContent();
-  assert(text?.includes('Tagesziel')&&text?.includes('automatisch'),'tap shows persistent contextual help on iPhone');
-  const expanded=await phone.locator('[data-help="dailyGoal"]').getAttribute('aria-expanded');
+  assert(text?.includes('Nachhaltig gemeistert'),'tap shows contextual help in the secondary progress area');
+  const expanded=await phone.locator('#progressDisclosure [data-help="mastery"]').getAttribute('aria-expanded');
   assert(expanded==='true','open touch help exposes its expanded state');
-  await phone.click('[data-help="dailyGoal"]');
+  await phone.click('#progressDisclosure [data-help="mastery"]');
   await phone.waitForFunction(()=>document.querySelector('#helpPopover')?.hidden===true);
 
   await phone.click('#helpBtn');
@@ -46,7 +48,7 @@ try{
 
   console.log('Vokabeltrainer help UI WebKit smoke: passed');
   console.log('✓ desktop mouseover shows contextual help');
-  console.log('✓ iPhone tap opens and closes contextual help');
+  console.log('✓ core child path stays uncluttered; iPhone detail help opens and closes');
   console.log('✓ central help explains the main navigation');
 }finally{
   await browser.close();
