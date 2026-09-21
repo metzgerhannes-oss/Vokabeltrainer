@@ -232,7 +232,7 @@ function leitnerBoxesHtml(w){
 }
 function renderLeitnerCard(w){
   session.currentSubmode='cards';
-  const q=setCurrentQuizQuestion(w,'recall').question,box=leitnerBox(w);
+  const q=setCurrentQuizQuestion(w,'recall',{strictOrthography:true}).question,box=leitnerBox(w);
   $('#modePill').textContent='Karteikarten';
   $('#studyArea').innerHTML=`<div class="study-card leitner-card"><div class="eyebrow">Karteikarten · Box ${box} von 5</div>${leitnerBoxesHtml(w)}<div class="study-prompt">${esc(q.prompt)}</div><div class="study-sub">Schreibe die Vokabel vollständig aus dem Gedächtnis. Nur eine automatisch richtige Antwort kann die Karte weiterbewegen.</div><input id="answerField" class="answer-input" aria-label="Deine Antwort" autocomplete="off" autocapitalize="none" spellcheck="false"><div class="top-space"><button id="answerBtn" class="primary">Prüfen</button></div></div>`;
   const submit=()=>gradeLeitnerCard(w,$('#answerField').value,q);$('#answerBtn').onclick=submit;$('#answerField').onkeydown=e=>{if(e.key==='Enter')submit()};setTimeout(()=>$('#answerField')?.focus(),40);
