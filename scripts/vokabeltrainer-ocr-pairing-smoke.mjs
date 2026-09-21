@@ -157,9 +157,46 @@ const result=vm.runInContext(`
   ])if(!c3pairs.includes(expected))throw new Error('Camden page 3 OCR pair missing: '+expected+' | '+c3pairs.join(' | '));
   const shut=c3.rows.find(r=>r.term==='shut up'),hes=c3.rows.find(r=>r.term==='he’s');
   if(shut?.extra!=='informal'||hes?.extra!=='= he is')throw new Error('Camden metadata was not kept as extra information: '+JSON.stringify({shut,hes}));
-  if(c3.rows.some(r=>/Theme 1|^[0-9]+$/.test(r.term||'')||/yes ↔ no|^bed$/.test(r.translation||'')))throw new Error('Camden page 3 kept heading, yellow marker or third-column note: '+JSON.stringify(c3.rows));
+  const guidedBook=makeBook('','english',{id:'book_builtin_camden_town_1',title:'Camden Town 1'});
+  guidedBook.builtinSource='verified-book-photos';state.books.push(guidedBook);
+  const addGuided=(page,term,translation,position)=>{
+    const v=makeVocabulary('english',term,translation,{verifiedAt:'2026-09-21T17:30:00.000Z'});state.vocabulary.push(v);
+    const sense=primarySense(v);const br=ensureBookVocabulary(guidedBook.id,v.id,{senseId:sense.id,section:'Welcome to Camden Town!',position,termOverride:term,translationOverride:translation,verifiedAt:'2026-09-21T17:30:00.000Z'});
+    br.sourcePage=page;br.source='builtin-verified-book-photo';
+  };
+  addGuided(170,'What can you see?','Was siehst du?',1);
+  addGuided(170,'can','können',2);
+  addGuided(170,'to see','sehen',3);
+  addGuided(170,'car','Auto',4);
+  addGuided(171,'phone number','Telefonnummer',5);
+  addGuided(171,'to find','finden',6);
+  rebuildWordIndexes();
 
+  const guided170=[
+    header,
+    camdenRow('170',35,20,40,20,96,1,1),
+    camdenRow('°What can you sce?',90,90,220,22,82,2,1),camdenRow('Was siehst du?',350,90,160,22,96,2,1),
+    camdenRow('can /kæn/',90,130,130,22,96,3,1),camdenRow('konnen',350,130,95,22,75,3,1),
+    camdenRow('YELLOW BOX IGNORE',650,130,170,22,96,3,1)
+  ].join('\\n');
+  const g170=tesseractTsvToVocabulary(guided170,'english',{profile:'camden-town'});
+  if(!g170.bookGuided||g170.bookPage!==170||g170.rows.length!==4)throw new Error('Camden known page number did not restore verified page rows: '+JSON.stringify(g170));
+  for(const expected of ['What can you see?=Was siehst du?','can=können','to see=sehen','car=Auto']){
+    if(!g170.rows.some(r=>r.term+'='+r.translation===expected))throw new Error('Verified Camden page row missing: '+expected+' '+JSON.stringify(g170.rows));
+  }
+  if(g170.rows.some(r=>/YELLOW|kæn|konnen/.test((r.term||'')+' '+(r.translation||''))))throw new Error('Verified Camden guidance kept OCR noise instead of canonical book data');
 
+  const guided171=[
+    header,
+    camdenRow('phone number /fəʊn ˌnʌmbə/',90,80,245,22,90,1,1),camdenRow('Telefonnummer',350,80,150,22,96,1,1),
+    camdenRow('to find /faɪnd/',90,120,140,22,90,2,1),camdenRow('finden',350,120,90,22,96,2,1),
+    camdenRow('5',35,160,18,20,92,3,1),camdenRow('yellow exercise text',620,160,180,22,96,3,2)
+  ].join('\\n');
+  const g171=tesseractTsvToVocabulary(guided171,'english',{profile:'camden-town'});
+  if(!g171.bookGuided||g171.bookPage!==171||g171.rows.length!==2)throw new Error('Camden fuzzy page guidance failed: '+JSON.stringify(g171));
+  if(!g171.rows.every(r=>r.origin==='verified-book'))throw new Error('Camden guided rows are not marked as verified-book');
+
+  state=defaultState();state.activeSubject='english';
   const book=upsertBook('9780140449136','english',{title:'Test Book'}).book;
   const photoSet={id:'photo_set',learnerId:'learner_demo',subject:'english',title:'Unit 1',schoolYear:currentSchoolYear(),bookId:book.id,bookSection:'Unit 1',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:true,pairVerifiedAt:''};
   state.sets.push(photoSet);
@@ -208,6 +245,7 @@ const io=fs.readFileSync('js/io.js','utf8');
 const translation=fs.readFileSync('js/translation.js','utf8');
 if(/right=right\.filter\(g=>g\.minX<divider\+/.test(io))throw new Error('OCR safety smoke failed: aggressive right-column x cutoff returned');
 if(!io.includes("tessedit_pageseg_mode:String(T.PSM?.AUTO??3)"))throw new Error('OCR safety smoke failed: textbook OCR no longer uses automatic page segmentation');
+if(!io.includes('reconcileCamdenWithVerifiedBook'))throw new Error('OCR safety smoke failed: verified Camden library guidance is missing');
 if(!translation.includes("row.include=false"))throw new Error('OCR safety smoke failed: automatic repairs are still preselected');
 
 console.log('Vokabeltrainer OCR pairing safety smoke: passed');
