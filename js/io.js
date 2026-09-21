@@ -286,10 +286,10 @@ function clusterOcrLineStarts(words,medianH){
   }
   return clusters;
 }
-function detectOcrColumnLayout(words,medianH,deutsch){
+function detectOcrColumnLayout(words,medianH,deutsch,profile=''){
   const pageWidth=Math.max(...words.map(w=>w.left+w.width),1);
   const clusters=clusterOcrLineStarts(words,medianH);
-  const minCount=clusters.reduce((sum,c)=>sum+c.count,0)>=18?3:2;
+  const minCount=profile==='camden-town'?2:(clusters.reduce((sum,c)=>sum+c.count,0)>=18?3:2);
   const strong=clusters.filter(c=>c.count>=minCount).sort((a,b)=>a.x-b.x);
   const minGap=Math.max(pageWidth*.16,medianH*5);
   let source=strong.find(c=>c.x<pageWidth*.48)||strong[0]||null;
@@ -338,7 +338,7 @@ function tesseractTsvToVocabulary(tsv,subject=state.activeSubject,opts={}){
   const canon=x=>normalize(x).replace(/[^a-zäöüß]/g,'');
   const deutsch=words.filter(w=>w.top>=profileStart&&canon(w.text)==='deutsch').sort((a,b)=>a.top-b.top)[0];
   const layoutWords=words.filter(w=>w.top>=profileStart);
-  const layout=detectOcrColumnLayout(layoutWords.length?layoutWords:words,medianH,deutsch);
+  const layout=detectOcrColumnLayout(layoutWords.length?layoutWords:words,medianH,deutsch,profile);
   const dataStart=deutsch?Math.max(profileStart,deutsch.top+deutsch.height+Math.max(16,medianH*.55)):Math.max(0,profileStart);
   const noiseToken=w=>(w.height<Math.max(5,medianH*.22)&&!/^\.{2,}$/.test(w.text))||/^[|¦Il1—–_\-]+$/.test(w.text)||(profile==='camden-town'&&/^\d{1,2}$/.test(w.text.trim())&&w.width<=medianH*2.2);
   const data=words.filter(w=>w.top>=dataStart&&!noiseToken(w));
