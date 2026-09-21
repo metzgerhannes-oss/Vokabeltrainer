@@ -246,7 +246,8 @@ function gradeLeitnerCard(w,answer,q){
   const mastered=move.after===5&&isMastered(w);
   $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}"><strong>${ok?'Richtig.':'Noch nicht richtig.'}</strong><br>${ok?'':errorFeedbackHtml(answer,q.targets)}<div class="leitner-move ${ok?'forward':'back'}">${esc(movement)}</div>${mastered?'<div class="leitner-mastered">✓ Nachhaltig gemeistert</div>':''}</div>`);
   logSessionResult(w,{answer,target:q.targets,correct:ok,skill:'cards',orthographyOk:grade.orthographyOk,prompt:q.prompt,note:movement});
-  scheduleSessionAdvance(targetSession,ok,w,ok?1000:2600);
+  if(typeof focusedDisableAnswerControls==='function'&&typeof focusedContinue==='function'){focusedDisableAnswerControls();focusedContinue(ok,w)}
+  else scheduleSessionAdvance(targetSession,ok,w,ok?1000:2600);
 }
 function renderRecall(w){
   const q=currentQuizQuestion(w,'recall');
