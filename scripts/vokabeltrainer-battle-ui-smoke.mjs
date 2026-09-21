@@ -21,6 +21,8 @@ try{
     state.sets.push(set);
     attachVocabularyToSet(set.id,{term:'shield',translation:'Schild',source:'battle-smoke',verified:true});
     for(const link of state.setVocabulary){link.firstContactCopiedAt=link.firstContactRecalledAt=link.firstContactCompletedAt=new Date().toISOString()}
+    const p=state.learnerVocabulary[0];
+    p.skills={recognition:4,listening:4,retrieval:4,spelling:4,context:4};p.independentSuccesses=8;p.activeSuccessDays=['2026-09-10','2026-09-14','2026-09-18'];p.activePracticeDays=[...p.activeSuccessDays];p.maxActiveGapDays=7;p.coldRecallDays=['2026-09-14','2026-09-18'];p.coldRecallSuccesses=2;p.intervalDays=14;p.errorProfile={meaning:0,retrieval:0,spelling:0,listening:0,context:0,grammar:0};refreshMastery(p);
     rebuildWordIndexes();renderAll();showView('childProgressView');
   });
 
@@ -32,16 +34,27 @@ try{
   await page.click('#attackBtn');
   await page.waitForSelector('#battleView.active');
   assert(await page.locator('#battleStage .battle-unit').count()>=6,'animated army contains multiple units');
+  assert(await page.locator('#battleStage .unit-archer').count()>=1,'progress unlocks archer units');
+  assert(await page.locator('#battleStage .unit-cavalry').count()>=1,'high progress unlocks cavalry units');
+  assert(await page.locator('#battleStage.fortress-stage-outpost').count()===1,'first campaign target has its own fortress stage');
+  assert(await page.locator('#battleStage.season-autumn').count()===1,'current autumn season changes the battle stage');
+  assert((await page.locator('#battleRankGear').textContent())?.length>3,'rank and equipment are visible');
+  assert(await page.locator('[data-battle-attack]').count()===4,'four visual attack types are available');
+  assert(!(await page.locator('[data-battle-attack="ram"]').isDisabled()),'ram attack unlocks from learning progress');
+  await page.click('[data-battle-attack="ram"]');
+  assert(await page.locator('[data-battle-attack="ram"].active').count()===1,'attack type can be selected');
   assert((await page.locator('#battleTicketPill').textContent())?.includes('1'),'battle screen shows earned attack');
 
   await page.click('#battleFullscreenBtn');
   assert(await page.locator('body.battle-immersive').count()===1,'immersive fullscreen fallback activates');
   await page.click('#battleAttackBtn');
-  await page.waitForSelector('#battleStage.battle-finished',{timeout:3000});
+  await page.waitForSelector('#battleStage.attack-ram.battle-finished',{timeout:3000});
   const msg=await page.locator('#battleMessage').textContent();
   assert(/Angriff|Festung|Mauer/i.test(msg||''),'battle ends with a visible result');
   assert(await page.evaluate(()=>battleTickets())===0,'attack consumes exactly one earned battle ticket');
   assert(await page.evaluate(()=>learner().campaignLog.length)===1,'battle result is stored in campaign log');
+  assert(await page.evaluate(()=>learner().campaignLog[0]?.attack)==='ram','selected attack is stored only as campaign presentation metadata');
+  assert((await page.locator('#battleFortressName').textContent())?.includes('Wachturm'),'winning advances to a visually different fortress');
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer battle UI smoke: passed');
 }finally{

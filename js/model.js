@@ -108,12 +108,26 @@ function armyStrength(subject=state.activeSubject,schoolYear=currentSchoolYear()
   const avg=words.length?words.reduce((s,w)=>s+masteryScore(w),0)/(words.length*4):0;
   return Math.round(p.pct*10 + avg*100);
 }
-const fortresses=[{id:'outpost',name:'Vorposten',req:15},{id:'tower',name:'Wachturm',req:30},{id:'wall',name:'Grenzfestung',req:50},{id:'citadel',name:'Zitadelle',req:70},{id:'capital',name:'Hauptfestung',req:85},{id:'final',name:'Jahresfestung',req:100}];
+const fortresses=[
+  {id:'outpost',name:'Vorposten',req:15,subtitle:'Holzpalisaden'},
+  {id:'tower',name:'Wachturm',req:30,subtitle:'Steinerner Turm'},
+  {id:'wall',name:'Grenzfestung',req:50,subtitle:'Doppelte Mauer'},
+  {id:'citadel',name:'Zitadelle',req:70,subtitle:'Bergzitadelle'},
+  {id:'capital',name:'Hauptfestung',req:85,subtitle:'Königsburg'},
+  {id:'final',name:'Jahresfestung',req:100,subtitle:'Goldene Festung'}
+];
 function nextFortress(subject=state.activeSubject,schoolYear=currentSchoolYear()){const wins=fortressWins(subject,schoolYear);return fortresses.find(f=>!wins.includes(f.id))||null}
 function rankFor(pct,subject=state.activeSubject){
   const arr=subjectCampaign(subject).ranks||SUBJECT_META.english.campaign.ranks;const i=Math.min(arr.length-1,Math.floor(pct/20));return arr[i];
 }
-function gearFor(pct){return ['I','II','III','IV','V','VI'][Math.min(5,Math.floor(pct/18))]}
+function gearTier(pct){return Math.min(6,1+Math.floor(clamp(Number(pct)||0,0,100)/18))}
+function gearFor(pct){return ['I','II','III','IV','V','VI'][gearTier(pct)-1]}
+function gearLabelFor(pct,subject=state.activeSubject){
+  const tier=gearTier(pct);
+  const english=['Grundausrüstung','Verstärkte Schilde','Bogenschützen-Set','Belagerungsausrüstung','Reiter-Ausrüstung','Eliteausrüstung'];
+  const latin=['Scutum & Pilum','Verstärktes Scutum','Sagittarii','Belagerungsgerät','Equites','Praetorianer-Ausrüstung'];
+  return (subject==='latin'?latin:english)[tier-1];
+}
 function soldiersFor(pct){return clamp(2+Math.floor(pct/9),2,13)}
 
 const streakActivityTypes=new Set(['adaptive','recognition','recall','spelling','listening','context','chunks','flash','shower','latinGrammar','handwriting','firstContact','practiceTest']);

@@ -92,6 +92,9 @@ Retrieval- und Spacing-Modells.
    Der Schlachtmodus ist ein eigener Erlebnisbereich und wird erst durch eine abgeschlossene
    Lerneinheit freigeschaltet. Kampfanimationen laufen niemals während einer Abfrage und
    verändern keinen fachlichen Mastery-Wert.
+   Angriffsarten, Einheiten, Festungen, Jahreszeiten, Rang und Ausrüstung sind visuelle
+   Motivation. Keine dieser Darstellungen darf die fachliche Bewertung oder Siegbedingung
+   verfälschen; Festungen fallen ausschließlich an den definierten Lernfortschrittsschwellen.
 
 10. **Globale Wissensbasis, getrennte Bedeutungen**
     Ein Lexem wird global gespeichert, Bedeutungen/Senses werden getrennt geführt.
