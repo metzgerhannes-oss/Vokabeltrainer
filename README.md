@@ -4,11 +4,20 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.7**
+App-Version: **v0.18.8**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.8 – Testplanung und Lernen ohne Test klar getrennt
+
+- steht ein Test an, ist **„Test planen“** der Standardweg und wird im Elternbereich zuerst angeboten
+- im Testplan werden Termin und konkrete Vokabeln direkt gewählt; die ausgewählten Wörter werden automatisch zum Lernstoff des Kindes
+- **„Ohne Test lernen“** ist ausschließlich für Lernstoff gedacht, für den kein konkreter Testtermin feststeht
+- das Testdatum wurde aus den allgemeinen Lernstoff-Details entfernt und kann nur noch über „Test planen“ gesetzt werden
+- leere Zustände und Elternhinweise zeigen beide Wege ausdrücklich statt eines mehrdeutigen „Lernstoff festlegen“
+- der sichtbare Begriff „Lernset“ wurde weiter auf technische/interne Stellen zurückgedrängt
 
 ## v0.18.7 – ein zentraler Lernstoff-Workflow
 
