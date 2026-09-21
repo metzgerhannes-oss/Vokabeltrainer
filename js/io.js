@@ -203,7 +203,12 @@ function parseTesseractWords(tsv){
     const c=row.split('\t'); if(c.length<12||Number(c[0])!==5)continue;
     const text=c.slice(11).join('\t').trim(); if(!text)continue;
     const conf=Number(c[10]); if(Number.isFinite(conf)&&conf<18)continue;
-    out.push({text,left:Number(c[6])||0,top:Number(c[7])||0,width:Number(c[8])||0,height:Number(c[9])||0,conf:Number.isFinite(conf)?conf:0});
+    out.push({
+      text,
+      page:Number(c[1])||0,block:Number(c[2])||0,paragraph:Number(c[3])||0,line:Number(c[4])||0,wordNum:Number(c[5])||0,
+      left:Number(c[6])||0,top:Number(c[7])||0,width:Number(c[8])||0,height:Number(c[9])||0,
+      conf:Number.isFinite(conf)?conf:0
+    });
   }
   return out;
 }
@@ -218,81 +223,146 @@ function groupOcrColumnLines(words,tolerance){
   }
   return groups.map(g=>{
     g.words.sort((a,b)=>a.left-b.left);
-    return {...g,text:cleanOcrCell(g.words.map(w=>w.text).join(' ')),minX:Math.min(...g.words.map(w=>w.left)),maxX:Math.max(...g.words.map(w=>w.left+w.width))};
+    const avgConf=g.words.reduce((sum,w)=>sum+(Number(w.conf)||0),0)/Math.max(1,g.words.length);
+    return {...g,text:cleanOcrCell(g.words.map(w=>w.text).join(' ')),minX:Math.min(...g.words.map(w=>w.left)),maxX:Math.max(...g.words.map(w=>w.left+w.width)),avgConf};
   }).filter(g=>g.text);
 }
 function ocrUiNoise(text){
   return /^(?:übersicht|finden|verwandte(?:s)?|herunterladen|download|suche|search|menü|menu|teilen|share|zurück|weiter|start|home|bookmark|lesezeichen)$/i.test(cleanOcrCell(text));
 }
-function safeOcrPair(term,translation,subject){
-  let a=cleanOcrCell(term),b=cleanOcrCell(translation);
+function stripOcrPronunciation(text){
+  return cleanOcrCell(text)
+    .replace(/\/[^/\n]{1,140}\//g,' ')
+    .replace(/^[°º•·*]+\s*/,'')
+    .replace(/\bto\*/gi,'to')
+    .replace(/\*+/g,'')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function ocrPronunciationOnly(text){
+  const t=cleanOcrCell(text);if(!t)return true;
+  const without=t.replace(/\/[^/\n]{1,140}\//g,' ').trim();
+  if(without&&/[A-Za-zÀ-ÿ]/.test(without))return false;
+  if(/^\/.*\/$/.test(t))return true;
+  const ipa=(t.match(/[əɐɑɒɔæɛɜɞɪʊʌŋθðʃʒçʔˈˌː]/g)||[]).length;
+  return (t.startsWith('/')||t.endsWith('/'))&&ipa>0;
+}
+function ocrEditorialNoise(text,subject){
+  const t=stripOcrPronunciation(text);if(!t||ocrUiNoise(t))return true;
+  if(/^(?:word\s*lists?|wordlist|vocabulary|vokabeln|(?:unit|test|theme|part)\s*(?:\d+|[a-z])?|arbeitsanweisungen\b|an\s+dem\s+wort\b|in\s+den\s+.+boxen\b|pick[- ]?up\s*:|hinweis\b|merke\b)$/i.test(t))return true;
+  if(/^(?:arbeitsanweisungen\b|an\s+dem\s+wort\b|in\s+den\s+.+boxen\b|pick[- ]?up\s*:)/i.test(t))return true;
+  const count=t.split(/\s+/).filter(Boolean).length;
+  if(count>=7&&germanScore(t)>=2&&foreignScore(t,subject)<=1)return true;
+  return false;
+}
+function clusterOcrLineStarts(words,medianH){
+  const tolerance=Math.max(24,medianH*1.5);
+  const starts=words
+    .filter(w=>w.wordNum===1&&w.height>=Math.max(7,medianH*.42)&&!/^[|¦—–_\-]+$/.test(w.text))
+    .map(w=>w.left)
+    .filter(Number.isFinite)
+    .sort((a,b)=>a-b);
+  const clusters=[];
+  for(const x of starts){
+    const last=clusters.at(-1);
+    if(last&&Math.abs(x-last.x)<=tolerance){
+      last.values.push(x);last.count++;last.x=last.values.reduce((sum,v)=>sum+v,0)/last.values.length;
+    }else clusters.push({x,count:1,values:[x]});
+  }
+  return clusters;
+}
+function detectOcrColumnLayout(words,medianH,deutsch){
+  const pageWidth=Math.max(...words.map(w=>w.left+w.width),1);
+  const clusters=clusterOcrLineStarts(words,medianH);
+  const minCount=clusters.reduce((sum,c)=>sum+c.count,0)>=18?3:2;
+  const strong=clusters.filter(c=>c.count>=minCount).sort((a,b)=>a.x-b.x);
+  const minGap=Math.max(pageWidth*.16,medianH*5);
+  let source=strong.find(c=>c.x<pageWidth*.48)||strong[0]||null;
+  let translation=null;
+  if(deutsch)translation={x:deutsch.left,count:999,values:[deutsch.left]};
+  else if(source)translation=strong.find(c=>c.x>source.x+minGap)||null;
+  if(!translation&&strong.length>=2){source=strong[0];translation=strong[1];}
+  let divider=deutsch?Math.max(pageWidth*.32,deutsch.left-Math.max(28,medianH*1.45)):pageWidth*.5;
+  let rightEnd=pageWidth+1;
+  if(translation){
+    divider=Math.max(pageWidth*.20,translation.x-Math.max(28,medianH*1.45));
+    const third=strong.find(c=>c.x>translation.x+Math.max(pageWidth*.12,medianH*4));
+    if(third)rightEnd=Math.max(divider+80,third.x-Math.max(18,medianH*.8));
+  }
+  return {pageWidth,divider,rightEnd,sourceX:source?.x??0,translationX:translation?.x??0,clusters:strong};
+}
+function cleanOcrTerm(text){
+  return stripOcrPronunciation(text)
+    .replace(/^[°º•·]+\s*/,'')
+    .replace(/\s+([,;!?])/g,'$1')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function safeOcrPair(term,translation,subject,confidence='good'){
+  let a=cleanOcrTerm(term),b=cleanOcrCell(translation);
   if(subjectMeta(subject)?.ocrRepairProfile==='english'){
     a=a.replace(/^l[’']m\b/i,"I'm").replace(/^I['’]m\s*\(=\s*am\)$/i,"I'm (= I am)");
     if(/^like$/i.test(a)&&/^ich mag[.!]?$/i.test(b))a='I like';
     b=b.replace(/\(beij\/in\)/i,'(bei/in)').replace(/\bPI\./g,'Pl.');
   }
-  return makeImportRow(a,b,'','','good');
+  return makeImportRow(a,b,'','',confidence);
 }
 function tesseractTsvToVocabulary(tsv,subject=state.activeSubject){
   const words=parseTesseractWords(tsv); if(!words.length)return {rows:[],text:''};
   const heights=words.map(w=>w.height).filter(h=>h>2); const medianH=Math.max(12,medianNumber(heights)||20);
   const canon=x=>normalize(x).replace(/[^a-zäöüß]/g,'');
   const deutsch=words.filter(w=>canon(w.text)==='deutsch').sort((a,b)=>a.top-b.top)[0];
-  const pageWidth=Math.max(...words.map(w=>w.left+w.width));
-  const divider=deutsch?Math.max(pageWidth*.36,deutsch.left-Math.max(30,deutsch.width*.30)):pageWidth*.46;
-  const dataStart=deutsch?deutsch.top+deutsch.height+Math.max(22,medianH*.8):Math.max(0,Math.min(...words.map(w=>w.top))+medianH*3);
+  const layout=detectOcrColumnLayout(words,medianH,deutsch);
+  const minTop=Math.min(...words.map(w=>w.top));
+  const dataStart=deutsch?deutsch.top+deutsch.height+Math.max(16,medianH*.55):Math.max(0,minTop-medianH*.25);
   const noiseToken=w=>(w.height<Math.max(5,medianH*.22)&&!/^\.{2,}$/.test(w.text))||/^[|¦Il1—–_\-]+$/.test(w.text);
   const data=words.filter(w=>w.top>=dataStart&&!noiseToken(w));
   const tolerance=Math.max(13,medianH*.72);
-  let left=groupOcrColumnLines(data.filter(w=>w.left<divider),tolerance);
-  let right=groupOcrColumnLines(data.filter(w=>w.left>=divider),tolerance);
-  // The word coordinates already split both columns. Do not impose an additional
-  // absolute x-position filter here: on wide textbook pages it can discard the
-  // complete German column and make the dictionary invent every translation.
-  left=left.filter(g=>!ocrUiNoise(g.text));
-  right=right.filter(g=>!ocrUiNoise(g.text));
+  let left=groupOcrColumnLines(data.filter(w=>w.left<layout.divider),tolerance)
+    .map(g=>({...g,text:cleanOcrTerm(g.text)}))
+    .filter(g=>g.text&&!ocrPronunciationOnly(g.text)&&!ocrEditorialNoise(g.text,subject));
+  let right=groupOcrColumnLines(data.filter(w=>w.left>=layout.divider&&w.left<layout.rightEnd),tolerance)
+    .filter(g=>g.text&&!ocrPronunciationOnly(g.text)&&!ocrUiNoise(g.text));
 
   const records=[]; const usedRight=new Set(); let consecutiveMissing=0;
   const firstY=left[0]?.yc??0;
-  const gapStop=Math.max(90,medianH*3.1);
   let parsedLastY=firstY;
 
   for(let i=0;i<left.length;i++){
-    const l=left[i]; if(ocrUiNoise(l.text))break;
-    if(i>4 && l.yc-left[i-1].yc>gapStop)break;
-    const prev=i?(left[i-1].yc+l.yc)/2:l.yc-medianH*1.7;
-    const next=i+1<left.length?(l.yc+left[i+1].yc)/2:l.yc+medianH*1.9;
-    const matches=right.map((r,idx)=>({r,idx})).filter(x=>x.r.yc>=prev&&x.r.yc<next&&!ocrUiNoise(x.r.text));
+    const l=left[i]; if(!l.text)continue;
+    const prev=i?(left[i-1].yc+l.yc)/2:l.yc-medianH*1.25;
+    const next=i+1<left.length?(l.yc+left[i+1].yc)/2:l.yc+medianH*1.35;
+    const matches=right.map((r,idx)=>({r,idx}))
+      .filter(x=>!usedRight.has(x.idx)&&x.r.yc>=prev&&x.r.yc<next&&!ocrUiNoise(x.r.text));
     if(!matches.length){
       parsedLastY=l.yc;
       consecutiveMissing++;
-      const term=cleanOcrCell(l.text);
-      if(term)records.push({y:l.yc,row:makeImportRow(term,'','','','check','ocr')});
-      if(consecutiveMissing>=3&&i>8)break;
+      if(l.text.length<=120)records.push({y:l.yc,row:makeImportRow(l.text,'','','','check','ocr')});
+      if(consecutiveMissing>=5&&i>14)break;
       continue;
     }
     consecutiveMissing=0;
     parsedLastY=l.yc;
     matches.forEach(x=>usedRight.add(x.idx));
     const translation=cleanOcrCell(matches.map(x=>x.r.text).join(' '));
-    const term=cleanOcrCell(l.text);
-    if(!term||!translation||ocrUiNoise(term)||ocrUiNoise(translation))continue;
-    if(subjectMeta(subject)?.ocrRepairProfile==='english'&&germanScore(term)>2&&foreignScore(term,subject)===0&&records.length>3)break;
-    records.push({y:l.yc,row:safeOcrPair(term,translation,subject)});
+    const term=cleanOcrTerm(l.text);
+    if(!term||!translation||ocrEditorialNoise(term,subject)||ocrUiNoise(translation))continue;
+    if(subjectMeta(subject)?.ocrRepairProfile==='english'&&germanScore(term)>2&&foreignScore(term,subject)===0&&records.length>3)continue;
+    const pairConfidence=Math.min(l.avgConf||100,...matches.map(x=>x.r.avgConf||100))>=55?'good':'check';
+    records.push({y:l.yc,row:safeOcrPair(term,translation,subject,pairConfidence)});
     if(records.length>=250)break;
   }
 
-  // Preserve German-only rows that OCR saw on the right but lost on the left.
   right.forEach((r,idx)=>{
     if(usedRight.has(idx)||r.yc<firstY-medianH||r.yc>parsedLastY+medianH*1.25||ocrUiNoise(r.text))return;
-    const translation=cleanOcrCell(r.text); if(!translation)return;
+    const translation=cleanOcrCell(r.text); if(!translation||translation.length>100||translation.split(/\s+/).length>10)return;
     const nearLeft=left.some(l=>Math.abs(l.yc-r.yc)<=tolerance*.65);
     if(!nearLeft)records.push({y:r.yc,row:makeImportRow('',translation,'','','check','ocr')});
   });
 
   records.sort((a,b)=>a.y-b.y);
-  const rows=records.map(x=>x.row).slice(0,250);
-  const text=rows.map(r=>`${r.term||''}\t${r.translation||''}`).join('\n');
+  const rows=records.map(x=>x.row).filter(r=>r.term||r.translation).slice(0,250);
+  const text=rows.map(r=>String(r.term||'')+'\t'+String(r.translation||'')).join('\n');
   return {rows,text};
 }
 function tesseractTsvToText(tsv){
@@ -305,7 +375,7 @@ function tesseractTsvToText(tsv){
 async function prepareOcrImage(file){
   if(!('createImageBitmap' in window))return file;
   try{
-    const bitmap=await createImageBitmap(file); const longest=Math.max(bitmap.width,bitmap.height); const scale=longest>2600?2600/longest:Math.min(1.5,2200/longest);
+    const bitmap=await createImageBitmap(file); const longest=Math.max(bitmap.width,bitmap.height); const scale=longest>2800?2800/longest:Math.min(1.8,2600/longest);
     const width=Math.max(1,Math.round(bitmap.width*scale)),height=Math.max(1,Math.round(bitmap.height*scale));
     const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;const ctx=canvas.getContext('2d',{willReadFrequently:true});
     ctx.drawImage(bitmap,0,0,width,height);bitmap.close?.();
@@ -362,7 +432,7 @@ async function runTesseractOcr(file){
     const worker=await Promise.race([createPromise,timeoutPromise]);
     if(watchdog){clearTimeout(watchdog);watchdog=null;}
     try{
-      await worker.setParameters({preserve_interword_spaces:'1',user_defined_dpi:'300',tessedit_pageseg_mode:String(T.PSM?.SINGLE_COLUMN??4)});
+      await worker.setParameters({preserve_interword_spaces:'1',user_defined_dpi:'300',tessedit_pageseg_mode:String(T.PSM?.AUTO??3)});
       scanOcrProgress(.18,'Text wird erkannt …');
       const result=await worker.recognize(prepared,{rotateAuto:true},{text:true,tsv:true});
       const table=tesseractTsvToVocabulary(result?.data?.tsv,state.activeSubject);
