@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 21.09.2026 · App v0.18.3
+Stand: 21.09.2026 · App v0.18.4
 
 ## Ergebnis
 
