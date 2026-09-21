@@ -43,7 +43,7 @@ assert(css.includes(':focus-visible')&&css.includes('outline:3px solid'),'visibl
 assert(css.includes('min-height:44px'),'primary pointer targets have a 44px minimum height');
 assert(css.includes('prefers-reduced-motion:reduce'),'reduced-motion preference is respected');
 assert(css.includes('.lrs-mode .eyebrow{text-transform:none'),'LRS mode avoids forced uppercase helper labels');
-assert(ui.includes("function showView(id){$$('.view').forEach")&&ui.includes("$$('.nav-btn[data-view]').forEach"),'view navigation iterates element lists');
+assert(/function showView\(id\)\{[\s\S]{0,240}\$\$\('\.view'\)\.forEach/.test(ui)&&ui.includes("$('.nav-btn[data-view]').forEach"),'view navigation iterates element lists');
 assert(focusUi.includes("cardExtras=function(){return ''}"),'retrieval diagnostics are removed before answering');
 assert(['gradeText=function','gradeChoice=function','gradeGrammar=function'].every(x=>focusUi.includes(x)),'all evaluated feedback paths use focused overrides');
 assert(!/setTimeout\s*\(\s*\(\)\s*=>\s*nextStudy/.test(focusUi),'focused feedback never auto-advances');
@@ -69,7 +69,7 @@ assert(html.includes('id="helpBtn"')&&html.includes('id="helpPopover"'),'central
 assert((html.match(/data-help="/g)||[]).length>=10,'main views expose contextual help at the important concepts');
 assert(help.includes("document.addEventListener('mouseover'")&&help.includes("document.addEventListener('focusin'")&&help.includes("document.addEventListener('click'"),'context help supports mouse, keyboard focus and touch/click');
 assert(help.includes('function openAppHelp()')&&help.includes('So funktioniert der Vokabeltrainer'),'central help provides a short orientation');
-const learnMarkup=html.slice(html.indexOf('id="learnView"'),html.indexOf('id="dashboardView"'));
+const learnMarkup=html.slice(html.indexOf('id="learnView"'),html.indexOf('id="moreView"'));
 assert(!learnMarkup.includes('data-help='),'focused retrieval view contains no contextual-help distractions');
 assert(css.includes('body.learning-focus .help-popover{display:none!important}'),'open help cannot cover focused retrieval');
 
