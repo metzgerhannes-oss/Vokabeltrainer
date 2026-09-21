@@ -332,11 +332,6 @@ function contentPlanPreviewText(rows,learnerId,testDate=''){
   if(!newCount)return `${count} ausgewählt · alle schon bekannt. Bis zum Test werden nur Wiederholungen eingeplant.`;
   return `${count} ausgewählt · ${newCount} noch neu · etwa ${dailyNew} neue Wörter pro Tag + Wiederholungen bis ungefähr ${target} Kontakte.`;
 }
-function createAdhocLearningSet(learnerId,subject,title='Eigene Liste'){
-  const l=(state.learners||[]).find(x=>x.id===learnerId);if(!l)return null;
-  const set={id:uid('set'),learnerId,subject,title,schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testSelectedLinkIds:[],testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
-  state.sets.push(set);rebuildWordIndexes();return set;
-}
 function openLearningContentPlanner(opts={}){
   if(!isParentMode()){openParentGate();return}
   const subject=state.activeSubject,learners=(state.learners||[]).filter(l=>learnerActiveSubjects(l).includes(subject)),books=globalLibraryBooks(subject);
@@ -364,8 +359,8 @@ function openLearningContentPlanner(opts={}){
   bookEl.onchange=updateSections;sectionEl.onchange=renderRows;learnerEl.onchange=renderRows;
   $('#contentSelectAll').onclick=()=>{picker.querySelectorAll('[data-book-row]').forEach(x=>x.checked=true);updateSummary()};
   $('#contentSelectNone').onclick=()=>{picker.querySelectorAll('[data-book-row]').forEach(x=>x.checked=false);updateSummary()};
-  $('#contentSourcePhoto').onclick=()=>{const learnerId=learnerEl.value;state.activeLearnerId=learnerId;ensureActiveSubject();const set=createAdhocLearningSet(learnerId,subject,'Foto / Text');closeModal();save();setTimeout(()=>openScanImport(set?.id||'__new__'),60)};
-  $('#contentSourceManual').onclick=()=>{const learnerId=learnerEl.value;state.activeLearnerId=learnerId;ensureActiveSubject();const set=createAdhocLearningSet(learnerId,subject,'Eigene Liste');closeModal();save();setTimeout(()=>openWordEditor(null,set?.id||''),60)};
+  $('#contentSourcePhoto').onclick=()=>{state.activeLearnerId=learnerEl.value;ensureActiveSubject();closeModal();save();setTimeout(()=>openScanImport('__new__'),60)};
+  $('#contentSourceManual').onclick=()=>{state.activeLearnerId=learnerEl.value;ensureActiveSubject();closeModal();save();setTimeout(()=>openSetEditor(null,'manual'),60)};
   $('#contentManageLibrary').onclick=()=>{closeModal();showView('libraryView')};
   $('#contentSave').onclick=()=>{const selected=checkedRows();if(!selected.length){preview.className='notice warn';preview.textContent='Bitte mindestens eine Vokabel auswählen.';return}const result=assignBookRowsToLearner(bookEl.value,sectionEl.value,learnerEl.value,selected.map(r=>r.id));if(!result.set)return;closeModal();save();const l=state.learners.find(x=>x.id===learnerEl.value);toast(`${selected.length} Vokabeln für ${l?.name||'das Profil'} vorbereitet.`,'good')};
   updateSections();
@@ -469,11 +464,11 @@ function openFirstWordsChooser(){
   $('#setupCsv').onclick=()=>{closeModal();const f=$('#fileInput');f.accept='.csv,text/csv';f.dataset.mode='csv';f.click()};
 }
 
-function openSetEditor(id=null){
+function openSetEditor(id=null,nextAction='chooser'){
   const s=id?state.sets.find(x=>x.id===id):null,books=(state.books||[]).filter(b=>b.subject===state.activeSubject),assigned=currentBook(learner().id,state.activeSubject),defaultBookId=s?.bookId||assigned?.id||'';
   modal(`<div class="eyebrow">Lernstoff · Details</div><h2>${s?'Lernstoff bearbeiten':'Eigener Lernbereich'}</h2><label>Titel<input id="setTitle" value="${esc(s?.title||'')}"></label><label>Schuljahr<input id="setYear" value="${esc(s?.schoolYear||currentSchoolYear())}"></label><label>Lehrwerk<select id="setBook"><option value="">Ohne Lehrwerk / Arbeitsblatt</option>${books.map(b=>`<option value="${b.id}" ${defaultBookId===b.id?'selected':''}>${esc(b.title||formatIsbn(b.isbn13))}</option>`).join('')}</select></label><label id="setSectionWrap">Abschnitt / Unit<input id="setSection" value="${esc(s?.bookSection||s?.title||'')}" placeholder="z. B. Unit 1 · Theme 2"></label><label>Testdatum (einmalig, optional)<input id="setDate" type="date" value="${esc(s?.testDate||'')}"></label><p class="test-plan-hint">Mit Lehrwerk werden erkannte Vokabeln zusätzlich unter ISBN + Abschnitt global gespeichert. Serientermin und Testbereich stellst du über „Testplan“ ein.</p><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button>${s?'<button type="button" id="deleteSet" class="ghost">Löschen</button>':''}<button type="button" id="saveSet" class="primary">Speichern</button></div>`);
   const syncSection=()=>$('#setSectionWrap').classList.toggle('hidden',!$('#setBook').value);$('#setBook').onchange=syncSection;syncSection();
-  $('#saveSet').onclick=()=>{const title=$('#setTitle').value.trim();if(!title)return;const bookId=$('#setBook').value,bookSection=bookId?($('#setSection').value.trim()||title):'';let target=s,created=false;if(target){target.title=title;target.schoolYear=$('#setYear').value.trim();target.testDate=$('#setDate').value;target.bookId=bookId;target.bookSection=bookSection}else{target={id:uid('set'),learnerId:learner().id,subject:state.activeSubject,title,schoolYear:$('#setYear').value.trim()||currentSchoolYear(),bookId,bookSection,testDate:$('#setDate').value,testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:''};state.sets.push(target);created=true}if(target.bookId)syncSetToBookVocabulary(target.id);closeModal();save();if(created)setTimeout(openFirstWordsChooser,80)};
+  $('#saveSet').onclick=()=>{const title=$('#setTitle').value.trim();if(!title)return;const bookId=$('#setBook').value,bookSection=bookId?($('#setSection').value.trim()||title):'';let target=s,created=false;if(target){target.title=title;target.schoolYear=$('#setYear').value.trim();target.testDate=$('#setDate').value;target.bookId=bookId;target.bookSection=bookSection}else{target={id:uid('set'),learnerId:learner().id,subject:state.activeSubject,title,schoolYear:$('#setYear').value.trim()||currentSchoolYear(),bookId,bookSection,testDate:$('#setDate').value,testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:''};state.sets.push(target);created=true}if(target.bookId)syncSetToBookVocabulary(target.id);closeModal();save();if(created)setTimeout(()=>nextAction==='manual'?openWordEditor(null,target.id):openFirstWordsChooser(),80)};
   if(s)$('#deleteSet').onclick=()=>{if(confirm('Diesen Lernbereich löschen? Die globale Bibliothek und bereits gelernte Fortschritte bleiben erhalten.')){removeSetWithLinks(s.id);state.learners.forEach(l=>{l.testSeries={...defaultTestSeries(),...(l.testSeries||{})};knownSubjectIds().forEach(sub=>{if(l.testSeries[sub]?.setId===s.id)l.testSeries[sub]=null})});closeModal();save()}}
 }
 function openWordEditor(id=null,preferredSetId=''){
