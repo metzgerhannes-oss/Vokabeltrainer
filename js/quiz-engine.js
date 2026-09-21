@@ -21,8 +21,8 @@ function quizSemanticMatches(answer,targets){
   return quizUnique(targets).some(t=>a===semanticNormalize(t));
 }
 function quizOrthographyMatches(answer,targets){
-  const a=orthographyNormalize(answer);if(!a)return false;
-  return quizUnique(targets).some(t=>a===orthographyNormalize(t));
+  if(!String(answer??'').trim())return false;
+  return quizUnique(targets).some(t=>orthographyNormalizeForTarget(answer,t)===orthographyNormalizeForTarget(t,t));
 }
 function quizQueueRef(w){
   return Object.freeze({
