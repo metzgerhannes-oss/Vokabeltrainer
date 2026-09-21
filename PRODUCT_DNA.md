@@ -23,6 +23,31 @@ Daraus folgen verbindliche Konsequenzen:
 - Bei Konflikten hat die Korrektheit der Abfrage Vorrang vor Komfort, Automatisierung, Gamification oder Featureumfang.
 - Neue Funktionen werden daran gemessen, ob sie die Qualität der Vokabelabfrage verbessern oder zumindest nicht beeinträchtigen.
 
+## Verbindliche Lernpipeline
+
+Eine neu erfasste Vokabel ist **noch keine gelernte Vokabel**. Die App trennt deshalb
+Datenerfassung, fachliche Prüfung und Erstaneignung ausdrücklich voneinander.
+
+Die verbindliche Reihenfolge lautet:
+
+**Erfassen → fachlich prüfen → kennenlernen → abrufen → verteilt wiederholen → nachhaltig meistern**
+
+Für den Erstkontakt gilt:
+
+- Nach OCR, Import oder Bibliotheksübernahme werden zuerst die exakten Wort↔Bedeutung-Paare geprüft.
+- Danach schreibt das Kind jede neue Vokabel bewusst in sein **Vokabelheft** ab.
+- Die Vorlage wird anschließend abgedeckt; die Wortform wird einmal aktiv aus dem Gedächtnis geschrieben.
+- Danach wird mit der fachlich geprüften Wortform verglichen. Die App bewertet die Handschrift nicht automatisch.
+- Kurze Blockwiederholungen unterbrechen lange Abschreibserien und fordern erneut aktiven Abruf.
+- Erst nach diesem Erstkontakt wird die Vokabel für den normalen adaptiven Lernpfad freigegeben.
+- Wird die fachliche Wortform oder Bedeutung später geändert, verliert die betroffene Zuordnung ihre Erstkontakt-Freigabe.
+- Bestehende, bereits verwendete Lernsets werden bei Einführung dieser Logik nicht rückwirkend gesperrt.
+
+Der Erstkontakt erzeugt **keine künstliche Mastery und keine Schreibkompetenz**. Er dokumentiert
+nur, dass die korrekte Wortform bewusst gesehen, handschriftlich verarbeitet und einmal aktiv
+erinnert wurde. Nachhaltige Beherrschung bleibt ausschließlich Sache des anschließenden
+Retrieval- und Spacing-Modells.
+
 ## Die 12 Prinzipien
 
 1. **Lernwirkung vor Featuremenge**
