@@ -32,6 +32,20 @@ function schoolYearWords(subject=state.activeSubject,schoolYear=currentSchoolYea
 function setWords(setId){return (state.setVocabulary||[]).filter(x=>x.setId===setId).sort((a,b)=>(a.position||0)-(b.position||0)).map(x=>wordViewForLink(x)).filter(Boolean);}
 function fortressWins(subject=state.activeSubject,schoolYear=currentSchoolYear()){const l=learner(),key=`${subject}:${schoolYear}`;l.fortressWinsByYear=l.fortressWinsByYear||{};return l.fortressWinsByYear[key]||(l.fortressWinsByYear[key]=[]);}
 
+function battleTickets(subject=state.activeSubject){
+  const l=learner();if(!l)return 0;l.battleTickets={...defaultSubjectNumbers(),...(l.battleTickets||{})};
+  return clamp(Math.round(Number(l.battleTickets[subject])||0),0,3);
+}
+function grantBattleTicket(reason='lesson',subject=state.activeSubject){
+  const l=learner();if(!l)return false;l.battleTickets={...defaultSubjectNumbers(),...(l.battleTickets||{})};
+  const before=battleTickets(subject);if(before>=3)return false;
+  l.battleTickets[subject]=before+1;recordActivity('battleUnlock',{subject,reason,tickets:l.battleTickets[subject]});return true;
+}
+function spendBattleTicket(subject=state.activeSubject){
+  const l=learner();if(!l)return false;l.battleTickets={...defaultSubjectNumbers(),...(l.battleTickets||{})};
+  const before=battleTickets(subject);if(before<1)return false;l.battleTickets[subject]=before-1;return true;
+}
+
 function semanticNormalize(s){return String(s||'').trim().toLowerCase().normalize('NFKC').replace(/[’‘`´]/g,"'").replace(/[.,;:!?()[\]{}"']/g,'').replace(/\s+/g,' ')}
 function normalize(s){return semanticNormalize(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
 function orthographyNormalize(value){

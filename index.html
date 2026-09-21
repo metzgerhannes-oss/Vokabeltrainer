@@ -8,10 +8,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Vokabeltrainer">
-  <title>Vokabeltrainer – Beta v0.14.1</title>
+  <title>Vokabeltrainer – Beta v0.15.0</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
-  <link rel="stylesheet" href="css/app.css?v=0.14.1">
+  <link rel="stylesheet" href="css/app.css?v=0.15.0">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Zum Inhalt</a>
@@ -19,7 +19,7 @@
     <header class="topbar">
       <div class="app-title-row">
         <h1 id="appTitle">Vokabeltrainer</h1>
-        <span id="versionBadge" class="version-badge" aria-label="App-Version">v0.14.1</span>
+        <span id="versionBadge" class="version-badge" aria-label="App-Version">v0.15.0</span>
       </div>
       <div class="top-actions">
         <button id="installBtn" class="ghost hidden">Installieren</button>
@@ -127,11 +127,37 @@
                 <div><small>Ausrüstung</small><strong id="gearLevel">I</strong></div>
               </div>
               <div class="row gap wrap">
-                <button id="attackBtn" class="primary">Festung angreifen</button>
+                <button id="attackBtn" class="primary">Zur Schlacht</button>
                 <button id="duelBtn" class="secondary">Freundschaftsduell</button>
               </div>
               <div id="campaignMessage" class="notice subtle"></div>
             </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="battleView" class="view battle-view" aria-labelledby="battleTitle">
+        <div class="battle-shell">
+          <div class="battle-toolbar">
+            <button id="battleBackBtn" class="battle-ghost" type="button">← Erfolge</button>
+            <span id="battleTicketPill" class="battle-ticket-pill">0 Angriffe</span>
+            <button id="battleFullscreenBtn" class="battle-ghost" type="button" aria-pressed="false">⛶ Vollbild</button>
+          </div>
+          <header class="battle-head">
+            <div class="battle-kicker">Schlacht</div>
+            <h2 id="battleTitle">Deine Armee rückt vor</h2>
+            <p id="battleSubtitle">Lerne eine Einheit, um einen Angriff freizuschalten.</p>
+          </header>
+          <div id="battleStage" class="battle-stage" role="img" aria-label="Animierte Armee vor einer Festung"></div>
+          <div class="battle-readout">
+            <div><small>Armeestärke</small><strong id="battleStrength">0</strong></div>
+            <div><small>Nächstes Ziel</small><strong id="battleFortressName">–</strong></div>
+            <div><small>Fortschritt</small><strong id="battleFortressProgress">–</strong></div>
+          </div>
+          <div id="battleMessage" class="battle-message" aria-live="polite"></div>
+          <div class="battle-actions">
+            <button id="battleAttackBtn" class="battle-primary" type="button">Angriff starten</button>
+            <button id="battleReturnBtn" class="battle-secondary" type="button">Zurück zu den Erfolgen</button>
           </div>
         </div>
       </section>
@@ -252,18 +278,18 @@
   <input id="fileInput" type="file" class="hidden" accept=".csv,.json,text/csv,application/json">
   <input id="photoInput" type="file" class="hidden" accept="image/*">
   <input id="isbnPhotoInput" type="file" class="hidden" accept="image/*" capture="environment">
-  <script src="js/core.js?v=0.14.1" defer></script>
-  <script src="js/help.js?v=0.14.1" defer></script>
-  <script src="js/library.js?v=0.14.1" defer></script>
-  <script src="js/storage.js?v=0.14.1" defer></script>
-  <script src="js/model.js?v=0.14.1" defer></script>
-  <script src="js/quiz-engine.js?v=0.14.1" defer></script>
-  <script src="js/learning.js?v=0.14.1" defer></script>
-  <script src="js/translation.js?v=0.14.1" defer></script>
-  <script src="js/io.js?v=0.14.1" defer></script>
-  <script src="js/ui.js?v=0.14.1" defer></script>
-  <script src="js/library-ui.js?v=0.14.1" defer></script>
-  <script src="js/focus-ui.js?v=0.14.1" defer></script>
-  <script src="js/app.js?v=0.14.1" defer></script>
+  <script src="js/core.js?v=0.15.0" defer></script>
+  <script src="js/help.js?v=0.15.0" defer></script>
+  <script src="js/library.js?v=0.15.0" defer></script>
+  <script src="js/storage.js?v=0.15.0" defer></script>
+  <script src="js/model.js?v=0.15.0" defer></script>
+  <script src="js/quiz-engine.js?v=0.15.0" defer></script>
+  <script src="js/learning.js?v=0.15.0" defer></script>
+  <script src="js/translation.js?v=0.15.0" defer></script>
+  <script src="js/io.js?v=0.15.0" defer></script>
+  <script src="js/ui.js?v=0.15.0" defer></script>
+  <script src="js/library-ui.js?v=0.15.0" defer></script>
+  <script src="js/focus-ui.js?v=0.15.0" defer></script>
+  <script src="js/app.js?v=0.15.0" defer></script>
 </body>
 </html>

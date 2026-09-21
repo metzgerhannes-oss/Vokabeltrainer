@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.14.1';
+const VERSION = '0.15.0';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';
@@ -50,6 +50,7 @@ const subjectMap=factory=>Object.fromEntries(knownSubjectIds().map(id=>[id,typeo
 const defaultGradeScales=()=>subjectMap(()=>defaultGradeScale());
 const defaultTestSeries=()=>subjectMap(()=>null);
 const defaultSubjectArrays=()=>subjectMap(()=>[]);
+const defaultSubjectNumbers=()=>subjectMap(()=>0);
 function subjectFromExternal(value,fallback=state?.activeSubject||'english'){
   const raw=String(value||'').trim().toLowerCase();if(!raw)return normalizeSubjectId(fallback);
   const hit=Object.values(SUBJECT_META).find(meta=>meta.id===raw||meta.label.toLowerCase()===raw||meta.short.toLowerCase()===raw||(meta.aliases||[]).some(x=>String(x).toLowerCase()===raw));
@@ -169,7 +170,7 @@ function defaultState(){
   const s={
     version: VERSION,senseModelVersion:1,spellingLeakRepairVersion:1,pairAuditVersion:1,firstContactVersion:1,
     activeLearnerId: 'learner_demo',activeSubject: 'english',
-    learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',activeSubjects:['english'],xp:0,lrsMode:false,fontSize:17,letterSpacing:0,flashSpeed:1600,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
+    learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',activeSubjects:['english'],xp:0,lrsMode:false,fontSize:17,letterSpacing:0,flashSpeed:1600,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
     books:[],learnerBooks:[],bookVocabulary:[],sets:[],vocabulary:[],setVocabulary:[],learnerVocabulary:[],grades:[],practiceTests:[],activity:[]
   };
   attachRuntimeWordApi(s);return s;

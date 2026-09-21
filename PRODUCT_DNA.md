@@ -89,6 +89,9 @@ Retrieval- und Spacing-Modells.
    Während des Abrufs: möglichst wenig Ablenkung.
    Abenteuer, Legion/Kampagne, XP und Belohnungen: vor oder nach der Lernsequenz.
    Gamification darf Aufmerksamkeit nicht vom Lerninhalt wegziehen.
+   Der Schlachtmodus ist ein eigener Erlebnisbereich und wird erst durch eine abgeschlossene
+   Lerneinheit freigeschaltet. Kampfanimationen laufen niemals während einer Abfrage und
+   verändern keinen fachlichen Mastery-Wert.
 
 10. **Globale Wissensbasis, getrennte Bedeutungen**
     Ein Lexem wird global gespeichert, Bedeutungen/Senses werden getrennt geführt.

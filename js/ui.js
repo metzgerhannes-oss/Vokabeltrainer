@@ -5,13 +5,66 @@ const PARENT_VIEW_IDS=new Set(['parentView','libraryView','dashboardView','setti
 function isParentMode(){return appRole==='parent'}
 
 
+function battleUnitsMarkup(count,large=false){
+  let out='';for(let i=0;i<count;i++)out+=`<div class="${large?'battle-unit':'soldier'} unit-${i%3}" style="--i:${i}"><i class="helmet"></i><i class="body"></i><i class="shield"></i><i class="spear"></i></div>`;return out;
+}
 function renderBattlefield(){
-  const p=subjectProgress(), next=nextFortress(), sea=seasonInfo(), count=soldiersFor(p.pct);
-  let soldiers=''; for(let i=0;i<count;i++)soldiers+=`<div class="soldier"><i class="shield"></i></div>`;
+  const p=subjectProgress(),next=nextFortress(),sea=seasonInfo(),count=soldiersFor(p.pct),tickets=battleTickets();
   const siege=p.pct>=45?'<div class="siege" title="Belagerungsgerät freigeschaltet"></div>':'';
+  const campaign=subjectCampaign(state.activeSubject),field=$('#battlefield');if(!field)return;
+  field.className=`battlefield ${sea.class} ${tickets?'battle-ready':''}`;field.setAttribute('aria-label',`${campaign.unitLabel}: ${p.pct}% Schuljahresfortschritt, ${tickets?`${tickets} Angriff freigeschaltet`:'noch kein Angriff freigeschaltet'}, ${next?`nächstes Ziel ${next.name}`:'alle Festungen erreicht'}`);
+  field.innerHTML=`<div class="sun"></div><div class="preview-cloud cloud-a"></div><div class="preview-cloud cloud-b"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army"><div class="preview-standard"></div>${battleUnitsMarkup(count)}${siege}</div><div class="fortress ${next?'':'inactive'}"><div class="gate"></div><div class="flag"></div></div>`;
+}
+function renderBattleView(){
+  const stage=$('#battleStage');if(!stage)return;
+  const p=subjectProgress(),f=nextFortress(),tickets=battleTickets(),count=Math.min(16,Math.max(6,soldiersFor(p.pct)+3)),damage=f?clamp(Math.round((p.pct/Math.max(1,f.req))*100),0,100):100;
   const campaign=subjectCampaign(state.activeSubject);
-  $('#battlefield').className=`battlefield ${sea.class}`; $('#battlefield').setAttribute('aria-label',`${campaign.unitLabel}: ${p.pct}% Schuljahresfortschritt, ${next?`nächstes Ziel ${next.name}`:'alle Festungen erreicht'}`);
-  $('#battlefield').innerHTML=`<div class="sun"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army">${soldiers}${siege}</div><div class="fortress ${next?'':'inactive'}"><div class="gate"></div><div class="flag"></div></div>`;
+  $('#battleTicketPill').textContent=`${tickets} ${tickets===1?'Angriff':'Angriffe'}`;
+  $('#battleStrength').textContent=armyStrength();
+  $('#battleFortressName').textContent=f?f.name:'Jahresfeldzug gewonnen';
+  $('#battleFortressProgress').textContent=f?`${p.pct}% / ${f.req}%`:'100%';
+  $('#battleTitle').textContent=f?`${campaign.unitLabel} gegen ${f.name}`:'Die Kampagne ist gewonnen';
+  $('#battleSubtitle').textContent=f?(tickets?'Dein Angriff ist freigeschaltet. Gib den Befehl!':'Schließe eine Lerneinheit ab, um den nächsten Angriff freizuschalten.'):'Alle Festungen dieses Schuljahres sind bezwungen.';
+  $('#battleAttackBtn').disabled=!f||tickets<1;$('#battleAttackBtn').textContent=!f?'Kampagne gewonnen':tickets?'Angriff starten':'Nach dem Lernen verfügbar';
+  $('#battleMessage').className='battle-message';$('#battleMessage').textContent=tickets?'Die Truppen stehen bereit.':'Noch kein Angriff verfügbar.';
+  stage.className='battle-stage';
+  stage.style.setProperty('--damage',damage);
+  stage.innerHTML=`<div class="battle-sky"><i class="battle-sun"></i><i class="battle-cloud cloud-1"></i><i class="battle-cloud cloud-2"></i></div><div class="battle-hills"></div><div class="battle-ground"></div><div class="battle-army"><div class="battle-standard"><i></i></div>${battleUnitsMarkup(count,true)}${p.pct>=35?'<div class="battle-ram"><i></i><b></b></div>':''}</div><div class="battle-projectiles"><i class="arrow a1"></i><i class="arrow a2"></i><i class="arrow a3"></i></div><div class="battle-impact"><i></i><i></i><i></i></div><div class="battle-fortress"><div class="tower tower-left"></div><div class="tower tower-right"></div><div class="wall"><div class="battle-gate"></div><div class="crack c1"></div><div class="crack c2"></div></div><div class="battle-enemy-flag"></div></div><div class="battle-dust"></div>`;
+}
+function openBattleView(){
+  if(isParentMode())return;
+  if(battleTickets()<1){toast('Die Schlacht wird nach einer abgeschlossenen Lerneinheit freigeschaltet.','subtle');return}
+  renderBattleView();showView('battleView');
+}
+function closeBattleImmersive(){
+  document.body.classList.remove('battle-immersive');$('#battleFullscreenBtn')?.setAttribute('aria-pressed','false');if($('#battleFullscreenBtn'))$('#battleFullscreenBtn').textContent='⛶ Vollbild';
+  if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
+}
+function toggleBattleFullscreen(){
+  const on=!document.body.classList.contains('battle-immersive');document.body.classList.toggle('battle-immersive',on);
+  $('#battleFullscreenBtn')?.setAttribute('aria-pressed',String(on));if($('#battleFullscreenBtn'))$('#battleFullscreenBtn').textContent=on?'✕ Vollbild verlassen':'⛶ Vollbild';
+  if(on){const el=$('#battleView');if(el?.requestFullscreen)el.requestFullscreen().catch(()=>{});}else if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
+}
+function runBattleAnimation(){
+  const f=nextFortress(),stage=$('#battleStage'),button=$('#battleAttackBtn');if(!f||!stage||!button)return;
+  if(!spendBattleTicket()){toast('Erst eine Lerneinheit abschließen.','subtle');renderBattleView();return}
+  const p=subjectProgress(),win=p.pct>=f.req,reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const t1=reduced?40:450,t2=reduced?90:1700,t3=reduced?150:3000;
+  button.disabled=true;$('#battleFullscreenBtn').disabled=true;$('#battleMessage').className='battle-message active';$('#battleMessage').textContent='Vorwärts! Die Armee setzt sich in Bewegung …';
+  stage.classList.add('is-attacking');
+  setTimeout(()=>{$('#battleMessage').textContent='Pfeile fliegen. Der Rammbock erreicht die Mauer!';stage.classList.add('is-impact')},t1);
+  setTimeout(()=>{
+    stage.classList.remove('is-attacking');stage.classList.add('battle-finished',win?'is-victory':'is-hold');
+    if(win){
+      fortressWins().push(f.id);learner().xp+=20;learner().campaignLog.push({date:new Date().toISOString(),subject:state.activeSubject,schoolYear:p.schoolYear,fortress:f.id,result:'win',progress:p.pct});recordActivity('fortress',{fortress:f.id,result:'win',schoolYear:p.schoolYear});
+      $('#battleMessage').className='battle-message victory';$('#battleMessage').innerHTML=`<strong>Festung gefallen!</strong><span>${esc(f.name)} ist bezwungen. +20 XP</span>`;
+    }else{
+      learner().campaignLog.push({date:new Date().toISOString(),subject:state.activeSubject,schoolYear:p.schoolYear,fortress:f.id,result:'hold',progress:p.pct});recordActivity('fortress',{fortress:f.id,result:'hold',schoolYear:p.schoolYear});
+      const missing=Math.max(0,f.req-p.pct);$('#battleMessage').className='battle-message hold';$('#battleMessage').innerHTML=`<strong>Starker Angriff!</strong><span>Die Mauer hält noch. Noch ${missing} Prozentpunkte Lernfortschritt bis zum Durchbruch.</span>`;
+    }
+    persistOnly();
+  },t2);
+  setTimeout(()=>{$('#battleFullscreenBtn').disabled=false;renderAll();renderBattleView();stage.classList.add('battle-finished',win?'is-victory':'is-hold')},t3);
 }
 
 function renderAll(){
@@ -22,8 +75,9 @@ function renderAll(){
   $('#subjectLabel').textContent=subjectLabel(state.activeSubject);
   const p=subjectProgress(); $('#masteryPct').textContent=`${p.pct}%`; $('#masteryProgress').value=p.pct; $('#masteryProgress').setAttribute('aria-valuetext',`${p.pct} Prozent nachhaltig gemeistert`); $('#masteryWords').textContent=`${p.mastered} / ${p.total} gemeistert`; $('#schoolYearPill').textContent=p.schoolYear; $('#dueCount').textContent=dueWords().length; $('#streakCount').textContent=streak(); $('#xpCount').textContent=l.xp; $('#stableCount').textContent=p.stable;
   const campaign=subjectCampaign(state.activeSubject);$('#campaignTitle').textContent=campaign.title;$('#campaignEyebrow').textContent=campaign.eyebrow; $('#armyRank').textContent=rankFor(p.pct,state.activeSubject); $('#armyStrength').textContent=armyStrength(); $('#gearLevel').textContent=gearFor(p.pct);
-  const nf=nextFortress(); $('#fortressRequirement').textContent=nf?`${nf.req}% · ${nf.name}`:'Alle bezwungen'; $('#attackBtn').disabled=!nf;
-  const hasSubjectWords=myWords().length>0; $('#campaignCard').classList.toggle('hidden',!hasSubjectWords); $('#optionalLearningCard').classList.toggle('hidden',!hasSubjectWords); renderToday(); renderTestCheck(); renderBattlefield(); renderRecommendations(); renderSets(); renderDashboard(); renderLibrary(); renderProfiles();
+  const nf=nextFortress(),tickets=battleTickets(); $('#fortressRequirement').textContent=nf?`${nf.req}% · ${nf.name}`:'Alle bezwungen'; $('#attackBtn').disabled=!nf||tickets<1;$('#attackBtn').textContent=tickets?'Zur Schlacht': 'Schlacht gesperrt';
+  $('#campaignMessage').className=`notice ${tickets?'good':'subtle'}`;$('#campaignMessage').textContent=tickets?`${tickets} ${tickets===1?'Angriff ist':'Angriffe sind'} bereit.`:'Nach einer abgeschlossenen Lerneinheit wird die Schlacht freigeschaltet.';
+  const hasSubjectWords=myWords().length>0; $('#campaignCard').classList.toggle('hidden',!hasSubjectWords); $('#optionalLearningCard').classList.toggle('hidden',!hasSubjectWords); renderToday(); renderTestCheck(); renderBattlefield(); renderBattleView(); renderRecommendations(); renderSets(); renderDashboard(); renderLibrary(); renderProfiles();
   $('#fontSizeRange').value=l.fontSize; $('#letterSpacingRange').value=l.letterSpacing; $('#flashSpeedSelect').value=String(l.flashSpeed);
   renderParentOverview(); checkHundredPercent(); renderStorageStatus();
 }
@@ -187,11 +241,7 @@ function renderProfiles(){
   $$('[data-profile-del]').forEach(b=>b.onclick=()=>deleteProfile(b.dataset.profileDel));
 }
 function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function attackFortress(){
-  const f=nextFortress(); if(!f)return; const p=subjectProgress(); const msg=$('#campaignMessage');
-  if(p.pct>=f.req){fortressWins().push(f.id);learner().xp+=20;learner().campaignLog.push({date:new Date().toISOString(),subject:state.activeSubject,schoolYear:p.schoolYear,fortress:f.id,result:'win',progress:p.pct});recordActivity('fortress',{fortress:f.id,result:'win',schoolYear:p.schoolYear});msg.className='notice good';msg.textContent=`Sieg: ${f.name} wurde bei ${p.pct}% Lernfortschritt bezwungen. +20 XP`;save()}
-  else{learner().campaignLog.push({date:new Date().toISOString(),subject:state.activeSubject,schoolYear:p.schoolYear,fortress:f.id,result:'retreat',progress:p.pct});recordActivity('fortress',{fortress:f.id,result:'retreat',schoolYear:p.schoolYear});msg.className='notice warn';msg.textContent=`Rückzug: Für ${f.name} brauchst du mindestens ${f.req}% Fortschritt. Aktuell: ${p.pct}%. Dein Lernfortschritt bleibt vollständig erhalten.`;persistOnly()}
-}
+function attackFortress(){openBattleView()}
 function duelPayload(){const p=subjectProgress();return {v:2,name:learner().name,subject:state.activeSubject,schoolYear:p.schoolYear,progress:p.pct,mastered:p.mastered,total:p.total,stable:p.stable,stability:p.total?Math.round(p.stable/p.total*1000):0,strength:armyStrength(),ts:Date.now()}}
 function encodeDuel(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
 function decodeDuel(code){const raw=String(code||'').trim();if(!raw||raw.length>4096)throw new Error('Ungültiger Code');const x=JSON.parse(decodeURIComponent(escape(atob(raw))));if(!x||typeof x!=='object'||!isKnownSubject(x.subject)||typeof x.schoolYear!=='string')throw new Error('Ungültiger Code');return {...x,name:safeText(x.name||'Gegner',80),progress:safeNumber(x.progress,0,100,0),mastered:Math.max(0,Math.round(safeNumber(x.mastered,0,100000,0))),total:Math.max(0,Math.round(safeNumber(x.total,0,100000,0))),stable:Math.max(0,Math.round(safeNumber(x.stable,0,100000,0))),stability:safeNumber(x.stability,0,1000,0)};}
@@ -292,7 +342,7 @@ function openProfileEditor(id=null){
   const gradeOptions=['','1','2','3','4','5','6','7','8','9','10','11','12','13'].map(x=>`<option value="${x}" ${String(existing?.gradeLevel||'')===x?'selected':''}>${x?`Klasse ${x}`:'Klasse wählen'}</option>`).join('');
   const subjectRows=Object.values(SUBJECT_META).map((meta,index)=>`<label class="switch-row ${meta.available?'':'disabled-row'}"><span><strong>${esc(meta.label)}</strong><small>${meta.available?(index===0?'nur aktivierte Fächer werden in der App angezeigt':'aktivierbar'):'vorbereitet · noch nicht freigeschaltet'}</small></span><input data-profile-subject="${esc(meta.id)}" type="checkbox" ${active.includes(meta.id)?'checked':''} ${meta.available?'':'disabled'}></label>`).join('');
   modal(`<div class="eyebrow">Profil</div><h2>${existing?'Profil bearbeiten':'Neues Lernprofil'}</h2><label>Name<input id="profileName" value="${esc(existing?.name||'')}"></label><label>Klasse<select id="profileGrade">${gradeOptions}</select></label><label class="switch-row"><span><span class="label-with-help"><strong>LRS</strong>${helpIcon('lrs')}</span><small>kürzere Einheiten, Audio zuerst, ruhigeres Layout</small></span><input id="profileLrs" type="checkbox" ${existing?.lrsMode?'checked':''}></label><fieldset class="subject-fieldset"><legend>Fremdsprachen</legend>${subjectRows}</fieldset><div id="profileError" class="notice subtle">Mindestens eine aktive Fremdsprache auswählen.</div><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="saveProfile" class="primary">${existing?'Speichern':'Anlegen'}</button></div>`);
-  $('#saveProfile').onclick=()=>{const name=$('#profileName').value.trim(),subjects=$$('[data-profile-subject]').filter(x=>x.checked&&!x.disabled).map(x=>x.dataset.profileSubject);if(!name){$('#profileError').className='notice warn';$('#profileError').textContent='Bitte einen Namen eingeben.';return}if(!subjects.length){$('#profileError').className='notice warn';$('#profileError').textContent='Mindestens eine aktive Fremdsprache auswählen.';return}const gradeLevel=$('#profileGrade').value,lrsMode=$('#profileLrs').checked;if(existing){existing.name=name;existing.gradeLevel=gradeLevel;existing.lrsMode=lrsMode;existing.activeSubjects=subjects}else{const learnerId=uid('learner');state.learners.push({id:learnerId,name,gradeLevel,activeSubjects:subjects,xp:0,lrsMode,fontSize:17,letterSpacing:0,flashSpeed:1600,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()});state.activeLearnerId=learnerId}ensureActiveSubject();closeModal();save()};
+  $('#saveProfile').onclick=()=>{const name=$('#profileName').value.trim(),subjects=$$('[data-profile-subject]').filter(x=>x.checked&&!x.disabled).map(x=>x.dataset.profileSubject);if(!name){$('#profileError').className='notice warn';$('#profileError').textContent='Bitte einen Namen eingeben.';return}if(!subjects.length){$('#profileError').className='notice warn';$('#profileError').textContent='Mindestens eine aktive Fremdsprache auswählen.';return}const gradeLevel=$('#profileGrade').value,lrsMode=$('#profileLrs').checked;if(existing){existing.name=name;existing.gradeLevel=gradeLevel;existing.lrsMode=lrsMode;existing.activeSubjects=subjects}else{const learnerId=uid('learner');state.learners.push({id:learnerId,name,gradeLevel,activeSubjects:subjects,xp:0,lrsMode,fontSize:17,letterSpacing:0,flashSpeed:1600,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()});state.activeLearnerId=learnerId}ensureActiveSubject();closeModal();save()};
 }
 function openBookManager(learnerId=state.activeLearnerId){
   const l=state.learners.find(x=>x.id===learnerId);if(!l)return;const subjects=learnerActiveSubjects(l);
@@ -339,6 +389,7 @@ function renderParentOverview(){
   box.querySelector('[data-parent-newset]')?.addEventListener('click',()=>openSetEditor());
 }
 function showView(id){
+  if(id!=='battleView'&&document.body.classList.contains('battle-immersive'))closeBattleImmersive();
   if(PARENT_VIEW_IDS.has(id)&&!isParentMode()){toast('Diese Funktion liegt im Elternbereich.','subtle');id='homeView'}
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
   document.querySelectorAll('.nav-btn[data-view]').forEach(b=>{const active=!isParentMode()&&b.dataset.view===id;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
@@ -349,7 +400,9 @@ function showView(id){
 
 function bind(){
   $$('.nav-btn[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view)); $('[data-action="quickLearn"]').onclick=startDailyTodo; $('#quickLearnHeroBtn').onclick=startDailyTodo; $('#todayTestBtn').onclick=openTestDatePlanner; $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
-  $('#newSetBtn').onclick=()=>openSetEditor(); $('#addGradeBtn').onclick=()=>addGrade(); $('#practiceTestBtn').onclick=openPracticeTestChooser; $('#addProfileBtn').onclick=addProfile; $('#attackBtn').onclick=attackFortress; $('#duelBtn').onclick=openDuel;
+  $('#newSetBtn').onclick=()=>openSetEditor(); $('#addGradeBtn').onclick=()=>addGrade(); $('#practiceTestBtn').onclick=openPracticeTestChooser; $('#addProfileBtn').onclick=addProfile; $('#attackBtn').onclick=openBattleView; $('#duelBtn').onclick=openDuel;
+  $('#battleBackBtn').onclick=()=>showView('childProgressView'); $('#battleReturnBtn').onclick=()=>showView('childProgressView'); $('#battleAttackBtn').onclick=runBattleAnimation; $('#battleFullscreenBtn').onclick=toggleBattleFullscreen;
+  document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('battle-immersive')){document.body.classList.remove('battle-immersive');$('#battleFullscreenBtn')?.setAttribute('aria-pressed','false');if($('#battleFullscreenBtn'))$('#battleFullscreenBtn').textContent='⛶ Vollbild';}});
   $('#parentAreaBtn').onclick=openParentGate; $('#childModeBtn').onclick=exitParentMode;
   $('#parentLibraryBtn').onclick=()=>showView('libraryView'); $('#parentTestPlanBtn').onclick=openTestDatePlanner; $('#parentDashboardBtn').onclick=()=>showView('dashboardView'); $('#parentSettingsBtn').onclick=()=>showView('settingsView');
   $$('[data-parent-home]').forEach(b=>b.onclick=()=>showView('parentView'));
