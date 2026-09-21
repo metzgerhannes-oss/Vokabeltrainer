@@ -4,7 +4,7 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.10.5**
+App-Version: **v0.17.1**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
@@ -51,3 +51,13 @@ Die Vokabelabfrage wurde als Kernprodukt technisch neu aufgebaut.
 - Foto-/OCR-Lernsets müssen vor dem Lernen sichtbar als Wort↔Bedeutung-Paare bestätigt werden
 - ältere Fotoimporte werden einmalig ebenfalls zur Paarprüfung gesperrt
 - Ergebnisübersicht ist über Question-ID und Set-Link reproduzierbar
+
+
+## v0.17.x – Schlachtmodus
+
+- eigener, nur nach abgeschlossenen Lerneinheiten erreichbarer Schlachtbereich
+- animierte Armee, Festungsschäden, Ergebnisdarstellung und immersiver Vollbildmodus
+- unterschiedliche Einheiten, sechs Festungsstufen, Angriffsarten, Jahreszeiten sowie Rang-/Ausrüstungsoptik
+- Bosskämpfe, Spezialangriff, kindgerechte Kampagnenkapitel und animierte Freundschaftsduelle
+- Gamification bleibt strikt außerhalb der aktiven Vokabelabfrage und verändert keinen Mastery-Wert
+- v0.17.1 minimiert die Daten in Herausforderungscodes: kein Profilname und keine unnötigen Detailwerte

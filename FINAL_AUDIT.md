@@ -1,85 +1,117 @@
-# Finales Audit vor Release-Candidate-Test
+# Finales Audit
 
-Stand: 20.09.2026 · App v0.10.2
+Stand: 21.09.2026 · App v0.17.1
 
 ## Ergebnis
 
-Der Stand ist für den anschließenden Release-Candidate-/End-to-End-Test freigegeben, sobald die zugehörige CI vollständig grün abgeschlossen ist.
+Der aktuelle Stand ist technisch und fachlich für den realen Kind-End-to-End-Test freigegeben.
+Die automatisierte CI muss für den Release-Commit vollständig grün sein. Ein grüner CI-Stand
+ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 
-## Im Audit geprüft
+## Release-Blocker geprüft
 
-### Datenmodell und Persistenz
+### Fachliche Vokabelkorrektheit
 
-- Sense-Modell: getrennte Bedeutungen, keine Mastery-Vererbung zwischen Senses
-- globale Bibliothek: ISBN → Lehrwerk → Unit/Lektion → Vokabel/Sense
-- Laufzeitindizes werden nicht persistiert
-- IndexedDB bleibt Primärspeicher, localStorage nur Fallback
-- Backup-Import wird vor der Migration plausibilisiert
-- Restore wird nach dem Schreiben aus dem tatsächlich verwendeten Speicherbackend zurückgelesen
-- Restore vergleicht Profile, Bücher, Buchzuordnungen, Lernsets, globale Vokabeln, Set-Zuordnungen, Lernfortschritt, Noten, Testchecks, Aktivität sowie aktives Profil/Fach
-- Backup-Größenlimits entsprechen den Limits der State-Härtung
+- zentrale, unveränderliche Question-/Sollantwort-Snapshots
+- Set-, Vokabel- und Sense-Identität werden vor der Bewertung geprüft
+- falsche Wort↔Bedeutung-Zuordnungen aus OCR werden vor dem Lernen durch Paarprüfung blockiert
+- Lehrwerks-/Set-Formulierungen und zulässige Sense-Antworten bleiben nachvollziehbar getrennt
+- Apostrophe und diakritische Zeichen werden im Schreibmodus orthographisch streng bewertet
+- semantisch richtige Antworten mit Schreibfehler werden fachlich differenziert behandelt
+- Ergebnisübersicht zeigt Frage, eigene Antwort, erwartete Antworten und Bewertung
 
-### Lernlogik
+### Lernprozess
 
-- Mastery bleibt konservativ: aktiver Abruf, Orthographie, mehrere Erfolgstage, zeitlicher Abstand und Cold Recall
+- verbindliche Reihenfolge: Erfassen → prüfen → kennenlernen/abschreiben → aktiv abrufen → verteilt wiederholen → nachhaltig meistern
+- Erstkontakt enthält Abschreiben, Abdecken, Erinnern, Vergleichen und Blockabruf
 - Hinweise zählen nicht wie unabhängige Abrufe
-- Schreibmodus zeigt die Lösung nicht vor dem Abruf
-- Apostrophe und diakritische Zeichen werden in Schreibkompetenz streng bewertet
-- semantisch richtiger Abruf mit Orthographiefehler bekommt keinen Spelling-Credit und wird früh erneut fällig
-- Testcheck bewertet Fremdsprachen-Schreibantworten und Diktat orthographisch streng
-- Testcheck verändert Mastery/Intervalle weiterhin nicht
-- Latein-Formentraining, Handschrift und abgeschlossene Testchecks zählen als aktive Lerntage, erzeugen dadurch aber keine zusätzliche Mastery
+- Fehler werden erneut geplant; Mastery verlangt mehrere unabhängige Abrufe über mehrere Tage
+- Testchecks verändern Mastery und Intervalle nicht
+- fokussierte Abfrage ohne Kampagne, globale Navigation oder bewegte Fortschrittsanzeige
 
-### Focused Learning / LRS / Accessibility
+### Kind-/Eltern-Rollen
 
-- globale Navigation und Kampagne verschwinden während des Abrufs
-- kein dynamischer Fortschrittsbalken während der Aufgabe
-- Feedback bleibt bis zum bewussten „Weiter“ stehen
-- Hilfen erscheinen erst auf Wunsch bzw. nach der Antwort
-- sichtbarer Tastaturfokus
-- zentrale Zielgrößen mindestens 44 px
-- Skip-Link
-- zugängliche Namen dynamischer Antwortfelder
-- Reduced Motion
-- LRS-Modus ohne erzwungene Versalien in Orientierungslabels
+- Kindmodus ist der Startzustand
+- Kind verwaltet keine Lernsets, OCR-Freigaben, Testumfänge, Profile, Lehrwerke oder Backups
+- offene Erwachsenenaufgaben werden dem Kind nur als verständlicher Status angezeigt
+- Elternbereich ist ein bewusster Rollenwechsel
+- Hilfe ist rollenabhängig
 
-### Sicherheit und Import
+### Schlachtmodus / Gamification
+
+- Schlacht ist ein separater Erlebnisbereich nach einer abgeschlossenen Lerneinheit
+- Angriffe sind begrenzt und werden als Belohnung freigeschaltet
+- Animationen, Einheiten, Festungen, Jahreszeiten, Rang und Ausrüstung liegen außerhalb der Abfrage
+- Bosskämpfe, Spezialangriffe und Story verändern keinen fachlichen Lernstand
+- Festungen fallen ausschließlich an den definierten Lernfortschrittsschwellen
+- Freundschaftsduelle sind deterministisch; kein Zufall entscheidet über das Ergebnis
+- Herausforderungscodes enthalten ab v0.17.1 keinen Profilnamen und nur die für den Vergleich nötigen Daten
+- der Battle-Browsertest prüft explizit, dass Mastery durch Kampf und Bosskampf unverändert bleibt
+
+### LRS / Accessibility
+
+- LRS-Modus mit ruhigerem Layout und anpassbarer Darstellung
+- keine erzwungenen Versalien in LRS-Orientierungslabels
+- sichtbarer Tastaturfokus und zentrale Zielgrößen von mindestens 44 px
+- Skip-Link und zugängliche Namen dynamischer Antwortfelder
+- Reduced-Motion wird berücksichtigt
+- Boss-Fortschritt und Schlachtfeld besitzen zugängliche Beschriftungen
+- Hilfen verschwinden während des fokussierten Abrufs
+
+### Daten / Datenschutz
+
+- IndexedDB ist Primärspeicher; localStorage nur Fallback
+- importierte Backups werden plausibilisiert, gehärtet und nach dem Restore zurückgelesen
+- Laufzeitindizes werden nicht persistiert
+- Größenlimits für Backup/Import sind vorhanden
+- der einmalige v0.14.1-Vokabel-Purge löscht Lerninhalte nur einmal je Browserprofil
+- Freundschaftsduell funktioniert ohne Server und überträgt keine Profildaten automatisch
+- Herausforderungscodes sind bewusst nicht kryptographisch fälschungssicher; darauf weist die UI hin
+
+### Security
 
 - CSP ohne unsafe-inline und unsafe-eval
-- keine externen Laufzeit-Skripte erforderlich
-- Datei-/CSV-/Backupdaten werden gehärtet und längenbegrenzt
-- OCR läuft mit lokal ausgelieferten Ressourcen
-- Bilddateien sind größenbegrenzt
-- semantisch unklare OCR-Treffer werden nicht automatisch einem Sense zugeordnet
+- keine externen Laufzeitskripte erforderlich
+- object-src none und base-uri none
+- dynamische Texte aus Lern-/Importdaten werden vor HTML-Ausgabe escaped
+- OCR und Wörterbuchressourcen werden lokal ausgeliefert
+- Browser-Smokes behandeln JavaScript-/CSP-Fehler als Fehler
+- Hilfe-Browsertest überwacht ab v0.17.1 zusätzlich die Browser-Konsole
 
 ### PWA / Offline / Deployment
 
 - versionsgetrennter App-Shell-Cache
-- langlebiger OCR-/Wikidict-Ressourcencache
-- Migration alter Cache-Pfade aus JohannasGartenwelt
-- fremde Origin-Caches werden nicht gelöscht
-- WebKit/iPhone-Smoke
+- langlebiger OCR-/Wörterbuch-Ressourcencache
+- Service Worker aktualisiert installierte Apps mit kontrolliertem einmaligem Reload
 - Chromium-Service-Worker-/Offline-Smoke
-- GitHub-Pages-Workflow auf aktuellen stabilen Action-Majors
+- WebKit/iPhone-Smokes für Shell, Lernen, Hilfe, OCR, Erstkontakt und Schlacht
+- Battle-Saisontest ist nicht mehr auf einen bestimmten Kalendermonat fest verdrahtet
+- GitHub Pages und CI laufen getrennt
 
-## Im finalen RC-Test noch praktisch zu prüfen
+## Audit-Korrekturen v0.17.1
 
-Diese Punkte sind absichtlich Bestandteil des nächsten End-to-End-Tests und nicht durch statische Audits ersetzbar:
-
-1. echtes Profil neu anlegen und zwischen Profilen wechseln
-2. ISBN fotografieren/eingeben und Lehrwerk zuordnen
-3. Vokabelseite fotografieren, OCR kontrollieren und importieren
-4. bekannte ISBN/Unit mit zweitem Profil wiederverwenden
-5. Tagesziel über mehrere adaptive Lernmodi absolvieren
-6. Schreibfehler, Hinweis, Fehlerwiederholung und Mastery-Entwicklung praktisch beobachten
-7. Testcheck in Ziel-, Quell-, Mixed- und Diktatmodus
-8. App schließen/neu öffnen und Datenbestand prüfen
-9. offline starten und bereits gecachte Ressourcen verwenden
-10. Backup erstellen, Daten verändern, Backup wiederherstellen und Bestand vergleichen
+1. **Datensparsamkeit im Freundschaftsduell:** Profilname sowie unnötige Detailwerte wurden aus neuen Herausforderungscodes entfernt. Alte Codes bleiben lesbar, der darin enthaltene Name wird nicht mehr übernommen.
+2. **Zeitstabiler Battle-Test:** Der Saisontest ermittelt Frühling/Sommer/Herbst/Winter dynamisch statt dauerhaft „Herbst“ zu erwarten.
+3. **Accessibility:** Schlachtfeld und Boss-Fortschritt wurden expliziter beschriftet.
+4. **Testhärtung:** Der Hilfe-Test prüft nun auch Browser-Konsole/CSP-Fehler.
+5. **Dokumentationsdrift:** README und finales Audit müssen nun per Preflight dieselbe App-Version wie der Code tragen.
 
 ## Bewusste Grenzen vor v1
 
-- „Globale Bibliothek“ ist derzeit global innerhalb des lokalen App-Datenbestands; geräteübergreifende Synchronisierung benötigt später eine Backend-/Sync-Schicht.
-- Französisch bleibt deaktiviert, solange die vollständige lokale OCR-/Sprachressource nicht vorhanden und getestet ist.
-- Browser/OS können Webspeicher unter extremem Speicherdruck löschen; deshalb bleibt der Backup-Export erforderlich.
-- Der nächste Test ist bewusst ein realer End-to-End-Test; ein grüner CI-Stand ersetzt diesen nicht.
+- Lerndaten bleiben lokal; geräteübergreifende Synchronisierung benötigt eine spätere Sync-Schicht.
+- Browser/OS können lokalen Webspeicher unter extremem Speicherdruck löschen; Backup bleibt notwendig.
+- Herausforderungscodes sind kein vertrauenswürdiger Leistungsnachweis und können manipuliert werden.
+- Gamification kann Motivation unterstützen, ist aber kein Beleg für höheren Lernerfolg; deshalb bleibt sie außerhalb des Abrufs.
+- Französisch bleibt deaktiviert, bis Sprach-/OCR-Pipeline vollständig getestet ist.
+
+## Praktischer Test vor v1
+
+Der nächste entscheidende Test ist ein echter Kind-Test ohne Erklärungen. Beobachtet werden:
+- erster Blick: erkennt das Kind die heutige Hauptaktion?
+- Erstkontakt: versteht es Abschreiben → Abdecken → Erinnern → Vergleichen?
+- normale Abfrage: versteht es Fehlerfeedback und „Weiter“?
+- Abschluss: findet und versteht es die Ergebnisübersicht?
+- Belohnung: versteht es, dass eine Schlacht freigeschaltet wurde?
+- Schlacht: findet es Angriffsart, Vollbild und Ergebnis ohne Hilfe?
+- Rückweg: kommt es selbständig zu Heute/Lernen zurück?
+- kritisch: erster Fehlklick, Pause >5 Sekunden, Zurückspringen oder Nachfrage werden notiert.

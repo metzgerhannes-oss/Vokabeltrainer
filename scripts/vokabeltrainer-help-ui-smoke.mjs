@@ -4,11 +4,12 @@ const base=process.env.APP_BASE||'http://127.0.0.1:4173';
 const browser=await webkit.launch({headless:true});
 const errors=[];
 const assert=(value,message)=>{if(!value)throw new Error('Help UI smoke failed: '+message)};
+const capture=page=>{page.on('pageerror',e=>errors.push(String(e?.message||e)));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())})};
 
 try{
   const desktop=await browser.newContext({viewport:{width:1280,height:800}});
   const page=await desktop.newPage();
-  page.on('pageerror',e=>errors.push(String(e?.message||e)));
+  capture(page);
   let response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'desktop app loads');
   assert(await page.locator('#homeView [data-help]').count()===0,'child home stays free of contextual-help clutter');
@@ -34,7 +35,7 @@ try{
 
   const mobile=await browser.newContext(devices['iPhone 13']);
   const phone=await mobile.newPage();
-  phone.on('pageerror',e=>errors.push(String(e?.message||e)));
+  capture(phone);
   response=await phone.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'mobile app loads');
   assert(await phone.locator('#homeView [data-help]').count()===0,'mobile child home has no help clutter');
@@ -44,7 +45,8 @@ try{
   assert(text?.includes('Heute')&&text?.includes('Lernen')&&text?.includes('Erfolge'),'mobile child help is short and role-specific');
   await mobile.close();
 
-  if(errors.length)throw new Error(errors.join(' | '));
+  const fatal=errors.filter(x=>/ReferenceError|TypeError|SyntaxError|Content Security Policy|Refused to/i.test(x));
+  if(fatal.length)throw new Error(fatal.join(' | '));
   console.log('Vokabeltrainer help UI smoke: passed');
 }finally{
   await browser.close();

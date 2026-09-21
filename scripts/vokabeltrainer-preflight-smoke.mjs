@@ -14,6 +14,8 @@ const ui=read('js/ui.js');
 const help=read('js/help.js');
 const manifest=JSON.parse(read('manifest.webmanifest'));
 const dna=read('PRODUCT_DNA.md');
+const readme=read('README.md');
+const finalAudit=read('FINAL_AUDIT.md');
 const allJs=fs.readdirSync('js').filter(x=>x.endsWith('.js')).map(x=>read('js/'+x)).join('\n');
 
 const passed=[];
@@ -25,6 +27,8 @@ assert(html.includes('Beta v'+version),'document title matches app version');
 assert(html.includes('id="versionBadge"')&&html.includes('>v'+version+'</span>'),'header shows the exact running app version');
 assert(app.includes("sw.js?v="+version),'service-worker registration uses current version');
 assert(sw.includes("APP_VERSION='"+version+"'"),'service-worker app version matches');
+assert(readme.includes('App-Version: **v'+version+'**'),'README version matches app version');
+assert(finalAudit.includes('App v'+version),'FINAL_AUDIT version matches app version');
 
 const csp=html.match(/Content-Security-Policy" content="([^"]+)"/)?.[1]||'';
 assert(csp&&!csp.includes("'unsafe-inline'")&&!csp.includes("'unsafe-eval'"),'CSP stays free of unsafe-inline and unsafe-eval');

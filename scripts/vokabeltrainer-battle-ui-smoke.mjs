@@ -38,7 +38,8 @@ try{
   assert(await page.locator('#battleStage .unit-archer').count()>=1,'progress unlocks archer units');
   assert(await page.locator('#battleStage .unit-cavalry').count()>=1,'high progress unlocks cavalry units');
   assert(await page.locator('#battleStage.fortress-stage-outpost').count()===1,'first campaign target has its own fortress stage');
-  assert(await page.locator('#battleStage.season-autumn').count()===1,'current autumn season changes the battle stage');
+  const expectedSeason=await page.evaluate(()=>seasonInfo().class);
+  assert(await page.locator('#battleStage.season-'+expectedSeason).count()===1,'current season changes the battle stage dynamically');
   assert((await page.locator('#battleRankGear').textContent())?.length>3,'rank and equipment are visible');
   assert(await page.locator('[data-battle-attack]').count()===5,'four standard attacks plus one special attack are available');
   assert(!(await page.locator('[data-battle-attack="ram"]').isDisabled()),'ram attack unlocks from learning progress');
@@ -73,8 +74,11 @@ try{
   await page.waitForSelector('#battleStage.attack-special.battle-finished',{timeout:3000});
   assert(await page.evaluate(()=>subjectProgress().pct)===100,'boss and special attack do not change academic mastery');
 
+  const privacy=await page.evaluate(()=>{const p=duelPayload(),raw=JSON.parse(decodeURIComponent(escape(atob(encodeDuel(p)))));return {payload:p,raw,profile:learner().name}});
+  assert(privacy.raw.name!==privacy.profile,'duel code never contains the learner profile name');
+  assert(!Object.hasOwn(privacy.raw,'mastered')&&!Object.hasOwn(privacy.raw,'total')&&!Object.hasOwn(privacy.raw,'stable')&&!Object.hasOwn(privacy.raw,'strength'),'duel code contains only comparison-minimum learning data');
   await page.evaluate(()=>openDuel());
-  const duelCode=await page.evaluate(()=>encodeDuel({...duelPayload(),name:'Gegner',progress:80,mastered:0,stable:0,stability:0}));
+  const duelCode=await page.evaluate(()=>encodeDuel({...duelPayload(),progress:80,stability:0}));
   await page.fill('#opponentCode',duelCode);
   await page.click('#duelCompare');
   assert(await page.locator('.duel-arena').count()===1,'friendship duel has an animated arena');
