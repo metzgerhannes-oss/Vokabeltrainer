@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#172033">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; media-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-src 'none'; worker-src 'self' blob:; manifest-src 'self'">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Vokabeltrainer">
-  <title>Vokabeltrainer – Beta v0.17.2</title>
+  <title>Vokabeltrainer – Beta v0.17.3</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
-  <link rel="stylesheet" href="css/app.css?v=0.17.2">
+  <link rel="stylesheet" href="css/app.css?v=0.17.3">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Zum Inhalt</a>
@@ -19,7 +20,7 @@
     <header class="topbar">
       <div class="app-title-row">
         <h1 id="appTitle">Vokabeltrainer</h1>
-        <span id="versionBadge" class="version-badge" aria-label="App-Version">v0.17.2</span>
+        <span id="versionBadge" class="version-badge" aria-label="App-Version">v0.17.3</span>
       </div>
       <div class="top-actions">
         <button id="installBtn" class="ghost hidden">Installieren</button>
@@ -32,6 +33,16 @@
 
     <main id="mainContent" tabindex="-1">
       <section id="homeView" class="view active">
+        <article id="iosInstallCard" class="install-callout hidden" aria-labelledby="iosInstallTitle">
+          <div class="install-callout-copy">
+            <span class="install-callout-icon" aria-hidden="true">▣</span>
+            <span>
+              <strong id="iosInstallTitle">Ohne Safari-Leiste öffnen</strong>
+              <small>Einmal als Web-App zum Home-Bildschirm hinzufügen. Danach startet der Vokabeltrainer wie eine normale App im Vollbild.</small>
+            </span>
+          </div>
+          <button id="iosInstallBtn" class="secondary" type="button">Vollbild einrichten</button>
+        </article>
         <article class="card today-focus">
           <div class="today-main">
             <div class="row gap align-center"><div class="eyebrow">Heute</div><span id="todayTestPill" class="pill hidden"></span></div>
@@ -306,18 +317,18 @@
   <input id="fileInput" type="file" class="hidden" accept=".csv,.json,text/csv,application/json">
   <input id="photoInput" type="file" class="hidden" accept="image/*">
   <input id="isbnPhotoInput" type="file" class="hidden" accept="image/*" capture="environment">
-  <script src="js/core.js?v=0.17.2" defer></script>
-  <script src="js/help.js?v=0.17.2" defer></script>
-  <script src="js/library.js?v=0.17.2" defer></script>
-  <script src="js/storage.js?v=0.17.2" defer></script>
-  <script src="js/model.js?v=0.17.2" defer></script>
-  <script src="js/quiz-engine.js?v=0.17.2" defer></script>
-  <script src="js/learning.js?v=0.17.2" defer></script>
-  <script src="js/translation.js?v=0.17.2" defer></script>
-  <script src="js/io.js?v=0.17.2" defer></script>
-  <script src="js/ui.js?v=0.17.2" defer></script>
-  <script src="js/library-ui.js?v=0.17.2" defer></script>
-  <script src="js/focus-ui.js?v=0.17.2" defer></script>
-  <script src="js/app.js?v=0.17.2" defer></script>
+  <script src="js/core.js?v=0.17.3" defer></script>
+  <script src="js/help.js?v=0.17.3" defer></script>
+  <script src="js/library.js?v=0.17.3" defer></script>
+  <script src="js/storage.js?v=0.17.3" defer></script>
+  <script src="js/model.js?v=0.17.3" defer></script>
+  <script src="js/quiz-engine.js?v=0.17.3" defer></script>
+  <script src="js/learning.js?v=0.17.3" defer></script>
+  <script src="js/translation.js?v=0.17.3" defer></script>
+  <script src="js/io.js?v=0.17.3" defer></script>
+  <script src="js/ui.js?v=0.17.3" defer></script>
+  <script src="js/library-ui.js?v=0.17.3" defer></script>
+  <script src="js/focus-ui.js?v=0.17.3" defer></script>
+  <script src="js/app.js?v=0.17.3" defer></script>
 </body>
 </html>
