@@ -8,10 +8,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Vokabeltrainer">
-  <title>Vokabeltrainer – Beta v0.13.1</title>
+  <title>Vokabeltrainer – Beta v0.14.0</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
-  <link rel="stylesheet" href="css/app.css?v=0.13.1">
+  <link rel="stylesheet" href="css/app.css?v=0.14.0">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Zum Inhalt</a>
@@ -19,12 +19,14 @@
     <header class="topbar">
       <div class="app-title-row">
         <h1 id="appTitle">Vokabeltrainer</h1>
-        <span id="versionBadge" class="version-badge" aria-label="App-Version">v0.13.1</span>
+        <span id="versionBadge" class="version-badge" aria-label="App-Version">v0.14.0</span>
       </div>
       <div class="top-actions">
         <button id="installBtn" class="ghost hidden">Installieren</button>
         <button id="helpBtn" class="ghost help-main-btn" type="button">? Hilfe</button>
-        <button id="profileBtn" class="profile-chip">Profil</button>
+        <span id="profileBtn" class="profile-chip profile-label" aria-label="Aktives Lernprofil">Profil</span>
+        <button id="parentAreaBtn" class="ghost role-switch-btn" type="button">Eltern</button>
+        <button id="childModeBtn" class="ghost role-switch-btn hidden" type="button">← Kindermodus</button>
       </div>
     </header>
 
@@ -63,91 +65,74 @@
           </div>
         </article>
 
-        <div class="home-secondary">
-          <details id="progressDisclosure" class="home-disclosure">
-            <summary>
-              <span><strong>Mein Fortschritt</strong><small>Jahresfortschritt und Kampagne</small></span>
-              <span class="disclosure-chevron" aria-hidden="true">›</span>
-            </summary>
-            <div class="home-disclosure-body">
-        <div class="hero-grid">
-          <article class="card progress-card">
-            <div class="row spread align-center">
-              <div>
-                <div class="row gap align-center"><div class="eyebrow" id="subjectLabel">Englisch</div><span id="schoolYearPill" class="pill">–</span></div>
-                <div class="row gap align-center"><h2 id="welcomeTitle">Dein Lernstand</h2><button type="button" class="help-tip" data-help="mastery" aria-label="Hilfe: nachhaltige Mastery">?</button></div>
+        <details id="practiceDisclosure" class="home-disclosure child-practice-disclosure">
+          <summary>
+            <span><strong>Mehr üben</strong><small>Freiwillige Übungen nach dem Tagesziel</small></span>
+            <span class="disclosure-chevron" aria-hidden="true">›</span>
+          </summary>
+          <div class="home-disclosure-body">
+            <section id="optionalLearningCard" class="card">
+              <div class="row spread align-center">
+                <div>
+                  <div class="eyebrow">Optional</div>
+                  <h2>Weitere Lernarten</h2>
+                </div>
+                <span id="lrsBadge" class="pill hidden">LRS aktiv</span>
               </div>
-              <div id="subjectSwitcher" class="segmented" aria-label="Fach wählen"></div>
-            </div>
-            <div class="big-progress">
-              <div class="progress-orb"><span id="masteryPct">0%</span></div>
-              <div class="progress-copy">
-                <strong id="masteryWords">0 / 0 gemeistert</strong>
-                <p>100 % bedeutet: alle Vokabeln des aktuellen Schuljahres nachhaltig beherrscht.</p>
-                <progress id="masteryProgress" class="mastery-progress" max="100" value="0" aria-label="Schuljahresfortschritt"></progress>
-              </div>
-            </div>
-            <div class="metric-grid">
-              <div><span class="metric" id="dueCount">0</span><small class="label-with-help">heute fällig <button type="button" class="help-tip" data-help="due" aria-label="Hilfe: heute fällig">?</button></small></div>
-              <div><span class="metric" id="streakCount">0</span><small class="label-with-help">Lernserie <button type="button" class="help-tip" data-help="streak" aria-label="Hilfe: Lernserie">?</button></small></div>
-              <div><span class="metric" id="xpCount">0</span><small class="label-with-help">XP <button type="button" class="help-tip" data-help="xp" aria-label="Hilfe: XP">?</button></small></div>
-              <div><span class="metric" id="stableCount">0</span><small class="label-with-help">langzeitstabil <button type="button" class="help-tip" data-help="stable" aria-label="Hilfe: Langzeitstabil">?</button></small></div>
-            </div>
-          </article>
-
-          <article class="card campaign-card" id="campaignCard">
-            <div class="row spread align-center">
-              <div>
-                <div class="eyebrow" id="campaignEyebrow">Kampagne</div>
-                <div class="row gap align-center"><h2 id="campaignTitle">Deine Armee</h2><button type="button" class="help-tip" data-help="campaign" aria-label="Hilfe: Kampagne">?</button></div>
-              </div>
-              <span class="pill" id="armyRank">Rekruten</span>
-            </div>
-            <div id="battlefield" class="battlefield" role="img" aria-label="Armee und Festung"></div>
-            <div class="campaign-stats">
-              <div><small>Stärke</small><strong id="armyStrength">0</strong></div>
-              <div><small>Nächstes Ziel</small><strong id="fortressRequirement">15%</strong></div>
-              <div><small>Ausrüstung</small><strong id="gearLevel">I</strong></div>
-            </div>
-            <div class="row gap wrap">
-              <button id="attackBtn" class="primary">Festung angreifen</button>
-              <button id="duelBtn" class="secondary">Freundschaftsduell</button>
-            </div>
-            <div id="campaignMessage" class="notice subtle"></div>
-          </article>
-        </div>
-            </div>
-          </details>
-
-          <details id="learningDisclosure" class="home-disclosure">
-            <summary>
-              <span><strong>Mehr lernen</strong><small>Weitere Lernarten und Lernsets</small></span>
-              <span class="disclosure-chevron" aria-hidden="true">›</span>
-            </summary>
-            <div class="home-disclosure-body">
-        <section id="optionalLearningCard" class="card">
-          <div class="row spread align-center">
-            <div>
-              <div class="eyebrow">Optional</div>
-              <div class="row gap align-center"><h2>Weitere Lernarten</h2><button type="button" class="help-tip" data-help="optionalModes" aria-label="Hilfe: weitere Lernarten">?</button></div>
-            </div>
-            <span id="lrsBadge" class="pill hidden">LRS aktiv</span>
+              <div id="recommendations" class="recommend-grid"></div>
+            </section>
           </div>
-          <div id="recommendations" class="recommend-grid"></div>
-        </section>
+        </details>
+      </section>
 
-        <section class="card">
-          <div class="row spread align-center">
-            <div>
-              <div class="eyebrow">Lernsets</div>
-              <h2>Dein Schuljahr</h2>
-            </div>
-            <button id="newSetBtn" class="secondary">+ Lernset</button>
+      <section id="childProgressView" class="view">
+        <div class="child-progress-shell">
+          <div class="hero-grid">
+            <article class="card progress-card">
+              <div class="row spread align-center">
+                <div>
+                  <div class="row gap align-center"><div class="eyebrow" id="subjectLabel">Englisch</div><span id="schoolYearPill" class="pill">–</span></div>
+                  <h2 id="welcomeTitle">Mein Fortschritt</h2>
+                </div>
+                <div id="subjectSwitcher" class="segmented" aria-label="Fach wählen"></div>
+              </div>
+              <div class="big-progress">
+                <div class="progress-orb"><span id="masteryPct">0%</span></div>
+                <div class="progress-copy">
+                  <strong id="masteryWords">0 / 0 gemeistert</strong>
+                  <p>Hier siehst du, wie viele Wörter schon sicher über mehrere Tage gelernt sind.</p>
+                  <progress id="masteryProgress" class="mastery-progress" max="100" value="0" aria-label="Schuljahresfortschritt"></progress>
+                </div>
+              </div>
+              <div class="metric-grid child-metrics">
+                <div><span class="metric" id="dueCount">0</span><small>heute fällig</small></div>
+                <div><span class="metric" id="streakCount">0</span><small>Lernserie</small></div>
+                <div><span class="metric" id="xpCount">0</span><small>XP</small></div>
+                <div><span class="metric" id="stableCount">0</span><small>schon sehr sicher</small></div>
+              </div>
+            </article>
+
+            <article class="card campaign-card" id="campaignCard">
+              <div class="row spread align-center">
+                <div>
+                  <div class="eyebrow" id="campaignEyebrow">Kampagne</div>
+                  <h2 id="campaignTitle">Deine Armee</h2>
+                </div>
+                <span class="pill" id="armyRank">Rekruten</span>
+              </div>
+              <div id="battlefield" class="battlefield" role="img" aria-label="Armee und Festung"></div>
+              <div class="campaign-stats">
+                <div><small>Stärke</small><strong id="armyStrength">0</strong></div>
+                <div><small>Nächstes Ziel</small><strong id="fortressRequirement">15%</strong></div>
+                <div><small>Ausrüstung</small><strong id="gearLevel">I</strong></div>
+              </div>
+              <div class="row gap wrap">
+                <button id="attackBtn" class="primary">Festung angreifen</button>
+                <button id="duelBtn" class="secondary">Freundschaftsduell</button>
+              </div>
+              <div id="campaignMessage" class="notice subtle"></div>
+            </article>
           </div>
-          <div id="setList" class="set-list"></div>
-        </section>
-            </div>
-          </details>
         </div>
       </section>
 
@@ -164,23 +149,35 @@
         </div>
       </section>
 
-      <section id="moreView" class="view">
-        <div class="more-shell">
-          <div class="more-head">
-            <div class="eyebrow">Mehr</div>
-            <h2>Alles Weitere</h2>
-            <p class="muted-line">Hier findest du Dinge, die du für das tägliche Lernen nicht brauchst.</p>
+      <section id="parentView" class="view">
+        <div class="parent-shell">
+          <div class="parent-head">
+            <div class="eyebrow">Elternbereich</div>
+            <h2>Lernen vorbereiten & begleiten</h2>
+            <p class="muted-line">Hier werden Inhalte, Testpläne, Profile und Daten verwaltet. Im Kindermodus sind diese Funktionen nicht sichtbar.</p>
           </div>
-          <div class="more-grid">
-            <button id="moreLibraryBtn" class="menu-card" type="button"><span aria-hidden="true">▤</span><span><strong>Vokabeln</strong><small>Bibliothek und neue Wörter</small></span><b aria-hidden="true">›</b></button>
-            <button id="moreLearningBtn" class="menu-card" type="button"><span aria-hidden="true">✦</span><span><strong>Lernsets & Übungen</strong><small>Lernsets verwalten und Lernarten wählen</small></span><b aria-hidden="true">›</b></button>
-            <button id="moreProgressBtn" class="menu-card" type="button"><span aria-hidden="true">▥</span><span><strong>Fortschritt</strong><small>Details, Testbereitschaft und Noten</small></span><b aria-hidden="true">›</b></button>
-            <button id="moreSettingsBtn" class="menu-card" type="button"><span aria-hidden="true">⚙</span><span><strong>Einstellungen</strong><small>Profile, Darstellung und Datensicherung</small></span><b aria-hidden="true">›</b></button>
+
+          <div id="parentAttention" class="parent-attention"></div>
+
+          <div class="parent-grid">
+            <button id="parentLibraryBtn" class="menu-card" type="button"><span aria-hidden="true">▤</span><span><strong>Vokabeln & Import</strong><small>Wörter erfassen, OCR prüfen und Bibliothek verwalten</small></span><b aria-hidden="true">›</b></button>
+            <button id="parentTestPlanBtn" class="menu-card" type="button"><span aria-hidden="true">◷</span><span><strong>Testplanung</strong><small>Termin, Umfang und Abfrageformat festlegen</small></span><b aria-hidden="true">›</b></button>
+            <button id="parentDashboardBtn" class="menu-card" type="button"><span aria-hidden="true">▥</span><span><strong>Fortschritt & Noten</strong><small>Testchecks, Lernstand und Schulnoten</small></span><b aria-hidden="true">›</b></button>
+            <button id="parentSettingsBtn" class="menu-card" type="button"><span aria-hidden="true">⚙</span><span><strong>Profile, Lehrwerke & Daten</strong><small>LRS, Darstellung, Bücher und Sicherung</small></span><b aria-hidden="true">›</b></button>
           </div>
+
+          <section class="card parent-sets-card">
+            <div class="row spread align-center wrap">
+              <div><div class="eyebrow">Lernstoff</div><h2>Lernsets</h2></div>
+              <button id="newSetBtn" class="secondary">+ Lernset</button>
+            </div>
+            <div id="setList" class="set-list"></div>
+          </section>
         </div>
       </section>
 
-      <section id="dashboardView" class="view">
+      <section id="dashboardView" class="view parent-only-view">
+        <div class="parent-subnav"><button class="ghost" data-parent-home type="button">← Elternbereich</button></div>
         <div class="card">
           <div class="row spread align-center">
             <div><div class="eyebrow">Familie</div><h2>Fortschritt & Noten</h2></div>
@@ -190,7 +187,8 @@
         </div>
       </section>
 
-      <section id="libraryView" class="view">
+      <section id="libraryView" class="view parent-only-view">
+        <div class="parent-subnav"><button class="ghost" data-parent-home type="button">← Elternbereich</button></div>
         <div class="card library-card">
           <div class="library-head">
             <div>
@@ -209,7 +207,8 @@
         </div>
       </section>
 
-      <section id="settingsView" class="view">
+      <section id="settingsView" class="view parent-only-view">
+        <div class="parent-subnav"><button class="ghost" data-parent-home type="button">← Elternbereich</button></div>
         <div class="settings-grid">
           <article class="card">
             <div class="eyebrow">Lernen</div><h2>Einstellungen</h2>
@@ -243,7 +242,7 @@
     <nav class="bottom-nav" aria-label="Navigation">
       <button data-view="homeView" class="nav-btn active" aria-current="page"><span aria-hidden="true">⌂</span>Heute</button>
       <button data-action="quickLearn" class="nav-btn"><span aria-hidden="true">✦</span>Lernen</button>
-      <button data-view="moreView" class="nav-btn"><span aria-hidden="true">•••</span>Mehr</button>
+      <button data-view="childProgressView" class="nav-btn"><span aria-hidden="true">★</span>Erfolge</button>
     </nav>
   </div>
 
@@ -253,18 +252,18 @@
   <input id="fileInput" type="file" class="hidden" accept=".csv,.json,text/csv,application/json">
   <input id="photoInput" type="file" class="hidden" accept="image/*">
   <input id="isbnPhotoInput" type="file" class="hidden" accept="image/*" capture="environment">
-  <script src="js/core.js?v=0.13.1" defer></script>
-  <script src="js/help.js?v=0.13.1" defer></script>
-  <script src="js/library.js?v=0.13.1" defer></script>
-  <script src="js/storage.js?v=0.13.1" defer></script>
-  <script src="js/model.js?v=0.13.1" defer></script>
-  <script src="js/quiz-engine.js?v=0.13.1" defer></script>
-  <script src="js/learning.js?v=0.13.1" defer></script>
-  <script src="js/translation.js?v=0.13.1" defer></script>
-  <script src="js/io.js?v=0.13.1" defer></script>
-  <script src="js/ui.js?v=0.13.1" defer></script>
-  <script src="js/library-ui.js?v=0.13.1" defer></script>
-  <script src="js/focus-ui.js?v=0.13.1" defer></script>
-  <script src="js/app.js?v=0.13.1" defer></script>
+  <script src="js/core.js?v=0.14.0" defer></script>
+  <script src="js/help.js?v=0.14.0" defer></script>
+  <script src="js/library.js?v=0.14.0" defer></script>
+  <script src="js/storage.js?v=0.14.0" defer></script>
+  <script src="js/model.js?v=0.14.0" defer></script>
+  <script src="js/quiz-engine.js?v=0.14.0" defer></script>
+  <script src="js/learning.js?v=0.14.0" defer></script>
+  <script src="js/translation.js?v=0.14.0" defer></script>
+  <script src="js/io.js?v=0.14.0" defer></script>
+  <script src="js/ui.js?v=0.14.0" defer></script>
+  <script src="js/library-ui.js?v=0.14.0" defer></script>
+  <script src="js/focus-ui.js?v=0.14.0" defer></script>
+  <script src="js/app.js?v=0.14.0" defer></script>
 </body>
 </html>

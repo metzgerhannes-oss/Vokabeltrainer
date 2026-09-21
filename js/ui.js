@@ -1,5 +1,10 @@
 'use strict';
 
+let appRole='child';
+const PARENT_VIEW_IDS=new Set(['parentView','libraryView','dashboardView','settingsView']);
+function isParentMode(){return appRole==='parent'}
+
+
 function renderBattlefield(){
   const p=subjectProgress(), next=nextFortress(), sea=seasonInfo(), count=soldiersFor(p.pct);
   let soldiers=''; for(let i=0;i<count;i++)soldiers+=`<div class="soldier"><i class="shield"></i></div>`;
@@ -11,7 +16,7 @@ function renderBattlefield(){
 
 function renderAll(){
   const l=learner(); if(!l) return; ensureActiveSubject();applyPreferences();
-  $('#profileBtn').textContent=l.name; $('#lrsBadge').classList.toggle('hidden',!l.lrsMode);
+  $('#profileBtn').textContent=l.name; $('#lrsBadge').classList.toggle('hidden',!l.lrsMode); applyRoleUi();
   const activeSubjects=learnerActiveSubjects(l),switcher=$('#subjectSwitcher');
   if(switcher){switcher.innerHTML=activeSubjects.map(subject=>`<button data-subject="${esc(subject)}" class="subject-btn ${subject===state.activeSubject?'active':''}" aria-pressed="${subject===state.activeSubject?'true':'false'}">${esc(subjectShort(subject))}</button>`).join('');switcher.classList.toggle('hidden',activeSubjects.length<=1);$$('.subject-btn').forEach(b=>b.onclick=()=>{if(!isSubjectActive(b.dataset.subject))return;state.activeSubject=b.dataset.subject;save()})}
   $('#subjectLabel').textContent=subjectLabel(state.activeSubject);
@@ -20,7 +25,7 @@ function renderAll(){
   const nf=nextFortress(); $('#fortressRequirement').textContent=nf?`${nf.req}% · ${nf.name}`:'Alle bezwungen'; $('#attackBtn').disabled=!nf;
   const hasSubjectWords=myWords().length>0; $('#campaignCard').classList.toggle('hidden',!hasSubjectWords); $('#optionalLearningCard').classList.toggle('hidden',!hasSubjectWords); renderToday(); renderTestCheck(); renderBattlefield(); renderRecommendations(); renderSets(); renderDashboard(); renderLibrary(); renderProfiles();
   $('#fontSizeRange').value=l.fontSize; $('#letterSpacingRange').value=l.letterSpacing; $('#flashSpeedSelect').value=String(l.flashSpeed);
-  checkHundredPercent(); renderStorageStatus();
+  renderParentOverview(); checkHundredPercent(); renderStorageStatus();
 }
 function applyPreferences(){const l=learner();document.documentElement.dataset.fontSize=String(clamp(Number(l.fontSize)||17,16,24));document.documentElement.dataset.letterSpace=String(clamp(Number(l.letterSpacing)||0,0,3));document.documentElement.classList.toggle('lrs-mode',!!l.lrsMode)}
 
@@ -34,11 +39,15 @@ function renderTestCheck(){
   $('#testReadyDetail').textContent=r.ready===r.total?'Alle Wörter sind nach dem Lernmodell testbereit.':`${r.total-r.ready} ${r.total-r.ready===1?'Wort braucht':'Wörter brauchen'} noch Festigung.`;
 }
 function renderToday(){
-  const reviewSet=mySets().find(setNeedsPairReview);
+  const parent=isParentMode(),reviewSet=mySets().find(setNeedsPairReview);
   if(reviewSet){
     const count=setWords(reviewSet.id).length,progressRow=$('#todayProgress')?.closest('.today-progress-row');
-    progressRow?.classList.add('hidden');$('#todayProgressText').textContent='';$('#todaySummary').textContent='Vokabelpaare prüfen';$('#todayContext').textContent=`${reviewSet.title} · ${count} ${count===1?'Vokabel':'Vokabeln'}`;$('#todayEstimate').textContent='Prüfe zuerst Wort und Bedeutung. Erst danach beginnt das Abschreiben und Kennenlernen.';
-    $('#quickLearnHeroBtn').disabled=false;$('#quickLearnHeroBtn').textContent='Paare prüfen';$('#todayTestPill').classList.add('hidden');$('#todayTestBtn').classList.add('hidden');return;
+    progressRow?.classList.add('hidden');$('#todayProgressText').textContent='';
+    $('#todaySummary').textContent=parent?'Vokabelpaare prüfen':'Neue Wörter werden vorbereitet';
+    $('#todayContext').textContent=`${reviewSet.title} · ${count} ${count===1?'Vokabel':'Vokabeln'}`;
+    $('#todayEstimate').textContent=parent?'Prüfe Wort und Bedeutung, bevor das Kind mit dem Kennenlernen beginnt.':'Ein Erwachsener prüft noch, ob Wort und Bedeutung richtig zusammengehören.';
+    $('#quickLearnHeroBtn').disabled=!parent;$('#quickLearnHeroBtn').textContent=parent?'Paare prüfen':'Noch nicht bereit';
+    $('#todayTestPill').classList.add('hidden');$('#todayTestBtn').classList.add('hidden');return;
   }
   const introSet=mySets().find(s=>!setNeedsPairReview(s)&&setNeedsFirstContact(s));
   if(introSet){
@@ -48,16 +57,28 @@ function renderToday(){
     $('#quickLearnHeroBtn').disabled=false;$('#quickLearnHeroBtn').textContent=fc.completed?'Kennenlernen fortsetzen':'Kennenlernen starten';$('#todayTestPill').classList.add('hidden');$('#todayTestBtn').classList.add('hidden');return;
   }
   const plan=buildDailyPlan(),status=dailyPlanStatus(plan),ctx=upcomingTestContext(),pending=seriesScopePending(),pendingIsNext=!!(pending&&(!ctx||pending.date<=ctx.date)),hasWords=(ctx?.words.length||schoolYearWords().length)>0; const progressRow=$('#todayProgress')?.closest('.today-progress-row');
-  if(pendingIsNext){const subjectName=subjectLabel(state.activeSubject),when=pending.days===0?'heute':pending.days===1?'morgen':`in ${pending.days} Tagen`;$('#todaySummary').textContent='Testumfang festlegen';$('#todayContext').textContent=`${subjectName}-Test ${when} · wöchentlich ${WEEKDAYS_SHORT[Number(pending.series.weekday)||0]}`;$('#todayEstimate').textContent='Welche Lektion oder welcher Vokabelbereich kommt dran? Danach erstellt die App automatisch das Tagespensum.';progressRow?.classList.add('hidden');$('#todayProgressText').textContent='';$('#quickLearnHeroBtn').disabled=!mySets().length;$('#quickLearnHeroBtn').textContent='Testumfang festlegen';$('#todayTestPill').textContent=`↻ ${WEEKDAYS_SHORT[Number(pending.series.weekday)||0]} · ${formatDateShort(pending.date)}`;$('#todayTestPill').classList.remove('hidden');$('#todayTestBtn').textContent='Serientermin ändern';$('#todayTestBtn').classList.remove('hidden');return}
+  if(pendingIsNext){
+    const subjectName=subjectLabel(state.activeSubject),when=pending.days===0?'heute':pending.days===1?'morgen':`in ${pending.days} Tagen`;
+    $('#todaySummary').textContent=parent?'Testumfang festlegen':'Der nächste Test wird vorbereitet';
+    $('#todayContext').textContent=`${subjectName}-Test ${when}`;
+    $('#todayEstimate').textContent=parent?'Lege fest, welche Lektion oder welcher Vokabelbereich drankommt.':'Ein Erwachsener trägt noch ein, welche Vokabeln im nächsten Test drankommen.';
+    progressRow?.classList.add('hidden');$('#todayProgressText').textContent='';$('#quickLearnHeroBtn').disabled=!parent||!mySets().length;$('#quickLearnHeroBtn').textContent=parent?'Testumfang festlegen':'Noch nicht bereit';
+    $('#todayTestPill').textContent=`↻ ${WEEKDAYS_SHORT[Number(pending.series.weekday)||0]} · ${formatDateShort(pending.date)}`;$('#todayTestPill').classList.remove('hidden');
+    if(parent){$('#todayTestBtn').textContent='Serientermin ändern';$('#todayTestBtn').classList.remove('hidden')}else $('#todayTestBtn').classList.add('hidden');
+    return;
+  }
   progressRow?.classList.remove('hidden');
-  if(!hasWords){$('#todaySummary').textContent='Noch keine Vokabeln';$('#todayContext').textContent='Lege ein Lernset an oder importiere eine Vokabelliste.';$('#todayEstimate').textContent='';}
-  else if(!status.total){$('#todaySummary').textContent='Tagesziel geschafft';$('#todayContext').textContent=ctx?testContextLabel(ctx):'Heute ist keine Pflicht-Wiederholung offen.';$('#todayEstimate').textContent='Weitere Übungen sind optional.';}
+  if(!hasWords){
+    $('#todaySummary').textContent=parent?'Noch keine Vokabeln':'Heute ist noch nichts vorbereitet';
+    $('#todayContext').textContent=parent?'Lege ein Lernset an oder importiere eine Vokabelliste.':'Bitte einen Erwachsenen, neue Vokabeln vorzubereiten.';
+    $('#todayEstimate').textContent=parent?'Danach erscheinen die freigegebenen Wörter automatisch im Kindermodus.':'Sobald alles vorbereitet ist, erscheint hier automatisch deine nächste Lernaufgabe.';
+  }else if(!status.total){$('#todaySummary').textContent='Tagesziel geschafft';$('#todayContext').textContent=ctx?testContextLabel(ctx):'Heute ist keine Pflicht-Wiederholung offen.';$('#todayEstimate').textContent='Weitere Übungen sind optional.';}
   else if(!status.remaining){$('#todaySummary').textContent=`${status.total} von ${status.total} erledigt ✓`;$('#todayContext').textContent=ctx?testContextLabel(ctx):'Dein heutiges Lernpensum ist erledigt.';$('#todayEstimate').textContent='Weitere Übungen sind optional.';}
   else{$('#todaySummary').textContent=status.done?`Noch ${status.remaining} von ${status.total} Vokabeln`:`${status.total} Vokabel${status.total===1?'':'n'} heute`;$('#todayContext').textContent=ctx?testContextLabel(ctx):'Automatisch aus fälligen und unsicheren Vokabeln';const mins=Math.max(2,Math.ceil(status.remaining*(learner().lrsMode?.9:.65)));const phaseText=plan.phase==='acquire'?' · Jetzt neue Wörter früh aufbauen.':plan.phase==='consolidate'?' · Schwerpunkt: aktiv festigen.':plan.phase==='rehearse'?' · Kurz vor dem Test: überwiegend abrufen und wiederholen.':'';const maintenance=plan.maintenanceCount?` · ${plan.maintenanceCount} ältere Wiederholung${plan.maintenanceCount===1?'':'en'} dabei.`:'';$('#todayEstimate').textContent=`${status.units} kurze ${status.units===1?'Einheit':'Einheiten'} · ca. ${mins} Min.${phaseText}${maintenance}${plan.urgent?' · Test ist nah: unsicherste Wörter zuerst.':''}`;}
   $('#todayProgress').max=Math.max(1,status.total); $('#todayProgress').value=status.done; $('#todayProgress').setAttribute('aria-valuetext',`${status.done} von ${status.total} Vokabeln heute erledigt`); $('#todayProgressText').textContent=status.total?`${status.done} / ${status.total} erledigt`:'';
-  $('#quickLearnHeroBtn').disabled=hasWords&&!status.remaining; $('#quickLearnHeroBtn').textContent=!hasWords?'Lernset anlegen':!status.remaining?'Heute erledigt ✓':status.done?'Weiterlernen':'Tagesziel starten';
-  if(ctx){$('#todayTestPill').textContent=(ctx.source==='series'||ctx.source==='mixed')?`↻ ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]} · ${formatDateShort(ctx.date)}`:`Test ${formatDateShort(ctx.date)}`;$('#todayTestPill').classList.remove('hidden');$('#todayTestBtn').textContent='Testplan ändern';$('#todayTestBtn').classList.remove('hidden');$('#todayTestBtn').dataset.setId=ctx.sets[0]?.id||'';}
-  else{const candidate=schoolYearSets()[0]||mySets()[0];$('#todayTestPill').classList.add('hidden');if(candidate){$('#todayTestBtn').textContent='Testplan festlegen';$('#todayTestBtn').classList.remove('hidden');$('#todayTestBtn').dataset.setId=candidate.id;}else $('#todayTestBtn').classList.add('hidden');}
+  $('#quickLearnHeroBtn').disabled=!hasWords||!status.remaining; $('#quickLearnHeroBtn').textContent=!hasWords?'Noch nicht bereit':!status.remaining?'Heute erledigt ✓':status.done?'Weiterlernen':'Tagesziel starten';
+  if(ctx){$('#todayTestPill').textContent=(ctx.source==='series'||ctx.source==='mixed')?`↻ ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]} · ${formatDateShort(ctx.date)}`:`Test ${formatDateShort(ctx.date)}`;$('#todayTestPill').classList.remove('hidden');if(parent){$('#todayTestBtn').textContent='Testplan ändern';$('#todayTestBtn').classList.remove('hidden');$('#todayTestBtn').dataset.setId=ctx.sets[0]?.id||'';}else $('#todayTestBtn').classList.add('hidden');}
+  else{$('#todayTestPill').classList.add('hidden');if(parent&&mySets().length){$('#todayTestBtn').textContent='Testplan festlegen';$('#todayTestBtn').classList.remove('hidden');}else $('#todayTestBtn').classList.add('hidden');}
 }function renderRecommendations(){
   const l=learner(), due=dueWords(), weak=schoolYearWords().filter(w=>!isMastered(w)).sort((a,b)=>masteryScore(a)-masteryScore(b));
   const recs=[];
@@ -105,24 +126,22 @@ function openSetPairAudit(setId){
   const rows=words.map((w,i)=>`<tr><td>${i+1}</td><td><strong>${esc(w.term)}</strong></td><td>${esc(w.translation)}</td><td><small>${esc(termTargets(w).join(' · '))}</small></td><td><small>${esc(translationTargets(w).join(' · '))}</small></td></tr>`).join('');
   modal(`<div class="eyebrow">Lernset prüfen</div><h2>${esc(s.title)}</h2>${required?'<div class="notice warn"><strong>Vor dem Lernen erforderlich.</strong><br>Bitte jedes Wort↔Bedeutung-Paar prüfen und erst danach freigeben.</div>':''}<p>Hier stehen exakt die Wort↔Bedeutung-Paare, die die Abfrage verwendet. Wenn diese Liste falsch ist, liegt der Fehler im Import – nicht in deiner Antwort.</p>${words.length?`<div class="table-wrap set-pair-audit"><table><thead><tr><th>#</th><th>Vokabel</th><th>Lehrwerksbedeutung</th><th>akzeptierte Wortformen</th><th>akzeptierte Bedeutungen</th></tr></thead><tbody>${rows}</tbody></table></div>`:'<div class="notice warn">Dieses Lernset enthält aktuell keine Vokabeln.</div>'}<div class="notice subtle top-space"><strong>Bei einem fehlerhaften Fotoimport:</strong> „Lernset neu einlesen“ entfernt nur die Vokabel-Zuordnungen und den bisherigen Lernstand dieses Lernsets. Profil, Lehrwerk und andere Lernsets bleiben erhalten.</div><div class="modal-actions"><button value="cancel" class="ghost">Schließen</button>${words.length?'<button type="button" id="copySetPairsBtn" class="ghost">Paare kopieren</button>':''}<button type="button" id="reimportSetBtn" class="secondary">Lernset neu einlesen</button>${required&&words.length?'<button type="button" id="confirmSetPairsBtn" class="primary">Paare stimmen · Kennenlernen starten</button>':''}</div>`);
   $('#copySetPairsBtn')?.addEventListener('click',()=>copySetPairAudit(setId));
-  $('#confirmSetPairsBtn')?.addEventListener('click',()=>{const now=new Date().toISOString();s.pairReviewRequired=false;s.pairVerifiedAt=now;for(const link of (state.setVocabulary||[]).filter(x=>x.setId===setId)){const v=(state.vocabulary||[]).find(x=>x.id===link.vocabId);if(v&&!v.verifiedAt)v.verifiedAt=now;if(v)v.updatedAt=now}syncSetToBookVocabulary(setId,now);closeModal();save();toast('Vokabelpaare bestätigt. Jetzt werden die Vokabeln kennengelernt.','good');setTimeout(()=>startFirstContact(setId),80)});
+  $('#confirmSetPairsBtn')?.addEventListener('click',()=>{const now=new Date().toISOString();s.pairReviewRequired=false;s.pairVerifiedAt=now;for(const link of (state.setVocabulary||[]).filter(x=>x.setId===setId)){const v=(state.vocabulary||[]).find(x=>x.id===link.vocabId);if(v&&!v.verifiedAt)v.verifiedAt=now;if(v)v.updatedAt=now}syncSetToBookVocabulary(setId,now);closeModal();save();if(isParentMode()){showView('parentView');renderAll();toast('Vokabelpaare bestätigt. Das Kind kann die Wörter jetzt kennenlernen.','good')}else{toast('Vokabelpaare bestätigt. Jetzt werden die Vokabeln kennengelernt.','good');setTimeout(()=>startFirstContact(setId),80)}});
   $('#reimportSetBtn').onclick=()=>{if(!confirm(`Vokabel-Zuordnungen und den bisherigen Lernstand von „${s.title}“ löschen und das Lernset neu per Foto einlesen? Andere Lernsets bleiben unverändert.`))return;if(!resetSetForReimport(setId))return;closeModal();save();setTimeout(()=>openScanImport(setId),100)};
 }
 
 function renderSets(){
-  const sets=mySets(); if(!sets.length){$('#setList').innerHTML='<div class="empty-state"><strong>Noch kein Lernset</strong><p>Lege zuerst die Lektion an. Danach kannst du Vokabeln per Foto/Text, CSV oder manuell hinzufügen.</p><button id="emptyNewSetBtn" class="primary">Erstes Lernset anlegen</button></div>';$('#emptyNewSetBtn').onclick=()=>openSetEditor();return}
+  const sets=mySets(); if(!sets.length){$('#setList').innerHTML='<div class="empty-state"><strong>Noch kein Lernset</strong><p>Lege zuerst eine Lektion an. Danach kannst du Vokabeln per Foto/Text, CSV oder manuell hinzufügen.</p><button id="emptyNewSetBtn" class="primary">Erstes Lernset anlegen</button></div>';$('#emptyNewSetBtn').onclick=()=>openSetEditor();return}
   const series=activeSeries(),pending=seriesScopePending();
   $('#setList').innerHTML=[...sets].sort((a,b)=>(b.schoolYear===currentSchoolYear())-(a.schoolYear===currentSchoolYear())).map(s=>{
     const w=setWords(s.id),m=w.filter(isMastered).length,p=w.length?Math.round(m/w.length*100):0,review=setNeedsPairReview(s),fc=firstContactStatus(s.id),intro=!review&&fc.pending>0;
     const seriesInfo=series?.setId===s.id?` · <strong>↻ ${WEEKDAYS_SHORT[Number(series.weekday)||0]}${pending?' · Umfang neu festlegen':series.scopeMode==='range'?` · Nr. ${normalizedRange(w.length,series.from,series.to).from}–${normalizedRange(w.length,series.from,series.to).to}`:''}</strong>`:'';
-    const statusPill=review?'<span class="pill warn">Paare prüfen</span>':intro?`<span class="pill">Kennenlernen ${fc.completed}/${fc.total}</span>`:'';
-    const learnDisabled=review||intro,learnTitle=review?'Erst Vokabelpaare bestätigen':intro?'Erst abschreiben und kennenlernen':'';
-    return `<div class="set-item ${s.schoolYear===currentSchoolYear()?'current-year':'other-year'}"><div><div class="row gap align-center"><h3>${esc(s.title)}</h3>${statusPill}</div><p>${esc(s.schoolYear)}${s.bookId&&bookById(s.bookId)?` · ${esc(bookById(s.bookId).title||formatIsbn(bookById(s.bookId).isbn13))}`:''} · ${w.length} Vokabeln · ${p}% gemeistert${intro?` · ${fc.pending} noch kennenlernen`:''}${s.testDate&&daysUntil(s.testDate)>=0?` · <strong>Test ${formatDateShort(s.testDate)}${s.testScopeMode==='range'?` · Nr. ${normalizedRange(w.length,s.testFrom,s.testTo).from}–${normalizedRange(w.length,s.testFrom,s.testTo).to}`:''}${daysUntil(s.testDate)===0?' heute':daysUntil(s.testDate)===1?' morgen':` in ${daysUntil(s.testDate)} Tagen`}</strong>`:''}${seriesInfo}</p><progress class="set-progress" max="100" value="${p}" aria-label="${esc(s.title)}: ${p}% gemeistert"></progress></div><div class="row gap wrap"><button class="ghost" data-set-study="${s.id}" ${learnDisabled?`disabled title="${learnTitle}"`:''}>Lernen</button>${intro?`<button class="primary" data-set-intro="${s.id}">Kennenlernen</button>`:''}<button class="${review?'primary':'ghost'}" data-set-audit="${s.id}">Paare prüfen</button><button class="ghost" data-set-edit="${s.id}">Bearbeiten</button></div></div>`;
+    const statusPill=review?'<span class="pill warn">Prüfung offen</span>':intro?`<span class="pill">Für Kind freigegeben · Kennenlernen ${fc.completed}/${fc.total}</span>`:'<span class="pill">Lernbereit</span>';
+    return `<div class="set-item ${s.schoolYear===currentSchoolYear()?'current-year':'other-year'}"><div><div class="row gap align-center"><h3>${esc(s.title)}</h3>${statusPill}</div><p>${esc(s.schoolYear)}${s.bookId&&bookById(s.bookId)?` · ${esc(bookById(s.bookId).title||formatIsbn(bookById(s.bookId).isbn13))}`:''} · ${w.length} Vokabeln · ${p}% gemeistert${s.testDate&&daysUntil(s.testDate)>=0?` · <strong>Test ${formatDateShort(s.testDate)}</strong>`:''}${seriesInfo}</p><progress class="set-progress" max="100" value="${p}" aria-label="${esc(s.title)}: ${p}% gemeistert"></progress></div><div class="row gap wrap">${review?`<button class="primary" data-set-audit="${s.id}">Paare prüfen</button>`:''}<button class="ghost" data-set-edit="${s.id}">Bearbeiten</button><button class="ghost" data-set-plan="${s.id}">Testplan</button></div></div>`;
   }).join('');
-  document.querySelectorAll('[data-set-study]').forEach(b=>b.onclick=()=>startSession('adaptive',b.dataset.setStudy));
-  document.querySelectorAll('[data-set-intro]').forEach(b=>b.onclick=()=>startFirstContact(b.dataset.setIntro));
   document.querySelectorAll('[data-set-audit]').forEach(b=>b.onclick=()=>openSetPairAudit(b.dataset.setAudit));
   document.querySelectorAll('[data-set-edit]').forEach(b=>b.onclick=()=>openSetEditor(b.dataset.setEdit));
+  document.querySelectorAll('[data-set-plan]').forEach(b=>b.onclick=()=>openTestDatePlanner());
 }function renderDashboard(){
   const l=learner(), p=subjectProgress(); const grades=state.grades.filter(g=>g.learnerId===l.id).sort((a,b)=>b.date.localeCompare(a.date));
   const activity=state.activity.filter(a=>a.learnerId===l.id).slice(-30); const last7=new Set(activity.filter(a=>Date.now()-new Date(a.date).getTime()<=7*864e5).map(a=>dateKey(new Date(a.date)))).size;
@@ -193,6 +212,7 @@ function checkHundredPercent(){
 }
 
 function openTestDatePlanner(){
+  if(!isParentMode()){openParentGate();return}
   const sets=mySets().sort((a,b)=>(b.schoolYear===currentSchoolYear())-(a.schoolYear===currentSchoolYear())||(a.title||'').localeCompare(b.title||'')); if(!sets.length){openSetEditor();return}
   const series=activeSeries(),ctx=upcomingTestContext(),pending=seriesScopePending(); const editingSeries=ctx?.source==='series'||ctx?.source==='mixed'||!!(pending&&(!ctx||pending.date<=ctx.date)); const defaultId=editingSeries?(series?.setId||ctx?.sets?.[0]?.id):((ctx?.sets?.[0]?.id)||series?.setId||sets[0].id); const defaultMode=editingSeries?'weekly':'single';
   const fallbackWeekday=series?Number(series.weekday):null; const weekdayOptions=`${fallbackWeekday===null?'<option value="" selected disabled>Wochentag wählen</option>':''}${WEEKDAYS.map((name,i)=>`<option value="${i}" ${fallbackWeekday===i?'selected':''}>${name}</option>`).join('')}`;
@@ -295,10 +315,33 @@ function deleteProfile(id){if(id===state.activeLearnerId)return;if(!confirm('Pro
 function modal(html){$('#modalContent').innerHTML=html;$('#modal').showModal()}
 function closeModal(){$('#modal').close()}
 function toast(text,type='subtle'){const el=$('#toastRegion');if(!el)return;clearTimeout(toastTimer);el.className=`toast-region show ${type}`;el.textContent=text;toastTimer=setTimeout(()=>{el.className='toast-region';el.textContent=''},4200)}
+function applyRoleUi(){
+  document.body.classList.toggle('parent-mode',isParentMode());
+  $('#parentAreaBtn')?.classList.toggle('hidden',isParentMode());
+  $('#childModeBtn')?.classList.toggle('hidden',!isParentMode());
+  $('#appTitle').textContent=isParentMode()?'Vokabeltrainer · Eltern':'Vokabeltrainer';
+}
+function openParentGate(){
+  modal('<div class="eyebrow">Rollenwechsel</div><h2>Elternbereich öffnen?</h2><p>Hier werden Lernstoff, Testpläne, Noten, Profile, Lehrwerke und Datensicherung verwaltet.</p><p class="notice subtle">Der Kindermodus bleibt bewusst frei von diesen Verwaltungsaufgaben.</p><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="confirmParentMode" class="primary">Elternbereich öffnen</button></div>');
+  $('#confirmParentMode').onclick=()=>{closeModal();enterParentMode()};
+}
+function enterParentMode(target='parentView'){appRole='parent';applyRoleUi();showView(target);renderAll()}
+function exitParentMode(){appRole='child';session=null;applyRoleUi();showView('homeView');renderAll()}
+function renderParentOverview(){
+  const box=$('#parentAttention');if(!box)return;
+  const tasks=[],review=mySets().find(setNeedsPairReview),pending=seriesScopePending();
+  if(review)tasks.push(`<div class="parent-task"><div><strong>Vokabelpaare prüfen</strong><small>${esc(review.title)} muss vor dem ersten Lernen fachlich bestätigt werden.</small></div><button class="primary" data-parent-audit="${review.id}">Jetzt prüfen</button></div>`);
+  if(pending)tasks.push('<div class="parent-task"><div><strong>Testumfang festlegen</strong><small>Für den nächsten wöchentlichen Test fehlt noch der konkrete Lernbereich.</small></div><button class="primary" data-parent-plan>Test planen</button></div>');
+  if(!mySets().length)tasks.push('<div class="parent-task"><div><strong>Lernstoff vorbereiten</strong><small>Noch kein Lernset vorhanden.</small></div><button class="primary" data-parent-newset>Erstes Lernset</button></div>');
+  box.innerHTML=tasks.join('');
+  box.querySelector('[data-parent-audit]')?.addEventListener('click',e=>openSetPairAudit(e.currentTarget.dataset.parentAudit));
+  box.querySelector('[data-parent-plan]')?.addEventListener('click',openTestDatePlanner);
+  box.querySelector('[data-parent-newset]')?.addEventListener('click',()=>openSetEditor());
+}
 function showView(id){
+  if(PARENT_VIEW_IDS.has(id)&&!isParentMode()){toast('Diese Funktion liegt im Elternbereich.','subtle');id='homeView'}
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
-  const navView=['libraryView','dashboardView','settingsView'].includes(id)?'moreView':id;
-  document.querySelectorAll('.nav-btn[data-view]').forEach(b=>{const active=b.dataset.view===navView;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+  document.querySelectorAll('.nav-btn[data-view]').forEach(b=>{const active=!isParentMode()&&b.dataset.view===id;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
   if(id==='homeView')document.querySelectorAll('.home-disclosure').forEach(d=>{d.open=false});
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   window.scrollTo({top:0,behavior:reduced?'auto':'smooth'});
@@ -307,11 +350,9 @@ function showView(id){
 function bind(){
   $$('.nav-btn[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view)); $('[data-action="quickLearn"]').onclick=startDailyTodo; $('#quickLearnHeroBtn').onclick=startDailyTodo; $('#todayTestBtn').onclick=openTestDatePlanner; $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
   $('#newSetBtn').onclick=()=>openSetEditor(); $('#addGradeBtn').onclick=()=>addGrade(); $('#practiceTestBtn').onclick=openPracticeTestChooser; $('#addProfileBtn').onclick=addProfile; $('#attackBtn').onclick=attackFortress; $('#duelBtn').onclick=openDuel;
-  $('#profileBtn').onclick=()=>showView('settingsView');
-  $('#moreLibraryBtn').onclick=()=>showView('libraryView');
-  $('#moreLearningBtn').onclick=()=>{showView('homeView');const details=$('#learningDisclosure');if(details){details.open=true;details.scrollIntoView({block:'start'});}};
-  $('#moreProgressBtn').onclick=()=>showView('dashboardView');
-  $('#moreSettingsBtn').onclick=()=>showView('settingsView');
+  $('#parentAreaBtn').onclick=openParentGate; $('#childModeBtn').onclick=exitParentMode;
+  $('#parentLibraryBtn').onclick=()=>showView('libraryView'); $('#parentTestPlanBtn').onclick=openTestDatePlanner; $('#parentDashboardBtn').onclick=()=>showView('dashboardView'); $('#parentSettingsBtn').onclick=()=>showView('settingsView');
+  $$('[data-parent-home]').forEach(b=>b.onclick=()=>showView('parentView'));
   $('#fontSizeRange').oninput=e=>{learner().fontSize=+e.target.value;save()}; $('#letterSpacingRange').oninput=e=>{learner().letterSpacing=+e.target.value;save()}; $('#flashSpeedSelect').onchange=e=>{learner().flashSpeed=+e.target.value;save()};
   $('#backupBtn').onclick=backup; $('#resetAppBtn').onclick=resetAppData; $('#restoreBtn').onclick=()=>{const f=$('#fileInput');f.accept='.json,application/json';f.dataset.mode='restore';f.click()}; $('#exportCsvBtn').onclick=exportCsv; $('#libraryAddBtn').onclick=openLibraryAddMenu; $('#librarySearchInput').oninput=()=>{libraryRenderLimit=200;renderLibrary()}; $('#librarySetFilter').onchange=()=>{libraryRenderLimit=200;renderLibrary()};
   $('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;const mode=e.target.dataset.mode,limit=mode==='restore'?MAX_BACKUP_BYTES:MAX_CSV_BYTES;if(f.size>limit){toast(`${mode==='restore'?'Backup':'CSV'} ist zu groß (${fmtBytes(f.size)}).`,'bad');e.target.value='';return}try{const text=await f.text();if(mode==='restore')restore(text);else importCsv(text)}catch(err){console.warn(err);toast('Datei konnte nicht gelesen werden.','bad')}e.target.value=''}; $('#photoInput').onchange=async e=>{const f=e.target.files[0];if(f)await handleScanPhoto(f);e.target.value=''}; $('#isbnPhotoInput').onchange=async e=>{const f=e.target.files[0];if(f)await handleIsbnPhoto(f);e.target.value=''};

@@ -29,14 +29,12 @@ function helpIcon(topic,label=''){
   return `<button type="button" class="help-tip" data-help="${helpEscape(topic)}" aria-label="Hilfe: ${helpEscape(item.title)}">${label?helpEscape(label):'?'}</button>`;
 }
 function openAppHelp(){
-  modal(`<div class="eyebrow">Kurze Orientierung</div><h2>So funktioniert der Vokabeltrainer</h2>
-    <div class="help-overview">
-      <div><strong>1 · Heute</strong><span>Hier startest du. Die große Schaltfläche zeigt immer den nächsten sinnvollen Schritt – zum Beispiel Vokabelpaare prüfen, neue Wörter abschreiben oder fällige Wörter lernen.</span></div>
-      <div><strong>2 · Lernen</strong><span>Damit startest du direkt dieselbe nächste Lernaufgabe. Während des Lernens zeigt die App nur das, was du gerade brauchst.</span></div>
-      <div><strong>3 · Mehr</strong><span>Hier liegen Vokabeln, Lernsets, detaillierter Fortschritt und Einstellungen. Für das tägliche Lernen musst du dort normalerweise nicht hinein.</span></div>
-    </div>
-    <div class="notice subtle top-space"><strong>Wichtig:</strong> „testbereit“, „langzeitstabil“ und „nachhaltig gemeistert“ sind unterschiedliche Stufen. Die kleinen ?-Symbole erklären Begriffe direkt an der Stelle, an der sie auftauchen.</div>
-    <div class="modal-actions"><button value="ok" class="primary">Verstanden</button></div>`);
+  const parent=typeof isParentMode==='function'&&isParentMode();
+  if(parent){
+    modal('<div class="eyebrow">Elternbereich</div><h2>Lernen vorbereiten & begleiten</h2><div class="help-overview"><div><strong>1 · Lernstoff</strong><span>Vokabeln importieren, Wort-Bedeutungs-Paare prüfen und Lernsets verwalten.</span></div><div><strong>2 · Testplanung</strong><span>Termin, Umfang und Abfrageformat festlegen. Daraus berechnet die App das Tagespensum.</span></div><div><strong>3 · Begleitung</strong><span>Fortschritt, Testchecks, Noten, Profile, LRS-Einstellungen, Lehrwerke und Sicherung liegen nur hier.</span></div></div><div class="modal-actions"><button value="ok" class="primary">Verstanden</button></div>');
+    return;
+  }
+  modal('<div class="eyebrow">Kurze Orientierung</div><h2>So funktioniert dein Vokabeltrainer</h2><div class="help-overview"><div><strong>1 · Heute</strong><span>Hier steht immer genau das, was als Nächstes dran ist.</span></div><div><strong>2 · Lernen</strong><span>Damit startest du direkt deine nächste Lernaufgabe.</span></div><div><strong>3 · Erfolge</strong><span>Hier siehst du deinen Fortschritt und deine Kampagne.</span></div></div><div class="notice subtle top-space"><strong>Du musst nichts verwalten.</strong> Neue Wörter, Testpläne und Einstellungen werden im Elternbereich vorbereitet.</div><div class="modal-actions"><button value="ok" class="primary">Verstanden</button></div>');
 }
 
 let helpTrigger=null,helpSticky=false;

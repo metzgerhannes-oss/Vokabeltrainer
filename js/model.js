@@ -196,14 +196,24 @@ function dailyPlanStatus(plan=buildDailyPlan()){
   return {total:pairs.length,done:done.length,remaining:remaining.length,remainingIds:remaining.map(x=>x.word.id),remainingRefs:remaining.map(x=>x.ref),units:remaining.length?Math.ceil(remaining.length/plan.sessionSize):0};
 }
 function startDailyTodo(){
-  const reviewSet=mySets().find(setNeedsPairReview);if(reviewSet){showView('homeView');renderAll();setTimeout(()=>openSetPairAudit?.(reviewSet.id),40);return}
+  const parent=typeof isParentMode==='function'&&isParentMode();
+  const reviewSet=mySets().find(setNeedsPairReview);
+  if(reviewSet){
+    if(parent){showView('parentView');renderAll();setTimeout(()=>openSetPairAudit?.(reviewSet.id),40)}
+    else{toast('Die neuen Wörter werden noch von einem Erwachsenen geprüft.','subtle');showView('homeView');renderAll()}
+    return;
+  }
   const introSet=mySets().find(s=>!setNeedsPairReview(s)&&setNeedsFirstContact(s));if(introSet){startFirstContact(introSet.id);return}
-  const pending=seriesScopePending(),ctx=upcomingTestContext(); if(pending&&(!ctx||pending.date<=ctx.date)){openTestDatePlanner();return}
+  const pending=seriesScopePending(),ctx=upcomingTestContext();
+  if(pending&&(!ctx||pending.date<=ctx.date)){
+    if(parent)openTestDatePlanner();else{toast('Der nächste Test wird noch von einem Erwachsenen vorbereitet.','subtle');showView('homeView');renderAll()}
+    return;
+  }
   const plan=buildDailyPlan(),status=dailyPlanStatus(plan);
   if(!myWords().length){
-    const blocked=mySets().find(setNeedsPairReview);
-    if(blocked){toast('Vor dem Lernen bitte zuerst die erkannten Vokabelpaare bestätigen.','warn');showView('homeView');renderAll();setTimeout(()=>openSetPairAudit?.(blocked.id),80);return}
-    if(!mySets().length)openSetEditor();else openFirstWordsChooser();return;
+    if(parent){if(!mySets().length)openSetEditor();else openFirstWordsChooser()}
+    else{toast('Heute ist noch nichts vorbereitet. Bitte einen Erwachsenen um Hilfe.','subtle');showView('homeView');renderAll()}
+    return;
   }
   if(!status.remaining){toast('Tagesziel erledigt. Weitere Übungen sind optional.','good');return}
   startSession('adaptive',null,(status.remainingRefs||status.remainingIds).slice(0,plan.sessionSize),true);

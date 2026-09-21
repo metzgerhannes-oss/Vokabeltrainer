@@ -119,6 +119,11 @@ Retrieval- und Spacing-Modells.
 ### Kind
 Ziel: lernen, nicht administrieren.
 
+**Harte Rollengrenze:** Der Kind-Modus enthält keine Anlage oder Bearbeitung von Lernsets,
+keine OCR-/Paarfreigabe, keine Testumfangsplanung, keine Noteneingabe, keine Profil- oder
+Lehrwerkverwaltung und keine Daten-/Backupfunktionen. Sind solche Vorarbeiten offen, sieht
+das Kind nur einen verständlichen Status und keine administrative Handlungsaufforderung.
+
 - Heute: eine klare Hauptaufgabe
 - täglicher Lernweg ohne Einweisung durch Erwachsene bedienbar
 - Lernmodus: fokussierter Abruf
@@ -129,6 +134,10 @@ Ziel: lernen, nicht administrieren.
 
 ### Eltern
 Ziel: Orientierung, Unterstützung und Organisation – keine Überwachung.
+
+Der Elternbereich ist ein bewusster Rollenwechsel und kein Untermenü des Kind-Modus.
+Beim App-Start wird immer der Kind-Modus verwendet; Verwaltungsfunktionen werden erst
+nach dem expliziten Wechsel in den Elternbereich sichtbar.
 
 Dashboard soll insbesondere beantworten:
 

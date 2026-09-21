@@ -69,7 +69,7 @@ assert(html.includes('id="helpBtn"')&&html.includes('id="helpPopover"'),'central
 assert((html.match(/data-help="/g)||[]).length>=10,'main views expose contextual help at the important concepts');
 assert(help.includes("document.addEventListener('mouseover'")&&help.includes("document.addEventListener('focusin'")&&help.includes("document.addEventListener('click'"),'context help supports mouse, keyboard focus and touch/click');
 assert(help.includes('function openAppHelp()')&&help.includes('So funktioniert der Vokabeltrainer'),'central help provides a short orientation');
-const learnMarkup=html.slice(html.indexOf('id="learnView"'),html.indexOf('id="moreView"'));
+const learnMarkup=html.slice(html.indexOf('id="learnView"'),html.indexOf('id="parentView"'));
 assert(!learnMarkup.includes('data-help='),'focused retrieval view contains no contextual-help distractions');
 assert(css.includes('body.learning-focus .help-popover{display:none!important}'),'open help cannot cover focused retrieval');
 
