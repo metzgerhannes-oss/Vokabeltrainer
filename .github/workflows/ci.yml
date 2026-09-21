@@ -90,6 +90,9 @@ jobs:
       - name: WebKit iPhone UI smoke
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-webkit-ui-smoke.mjs
 
+      - name: WebKit unified content planner
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-content-planner-ui-smoke.mjs
+
       - name: WebKit animated battle mode
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-battle-ui-smoke.mjs
 

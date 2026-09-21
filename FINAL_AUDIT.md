@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 21.09.2026 · App v0.18.6
+Stand: 21.09.2026 · App v0.18.7
 
 ## Ergebnis
 
@@ -26,6 +26,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - Erstkontakt enthält Abschreiben, Abdecken, Erinnern, Vergleichen und Blockabruf
 - Erstkontakt wird pro Vokabel freigegeben; ein großes Lernset sperrt bereits kennengelernte Wörter nicht mehr
 - Tagespensum: 5–7 neue Vokabeln, ergänzt um Wiederholungen auf ungefähr 10–12 Kontakte; Testtermine steuern die Verteilung mit sichtbarer Überlastungswarnung
+- Eltern-UX: „Lernstoff festlegen“ ist der zentrale Einstieg; Testpläne wählen konkrete Vokabeln direkt und erzeugen die technische Zuordnung im Hintergrund
 - Hinweise zählen nicht wie unabhängige Abrufe
 - Fehler werden erneut geplant; Mastery verlangt mehrere unabhängige Abrufe über mehrere Tage
 - Testchecks verändern Mastery und Intervalle nicht

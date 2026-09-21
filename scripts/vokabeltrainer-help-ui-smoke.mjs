@@ -26,6 +26,8 @@ try{
   await page.waitForSelector('#parentView.active');
   assert(await page.locator('body.parent-mode').count()===1,'parent mode is visibly active');
   await page.click('#parentLibraryBtn');
+  await page.waitForSelector('#modal[open] #contentManageLibrary');
+  await page.click('#contentManageLibrary');
   await page.waitForSelector('#libraryView.active [data-help="library"]');
   await page.hover('#libraryView [data-help="library"]');
   await page.waitForSelector('#helpPopover:not([hidden])');
@@ -50,6 +52,8 @@ try{
   await phone.click('#confirmParentMode');
   await phone.waitForSelector('#parentView.active');
   await phone.click('#parentLibraryBtn');
+  await phone.waitForSelector('#modal[open] #contentManageLibrary');
+  await phone.click('#contentManageLibrary');
   await phone.waitForSelector('#libraryView.active [data-help="library"]');
   await phone.click('#libraryView [data-help="library"]');
   await phone.waitForSelector('#helpPopover:not([hidden])');

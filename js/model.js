@@ -156,10 +156,10 @@ function nextWeeklyDate(weekday,fromKey=today()){const base=localDateFromKey(fro
 function activeSeries(subject=state.activeSubject){const cfg=learner()?.testSeries?.[subject];return cfg&&cfg.enabled?cfg:null}
 function seriesScopePending(subject=state.activeSubject){const cfg=activeSeries(subject);if(!cfg)return null;const date=nextWeeklyDate(cfg.weekday);return cfg.scopeDate===date?null:{date,days:daysUntil(date),series:cfg}}
 function normalizedRange(count,from,to){if(!count)return {from:1,to:0};let a=clamp(Math.max(1,Number(from)||1),1,count),b=clamp(Math.max(1,Number(to)||count),1,count);if(a>b)[a,b]=[b,a];return {from:a,to:b}}
-function scopedWordsForSet(set,scopeMode='set',from=1,to=null){if(!set||setNeedsPairReview(set))return [];const words=setWords(set.id);if(scopeMode!=='range'||!words.length)return words;const r=normalizedRange(words.length,from,to);return words.slice(r.from-1,r.to)}
-function scopeTextForSet(set,scopeMode='set',from=1,to=null){if(!set)return '';if(scopeMode!=='range')return set.title;const count=setWords(set.id).length;if(!count)return set.title;const r=normalizedRange(count,from,to);return `${set.title} · Vokabeln ${r.from}–${r.to}`}
-function scopedWordsForSeries(cfg,subject=state.activeSubject){if(!cfg||!cfg.setId)return [];const set=state.sets.find(s=>s.id===cfg.setId&&s.learnerId===state.activeLearnerId&&s.subject===subject);return scopedWordsForSet(set,cfg.scopeMode,cfg.from,cfg.to)}
-function seriesScopeText(cfg){if(!cfg)return '';const set=state.sets.find(s=>s.id===cfg.setId);return scopeTextForSet(set,cfg.scopeMode,cfg.from,cfg.to)}
+function scopedWordsForSet(set,scopeMode='set',from=1,to=null,selectedLinkIds=null){if(!set||setNeedsPairReview(set))return [];const words=setWords(set.id);if(scopeMode==='selected'){const ids=new Set((selectedLinkIds||set.testSelectedLinkIds||[]).filter(Boolean));return ids.size?words.filter(w=>ids.has(w.setLinkId)):[]}if(scopeMode!=='range'||!words.length)return words;const r=normalizedRange(words.length,from,to);return words.slice(r.from-1,r.to)}
+function scopeTextForSet(set,scopeMode='set',from=1,to=null,selectedLinkIds=null){if(!set)return '';if(scopeMode==='selected'){const count=scopedWordsForSet(set,'selected',from,to,selectedLinkIds).length;return `${set.title} · ${count} ausgewählt`}if(scopeMode!=='range')return set.title;const count=setWords(set.id).length;if(!count)return set.title;const r=normalizedRange(count,from,to);return `${set.title} · Vokabeln ${r.from}–${r.to}`}
+function scopedWordsForSeries(cfg,subject=state.activeSubject){if(!cfg||!cfg.setId)return [];const set=state.sets.find(s=>s.id===cfg.setId&&s.learnerId===state.activeLearnerId&&s.subject===subject);return scopedWordsForSet(set,cfg.scopeMode,cfg.from,cfg.to,cfg.selectedLinkIds)}
+function seriesScopeText(cfg){if(!cfg)return '';const set=state.sets.find(s=>s.id===cfg.setId);return scopeTextForSet(set,cfg.scopeMode,cfg.from,cfg.to,cfg.selectedLinkIds)}
 function testReadinessScore(w){
   const s={...defaultSkills(),...(w.skills||{})};
   const activeCore=((s.retrieval||0)*.48+(s.spelling||0)*.38+(s.context||0)*.08+(s.recognition||0)*.03+(s.listening||0)*.03)/4;
@@ -176,7 +176,7 @@ function testReadinessForContext(ctx){
 function upcomingTestContext(subject=state.activeSubject){
   const explicit=mySets(subject).filter(s=>!setNeedsPairReview(s)&&s.testDate&&daysUntil(s.testDate)>=0&&setWords(s.id).length).sort((a,b)=>a.testDate.localeCompare(b.testDate));
   let single=null;
-  if(explicit.length){const date=explicit[0].testDate,sets=explicit.filter(s=>s.testDate===date),words=uniqueWords(sets.flatMap(set=>scopedWordsForSet(set,set.testScopeMode,set.testFrom,set.testTo)));single={date,days:daysUntil(date),sets,words,source:'single',testFormat:sets[0]?.testFormat||'target',scopeText:sets.map(set=>scopeTextForSet(set,set.testScopeMode,set.testFrom,set.testTo)).join(' + ')}}
+  if(explicit.length){const date=explicit[0].testDate,sets=explicit.filter(s=>s.testDate===date),words=uniqueWords(sets.flatMap(set=>scopedWordsForSet(set,set.testScopeMode,set.testFrom,set.testTo,set.testSelectedLinkIds)));single={date,days:daysUntil(date),sets,words,source:'single',testFormat:sets[0]?.testFormat||'target',scopeText:sets.map(set=>scopeTextForSet(set,set.testScopeMode,set.testFrom,set.testTo,set.testSelectedLinkIds)).join(' + ')}}
   const cfg=activeSeries(subject); let recurring=null;
   if(cfg){const date=nextWeeklyDate(cfg.weekday),set=state.sets.find(s=>s.id===cfg.setId&&s.learnerId===state.activeLearnerId&&s.subject===subject),words=scopedWordsForSeries(cfg,subject);if(cfg.scopeDate===date&&set&&words.length)recurring={date,days:daysUntil(date),sets:[set],words,source:'series',series:cfg,testFormat:cfg.testFormat||'target',scopeText:seriesScopeText(cfg)}}
   if(single&&recurring&&single.date===recurring.date){const sets=uniqueById([...single.sets,...recurring.sets]);const words=uniqueWords([...single.words,...recurring.words]);return {date:single.date,days:single.days,sets,words,source:'mixed',series:cfg,testFormat:single.testFormat||recurring.testFormat||'target',scopeText:[single.scopeText,recurring.scopeText].filter(Boolean).join(' + ')}}
@@ -266,7 +266,7 @@ function startDailyTodo(){
   }
   const plan=buildDailyPlan(),status=dailyPlanStatus(plan),prepared=schoolYearVerifiedWords().length>0;
   if(!prepared){
-    if(parent){if(!mySets().length)openSetEditor();else openFirstWordsChooser()}
+    if(parent){if(!mySets().length)openLearningContentPlanner();else openFirstWordsChooser()}
     else{toast('Heute ist noch nichts vorbereitet. Bitte einen Erwachsenen um Hilfe.','subtle');showView('homeView');renderAll()}
     return;
   }

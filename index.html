@@ -9,10 +9,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Vokabeltrainer">
-  <title>Vokabeltrainer – Beta v0.18.6</title>
+  <title>Vokabeltrainer – Beta v0.18.7</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
-  <link rel="stylesheet" href="css/app.css?v=0.18.6">
+  <link rel="stylesheet" href="css/app.css?v=0.18.7">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Zum Inhalt</a>
@@ -20,7 +20,7 @@
     <header class="topbar">
       <div class="app-title-row">
         <h1 id="appTitle">Vokabeltrainer</h1>
-        <span id="versionBadge" class="version-badge" aria-label="App-Version">v0.18.6</span>
+        <span id="versionBadge" class="version-badge" aria-label="App-Version">v0.18.7</span>
       </div>
       <div class="top-actions">
         <button id="installBtn" class="ghost hidden">Installieren</button>
@@ -225,16 +225,16 @@
           <div id="parentAttention" class="parent-attention"></div>
 
           <div class="parent-grid">
-            <button id="parentLibraryBtn" class="menu-card" type="button"><span aria-hidden="true">▤</span><span><strong>Vokabeln & Import</strong><small>Wörter erfassen, OCR prüfen und Bibliothek verwalten</small></span><b aria-hidden="true">›</b></button>
-            <button id="parentTestPlanBtn" class="menu-card" type="button"><span aria-hidden="true">◷</span><span><strong>Testplanung</strong><small>Termin, Umfang und Abfrageformat festlegen</small></span><b aria-hidden="true">›</b></button>
+            <button id="parentLibraryBtn" class="menu-card" type="button"><span aria-hidden="true">＋</span><span><strong>Lernstoff festlegen</strong><small>Kind, Lehrwerk und Vokabeln in einem Schritt auswählen</small></span><b aria-hidden="true">›</b></button>
+            <button id="parentTestPlanBtn" class="menu-card" type="button"><span aria-hidden="true">◷</span><span><strong>Test planen</strong><small>Testdatum und konkrete Vokabeln auswählen; Tagesplan automatisch</small></span><b aria-hidden="true">›</b></button>
             <button id="parentDashboardBtn" class="menu-card" type="button"><span aria-hidden="true">▥</span><span><strong>Fortschritt & Noten</strong><small>Testchecks, Lernstand und Schulnoten</small></span><b aria-hidden="true">›</b></button>
             <button id="parentSettingsBtn" class="menu-card" type="button"><span aria-hidden="true">⚙</span><span><strong>Profile, Lehrwerke & Daten</strong><small>LRS, Darstellung, Bücher und Sicherung</small></span><b aria-hidden="true">›</b></button>
           </div>
 
           <section class="card parent-sets-card">
             <div class="row spread align-center wrap">
-              <div><div class="eyebrow">Lernstoff</div><h2>Lernsets</h2></div>
-              <button id="newSetBtn" class="secondary">+ Lernset</button>
+              <div><div class="eyebrow">Lernstoff</div><h2>Vorbereiteter Lernstoff</h2></div>
+              <button id="newSetBtn" class="secondary">+ Lernstoff</button>
             </div>
             <div id="setList" class="set-list"></div>
           </section>
@@ -258,12 +258,9 @@
           <div class="library-head">
             <div>
               <div class="row gap align-center"><h2>Vokabelbibliothek</h2><button type="button" class="help-tip" data-help="library" aria-label="Hilfe: Vokabelbibliothek">?</button></div>
-              <span id="libraryCountPill" class="library-count">0 Wörter · gemeinsam für alle Profile auf diesem Gerät</span>
+              <span id="libraryCountPill" class="library-count">0 Wörter · gemeinsamer Bestand zum Prüfen und Korrigieren</span>
             </div>
-            <div class="row gap wrap">
-              <button id="libraryAssignBtn" class="secondary compact-action">Aus Bibliothek zuordnen</button>
-              <button id="libraryAddBtn" class="primary compact-action">+ Hinzufügen</button>
-            </div>
+            <button id="libraryUseBtn" class="primary compact-action">Lernstoff festlegen</button>
           </div>
           <div class="library-filters">
             <label>Suche<input id="librarySearchInput" type="search" placeholder="Vokabel, Bedeutung, ISBN oder Unit"></label>
@@ -331,20 +328,20 @@
   <input id="fileInput" type="file" class="hidden" accept=".csv,.json,text/csv,application/json">
   <input id="photoInput" type="file" class="hidden" accept="image/*">
   <input id="isbnPhotoInput" type="file" class="hidden" accept="image/*" capture="environment">
-  <script src="js/core.js?v=0.18.6" defer></script>
-  <script src="js/help.js?v=0.18.6" defer></script>
-  <script src="js/library.js?v=0.18.6" defer></script>
-  <script src="js/builtin-library.js?v=0.18.6" defer></script>
-  <script src="js/storage.js?v=0.18.6" defer></script>
-  <script src="js/model.js?v=0.18.6" defer></script>
-  <script src="js/family-sync.js?v=0.18.6" defer></script>
-  <script src="js/quiz-engine.js?v=0.18.6" defer></script>
-  <script src="js/learning.js?v=0.18.6" defer></script>
-  <script src="js/translation.js?v=0.18.6" defer></script>
-  <script src="js/io.js?v=0.18.6" defer></script>
-  <script src="js/ui.js?v=0.18.6" defer></script>
-  <script src="js/library-ui.js?v=0.18.6" defer></script>
-  <script src="js/focus-ui.js?v=0.18.6" defer></script>
-  <script src="js/app.js?v=0.18.6" defer></script>
+  <script src="js/core.js?v=0.18.7" defer></script>
+  <script src="js/help.js?v=0.18.7" defer></script>
+  <script src="js/library.js?v=0.18.7" defer></script>
+  <script src="js/builtin-library.js?v=0.18.7" defer></script>
+  <script src="js/storage.js?v=0.18.7" defer></script>
+  <script src="js/model.js?v=0.18.7" defer></script>
+  <script src="js/family-sync.js?v=0.18.7" defer></script>
+  <script src="js/quiz-engine.js?v=0.18.7" defer></script>
+  <script src="js/learning.js?v=0.18.7" defer></script>
+  <script src="js/translation.js?v=0.18.7" defer></script>
+  <script src="js/io.js?v=0.18.7" defer></script>
+  <script src="js/ui.js?v=0.18.7" defer></script>
+  <script src="js/library-ui.js?v=0.18.7" defer></script>
+  <script src="js/focus-ui.js?v=0.18.7" defer></script>
+  <script src="js/app.js?v=0.18.7" defer></script>
 </body>
 </html>
