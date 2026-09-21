@@ -20,8 +20,9 @@ const passed=[];
 const assert=(value,name)=>{if(!value)throw new Error('Preflight smoke failed: '+name);passed.push(name)};
 
 const version=core.match(/const VERSION\s*=\s*'([^']+)'/)?.[1]||'';
-assert(version==='0.12.3','core version is v0.12.3');
+assert(version==='0.12.4','core version is v0.12.4');
 assert(html.includes('Beta v'+version),'document title matches app version');
+assert(html.includes('id="versionBadge"')&&html.includes('>v'+version+'</span>'),'header shows the exact running app version');
 assert(app.includes("sw.js?v="+version),'service-worker registration uses current version');
 assert(sw.includes("APP_VERSION='"+version+"'"),'service-worker app version matches');
 
