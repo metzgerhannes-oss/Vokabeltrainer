@@ -45,7 +45,12 @@ try{
   const response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'app loads');
   await page.waitForFunction(()=>typeof startSession==='function'&&typeof attachVocabularyToSet==='function');
+  // Functions are parsed before the async bootstrap has finished loading IndexedDB.
+  // Wait until renderAll() has applied the active learner, otherwise bootstrap can
+  // overwrite the diagnostic seed and make the first answer field disappear.
+  await page.waitForFunction(()=>typeof state==='object'&&Array.isArray(state?.learners)&&state.learners.length>0&&document.querySelector('#profileBtn')?.textContent?.trim()&&document.querySelector('#profileBtn')?.textContent?.trim()!=='Profil',{timeout:15000});
   await seed();
+  await page.waitForFunction(()=>state?.sets?.some(s=>s.id==='diag_set')&&setWords('diag_set').length===3);
 
   let r=await runText('recall','look');
   assert(r.result?.targets?.includes('look'),'recall snapshot contains canonical foreign term');
