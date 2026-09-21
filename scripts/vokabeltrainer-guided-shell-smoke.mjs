@@ -22,6 +22,8 @@ assert(html.includes('id="childProgressView"'),'eigene kindgerechte Fortschritts
 assert(!html.includes('id="moreView"'),'altes gemischtes Mehr-Menü ist entfernt');
 assert(html.indexOf('id="setList"')>html.indexOf('id="parentView"'),'Lernsets liegen im Elternbereich');
 assert(html.indexOf('id="libraryView"')>html.indexOf('id="parentView"'),'Bibliothek liegt hinter Elternbereich');
+assert(html.indexOf('id="parentTestPlanBtn"')<html.indexOf('id="parentLibraryBtn"'),'Test planen steht vor Lernen ohne Test');
+assert(html.includes('<strong>Ohne Test lernen</strong>'),'Elternbereich benennt den no-test Lernweg eindeutig');
 
 assert(ui.includes("let appRole='child'"),'App startet im Kind-Modus');
 assert(ui.includes("PARENT_VIEW_IDS.has(id)&&!isParentMode()"),'Admin-Views sind im Kind-Modus gesperrt');
@@ -37,8 +39,11 @@ assert(model.includes("Die neuen Wörter werden noch von einem Erwachsenen gepr�
 assert(model.includes("Der nächste Test wird noch von einem Erwachsenen vorbereitet."),'Testumfang wird dem Kind nicht als Aufgabe gegeben');
 assert(model.includes("Heute ist noch nichts vorbereitet. Bitte einen Erwachsenen um Hilfe."),'fehlender Lernstoff führt nicht zur Lernset-Anlage durch das Kind');
 assert(learning.includes("Diese Wörter werden noch von einem Erwachsenen geprüft."),'Erstkontakt öffnet im Kind-Modus keine Paarprüfung');
+assert(!ui.includes('id="setDate"'),'allgemeine Lernstoffdetails enthalten kein konkurrierendes Testdatum');
+assert(ui.includes('automatisch als Lernstoff'),'Testplanung erklärt die automatische Lernstoffübernahme');
 
 assert(dna.includes('Harte Rollengrenze'),'PRODUCT_DNA schreibt Rollentrennung fest');
 assert(dna.includes('bewusster Rollenwechsel'),'Elternbereich ist als eigener Modus definiert');
+assert(dna.includes('„Test planen“ der normale Weg'),'PRODUCT_DNA hält Testplanung als Standardweg bei bekanntem Test fest');
 
 console.log('OK: child/parent role separation');
