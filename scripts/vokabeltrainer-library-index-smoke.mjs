@@ -53,6 +53,14 @@ const passed=vm.runInContext(`
   assert(cleared.sets===1&&!state.sets.some(s=>s.learnerId==='learner_three')&&!state.learnerVocabulary.some(p=>p.learnerId==='learner_three'),'profile learning reset removes only personal sets and progress');
   assert(state.vocabulary.length===sharedVocabularyCount,'profile learning reset preserves shared global/book vocabulary');
 
+  const extra=attachVocabularyToSet(set1.id,{term:'see',translation:'sehen',source:'test',verified:true});syncSetToBookVocabulary(set1.id,new Date().toISOString());rebuildWordIndexes();
+  state.learners.push({id:'learner_four',name:'Vierter Nutzer',gradeLevel:'6',activeSubjects:['english'],xp:0,lrsMode:false,fontSize:17,letterSpacing:0,flashSpeed:1600,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()});
+  const rows=knownBookSections(book.id).find(g=>g.section==='Unit 1').items;
+  const picked=assignBookRowsToLearner(book.id,'Unit 1','learner_four',[rows.find(r=>r.vocabId===extra.vocab.id).id]);
+  assert(picked.total===1&&picked.linkIds.length===1&&setWords(picked.set.id).length===1,'direct library selection assigns only the chosen vocabulary');
+  picked.set.testScopeMode='selected';picked.set.testSelectedLinkIds=[picked.linkIds[0]];
+  assert(scopedWordsForSet(picked.set,'selected',1,null,picked.set.testSelectedLinkIds).length===1,'selected test scope resolves exact chosen link ids');
+
   const doc=globalLibraryIndex().docs.get(a.vocab.id);
   assert(doc&&!('progress' in doc)&&!('learnerId' in doc),'global search document contains no learner progress');
   assert(!JSON.stringify(state).includes('_libraryIndex'),'runtime index is never persisted');
