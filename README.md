@@ -10,7 +10,15 @@ Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in diese
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
 
-## v0.18.10 – Von-bis-Auswahl & sauberer Daten-Neustart
+## v0.18.10 – Schlacht nach Kennenlern-Einheit & neutraler Abschreibtext
+
+- auch ein vollständig abgeschlossener täglicher Kennenlern-/Abschreibblock zählt als Lerneinheit und vergibt genau einen Angriff
+- die Abschlussansicht zeigt die freigeschaltete Schlacht unmittelbar an
+- der Erstkontakt setzt kein Vokabelheft mehr voraus: das Kind schreibt von Hand auf Papier oder in ein beliebiges Heft
+- beim zweiten Abruf wird nur verlangt, die erste Abschrift zu verdecken und erneut aus dem Kopf zu schreiben
+- die Battle-Belohnung des Erstkontakts ist gegen versehentliche Mehrfachvergabe abgesichert
+
+## v0.18.9 – Von-bis-Auswahl & sauberer Daten-Neustart
 
 - in „Test planen“ und „Ohne Test lernen“ können Vokabeln jetzt zusätzlich als inklusiver Bereich **Von–Bis** ausgewählt werden
 - „Nur Bereich“ setzt exakt die gewählte Nummernspanne; Einzelhäkchen sowie „Alle/Keine“ bleiben weiterhin möglich
