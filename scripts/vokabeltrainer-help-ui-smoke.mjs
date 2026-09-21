@@ -39,7 +39,7 @@ try{
   await phone.waitForSelector('#modal[open]');
   const modalText=await phone.locator('#modalContent').textContent();
   assert(modalText?.includes('So funktioniert der Vokabeltrainer'),'central help opens the short orientation');
-  assert(modalText?.includes('Heute')&&modalText?.includes('Vokabeln')&&modalText?.includes('Fortschritt')&&modalText?.includes('Mehr'),'orientation explains the four main areas');
+  assert(modalText?.includes('Heute')&&modalText?.includes('Lernen')&&modalText?.includes('Mehr'),'orientation explains the three main areas');
   await phone.locator('#modal button[value="ok"]').click();
   assert(errors.length===0,'help interactions produce no browser errors: '+errors.join(' | '));
   await mobile.close();
