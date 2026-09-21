@@ -146,7 +146,7 @@ function runBattleAnimation(){
 }
 function renderAll(){
   const l=learner(); if(!l) return; ensureActiveSubject();applyPreferences();
-  $('#profileBtn').textContent=l.name; $('#lrsBadge').classList.toggle('hidden',!l.lrsMode); applyRoleUi();
+  const profileBtn=$('#profileBtn');profileBtn.textContent=l.name;profileBtn.setAttribute('aria-label',`Lernprofil wechseln. Aktiv: ${l.name}`);profileBtn.title='Profil wechseln'; $('#lrsBadge').classList.toggle('hidden',!l.lrsMode); applyRoleUi();
   const activeSubjects=learnerActiveSubjects(l),switcher=$('#subjectSwitcher');
   if(switcher){switcher.innerHTML=activeSubjects.map(subject=>`<button data-subject="${esc(subject)}" class="subject-btn ${subject===state.activeSubject?'active':''}" aria-pressed="${subject===state.activeSubject?'true':'false'}">${esc(subjectShort(subject))}</button>`).join('');switcher.classList.toggle('hidden',activeSubjects.length<=1);$$('.subject-btn').forEach(b=>b.onclick=()=>{if(!isSubjectActive(b.dataset.subject))return;state.activeSubject=b.dataset.subject;save()})}
   $('#subjectLabel').textContent=subjectLabel(state.activeSubject);
@@ -415,6 +415,17 @@ function addGrade(opts={}){
   $('#gradeSubject').value=subject; if(pt)$('#gradeSubject').disabled=true;
   $('#saveGrade').onclick=()=>{if(!$('#gradeValue').value.trim())return;const existing=practiceId?state.grades.find(g=>g.learnerId===learner().id&&g.practiceTestId===practiceId):null;const data={learnerId:learner().id,date:$('#gradeDate').value,subject:$('#gradeSubject').value,grade:$('#gradeValue').value.trim(),note:$('#gradeNote').value.trim(),practiceTestId:practiceId||null};if(existing)Object.assign(existing,data);else state.grades.push({id:uid('g'),...data});closeModal();save();}
 }
+function switchLearnerProfile(id){
+  const next=state.learners.find(x=>x.id===id);if(!next){closeModal();return}
+  if(next.id===state.activeLearnerId){closeModal();return}
+  state.activeLearnerId=next.id;session=null;ensureActiveSubject();closeModal();showView('homeView');save();toast(`${next.name} ist jetzt aktiv.`,'good');
+}
+function openProfileSwitcher(){
+  const learners=state.learners||[];if(!learners.length)return;
+  modal(`<div class="eyebrow">Lernprofil</div><h2>Profil wechseln</h2><p class="muted-line">Wer lernt gerade?</p><div class="profile-switch-list">${learners.map(l=>{const active=l.id===state.activeLearnerId,meta=[l.gradeLevel?`Klasse ${esc(l.gradeLevel)}`:'',learnerActiveSubjects(l).map(subjectShort).join(' · ')].filter(Boolean).join(' · ');return `<button type="button" class="profile-switch-option ${active?'active':''}" data-profile-switch="${esc(l.id)}" aria-pressed="${active?'true':'false'}"><span><strong>${esc(l.name)}</strong><small>${esc(meta||'Lernprofil')}</small></span><b>${active?'Aktiv':'Wechseln'}</b></button>`}).join('')}</div><div class="modal-actions wrap"><button type="button" id="manageProfilesBtn" class="ghost">Profile verwalten</button><button value="cancel" class="primary">Schließen</button></div>`);
+  $('[data-profile-switch]').forEach(b=>b.onclick=()=>switchLearnerProfile(b.dataset.profileSwitch));
+  $('#manageProfilesBtn').onclick=()=>{closeModal();openParentGate('settingsView')};
+}
 function addProfile(){openProfileEditor()}
 function openProfileEditor(id=null){
   const existing=id?state.learners.find(x=>x.id===id):null,active=normalizeLearnerSubjects(existing||{},existing?[]:[availableSubjectIds()[0]||'english']);
@@ -450,9 +461,9 @@ function applyRoleUi(){
   $('#childModeBtn')?.classList.toggle('hidden',!isParentMode());
   $('#appTitle').textContent=isParentMode()?'Vokabeltrainer · Eltern':'Vokabeltrainer';
 }
-function openParentGate(){
+function openParentGate(target='parentView'){
   modal('<div class="eyebrow">Rollenwechsel</div><h2>Elternbereich öffnen?</h2><p>Hier werden Lernstoff, Testpläne, Noten, Profile, Lehrwerke und Datensicherung verwaltet.</p><p class="notice subtle">Der Kindermodus bleibt bewusst frei von diesen Verwaltungsaufgaben.</p><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="confirmParentMode" class="primary">Elternbereich öffnen</button></div>');
-  $('#confirmParentMode').onclick=()=>{closeModal();enterParentMode()};
+  $('#confirmParentMode').onclick=()=>{closeModal();enterParentMode(target)};
 }
 function enterParentMode(target='parentView'){appRole='parent';applyRoleUi();showView(target);renderAll()}
 function exitParentMode(){appRole='child';session=null;applyRoleUi();showView('homeView');renderAll()}
@@ -504,11 +515,11 @@ function showView(id){
 
 function bind(){
   $$('.nav-btn[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view)); $('[data-action="quickLearn"]').onclick=startDailyTodo; $('#quickLearnHeroBtn').onclick=startDailyTodo; $('#todayTestBtn').onclick=openTestDatePlanner; $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
-  $('#newSetBtn').onclick=()=>openSetEditor(); $('#addGradeBtn').onclick=()=>addGrade(); $('#practiceTestBtn').onclick=openPracticeTestChooser; $('#addProfileBtn').onclick=addProfile; $('#attackBtn').onclick=openBattleView; $('#duelBtn').onclick=openDuel;
+  $('#newSetBtn').onclick=()=>openSetEditor(); $('#addGradeBtn').onclick=()=>addGrade(); $('#practiceTestBtn').onclick=openPracticeTestChooser; $('#addProfileBtn').onclick=addProfile; $('#profileBtn').onclick=openProfileSwitcher; $('#attackBtn').onclick=openBattleView; $('#duelBtn').onclick=openDuel;
   $('#battleBackBtn').onclick=()=>showView('childProgressView'); $('#battleReturnBtn').onclick=()=>showView('childProgressView'); $('#battleAttackBtn').onclick=runBattleAnimation; $('#battleFullscreenBtn').onclick=toggleBattleFullscreen;
   $('#battleAttackChoices').addEventListener('click',e=>{const b=e.target.closest('[data-battle-attack]');if(b&&!b.disabled)selectBattleAttack(b.dataset.battleAttack)});
   document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('battle-immersive')){document.body.classList.remove('battle-immersive');$('#battleFullscreenBtn')?.setAttribute('aria-pressed','false');if($('#battleFullscreenBtn'))$('#battleFullscreenBtn').textContent='⛶ Vollbild';}});
-  $('#parentAreaBtn').onclick=openParentGate; $('#childModeBtn').onclick=exitParentMode;
+  $('#parentAreaBtn').onclick=()=>openParentGate(); $('#childModeBtn').onclick=exitParentMode;
   $('#parentLibraryBtn').onclick=()=>showView('libraryView'); $('#parentTestPlanBtn').onclick=openTestDatePlanner; $('#parentDashboardBtn').onclick=()=>showView('dashboardView'); $('#parentSettingsBtn').onclick=()=>showView('settingsView');
   $$('[data-parent-home]').forEach(b=>b.onclick=()=>showView('parentView'));
   $('#fontSizeRange').oninput=e=>{learner().fontSize=+e.target.value;save()}; $('#letterSpacingRange').oninput=e=>{learner().letterSpacing=+e.target.value;save()}; $('#flashSpeedSelect').onchange=e=>{learner().flashSpeed=+e.target.value;save()};

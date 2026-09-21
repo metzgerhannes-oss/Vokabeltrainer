@@ -16,6 +16,7 @@ for(const label of ['Heute','Lernen','Erfolge'])assert(nav.includes('>'+label+'<
 for(const admin of ['Vokabeln','Einstellungen','Fortschritt & Noten'])assert(!nav.includes(admin),'Administration fehlt in Kindernavigation: '+admin);
 
 assert(html.includes('id="parentAreaBtn"')&&html.includes('id="childModeBtn"'),'expliziter Rollenwechsel existiert');
+assert(html.includes('id="profileBtn"')&&html.includes('aria-haspopup="dialog"'),'aktives Lernprofil ist als direkter Profilwechsler erkennbar');
 assert(html.includes('id="parentView"'),'Elternbereich existiert');
 assert(html.includes('id="childProgressView"'),'eigene kindgerechte Fortschrittsansicht existiert');
 assert(!html.includes('id="moreView"'),'altes gemischtes Mehr-Menü ist entfernt');
@@ -24,7 +25,10 @@ assert(html.indexOf('id="libraryView"')>html.indexOf('id="parentView"'),'Bibliot
 
 assert(ui.includes("let appRole='child'"),'App startet im Kind-Modus');
 assert(ui.includes("PARENT_VIEW_IDS.has(id)&&!isParentMode()"),'Admin-Views sind im Kind-Modus gesperrt');
-assert(ui.includes('function openParentGate()'),'Elternbereich braucht bewussten Rollenwechsel');
+assert(ui.includes('function openParentGate('),'Elternbereich braucht bewussten Rollenwechsel');
+assert(ui.includes('function openProfileSwitcher()'),'Profilwechsler hat einen eigenen Dialog');
+assert(ui.includes("$('#profileBtn').onclick=openProfileSwitcher"),'Profilname in der Kopfleiste öffnet den Profilwechsler');
+assert(ui.includes('state.activeLearnerId=next.id'),'Profilwechsel setzt das aktive Lernprofil');
 assert(ui.includes("$('#parentAreaBtn').onclick=openParentGate"),'Elternschalter ist gebunden');
 assert(ui.includes("$('#childModeBtn').onclick=exitParentMode"),'Rückkehr zum Kindermodus ist gebunden');
 assert(css.includes('.parent-mode .bottom-nav{display:none!important}'),'Kindernavigation verschwindet im Elternbereich');
