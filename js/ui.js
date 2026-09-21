@@ -332,9 +332,9 @@ function renderProfiles(){
   $('#profileList').innerHTML=state.learners.map(l=>`<div class="profile-row profile-row-rich"><div class="profile-main"><strong>${esc(l.name)}</strong><small class="profile-meta">${esc(meta(l))}</small><div class="profile-books">${books(l)}</div></div><div class="profile-actions"><button class="ghost" data-profile-use="${l.id}">${l.id===state.activeLearnerId?'Aktiv':'Wählen'}</button><button class="ghost" data-profile-edit="${l.id}">Bearbeiten</button><button class="ghost" data-profile-books="${l.id}">Lehrwerke</button><button class="ghost" data-profile-clear="${l.id}">Lernstoff löschen</button>${state.learners.length>1?`<button class="ghost" data-profile-del="${l.id}">×</button>`:''}</div></div>`).join('');
   $$('[data-profile-use]').forEach(b=>b.onclick=()=>{state.activeLearnerId=b.dataset.profileUse;ensureActiveSubject();save()});
   $$('[data-profile-edit]').forEach(b=>b.onclick=()=>openProfileEditor(b.dataset.profileEdit));
-  $('[data-profile-books]').forEach(b=>b.onclick=()=>openBookManager(b.dataset.profileBooks));
-  $('[data-profile-clear]').forEach(b=>b.onclick=()=>{const id=b.dataset.profileClear,l=state.learners.find(x=>x.id===id);if(!l)return;if(!confirm(`Lernstoff und Lernstände von „${l.name}“ löschen? Profil, Einstellungen, manuell eingetragene Schulnoten und die globale Bibliothek bleiben erhalten.`))return;const removed=clearLearnerLearningData(id);if(id===state.activeLearnerId)session=null;save();toast(`${l.name}: ${removed.sets} Lernset${removed.sets===1?'':'s'} und persönliche Lernstände gelöscht.`,'good')});
-  $('[data-profile-del]').forEach(b=>b.onclick=()=>deleteProfile(b.dataset.profileDel));
+  $$('[data-profile-books]').forEach(b=>b.onclick=()=>openBookManager(b.dataset.profileBooks));
+  $$('[data-profile-clear]').forEach(b=>b.onclick=()=>{const id=b.dataset.profileClear,l=state.learners.find(x=>x.id===id);if(!l)return;if(!confirm(`Lernstoff und Lernstände von „${l.name}“ löschen? Profil, Einstellungen, manuell eingetragene Schulnoten und die globale Bibliothek bleiben erhalten.`))return;const removed=clearLearnerLearningData(id);if(id===state.activeLearnerId)session=null;save();toast(`${l.name}: ${removed.sets} Lernset${removed.sets===1?'':'s'} und persönliche Lernstände gelöscht.`,'good')});
+  $$('[data-profile-del]').forEach(b=>b.onclick=()=>deleteProfile(b.dataset.profileDel));
 }
 function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function attackFortress(){openBattleView()}
