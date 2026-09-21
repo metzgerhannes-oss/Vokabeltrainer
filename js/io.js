@@ -403,7 +403,8 @@ function reconcileCamdenWithVerifiedBook(words,rows,medianH){
   }
   const pageHits=page?(byPage.get(page)||[]):[];
   const distinctive=pageHits.some(h=>ocrFuzzyKey(h.entry.term).length>=12&&h.score>=.82);
-  const confident=!!page&&(pageNumbers.includes(page)||pageHits.length>=2||distinctive);
+  const numbered=pageNumbers.includes(page);
+  const confident=!!page&&((numbered&&pageHits.length>=1)||pageHits.length>=2||distinctive);
   if(!confident)return {rows,bookGuided:false,bookGuidedCount:0,bookPage:0};
 
   let selected;
