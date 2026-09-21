@@ -26,6 +26,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - Erstkontakt enthält handschriftliches Abschreiben auf beliebigem Papier/Heft, Abdecken, Erinnern, Vergleichen und Blockabruf
 - Erstkontakt wird pro Vokabel freigegeben; ein großer Lernbereich sperrt bereits kennengelernte Wörter nicht mehr
 - Tagespensum: 5–7 neue Vokabeln, ergänzt um Wiederholungen auf ungefähr 10–12 Kontakte; Testtermine steuern die Verteilung mit sichtbarer Überlastungswarnung
+- Karteikartenmodus: fünf sichtbare Leitner-Boxen, ausschließlich schriftliche automatische Bewertung; richtig maximal +1 Box, falsch −1 Box, höhere Stufen durch Spacing begrenzt, Box 5 nur bei nachhaltiger Mastery
 - Eltern-UX: Steht ein Test an, ist „Test planen“ der Standardweg und übernimmt die ausgewählten Vokabeln automatisch als Lernstoff. „Ohne Test lernen“ dient ausschließlich zusätzlichem Lernstoff ohne Termin.
 - Vokabelauswahl unterstützt Einzelauswahl, Alle/Keine und eine inklusive Von–Bis-Spanne; gespeicherte Einzel-/Bereichsauswahl bleibt reload-stabil.
 - Einmalige Datenbereinigung entfernt alte Lern-/Test-/Noten-/Importdaten und alle nicht fest eingebauten Vokabeln; Profile/Grundeinstellungen bleiben, die geprüfte Lehrwerksbibliothek wird neu aufgebaut.
@@ -46,7 +47,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 ### Schlachtmodus / Gamification
 
 - Schlacht ist ein separater Erlebnisbereich nach einer abgeschlossenen Lerneinheit
-- Angriffe sind begrenzt und werden als Belohnung nach jeder abgeschlossenen Lerneinheit freigeschaltet; ein abgeschlossener Kennenlernblock zählt dabei mit
+- Angriffe sind begrenzt und werden als Belohnung nach jeder abgeschlossenen Lerneinheit freigeschaltet; ein abgeschlossener Kennenlern- oder Karteikartenblock zählt dabei mit
 - Animationen, Einheiten, Festungen, Jahreszeiten, Rang und Ausrüstung liegen außerhalb der Abfrage
 - Bosskämpfe, Spezialangriffe und Story verändern keinen fachlichen Lernstand
 - Festungen fallen ausschließlich an den definierten Lernfortschrittsschwellen
