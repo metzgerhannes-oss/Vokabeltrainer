@@ -2,6 +2,10 @@
 
 (async function bootstrap(){
   state = await loadState();
+  try{
+    const seeded=await installBuiltinLibraries();
+    if(seeded?.changed)await persistOnly();
+  }catch(e){console.warn('Feste Lehrwerksbibliothek konnte nicht geladen werden.',e)}
   if('serviceWorker' in navigator){
     const hadController=!!navigator.serviceWorker.controller;
     let updateReloading=false;
@@ -11,7 +15,7 @@
       if(sessionStorage.getItem(key))return;
       updateReloading=true;sessionStorage.setItem(key,'1');location.reload();
     });
-    navigator.serviceWorker.register('./sw.js?v=0.18.3')
+    navigator.serviceWorker.register('./sw.js?v=0.18.4')
       .then(reg=>reg.update().catch(()=>{}))
       .catch(console.warn);
   }

@@ -41,6 +41,8 @@ try{
     marker:!!localStorage.getItem(VOCABULARY_PURGE_MARKER),
     sets:state.sets.length,vocabulary:state.vocabulary.length,setVocabulary:state.setVocabulary.length,
     learnerVocabulary:state.learnerVocabulary.length,bookVocabulary:state.bookVocabulary.length,
+    builtinRows:state.bookVocabulary.filter(r=>r.bookId==='book_builtin_camden_town_1').length,
+    hasOldWord:state.vocabulary.some(v=>v.term==='oldword'),
     practiceTests:state.practiceTests.length,activity:state.activity.length,grades:state.grades.map(g=>g.id),
     name:state.learners[0].name,lrs:state.learners[0].lrsMode,fontSize:state.learners[0].fontSize,
     xp:state.learners[0].xp,streak:state.learners[0].streakDays.length,
@@ -48,8 +50,9 @@ try{
     series:state.learners[0].testSeries?.english
   }));
   assert(cleaned.marker,'one-time purge marker is written');
-  assert(cleaned.sets===0&&cleaned.vocabulary===0&&cleaned.setVocabulary===0&&cleaned.learnerVocabulary===0,'all vocabulary and set data are removed');
-  assert(cleaned.bookVocabulary===0&&cleaned.practiceTests===0&&cleaned.activity===0,'derived vocabulary/test data are removed');
+  assert(cleaned.sets===0&&cleaned.setVocabulary===0&&cleaned.learnerVocabulary===0&&!cleaned.hasOldWord,'user vocabulary and set data are removed');
+  assert(cleaned.vocabulary>0&&cleaned.bookVocabulary===202&&cleaned.builtinRows===202,'verified built-in book library is restored after purge');
+  assert(cleaned.practiceTests===0&&cleaned.activity===0,'derived vocabulary/test data are removed');
   assert(cleaned.grades.length===1&&cleaned.grades[0]==='g_manual','manual grade is preserved while linked testcheck grade is removed');
   assert(cleaned.name==='Profil bleibt'&&cleaned.lrs===true&&cleaned.fontSize===21,'profile and LRS/display settings are preserved');
   assert(cleaned.xp===0&&cleaned.streak===0&&cleaned.dailyPlanRefs.length===0&&!cleaned.series?.enabled,'derived learning state is reset without old vocabulary references');
@@ -63,8 +66,12 @@ try{
   });
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>state!==null);
-  const retained=await page.evaluate(()=>({sets:state.sets.length,vocabulary:state.vocabulary.length,term:state.vocabulary[0]?.term}));
-  assert(retained.sets===1&&retained.vocabulary===1&&retained.term==='newword','purge runs only once; newly entered vocabulary survives later reloads');
+  const retained=await page.evaluate(()=>({
+    sets:state.sets.length,
+    hasNewWord:state.vocabulary.some(v=>v.term==='newword'),
+    builtinRows:state.bookVocabulary.filter(r=>r.bookId==='book_builtin_camden_town_1').length
+  }));
+  assert(retained.sets===1&&retained.hasNewWord&&retained.builtinRows===202,'purge runs only once; newly entered vocabulary survives later reloads alongside built-in library');
 
   console.log('Vokabeltrainer one-time vocabulary purge UI smoke: passed');
 }finally{
