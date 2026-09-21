@@ -332,4 +332,4 @@ function migrate(s){
   s.practiceTests=(s.practiceTests||[]).map(t=>{const subject=normalizeSubjectId(t.subject),owner=s.learners.find(l=>l.id===t.learnerId),scale={...defaultGradeScale(),...((owner?.gradeScales||defaultGradeScales())[subject]||{})};return {...t,gradeScaleSnapshot:t.gradeScaleSnapshot||scale,suggestedGrade:t.suggestedGrade||suggestGradeFromScale(t.percent,scale)}});
   return hardenState(s);
 }
-function save(){persistOnly();renderAll();}
+function save(){persistOnly();window.VTFamilySync?.markLocalChange();renderAll();}
