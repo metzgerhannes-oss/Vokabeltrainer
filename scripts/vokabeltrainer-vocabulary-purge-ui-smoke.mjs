@@ -44,7 +44,7 @@ try{
     practiceTests:state.practiceTests.length,activity:state.activity.length,grades:state.grades.map(g=>g.id),
     name:state.learners[0].name,lrs:state.learners[0].lrsMode,fontSize:state.learners[0].fontSize,
     xp:state.learners[0].xp,streak:state.learners[0].streakDays.length,
-    dailyPlans:Object.keys(state.learners[0].dailyPlans||{}).length,
+    dailyPlanRefs:Object.values(state.learners[0].dailyPlans||{}).flatMap(p=>[...(p?.wordIds||[]),...(p?.wordRefs||[]).map(r=>r?.wordId||'')]).filter(Boolean),
     series:state.learners[0].testSeries?.english
   }));
   assert(cleaned.marker,'one-time purge marker is written');
@@ -52,7 +52,7 @@ try{
   assert(cleaned.bookVocabulary===0&&cleaned.practiceTests===0&&cleaned.activity===0,'derived vocabulary/test data are removed');
   assert(cleaned.grades.length===1&&cleaned.grades[0]==='g_manual','manual grade is preserved while linked testcheck grade is removed');
   assert(cleaned.name==='Profil bleibt'&&cleaned.lrs===true&&cleaned.fontSize===21,'profile and LRS/display settings are preserved');
-  assert(cleaned.xp===0&&cleaned.streak===0&&cleaned.dailyPlans===0&&!cleaned.series?.enabled,'derived learning state is reset');
+  assert(cleaned.xp===0&&cleaned.streak===0&&cleaned.dailyPlanRefs.length===0&&!cleaned.series?.enabled,'derived learning state is reset without old vocabulary references');
 
   await page.evaluate(async()=>{
     const l=state.learners[0];
