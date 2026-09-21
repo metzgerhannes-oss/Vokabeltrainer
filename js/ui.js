@@ -181,14 +181,7 @@ function renderToday(){
     $('#quickLearnHeroBtn').disabled=!parent;$('#quickLearnHeroBtn').textContent=parent?'Paare prüfen':'Noch nicht bereit';
     $('#todayTestPill').classList.add('hidden');$('#todayTestBtn').classList.add('hidden');return;
   }
-  const introSet=mySets().find(s=>!setNeedsPairReview(s)&&setNeedsFirstContact(s));
-  if(introSet){
-    const fc=firstContactStatus(introSet.id),progressRow=$('#todayProgress')?.closest('.today-progress-row');
-    progressRow?.classList.remove('hidden');$('#todaySummary').textContent='Neue Vokabeln kennenlernen';$('#todayContext').textContent=`${introSet.title} · ${fc.pending} ${fc.pending===1?'Vokabel':'Vokabeln'} noch offen`;$('#todayEstimate').textContent='Anschauen → ins Vokabelheft abschreiben → abdecken → aus dem Gedächtnis schreiben → vergleichen.';
-    $('#todayProgress').max=Math.max(1,fc.total);$('#todayProgress').value=fc.completed;$('#todayProgress').setAttribute('aria-valuetext',`${fc.completed} von ${fc.total} Vokabeln kennengelernt`);$('#todayProgressText').textContent=`${fc.completed} / ${fc.total} kennengelernt`;
-    $('#quickLearnHeroBtn').disabled=false;$('#quickLearnHeroBtn').textContent=fc.completed?'Kennenlernen fortsetzen':'Kennenlernen starten';$('#todayTestPill').classList.add('hidden');$('#todayTestBtn').classList.add('hidden');return;
-  }
-  const plan=buildDailyPlan(),status=dailyPlanStatus(plan),ctx=upcomingTestContext(),pending=seriesScopePending(),pendingIsNext=!!(pending&&(!ctx||pending.date<=ctx.date)),hasWords=(ctx?.words.length||schoolYearWords().length)>0; const progressRow=$('#todayProgress')?.closest('.today-progress-row');
+  const plan=buildDailyPlan(),status=dailyPlanStatus(plan),ctx=upcomingTestContext(),pending=seriesScopePending(),pendingIsNext=!!(pending&&(!ctx||pending.date<=ctx.date)),hasWords=(ctx?.words.length||schoolYearVerifiedWords().length)>0; const progressRow=$('#todayProgress')?.closest('.today-progress-row');
   if(pendingIsNext){
     const subjectName=subjectLabel(state.activeSubject),when=pending.days===0?'heute':pending.days===1?'morgen':`in ${pending.days} Tagen`;
     $('#todaySummary').textContent=parent?'Testumfang festlegen':'Der nächste Test wird vorbereitet';
@@ -207,7 +200,14 @@ function renderToday(){
     $('#todayEstimate').textContent=parent?'Danach erscheinen die freigegebenen Wörter automatisch im Kindermodus.':'Sobald alles vorbereitet ist, erscheint hier automatisch deine nächste Lernaufgabe.';
   }else if(!status.total){$('#todaySummary').textContent='Tagesziel geschafft';$('#todayContext').textContent=ctx?testContextLabel(ctx):'Heute ist keine Pflicht-Wiederholung offen.';$('#todayEstimate').textContent='Weitere Übungen sind optional.';}
   else if(!status.remaining){$('#todaySummary').textContent=`${status.total} von ${status.total} erledigt ✓`;$('#todayContext').textContent=ctx?testContextLabel(ctx):'Dein heutiges Lernpensum ist erledigt.';$('#todayEstimate').textContent='Weitere Übungen sind optional.';}
-  else{$('#todaySummary').textContent=status.done?`Noch ${status.remaining} von ${status.total} Vokabeln`:`${status.total} Vokabel${status.total===1?'':'n'} heute`;$('#todayContext').textContent=ctx?testContextLabel(ctx):'Automatisch aus fälligen und unsicheren Vokabeln';const mins=Math.max(2,Math.ceil(status.remaining*(learner().lrsMode?.9:.65)));const phaseText=plan.phase==='acquire'?' · Jetzt neue Wörter früh aufbauen.':plan.phase==='consolidate'?' · Schwerpunkt: aktiv festigen.':plan.phase==='rehearse'?' · Kurz vor dem Test: überwiegend abrufen und wiederholen.':'';const maintenance=plan.maintenanceCount?` · ${plan.maintenanceCount} ältere Wiederholung${plan.maintenanceCount===1?'':'en'} dabei.`:'';$('#todayEstimate').textContent=`${status.units} kurze ${status.units===1?'Einheit':'Einheiten'} · ca. ${mins} Min.${phaseText}${maintenance}${plan.urgent?' · Test ist nah: unsicherste Wörter zuerst.':''}`;}
+  else{
+    const mix=[];if(status.introRemaining)mix.push(`${status.introRemaining} neu`);if(status.reviewRemaining)mix.push(`${status.reviewRemaining} Wiederholung${status.reviewRemaining===1?'':'en'}`);
+    $('#todaySummary').textContent=status.done?`Noch ${status.remaining} von ${status.total} Vokabeln`:`${status.total} Vokabel${status.total===1?'':'n'} heute`;
+    $('#todayContext').textContent=ctx?testContextLabel(ctx):(mix.length?mix.join(' · '):'Automatisch aus fälligen und unsicheren Vokabeln');
+    const mins=Math.max(2,Math.ceil(status.remaining*(learner().lrsMode?.9:.65))),phaseText=plan.phase==='acquire'?' · Neue Wörter früh aufbauen.':plan.phase==='consolidate'?' · Schwerpunkt: aktiv festigen.':plan.phase==='rehearse'?' · Kurz vor dem Test: überwiegend abrufen und wiederholen.':'';
+    const maintenance=plan.maintenanceCount?` · ${plan.maintenanceCount} ältere Wiederholung${plan.maintenanceCount===1?'':'en'} dabei.`:'',deadline=plan.deadlineOverload?` · Mit maximal 7 neuen Wörtern pro Tag reicht die Zeit bis zum Test rechnerisch nicht ganz; Testumfang oder Starttermin prüfen.`:'';
+    $('#todayEstimate').textContent=`${status.units} kurze ${status.units===1?'Einheit':'Einheiten'} · ca. ${mins} Min.${phaseText}${maintenance}${deadline}`;
+  }
   $('#todayProgress').max=Math.max(1,status.total); $('#todayProgress').value=status.done; $('#todayProgress').setAttribute('aria-valuetext',`${status.done} von ${status.total} Vokabeln heute erledigt`); $('#todayProgressText').textContent=status.total?`${status.done} / ${status.total} erledigt`:'';
   $('#quickLearnHeroBtn').disabled=!hasWords||!status.remaining; $('#quickLearnHeroBtn').textContent=!hasWords?'Noch nicht bereit':!status.remaining?'Heute erledigt ✓':status.done?'Weiterlernen':'Tagesziel starten';
   if(ctx){$('#todayTestPill').textContent=(ctx.source==='series'||ctx.source==='mixed')?`↻ ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]} · ${formatDateShort(ctx.date)}`:`Test ${formatDateShort(ctx.date)}`;$('#todayTestPill').classList.remove('hidden');if(parent){$('#todayTestBtn').textContent='Testplan ändern';$('#todayTestBtn').classList.remove('hidden');$('#todayTestBtn').dataset.setId=ctx.sets[0]?.id||'';}else $('#todayTestBtn').classList.add('hidden');}
