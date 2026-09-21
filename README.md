@@ -10,14 +10,20 @@ Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in diese
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
 
-## v0.18.6 – feste Camden-Town-Lehrwerksbibliothek
+## v0.18.6 – Hilfe-Popover auf iPhone schließen
+
+- Kontext-Hinweise besitzen jetzt eine sichtbare Schließen-Schaltfläche.
+- Tippen außerhalb des Hinweises schließt ihn sofort, auch auf iPhone/WebKit.
+- Das Verhalten ist im mobilen WebKit-Smoke-Test abgesichert.
+
+## v0.18.4 – feste Camden-Town-Lehrwerksbibliothek
 
 - Die fotografisch geprüften Word lists „Welcome to Camden Town!“ und „Theme 1: At school“ sind fest mit der App ausgeliefert.
 - Lautschrift und gelb hinterlegte Pick-up-/Hinweisboxen sind bewusst nicht Bestandteil der Bibliothek.
 - Die Buchform bleibt je Abschnitt erhalten; gebräuchliche im Buch angegebene Alternativen werden als akzeptierte Antworten hinterlegt.
 - Die feste Bibliothek wird idempotent in die globale Bibliothek gemergt und überschreibt keine Lernstände.
 
-## v0.18.6 – Bibliothekszuordnung & begrenztes Tagespensum
+## v0.18.5 – Bibliothekszuordnung & begrenztes Tagespensum
 
 - geprüfte Lehrwerksabschnitte können im Elternbereich direkt einem Kind zugeordnet werden
 - persönlicher Lernstoff eines Profils kann gelöscht werden, ohne die gemeinsame Lehrwerksbibliothek zu beschädigen
