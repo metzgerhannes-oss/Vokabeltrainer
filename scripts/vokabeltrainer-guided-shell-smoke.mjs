@@ -29,7 +29,7 @@ assert(ui.includes('function openParentGate('),'Elternbereich braucht bewussten 
 assert(ui.includes('function openProfileSwitcher()'),'Profilwechsler hat einen eigenen Dialog');
 assert(ui.includes("$('#profileBtn').onclick=openProfileSwitcher"),'Profilname in der Kopfleiste öffnet den Profilwechsler');
 assert(ui.includes('state.activeLearnerId=next.id'),'Profilwechsel setzt das aktive Lernprofil');
-assert(ui.includes("$('#parentAreaBtn').onclick=openParentGate"),'Elternschalter ist gebunden');
+assert(ui.includes("$('#parentAreaBtn').onclick=()=>openParentGate()"),'Elternschalter ist gebunden');
 assert(ui.includes("$('#childModeBtn').onclick=exitParentMode"),'Rückkehr zum Kindermodus ist gebunden');
 assert(css.includes('.parent-mode .bottom-nav{display:none!important}'),'Kindernavigation verschwindet im Elternbereich');
 
