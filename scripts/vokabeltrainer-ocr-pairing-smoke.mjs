@@ -31,6 +31,43 @@ const result=vm.runInContext(`
   const pairs=parsed.rows.map(r=>r.term+'='+r.translation);
   if(!pairs.includes('look=schauen')||!pairs.includes('write=schreiben')||!pairs.includes('house=Haus'))throw new Error('wide right column paired incorrectly: '+pairs.join(' | '));
 
+
+  const camdenRow=(word,left,top,width=120,height=22,conf=95,line=1,wordNum=1)=>['5','1','1','1',String(line),String(wordNum),String(left),String(top),String(width),String(height),String(conf),word].join('\t');
+  const camdenTsv=[
+    header,
+    camdenRow('Word lists',120,20,150,26,95,1,1),
+    camdenRow('Welcome to Camden Town!',120,70,300,24,96,2,1),camdenRow('Willkommen in Camden Town!',510,70,270,24,96,2,1),
+    camdenRow("/'welkam to ,kaemdan 'taun/",150,102,275,20,90,3,1),
+    camdenRow('Arbeitsanweisungen, die häufig im Buch vorkommen, kannst du in der Liste nachlesen.',120,140,350,20,92,4,1),
+    camdenRow('°What can you see?',120,190,245,22,96,5,1),camdenRow('Was siehst du?',510,190,180,22,96,5,1),
+    camdenRow('can /kæn/',120,230,150,22,96,6,1),camdenRow('können',510,230,105,22,96,6,1),camdenRow('can © car',820,230,115,22,90,6,1),
+    camdenRow('to* see /si:/',120,270,175,22,96,7,1),camdenRow('sehen',510,270,95,22,96,7,1),camdenRow('can see a',820,270,110,22,90,7,1),
+    camdenRow('*An dem Wort to erkennst du, dass es sich um den Infinitiv handelt.',120,310,350,20,92,8,1),
+    camdenRow('a, an /ə, ən/',120,355,165,22,96,9,1),camdenRow('ein(e)',510,355,95,22,96,9,1),camdenRow('a car',820,355,90,22,90,9,1),
+    camdenRow('car /kɑ:/',120,395,135,22,96,10,1),camdenRow('Auto',510,395,80,22,96,10,1),
+    camdenRow('I /aɪ/',120,435,100,22,96,11,1),camdenRow('ich',510,435,70,22,96,11,1),
+    camdenRow('°Listen.',120,475,110,22,96,12,1),camdenRow('Hör zu.',510,475,110,22,96,12,1),
+    camdenRow('to listen to /ˈlɪs(ə)n tə/',120,515,245,22,96,13,1),camdenRow('zuhören; (an)hören',510,515,220,22,96,13,1),camdenRow('Listen!',820,515,90,22,90,13,1),
+    camdenRow('°Where is ...? / Where are ...?',120,555,300,22,96,14,1),camdenRow('Wo ist ...? / Wo sind ...?',510,555,245,22,96,14,1),
+    camdenRow("/'weər ɪz, 'weər ɑ:/",150,588,230,20,90,15,1)
+  ].join('\n');
+  const camden=tesseractTsvToVocabulary(camdenTsv,'english');
+  const camdenPairs=camden.rows.filter(r=>r.term&&r.translation).map(r=>r.term+'='+r.translation);
+  for(const expected of [
+    'Welcome to Camden Town!=Willkommen in Camden Town!',
+    'What can you see?=Was siehst du?',
+    'can=können',
+    'to see=sehen',
+    'a, an=ein(e)',
+    'car=Auto',
+    'I=ich',
+    'Listen.=Hör zu.',
+    'to listen to=zuhören; (an)hören',
+    'Where is ...? / Where are ...?=Wo ist ...? / Wo sind ...?'
+  ])if(!camdenPairs.includes(expected))throw new Error('Camden OCR pair missing: '+expected+' | '+camdenPairs.join(' | '));
+  if(camden.rows.some(r=>/Arbeitsanweisungen|An dem Wort|welkam|kæn|si:/.test((r.term||'')+' '+(r.translation||''))))throw new Error('Camden OCR kept pronunciation/editorial noise: '+JSON.stringify(camden.rows));
+  if(camden.rows.some(r=>/can © car|can see a|a car|Listen!/.test(r.translation||'')))throw new Error('Camden OCR leaked third-column examples into German translations: '+JSON.stringify(camden.rows));
+
   const book=upsertBook('9780140449136','english',{title:'Test Book'}).book;
   const photoSet={id:'photo_set',learnerId:'learner_demo',subject:'english',title:'Unit 1',schoolYear:currentSchoolYear(),bookId:book.id,bookSection:'Unit 1',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:true,pairVerifiedAt:''};
   state.sets.push(photoSet);
@@ -78,6 +115,7 @@ const result=vm.runInContext(`
 const io=fs.readFileSync('js/io.js','utf8');
 const translation=fs.readFileSync('js/translation.js','utf8');
 if(/right=right\.filter\(g=>g\.minX<divider\+/.test(io))throw new Error('OCR safety smoke failed: aggressive right-column x cutoff returned');
+if(!io.includes("tessedit_pageseg_mode:String(T.PSM?.AUTO??3)"))throw new Error('OCR safety smoke failed: textbook OCR no longer uses automatic page segmentation');
 if(!translation.includes("row.include=false"))throw new Error('OCR safety smoke failed: automatic repairs are still preselected');
 
 console.log('Vokabeltrainer OCR pairing safety smoke: passed');
