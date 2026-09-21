@@ -88,7 +88,7 @@ const passed=vm.runInContext(`
   const card=makeLearnerVocabulary('learner_demo','v_card','sense_card');
   assert(leitnerBox(card)===1,'new vocabulary starts in Leitner box 1');
   card.independentSuccesses=1;card.activeSuccessDays=[today()];card.intervalDays=1;
-  let move=updateLeitnerBox(card,true,{active:true,assisted:false,orthographyOk:true});
+  let move=updateLeitnerBox(card,true,{active:true,assisted:false,orthographyOk:true,beforeBox:1});
   assert(move.before===1&&move.after===2,'one correct written recall moves exactly one box back');
   move=updateLeitnerBox(card,true,{active:true,assisted:false,orthographyOk:true});
   assert(move.after===2&&move.blockedBySpacing===true,'same-day repetition cannot fake distributed mastery');
