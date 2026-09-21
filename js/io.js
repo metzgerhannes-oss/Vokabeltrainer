@@ -138,7 +138,7 @@ function ocrBookProfile(context={},plainText=''){
   if(state.activeSubject!=='english')return '';
   const title=normalize(String(context?.bookTitle||'')),text=normalize(String(plainText||''));
   if(title.includes('camden town'))return 'camden-town';
-  if(text.includes('camden town')&&text.includes('word lists'))return 'camden-town';
+  if(text.includes('word lists')&&text.includes('camden'))return 'camden-town';
   return '';
 }
 function scanOcrProgress(progress=0,label=''){
