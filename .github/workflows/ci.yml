@@ -60,6 +60,10 @@ jobs:
       - name: Family sync architecture smoke
         run: node scripts/vokabeltrainer-family-sync-smoke.mjs
 
+      - name: Live production Family Sync smoke
+        if: ${{ github.event_name == 'pull_request' && startsWith(github.head_ref, 'audit/live-family-sync-smoke') }}
+        run: node scripts/vokabeltrainer-family-sync-live-smoke.mjs
+
       - name: Final release audit smoke
         run: node scripts/vokabeltrainer-release-audit-smoke.mjs
 
