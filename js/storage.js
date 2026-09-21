@@ -13,21 +13,59 @@ async function idbPut(value){const db=await openDb();return new Promise((resolve
 async function idbClear(){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(DB_STORE,'readwrite');tx.objectStore(DB_STORE).delete(DB_KEY);tx.oncomplete=()=>{db.close();resolve(true)};tx.onerror=()=>{db.close();reject(tx.error)}})}
 function storagePayload(s=state){const out={...s};delete out.words;return out;}
 
+function purgeVocabularyData(s){
+  if(!s||typeof s!=='object')return s;
+  s.sets=[];
+  s.vocabulary=[];
+  s.setVocabulary=[];
+  s.learnerVocabulary=[];
+  s.bookVocabulary=[];
+  s.practiceTests=[];
+  s.activity=[];
+  s.grades=(Array.isArray(s.grades)?s.grades:[]).filter(g=>!g?.practiceTestId);
+  for(const l of (s.learners||[])){
+    l.xp=0;
+    l.streakDays=[];
+    l.milestones={};
+    l.fortressWins=defaultSubjectArrays();
+    l.fortressWinsByYear={};
+    l.campaignLog=[];
+    l.dailyPlans={};
+    l.testSeries=defaultTestSeries();
+  }
+  attachRuntimeWordApi(s);rebuildWordIndexes(s);return s;
+}
+async function applyOneTimeVocabularyPurge(s,mode='indexeddb'){
+  if(localStorage.getItem(VOCABULARY_PURGE_MARKER))return s;
+  purgeVocabularyData(s);
+  const payload=storagePayload(s);
+  if(mode==='indexeddb')await idbPut(payload);
+  else localStorage.setItem(STORAGE_KEY,JSON.stringify(payload));
+  localStorage.setItem(VOCABULARY_PURGE_MARKER,new Date().toISOString());
+  return s;
+}
+function markFreshVocabularyPurge(){
+  if(!localStorage.getItem(VOCABULARY_PURGE_MARKER))localStorage.setItem(VOCABULARY_PURGE_MARKER,new Date().toISOString());
+}
+
 async function loadState(){
   try{
     const stored=await idbGet();
-    if(stored)return migrate(stored);
+    if(stored)return await applyOneTimeVocabularyPurge(migrate(stored),'indexeddb');
     const raw=localStorage.getItem(STORAGE_KEY);
     if(raw){
       const migrated=migrate(JSON.parse(raw));
-      await idbPut(storagePayload(migrated));
-      localStorage.removeItem(STORAGE_KEY);localStorage.setItem(MIGRATION_MARKER,new Date().toISOString());return migrated;
+      const cleaned=await applyOneTimeVocabularyPurge(migrated,'indexeddb');
+      localStorage.removeItem(STORAGE_KEY);localStorage.setItem(MIGRATION_MARKER,new Date().toISOString());return cleaned;
     }
-    const d=defaultState();await idbPut(storagePayload(d));return d;
+    const d=defaultState();markFreshVocabularyPurge();await idbPut(storagePayload(d));return d;
   }catch(e){
     console.warn('IndexedDB nicht verfügbar, localStorage-Fallback aktiv.',e);persistenceMode='localstorage';
-    try{const raw=localStorage.getItem(STORAGE_KEY);if(raw)return migrate(JSON.parse(raw))}catch(err){console.warn(err)}
-    return defaultState();
+    try{
+      const raw=localStorage.getItem(STORAGE_KEY);
+      if(raw)return await applyOneTimeVocabularyPurge(migrate(JSON.parse(raw)),'localstorage');
+    }catch(err){console.warn(err)}
+    const d=defaultState();markFreshVocabularyPurge();return d;
   }
 }
 function pruneState(){
