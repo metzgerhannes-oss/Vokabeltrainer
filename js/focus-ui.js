@@ -60,9 +60,9 @@ gradeGrammar=function(w,g,answer){
   focusedContinue(ok,w);
 };
 
-gradeChoice=function(btn,w,answer,target,skill,nonEvaluative=false){
+gradeChoice=function(btn,w,answer,target,skill,nonEvaluative=false,questionSnapshot=null){
   if(session.locked)return;session.locked=true;
-  const q=currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct;
+  const q=questionSnapshot||currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct;
   btn.classList.add(ok?'correct':'wrong');
   if(!ok)$$('[data-answer]').find(b=>gradeQuizQuestion(q,b.dataset.answer).correct)?.classList.add('correct');
   focusedDisableAnswerControls();
