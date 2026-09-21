@@ -165,6 +165,40 @@ function syncSetToBookVocabulary(setId,verifiedAt=''){
 }
 function associateExistingSetsToBook(learnerId,subject,bookId){const book=bookById(bookId);if(!book||book.subject!==subject)return {sets:0,links:0};let sets=0,links=0;for(const set of (state.sets||[]).filter(s=>s.learnerId===learnerId&&s.subject===subject&&!s.bookId)){set.bookId=bookId;set.bookSection=set.bookSection||set.title;sets++;links+=syncSetToBookVocabulary(set.id)}return {sets,links}}
 function cloneKnownBookToLearner(bookId,learnerId){const book=bookById(bookId),l=(state.learners||[]).find(x=>x.id===learnerId);if(!book||!l)return {sets:0,links:0};let sets=0,links=0;for(const group of knownBookSections(bookId)){let set=(state.sets||[]).find(s=>s.learnerId===learnerId&&s.bookId===bookId&&s.bookSection===group.section);if(!set){set={id:uid('set'),learnerId,subject:book.subject,title:group.section,schoolYear:currentSchoolYear(),bookId,bookSection:group.section,testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:''};state.sets.push(set);sets++}for(const r of group.items){const v=(state.vocabulary||[]).find(x=>x.id===r.vocabId),sense=v&&(senseById(v,r.senseId)||primarySense(v));if(!v||!sense)continue;if(!(state.setVocabulary||[]).some(x=>x.setId===set.id&&x.senseId===sense.id)){state.setVocabulary.push(makeSetVocabulary(set.id,v.id,sense.id,{position:r.position,termOverride:r.termOverride,translationOverride:r.translationOverride,acceptedTermOverrides:r.acceptedTermOverrides,acceptedTranslationOverrides:r.acceptedTranslationOverrides,extraOverride:r.extraOverride,exampleOverride:r.exampleOverride,source:'book-library'}));ensureLearnerVocabulary(learnerId,v.id,sense.id);links++}}}rebuildWordIndexes();return {sets,links}}
+function assignBookSectionToLearner(bookId,section,learnerId){
+  const book=bookById(bookId),l=(state.learners||[]).find(x=>x.id===learnerId),group=knownBookSections(bookId).find(x=>x.section===section);
+  if(!book||!l||!group)return {set:null,links:0,total:0};
+  assignBookToLearner(learnerId,book.subject,book.id,{gradeLevel:l.gradeLevel,schoolYear:currentSchoolYear()});
+  let set=(state.sets||[]).find(s=>s.learnerId===learnerId&&s.bookId===bookId&&s.bookSection===section);
+  if(!set){
+    set={id:uid('set'),learnerId,subject:book.subject,title:section,schoolYear:currentSchoolYear(),bookId,bookSection:section,testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+    state.sets.push(set);
+  }
+  let links=0;
+  for(const r of group.items){
+    const v=(state.vocabulary||[]).find(x=>x.id===r.vocabId),sense=v&&(senseById(v,r.senseId)||primarySense(v));if(!v||!sense)continue;
+    if(!(state.setVocabulary||[]).some(x=>x.setId===set.id&&x.senseId===sense.id)){
+      state.setVocabulary.push(makeSetVocabulary(set.id,v.id,sense.id,{position:r.position,termOverride:r.termOverride,translationOverride:r.translationOverride,acceptedTermOverrides:r.acceptedTermOverrides,acceptedTranslationOverrides:r.acceptedTranslationOverrides,extraOverride:r.extraOverride,exampleOverride:r.exampleOverride,source:'book-library'}));
+      ensureLearnerVocabulary(learnerId,v.id,sense.id);links++;
+    }
+  }
+  rebuildWordIndexes();return {set,links,total:group.items.length};
+}
+function clearLearnerLearningData(learnerId){
+  const l=(state.learners||[]).find(x=>x.id===learnerId);if(!l)return {sets:0,links:0,progress:0};
+  const setIds=new Set((state.sets||[]).filter(s=>s.learnerId===learnerId).map(s=>s.id));
+  const linksBefore=(state.setVocabulary||[]).filter(x=>setIds.has(x.setId)).length;
+  const progressBefore=(state.learnerVocabulary||[]).filter(x=>x.learnerId===learnerId).length;
+  state.setVocabulary=(state.setVocabulary||[]).filter(x=>!setIds.has(x.setId));
+  for(const v of (state.vocabulary||[]))v.sources=(v.sources||[]).filter(src=>!setIds.has(src.setId));
+  state.sets=(state.sets||[]).filter(s=>s.learnerId!==learnerId);
+  state.learnerVocabulary=(state.learnerVocabulary||[]).filter(x=>x.learnerId!==learnerId);
+  state.practiceTests=(state.practiceTests||[]).filter(t=>t.learnerId!==learnerId);
+  state.activity=(state.activity||[]).filter(a=>a.learnerId!==learnerId);
+  state.grades=(state.grades||[]).filter(g=>g.learnerId!==learnerId||!g.practiceTestId);
+  l.xp=0;l.streakDays=[];l.milestones={};l.fortressWins=defaultSubjectArrays();l.fortressWinsByYear={};l.battleTickets=defaultSubjectNumbers();l.campaignLog=[];l.dailyPlans={};l.testSeries=defaultTestSeries();
+  rebuildWordIndexes();return {sets:setIds.size,links:linksBefore,progress:progressBefore};
+}
 
 function defaultState(){
   const s={
