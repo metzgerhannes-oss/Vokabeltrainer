@@ -34,6 +34,12 @@ function renderTestCheck(){
   $('#testReadyDetail').textContent=r.ready===r.total?'Alle Wörter sind nach dem Lernmodell testbereit.':`${r.total-r.ready} ${r.total-r.ready===1?'Wort braucht':'Wörter brauchen'} noch Festigung.`;
 }
 function renderToday(){
+  const reviewSet=mySets().find(setNeedsPairReview);
+  if(reviewSet){
+    const count=setWords(reviewSet.id).length,progressRow=$('#todayProgress')?.closest('.today-progress-row');
+    progressRow?.classList.add('hidden');$('#todayProgressText').textContent='';$('#todaySummary').textContent='Vokabelpaare prüfen';$('#todayContext').textContent=`${reviewSet.title} · ${count} ${count===1?'Vokabel':'Vokabeln'}`;$('#todayEstimate').textContent='Prüfe zuerst Wort und Bedeutung. Erst danach beginnt das Abschreiben und Kennenlernen.';
+    $('#quickLearnHeroBtn').disabled=false;$('#quickLearnHeroBtn').textContent='Paare prüfen';$('#todayTestPill').classList.add('hidden');$('#todayTestBtn').classList.add('hidden');return;
+  }
   const introSet=mySets().find(s=>!setNeedsPairReview(s)&&setNeedsFirstContact(s));
   if(introSet){
     const fc=firstContactStatus(introSet.id),progressRow=$('#todayProgress')?.closest('.today-progress-row');
