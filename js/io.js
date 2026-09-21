@@ -99,8 +99,8 @@ function makeImportRow(term,translation,extra='',example='',confidence='check',o
   const tx=splitTermExtra(term,state.activeSubject);
   return {term:tx.term,translation:String(translation||'').trim(),extra:String(extra||tx.extra||'').trim(),example:String(example||'').trim(),include:true,confidence,origin};
 }
-function parseVocabularyText(text,subject=state.activeSubject){
-  const lines=cleanImportText(text); const titleHint=importTitleHint(lines); const rows=[]; const unresolved=[];
+function parseVocabularyText(text,subject=state.activeSubject,opts={}){
+  let lines=cleanImportText(text); const profile=opts?.profile||'';if(profile==='camden-town')lines=lines.map(stripOcrPronunciation).filter(line=>line&&!/^\d{1,2}$/.test(line)&&!ocrEditorialNoise(line,subject,profile)); const titleHint=importTitleHint(lines); const rows=[]; const unresolved=[];
   const headingRx=/^(?:camden\s*town\b|unit\s*\d+\b|theme\s*\d+\b|part\s*[a-z0-9]+\s*$|word\s*bank\b|wordbank\b|vocabulary\b|vokabeln\b)/i;
   for(const line of lines){
     if(line.length<2 || /^\d{1,3}$/.test(line) || headingRx.test(line))continue;
@@ -130,9 +130,16 @@ function scanStatus(text,type='subtle'){
 }
 function scanLibraryContext(sectionHint=''){
   const selected=$('#scanSetSelect')?.value||'',existing=selected&&selected!=='__new__'?(state.sets||[]).find(s=>s.id===selected):null;
-  if(existing)return {bookId:existing.bookId||'',section:existing.bookSection||existing.title||''};
+  if(existing){const book=existing.bookId?bookById(existing.bookId):null;return {bookId:existing.bookId||'',bookTitle:book?.title||'',isbn13:book?.isbn13||'',section:existing.bookSection||existing.title||''};}
   const book=currentBook(learner()?.id,state.activeSubject),section=String(sectionHint||$('#scanNewTitle')?.value||scanImportState.titleHint||'').trim();
-  return {bookId:book?.id||'',section};
+  return {bookId:book?.id||'',bookTitle:book?.title||'',isbn13:book?.isbn13||'',section};
+}
+function ocrBookProfile(context={},plainText=''){
+  if(state.activeSubject!=='english')return '';
+  const title=normalize(String(context?.bookTitle||'')),text=normalize(String(plainText||''));
+  if(title.includes('camden town'))return 'camden-town';
+  if(text.includes('camden town')&&text.includes('word lists'))return 'camden-town';
+  return '';
 }
 function scanOcrProgress(progress=0,label=''){
   const wrap=$('#scanOcrWrap'),bar=$('#scanOcrProgress'),txt=$('#scanOcrLabel');
@@ -174,7 +181,7 @@ async function analyzeScanText(text,source='Text'){
     else scanStatus('Kein Text erkannt. Foto möglichst gerade, nah und gut beleuchtet aufnehmen.','warn');
     return;
   }
-  const parsed=parseVocabularyText(raw,state.activeSubject);
+  const profile=ocrBookProfile(scanLibraryContext(),raw);const parsed=parseVocabularyText(raw,state.activeSubject,{profile});
   scanImportState.rows=parsed.rows; scanImportState.titleHint=parsed.titleHint;
   await enrichHybridRows(scanImportState.rows,scanLibraryContext(parsed.titleHint));
   if(parsed.titleHint && ($('#scanNewTitle')?.value==='Foto-Import'||!$('#scanNewTitle')?.value.trim()))$('#scanNewTitle').value=parsed.titleHint;
@@ -232,7 +239,8 @@ function ocrUiNoise(text){
 }
 function stripOcrPronunciation(text){
   return cleanOcrCell(text)
-    .replace(/\/[^/\n]{1,140}\//g,' ')
+    .replace(/\/[^/\n]{1,180}\//g,' ')
+    .replace(/\s+\/[\sˈˌA-Za-zəɐɑɒɔæɛɜɞɪʊʌŋθðʃʒçʔː,.'’-]{2,}$/g,' ')
     .replace(/^[°º•·*]+\s*/,'')
     .replace(/\bto\*/gi,'to')
     .replace(/\*+/g,'')
@@ -247,10 +255,15 @@ function ocrPronunciationOnly(text){
   const ipa=(t.match(/[əɐɑɒɔæɛɜɞɪʊʌŋθðʃʒçʔˈˌː]/g)||[]).length;
   return (t.startsWith('/')||t.endsWith('/'))&&ipa>0;
 }
-function ocrEditorialNoise(text,subject){
+function ocrEditorialNoise(text,subject,profile=''){
   const t=stripOcrPronunciation(text);if(!t||ocrUiNoise(t))return true;
   if(/^(?:word\s*lists?|wordlist|vocabulary|vokabeln|(?:unit|test|theme|part)\s*(?:\d+|[a-z])?|arbeitsanweisungen\b|an\s+dem\s+wort\b|in\s+den\s+.+boxen\b|pick[- ]?up\s*:|hinweis\b|merke\b)$/i.test(t))return true;
   if(/^(?:arbeitsanweisungen\b|an\s+dem\s+wort\b|in\s+den\s+.+boxen\b|pick[- ]?up\s*:)/i.test(t))return true;
+  if(profile==='camden-town'){
+    if(/^\d{1,2}$/.test(t)||/^p\.?\s*\d+$/i.test(t))return true;
+    if(/^(?:tipps?\s+zum\s+w[oö]rterlernen|weitere\s+listen\s+zum\s+nachschlagen|names\s*\(|numbers\s*\(|w[oö]rter,\s*die\s+im\s+deutschen|irregular\s+verbs\s*\()/i.test(t))return true;
+    if(/^\/?.*(?:klingt\s+ungef[aä]hr|wird\s+immer\s+gro[sß]geschrieben|wird\s+nicht\s+ausgesprochen|steht\s+am\s+satzende)\.?$/i.test(t))return true;
+  }
   const count=t.split(/\s+/).filter(Boolean).length;
   if(count>=7&&germanScore(t)>=2&&foreignScore(t,subject)<=1)return true;
   return false;
@@ -307,20 +320,24 @@ function safeOcrPair(term,translation,subject,confidence='good'){
   }
   return makeImportRow(a,b,'','',confidence);
 }
-function tesseractTsvToVocabulary(tsv,subject=state.activeSubject){
+function tesseractTsvToVocabulary(tsv,subject=state.activeSubject,opts={}){
   const words=parseTesseractWords(tsv); if(!words.length)return {rows:[],text:''};
+  const profile=opts?.profile||'';
   const heights=words.map(w=>w.height).filter(h=>h>2); const medianH=Math.max(12,medianNumber(heights)||20);
-  const canon=x=>normalize(x).replace(/[^a-zäöüß]/g,'');
-  const deutsch=words.filter(w=>canon(w.text)==='deutsch').sort((a,b)=>a.top-b.top)[0];
-  const layout=detectOcrColumnLayout(words,medianH,deutsch);
+  const tolerance=Math.max(13,medianH*.72),allLines=groupOcrColumnLines(words,tolerance);
+  const wordListsHeading=profile==='camden-town'?allLines.find(g=>/^word\s*lists?$/i.test(cleanOcrCell(g.text))):null;
   const minTop=Math.min(...words.map(w=>w.top));
-  const dataStart=deutsch?deutsch.top+deutsch.height+Math.max(16,medianH*.55):Math.max(0,minTop-medianH*.25);
-  const noiseToken=w=>(w.height<Math.max(5,medianH*.22)&&!/^\.{2,}$/.test(w.text))||/^[|¦Il1—–_\-]+$/.test(w.text);
+  const profileStart=wordListsHeading?wordListsHeading.yc+Math.max(8,medianH*.35):minTop-medianH*.25;
+  const canon=x=>normalize(x).replace(/[^a-zäöüß]/g,'');
+  const deutsch=words.filter(w=>w.top>=profileStart&&canon(w.text)==='deutsch').sort((a,b)=>a.top-b.top)[0];
+  const layoutWords=words.filter(w=>w.top>=profileStart);
+  const layout=detectOcrColumnLayout(layoutWords.length?layoutWords:words,medianH,deutsch);
+  const dataStart=deutsch?Math.max(profileStart,deutsch.top+deutsch.height+Math.max(16,medianH*.55)):Math.max(0,profileStart);
+  const noiseToken=w=>(w.height<Math.max(5,medianH*.22)&&!/^\.{2,}$/.test(w.text))||/^[|¦Il1—–_\-]+$/.test(w.text)||(profile==='camden-town'&&/^\d{1,2}$/.test(w.text.trim())&&w.width<=medianH*2.2);
   const data=words.filter(w=>w.top>=dataStart&&!noiseToken(w));
-  const tolerance=Math.max(13,medianH*.72);
   let left=groupOcrColumnLines(data.filter(w=>w.left<layout.divider),tolerance)
     .map(g=>({...g,text:cleanOcrTerm(g.text)}))
-    .filter(g=>g.text&&!ocrPronunciationOnly(g.text)&&!ocrEditorialNoise(g.text,subject));
+    .filter(g=>g.text&&!ocrPronunciationOnly(g.text)&&!ocrEditorialNoise(g.text,subject,profile));
   let right=groupOcrColumnLines(data.filter(w=>w.left>=layout.divider&&w.left<layout.rightEnd),tolerance)
     .filter(g=>g.text&&!ocrPronunciationOnly(g.text)&&!ocrUiNoise(g.text));
 
@@ -346,7 +363,7 @@ function tesseractTsvToVocabulary(tsv,subject=state.activeSubject){
     matches.forEach(x=>usedRight.add(x.idx));
     const translation=cleanOcrCell(matches.map(x=>x.r.text).join(' '));
     const term=cleanOcrTerm(l.text);
-    if(!term||!translation||ocrEditorialNoise(term,subject)||ocrUiNoise(translation))continue;
+    if(!term||!translation||ocrEditorialNoise(term,subject,profile)||ocrUiNoise(translation))continue;
     if(subjectMeta(subject)?.ocrRepairProfile==='english'&&germanScore(term)>2&&foreignScore(term,subject)===0&&records.length>3)continue;
     const pairConfidence=Math.min(l.avgConf||100,...matches.map(x=>x.r.avgConf||100))>=55?'good':'check';
     records.push({y:l.yc,row:safeOcrPair(term,translation,subject,pairConfidence)});
@@ -365,8 +382,8 @@ function tesseractTsvToVocabulary(tsv,subject=state.activeSubject){
   const text=rows.map(r=>String(r.term||'')+'\t'+String(r.translation||'')).join('\n');
   return {rows,text};
 }
-function tesseractTsvToText(tsv){
-  const parsed=tesseractTsvToVocabulary(tsv,state.activeSubject);
+function tesseractTsvToText(tsv,opts={}){
+  const parsed=tesseractTsvToVocabulary(tsv,state.activeSubject,opts);
   if(parsed.text)return parsed.text;
   const words=parseTesseractWords(tsv); if(!words.length)return '';
   const tolerance=Math.max(13,(medianNumber(words.map(w=>w.height).filter(h=>h>2))||20)*.72);
@@ -435,9 +452,9 @@ async function runTesseractOcr(file){
       await worker.setParameters({preserve_interword_spaces:'1',user_defined_dpi:'300',tessedit_pageseg_mode:String(T.PSM?.AUTO??3)});
       scanOcrProgress(.18,'Text wird erkannt …');
       const result=await worker.recognize(prepared,{rotateAuto:true},{text:true,tsv:true});
-      const table=tesseractTsvToVocabulary(result?.data?.tsv,state.activeSubject);
-      const plainText=String(result?.data?.text||'').trim();
-      const text=(table.text||tesseractTsvToText(result?.data?.tsv)||plainText).trim();
+      const plainText=String(result?.data?.text||'').trim(),scanContext=scanLibraryContext(),profile=ocrBookProfile(scanContext,plainText);
+      const table=tesseractTsvToVocabulary(result?.data?.tsv,state.activeSubject,{profile});
+      const text=(table.text||tesseractTsvToText(result?.data?.tsv,{profile})||plainText).trim();
       if(!text)throw new Error('OCR lieferte keinen Text');
       $('#scanRawText').value=text; scanImportState.nativeOcr=true; scanOcrProgress(1,'OCR abgeschlossen');
       if(table.rows.length){
@@ -447,7 +464,7 @@ async function runTesseractOcr(file){
         const good=scanImportState.rows.filter(r=>r.confidence==='good'&&r.term&&r.translation).length;
         const auto=scanImportState.rows.filter(r=>r.confidence==='auto'&&r.term&&r.translation).length;
         const open=scanImportState.rows.filter(r=>!(r.term&&r.translation)).length;
-        scanStatus(`OCR: ${good} Originalpaare erkannt${auto?` · ${auto} automatisch ergänzt`:''}${open?` · ${open} noch offen`:''}.`,'good');
+        scanStatus(`OCR${profile==='camden-town'?' · Camden-Town-Profil':''}: ${good} Originalpaare erkannt${auto?` · ${auto} automatisch ergänzt`:''}${open?` · ${open} noch offen`:''}.`,'good');
       }else await analyzeScanText(text,'OCR');
     }finally{await worker.terminate().catch(()=>{});}
   }catch(e){
