@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 21.09.2026 · App v0.18.7
+Stand: 21.09.2026 · App v0.18.8
 
 ## Ergebnis
 
@@ -24,9 +24,9 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 
 - verbindliche Reihenfolge: Erfassen → prüfen → kennenlernen/abschreiben → aktiv abrufen → verteilt wiederholen → nachhaltig meistern
 - Erstkontakt enthält Abschreiben, Abdecken, Erinnern, Vergleichen und Blockabruf
-- Erstkontakt wird pro Vokabel freigegeben; ein großes Lernset sperrt bereits kennengelernte Wörter nicht mehr
+- Erstkontakt wird pro Vokabel freigegeben; ein großer Lernbereich sperrt bereits kennengelernte Wörter nicht mehr
 - Tagespensum: 5–7 neue Vokabeln, ergänzt um Wiederholungen auf ungefähr 10–12 Kontakte; Testtermine steuern die Verteilung mit sichtbarer Überlastungswarnung
-- Eltern-UX: „Lernstoff festlegen“ ist der zentrale Einstieg; Testpläne wählen konkrete Vokabeln direkt und erzeugen die technische Zuordnung im Hintergrund
+- Eltern-UX: Steht ein Test an, ist „Test planen“ der Standardweg und übernimmt die ausgewählten Vokabeln automatisch als Lernstoff. „Ohne Test lernen“ dient ausschließlich zusätzlichem Lernstoff ohne Termin.
 - Hinweise zählen nicht wie unabhängige Abrufe
 - Fehler werden erneut geplant; Mastery verlangt mehrere unabhängige Abrufe über mehrere Tage
 - Testchecks verändern Mastery und Intervalle nicht
@@ -35,7 +35,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 ### Kind-/Eltern-Rollen
 
 - Kindmodus ist der Startzustand
-- Kind verwaltet keine Lernsets, OCR-Freigaben, Testumfänge, Profile, Lehrwerke oder Backups
+- Kind verwaltet keine Lernbereiche, OCR-Freigaben, Testumfänge, Profile, Lehrwerke oder Backups
 - offene Erwachsenenaufgaben werden dem Kind nur als verständlicher Status angezeigt
 - Elternbereich ist ein bewusster Rollenwechsel
 - Hilfe ist rollenabhängig
