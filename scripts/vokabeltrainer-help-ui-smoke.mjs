@@ -43,6 +43,24 @@ try{
   await phone.waitForSelector('#modal[open]');
   text=await phone.locator('#modalContent').textContent();
   assert(text?.includes('Heute')&&text?.includes('Lernen')&&text?.includes('Erfolge'),'mobile child help is short and role-specific');
+  await phone.locator('#modal').evaluate(el=>el.close());
+
+  await phone.click('#parentAreaBtn');
+  await phone.waitForSelector('#modal[open] #confirmParentMode');
+  await phone.click('#confirmParentMode');
+  await phone.waitForSelector('#parentView.active');
+  await phone.click('#parentLibraryBtn');
+  await phone.waitForSelector('#libraryView.active [data-help="library"]');
+  await phone.click('#libraryView [data-help="library"]');
+  await phone.waitForSelector('#helpPopover:not([hidden])');
+  assert(await phone.locator('#helpPopover [data-help-close]').isVisible(),'mobile contextual help has an explicit close button');
+  await phone.click('#helpPopover [data-help-close]');
+  assert(await phone.locator('#helpPopover').evaluate(el=>el.hidden),'mobile contextual help closes via close button');
+
+  await phone.click('#libraryView [data-help="library"]');
+  await phone.waitForSelector('#helpPopover:not([hidden])');
+  await phone.tap('#librarySearchInput');
+  assert(await phone.locator('#helpPopover').evaluate(el=>el.hidden),'mobile contextual help closes when tapping outside');
   await mobile.close();
 
   const fatal=errors.filter(x=>/ReferenceError|TypeError|SyntaxError|Content Security Policy|Refused to/i.test(x));
