@@ -125,6 +125,10 @@ Retrieval- und Spacing-Modells.
     zeigt eine dominante Hauptaktion; Verwaltung, Detailstatistik und alternative Wege
     werden nachgeordnet. Muss ein Erwachsener den nächsten Klick erklären, ist das ein
     UX-Release-Blocker und kein Fall für zusätzliche Hilfetexte.
+    Auch im Elternbereich gilt: **„Lernstoff festlegen“ ist die eine normale Tür zu
+    Vokabeln.** Bibliothek, Lernset, Buchzuordnung und Import sind technische Ebenen im
+    Hintergrund oder Verwaltungs-/Korrekturwege. Ein Testplan wählt die konkreten
+    Vokabeln direkt und darf kein Verständnis des Datenmodells voraussetzen.
 
 ---
 
