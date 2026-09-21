@@ -328,7 +328,7 @@ function contentPlanPreviewText(rows,learnerId,testDate=''){
   const l=(state.learners||[]).find(x=>x.id===learnerId),count=rows.length,newCount=rows.filter(r=>!learnerAlreadyKnowsSense(learnerId,r.senseId)).length,target=l?.lrsMode?10:12;
   if(!count)return 'Noch keine Vokabel ausgewählt.';
   if(!testDate)return `${count} Vokabeln ausgewählt. Beim Lernen führt die App normalerweise 5–7 neue Wörter pro Tag ein und ergänzt Wiederholungen bis ungefähr ${target} Kontakte.`;
-  const days=Math.max(0,daysUntil(testDate)),learningDays=Math.max(1,days-1),required=newCount?Math.ceil(newCount/learningDays):0,dailyNew=newCount?Math.min(7,Math.max(5,required)):0;
+  const days=Math.max(0,daysUntil(testDate)),learningDays=Math.max(1,days-1),required=newCount?Math.ceil(newCount/learningDays):0,dailyNew=newCount?Math.min(newCount,Math.min(7,Math.max(5,required))):0;
   if(days<1)return `${count} Vokabeln ausgewählt · Test ist heute bzw. liegt nicht in der Zukunft.`;
   if(required>7)return `${count} ausgewählt · ${newCount} noch neu · rechnerisch ${required} neue Wörter pro Tag nötig. Das überschreitet die Grenze von 7; der Plan wird als zu knapp markiert.`;
   if(!newCount)return `${count} ausgewählt · alle schon bekannt. Bis zum Test werden nur Wiederholungen eingeplant.`;
