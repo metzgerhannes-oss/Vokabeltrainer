@@ -55,6 +55,9 @@ jobs:
       - name: Final release audit smoke
         run: node scripts/vokabeltrainer-release-audit-smoke.mjs
 
+      - name: Guided child shell smoke
+        run: node scripts/vokabeltrainer-guided-shell-smoke.mjs
+
       - name: Install Playwright browsers
         run: |
           npm init -y

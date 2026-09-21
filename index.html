@@ -8,10 +8,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Vokabeltrainer">
-  <title>Vokabeltrainer – Beta v0.12.4</title>
+  <title>Vokabeltrainer – Beta v0.13.0</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
-  <link rel="stylesheet" href="css/app.css?v=0.12.4">
+  <link rel="stylesheet" href="css/app.css?v=0.13.0">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Zum Inhalt</a>
@@ -19,7 +19,7 @@
     <header class="topbar">
       <div class="app-title-row">
         <h1 id="appTitle">Vokabeltrainer</h1>
-        <span id="versionBadge" class="version-badge" aria-label="App-Version">v0.12.4</span>
+        <span id="versionBadge" class="version-badge" aria-label="App-Version">v0.13.0</span>
       </div>
       <div class="top-actions">
         <button id="installBtn" class="ghost hidden">Installieren</button>
@@ -32,7 +32,7 @@
       <section id="homeView" class="view active">
         <article class="card today-focus">
           <div class="today-main">
-            <div class="row gap align-center"><div class="eyebrow">Dein Tagesziel</div><button type="button" class="help-tip" data-help="dailyGoal" aria-label="Hilfe: Tagesziel">?</button><span id="todayTestPill" class="pill hidden"></span></div>
+            <div class="row gap align-center"><div class="eyebrow">Heute</div><span id="todayTestPill" class="pill hidden"></span></div>
             <h2 id="todaySummary">Deine nächste Lerneinheit</h2>
             <p id="todayContext" class="muted-line"></p>
             <div class="today-progress-row">
@@ -50,11 +50,11 @@
         <article id="testCheckCard" class="card test-check-card hidden">
           <div class="row spread align-center wrap">
             <div>
-              <div class="row gap align-center"><div class="eyebrow">Testcheck</div><button type="button" class="help-tip" data-help="testCheck" aria-label="Hilfe: Testcheck">?</button></div>
+              <div class="eyebrow">Testcheck</div>
               <h2 id="testCheckTitle">Bereit für den Vokabeltest?</h2>
               <p id="testCheckContext" class="muted-line"></p>
             </div>
-            <div class="test-check-score"><strong id="testReadyPct">0%</strong><small class="label-with-help">testbereit <button type="button" class="help-tip" data-help="testReady" aria-label="Hilfe: Testbereit">?</button></small></div>
+            <div class="test-check-score"><strong id="testReadyPct">0%</strong><small>testbereit</small></div>
           </div>
           <progress id="testReadyProgress" class="mastery-progress" max="100" value="0" aria-label="Testbereitschaft"></progress>
           <div class="row spread align-center wrap top-space">
@@ -63,6 +63,13 @@
           </div>
         </article>
 
+        <div class="home-secondary">
+          <details id="progressDisclosure" class="home-disclosure">
+            <summary>
+              <span><strong>Mein Fortschritt</strong><small>Jahresfortschritt und Kampagne</small></span>
+              <span class="disclosure-chevron" aria-hidden="true">›</span>
+            </summary>
+            <div class="home-disclosure-body">
         <div class="hero-grid">
           <article class="card progress-card">
             <div class="row spread align-center">
@@ -109,7 +116,15 @@
             <div id="campaignMessage" class="notice subtle"></div>
           </article>
         </div>
+            </div>
+          </details>
 
+          <details id="learningDisclosure" class="home-disclosure">
+            <summary>
+              <span><strong>Mehr lernen</strong><small>Weitere Lernarten und Lernsets</small></span>
+              <span class="disclosure-chevron" aria-hidden="true">›</span>
+            </summary>
+            <div class="home-disclosure-body">
         <section id="optionalLearningCard" class="card">
           <div class="row spread align-center">
             <div>
@@ -131,6 +146,9 @@
           </div>
           <div id="setList" class="set-list"></div>
         </section>
+            </div>
+          </details>
+        </div>
       </section>
 
       <section id="learnView" class="view">
@@ -143,6 +161,22 @@
             </div>
           </div>
           <div id="studyArea" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section id="moreView" class="view">
+        <div class="more-shell">
+          <div class="more-head">
+            <div class="eyebrow">Mehr</div>
+            <h2>Alles Weitere</h2>
+            <p class="muted-line">Hier findest du Dinge, die du für das tägliche Lernen nicht brauchst.</p>
+          </div>
+          <div class="more-grid">
+            <button id="moreLibraryBtn" class="menu-card" type="button"><span aria-hidden="true">▤</span><span><strong>Vokabeln</strong><small>Bibliothek und neue Wörter</small></span><b aria-hidden="true">›</b></button>
+            <button id="moreLearningBtn" class="menu-card" type="button"><span aria-hidden="true">✦</span><span><strong>Lernsets & Übungen</strong><small>Lernsets verwalten und Lernarten wählen</small></span><b aria-hidden="true">›</b></button>
+            <button id="moreProgressBtn" class="menu-card" type="button"><span aria-hidden="true">▥</span><span><strong>Fortschritt</strong><small>Details, Testbereitschaft und Noten</small></span><b aria-hidden="true">›</b></button>
+            <button id="moreSettingsBtn" class="menu-card" type="button"><span aria-hidden="true">⚙</span><span><strong>Einstellungen</strong><small>Profile, Darstellung und Datensicherung</small></span><b aria-hidden="true">›</b></button>
+          </div>
         </div>
       </section>
 
@@ -209,9 +243,7 @@
     <nav class="bottom-nav" aria-label="Navigation">
       <button data-view="homeView" class="nav-btn active" aria-current="page"><span aria-hidden="true">⌂</span>Heute</button>
       <button data-action="quickLearn" class="nav-btn"><span aria-hidden="true">✦</span>Lernen</button>
-      <button data-view="libraryView" class="nav-btn"><span aria-hidden="true">▤</span>Vokabeln</button>
-      <button data-view="dashboardView" class="nav-btn"><span aria-hidden="true">▥</span>Fortschritt</button>
-      <button data-view="settingsView" class="nav-btn"><span aria-hidden="true">⚙</span>Mehr</button>
+      <button data-view="moreView" class="nav-btn"><span aria-hidden="true">•••</span>Mehr</button>
     </nav>
   </div>
 
@@ -221,18 +253,18 @@
   <input id="fileInput" type="file" class="hidden" accept=".csv,.json,text/csv,application/json">
   <input id="photoInput" type="file" class="hidden" accept="image/*">
   <input id="isbnPhotoInput" type="file" class="hidden" accept="image/*" capture="environment">
-  <script src="js/core.js?v=0.12.4" defer></script>
-  <script src="js/help.js?v=0.12.4" defer></script>
-  <script src="js/library.js?v=0.12.4" defer></script>
-  <script src="js/storage.js?v=0.12.4" defer></script>
-  <script src="js/model.js?v=0.12.4" defer></script>
-  <script src="js/quiz-engine.js?v=0.12.4" defer></script>
-  <script src="js/learning.js?v=0.12.4" defer></script>
-  <script src="js/translation.js?v=0.12.4" defer></script>
-  <script src="js/io.js?v=0.12.4" defer></script>
-  <script src="js/ui.js?v=0.12.4" defer></script>
-  <script src="js/library-ui.js?v=0.12.4" defer></script>
-  <script src="js/focus-ui.js?v=0.12.4" defer></script>
-  <script src="js/app.js?v=0.12.4" defer></script>
+  <script src="js/core.js?v=0.13.0" defer></script>
+  <script src="js/help.js?v=0.13.0" defer></script>
+  <script src="js/library.js?v=0.13.0" defer></script>
+  <script src="js/storage.js?v=0.13.0" defer></script>
+  <script src="js/model.js?v=0.13.0" defer></script>
+  <script src="js/quiz-engine.js?v=0.13.0" defer></script>
+  <script src="js/learning.js?v=0.13.0" defer></script>
+  <script src="js/translation.js?v=0.13.0" defer></script>
+  <script src="js/io.js?v=0.13.0" defer></script>
+  <script src="js/ui.js?v=0.13.0" defer></script>
+  <script src="js/library-ui.js?v=0.13.0" defer></script>
+  <script src="js/focus-ui.js?v=0.13.0" defer></script>
+  <script src="js/app.js?v=0.13.0" defer></script>
 </body>
 </html>

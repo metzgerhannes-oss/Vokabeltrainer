@@ -1,6 +1,6 @@
 # Vokabeltrainer – Product DNA
 
-Stand: 20.09.2026
+Stand: 21.09.2026
 
 Diese Prinzipien sind die verbindliche Leitlinie für Produktentscheidungen vor und nach v1.
 Neue Features werden gegen diese DNA geprüft. Wenn ein Wunsch davon abweicht, soll der
@@ -48,7 +48,7 @@ nur, dass die korrekte Wortform bewusst gesehen, handschriftlich verarbeitet und
 erinnert wurde. Nachhaltige Beherrschung bleibt ausschließlich Sache des anschließenden
 Retrieval- und Spacing-Modells.
 
-## Die 12 Prinzipien
+## Die 13 Prinzipien
 
 1. **Lernwirkung vor Featuremenge**
    Jede Funktion muss der fachlich korrekten Vokabelabfrage, dem Lernen, der Orientierung
@@ -105,6 +105,13 @@ Retrieval- und Spacing-Modells.
     UX-/Cognitive-Load-Forschung und Barrierefreiheitsstandards geprüft.
     Wenn Produktwunsch und Evidenz kollidieren, wird der Zielkonflikt offengelegt.
 
+13. **Ohne Erklärung bedienbar**
+    Der kritische Kind-Pfad muss selbsterklärend sein: Auf jedem Bildschirm ist klar,
+    wo das Kind ist, was jetzt zu tun ist und wie es weitergeht. Der tägliche Einstieg
+    zeigt eine dominante Hauptaktion; Verwaltung, Detailstatistik und alternative Wege
+    werden nachgeordnet. Muss ein Erwachsener den nächsten Klick erklären, ist das ein
+    UX-Release-Blocker und kein Fall für zusätzliche Hilfetexte.
+
 ---
 
 ## Rollenmodell
@@ -113,6 +120,7 @@ Retrieval- und Spacing-Modells.
 Ziel: lernen, nicht administrieren.
 
 - Heute: eine klare Hauptaufgabe
+- täglicher Lernweg ohne Einweisung durch Erwachsene bedienbar
 - Lernmodus: fokussierter Abruf
 - Fortschritt: verständlich und motivierend
 - Kampagne/Belohnung: ergänzend
@@ -186,3 +194,4 @@ So bleiben Daten konsistent und die Oberfläche kann je Rolle radikal vereinfach
 5. Gehört es in Kind-, Eltern- oder Lehrkraftbereich?
 6. Ist die Datenstruktur global wiederverwendbar?
 7. Gibt es aktuelle Forschung, die unsere Annahme bestätigt oder widerspricht?
+8. Versteht ein Kind den nächsten Schritt ohne mündliche Erklärung?
