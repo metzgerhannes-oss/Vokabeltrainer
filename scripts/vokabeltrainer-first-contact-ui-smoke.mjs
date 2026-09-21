@@ -17,15 +17,17 @@ try{
 
   await page.evaluate(()=>{
     state=defaultState();
-    const set={id:'intro_set',learnerId:'learner_demo',subject:'english',title:'Unit Erstkontakt',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+    const set={id:'intro_set',learnerId:'learner_demo',subject:'english',title:'Unit Erstkontakt',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(2),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
     state.sets.push(set);
     const pairs=[['alpha','eins'],['bravo','zwei'],['charlie','drei'],['delta','vier'],['echo','fünf'],['foxtrot','sechs']];
     for(const [term,translation] of pairs)attachVocabularyToSet(set.id,{term,translation,source:'first-contact-smoke',verified:true});
     rebuildWordIndexes();renderAll();showView('homeView');
   });
 
-  assert((await page.locator('#todaySummary').textContent())?.includes('Neue Vokabeln kennenlernen'),'today identifies first contact as the next child task');
-  assert((await page.locator('#quickLearnHeroBtn').textContent())?.includes('Kennenlernen'),'primary child action starts first contact');
+  const plan=await page.evaluate(()=>buildDailyPlan());
+  assert(plan.introRefs.length===6&&plan.dailyTarget===12,'daily plan limits first contact through the daily planner');
+  assert((await page.locator('#todaySummary').textContent())?.includes('Vokabeln heute'),'today shows a bounded daily target');
+  assert((await page.locator('#quickLearnHeroBtn').textContent())?.includes('Tagesziel'),'primary child action starts the bounded daily target');
   assert(await page.locator('#setList').count()===1&&!(await page.locator('#setList').isVisible()),'learning-set administration is not visible in child mode');
 
   const before=await page.evaluate(()=>firstContactStatus('intro_set'));
@@ -54,7 +56,9 @@ try{
 
   await page.waitForSelector('#firstContactDoneBtn');
   const after=await page.evaluate(()=>firstContactStatus('intro_set'));
-  assert(after.pending===0&&after.completed===6,'all words complete first contact');
+  assert(after.pending===0&&after.completed===6,'all words in the planned first-contact batch complete');
+  const ready=await page.evaluate(()=>schoolYearWords('english').length);
+  assert(ready===6,'completed first-contact words become individually available for normal learning');
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer first-contact UI smoke: passed');
 }finally{
