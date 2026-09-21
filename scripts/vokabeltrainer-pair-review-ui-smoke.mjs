@@ -30,7 +30,10 @@ try{
   assert(await study.isDisabled(),'learning is blocked for unreviewed OCR set');
   assert(await page.evaluate(()=>!state.vocabulary[0]?.verifiedAt),'OCR vocabulary is not verified before pair confirmation');
   const audit=page.locator('[data-set-audit="ocr_set"]');
-  assert((await audit.textContent())?.includes('Paare prüfen'),'pair review action is visible');
+  assert((await audit.textContent())?.includes('Paare prüfen'),'pair review action exists for the unreviewed set');
+  await page.locator('#learningDisclosure > summary').click();
+  await page.waitForSelector('#learningDisclosure[open] [data-set-audit="ocr_set"]');
+  assert(await audit.isVisible(),'pair review action becomes visible after opening More learning');
 
   await audit.click();
   await page.waitForSelector('#modal[open] #confirmSetPairsBtn');
