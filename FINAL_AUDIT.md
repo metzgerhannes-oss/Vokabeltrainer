@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 21.09.2026 · App v0.18.0
+Stand: 21.09.2026 · App v0.18.1
 
 ## Ergebnis
 
@@ -36,6 +36,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - offene Erwachsenenaufgaben werden dem Kind nur als verständlicher Status angezeigt
 - Elternbereich ist ein bewusster Rollenwechsel
 - Hilfe ist rollenabhängig
+- Lernprofile können in der Kinderansicht direkt und eindeutig gewechselt werden
 
 ### Schlachtmodus / Gamification
 
@@ -60,13 +61,17 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 
 ### Daten / Datenschutz
 
-- IndexedDB ist Primärspeicher; localStorage nur Fallback
+- IndexedDB ist Primärspeicher; localStorage nur Fallback und für die lokale Family-Sync-Gerätekonfiguration
 - importierte Backups werden plausibilisiert, gehärtet und nach dem Restore zurückgelesen
 - Laufzeitindizes werden nicht persistiert
 - Größenlimits für Backup/Import sind vorhanden
 - der einmalige v0.14.1-Vokabel-Purge löscht Lerninhalte nur einmal je Browserprofil
 - Freundschaftsduell funktioniert ohne Server und überträgt keine Profildaten automatisch
 - Herausforderungscodes sind bewusst nicht kryptographisch fälschungssicher; darauf weist die UI hin
+- Familiensynchronisierung ist optional und trennt gemeinsame Daten, Profileinrichtung und Lernfortschritt
+- jedes verbundene Gerät besitzt ein eigenes zufälliges Geräteschlüssel-Geheimnis
+- Kindergeräte können serverseitig nur den eigenen Profilfortschritt schreiben
+- Eltern können Geräte auflisten und widerrufen; Kinder-Einladungen sind einmalig und zeitlich begrenzt
 
 ### Security
 
@@ -76,7 +81,10 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - dynamische Texte aus Lern-/Importdaten werden vor HTML-Ausgabe escaped
 - OCR und Wörterbuchressourcen werden lokal ausgeliefert
 - Browser-Smokes behandeln JavaScript-/CSP-Fehler als Fehler
-- Hilfe-Browsertest überwacht ab v0.17.1 zusätzlich die Browser-Konsole
+- Hilfe-Browsertest überwacht zusätzlich die Browser-Konsole
+- Supabase-Family-Sync nutzt ausschließlich einen Publishable Key im Browser; privilegierte Schlüssel bleiben serverseitig
+- Family-Sync-RPCs prüfen Geräte-ID und Geräteschlüssel serverseitig und begrenzen Kinderrechte unabhängig vom Frontend
+- sensible Family-Sync-RPCs sind über den Supabase-Pre-Request-Hook rate-limitiert
 
 ### PWA / Offline / Deployment
 
@@ -86,7 +94,8 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - Chromium-Service-Worker-/Offline-Smoke
 - WebKit/iPhone-Smokes für Shell, Lernen, Hilfe, OCR, Erstkontakt und Schlacht
 - Battle-Saisontest ist nicht mehr auf einen bestimmten Kalendermonat fest verdrahtet
-- GitHub Pages und CI laufen getrennt
+- der eigene GitHub-Pages-Workflow deployt nur nach erfolgreichem Vokabeltrainer-CI und checkt exakt den getesteten Commit aus
+- GitHubs zusätzliches Branch-basiertes Pages-Deployment muss in den Repository-Einstellungen noch auf „GitHub Actions“ umgestellt werden, damit der CI-Gate vollständig erzwungen ist
 
 ## Audit-Korrekturen v0.17.1
 
@@ -94,12 +103,13 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 2. **Zeitstabiler Battle-Test:** Der Saisontest ermittelt Frühling/Sommer/Herbst/Winter dynamisch statt dauerhaft „Herbst“ zu erwarten.
 3. **Accessibility:** Schlachtfeld und Boss-Fortschritt wurden expliziter beschriftet.
 4. **Testhärtung:** Der Hilfe-Test prüft nun auch Browser-Konsole/CSP-Fehler.
-5. **Dokumentationsdrift:** README und finales Audit müssen nun per Preflight dieselbe App-Version wie der Code tragen.
+5. **Dokumentationsdrift:** README und finales Audit müssen per Preflight dieselbe App-Version wie der Code tragen.
 
 ## Bewusste Grenzen vor v1
 
-- Lerndaten bleiben lokal; geräteübergreifende Synchronisierung benötigt eine spätere Sync-Schicht.
+- Family Sync ist vorhanden, bleibt vor v1 aber eine Beta-Funktion; lokale Backups bleiben als unabhängige Rückfallebene notwendig.
 - Browser/OS können lokalen Webspeicher unter extremem Speicherdruck löschen; Backup bleibt notwendig.
+- Gleichzeitige Änderungen desselben synchronisierten Dokuments werden bewusst als Konflikt markiert und nicht automatisch zusammengeführt.
 - Herausforderungscodes sind kein vertrauenswürdiger Leistungsnachweis und können manipuliert werden.
 - Gamification kann Motivation unterstützen, ist aber kein Beleg für höheren Lernerfolg; deshalb bleibt sie außerhalb des Abrufs.
 - Französisch bleibt deaktiviert, bis Sprach-/OCR-Pipeline vollständig getestet ist.
