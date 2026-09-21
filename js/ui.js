@@ -363,7 +363,7 @@ function openLearningContentPlanner(opts={}){
   $('#contentSelectNone').onclick=()=>{picker.querySelectorAll('[data-book-row]').forEach(x=>x.checked=false);updateSummary()};
   $('#contentSourcePhoto').onclick=()=>{state.activeLearnerId=learnerEl.value;ensureActiveSubject();closeModal();save();setTimeout(()=>openScanImport('__new__'),60)};
   $('#contentSourceManual').onclick=()=>{state.activeLearnerId=learnerEl.value;ensureActiveSubject();closeModal();save();setTimeout(()=>openSetEditor(null,'manual'),60)};
-  $('#contentManageLibrary').onclick=()=>{closeModal();showView('libraryView')};
+  $('#contentManageLibrary').onclick=()=>{showView('libraryView');closeModal();renderLibrary()};
   $('#contentSave').onclick=()=>{const selected=checkedRows();if(!selected.length){preview.className='notice warn';preview.textContent='Bitte mindestens eine Vokabel auswählen.';return}const result=assignBookRowsToLearner(bookEl.value,sectionEl.value,learnerEl.value,selected.map(r=>r.id));if(!result.set)return;closeModal();save();const l=state.learners.find(x=>x.id===learnerEl.value);toast(`${selected.length} Vokabeln für ${l?.name||'das Profil'} vorbereitet.`,'good')};
   updateSections();
 }
