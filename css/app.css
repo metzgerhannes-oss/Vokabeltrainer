@@ -454,3 +454,68 @@ body.battle-immersive{overflow:hidden;background:#0f172a}.battle-immersive .topb
 @media(prefers-reduced-motion:reduce){
   .battle-boss-character,.battle-stage.is-impact .battle-boss-character,.battle-stage.is-victory .battle-boss-character,.battle-stage.attack-special.is-attacking .battle-special-flare,.battle-stage.attack-special.is-attacking .battle-standard,.battle-stage.attack-special.is-attacking .battle-army,.duel-own,.duel-other,.duel-clash{animation:none!important}
 }
+
+/* v0.17.2 Mobile shell polish */
+.primary:disabled,.secondary:disabled,.ghost:disabled{
+  cursor:default;
+  opacity:.62;
+  box-shadow:none;
+}
+.primary:disabled{
+  background:#e5e7eb;
+  border-color:#d1d5db;
+  color:#667085;
+}
+@media(max-width:620px){
+  body:not(.parent-mode):not(.learning-focus):not(.battle-immersive) .topbar{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    align-items:stretch;
+    gap:10px;
+    padding:4px 2px 14px;
+  }
+  body:not(.parent-mode) .topbar .app-title-row{
+    min-width:0;
+    flex-wrap:nowrap;
+  }
+  body:not(.parent-mode) .topbar .version-badge{
+    margin-left:auto;
+    flex:none;
+  }
+  body:not(.parent-mode) .topbar .top-actions{
+    width:100%;
+    display:grid;
+    grid-template-columns:auto minmax(0,1fr) auto;
+    gap:8px;
+    align-items:stretch;
+  }
+  body:not(.parent-mode) .topbar .top-actions>*{
+    min-width:0;
+    min-height:44px;
+  }
+  body:not(.parent-mode) .topbar .help-main-btn,
+  body:not(.parent-mode) .topbar .role-switch-btn{
+    padding-inline:12px;
+    justify-content:center;
+  }
+  body:not(.parent-mode) .topbar .profile-chip{
+    max-width:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:8px 10px;
+    text-align:center;
+  }
+  .bottom-nav{
+    bottom:calc(12px + env(safe-area-inset-bottom));
+  }
+  .app-shell{
+    padding-bottom:calc(112px + env(safe-area-inset-bottom));
+  }
+}
+@media(max-width:390px){
+  body:not(.parent-mode) .topbar .top-actions{gap:6px}
+  body:not(.parent-mode) .topbar .help-main-btn,
+  body:not(.parent-mode) .topbar .role-switch-btn{padding-inline:10px}
+  body:not(.parent-mode) .topbar .profile-chip{font-size:.84rem}
+}
