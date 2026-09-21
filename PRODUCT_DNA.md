@@ -35,7 +35,7 @@ Die verbindliche Reihenfolge lautet:
 Für den Erstkontakt gilt:
 
 - Nach OCR, Import oder Bibliotheksübernahme werden zuerst die exakten Wort↔Bedeutung-Paare geprüft.
-- Danach schreibt das Kind jede neue Vokabel bewusst in sein **Vokabelheft** ab.
+- Danach schreibt das Kind jede neue Vokabel bewusst **von Hand auf Papier oder in ein beliebiges Heft** ab; die App setzt kein spezielles Vokabelheft voraus.
 - Die Vorlage wird anschließend abgedeckt; die Wortform wird einmal aktiv aus dem Gedächtnis geschrieben.
 - Danach wird mit der fachlich geprüften Wortform verglichen. Die App bewertet die Handschrift nicht automatisch.
 - Kurze Blockwiederholungen unterbrechen lange Abschreibserien und fordern erneut aktiven Abruf.
@@ -95,7 +95,8 @@ Retrieval- und Spacing-Modells.
    Abenteuer, Legion/Kampagne, XP und Belohnungen: vor oder nach der Lernsequenz.
    Gamification darf Aufmerksamkeit nicht vom Lerninhalt wegziehen.
    Der Schlachtmodus ist ein eigener Erlebnisbereich und wird erst durch eine abgeschlossene
-   Lerneinheit freigeschaltet. Kampfanimationen laufen niemals während einer Abfrage und
+   Lerneinheit freigeschaltet. Ein vollständig abgeschlossener Kennenlern-/Abschreibblock zählt
+   dabei ebenfalls als Lerneinheit. Kampfanimationen laufen niemals während einer Abfrage und
    verändern keinen fachlichen Mastery-Wert.
    Angriffsarten, Einheiten, Festungen, Jahreszeiten, Rang und Ausrüstung sind visuelle
    Motivation. Keine dieser Darstellungen darf die fachliche Bewertung oder Siegbedingung
