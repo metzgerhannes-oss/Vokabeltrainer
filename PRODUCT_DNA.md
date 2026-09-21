@@ -95,7 +95,8 @@ Retrieval- und Spacing-Modells.
    Abenteuer, Legion/Kampagne, XP und Belohnungen: vor oder nach der Lernsequenz.
    Gamification darf Aufmerksamkeit nicht vom Lerninhalt wegziehen.
    Der Schlachtmodus ist ein eigener Erlebnisbereich und wird erst durch eine abgeschlossene
-   Lerneinheit freigeschaltet. Kampfanimationen laufen niemals während einer Abfrage und
+   Lerneinheit freigeschaltet. Ein vollständig abgeschlossener Kennenlern-/Abschreibblock zählt
+   dabei ebenfalls als Lerneinheit. Kampfanimationen laufen niemals während einer Abfrage und
    verändern keinen fachlichen Mastery-Wert.
    Angriffsarten, Einheiten, Festungen, Jahreszeiten, Rang und Ausrüstung sind visuelle
    Motivation. Keine dieser Darstellungen darf die fachliche Bewertung oder Siegbedingung
