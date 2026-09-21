@@ -1,6 +1,10 @@
 import { chromium, devices } from 'playwright';
+import fs from 'node:fs';
 
 const base=process.env.APP_BASE||'http://127.0.0.1:4173';
+const swSource=fs.readFileSync('sw.js','utf8');
+const appVersion=swSource.match(/const APP_VERSION='([^']+)'/)?.[1]||'';
+if(!appVersion)throw new Error('service worker app version missing');
 const hardStop=setTimeout(()=>{console.error('FATAL_VOKABELTRAINER_SW_BROWSER_TIMEOUT');process.exit(1)},45000);
 const browser=await chromium.launch({headless:true});
 const context=await browser.newContext(devices['Desktop Chrome']);
@@ -60,7 +64,7 @@ try{
     return {keys,sentinel:sentinel?await sentinel.text():''};
   },foreignCacheName);
   if(!cacheState.keys.includes(foreignCacheName)||cacheState.sentinel!=='keep-me')throw new Error('foreign cache was touched');
-  if(!cacheState.keys.includes('vokabeltrainer-shell-v0.11.0'))throw new Error('shell cache missing');
+  if(!cacheState.keys.includes(`vokabeltrainer-shell-v${appVersion}`))throw new Error('shell cache missing');
   if(!cacheState.keys.includes('vokabeltrainer-resources-v1'))throw new Error('resource cache missing');
 
   await context.setOffline(true);
