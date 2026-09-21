@@ -7,20 +7,28 @@ function gradeScaleText(scale=gradeScaleFor()){return `1 ab ${scale.n1}% · 2 ab
 function actualGradeForPractice(practiceId){return state.grades.find(g=>g.learnerId===state.activeLearnerId&&g.practiceTestId===practiceId)||null;}
 function mySets(subject=state.activeSubject){ return state.sets.filter(s=>s.learnerId===state.activeLearnerId && s.subject===subject); }
 function setNeedsPairReview(set){return !!set?.pairReviewRequired}
+function firstContactStatus(setId){
+  const links=(state?.setVocabulary||[]).filter(x=>x.setId===setId),total=links.length;
+  const copied=links.filter(x=>x.firstContactCopiedAt).length,recalled=links.filter(x=>x.firstContactRecalledAt).length,completed=links.filter(x=>x.firstContactCompletedAt).length;
+  return {total,copied,recalled,completed,pending:Math.max(0,total-completed),pct:total?Math.round(completed/total*100):0};
+}
+function setNeedsFirstContact(set){return !!set&&!setNeedsPairReview(set)&&firstContactStatus(set.id).pending>0}
 function vocabularyPairSignature(v){
   if(!v)return '';
   return JSON.stringify({term:String(v.term||''),termVariants:[...(v.termVariants||[])],senses:(v.senses||[]).map(s=>({id:String(s.id||''),translation:String(s.translation||''),translations:[...(s.translations||[])]}))});
 }
 function requirePairReviewForVocabulary(vocabId){
-  const setIds=new Set((state.setVocabulary||[]).filter(x=>x.vocabId===vocabId).map(x=>x.setId));let changed=0;
+  const links=(state.setVocabulary||[]).filter(x=>x.vocabId===vocabId),setIds=new Set(links.map(x=>x.setId));let changed=0;
+  for(const link of links){link.firstContactCopiedAt='';link.firstContactRecalledAt='';link.firstContactCompletedAt='';}
   for(const set of (state.sets||[])){if(!setIds.has(set.id))continue;if(!set.pairReviewRequired||set.pairVerifiedAt)changed++;set.pairReviewRequired=true;set.pairVerifiedAt='';}
   for(const row of (state.bookVocabulary||[])){if(row.vocabId!==vocabId)continue;row.verifiedAt='';}
   return changed;
 }
-function learningReadySets(subject=state.activeSubject){return mySets(subject).filter(s=>!setNeedsPairReview(s))}
+function learningReadySets(subject=state.activeSubject){return mySets(subject).filter(s=>!setNeedsPairReview(s)&&!setNeedsFirstContact(s))}
 function schoolYearSets(subject=state.activeSubject,schoolYear=currentSchoolYear()){ return mySets(subject).filter(s=>s.schoolYear===schoolYear); }
 function myWords(subject=state.activeSubject){const ids=new Set(learningReadySets(subject).map(s=>s.id));return uniqueWords(state.words.filter(w=>ids.has(w.setId)));}
-function schoolYearWords(subject=state.activeSubject,schoolYear=currentSchoolYear()){const ids=new Set(schoolYearSets(subject,schoolYear).filter(s=>!setNeedsPairReview(s)).map(s=>s.id));return uniqueWords(state.words.filter(w=>ids.has(w.setId)));}
+function schoolYearVerifiedWords(subject=state.activeSubject,schoolYear=currentSchoolYear()){const ids=new Set(schoolYearSets(subject,schoolYear).filter(s=>!setNeedsPairReview(s)).map(s=>s.id));return uniqueWords(state.words.filter(w=>ids.has(w.setId)));}
+function schoolYearWords(subject=state.activeSubject,schoolYear=currentSchoolYear()){const ids=new Set(schoolYearSets(subject,schoolYear).filter(s=>!setNeedsPairReview(s)&&!setNeedsFirstContact(s)).map(s=>s.id));return uniqueWords(state.words.filter(w=>ids.has(w.setId)));}
 function setWords(setId){return (state.setVocabulary||[]).filter(x=>x.setId===setId).sort((a,b)=>(a.position||0)-(b.position||0)).map(x=>wordViewForLink(x)).filter(Boolean);}
 function fortressWins(subject=state.activeSubject,schoolYear=currentSchoolYear()){const l=learner(),key=`${subject}:${schoolYear}`;l.fortressWinsByYear=l.fortressWinsByYear||{};return l.fortressWinsByYear[key]||(l.fortressWinsByYear[key]=[]);}
 
@@ -77,12 +85,12 @@ function refreshMastery(w){
   w.level=mastered?4:Math.min(3,Math.max(0,Math.floor(masteryScore(w))));
 }
 function subjectProgress(subject=state.activeSubject,schoolYear=currentSchoolYear()){
-  const words=schoolYearWords(subject,schoolYear); const mastered=words.filter(isMastered).length; const stable=words.filter(w=>w.intervalDays>=7 && (w.independentSuccesses||0)>w.failures).length;
+  const words=schoolYearVerifiedWords(subject,schoolYear); const mastered=words.filter(w=>w.firstContactCompletedAt&&isMastered(w)).length; const stable=words.filter(w=>w.firstContactCompletedAt&&w.intervalDays>=7 && (w.independentSuccesses||0)>w.failures).length;
   return {schoolYear,total:words.length,mastered,stable,pct:words.length?Math.round(mastered/words.length*100):0};
 }
 function dueWords(subject=state.activeSubject,schoolYear=currentSchoolYear()){return schoolYearWords(subject,schoolYear).filter(w=>!w.dueDate||w.dueDate<=today()).sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||''));}
 function armyStrength(subject=state.activeSubject,schoolYear=currentSchoolYear()){
-  const p=subjectProgress(subject,schoolYear); const words=schoolYearWords(subject,schoolYear);
+  const p=subjectProgress(subject,schoolYear); const words=schoolYearVerifiedWords(subject,schoolYear);
   const avg=words.length?words.reduce((s,w)=>s+masteryScore(w),0)/(words.length*4):0;
   return Math.round(p.pct*10 + avg*100);
 }
@@ -94,7 +102,7 @@ function rankFor(pct,subject=state.activeSubject){
 function gearFor(pct){return ['I','II','III','IV','V','VI'][Math.min(5,Math.floor(pct/18))]}
 function soldiersFor(pct){return clamp(2+Math.floor(pct/9),2,13)}
 
-const streakActivityTypes=new Set(['adaptive','recognition','recall','spelling','listening','context','chunks','flash','shower','latinGrammar','handwriting','practiceTest']);
+const streakActivityTypes=new Set(['adaptive','recognition','recall','spelling','listening','context','chunks','flash','shower','latinGrammar','handwriting','firstContact','practiceTest']);
 function recordActivity(type,meta={}){ const l=learner(); if(streakActivityTypes.has(type)&&!l.streakDays.includes(today())) l.streakDays.push(today()); state.activity.push({id:uid('a'),learnerId:l.id,date:new Date().toISOString(),type,...meta}); }
 function streak(){
   const days=new Set(learner().streakDays); let n=0,d=new Date(); d.setHours(12,0,0,0); for(;;){const k=dateKey(d); if(days.has(k)){n++;d.setDate(d.getDate()-1)}else break} return n;
@@ -111,7 +119,7 @@ function nextWeeklyDate(weekday,fromKey=today()){const base=localDateFromKey(fro
 function activeSeries(subject=state.activeSubject){const cfg=learner()?.testSeries?.[subject];return cfg&&cfg.enabled?cfg:null}
 function seriesScopePending(subject=state.activeSubject){const cfg=activeSeries(subject);if(!cfg)return null;const date=nextWeeklyDate(cfg.weekday);return cfg.scopeDate===date?null:{date,days:daysUntil(date),series:cfg}}
 function normalizedRange(count,from,to){if(!count)return {from:1,to:0};let a=clamp(Math.max(1,Number(from)||1),1,count),b=clamp(Math.max(1,Number(to)||count),1,count);if(a>b)[a,b]=[b,a];return {from:a,to:b}}
-function scopedWordsForSet(set,scopeMode='set',from=1,to=null){if(!set||setNeedsPairReview(set))return [];const words=setWords(set.id);if(scopeMode!=='range'||!words.length)return words;const r=normalizedRange(words.length,from,to);return words.slice(r.from-1,r.to)}
+function scopedWordsForSet(set,scopeMode='set',from=1,to=null){if(!set||setNeedsPairReview(set)||setNeedsFirstContact(set))return [];const words=setWords(set.id);if(scopeMode!=='range'||!words.length)return words;const r=normalizedRange(words.length,from,to);return words.slice(r.from-1,r.to)}
 function scopeTextForSet(set,scopeMode='set',from=1,to=null){if(!set)return '';if(scopeMode!=='range')return set.title;const count=setWords(set.id).length;if(!count)return set.title;const r=normalizedRange(count,from,to);return `${set.title} · Vokabeln ${r.from}–${r.to}`}
 function scopedWordsForSeries(cfg,subject=state.activeSubject){if(!cfg||!cfg.setId)return [];const set=state.sets.find(s=>s.id===cfg.setId&&s.learnerId===state.activeLearnerId&&s.subject===subject);return scopedWordsForSet(set,cfg.scopeMode,cfg.from,cfg.to)}
 function seriesScopeText(cfg){if(!cfg)return '';const set=state.sets.find(s=>s.id===cfg.setId);return scopeTextForSet(set,cfg.scopeMode,cfg.from,cfg.to)}
@@ -129,7 +137,7 @@ function testReadinessForContext(ctx){
   return {total:words.length,ready,pct:Math.round(ready/words.length*100),avg,weak};
 }
 function upcomingTestContext(subject=state.activeSubject){
-  const explicit=mySets(subject).filter(s=>!setNeedsPairReview(s)&&s.testDate&&daysUntil(s.testDate)>=0&&setWords(s.id).length).sort((a,b)=>a.testDate.localeCompare(b.testDate));
+  const explicit=mySets(subject).filter(s=>!setNeedsPairReview(s)&&!setNeedsFirstContact(s)&&s.testDate&&daysUntil(s.testDate)>=0&&setWords(s.id).length).sort((a,b)=>a.testDate.localeCompare(b.testDate));
   let single=null;
   if(explicit.length){const date=explicit[0].testDate,sets=explicit.filter(s=>s.testDate===date),words=uniqueWords(sets.flatMap(set=>scopedWordsForSet(set,set.testScopeMode,set.testFrom,set.testTo)));single={date,days:daysUntil(date),sets,words,source:'single',testFormat:sets[0]?.testFormat||'target',scopeText:sets.map(set=>scopeTextForSet(set,set.testScopeMode,set.testFrom,set.testTo)).join(' + ')}}
   const cfg=activeSeries(subject); let recurring=null;
