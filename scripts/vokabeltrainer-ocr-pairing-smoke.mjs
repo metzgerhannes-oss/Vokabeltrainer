@@ -51,7 +51,7 @@ const result=vm.runInContext(`
     camdenRow('°Where is ...? / Where are ...?',120,555,300,22,96,14,1),camdenRow('Wo ist ...? / Wo sind ...?',510,555,245,22,96,14,1),
     camdenRow("/'weər ɪz, 'weər ɑ:/",150,588,230,20,90,15,1)
   ].join('\\n');
-  const camden=tesseractTsvToVocabulary(camdenTsv,'english');
+  const camden=tesseractTsvToVocabulary(camdenTsv,'english',{profile:'camden-town'});
   const camdenPairs=camden.rows.filter(r=>r.term&&r.translation).map(r=>r.term+'='+r.translation);
   for(const expected of [
     'Welcome to Camden Town!=Willkommen in Camden Town!',
@@ -67,6 +67,98 @@ const result=vm.runInContext(`
   ])if(!camdenPairs.includes(expected))throw new Error('Camden OCR pair missing: '+expected+' | '+camdenPairs.join(' | '));
   if(camden.rows.some(r=>/Arbeitsanweisungen|An dem Wort|welkam|kæn|si:/.test((r.term||'')+' '+(r.translation||''))))throw new Error('Camden OCR kept pronunciation/editorial noise: '+JSON.stringify(camden.rows));
   if(camden.rows.some(r=>/can © car|can see a|a car|Listen!/.test(r.translation||'')))throw new Error('Camden OCR leaked third-column examples into German translations: '+JSON.stringify(camden.rows));
+
+  if(ocrBookProfile({bookTitle:'Camden Town 1'},'')!=='camden-town')throw new Error('Camden book title does not activate OCR profile');
+  if(ocrBookProfile({bookTitle:''},'Word lists Welcome to Camden Town!')!=='camden-town')throw new Error('Camden page text does not activate OCR profile');
+
+  const camdenPage2=[
+    header,
+    camdenRow('Welcome to Camden Town!',90,20,260,24,96,1,1),camdenRow('Word lists',670,20,120,24,96,1,1),
+    camdenRow('this /ðɪs/',90,75,130,22,96,2,1),camdenRow('diese(r, s); das',350,75,170,22,96,2,1),
+    camdenRow('and /ænd/',90,110,125,22,96,3,1),camdenRow('und',350,110,80,22,96,3,1),
+    camdenRow('too /tu:/',90,145,110,22,96,4,1),camdenRow('auch',350,145,80,22,96,4,1),camdenRow('I like elephants, too.',590,145,185,22,92,4,1),
+    camdenRow('4',35,195,18,20,92,5,1),
+    camdenRow('°Write down and learn “your” sentences.',90,195,270,22,95,5,2),camdenRow('Schreib „deine“ Sätze auf und lerne sie.',350,195,240,22,95,5,1),
+    camdenRow('to read /ri:d/',90,245,150,22,96,6,1),camdenRow('lesen',350,245,80,22,96,6,1),camdenRow('Read the text.',590,245,130,22,93,6,1),
+    camdenRow('picture /ˈpɪktʃə/',90,280,180,22,96,7,1),camdenRow('Bild',350,280,70,22,96,7,1),
+    camdenRow('What’s ... in English?',90,315,230,22,96,8,1),camdenRow('Was bedeutet ... auf Englisch?',350,315,250,22,96,8,1),camdenRow('What’s “Bild” in English? – Picture.',590,315,190,22,91,8,1),
+    camdenRow('5',35,355,18,20,92,9,1),
+    camdenRow('to write (down) /raɪt daʊn/',90,355,230,22,96,9,2),camdenRow('(auf)schreiben, (nieder)schreiben',350,355,260,22,96,9,1),
+    camdenRow('dog /dɒg/',90,395,120,22,96,10,1),camdenRow('Hund',350,395,80,22,96,10,1),
+    camdenRow('phone number /fəʊn ˌnʌmbə/',90,430,245,22,96,11,1),camdenRow('Telefonnummer',350,430,150,22,96,11,1),
+    camdenRow('to find /faɪnd/',90,465,140,22,96,12,1),camdenRow('finden',350,465,90,22,96,12,1),camdenRow('Where is my bag? I can’t find it.',590,465,190,22,90,12,1),
+    camdenRow('pet /pet/',90,500,110,22,96,13,1),camdenRow('Haustier',350,500,100,22,96,13,1),
+    camdenRow('to play (a game) /pleɪ ə geɪm/',90,535,245,22,96,14,1),camdenRow('(ein Spiel) spielen',350,535,180,22,96,14,1),
+    camdenRow('How many ...? /haʊ meni/',90,570,210,22,96,15,1),camdenRow('Wie viele ...?',350,570,140,22,96,15,1),
+    camdenRow('thing /θɪŋ/',90,605,125,22,96,16,1),camdenRow('Ding, Gegenstand, Sache',350,605,220,22,96,16,1)
+  ].join('\\n');
+  const c2=tesseractTsvToVocabulary(camdenPage2,'english',{profile:'camden-town'});
+  const c2pairs=c2.rows.filter(r=>r.term&&r.translation).map(r=>r.term+'='+r.translation);
+  for(const expected of [
+    'this=diese(r, s); das',
+    'and=und',
+    'too=auch',
+    'Write down and learn “your” sentences.=Schreib „deine“ Sätze auf und lerne sie.',
+    'to read=lesen',
+    'picture=Bild',
+    'What’s ... in English?=Was bedeutet ... auf Englisch?',
+    'to write (down)=(auf)schreiben, (nieder)schreiben',
+    'dog=Hund',
+    'phone number=Telefonnummer',
+    'to find=finden',
+    'pet=Haustier',
+    'to play (a game)=(ein Spiel) spielen',
+    'How many ...?=Wie viele ...?',
+    'thing=Ding, Gegenstand, Sache'
+  ])if(!c2pairs.includes(expected))throw new Error('Camden page 2 OCR pair missing: '+expected+' | '+c2pairs.join(' | '));
+  if(c2.rows.some(r=>/^[0-9]+$/.test(r.term||'')||/I like elephants|Read the text|Where is my bag/.test(r.translation||'')))throw new Error('Camden page 2 kept yellow marker or third-column example: '+JSON.stringify(c2.rows));
+
+  const camdenPage3=[
+    header,
+    camdenRow('Word lists',90,20,120,24,96,1,1),
+    camdenRow('shut up (informal) /ʃʌt ʌp/',90,80,250,22,96,2,1),camdenRow('Halt deinen Mund!',360,80,180,22,96,2,1),
+    camdenRow('I’m at Camden School for Girls.',90,120,270,22,96,3,1),camdenRow('Ich bin auf der Camden School',360,120,235,22,96,3,1),
+    camdenRow('/aɪm æt kæmdən sku:l fə gɜ:lz/',115,150,245,20,90,4,1),camdenRow('for Girls.',390,150,100,22,95,4,1),
+    camdenRow('school /sku:l/',90,195,140,22,96,5,1),camdenRow('Schule',360,195,90,22,96,5,1),
+    camdenRow('for /fɔ:/',90,230,110,22,96,6,1),camdenRow('für',360,230,70,22,96,6,1),
+    camdenRow('girl /gɜ:l/',90,265,115,22,96,7,1),camdenRow('Mädchen',360,265,100,22,96,7,1),
+    camdenRow('to go to school together',90,300,230,22,96,8,1),camdenRow('zusammen zur Schule gehen',360,300,220,22,96,8,1),
+    camdenRow('/gəʊ tə sku:l təgeðə/',115,330,190,20,90,9,1),
+    camdenRow('he’s (= he is) /hi:z, hi iz/',90,370,210,22,96,10,1),camdenRow('er ist',360,370,80,22,96,10,1),
+    camdenRow('friend /frend/',90,405,140,22,96,11,1),camdenRow('Freund/in',360,405,110,22,96,11,1),
+    camdenRow('yes /jes/',90,440,110,22,96,12,1),camdenRow('ja',360,440,60,22,96,12,1),camdenRow('yes ↔ no',670,440,90,22,92,12,1),
+    camdenRow('his /hɪz/',90,475,110,22,96,13,1),camdenRow('sein(e, r)',360,475,110,22,96,13,1),
+    camdenRow('So he isn’t a baby like George.',90,525,270,22,96,14,1),camdenRow('Also ist er kein Baby wie George.',360,525,260,22,96,14,1),
+    camdenRow('on /ɒn/',90,560,105,22,96,15,1),camdenRow('auf',360,560,60,22,96,15,1),
+    camdenRow('bed /bed/',90,595,110,22,96,16,1),camdenRow('Bett',360,595,70,22,96,16,1),camdenRow('bed',670,595,50,22,92,16,1),
+    camdenRow('10',35,645,22,20,92,17,1),
+    camdenRow('°Complete the sentences. Write them down.',90,645,280,22,95,17,2),camdenRow('Vervollständige die Sätze. Schreibe sie auf.',360,645,275,22,95,17,1),
+    camdenRow('(for) example /fər ɪgˈzɑ:mp(ə)l/',90,695,250,22,96,18,1),camdenRow('(zum) Beispiel',360,695,140,22,96,18,1),
+    camdenRow('Theme 1: At school',90,750,200,26,96,19,1)
+  ].join('\\n');
+  const c3=tesseractTsvToVocabulary(camdenPage3,'english',{profile:'camden-town'});
+  const c3pairs=c3.rows.filter(r=>r.term&&r.translation).map(r=>r.term+'='+r.translation);
+  for(const expected of [
+    'shut up=Halt deinen Mund!',
+    'I’m at Camden School for Girls.=Ich bin auf der Camden School for Girls.',
+    'school=Schule',
+    'for=für',
+    'girl=Mädchen',
+    'to go to school together=zusammen zur Schule gehen',
+    'he’s=er ist',
+    'friend=Freund/in',
+    'yes=ja',
+    'his=sein(e, r)',
+    'So he isn’t a baby like George.=Also ist er kein Baby wie George.',
+    'on=auf',
+    'bed=Bett',
+    'Complete the sentences. Write them down.=Vervollständige die Sätze. Schreibe sie auf.',
+    '(for) example=(zum) Beispiel'
+  ])if(!c3pairs.includes(expected))throw new Error('Camden page 3 OCR pair missing: '+expected+' | '+c3pairs.join(' | '));
+  const shut=c3.rows.find(r=>r.term==='shut up'),hes=c3.rows.find(r=>r.term==='he’s');
+  if(shut?.extra!=='informal'||hes?.extra!=='= he is')throw new Error('Camden metadata was not kept as extra information: '+JSON.stringify({shut,hes}));
+  if(c3.rows.some(r=>/Theme 1|^[0-9]+$/.test(r.term||'')||/yes ↔ no|^bed$/.test(r.translation||'')))throw new Error('Camden page 3 kept heading, yellow marker or third-column note: '+JSON.stringify(c3.rows));
+
 
   const book=upsertBook('9780140449136','english',{title:'Test Book'}).book;
   const photoSet={id:'photo_set',learnerId:'learner_demo',subject:'english',title:'Unit 1',schoolYear:currentSchoolYear(),bookId:book.id,bookSection:'Unit 1',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:true,pairVerifiedAt:''};
