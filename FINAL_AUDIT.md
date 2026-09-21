@@ -95,7 +95,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - WebKit/iPhone-Smokes für Shell, Lernen, Hilfe, OCR, Erstkontakt und Schlacht
 - Battle-Saisontest ist nicht mehr auf einen bestimmten Kalendermonat fest verdrahtet
 - der eigene GitHub-Pages-Workflow deployt nur nach erfolgreichem Vokabeltrainer-CI und checkt exakt den getesteten Commit aus
-- GitHubs zusätzliches Branch-basiertes Pages-Deployment muss in den Repository-Einstellungen noch auf „GitHub Actions“ umgestellt werden, damit der CI-Gate vollständig erzwungen ist
+- GitHub Pages ist auf „GitHub Actions“ umgestellt; der Produktions-Deploy wird damit ausschließlich nach erfolgreichem Vokabeltrainer-CI ausgelöst
 
 ## Audit-Korrekturen v0.17.1
 
@@ -107,7 +107,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 
 ## Bewusste Grenzen vor v1
 
-- Family Sync ist vorhanden, bleibt vor v1 aber eine Beta-Funktion; lokale Backups bleiben als unabhängige Rückfallebene notwendig.
+- Family Sync ist vorhanden und wurde am 21.09.2026 zusätzlich end-to-end gegen die produktiven Supabase-RPCs mit getrenntem Eltern-/Kindergerät, Einmal-Invite, Rechteprüfung, Progress-Sync, Revisionskonflikt und Geräte-Revoke erfolgreich getestet. Vor v1 bleibt die Funktion dennoch als Beta gekennzeichnet; lokale Backups bleiben eine unabhängige Rückfallebene.
 - Browser/OS können lokalen Webspeicher unter extremem Speicherdruck löschen; Backup bleibt notwendig.
 - Gleichzeitige Änderungen desselben synchronisierten Dokuments werden bewusst als Konflikt markiert und nicht automatisch zusammengeführt.
 - Herausforderungscodes sind kein vertrauenswürdiger Leistungsnachweis und können manipuliert werden.
