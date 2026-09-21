@@ -117,8 +117,8 @@ function leitnerMaxBox(w){return inferredLeitnerBox(w)}
 function leitnerLabel(box){
   return ({1:'Neu',2:'Im Lernen',3:'Bekannt',4:'Sicher',5:'Nachhaltig gemeistert'})[clamp(Math.round(Number(box)||1),1,5)]||'Neu';
 }
-function updateLeitnerBox(w,ok,{assisted=false,active=true,orthographyOk=true}={}){
-  const before=leitnerBox(w);let after=before,blockedBySpacing=false;
+function updateLeitnerBox(w,ok,{assisted=false,active=true,orthographyOk=true,beforeBox=null}={}){
+  const supplied=Math.round(Number(beforeBox)||0),before=supplied>=1&&supplied<=5?supplied:leitnerBox(w);let after=before,blockedBySpacing=false;
   if(!active)return {before,after,moved:false,blockedBySpacing:false};
   if(!ok)after=Math.max(1,before-1);
   else if(!assisted&&orthographyOk){
