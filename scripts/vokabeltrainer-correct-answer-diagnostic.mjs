@@ -14,8 +14,8 @@ async function seed(){
     state=defaultState();
     const set={id:'diag_set',learnerId:'learner_demo',subject:'english',title:'Diag Unit',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:''};
     state.sets.push(set);
-    attachVocabularyToSet(set.id,{term:'look',translation:'schauen',source:'diag',verified:true});
-    attachVocabularyToSet(set.id,{term:'write',translation:'schreiben',source:'diag',verified:true});
+    attachVocabularyToSet(set.id,{term:'look',translation:'schauen',source:'diag',verified:true,firstContactCopiedAt:'test',firstContactRecalledAt:'test',firstContactCompletedAt:'test'});
+    attachVocabularyToSet(set.id,{term:'write',translation:'schreiben',source:'diag',verified:true,firstContactCopiedAt:'test',firstContactRecalledAt:'test',firstContactCompletedAt:'test'});
     const word=setWords(set.id)[0];
     word.translation='ansehen';
     rebuildWordIndexes();
