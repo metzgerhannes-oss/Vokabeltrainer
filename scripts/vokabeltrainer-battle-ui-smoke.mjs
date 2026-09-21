@@ -40,7 +40,7 @@ try{
   assert(await page.locator('#battleStage.fortress-stage-outpost').count()===1,'first campaign target has its own fortress stage');
   assert(await page.locator('#battleStage.season-autumn').count()===1,'current autumn season changes the battle stage');
   assert((await page.locator('#battleRankGear').textContent())?.length>3,'rank and equipment are visible');
-  assert(await page.locator('[data-battle-attack]').count()===4,'four visual attack types are available');
+  assert(await page.locator('[data-battle-attack]').count()===5,'four standard attacks plus one special attack are available');
   assert(!(await page.locator('[data-battle-attack="ram"]').isDisabled()),'ram attack unlocks from learning progress');
   await page.click('[data-battle-attack="ram"]');
   assert(await page.locator('[data-battle-attack="ram"].active').count()===1,'attack type can be selected');
