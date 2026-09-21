@@ -294,7 +294,7 @@ function detectOcrColumnLayout(words,medianH,deutsch){
 function cleanOcrTerm(text){
   return stripOcrPronunciation(text)
     .replace(/^[°º•·]+\s*/,'')
-    .replace(/\s+([,.;!?])/g,'$1')
+    .replace(/\s+([,;!?])/g,'$1')
     .replace(/\s+/g,' ')
     .trim();
 }
