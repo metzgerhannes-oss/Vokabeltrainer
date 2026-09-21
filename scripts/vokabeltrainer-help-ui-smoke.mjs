@@ -11,8 +11,10 @@ try{
   page.on('pageerror',e=>errors.push(String(e?.message||e)));
   let response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'desktop app loads');
-  await page.waitForSelector('[data-help="mastery"]');
-  await page.hover('[data-help="mastery"]');
+  assert(await page.locator('.today-focus [data-help]').count()===0,'desktop daily child path stays free of contextual-help clutter');
+  await page.locator('#progressDisclosure > summary').click();
+  await page.waitForSelector('#progressDisclosure[open] [data-help="mastery"]');
+  await page.hover('#progressDisclosure [data-help="mastery"]');
   await page.waitForSelector('#helpPopover:not([hidden])');
   let text=await page.locator('#helpPopover').textContent();
   assert(text?.includes('Nachhaltig gemeistert'),'desktop mouseover shows contextual mastery help');
