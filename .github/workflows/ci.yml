@@ -87,6 +87,9 @@ jobs:
       - name: WebKit one-time vocabulary purge
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-vocabulary-purge-ui-smoke.mjs
 
+      - name: WebKit built-in-only clean reset
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-builtin-only-reset-ui-smoke.mjs
+
       - name: WebKit iPhone UI smoke
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-webkit-ui-smoke.mjs
 
