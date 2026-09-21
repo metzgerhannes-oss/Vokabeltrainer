@@ -68,8 +68,8 @@ const staticChecks=[
   [(()=>{const s=ui.slice(ui.indexOf('function duelPayload'),ui.indexOf('function openDuel'));return s.includes('subjectCampaign(state.activeSubject).unitLabel')&&!s.includes('learner().name')&&!s.includes('mastered:p.mastered')&&!s.includes('strength:armyStrength')})(),'friendship duel code excludes profile name and unnecessary detailed learning fields'],
   [io.includes("JSON.stringify(backupSummary(check))===JSON.stringify(backupSummary(state))"),'restore compares the full persisted summary'],
   [io.includes("persistenceMode==='indexeddb'")&&io.includes("localStorage.getItem(STORAGE_KEY)"),'restore verifies both persistence backends'],
-  [ci.includes('actions/checkout@v7')&&ci.includes('actions/setup-node@v7'),'CI uses current Node-24 GitHub Actions'],
-  [pages.includes('actions/checkout@v7')&&pages.includes('actions/configure-pages@v6')&&pages.includes('actions/upload-pages-artifact@v5')&&pages.includes('actions/deploy-pages@v5'),'Pages workflow uses current stable action majors']
+  [ci.includes('actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1')&&ci.includes('actions/setup-node@820762786026740c76f36085b0efc47a31fe5020'),'CI pins reviewed GitHub Actions to immutable SHAs'],
+  [pages.includes('actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1')&&pages.includes('actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d')&&pages.includes('actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9')&&pages.includes('actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346'),'Pages workflow pins reviewed actions to immutable SHAs']
 ];
 for(const [value,name] of staticChecks){if(!value)throw new Error('Release audit smoke failed: '+name);passed.push(name)}
 
