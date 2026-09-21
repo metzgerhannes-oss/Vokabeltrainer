@@ -35,11 +35,13 @@ try{
   assert((await page.locator('#modalContent').textContent())?.includes('automatisch als Lernstoff'),'test planner explains that selected words become learning content automatically');
   const total=await page.locator('#planWordPicker [data-plan-row]').count();
   assert(total>6,'test planner exposes individual vocabulary choices');
-  await page.click('#planSelectNone');
+  await page.locator('#planRangeFrom').fill('3');
+  await page.locator('#planRangeTo').fill('8');
+  await page.click('#planSelectRange');
   const boxes=page.locator('#planWordPicker [data-plan-row]');
-  for(let i=0;i<6;i++)await boxes.nth(i).check();
+  assert(await boxes.nth(1).isChecked()===false&&await boxes.nth(2).isChecked()&&await boxes.nth(7).isChecked()&&await boxes.nth(8).isChecked()===false,'von-bis selection checks exactly the requested inclusive range');
   await page.locator('#testPlanDate').fill(await page.evaluate(()=>datePlusDays(7)));
-  assert((await page.locator('#planSelectionCount').textContent())?.startsWith('6 '),'selection counter follows the checked words');
+  assert((await page.locator('#planSelectionCount').textContent())?.startsWith('6 '),'selection counter follows the range selection');
   const preview=await page.locator('#planDailyPreview').textContent();
   assert(preview?.includes('6 ausgewählt')&&preview?.includes('neue Wörter pro Tag'),'daily learning preview is calculated before save');
   await page.click('#saveTestPlan');
