@@ -32,7 +32,7 @@ const result=vm.runInContext(`
   if(!pairs.includes('look=schauen')||!pairs.includes('write=schreiben')||!pairs.includes('house=Haus'))throw new Error('wide right column paired incorrectly: '+pairs.join(' | '));
 
 
-  const camdenRow=(word,left,top,width=120,height=22,conf=95,line=1,wordNum=1)=>['5','1','1','1',String(line),String(wordNum),String(left),String(top),String(width),String(height),String(conf),word].join('\t');
+  const camdenRow=(word,left,top,width=120,height=22,conf=95,line=1,wordNum=1)=>['5','1','1','1',String(line),String(wordNum),String(left),String(top),String(width),String(height),String(conf),word].join('\\t');
   const camdenTsv=[
     header,
     camdenRow('Word lists',120,20,150,26,95,1,1),
@@ -50,7 +50,7 @@ const result=vm.runInContext(`
     camdenRow('to listen to /ˈlɪs(ə)n tə/',120,515,245,22,96,13,1),camdenRow('zuhören; (an)hören',510,515,220,22,96,13,1),camdenRow('Listen!',820,515,90,22,90,13,1),
     camdenRow('°Where is ...? / Where are ...?',120,555,300,22,96,14,1),camdenRow('Wo ist ...? / Wo sind ...?',510,555,245,22,96,14,1),
     camdenRow("/'weər ɪz, 'weər ɑ:/",150,588,230,20,90,15,1)
-  ].join('\n');
+  ].join('\\n');
   const camden=tesseractTsvToVocabulary(camdenTsv,'english');
   const camdenPairs=camden.rows.filter(r=>r.term&&r.translation).map(r=>r.term+'='+r.translation);
   for(const expected of [
