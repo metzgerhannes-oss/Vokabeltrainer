@@ -185,19 +185,27 @@ function assignBookSectionToLearner(bookId,section,learnerId){
   rebuildWordIndexes();return {set,links,total:group.items.length};
 }
 function clearLearnerLearningData(learnerId){
-  const l=(state.learners||[]).find(x=>x.id===learnerId);if(!l)return {sets:0,links:0,progress:0};
-  const setIds=new Set((state.sets||[]).filter(s=>s.learnerId===learnerId).map(s=>s.id));
+  const l=(state.learners||[]).find(x=>x.id===learnerId);if(!l)return {sets:0,links:0,progress:0,orphanVocabulary:0};
+  const targetSets=(state.sets||[]).filter(s=>s.learnerId===learnerId),setIds=new Set(targetSets.map(s=>s.id));
+  const bookSections=[...new Map(targetSets.filter(s=>s.bookId).map(s=>[`${s.bookId}\u0000${s.bookSection||s.title||''}`,{bookId:s.bookId,section:s.bookSection||s.title||''}])).values()];
   const linksBefore=(state.setVocabulary||[]).filter(x=>setIds.has(x.setId)).length;
   const progressBefore=(state.learnerVocabulary||[]).filter(x=>x.learnerId===learnerId).length;
   state.setVocabulary=(state.setVocabulary||[]).filter(x=>!setIds.has(x.setId));
   for(const v of (state.vocabulary||[]))v.sources=(v.sources||[]).filter(src=>!setIds.has(src.setId));
   state.sets=(state.sets||[]).filter(s=>s.learnerId!==learnerId);
   state.learnerVocabulary=(state.learnerVocabulary||[]).filter(x=>x.learnerId!==learnerId);
+  for(const pair of bookSections){
+    const stillUsed=(state.sets||[]).some(s=>s.bookId===pair.bookId&&(s.bookSection||s.title||'')===pair.section),book=bookById(pair.bookId);
+    if(!stillUsed&&!book?.builtinSource)state.bookVocabulary=(state.bookVocabulary||[]).filter(r=>!(r.bookId===pair.bookId&&(r.section||'')===pair.section));
+  }
+  const usedVocabIds=new Set([...(state.setVocabulary||[]).map(x=>x.vocabId),...(state.bookVocabulary||[]).map(x=>x.vocabId)]);
+  const beforeVocabulary=(state.vocabulary||[]).length;
+  state.vocabulary=(state.vocabulary||[]).filter(v=>usedVocabIds.has(v.id)||(v.sources||[]).length>0);
   state.practiceTests=(state.practiceTests||[]).filter(t=>t.learnerId!==learnerId);
   state.activity=(state.activity||[]).filter(a=>a.learnerId!==learnerId);
   state.grades=(state.grades||[]).filter(g=>g.learnerId!==learnerId||!g.practiceTestId);
   l.xp=0;l.streakDays=[];l.milestones={};l.fortressWins=defaultSubjectArrays();l.fortressWinsByYear={};l.battleTickets=defaultSubjectNumbers();l.campaignLog=[];l.dailyPlans={};l.testSeries=defaultTestSeries();
-  rebuildWordIndexes();return {sets:setIds.size,links:linksBefore,progress:progressBefore};
+  rebuildWordIndexes();return {sets:setIds.size,links:linksBefore,progress:progressBefore,orphanVocabulary:beforeVocabulary-(state.vocabulary||[]).length};
 }
 
 function defaultState(){
