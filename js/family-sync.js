@@ -243,6 +243,30 @@
     }finally{runtime.busy=false}
   }
 
+  async function replaceCloudWithCurrent(){
+    const cfg=loadConfig();
+    if(!cfg.enabled)return {ok:true,localOnly:true};
+    if(cfg.role!=='parent')return {ok:false,skipped:true,reason:'parent-required'};
+    if(runtime.busy)return {ok:false,skipped:true,reason:'busy'};
+    runtime.busy=true;
+    try{
+      const pulled=await rpc('vt_pull_documents',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
+      if(!pulled?.ok)throw new Error(pulled?.error||'Cloud-Stand nicht erreichbar.');
+      const remoteRev=new Map((pulled.documents||[]).map(d=>[String(d.key||''),Number(d.revision)||0]));
+      const docs=serializeDocuments();
+      const revisions={...cfg.revisions};
+      for(const [key,payload] of Object.entries(docs)){
+        if(!canWrite(cfg,key))continue;
+        const base=remoteRev.has(key)?remoteRev.get(key):(Number(revisions[key])||0);
+        const pushed=await rpc('vt_push_document',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret,p_doc_key:key,p_payload:payload,p_base_revision:base});
+        if(!pushed?.ok)throw new Error(pushed?.error||('Bereinigter Stand konnte nicht hochgeladen werden: '+key));
+        revisions[key]=Number(pushed.revision)||base+1;
+      }
+      cfg.revisions=revisions;cfg.dirtyKeys=[];cfg.conflicts={};cfg.lastSync=new Date().toISOString();persistCfg(cfg);initSnapshots();
+      return {ok:true,localOnly:false};
+    }finally{runtime.busy=false}
+  }
+
   async function listDevices(){
     const cfg=loadConfig();if(!cfg.enabled||cfg.role!=='parent')return [];
     const r=await rpc('vt_list_devices',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
@@ -269,5 +293,5 @@
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncNow(false).catch(e=>console.warn('Family sync resume',e))});
   }
 
-  window.VTFamilySync={serializeDocuments,status,createFamily,joinParent,createChildInvite,claimChildInvite,syncNow,markLocalChange,listDevices,revokeDevice,disconnectLocal,bootstrap};
+  window.VTFamilySync={serializeDocuments,status,createFamily,joinParent,createChildInvite,claimChildInvite,syncNow,replaceCloudWithCurrent,markLocalChange,listDevices,revokeDevice,disconnectLocal,bootstrap};
 })();
