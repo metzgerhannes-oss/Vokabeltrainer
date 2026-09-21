@@ -234,8 +234,10 @@ function groupOcrColumnLines(words,tolerance){
     return {...g,text:cleanOcrCell(g.words.map(w=>w.text).join(' ')),minX:Math.min(...g.words.map(w=>w.left)),maxX:Math.max(...g.words.map(w=>w.left+w.width)),avgConf};
   }).filter(g=>g.text);
 }
-function ocrUiNoise(text){
-  return /^(?:übersicht|finden|verwandte(?:s)?|herunterladen|download|suche|search|menü|menu|teilen|share|zurück|weiter|start|home|bookmark|lesezeichen)$/i.test(cleanOcrCell(text));
+function ocrUiNoise(text,profile=''){
+  const t=cleanOcrCell(text);
+  if(profile==='camden-town'&&/^finden$/i.test(t))return false;
+  return /^(?:übersicht|finden|verwandte(?:s)?|herunterladen|download|suche|search|menü|menu|teilen|share|zurück|weiter|start|home|bookmark|lesezeichen)$/i.test(t);
 }
 function stripOcrPronunciation(text){
   return cleanOcrCell(text)
@@ -256,7 +258,7 @@ function ocrPronunciationOnly(text){
   return (t.startsWith('/')||t.endsWith('/'))&&ipa>0;
 }
 function ocrEditorialNoise(text,subject,profile=''){
-  const t=stripOcrPronunciation(text);if(!t||ocrUiNoise(t))return true;
+  const t=stripOcrPronunciation(text);if(!t||ocrUiNoise(t,profile))return true;
   if(/^(?:word\s*lists?|wordlist|vocabulary|vokabeln|(?:unit|test|theme|part)\s*(?:\d+|[a-z])?|arbeitsanweisungen\b|an\s+dem\s+wort\b|in\s+den\s+.+boxen\b|pick[- ]?up\s*:|hinweis\b|merke\b)$/i.test(t))return true;
   if(/^(?:arbeitsanweisungen\b|an\s+dem\s+wort\b|in\s+den\s+.+boxen\b|pick[- ]?up\s*:)/i.test(t))return true;
   if(profile==='camden-town'){
@@ -344,7 +346,7 @@ function tesseractTsvToVocabulary(tsv,subject=state.activeSubject,opts={}){
     .map(g=>({...g,text:cleanOcrTerm(g.text)}))
     .filter(g=>g.text&&!ocrPronunciationOnly(g.text)&&!ocrEditorialNoise(g.text,subject,profile));
   let right=groupOcrColumnLines(data.filter(w=>w.left>=layout.divider&&w.left<layout.rightEnd),tolerance)
-    .filter(g=>g.text&&!ocrPronunciationOnly(g.text)&&!ocrUiNoise(g.text));
+    .filter(g=>g.text&&!ocrPronunciationOnly(g.text)&&!ocrUiNoise(g.text,profile));
 
   const records=[]; const usedRight=new Set(); let consecutiveMissing=0;
   const firstY=left[0]?.yc??0;
@@ -355,7 +357,7 @@ function tesseractTsvToVocabulary(tsv,subject=state.activeSubject,opts={}){
     const prev=i?(left[i-1].yc+l.yc)/2:l.yc-medianH*1.25;
     const next=i+1<left.length?(l.yc+left[i+1].yc)/2:l.yc+medianH*1.35;
     const matches=right.map((r,idx)=>({r,idx}))
-      .filter(x=>!usedRight.has(x.idx)&&x.r.yc>=prev&&x.r.yc<next&&!ocrUiNoise(x.r.text));
+      .filter(x=>!usedRight.has(x.idx)&&x.r.yc>=prev&&x.r.yc<next&&!ocrUiNoise(x.r.text,profile));
     if(!matches.length){
       parsedLastY=l.yc;
       consecutiveMissing++;
@@ -368,7 +370,7 @@ function tesseractTsvToVocabulary(tsv,subject=state.activeSubject,opts={}){
     matches.forEach(x=>usedRight.add(x.idx));
     const translation=cleanOcrCell(matches.map(x=>x.r.text).join(' '));
     const term=cleanOcrTerm(l.text);
-    if(!term||!translation||ocrEditorialNoise(term,subject,profile)||ocrUiNoise(translation))continue;
+    if(!term||!translation||ocrEditorialNoise(term,subject,profile)||ocrUiNoise(translation,profile))continue;
     if(subjectMeta(subject)?.ocrRepairProfile==='english'&&germanScore(term)>2&&foreignScore(term,subject)===0&&records.length>3)continue;
     const pairConfidence=Math.min(l.avgConf||100,...matches.map(x=>x.r.avgConf||100))>=55?'good':'check';
     records.push({y:l.yc,row:safeOcrPair(term,translation,subject,pairConfidence,profile)});
@@ -376,7 +378,7 @@ function tesseractTsvToVocabulary(tsv,subject=state.activeSubject,opts={}){
   }
 
   right.forEach((r,idx)=>{
-    if(usedRight.has(idx)||r.yc<firstY-medianH||r.yc>parsedLastY+medianH*1.25||ocrUiNoise(r.text))return;
+    if(usedRight.has(idx)||r.yc<firstY-medianH||r.yc>parsedLastY+medianH*1.25||ocrUiNoise(r.text,profile))return;
     const translation=cleanOcrCell(r.text); if(!translation||translation.length>100||translation.split(/\s+/).length>10)return;
     const nearLeft=left.some(l=>Math.abs(l.yc-r.yc)<=tolerance*.65);
     if(!nearLeft)records.push({y:r.yc,row:makeImportRow('',translation,'','','check','ocr')});
