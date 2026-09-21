@@ -311,14 +311,19 @@ function cleanOcrTerm(text){
     .replace(/\s+/g,' ')
     .trim();
 }
-function safeOcrPair(term,translation,subject,confidence='good'){
+function safeOcrPair(term,translation,subject,confidence='good',profile=''){
   let a=cleanOcrTerm(term),b=cleanOcrCell(translation);
   if(subjectMeta(subject)?.ocrRepairProfile==='english'){
     a=a.replace(/^l[’']m\b/i,"I'm").replace(/^I['’]m\s*\(=\s*am\)$/i,"I'm (= I am)");
     if(/^like$/i.test(a)&&/^ich mag[.!]?$/i.test(b))a='I like';
     b=b.replace(/\(beij\/in\)/i,'(bei/in)').replace(/\bPI\./g,'Pl.');
   }
-  return makeImportRow(a,b,'','',confidence);
+  const row=makeImportRow(a,b,'','',confidence);
+  if(profile==='camden-town'){
+    const m=a.match(/^(.+\s)\(([^)]+)\)$/);
+    if(m&&!/^(?:=|informal\b|formal\b|pl\.?\b|sing\.?\b|ugs\.?\b)/i.test(m[2].trim())){row.term=a;row.extra='';}
+  }
+  return row;
 }
 function tesseractTsvToVocabulary(tsv,subject=state.activeSubject,opts={}){
   const words=parseTesseractWords(tsv); if(!words.length)return {rows:[],text:''};
@@ -366,7 +371,7 @@ function tesseractTsvToVocabulary(tsv,subject=state.activeSubject,opts={}){
     if(!term||!translation||ocrEditorialNoise(term,subject,profile)||ocrUiNoise(translation))continue;
     if(subjectMeta(subject)?.ocrRepairProfile==='english'&&germanScore(term)>2&&foreignScore(term,subject)===0&&records.length>3)continue;
     const pairConfidence=Math.min(l.avgConf||100,...matches.map(x=>x.r.avgConf||100))>=55?'good':'check';
-    records.push({y:l.yc,row:safeOcrPair(term,translation,subject,pairConfidence)});
+    records.push({y:l.yc,row:safeOcrPair(term,translation,subject,pairConfidence,profile)});
     if(records.length>=250)break;
   }
 
