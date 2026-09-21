@@ -330,7 +330,7 @@ function tesseractTsvToVocabulary(tsv,subject=state.activeSubject,opts={}){
   const profile=opts?.profile||'';
   const heights=words.map(w=>w.height).filter(h=>h>2); const medianH=Math.max(12,medianNumber(heights)||20);
   const tolerance=Math.max(13,medianH*.72),allLines=groupOcrColumnLines(words,tolerance);
-  const wordListsHeading=profile==='camden-town'?allLines.find(g=>/^word\s*lists?$/i.test(cleanOcrCell(g.text))):null;
+  const wordListsHeading=profile==='camden-town'?allLines.find(g=>/\bword\s*lists?\b/i.test(cleanOcrCell(g.text))):null;
   const minTop=Math.min(...words.map(w=>w.top));
   const profileStart=wordListsHeading?wordListsHeading.yc+Math.max(8,medianH*.35):minTop-medianH*.25;
   const canon=x=>normalize(x).replace(/[^a-zäöüß]/g,'');
