@@ -75,6 +75,11 @@ Retrieval- und Spacing-Modells.
 6. **Tagesziel beantwortet: Was muss ich heute lernen?**
    Testdatum, Testumfang, fällige Wiederholungen und schwache Wörter steuern das Tagespensum.
    Kurze, realistische Einheiten haben Vorrang vor langen Sessions.
+   Als Richtgröße werden pro Tag **5–7 neue Vokabeln** eingeführt. Fällige und unsichere
+   Wiederholungen ergänzen das Tagesziel auf ungefähr **10–12 Vokabelkontakte**. Liegt ein
+   Testdatum vor, verteilt die App die noch unbekannten Wörter auf die verbleibenden Lerntage.
+   Mehr als sieben neue Wörter pro Tag werden nicht stillschweigend erzwungen; reicht die
+   verbleibende Zeit rechnerisch nicht, wird dies als Planungsproblem sichtbar gemacht.
 
 7. **Neue Wörter im Kontext, Wiederholung gemischt**
    Erstaneignung respektiert soweit sinnvoll Buch-/Unit-Reihenfolge und Zusammenhang.

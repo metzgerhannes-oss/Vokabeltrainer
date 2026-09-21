@@ -24,6 +24,8 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 
 - verbindliche Reihenfolge: Erfassen → prüfen → kennenlernen/abschreiben → aktiv abrufen → verteilt wiederholen → nachhaltig meistern
 - Erstkontakt enthält Abschreiben, Abdecken, Erinnern, Vergleichen und Blockabruf
+- Erstkontakt wird pro Vokabel freigegeben; ein großes Lernset sperrt bereits kennengelernte Wörter nicht mehr
+- Tagespensum: 5–7 neue Vokabeln, ergänzt um Wiederholungen auf ungefähr 10–12 Kontakte; Testtermine steuern die Verteilung mit sichtbarer Überlastungswarnung
 - Hinweise zählen nicht wie unabhängige Abrufe
 - Fehler werden erneut geplant; Mastery verlangt mehrere unabhängige Abrufe über mehrere Tage
 - Testchecks verändern Mastery und Intervalle nicht

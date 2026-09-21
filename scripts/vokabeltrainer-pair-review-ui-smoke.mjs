@@ -49,7 +49,7 @@ try{
 
   await page.click('#childModeBtn');
   await page.waitForSelector('#homeView.active');
-  assert((await page.locator('#todaySummary').textContent())?.includes('Neue Vokabeln kennenlernen'),'verified words become the next child learning task');
+  assert((await page.locator('#todaySummary').textContent())?.includes('Vokabel heute'),'verified words become part of the bounded daily child learning task');
   await page.click('#quickLearnHeroBtn');
   await page.waitForSelector('#firstContactCopiedBtn');
   assert(await page.locator('body.learning-focus').count()===1,'child can start first contact only after parent verification');

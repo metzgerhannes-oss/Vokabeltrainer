@@ -45,6 +45,14 @@ const passed=vm.runInContext(`
   assert(state.vocabulary.length===before,'second learner reuses book vocabulary instead of duplicating it');
   assert(state.sets.some(s=>s.learnerId==='learner_two'&&s.bookId===book.id),'known book units clone to another learner');
 
+  state.learners.push({id:'learner_three',name:'Dritter Nutzer',gradeLevel:'6',activeSubjects:['english'],xp:0,lrsMode:false,fontSize:17,letterSpacing:0,flashSpeed:1600,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()});
+  const assigned=assignBookSectionToLearner(book.id,'Unit 1','learner_three');
+  assert(assigned.total===1&&assigned.links===1,'one known library section can be assigned directly to one learner');
+  assert(state.sets.some(s=>s.learnerId==='learner_three'&&s.bookSection==='Unit 1')&&!state.sets.some(s=>s.learnerId==='learner_three'&&s.bookSection==='Unit 2'),'section assignment does not clone unrelated book sections');
+  const sharedVocabularyCount=state.vocabulary.length,cleared=clearLearnerLearningData('learner_three');
+  assert(cleared.sets===1&&!state.sets.some(s=>s.learnerId==='learner_three')&&!state.learnerVocabulary.some(p=>p.learnerId==='learner_three'),'profile learning reset removes only personal sets and progress');
+  assert(state.vocabulary.length===sharedVocabularyCount,'profile learning reset preserves shared global/book vocabulary');
+
   const doc=globalLibraryIndex().docs.get(a.vocab.id);
   assert(doc&&!('progress' in doc)&&!('learnerId' in doc),'global search document contains no learner progress');
   assert(!JSON.stringify(state).includes('_libraryIndex'),'runtime index is never persisted');

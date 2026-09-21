@@ -70,6 +70,20 @@ const passed=vm.runInContext(`
   const localTermView=setWords(localSet.id)[0];
   assert(termTargets(localTermView).includes('to look'),'local term wording stays accepted');
   assert(termTargets(localTermView).includes('look'),'canonical term remains accepted beside the local wording');
+
+  state=defaultState();
+  const pacedSet={id:'paced_set',learnerId:'learner_demo',subject:'english',title:'Theme Test',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(4),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+  state.sets.push(pacedSet);
+  for(let i=1;i<=15;i++)attachVocabularyToSet(pacedSet.id,{term:'paced'+i,translation:'bedeutung'+i,source:'paced-smoke',verified:true});
+  const pacedLinks=state.setVocabulary.filter(x=>x.setId===pacedSet.id).sort((a,b)=>a.position-b.position);
+  pacedLinks.slice(0,6).forEach(link=>{link.firstContactCopiedAt=new Date().toISOString();link.firstContactRecalledAt=link.firstContactCopiedAt;link.firstContactCompletedAt=link.firstContactCopiedAt});
+  rebuildWordIndexes();
+  const pacedPlan=buildDailyPlan('english'),pacedStatus=dailyPlanStatus(pacedPlan);
+  assert(pacedPlan.introCount===5,'daily plan introduces five new words when the deadline allows it');
+  assert(pacedPlan.reviewCount===6&&pacedStatus.total===11,'daily plan mixes available reviews to stay around ten to twelve words');
+  pacedSet.testDate=datePlusDays(2);learner().dailyPlans={};
+  const urgentPlan=buildDailyPlan('english');
+  assert(urgentPlan.introCount===7&&urgentPlan.deadlineOverload===true&&urgentPlan.requiredNewPerDay>7,'deadline formula caps new words at seven and flags an impossible pace');
   return ok;
 })()
 `,context,{filename:'learning-integrity-runtime'});

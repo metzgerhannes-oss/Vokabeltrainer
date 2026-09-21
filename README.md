@@ -17,6 +17,16 @@ Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Joh
 - Die Buchform bleibt je Abschnitt erhalten; gebräuchliche im Buch angegebene Alternativen werden als akzeptierte Antworten hinterlegt.
 - Die feste Bibliothek wird idempotent in die globale Bibliothek gemergt und überschreibt keine Lernstände.
 
+## v0.18.5 – Bibliothekszuordnung & begrenztes Tagespensum
+
+- geprüfte Lehrwerksabschnitte können im Elternbereich direkt einem Kind zugeordnet werden
+- persönlicher Lernstoff eines Profils kann gelöscht werden, ohne die gemeinsame Lehrwerksbibliothek zu beschädigen
+- verwaiste Fehlimporte des gelöschten Profils werden dabei aufgeräumt, gemeinsam genutzte Vokabeln bleiben erhalten
+- neue Vokabeln werden pro Tag auf 5–7 begrenzt
+- Wiederholungen ergänzen das Tagesziel auf ungefähr 10–12 Vokabelkontakte
+- ein gesetzter Testtermin verteilt noch unbekannte Wörter auf die verbleibenden Lerntage; mathematisch nicht erreichbare Pläne werden sichtbar markiert
+- Erstkontakt/Freischaltung erfolgt pro Vokabel statt als Alles-oder-nichts-Sperre für das gesamte Lernset
+
 ## Architektur
 
 - statische Web-App ohne Serverzwang
