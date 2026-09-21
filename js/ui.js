@@ -64,7 +64,11 @@ function runBattleAnimation(){
     }
     persistOnly();
   },t2);
-  setTimeout(()=>{$('#battleFullscreenBtn').disabled=false;renderAll();renderBattleView();stage.classList.add('battle-finished',win?'is-victory':'is-hold')},t3);
+  setTimeout(()=>{
+    $('#battleFullscreenBtn').disabled=false;
+    const left=battleTickets(),next=nextFortress();$('#battleTicketPill').textContent=`${left} ${left===1?'Angriff':'Angriffe'}`;$('#battleStrength').textContent=armyStrength();$('#battleFortressName').textContent=next?next.name:'Jahresfeldzug gewonnen';$('#battleFortressProgress').textContent=next?`${subjectProgress().pct}% / ${next.req}%`:'100%';
+    button.disabled=!next||left<1;button.textContent=!next?'Kampagne gewonnen':left?'Nächsten Angriff starten':'Nach dem Lernen verfügbar';renderBattlefield();
+  },t3);
 }
 
 function renderAll(){
