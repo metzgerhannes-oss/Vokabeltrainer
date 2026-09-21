@@ -260,7 +260,7 @@ function ocrEditorialNoise(text,subject,profile=''){
   if(/^(?:word\s*lists?|wordlist|vocabulary|vokabeln|(?:unit|test|theme|part)\s*(?:\d+|[a-z])?|arbeitsanweisungen\b|an\s+dem\s+wort\b|in\s+den\s+.+boxen\b|pick[- ]?up\s*:|hinweis\b|merke\b)$/i.test(t))return true;
   if(/^(?:arbeitsanweisungen\b|an\s+dem\s+wort\b|in\s+den\s+.+boxen\b|pick[- ]?up\s*:)/i.test(t))return true;
   if(profile==='camden-town'){
-    if(/^\d{1,2}$/.test(t)||/^p\.?\s*\d+$/i.test(t))return true;
+    if(/^\d{1,2}$/.test(t)||/^p\.?\s*\d+$/i.test(t)||/^theme\s*\d+\s*:/i.test(t))return true;
     if(/^(?:tipps?\s+zum\s+w[oö]rterlernen|weitere\s+listen\s+zum\s+nachschlagen|names\s*\(|numbers\s*\(|w[oö]rter,\s*die\s+im\s+deutschen|irregular\s+verbs\s*\()/i.test(t))return true;
     if(/^\/?.*(?:klingt\s+ungef[aä]hr|wird\s+immer\s+gro[sß]geschrieben|wird\s+nicht\s+ausgesprochen|steht\s+am\s+satzende)\.?$/i.test(t))return true;
   }
