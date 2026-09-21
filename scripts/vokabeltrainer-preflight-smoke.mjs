@@ -20,7 +20,7 @@ const passed=[];
 const assert=(value,name)=>{if(!value)throw new Error('Preflight smoke failed: '+name);passed.push(name)};
 
 const version=core.match(/const VERSION\s*=\s*'([^']+)'/)?.[1]||'';
-assert(version==='0.11.0','core version is v0.11.0');
+assert(version==='0.12.0','core version is v0.12.0');
 assert(html.includes('Beta v'+version),'document title matches app version');
 assert(app.includes("sw.js?v="+version),'service-worker registration uses current version');
 assert(sw.includes("APP_VERSION='"+version+"'"),'service-worker app version matches');
@@ -59,6 +59,7 @@ assert(focusUi.includes('gradeQuizQuestion(q,answer)'),'focused-learning overrid
 assert(quiz.includes("issues.push('sense-mismatch')")&&quiz.includes("issues.push('set-mismatch')"),'quiz integrity gate rejects set/sense identity drift');
 assert(!/split\(\/\\s\*\[\/;,\]/.test(model),'answer comparison never invents alternatives by punctuation splitting');
 assert(model.includes('setNeedsPairReview')&&learning.includes('setNeedsPairReview'),'unreviewed OCR sets are blocked from learning');
+assert(model.includes('setNeedsFirstContact')&&learning.includes('startFirstContact')&&learning.includes("mode:'firstContact'"),'new vocabulary must pass the first-contact phase before ordinary learning');
 
 assert(html.includes('id="helpBtn"')&&html.includes('id="helpPopover"'),'central help and shared help popover exist');
 assert((html.match(/data-help="/g)||[]).length>=10,'main views expose contextual help at the important concepts');
@@ -77,6 +78,7 @@ for(const ref of refs)assert(sw.includes("'./"+ref+"'"),'app-shell caches '+ref)
 
 assert(dna.includes('Die fachlich korrekte Vokabelabfrage ist die Daseinsberechtigung der App.')&&dna.includes('Release-Blocker'),'top product DNA keeps vocabulary correctness as release gate');
 assert(dna.includes('LRS und Barrierefreiheit sind Teil des Grunddesigns')&&dna.includes('Lernen fokussiert, Motivation außen herum'),'product DNA accessibility and focus guardrails remain present');
+assert(dna.includes('Erfassen → fachlich prüfen → kennenlernen → abrufen')&&dna.includes('Vokabelheft'),'product DNA requires first contact and handwriting before retrieval');
 
 console.log('Vokabeltrainer preflight smoke: '+passed.length+' checks passed');
 for(const name of passed)console.log('✓ '+name);
