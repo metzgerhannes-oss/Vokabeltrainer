@@ -197,6 +197,7 @@ function dailyPlanStatus(plan=buildDailyPlan()){
 }
 function startDailyTodo(){
   const pending=seriesScopePending(),ctx=upcomingTestContext(); if(pending&&(!ctx||pending.date<=ctx.date)){openTestDatePlanner();return}
+  const introSet=mySets().find(s=>!setNeedsPairReview(s)&&setNeedsFirstContact(s));if(introSet){startFirstContact(introSet.id);return}
   const plan=buildDailyPlan(),status=dailyPlanStatus(plan);
   if(!myWords().length){
     const blocked=mySets().find(setNeedsPairReview);
