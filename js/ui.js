@@ -309,22 +309,62 @@ function openLibraryAddMenu(){
   $('#addManualWord').onclick=()=>{closeModal();openWordEditor()};
   $('#addByCsv').onclick=()=>{closeModal();const f=$('#fileInput');f.accept='.csv,text/csv';f.dataset.mode='csv';f.click()};
 }
-function openLibraryAssignDialog(){
+function bookRowDisplay(row){
+  const v=(state.vocabulary||[]).find(x=>x.id===row.vocabId),sense=v&&(senseById(v,row.senseId)||primarySense(v));
+  return {term:row.termOverride||v?.term||'',translation:row.translationOverride||sense?.translation||'',position:Number(row.position)||0};
+}
+function selectedRowsForCurrentPlan(learnerId,bookId,section){
+  const sets=(state.sets||[]).filter(s=>s.learnerId===learnerId&&s.subject===state.activeSubject&&s.bookId===bookId&&s.bookSection===section);
+  const active=sets.find(s=>s.testDate&&daysUntil(s.testDate)>=0)||sets.find(s=>s.testScopeMode==='selected');
+  if(!active)return [];
+  const selected=new Set(active.testScopeMode==='selected'?(active.testSelectedLinkIds||[]):(state.setVocabulary||[]).filter(x=>x.setId===active.id).map(x=>x.id));
+  const links=(state.setVocabulary||[]).filter(x=>x.setId===active.id&&selected.has(x.id));
+  const rows=knownBookSections(bookId).find(g=>g.section===section)?.items||[];
+  return rows.filter(r=>links.some(l=>l.vocabId===r.vocabId&&l.senseId===r.senseId)).map(r=>r.id);
+}
+function contentPlanPreviewText(rows,learnerId,testDate=''){
+  const l=(state.learners||[]).find(x=>x.id===learnerId),count=rows.length,newCount=rows.filter(r=>!learnerAlreadyKnowsSense(learnerId,r.senseId)).length,target=l?.lrsMode?10:12;
+  if(!count)return 'Noch keine Vokabel ausgewählt.';
+  if(!testDate)return `${count} Vokabeln ausgewählt. Beim Lernen führt die App normalerweise 5–7 neue Wörter pro Tag ein und ergänzt Wiederholungen bis ungefähr ${target} Kontakte.`;
+  const days=Math.max(0,daysUntil(testDate)),learningDays=Math.max(1,days-1),required=newCount?Math.ceil(newCount/learningDays):0,dailyNew=newCount?Math.min(7,Math.max(5,required)):0;
+  if(days<1)return `${count} Vokabeln ausgewählt · Test ist heute bzw. liegt nicht in der Zukunft.`;
+  if(required>7)return `${count} ausgewählt · ${newCount} noch neu · rechnerisch ${required} neue Wörter pro Tag nötig. Das überschreitet die Grenze von 7; der Plan wird als zu knapp markiert.`;
+  if(!newCount)return `${count} ausgewählt · alle schon bekannt. Bis zum Test werden nur Wiederholungen eingeplant.`;
+  return `${count} ausgewählt · ${newCount} noch neu · etwa ${dailyNew} neue Wörter pro Tag + Wiederholungen bis ungefähr ${target} Kontakte.`;
+}
+function openLearningContentPlanner(opts={}){
+  if(!isParentMode()){openParentGate();return}
   const subject=state.activeSubject,learners=(state.learners||[]).filter(l=>learnerActiveSubjects(l).includes(subject)),books=globalLibraryBooks(subject);
   if(!learners.length){toast('Für dieses Fach ist noch kein Lernprofil aktiv.','warn');return}
-  if(!books.length){toast('Für dieses Fach sind noch keine geprüften Lehrwerksvokabeln in der Bibliothek.','warn');return}
-  const preferredBook=$('#libraryBookFilter')?.value,defaultBook=books.find(b=>b.id===preferredBook)||books[0];
-  modal(`<div class="eyebrow">Bibliothek</div><h2>Vokabeln einem Kind zuordnen</h2><p class="muted-line">Die Vokabeln bleiben einmal global gespeichert. Für das Kind entsteht ein eigenes Lernset mit persönlichem Lernstand.</p><label>Kind<select id="assignLibraryLearner">${learners.map(l=>`<option value="${esc(l.id)}" ${l.id===state.activeLearnerId?'selected':''}>${esc(l.name)}</option>`).join('')}</select></label><label>Lehrwerk<select id="assignLibraryBook">${books.map(b=>`<option value="${esc(b.id)}" ${b.id===defaultBook.id?'selected':''}>${esc(b.title||formatIsbn(b.isbn13))}${b.isbn13?` · ${esc(formatIsbn(b.isbn13))}`:''}</option>`).join('')}</select></label><label>Kapitel / Abschnitt<select id="assignLibrarySection"></select></label><div id="assignLibraryPreview" class="notice subtle"></div><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="assignLibrarySave" class="primary">Zuordnen</button></div>`);
-  const bookEl=$('#assignLibraryBook'),sectionEl=$('#assignLibrarySection'),preview=$('#assignLibraryPreview');
-  const updateSections=()=>{
-    const groups=knownBookSections(bookEl.value);sectionEl.innerHTML=groups.map(g=>`<option value="${esc(g.section)}">${esc(g.section)} · ${g.items.length} Vokabeln</option>`).join('');
-    const requested=$('#librarySectionFilter')?.value;if(requested&&groups.some(g=>g.section===requested))sectionEl.value=requested;
-    updatePreview();
+  if(!books.length){
+    modal(`<div class="eyebrow">Lernstoff festlegen</div><h2>Noch kein geprüfter Bibliotheksbestand</h2><p>Erfasse zuerst Vokabeln. Danach wählst du hier nur noch Kind, Lehrwerk und konkrete Wörter aus.</p><div class="add-vocab-grid"><button type="button" id="contentByPhoto" class="add-vocab-option"><span>📷</span><strong>Foto / Text</strong><small>Liste erfassen und prüfen</small></button><button type="button" id="contentManual" class="add-vocab-option"><span>＋</span><strong>Manuell</strong><small>Einzelne Wörter erfassen</small></button><button type="button" id="contentLibrary" class="add-vocab-option"><span>▤</span><strong>Bibliothek</strong><small>Bestehenden Bestand ansehen</small></button></div><div class="modal-actions"><button value="cancel" class="ghost">Schließen</button></div>`);
+    $('#contentByPhoto').onclick=()=>{closeModal();openSetEditor()};
+    $('#contentManual').onclick=()=>{closeModal();openSetEditor()};
+    $('#contentLibrary').onclick=()=>{closeModal();showView('libraryView')};
+    return;
+  }
+  const requestedLearner=opts.learnerId||state.activeLearnerId,defaultLearner=learners.find(l=>l.id===requestedLearner)||learners[0],defaultBook=books.find(b=>b.id===opts.bookId)||currentBook(defaultLearner.id,subject)||books[0];
+  modal(`<div class="eyebrow">Lernstoff festlegen</div><h2>Welche Vokabeln soll das Kind lernen?</h2><p class="muted-line">Bibliothek und Lernstand bleiben im Hintergrund getrennt. Hier wählst du nur den tatsächlichen Lernstoff.</p><label>Kind<select id="contentLearner">${learners.map(l=>`<option value="${esc(l.id)}" ${l.id===defaultLearner.id?'selected':''}>${esc(l.name)}</option>`).join('')}</select></label><label>Lehrwerk<select id="contentBook">${books.map(b=>`<option value="${esc(b.id)}" ${b.id===defaultBook.id?'selected':''}>${esc(b.title||formatIsbn(b.isbn13))}</option>`).join('')}</select></label><label>Kapitel / Abschnitt<select id="contentSection"></select></label><div class="row spread align-center wrap content-picker-head"><strong id="contentSelectionCount">0 ausgewählt</strong><div class="row gap"><button type="button" id="contentSelectAll" class="ghost compact-action">Alle</button><button type="button" id="contentSelectNone" class="ghost compact-action">Keine</button></div></div><div id="contentWordPicker" class="vocab-picker"></div><div id="contentPlanPreview" class="notice subtle"></div><div class="modal-actions wrap"><button type="button" id="contentManageLibrary" class="ghost">Bibliothek verwalten</button><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="contentSave" class="primary">Zum Lernen hinzufügen</button></div>`);
+  const learnerEl=$('#contentLearner'),bookEl=$('#contentBook'),sectionEl=$('#contentSection'),picker=$('#contentWordPicker'),counter=$('#contentSelectionCount'),preview=$('#contentPlanPreview');
+  let rows=[];
+  const checkedRows=()=>rows.filter(r=>picker.querySelector(`[data-book-row="${CSS.escape(r.id)}"]`)?.checked);
+  const updateSummary=()=>{const selected=checkedRows();counter.textContent=`${selected.length} von ${rows.length} ausgewählt`;preview.textContent=contentPlanPreviewText(selected,learnerEl.value)};
+  const renderRows=()=>{
+    const group=knownBookSections(bookEl.value).find(g=>g.section===sectionEl.value);rows=group?.items||[];
+    const existing=new Set(selectedRowsForCurrentPlan(learnerEl.value,bookEl.value,sectionEl.value));const useExisting=existing.size>0;
+    picker.innerHTML=rows.map((r,i)=>{const d=bookRowDisplay(r),checked=useExisting?existing.has(r.id):true;return `<label class="vocab-picker-row"><input type="checkbox" data-book-row="${esc(r.id)}" ${checked?'checked':''}><span class="vocab-picker-num">${i+1}</span><span><strong>${esc(d.term)}</strong><small>${esc(d.translation)}</small></span></label>`}).join('');
+    picker.querySelectorAll('[data-book-row]').forEach(x=>x.onchange=updateSummary);updateSummary();
   };
-  const updatePreview=()=>{const group=knownBookSections(bookEl.value).find(g=>g.section===sectionEl.value),l=state.learners.find(x=>x.id===$('#assignLibraryLearner').value);preview.textContent=group?`${group.items.length} Vokabeln aus „${group.section}“ werden ${l?.name||'dem Kind'} zugeordnet. Pro Tag führt der Lernplan in der Regel 5–7 neue Wörter ein und mischt Wiederholungen bis zu einem Tagesziel von etwa 10–12 Vokabeln dazu.`:'Kein Abschnitt verfügbar.'};
-  bookEl.onchange=updateSections;sectionEl.onchange=updatePreview;$('#assignLibraryLearner').onchange=updatePreview;updateSections();
-  $('#assignLibrarySave').onclick=()=>{const learnerId=$('#assignLibraryLearner').value,bookId=bookEl.value,section=sectionEl.value;if(!learnerId||!bookId||!section)return;const result=assignBookSectionToLearner(bookId,section,learnerId);if(!result.set)return;closeModal();save();const l=state.learners.find(x=>x.id===learnerId);toast(`${section} wurde ${l?.name||'dem Profil'} zugeordnet · ${result.total} Vokabeln im Lernset.`,'good')};
+  const updateSections=()=>{const groups=knownBookSections(bookEl.value);sectionEl.innerHTML=groups.map(g=>`<option value="${esc(g.section)}">${esc(g.section)} · ${g.items.length}</option>`).join('');if(opts.section&&groups.some(g=>g.section===opts.section))sectionEl.value=opts.section;renderRows()};
+  bookEl.onchange=updateSections;sectionEl.onchange=renderRows;learnerEl.onchange=renderRows;
+  $('#contentSelectAll').onclick=()=>{picker.querySelectorAll('[data-book-row]').forEach(x=>x.checked=true);updateSummary()};
+  $('#contentSelectNone').onclick=()=>{picker.querySelectorAll('[data-book-row]').forEach(x=>x.checked=false);updateSummary()};
+  $('#contentManageLibrary').onclick=()=>{closeModal();showView('libraryView')};
+  $('#contentSave').onclick=()=>{const selected=checkedRows();if(!selected.length){preview.className='notice warn';preview.textContent='Bitte mindestens eine Vokabel auswählen.';return}const result=assignBookRowsToLearner(bookEl.value,sectionEl.value,learnerEl.value,selected.map(r=>r.id));if(!result.set)return;closeModal();save();const l=state.learners.find(x=>x.id===learnerEl.value);toast(`${selected.length} Vokabeln für ${l?.name||'das Profil'} vorbereitet.`,'good')};
+  updateSections();
 }
+function openLibraryAssignDialog(){openLearningContentPlanner()}
+
 function topError(w){const entries=Object.entries(w.errorProfile||{}).sort((a,b)=>b[1]-a[1]);return entries[0]?.[1]?({meaning:'Bedeutung',retrieval:'Abruf',spelling:'Schreibung',listening:'Hören',context:'Kontext',grammar:'Latein-Formen'}[entries[0][0]]):'–'}
 function renderProfiles(){
   const meta=l=>{const active=learnerActiveSubjects(l).map(subjectShort).join(' · '),parts=[];if(l.gradeLevel)parts.push(`Klasse ${l.gradeLevel}`);if(l.lrsMode)parts.push('LRS');if(active)parts.push(active);parts.push(`${l.xp} XP`);return parts.join(' · ')};
