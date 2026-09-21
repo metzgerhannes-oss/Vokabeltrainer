@@ -156,7 +156,7 @@ function renderAll(){
   $('#campaignMessage').className=`notice ${tickets?'good':'subtle'}`;$('#campaignMessage').textContent=tickets?`${tickets} ${tickets===1?'Angriff ist':'Angriffe sind'} bereit.`:'Nach einer abgeschlossenen Lerneinheit wird die Schlacht freigeschaltet.';
   const hasSubjectWords=myWords().length>0; $('#campaignCard').classList.toggle('hidden',!hasSubjectWords); $('#optionalLearningCard').classList.toggle('hidden',!hasSubjectWords); renderToday(); renderTestCheck(); renderBattlefield(); renderBattleView(); renderRecommendations(); renderSets(); renderDashboard(); renderLibrary(); renderProfiles();
   $('#fontSizeRange').value=l.fontSize; $('#letterSpacingRange').value=l.letterSpacing; $('#flashSpeedSelect').value=String(l.flashSpeed);
-  renderParentOverview(); checkHundredPercent(); renderStorageStatus();
+  renderParentOverview(); renderFamilySync(); checkHundredPercent(); renderStorageStatus();
 }
 function applyPreferences(){const l=learner();document.documentElement.dataset.fontSize=String(clamp(Number(l.fontSize)||17,16,24));document.documentElement.dataset.letterSpace=String(clamp(Number(l.letterSpacing)||0,0,3));document.documentElement.classList.toggle('lrs-mode',!!l.lrsMode)}
 
@@ -456,6 +456,31 @@ function openParentGate(){
 }
 function enterParentMode(target='parentView'){appRole='parent';applyRoleUi();showView(target);renderAll()}
 function exitParentMode(){appRole='child';session=null;applyRoleUi();showView('homeView');renderAll()}
+function familySyncTime(value){if(!value)return 'noch nie';try{return new Date(value).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}catch(_){return value}}
+function renderFamilySync(){
+  const box=$('#familySyncStatus'),setup=$('#familySyncSetupBtn'),now=$('#familySyncNowBtn'),child=$('#familySyncChildBtn');if(!box||!window.VTFamilySync)return;
+  const s=VTFamilySync.status();
+  setup.classList.toggle('hidden',s.enabled);
+  now.classList.toggle('hidden',!s.enabled);
+  child.classList.toggle('hidden',!s.enabled||s.role!=='parent');
+  if(!s.enabled){box.className='notice subtle';box.innerHTML='<strong>Noch nicht verbunden.</strong><br>Die App arbeitet ausschließlich lokal auf diesem Gerät.';return}
+  if(s.conflicts){box.className='notice warn';box.innerHTML=`<strong>Synchronisationskonflikt</strong><br>${s.conflicts} Dokument${s.conflicts===1?'':'e'} wurde${s.conflicts===1?'':'n'} auf mehreren Geräten geändert. Nichts wird automatisch überschrieben.`;return}
+  if(s.busy){box.className='notice subtle';box.innerHTML='<strong>Synchronisierung läuft …</strong><br>Lokales Lernen bleibt verfügbar.';return}
+  box.className='notice good';box.innerHTML=`<strong>Familiensync aktiv</strong><br>Familie: ${esc(s.familyId)} · ${s.role==='parent'?'Eltern-Gerät':'Kindergerät'} · zuletzt ${esc(familySyncTime(s.lastSync))}${s.dirty?` · ${s.dirty} Änderung${s.dirty===1?'':'en'} wartet${s.dirty===1?'':'en'} auf Upload`:''}`;
+}
+function openFamilySyncSetup(){
+  if(!window.VTFamilySync)return;
+  modal('<div class="eyebrow">Familie & Geräte</div><h2>Familiensync einrichten</h2><p>Der aktuelle Stand dieses Geräts wird als erster Familienstand hochgeladen. Die PIN wird nicht gespeichert.</p><label>Familien-PIN<input id="familyPin" type="password" minlength="6" autocomplete="new-password" placeholder="mindestens 6 Zeichen"></label><label>PIN wiederholen<input id="familyPin2" type="password" minlength="6" autocomplete="new-password"></label><div id="familySyncSetupError" class="notice subtle">Danach können weitere Eltern- und Kindergeräte verbunden werden.</div><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="familySyncCreateBtn" class="primary">Familie anlegen</button></div>');
+  $('#familySyncCreateBtn').onclick=async()=>{const p1=$('#familyPin').value,p2=$('#familyPin2').value,err=$('#familySyncSetupError'),btn=$('#familySyncCreateBtn');if(p1.length<6){err.className='notice warn';err.textContent='Die PIN muss mindestens 6 Zeichen lang sein.';return}if(p1!==p2){err.className='notice warn';err.textContent='Die beiden PINs stimmen nicht überein.';return}btn.disabled=true;btn.textContent='Wird eingerichtet …';try{await VTFamilySync.createFamily(p1,'Eltern-Gerät');closeModal();renderFamilySync();toast('Familiensync eingerichtet.','good')}catch(e){err.className='notice bad';err.textContent=e.message||'Einrichtung fehlgeschlagen.';btn.disabled=false;btn.textContent='Familie anlegen'}};
+}
+async function runFamilySync(){
+  if(!window.VTFamilySync)return;const btn=$('#familySyncNowBtn');btn.disabled=true;renderFamilySync();try{await VTFamilySync.syncNow(true);renderAll();toast('Synchronisierung abgeschlossen.','good')}catch(e){toast(e.message||'Synchronisierung fehlgeschlagen.','bad');renderFamilySync()}finally{btn.disabled=false}
+}
+function openChildDeviceInvite(){
+  if(!window.VTFamilySync)return;const learners=state.learners||[];if(!learners.length){toast('Zuerst ein Kinderprofil anlegen.','subtle');return}
+  modal(`<div class="eyebrow">Kindergerät</div><h2>Gerät einem Kind zuordnen</h2><p>Der Gerätecode wird genau an ein Profil gebunden und ist 15 Minuten gültig.</p><label>Profil<select id="familyChildProfile">${learners.map(l=>`<option value="${esc(l.id)}">${esc(l.name)}</option>`).join('')}</select></label><div id="familyChildInviteResult" class="notice subtle">Im nächsten Schritt kann daraus ein QR-Code für das Kindergerät erzeugt werden.</div><div class="modal-actions"><button value="cancel" class="ghost">Schließen</button><button type="button" id="familyChildInviteBtn" class="primary">Gerätecode erzeugen</button></div>`);
+  $('#familyChildInviteBtn').onclick=async()=>{const btn=$('#familyChildInviteBtn'),out=$('#familyChildInviteResult'),profileId=$('#familyChildProfile').value;btn.disabled=true;try{const r=await VTFamilySync.createChildInvite(profileId);out.className='notice good';out.innerHTML=`<strong>Gerätecode erstellt</strong><br><span class="duel-code">${esc(r.token)}</span><br>Gültig bis ${esc(familySyncTime(r.expires_at))}. Der QR-/Übernahmeschritt für die Kinder-App folgt als nächster Ausbau.`;btn.textContent='Neuen Code erzeugen'}catch(e){out.className='notice bad';out.textContent=e.message||'Code konnte nicht erzeugt werden.'}finally{btn.disabled=false}};
+}
 function renderParentOverview(){
   const box=$('#parentAttention');if(!box)return;
   const tasks=[],review=mySets().find(setNeedsPairReview),pending=seriesScopePending();
@@ -487,6 +512,7 @@ function bind(){
   $('#parentLibraryBtn').onclick=()=>showView('libraryView'); $('#parentTestPlanBtn').onclick=openTestDatePlanner; $('#parentDashboardBtn').onclick=()=>showView('dashboardView'); $('#parentSettingsBtn').onclick=()=>showView('settingsView');
   $$('[data-parent-home]').forEach(b=>b.onclick=()=>showView('parentView'));
   $('#fontSizeRange').oninput=e=>{learner().fontSize=+e.target.value;save()}; $('#letterSpacingRange').oninput=e=>{learner().letterSpacing=+e.target.value;save()}; $('#flashSpeedSelect').onchange=e=>{learner().flashSpeed=+e.target.value;save()};
+  $('#familySyncSetupBtn').onclick=openFamilySyncSetup; $('#familySyncNowBtn').onclick=runFamilySync; $('#familySyncChildBtn').onclick=openChildDeviceInvite;
   $('#backupBtn').onclick=backup; $('#resetAppBtn').onclick=resetAppData; $('#restoreBtn').onclick=()=>{const f=$('#fileInput');f.accept='.json,application/json';f.dataset.mode='restore';f.click()}; $('#exportCsvBtn').onclick=exportCsv; $('#libraryAddBtn').onclick=openLibraryAddMenu; $('#librarySearchInput').oninput=()=>{libraryRenderLimit=200;renderLibrary()}; $('#librarySetFilter').onchange=()=>{libraryRenderLimit=200;renderLibrary()};
   $('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;const mode=e.target.dataset.mode,limit=mode==='restore'?MAX_BACKUP_BYTES:MAX_CSV_BYTES;if(f.size>limit){toast(`${mode==='restore'?'Backup':'CSV'} ist zu groß (${fmtBytes(f.size)}).`,'bad');e.target.value='';return}try{const text=await f.text();if(mode==='restore')restore(text);else importCsv(text)}catch(err){console.warn(err);toast('Datei konnte nicht gelesen werden.','bad')}e.target.value=''}; $('#photoInput').onchange=async e=>{const f=e.target.files[0];if(f)await handleScanPhoto(f);e.target.value=''}; $('#isbnPhotoInput').onchange=async e=>{const f=e.target.files[0];if(f)await handleIsbnPhoto(f);e.target.value=''};
   $('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal()}); $('#modal').addEventListener('close',()=>{if(scanImportState.imageUrl){URL.revokeObjectURL(scanImportState.imageUrl);scanImportState.imageUrl=null;}scanImportState.lastFile=null;});
