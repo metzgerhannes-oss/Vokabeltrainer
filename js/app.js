@@ -11,10 +11,11 @@
       if(sessionStorage.getItem(key))return;
       updateReloading=true;sessionStorage.setItem(key,'1');location.reload();
     });
-    navigator.serviceWorker.register('./sw.js?v=0.17.3')
+    navigator.serviceWorker.register('./sw.js?v=0.18.0')
       .then(reg=>reg.update().catch(()=>{}))
       .catch(console.warn);
   }
   bind();
   renderAll();
+  window.VTFamilySync?.bootstrap();
 })();
