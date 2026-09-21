@@ -215,7 +215,7 @@ function renderRecognition(w){
   const distractors=shuffle(pool).map(x=>reverse?x.term:x.translation);
   const opts=uniqueOptions(primary,distractors);
   $('#studyArea').innerHTML=`<div class="study-card"><div class="eyebrow">Erkennen</div><div class="study-prompt">${esc(q.prompt)}</div>${reverse?'':meaningCueHtml(w)}<div class="study-sub">${reverse?'Welche Vokabel passt zu dieser Bedeutung?':'Welche Bedeutung passt?'}</div><div class="answer-grid">${opts.map(o=>`<button class="answer-option" data-answer="${esc(o)}">${esc(o)}</button>`).join('')}</div>${cardExtras(w)}</div>`;
-  $('[data-answer]').forEach(b=>b.onclick=()=>gradeChoice(b,w,b.dataset.answer,q.targets,'recognition',false,q));
+  $$('[data-answer]').forEach(b=>b.onclick=()=>gradeChoice(b,w,b.dataset.answer,q.targets,'recognition',false,q));
 }
 function renderRecall(w){
   const q=currentQuizQuestion(w,'recall');
@@ -277,7 +277,7 @@ function recordHandwriting(w,matched){
 function renderListening(w){
   const q=currentQuizQuestion(w,'listening'),pool=schoolYearWords().filter(x=>x.id!==w.id),primary=q.targets[0]||'',opts=uniqueOptions(primary,shuffle(pool).map(x=>x.term));
   $('#studyArea').innerHTML=`<div class="study-card"><div class="eyebrow">Hören</div><button id="speakBtn" class="secondary">🔊 Wort anhören</button><div class="study-sub top-space-lg">Welches Wort hast du gehört?</div><div class="answer-grid">${opts.map(o=>`<button class="answer-option" data-answer="${esc(o)}">${esc(o)}</button>`).join('')}</div>${cardExtras(w)}</div>`;
-  $('#speakBtn').onclick=()=>speak(q.term); $('[data-answer]').forEach(b=>b.onclick=()=>gradeChoice(b,w,b.dataset.answer,q.targets,'listening',false,q)); setTimeout(()=>speak(q.term),200);
+  $('#speakBtn').onclick=()=>speak(q.term); $$('[data-answer]').forEach(b=>b.onclick=()=>gradeChoice(b,w,b.dataset.answer,q.targets,'listening',false,q)); setTimeout(()=>speak(q.term),200);
 }
 function renderContext(w){
   const q=currentQuizQuestion(w,'context');
