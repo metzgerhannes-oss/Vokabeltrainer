@@ -53,7 +53,7 @@ function showHelpPopover(trigger,sticky=false){
   const item=HELP_TOPICS[trigger.dataset.help],pop=helpPopover();if(!item||!pop)return;
   if(helpTrigger&&helpTrigger!==trigger){helpTrigger.removeAttribute('aria-describedby');helpTrigger.setAttribute('aria-expanded','false')}
   helpTrigger=trigger;helpSticky=sticky;
-  pop.innerHTML=`<strong>${helpEscape(item.title)}</strong><span>${helpEscape(item.text)}</span>`;
+  pop.innerHTML=`<button type="button" class="help-popover-close" data-help-close aria-label="Hinweis schließen">×</button><strong>${helpEscape(item.title)}</strong><span>${helpEscape(item.text)}</span>`;
   pop.hidden=false;trigger.setAttribute('aria-describedby','helpPopover');trigger.setAttribute('aria-expanded','true');
   requestAnimationFrame(()=>positionHelpPopover(trigger));
 }
@@ -69,7 +69,15 @@ function initHelpUi(){
   document.addEventListener('mouseout',e=>{const t=e.target.closest?.('.help-tip');if(t&&!t.contains(e.relatedTarget))hideHelpPopover(false)});
   document.addEventListener('focusin',e=>{const t=e.target.closest?.('.help-tip');if(t)showHelpPopover(t,helpSticky&&helpTrigger===t)});
   document.addEventListener('focusout',e=>{const t=e.target.closest?.('.help-tip');if(t&&!helpSticky)hideHelpPopover(false)});
+  document.addEventListener('pointerdown',e=>{
+    if(!helpTrigger)return;
+    const target=e.target;
+    if(target.closest?.('.help-tip')||target.closest?.('#helpPopover'))return;
+    hideHelpPopover(true);
+  },true);
   document.addEventListener('click',e=>{
+    const close=e.target.closest?.('[data-help-close]');
+    if(close){e.preventDefault();e.stopPropagation();hideHelpPopover(true);return}
     const t=e.target.closest?.('.help-tip');
     if(t){e.preventDefault();e.stopPropagation();const same=helpTrigger===t&&helpSticky;if(same)hideHelpPopover(true);else showHelpPopover(t,true);return}
     if(helpTrigger)hideHelpPopover(true);
