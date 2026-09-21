@@ -338,8 +338,8 @@ function openLearningContentPlanner(opts={}){
   if(!learners.length){toast('Für dieses Fach ist noch kein Lernprofil aktiv.','warn');return}
   if(!books.length){
     modal(`<div class="eyebrow">Lernstoff festlegen</div><h2>Noch kein geprüfter Bibliotheksbestand</h2><p>Erfasse zuerst Vokabeln. Danach wählst du hier nur noch Kind, Lehrwerk und konkrete Wörter aus.</p><div class="add-vocab-grid"><button type="button" id="contentByPhoto" class="add-vocab-option"><span>📷</span><strong>Foto / Text</strong><small>Liste erfassen und prüfen</small></button><button type="button" id="contentManual" class="add-vocab-option"><span>＋</span><strong>Manuell</strong><small>Einzelne Wörter erfassen</small></button><button type="button" id="contentLibrary" class="add-vocab-option"><span>▤</span><strong>Bibliothek</strong><small>Bestehenden Bestand ansehen</small></button></div><div class="modal-actions"><button value="cancel" class="ghost">Schließen</button></div>`);
-    $('#contentByPhoto').onclick=()=>{closeModal();openSetEditor()};
-    $('#contentManual').onclick=()=>{closeModal();openSetEditor()};
+    $('#contentByPhoto').onclick=()=>{closeModal();openScanImport('__new__')};
+    $('#contentManual').onclick=()=>{closeModal();openSetEditor(null,'manual')};
     $('#contentLibrary').onclick=()=>{closeModal();showView('libraryView')};
     return;
   }
