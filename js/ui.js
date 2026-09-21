@@ -296,10 +296,10 @@ function modal(html){$('#modalContent').innerHTML=html;$('#modal').showModal()}
 function closeModal(){$('#modal').close()}
 function toast(text,type='subtle'){const el=$('#toastRegion');if(!el)return;clearTimeout(toastTimer);el.className=`toast-region show ${type}`;el.textContent=text;toastTimer=setTimeout(()=>{el.className='toast-region';el.textContent=''},4200)}
 function showView(id){
-  $('.view').forEach(v=>v.classList.toggle('active',v.id===id));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
   const navView=['libraryView','dashboardView','settingsView'].includes(id)?'moreView':id;
-  $('.nav-btn[data-view]').forEach(b=>{const active=b.dataset.view===navView;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
-  if(id==='homeView')$('.home-disclosure').forEach(d=>{d.open=false});
+  document.querySelectorAll('.nav-btn[data-view]').forEach(b=>{const active=b.dataset.view===navView;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+  if(id==='homeView')document.querySelectorAll('.home-disclosure').forEach(d=>{d.open=false});
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   window.scrollTo({top:0,behavior:reduced?'auto':'smooth'});
 }
