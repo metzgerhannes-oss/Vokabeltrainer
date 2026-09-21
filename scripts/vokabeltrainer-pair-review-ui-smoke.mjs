@@ -40,8 +40,22 @@ try{
   await page.waitForFunction(()=>!document.querySelector('#modal')?.open);
 
   await page.evaluate(()=>showView('homeView'));
-  assert(!(await page.locator('[data-set-study="ocr_set"]').isDisabled()),'learning unlocks only after explicit pair confirmation');
+  assert(await page.locator('[data-set-study="ocr_set"]').isDisabled(),'ordinary learning stays blocked until first contact is complete');
+  assert(await page.locator('[data-set-intro="ocr_set"]').count()===1,'first-contact action is visible after pair confirmation');
   assert(await page.evaluate(()=>!!state.vocabulary[0]?.verifiedAt),'pair confirmation marks vocabulary as verified');
+
+  await page.waitForSelector('#firstContactCopiedBtn');
+  await page.click('#firstContactCopiedBtn');
+  await page.waitForSelector('#firstContactRevealBtn');
+  await page.click('#firstContactRevealBtn');
+  await page.waitForSelector('#firstContactCorrectBtn');
+  const compare=await page.locator('#studyArea').textContent();
+  assert(compare?.includes('write')&&compare?.includes('schreiben'),'first contact compares against the exact confirmed pair');
+  await page.click('#firstContactCorrectBtn');
+  await page.waitForSelector('#firstContactDoneBtn');
+  assert(await page.evaluate(()=>!!state.setVocabulary[0]?.firstContactCompletedAt),'first contact completion is persisted on the set link');
+  await page.click('#firstContactDoneBtn');
+  assert(!(await page.locator('[data-set-study="ocr_set"]').isDisabled()),'ordinary learning unlocks only after first contact');
 
   await page.evaluate(()=>startSession('recall','ocr_set',null,false));
   await page.waitForSelector('#answerField');
@@ -59,8 +73,8 @@ try{
   console.log('Vokabeltrainer pair review WebKit smoke: passed');
   console.log('✓ unreviewed OCR set cannot be learned');
   console.log('✓ exact pairs are visible before confirmation');
-  console.log('✓ explicit confirmation unlocks learning');
-  console.log('✓ confirmed exact answer is graded correct');
+  console.log('✓ pair confirmation starts the required first-contact phase');
+  console.log('✓ first contact unlocks learning and the confirmed exact answer is graded correct');
 }finally{
   await browser.close();
 }
