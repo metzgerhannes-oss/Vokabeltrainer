@@ -564,3 +564,5 @@ body.battle-immersive{overflow:hidden;background:#0f172a}.battle-immersive .topb
 .vocab-picker-row small{color:#64748b;font-size:.84rem;line-height:1.25;overflow-wrap:anywhere}
 .vocab-picker-row:has(input:checked){border-color:#a5b4fc;background:#f5f3ff}
 @media(max-width:640px){.vocab-picker{max-height:38vh}.vocab-picker-row{padding:9px 10px}.content-picker-head .compact-action{min-height:38px}}
+
+.content-source-row{display:grid;gap:7px;margin:4px 0 12px}.content-source-row>span{font-weight:800;color:#475569;font-size:.88rem}
