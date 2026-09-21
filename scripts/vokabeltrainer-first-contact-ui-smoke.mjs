@@ -25,7 +25,10 @@ try{
   });
 
   assert(await page.locator('[data-set-study="intro_set"]').isDisabled(),'ordinary learning is blocked before first contact');
-  assert(await page.locator('[data-set-intro="intro_set"]').count()===1,'first-contact action is visible');
+  assert(await page.locator('[data-set-intro="intro_set"]').count()===1,'first-contact action exists');
+  await page.locator('#learningDisclosure > summary').click();
+  await page.waitForSelector('#learningDisclosure[open] [data-set-intro="intro_set"]');
+  assert(await page.locator('[data-set-intro="intro_set"]').isVisible(),'first-contact action becomes visible after opening More learning');
   const before=await page.evaluate(()=>firstContactStatus('intro_set'));
   assert(before.pending===6&&before.completed===0,'all new set links begin pending');
 
