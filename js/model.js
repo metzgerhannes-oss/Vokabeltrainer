@@ -101,6 +101,37 @@ function meetsMasteryCriteria(w){
   return s.retrieval>=2 && s.spelling>=2 && contextOk && activeDays>=3 && (w.maxActiveGapDays||0)>=3 && (w.coldRecallDays||[]).length>=2 && (w.independentSuccesses||0)>=5 && w.intervalDays>=7;
 }
 function isMastered(w){ return meetsMasteryCriteria(w); }
+function inferredLeitnerBox(w){
+  if(isMastered(w))return 5;
+  const days=(w.activeSuccessDays||[]).length,independent=Number(w.independentSuccesses)||0,interval=Number(w.intervalDays)||0,gap=Number(w.maxActiveGapDays)||0;
+  if(days>=3&&independent>=4&&gap>=3&&interval>=7)return 4;
+  if(days>=2&&independent>=2&&gap>=1&&interval>=3)return 3;
+  if(independent>=1)return 2;
+  return 1;
+}
+function leitnerBox(w){
+  const stored=Math.round(Number(w?.leitnerBox)||0);
+  return stored>=1&&stored<=5?stored:inferredLeitnerBox(w);
+}
+function leitnerMaxBox(w){return inferredLeitnerBox(w)}
+function leitnerLabel(box){
+  return ({1:'Neu',2:'Im Lernen',3:'Bekannt',4:'Sicher',5:'Nachhaltig gemeistert'})[clamp(Math.round(Number(box)||1),1,5)]||'Neu';
+}
+function updateLeitnerBox(w,ok,{assisted=false,active=true,orthographyOk=true}={}){
+  const before=leitnerBox(w);let after=before,blockedBySpacing=false;
+  if(!active)return {before,after,moved:false,blockedBySpacing:false};
+  if(!ok)after=Math.max(1,before-1);
+  else if(!assisted&&orthographyOk){
+    const wanted=Math.min(5,before+1),allowed=leitnerMaxBox(w);after=Math.min(wanted,allowed);blockedBySpacing=after<wanted;
+  }
+  w.leitnerBox=after;w.leitnerUpdatedAt=new Date().toISOString();
+  return {before,after,moved:after!==before,blockedBySpacing};
+}
+function leitnerDistribution(words=schoolYearWords()){
+  const counts={1:0,2:0,3:0,4:0,5:0};
+  for(const w of words)counts[leitnerBox(w)]++;
+  return counts;
+}
 function refreshMastery(w){
   const mastered=meetsMasteryCriteria(w);
   if(mastered && !w.masteredAt)w.masteredAt=new Date().toISOString();
