@@ -52,7 +52,7 @@ try{
   await page.waitForSelector('#firstContactCorrectBtn');
   await page.click('#firstContactCorrectBtn');
 
-  await page.waitForSelector('#doneBtn');
+  await page.waitForSelector('#firstContactDoneBtn');
   const after=await page.evaluate(()=>firstContactStatus('intro_set'));
   assert(after.pending===0&&after.completed===6,'all words complete first contact');
   if(errors.length)throw new Error(errors.join(' | '));
