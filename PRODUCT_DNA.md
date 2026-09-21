@@ -95,6 +95,9 @@ Retrieval- und Spacing-Modells.
    Angriffsarten, Einheiten, Festungen, Jahreszeiten, Rang und Ausrüstung sind visuelle
    Motivation. Keine dieser Darstellungen darf die fachliche Bewertung oder Siegbedingung
    verfälschen; Festungen fallen ausschließlich an den definierten Lernfortschrittsschwellen.
+   Bosskämpfe, Spezialangriffe, Story und Freundschaftsduelle folgen derselben Regel:
+   Sie visualisieren vorhandenen Lernfortschritt und dürfen keine fachliche Leistung
+   vortäuschen, ersetzen oder zufällig verändern.
 
 10. **Globale Wissensbasis, getrennte Bedeutungen**
     Ein Lexem wird global gespeichert, Bedeutungen/Senses werden getrennt geführt.

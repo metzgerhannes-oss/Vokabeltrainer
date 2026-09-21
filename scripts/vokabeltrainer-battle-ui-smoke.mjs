@@ -58,6 +58,27 @@ try{
   assert(await page.evaluate(()=>subjectProgress().pct)===100,'battle presentation does not alter academic mastery');
   await page.waitForFunction(()=>document.querySelector('#battleFortressName')?.textContent?.includes('Wachturm'));
   assert((await page.locator('#battleFortressName').textContent())?.includes('Wachturm'),'winning advances to a visually different fortress');
+
+  await page.evaluate(()=>{
+    const wins=fortressWins();wins.splice(0,wins.length,'outpost','tower','wall');
+    grantBattleTicket('boss-smoke');renderBattleView();
+  });
+  assert(await page.locator('#battleBossPanel:not(.hidden)').count()===1,'citadel opens a boss fight panel');
+  assert((await page.locator('#battleBossName').textContent())?.includes('Torwächter'),'boss fight has a child-friendly named opponent');
+  assert(await page.locator('#battleStage .battle-boss-character').count()===1,'boss character is visible in battle stage');
+  assert((await page.locator('#battleStoryTitle').textContent())?.includes('Bergzitadelle'),'campaign story advances with the fortress');
+  assert(!(await page.locator('[data-battle-attack="special"]').isDisabled()),'high progress unlocks a special attack');
+  await page.click('[data-battle-attack="special"]');
+  await page.click('#battleAttackBtn');
+  await page.waitForSelector('#battleStage.attack-special.battle-finished',{timeout:3000});
+  assert(await page.evaluate(()=>subjectProgress().pct)===100,'boss and special attack do not change academic mastery');
+
+  await page.evaluate(()=>openDuel());
+  const duelCode=await page.evaluate(()=>encodeDuel({...duelPayload(),name:'Gegner',progress:80,mastered:0,stable:0,stability:0}));
+  await page.fill('#opponentCode',duelCode);
+  await page.click('#duelCompare');
+  assert(await page.locator('.duel-arena').count()===1,'friendship duel has an animated arena');
+  assert((await page.locator('#duelResult').textContent())?.includes('Sieg'),'deterministic duel still uses academic progress');
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer battle UI smoke: passed');
 }finally{
