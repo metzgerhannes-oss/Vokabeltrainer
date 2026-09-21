@@ -125,10 +125,12 @@ Retrieval- und Spacing-Modells.
     zeigt eine dominante Hauptaktion; Verwaltung, Detailstatistik und alternative Wege
     werden nachgeordnet. Muss ein Erwachsener den nächsten Klick erklären, ist das ein
     UX-Release-Blocker und kein Fall für zusätzliche Hilfetexte.
-    Auch im Elternbereich gilt: **„Lernstoff festlegen“ ist die eine normale Tür zu
-    Vokabeln.** Bibliothek, Lernset, Buchzuordnung und Import sind technische Ebenen im
-    Hintergrund oder Verwaltungs-/Korrekturwege. Ein Testplan wählt die konkreten
-    Vokabeln direkt und darf kein Verständnis des Datenmodells voraussetzen.
+    Auch im Elternbereich gilt eine klare Zieltrennung: **Steht ein Test an, ist
+    „Test planen“ der normale Weg.** Dort werden Termin und konkrete Vokabeln direkt gewählt;
+    diese Wörter werden automatisch zum Lernstoff des Kindes. **„Ohne Test lernen“** ist nur
+    für zusätzlichen Lernstoff ohne konkreten Testtermin gedacht. Bibliothek, Lernbereich,
+    Buchzuordnung und Import sind technische Ebenen im Hintergrund oder Verwaltungs-/
+    Korrekturwege und dürfen kein Verständnis des Datenmodells voraussetzen.
 
 ---
 
@@ -137,7 +139,7 @@ Retrieval- und Spacing-Modells.
 ### Kind
 Ziel: lernen, nicht administrieren.
 
-**Harte Rollengrenze:** Der Kind-Modus enthält keine Anlage oder Bearbeitung von Lernsets,
+**Harte Rollengrenze:** Der Kind-Modus enthält keine Anlage oder Bearbeitung von Lernbereichen,
 keine OCR-/Paarfreigabe, keine Testumfangsplanung, keine Noteneingabe, keine Profil- oder
 Lehrwerkverwaltung und keine Daten-/Backupfunktionen. Sind solche Vorarbeiten offen, sieht
 das Kind nur einen verständlichen Status und keine administrative Handlungsaufforderung.
@@ -163,7 +165,7 @@ Dashboard soll insbesondere beantworten:
 - Was ist noch offen?
 - Welche Vokabeln/Bedeutungen sind instabil?
 - Wo liegen Fehlerarten: Abruf, Schreibung, Hören, Kontext, Grammatik?
-- Welche Lernsets/Units sind aktiv?
+- Welche Lernbereiche/Units sind aktiv?
 - Wie entwickelt sich nachhaltige Mastery?
 - Welche Testchecks wurden durchgeführt?
 - Welche Schulnoten wurden manuell hinterlegt?

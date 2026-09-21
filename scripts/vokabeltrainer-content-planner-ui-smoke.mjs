@@ -20,15 +20,19 @@ try{
   await page.click('#confirmParentMode');
   await page.waitForSelector('#parentView.active');
 
-  assert((await page.locator('#parentLibraryBtn').textContent())?.includes('Lernstoff festlegen'),'parent has one primary learning-content entry');
+  assert((await page.locator('#parentTestPlanBtn').textContent())?.includes('Test planen'),'test planning is the primary path when a test exists');
+  assert((await page.locator('#parentLibraryBtn').textContent())?.includes('Ohne Test lernen'),'separate no-test path is explicitly labeled');
+  const order=await page.evaluate(()=>Array.from(document.querySelectorAll('.parent-grid .menu-card')).map(x=>x.id));
+  assert(order.indexOf('parentTestPlanBtn')<order.indexOf('parentLibraryBtn'),'test planning is shown before no-test learning');
   await page.click('#parentLibraryBtn');
   await page.waitForSelector('#modal[open] #contentWordPicker');
-  assert((await page.locator('#modalContent').textContent())?.includes('Welche Vokabeln soll das Kind lernen?'),'content flow hides technical set creation');
+  assert((await page.locator('#modalContent').textContent())?.includes('ohne Testtermin'),'no-test flow states its purpose explicitly');
   assert(await page.locator('#contentWordPicker [data-book-row]').count()>0,'known book words are directly selectable');
   await page.locator('#modal').evaluate(el=>el.close());
 
   await page.click('#parentTestPlanBtn');
   await page.waitForSelector('#modal[open] #planWordPicker');
+  assert((await page.locator('#modalContent').textContent())?.includes('automatisch als Lernstoff'),'test planner explains that selected words become learning content automatically');
   const total=await page.locator('#planWordPicker [data-plan-row]').count();
   assert(total>6,'test planner exposes individual vocabulary choices');
   await page.click('#planSelectNone');
@@ -44,9 +48,9 @@ try{
   const saved=await page.evaluate(()=>{
     const ctx=upcomingTestContext('english');
     const set=ctx?.sets?.[0];
-    return {count:ctx?.words?.length||0,mode:set?.testScopeMode||'',selected:set?.testSelectedLinkIds?.length||0,title:set?.title||''};
+    return {count:ctx?.words?.length||0,mode:set?.testScopeMode||'',selected:set?.testSelectedLinkIds?.length||0,title:set?.title||'',links:set?setWords(set.id).length:0};
   });
-  assert(saved.count===6&&saved.mode==='selected'&&saved.selected===6,'saved test plan contains exactly the selected vocabulary');
+  assert(saved.count===6&&saved.mode==='selected'&&saved.selected===6&&saved.links>=6,'test plan automatically adds selected vocabulary to the child learning content');
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer unified content planner UI smoke: passed');
