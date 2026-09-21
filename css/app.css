@@ -245,7 +245,7 @@ body.learning-focus .help-popover{display:none!important}
 @media(max-width:620px){.app-title-row{gap:6px}.version-badge{font-size:.68rem;padding:2px 7px}}
 
 
-/* v0.13.0 Guided child shell */
+/* v0.13.1 Guided child shell */
 #homeView{max-width:980px;margin:0 auto}
 #homeView .today-focus{padding:clamp(20px,4vw,30px);margin-bottom:14px}
 #homeView .today-main{min-width:0;flex:1}
