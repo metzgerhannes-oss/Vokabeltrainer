@@ -10,7 +10,17 @@ Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in diese
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
 
-## v0.18.11 – Schlacht nach Kennenlern-Einheit & neutraler Abschreibtext
+## v0.18.11 – schriftlicher Karteikartenmodus mit fünf Boxen
+
+- neuer Lernmodus **Karteikarten** unter „Mehr üben“: Bedeutung sehen, Vokabel vollständig schreiben, automatisch prüfen
+- fünf sichtbare Stufen: **Neu → Im Lernen → Bekannt → Sicher → Nachhaltig gemeistert**
+- eine richtige unabhängige schriftliche Antwort bewegt die Karte höchstens eine Box nach hinten; eine falsche Antwort genau eine Box nach vorne
+- wiederholtes Richtigantworten am selben Tag kann die zeitlich geschützten höheren Boxen nicht künstlich überspringen
+- Box 5 wird nur erreicht, wenn zusätzlich die bestehende nachhaltige Mastery-Logik erfüllt ist
+- die fünf Boxen visualisieren denselben Lernstand; sie bilden kein konkurrierendes zweites Bewertungssystem
+- ein abgeschlossener Karteikartenblock zählt als Lerneinheit und kann einen Schlacht-Angriff freischalten
+
+## v0.18.10 – Schlacht nach Kennenlern-Einheit & neutraler Abschreibtext
 
 - auch ein vollständig abgeschlossener täglicher Kennenlern-/Abschreibblock zählt als Lerneinheit und vergibt genau einen Angriff
 - die Abschlussansicht zeigt die freigeschaltete Schlacht unmittelbar an
