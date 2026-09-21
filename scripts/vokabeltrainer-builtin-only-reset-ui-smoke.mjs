@@ -48,7 +48,7 @@ try{
     books:state.books.map(b=>b.id),builtinRows:state.bookVocabulary.filter(r=>r.bookId==='book_builtin_camden_town_1').length,
     vocabCount:state.vocabulary.length,nonBuiltinVocabulary:state.vocabulary.filter(v=>!(v.sources||[]).some(src=>src.kind==='builtin-book')).map(v=>v.term),
     testSeries:state.learners[0]?.testSeries?.english,
-    dailyPlans:Object.keys(state.learners[0]?.dailyPlans||{}).length
+    dailyPlanText:JSON.stringify(state.learners[0]?.dailyPlans||{})
   }));
 
   assert(cleaned.marker,'reset marker is written');
@@ -57,7 +57,7 @@ try{
   assert(cleaned.practiceTests===0&&cleaned.activity===0&&cleaned.grades===0&&cleaned.learnerBooks===0,'old test, grade, activity and book-assignment data are cleared');
   assert(cleaned.books.length===1&&cleaned.books[0]==='book_builtin_camden_town_1','only the built-in book remains');
   assert(cleaned.builtinRows===202&&cleaned.vocabCount>0&&cleaned.nonBuiltinVocabulary.length===0,'only verified built-in vocabulary remains');
-  assert(!cleaned.testSeries?.enabled&&cleaned.dailyPlans===0,'old plans and test series are removed');
+  assert(!cleaned.testSeries?.enabled&&!cleaned.dailyPlanText.includes('old_set')&&!cleaned.dailyPlanText.includes('"old"'),'old plans and test series are removed; a fresh empty-day plan may be regenerated');
 
   console.log('Vokabeltrainer built-in-only reset UI smoke: passed');
 }finally{
