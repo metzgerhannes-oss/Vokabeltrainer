@@ -32,7 +32,7 @@ function openAppHelp(){
   modal(`<div class="eyebrow">Kurze Orientierung</div><h2>So funktioniert der Vokabeltrainer</h2>
     <div class="help-overview">
       <div><strong>1 · Heute</strong><span>Hier startest du normalerweise. Das Tagesziel wählt fällige und wichtige Wörter automatisch aus.</span></div>
-      <div><strong>2 · Vokabeln</strong><span>Hier legst du Lernsets an, fotografierst Listen oder pflegst die gemeinsame Vokabelbibliothek.</span></div>
+      <div><strong>2 · Neue Vokabeln</strong><span>Neue Listen werden zuerst fachlich geprüft. Danach schreibst du die Vokabeln ins Vokabelheft, deckst sie ab, erinnerst sie einmal und vergleichst. Erst dann beginnt das normale Lernen.</span></div>
       <div><strong>3 · Fortschritt</strong><span>Hier siehst du Lernstand, Testchecks und Noten. XP sind davon bewusst getrennt.</span></div>
       <div><strong>4 · Mehr</strong><span>Hier verwaltest du Profile, Lehrwerke, LRS-Einstellungen und Backups.</span></div>
     </div>
