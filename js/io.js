@@ -249,7 +249,7 @@ function ocrPronunciationOnly(text){
 }
 function ocrEditorialNoise(text,subject){
   const t=stripOcrPronunciation(text);if(!t||ocrUiNoise(t))return true;
-  if(/^(?:word\s*lists?|wordlist|vocabulary|vokabeln|arbeitsanweisungen\b|an\s+dem\s+wort\b|in\s+den\s+.+boxen\b|pick[- ]?up\s*:|hinweis\b|merke\b)$/i.test(t))return true;
+  if(/^(?:word\s*lists?|wordlist|vocabulary|vokabeln|(?:unit|test|theme|part)\s*(?:\d+|[a-z])?|arbeitsanweisungen\b|an\s+dem\s+wort\b|in\s+den\s+.+boxen\b|pick[- ]?up\s*:|hinweis\b|merke\b)$/i.test(t))return true;
   if(/^(?:arbeitsanweisungen\b|an\s+dem\s+wort\b|in\s+den\s+.+boxen\b|pick[- ]?up\s*:)/i.test(t))return true;
   const count=t.split(/\s+/).filter(Boolean).length;
   if(count>=7&&germanScore(t)>=2&&foreignScore(t,subject)<=1)return true;
