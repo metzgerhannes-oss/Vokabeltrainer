@@ -55,6 +55,8 @@ assert(html.indexOf('js/quiz-engine.js?v='+version)>html.indexOf('js/model.js?v=
 assert(sw.includes("'./js/quiz-engine.js?v="+version+"'"),'quiz engine is part of the offline app shell');
 assert(quiz.includes('function makeQuizQuestion(')&&quiz.includes('Object.freeze')&&quiz.includes('function gradeQuizQuestion('),'quiz engine creates immutable questions and grades centrally');
 assert(learning.includes('setCurrentQuizQuestion(w,sub)')&&learning.includes('gradeQuizQuestion(q,answer)'),'core learning path uses the central question snapshot and grader');
+assert(learning.includes("gradeChoice(b,w,b.dataset.answer,q.targets,'recognition',false,q)")&&focusUi.includes('questionSnapshot||currentQuizQuestion'),'choice grading is bound to the exact rendered question snapshot');
+assert(app.includes("addEventListener('controllerchange'")&&app.includes('location.reload()'),'installed app reloads once when a new service worker takes control');
 assert(focusUi.includes('gradeQuizQuestion(q,answer)'),'focused-learning overrides use the same central grader');
 assert(quiz.includes("issues.push('sense-mismatch')")&&quiz.includes("issues.push('set-mismatch')"),'quiz integrity gate rejects set/sense identity drift');
 assert(!/split\(\/\\s\*\[\/;,\]/.test(model),'answer comparison never invents alternatives by punctuation splitting');
