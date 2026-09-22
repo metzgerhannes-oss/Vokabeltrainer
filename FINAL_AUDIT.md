@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 22.09.2026 · App v0.18.14
+Stand: 22.09.2026 · App v0.18.15
 
 ## Ergebnis
 
@@ -15,6 +15,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - zentrale, unveränderliche Question-/Sollantwort-Snapshots
 - Set-, Vokabel- und Sense-Identität werden vor der Bewertung geprüft
 - falsche Wort↔Bedeutung-Zuordnungen aus OCR werden vor dem Lernen durch Paarprüfung blockiert
+- eine bestätigte Paarprüfung bleibt über Neustart/Reload/Sync gültig; nur eine echte Inhaltsänderung macht sie erneut prüfpflichtig
 - Lehrwerks-/Set-Formulierungen und zulässige Sense-Antworten bleiben nachvollziehbar getrennt
 - Apostrophe und diakritische Zeichen werden im Schreibmodus orthographisch streng bewertet
 - semantisch richtige Antworten mit Schreibfehler werden fachlich differenziert behandelt
