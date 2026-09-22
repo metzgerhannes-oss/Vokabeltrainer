@@ -28,7 +28,7 @@ function firstContactLinkReady(link){return !!(link?.firstContactCompletedAt||li
 function wordFirstContactReady(w){return !!(w?.firstContactCompletedAt||w?.firstContactProvedAt)}
 function markWordKnownByProof(w){
   if(!w?.senseId)return 0;
-  const setIds=new Set((state.sets||[]).filter(s=>s.learnerId===state.activeLearnerId&&s.subject===w.subject).map(s=>s.id)),now=new Date().toISOString();let changed=0;
+  const learnerId=w.learnerId||state.activeLearnerId,setIds=new Set((state.sets||[]).filter(s=>s.learnerId===learnerId&&s.subject===w.subject).map(s=>s.id)),now=new Date().toISOString();let changed=0;
   for(const link of (state.setVocabulary||[])){
     if(!setIds.has(link.setId)||link.senseId!==w.senseId||firstContactLinkReady(link))continue;
     link.firstContactProvedAt=now;changed++;
