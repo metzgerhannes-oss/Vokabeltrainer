@@ -16,7 +16,7 @@ Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Joh
 - der Elternbereich nutzt auf Desktop vier kompakte Funktionskarten nebeneinander; Mobil- und Tabletansicht bleiben unverändert fokussiert
 - **Karteikarten** sind als feste Schnellaktion auf der Heute-Seite jederzeit erreichbar, sobald geprüfte Vokabeln vorhanden sind
 - Karteikarten dürfen auch mit neuen, noch nicht abgeschriebenen Vokabeln gestartet werden
-- schreibt das Kind eine solche Vokabel ohne Hilfe orthographisch korrekt, gilt die Vorkenntnis als nachgewiesen: der Abschreib-Erstkontakt für dieses Wort entfällt und das Wort geht direkt in die Wiederholung
+- schreibt das Kind eine solche Vokabel beim ersten unbeeinflussten Versuch ohne Hilfe orthographisch korrekt, gilt die Vorkenntnis als nachgewiesen: der Abschreib-Erstkontakt für dieses Wort entfällt und das Wort geht direkt in die Wiederholung
 - ein Fehlversuch beweist nichts und lässt das Wort im normalen Kennenlernprozess
 - der Vorkenntnis-Beweis vergibt **keine Mastery**; Box 5 und „nachhaltig gemeistert“ bleiben an zeitlich verteilte Abrufe gebunden
 - der Beweisstatus wird separat gespeichert und über Backup/Sync erhalten
