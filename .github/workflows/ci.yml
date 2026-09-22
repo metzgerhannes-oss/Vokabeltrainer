@@ -108,6 +108,9 @@ jobs:
       - name: WebKit written Leitner cards
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-cards-ui-smoke.mjs
 
+      - name: WebKit desktop workspace
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-desktop-ui-smoke.mjs
+
       - name: WebKit correct-answer diagnostic
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-correct-answer-diagnostic.mjs
 
