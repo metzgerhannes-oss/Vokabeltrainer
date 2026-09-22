@@ -137,7 +137,7 @@ function updateLeitnerBox(w,ok,{assisted=false,active=true,orthographyOk=true,be
   w.leitnerBox=after;w.leitnerUpdatedAt=new Date().toISOString();
   return {before,after,moved:after!==before,blockedBySpacing};
 }
-function leitnerDistribution(words=schoolYearWords()){
+function leitnerDistribution(words=schoolYearVerifiedWords()){
   const counts={1:0,2:0,3:0,4:0,5:0};
   for(const w of words)counts[leitnerBox(w)]++;
   return counts;
