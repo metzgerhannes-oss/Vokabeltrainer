@@ -18,11 +18,21 @@
       if(sessionStorage.getItem(key))return;
       updateReloading=true;sessionStorage.setItem(key,'1');location.reload();
     });
-    navigator.serviceWorker.register('./sw.js?v=0.18.13')
+    navigator.serviceWorker.register('./sw.js?v=0.18.14')
       .then(reg=>reg.update().catch(()=>{}))
       .catch(console.warn);
   }
+  try{
+    await new Promise((resolve,reject)=>{
+      const s=document.createElement('script');
+      s.src='./js/device-pairing.js?v='+VERSION;
+      s.onload=resolve;
+      s.onerror=()=>reject(new Error('Geräteverbindung konnte nicht geladen werden.'));
+      document.head.appendChild(s);
+    });
+  }catch(e){console.warn(e)}
   bind();
   renderAll();
+  window.handleChildInviteFromUrl?.();
   window.VTFamilySync?.bootstrap();
 })();

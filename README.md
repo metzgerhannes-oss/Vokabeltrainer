@@ -4,13 +4,13 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.13**
+App-Version: **v0.18.14**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
 
-## v0.18.13 – Desktop-Workspace & Vorkenntnis-Beweis
+## v0.18.14 – Desktop-Workspace & Vorkenntnis-Beweis
 
 - ab 1100 px nutzt die App ein echtes Desktop-Layout mit linker Navigation, breitem Tagesbereich und dauerhaft sichtbaren freiwilligen Lernarten
 - der Elternbereich nutzt auf Desktop vier kompakte Funktionskarten nebeneinander; Mobil- und Tabletansicht bleiben unverändert fokussiert
