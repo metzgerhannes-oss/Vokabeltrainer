@@ -83,10 +83,15 @@ Retrieval- und Spacing-Modells.
    Testdatum, Testumfang, fällige Wiederholungen und schwache Wörter steuern das Tagespensum.
    Kurze, realistische Einheiten haben Vorrang vor langen Sessions.
    Als Richtgröße werden pro Tag **5–7 neue Vokabeln** eingeführt. Fällige und unsichere
-   Wiederholungen ergänzen das Tagesziel auf ungefähr **10–12 Vokabelkontakte**. Liegt ein
-   Testdatum vor, verteilt die App die noch unbekannten Wörter auf die verbleibenden Lerntage.
-   Mehr als sieben neue Wörter pro Tag werden nicht stillschweigend erzwungen; reicht die
-   verbleibende Zeit rechnerisch nicht, wird dies als Planungsproblem sichtbar gemacht.
+   Wiederholungen ergänzen das Tagesziel normalerweise auf ungefähr **10–12 Vokabelkontakte**.
+   Bei einem bekannten Testtermin wird das Pensum jedoch **täglich aus dem tatsächlichen
+   Restlernstand neu berechnet**: Rückstand erhöht die Last, Vorsprung reduziert sie. Bei
+   deutlichem Vorsprung sind kleinere 3er-Blöcke und etwa 8 Kontakte zulässig; bei Rückstand
+   kann das Gesamtpensum vorübergehend bis etwa 14 Kontakte steigen. Mehr als **7 neue Wörter
+   pro Tag** werden weiterhin nicht erzwungen. Wenn mindestens zwei Tage Vorlauf bestehen,
+   bleibt der letzte Tag vor dem Test für Wiederholung reserviert. Neue Wörter am Tag vor
+   dem Test werden als Spacing-Risiko gekennzeichnet; am Testtag selbst werden keine neuen
+   Wörter eingeplant. Vorschau und Tagesplan müssen dieselbe Formel verwenden.
 
 7. **Neue Wörter im Kontext, Wiederholung gemischt**
    Erstaneignung respektiert soweit sinnvoll Buch-/Unit-Reihenfolge und Zusammenhang.

@@ -25,7 +25,7 @@ try{
   });
 
   const plan=await page.evaluate(()=>buildDailyPlan());
-  assert(plan.introRefs.length===6&&plan.dailyTarget===12,'daily plan limits first contact through the daily planner');
+  assert(plan.introRefs.length===6&&plan.dailyTarget===11&&plan.acquisitionDays===1,'daily plan uses the dynamic test window and reserves the final day for review');
   assert((await page.locator('#todaySummary').textContent())?.includes('Vokabeln heute'),'today shows a bounded daily target');
   assert((await page.locator('#quickLearnHeroBtn').textContent())?.includes('Tagesziel'),'primary child action starts the bounded daily target');
   assert(await page.locator('#setList').count()===1&&!(await page.locator('#setList').isVisible()),'learning-set administration is not visible in child mode');

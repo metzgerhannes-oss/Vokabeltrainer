@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 21.09.2026 · App v0.18.11
+Stand: 21.09.2026 · App v0.18.12
 
 ## Ergebnis
 
@@ -25,7 +25,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - verbindliche Reihenfolge: Erfassen → prüfen → kennenlernen/abschreiben → aktiv abrufen → verteilt wiederholen → nachhaltig meistern
 - Erstkontakt enthält handschriftliches Abschreiben auf beliebigem Papier/Heft, Abdecken, Erinnern, Vergleichen und Blockabruf
 - Erstkontakt wird pro Vokabel freigegeben; ein großer Lernbereich sperrt bereits kennengelernte Wörter nicht mehr
-- Tagespensum: 5–7 neue Vokabeln, ergänzt um Wiederholungen auf ungefähr 10–12 Kontakte; Testtermine steuern die Verteilung mit sichtbarer Überlastungswarnung
+- Tagespensum: normalerweise 5–7 neue Vokabeln und etwa 10–12 Kontakte; täglich dynamisch aus Restlernstand, Testabstand und Unsicherheiten neu berechnet (Vorsprung bis ca. 8 Kontakte, Rückstand bis ca. 14, max. 7 neue Wörter). Letzter Tag vor dem Test wird bei ausreichendem Vorlauf für Wiederholung reserviert; Testtag führt keine neuen Wörter ein.
 - Karteikartenmodus: fünf sichtbare Leitner-Boxen, ausschließlich schriftliche automatische Bewertung; richtig maximal +1 Box, falsch −1 Box, höhere Stufen durch Spacing begrenzt, Box 5 nur bei nachhaltiger Mastery
 - Eltern-UX: Steht ein Test an, ist „Test planen“ der Standardweg und übernimmt die ausgewählten Vokabeln automatisch als Lernstoff. „Ohne Test lernen“ dient ausschließlich zusätzlichem Lernstoff ohne Termin.
 - Vokabelauswahl unterstützt Einzelauswahl, Alle/Keine und eine inklusive Von–Bis-Spanne; gespeicherte Einzel-/Bereichsauswahl bleibt reload-stabil.
