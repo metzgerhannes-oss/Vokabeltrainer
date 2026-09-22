@@ -59,6 +59,11 @@ try{
   await page.waitForSelector('.session-finish-card');
   assert(await page.locator('#rewardBattleBtn').count()===1,'completed written cards session earns a battle attack');
   assert(await page.evaluate(()=>battleTickets('english'))===1,'cards session grants exactly one battle ticket');
+  await page.evaluate(async()=>{await persistState()});
+  await page.reload({waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>state!==null&&typeof firstContactStatus==='function');
+  assert((await page.evaluate(()=>firstContactStatus('cards_set').pending))===0,'successful proof survives persistence and reload');
+  assert((await page.evaluate(()=>firstContactStatus('cards_set').proved))===1,'proof is stored separately from handwritten first-contact');
   if(errors.length)throw new Error(errors.join(' | '));
 
   console.log('Vokabeltrainer written Leitner cards UI smoke: passed');
