@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 22.09.2026 · App v0.18.16
+Stand: 22.09.2026 · App v0.18.17
 
 ## Ergebnis
 
@@ -114,6 +114,13 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 3. **Accessibility:** Schlachtfeld und Boss-Fortschritt wurden expliziter beschriftet.
 4. **Testhärtung:** Der Hilfe-Test prüft nun auch Browser-Konsole/CSP-Fehler.
 5. **Dokumentationsdrift:** README und finales Audit müssen per Preflight dieselbe App-Version wie der Code tragen.
+
+## Audit-Korrekturen v0.18.17
+
+1. **Visuelle Konsistenz:** Karten, Navigation, Dialoge, Formulare und Statusflächen nutzen ein gemeinsames ruhiges Designsystem.
+2. **Lernfokus geschützt:** Die fokussierte Abfrage wurde nur visuell verfeinert; Abläufe, Bewertung und Mastery bleiben unverändert.
+3. **LRS geschützt:** Der LRS-Modus behält reduzierte Schatten und eine sachliche Darstellung.
+4. **Rollen geschützt:** Eltern-/Kinderlogik und Family-Sync wurden durch den Design-Pass nicht verändert.
 
 ## Bewusste Grenzen vor v1
 
