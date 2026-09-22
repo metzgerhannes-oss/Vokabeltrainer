@@ -10,6 +10,17 @@ Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in diese
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
 
+## v0.18.13 – Desktop-Workspace & Vorkenntnis-Beweis
+
+- ab 1100 px nutzt die App ein echtes Desktop-Layout mit linker Navigation, breitem Tagesbereich und dauerhaft sichtbaren freiwilligen Lernarten
+- der Elternbereich nutzt auf Desktop vier kompakte Funktionskarten nebeneinander; Mobil- und Tabletansicht bleiben unverändert fokussiert
+- **Karteikarten** sind als feste Schnellaktion auf der Heute-Seite jederzeit erreichbar, sobald geprüfte Vokabeln vorhanden sind
+- Karteikarten dürfen auch mit neuen, noch nicht abgeschriebenen Vokabeln gestartet werden
+- schreibt das Kind eine solche Vokabel ohne Hilfe orthographisch korrekt, gilt die Vorkenntnis als nachgewiesen: der Abschreib-Erstkontakt für dieses Wort entfällt und das Wort geht direkt in die Wiederholung
+- ein Fehlversuch beweist nichts und lässt das Wort im normalen Kennenlernprozess
+- der Vorkenntnis-Beweis vergibt **keine Mastery**; Box 5 und „nachhaltig gemeistert“ bleiben an zeitlich verteilte Abrufe gebunden
+- der Beweisstatus wird separat gespeichert und über Backup/Sync erhalten
+
 ## v0.18.12 – dynamische Testplanung nach tatsächlichem Lernstand
 
 - Testtage werden als lokale Kalendertage gerechnet; „in 7 Tagen“ entspricht exakt sieben Datumswechseln und ist unabhängig von Sommer-/Winterzeit
