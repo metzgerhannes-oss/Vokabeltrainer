@@ -206,7 +206,8 @@ function renderToday(){
     $('#todayContext').textContent=ctx?testContextLabel(ctx):(mix.length?mix.join(' · '):'Automatisch aus fälligen und unsicheren Vokabeln');
     const mins=Math.max(2,Math.ceil(status.remaining*(learner().lrsMode?.9:.65))),phaseText=plan.phase==='acquire'?' · Neue Wörter früh aufbauen.':plan.phase==='consolidate'?' · Schwerpunkt: aktiv festigen.':plan.phase==='rehearse'?' · Kurz vor dem Test: überwiegend abrufen und wiederholen.':'';
     const maintenance=plan.maintenanceCount?` · ${plan.maintenanceCount} ältere Wiederholung${plan.maintenanceCount===1?'':'en'} dabei.`:'',deadline=plan.deadlineOverload?` · Mit maximal 7 neuen Wörtern pro Tag reicht die Zeit bis zum Test rechnerisch nicht ganz; Testumfang oder Starttermin prüfen.`:'';
-    $('#todayEstimate').textContent=`${status.units} kurze ${status.units===1?'Einheit':'Einheiten'} · ca. ${mins} Min.${phaseText}${maintenance}${deadline}`;
+    const paceText=ctx?(plan.pace==='ahead'?' · Du liegst vor dem Plan; das Tagesziel wurde reduziert.':plan.pace==='catchup'?' · Es gibt Nachholbedarf; das Tagesziel wurde erhöht.':plan.pace==='overload'?' · Deutlicher Rückstand: maximale neue Wörter plus zusätzliche Wiederholungen.':' · Das Tagesziel passt zum aktuellen Lernstand.'):'';
+    $('#todayEstimate').textContent=`${status.units} kurze ${status.units===1?'Einheit':'Einheiten'} · ca. ${mins} Min. · Ziel heute: ${plan.dailyTarget} Kontakte.${phaseText}${maintenance}${paceText}${deadline}`;
   }
   $('#todayProgress').max=Math.max(1,status.total); $('#todayProgress').value=status.done; $('#todayProgress').setAttribute('aria-valuetext',`${status.done} von ${status.total} Vokabeln heute erledigt`); $('#todayProgressText').textContent=status.total?`${status.done} / ${status.total} erledigt`:'';
   $('#quickLearnHeroBtn').disabled=!hasWords||!status.remaining; $('#quickLearnHeroBtn').textContent=!hasWords?'Noch nicht bereit':!status.remaining?'Heute erledigt ✓':status.done?'Weiterlernen':'Tagesziel starten';
@@ -326,15 +327,21 @@ function selectedRowsForCurrentPlan(learnerId,bookId,section){
   const rows=knownBookSections(bookId).find(g=>g.section===section)?.items||[];
   return rows.filter(r=>links.some(l=>l.vocabId===r.vocabId&&l.senseId===r.senseId)).map(r=>r.id);
 }
+function contentPlanPreviewData(rows,learnerId,testDate=''){
+  const l=(state.learners||[]).find(x=>x.id===learnerId),count=rows.length,newCount=rows.filter(r=>!learnerAlreadyKnowsSense(learnerId,r.senseId)).length;
+  const knownRows=rows.filter(r=>learnerAlreadyKnowsSense(learnerId,r.senseId)),weakCount=knownRows.filter(r=>{const p=progressForSense(r.senseId,learnerId);return !p||!isTestReady(p)}).length;
+  const days=testDate?Math.max(0,daysUntil(testDate)):null,pace=testDate?dailyPacePlan(newCount,weakCount,{days},!!l?.lrsMode):dailyPacePlan(newCount,weakCount,null,!!l?.lrsMode);
+  return {l,count,newCount,weakCount,days,pace};
+}
 function contentPlanPreviewText(rows,learnerId,testDate=''){
-  const l=(state.learners||[]).find(x=>x.id===learnerId),count=rows.length,newCount=rows.filter(r=>!learnerAlreadyKnowsSense(learnerId,r.senseId)).length,target=l?.lrsMode?10:12;
+  const {count,newCount,days,pace}=contentPlanPreviewData(rows,learnerId,testDate);
   if(!count)return 'Noch keine Vokabel ausgewählt.';
-  if(!testDate)return `${count} Vokabeln ausgewählt. Beim Lernen führt die App normalerweise 5–7 neue Wörter pro Tag ein und ergänzt Wiederholungen bis ungefähr ${target} Kontakte.`;
-  const days=Math.max(0,daysUntil(testDate)),learningDays=Math.max(1,days-1),required=newCount?Math.ceil(newCount/learningDays):0,dailyNew=newCount?Math.min(newCount,Math.min(7,Math.max(5,required))):0;
-  if(days<1)return `${count} Vokabeln ausgewählt · Test ist heute bzw. liegt nicht in der Zukunft.`;
-  if(required>7)return `${count} ausgewählt · ${newCount} noch neu · rechnerisch ${required} neue Wörter pro Tag nötig. Das überschreitet die Grenze von 7; der Plan wird als zu knapp markiert.`;
-  if(!newCount)return `${count} ausgewählt · alle schon bekannt. Bis zum Test werden nur Wiederholungen eingeplant.`;
-  return `${count} ausgewählt · ${newCount} noch neu · etwa ${dailyNew} neue Wörter pro Tag + Wiederholungen bis ungefähr ${target} Kontakte.`;
+  if(!testDate)return `${count} Vokabeln ausgewählt. Ohne Testtermin startet die App normalerweise mit bis zu ${pace.quota||5} neuen Wörtern und ungefähr ${pace.dailyTarget} Kontakten pro Tag.`;
+  if(days<1)return `${count} Vokabeln ausgewählt · Test ist heute. Für neue Wörter bleibt kein sinnvoller Lernabstand mehr; heute nur gezielt wiederholen.`;
+  const windowText=pace.reviewOnlyDays?`${pace.acquisitionDays} Tag${pace.acquisitionDays===1?'':'e'} für neue Wörter + 1 Wiederholungstag`:`${pace.acquisitionDays} Lerntag${pace.acquisitionDays===1?'':'e'} vor dem Test`;
+  if(pace.overload)return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · ${newCount} noch neu · rechnerisch ${pace.requiredPerDay} neue Wörter pro Lerntag nötig. Maximal 7 werden angesetzt; das Tagesziel steigt auf bis zu etwa ${pace.dailyTarget} Kontakte. Zeit bis zum Test ist zu knapp für den vorgesehenen Abstand.`;
+  if(!newCount)return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · alle Wörter kennengelernt. Das Tagesziel wird anhand der noch unsicheren Wörter dynamisch auf etwa ${pace.dailyTarget} Kontakte angepasst.`;
+  return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · ${newCount} noch neu · ${windowText}. Aktuell etwa ${pace.quota} neue Wörter und insgesamt ${pace.dailyTarget} Kontakte pro Tag. Der Plan wird jeden Tag aus dem tatsächlichen Lernstand neu berechnet.`;
 }
 function applyVocabularyPickerRange(picker,selector,fromInput,toInput,onChange){
   const boxes=[...picker.querySelectorAll(selector)],count=boxes.length;if(!count)return;
@@ -444,7 +451,7 @@ function openTestDatePlanner(){
   };
   const updatePreview=()=>{
     const selected=selectedRows(),when=plannedDate();counter.textContent=`${selected.length} von ${rows.length} ausgewählt`;preview.className='notice subtle';preview.textContent=contentPlanPreviewText(selected,learnerEl.value,when);
-    const newCount=selected.filter(r=>!learnerAlreadyKnowsSense(learnerEl.value,r.senseId)).length,days=Math.max(0,daysUntil(when)),required=newCount?Math.ceil(newCount/Math.max(1,days-1)):0;if(required>7)preview.className='notice warn';
+    const pace=contentPlanPreviewData(selected,learnerEl.value,when).pace;if(pace.overload)preview.className='notice warn';
   };
   const renderRows=()=>{
     const group=knownBookSections(bookEl.value).find(g=>g.section===sectionEl.value);rows=group?.items||[];const existing=new Set(selectedRowIdsFromSet(matchingSet())),useExisting=existing.size>0;
