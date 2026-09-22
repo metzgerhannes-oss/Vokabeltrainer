@@ -23,7 +23,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 ### Lernprozess
 
 - verbindliche Reihenfolge: Erfassen → prüfen → kennenlernen/abschreiben oder Vorkenntnis schriftlich beweisen → aktiv abrufen → verteilt wiederholen → nachhaltig meistern
-- Erstkontakt enthält standardmäßig handschriftliches Abschreiben auf beliebigem Papier/Heft, Abdecken, Erinnern, Vergleichen und Blockabruf; alternativ kann ein bereits bekanntes, fachlich geprüftes Wort durch eine orthographisch korrekte schriftliche Karteikartenantwort freigegeben werden
+- Erstkontakt enthält standardmäßig handschriftliches Abschreiben auf beliebigem Papier/Heft, Abdecken, Erinnern, Vergleichen und Blockabruf; alternativ kann ein bereits bekanntes, fachlich geprüftes Wort durch eine orthographisch korrekte schriftliche Karteikartenantwort beim ersten unbeeinflussten Versuch freigegeben werden
 - Erstkontakt wird pro Vokabel freigegeben; ein großer Lernbereich sperrt bereits kennengelernte Wörter nicht mehr
 - Tagespensum: normalerweise 5–7 neue Vokabeln und etwa 10–12 Kontakte; täglich dynamisch aus Restlernstand, Testabstand und Unsicherheiten neu berechnet (Vorsprung bis ca. 8 Kontakte, Rückstand bis ca. 14, max. 7 neue Wörter). Letzter Tag vor dem Test wird bei ausreichendem Vorlauf für Wiederholung reserviert; Testtag führt keine neuen Wörter ein.
 - Karteikartenmodus: jederzeit für alle fachlich geprüften Wörter verfügbar; fünf sichtbare Leitner-Boxen, ausschließlich schriftliche automatische Bewertung; richtig maximal +1 Box, falsch −1 Box, höhere Stufen durch Spacing begrenzt, Box 5 nur bei nachhaltiger Mastery. Ein erfolgreicher Vorkenntnis-Beweis überspringt nur den Abschreib-Erstkontakt, nicht die Mastery-Kriterien.
