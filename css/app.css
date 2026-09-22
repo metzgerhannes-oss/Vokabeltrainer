@@ -593,7 +593,7 @@ body.battle-immersive{overflow:hidden;background:#0f172a}.battle-immersive .topb
 
 
 /* Desktop workspace */
-@media(min-width:1000px){
+@media(min-width:1100px){
   .app-shell{max-width:1480px;padding:24px 38px 48px 178px}
   .topbar{padding:8px 0 22px}
   .bottom-nav{
