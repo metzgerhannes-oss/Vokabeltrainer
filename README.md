@@ -4,11 +4,20 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.15**
+App-Version: **v0.18.16**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.16 – Familienverbund beitreten & wechseln
+
+- die Einrichtung trennt jetzt klar zwischen **„Bestehender Familie beitreten“** und **„Neue Familie anlegen“**
+- weitere Eltern-Geräte treten mit Familien-ID + bestehender PIN demselben Familienverbund bei, statt versehentlich eine zweite Familie anzulegen
+- ein verbundenes Eltern-Gerät kann über **„Familie wechseln“** die lokale Sync-Verbindung lösen und anschließend einer anderen bestehenden Familie beitreten; lokale Lern- und Vokabeldaten bleiben dabei erhalten
+- beim erstmaligen Einrichten eines Kindergeräts werden Sync-Dokumente verbindlich in der Reihenfolge **gemeinsame Bibliothek → Profileinrichtung → Lernfortschritt** verarbeitet
+- damit stehen die gemeinsamen Vokabeln bereits bereit, bevor Lernsets und Fortschrittsdaten des Kindes eingelesen werden
+- der Family-Sync-CI-Test prüft Beitritt, Wechsel und die Dokumentreihenfolge als Regression
 
 ## v0.18.15 – Elternfreigabe bleibt gültig
 

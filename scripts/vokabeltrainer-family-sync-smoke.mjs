@@ -4,6 +4,7 @@ const read=p=>fs.readFileSync(p,'utf8');
 const core=read('js/core.js');
 const sync=read('js/family-sync.js');
 const pairing=read('js/device-pairing.js');
+const ui=read('js/ui.js');
 const app=read('js/app.js');
 const html=read('index.html');
 const sw=read('sw.js');
@@ -23,6 +24,10 @@ assert(sync.includes("sb_publishable_")&&!sync.includes('sb_secret_')&&!sync.inc
 assert(sync.includes("shared:{")&&sync.includes("'/setup'")&&sync.includes("'/progress'"),'state is split into shared, setup and progress documents');
 assert(sync.includes("return key==='profile/'+cfg.profileId+'/progress'"),'child devices can write only their own progress document');
 assert(sync.includes("vt_create_child_invite")&&sync.includes("vt_claim_child_invite"),'one-time child-device enrollment is implemented');
+assert(sync.includes('function documentRank(key)')&&sync.includes("k==='shared'?0:k.endsWith('/setup')?1:k.endsWith('/progress')?2:3"),'sync has one canonical shared → setup → progress document order');
+assert((sync.match(/documentRank\(a\.key\)-documentRank\(b\.key\)/g)||[]).length>=2,'initial child claim and recurring sync both load shared vocabulary before profile documents');
+assert(ui.includes('Bestehender Familie beitreten')&&ui.includes('VTFamilySync.joinParent(id,pin'), 'parent UI can join an existing family instead of creating a duplicate family');
+assert(ui.includes('Familie wechseln')&&ui.includes('VTFamilySync.disconnectLocal()'), 'parent UI can leave a wrong local family connection and switch families without deleting learning data');
 assert(pairing.includes("Verbindungslink erstellen")&&pairing.includes('navigator.share'),'parent UI hands the invite off as a shareable link instead of exposing the raw token');
 assert(pairing.includes("claimChildInvite(token")&&pairing.includes("Dieses Gerät verbinden"),'child device can consume the invite link in one guided step');
 assert(pairing.includes("location.hash")&&!pairing.includes("searchParams.set('childInvite'"),'invite secret is transported in the URL fragment, not the query string');

@@ -44,3 +44,10 @@ Die öffentlichen RPC-Wrapper sind `SECURITY INVOKER`; privilegierte Implementie
 3. Eigenständige installierbare Eltern-App und Entfernen der Verwaltungsfunktionen aus der Kinder-App.
 4. Geräteverwaltung, Widerruf, Konfliktoberfläche und Familien-Backup.
 5. Lehrkraft-Oberfläche mit ausdrücklich freigegebenen, minimalen Lerninformationen.
+
+## Gerätebeitritt und Familienwechsel
+
+- Der erste Elternstand legt einen Familienverbund an.
+- Jedes weitere Eltern-Gerät tritt mit Familien-ID und derselben Familien-PIN dem bestehenden Verbund bei; eine zweite Familie ist dafür nicht erforderlich.
+- Die lokale Verbindung eines Eltern-Geräts kann gewechselt werden, ohne lokale Lern- oder Vokabeldaten zu löschen.
+- Kindergeräte erhalten beim Erstbeitritt die Dokumente strikt in der Reihenfolge `shared` → `profile/<id>/setup` → `profile/<id>/progress`, damit die Vokabelbibliothek vor Set- und Fortschrittsreferenzen vorhanden ist.

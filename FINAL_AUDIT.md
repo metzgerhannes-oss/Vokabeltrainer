@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 22.09.2026 · App v0.18.15
+Stand: 22.09.2026 · App v0.18.16
 
 ## Ergebnis
 
@@ -39,6 +39,8 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 ### Kind-/Eltern-Rollen
 
 - Kindmodus ist der Startzustand
+- weitere Eltern-Geräte treten einem bestehenden Familienverbund bei; ein versehentlich falscher Familienverbund kann lokal gewechselt werden, ohne Lern- oder Vokabeldaten zu löschen
+- Kindergeräte laden gemeinsame Vokabelbibliothek vor Profileinrichtung und Lernfortschritt
 - Kind verwaltet keine Lernbereiche, OCR-Freigaben, Testumfänge, Profile, Lehrwerke oder Backups
 - offene Erwachsenenaufgaben werden dem Kind nur als verständlicher Status angezeigt
 - Elternbereich ist ein bewusster Rollenwechsel
