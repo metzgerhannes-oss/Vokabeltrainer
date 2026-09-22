@@ -105,6 +105,7 @@
       else if(key.endsWith('/setup'))applySetup(key,payload);
       else if(key.endsWith('/progress'))applyProgress(key,payload);
       rebuildWordIndexes();
+      if(typeof backfillPairReviewSignatures==='function')backfillPairReviewSignatures(state);
     }finally{runtime.applying=false}
   }
 

@@ -6,7 +6,7 @@ function suggestGradeFromScale(percent,scale){const s={...defaultGradeScale(),..
 function gradeScaleText(scale=gradeScaleFor()){return `1 ab ${scale.n1}% · 2 ab ${scale.n2}% · 3 ab ${scale.n3}% · 4 ab ${scale.n4}% · 5 ab ${scale.n5}% · darunter 6`;}
 function actualGradeForPractice(practiceId){return state.grades.find(g=>g.learnerId===state.activeLearnerId&&g.practiceTestId===practiceId)||null;}
 function mySets(subject=state.activeSubject){ return state.sets.filter(s=>s.learnerId===state.activeLearnerId && s.subject===subject); }
-function setNeedsPairReview(set){return !!set?.pairReviewRequired}
+function setNeedsPairReview(set){return !!set&&(set.pairReviewRequired===true||pairReviewSignatureMismatch(set))}
 function firstContactStatus(setId){
   const links=(state?.setVocabulary||[]).filter(x=>x.setId===setId),total=links.length;
   const copied=links.filter(x=>x.firstContactCopiedAt).length,recalled=links.filter(x=>x.firstContactRecalledAt).length,proved=links.filter(x=>x.firstContactProvedAt).length,completed=links.filter(firstContactLinkReady).length;
@@ -20,7 +20,7 @@ function vocabularyPairSignature(v){
 function requirePairReviewForVocabulary(vocabId){
   const links=(state.setVocabulary||[]).filter(x=>x.vocabId===vocabId),setIds=new Set(links.map(x=>x.setId));let changed=0;
   for(const link of links){link.firstContactCopiedAt='';link.firstContactRecalledAt='';link.firstContactCompletedAt='';link.firstContactProvedAt='';}
-  for(const set of (state.sets||[])){if(!setIds.has(set.id))continue;if(!set.pairReviewRequired||set.pairVerifiedAt)changed++;set.pairReviewRequired=true;set.pairVerifiedAt='';}
+  for(const set of (state.sets||[])){if(!setIds.has(set.id))continue;if(!set.pairReviewRequired||set.pairVerifiedAt||set.pairVerifiedSignature)changed++;set.pairReviewRequired=true;set.pairVerifiedAt='';set.pairVerifiedSignature='';}
   for(const row of (state.bookVocabulary||[])){if(row.vocabId!==vocabId)continue;row.verifiedAt='';}
   return changed;
 }

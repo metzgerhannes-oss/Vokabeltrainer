@@ -299,12 +299,27 @@ function backfillBookVocabularyVerification(s){
   for(const set of sets){
     const derivativeLinks=links.filter(link=>String(link?.setId||'')===String(set?.id||'')&&link?.source==='book-library');
     if(!derivativeLinks.length)continue;
-    const section=String(set.bookSection||set.title||'Lernset');
+    const section=String(set.bookSection||set.title||'Lernset'),approvedAt=String(set.pairVerifiedAt||'');
+    if(set.pairReviewRequired!==true&&approvedAt){
+      for(const link of derivativeLinks){
+        const row=rows.find(r=>String(r?.bookId||'')===String(set.bookId||'')&&String(r?.section||'Lernset')===section&&String(r?.vocabId||'')===String(link.vocabId||'')&&String(r?.senseId||'')===String(link.senseId||''));
+        if(row&&!row.verifiedAt){row.verifiedAt=approvedAt;row.verificationBlocked=false;}
+      }
+      continue;
+    }
     const hasUnverified=derivativeLinks.some(link=>{
       const row=rows.find(r=>String(r?.bookId||'')===String(set.bookId||'')&&String(r?.section||'Lernset')===section&&String(r?.vocabId||'')===String(link.vocabId||'')&&String(r?.senseId||'')===String(link.senseId||''));
       return !row?.verifiedAt;
     });
-    if(hasUnverified){set.pairReviewRequired=true;set.pairVerifiedAt='';}
+    if(hasUnverified){set.pairReviewRequired=true;set.pairVerifiedAt='';set.pairVerifiedSignature='';}
+  }
+  return s;
+}
+
+function backfillPairReviewSignatures(s){
+  for(const set of (s?.sets||[])){
+    if(set?.pairReviewRequired===true||!set?.pairVerifiedAt||set?.pairVerifiedSignature)continue;
+    set.pairVerifiedSignature=pairReviewSignatureForSet(set.id,s);
   }
   return s;
 }
@@ -322,7 +337,7 @@ function hardenState(s){
   s.books=(Array.isArray(s.books)?s.books:[]).slice(0,5000).map(raw=>{const b=raw&&typeof raw==='object'?raw:{};const isbn13=normalizeIsbn(b.isbn13||b.isbn||'');if(!isbn13)return null;const old=String(b.id||''),id=safeId(old,'book',bookUsed);if(!bookMap.has(old))bookMap.set(old,id);return {...b,id,isbn13,subject:normalizeSubjectId(b.subject),title:safeText(b.title,200),publisher:safeText(b.publisher,160),edition:safeText(b.edition,120),createdAt:safeText(b.createdAt||new Date().toISOString(),40),updatedAt:safeText(b.updatedAt||b.createdAt||new Date().toISOString(),40)}}).filter(Boolean);
   const bookIds=new Set(s.books.map(x=>x.id));
   const setUsed=new Set(),setMap=new Map();
-  s.sets=(Array.isArray(s.sets)?s.sets:[]).slice(0,10000).map(raw=>{const x=raw&&typeof raw==='object'?raw:{};const old=String(x.id||'');const id=safeId(old,'set',setUsed);if(!setMap.has(old))setMap.set(old,id);const mappedBook=bookMap.get(String(x.bookId||''))||String(x.bookId||'');return {...x,id,learnerId:mapLearner(x.learnerId),subject:normalizeSubjectId(x.subject),title:safeText(x.title||'Lernset',200),schoolYear:safeText(x.schoolYear||currentSchoolYear(),24),bookId:bookIds.has(mappedBook)?mappedBook:'',bookSection:safeText(x.bookSection||x.title||'',200),testDate:safeText(x.testDate||'',10),testScopeMode:['range','selected'].includes(x.testScopeMode)?x.testScopeMode:'set',testSelectedLinkIds:(Array.isArray(x.testSelectedLinkIds)?x.testSelectedLinkIds:[]).slice(0,10000).map(y=>safeText(y,120)).filter(Boolean),testFrom:Math.max(1,Math.round(safeNumber(x.testFrom,1,100000,1))),testTo:Math.max(0,Math.round(safeNumber(x.testTo,0,100000,0))),testFormat:['target','source','mixed','dictation'].includes(x.testFormat)?x.testFormat:'target',pairReviewRequired:x.pairReviewRequired===true,pairVerifiedAt:safeText(x.pairVerifiedAt||'',40)};});
+  s.sets=(Array.isArray(s.sets)?s.sets:[]).slice(0,10000).map(raw=>{const x=raw&&typeof raw==='object'?raw:{};const old=String(x.id||'');const id=safeId(old,'set',setUsed);if(!setMap.has(old))setMap.set(old,id);const mappedBook=bookMap.get(String(x.bookId||''))||String(x.bookId||'');return {...x,id,learnerId:mapLearner(x.learnerId),subject:normalizeSubjectId(x.subject),title:safeText(x.title||'Lernset',200),schoolYear:safeText(x.schoolYear||currentSchoolYear(),24),bookId:bookIds.has(mappedBook)?mappedBook:'',bookSection:safeText(x.bookSection||x.title||'',200),testDate:safeText(x.testDate||'',10),testScopeMode:['range','selected'].includes(x.testScopeMode)?x.testScopeMode:'set',testSelectedLinkIds:(Array.isArray(x.testSelectedLinkIds)?x.testSelectedLinkIds:[]).slice(0,10000).map(y=>safeText(y,120)).filter(Boolean),testFrom:Math.max(1,Math.round(safeNumber(x.testFrom,1,100000,1))),testTo:Math.max(0,Math.round(safeNumber(x.testTo,0,100000,0))),testFormat:['target','source','mixed','dictation'].includes(x.testFormat)?x.testFormat:'target',pairReviewRequired:x.pairReviewRequired===true,pairVerifiedAt:safeText(x.pairVerifiedAt||'',40),pairVerifiedSignature:safeText(x.pairVerifiedSignature||'',120)};});
   const setIds=new Set(s.sets.map(x=>x.id));
   const vocabUsed=new Set(),vocabMap=new Map(),senseUsed=new Set(),senseMap=new Map();
   s.vocabulary=(Array.isArray(s.vocabulary)?s.vocabulary:[]).slice(0,100000).map(raw=>{
@@ -375,6 +390,6 @@ function migrate(s){
   migrateSenseModel(s);
   repairV0912AliasSplit(s,sourceVersion);s.senseModelVersion=1;repairPreFocusSpellingLeak(s);requireLegacyPhotoPairReview(s);backfillBookVocabularyVerification(s);backfillFirstContact(s);
   s.practiceTests=(s.practiceTests||[]).map(t=>{const subject=normalizeSubjectId(t.subject),owner=s.learners.find(l=>l.id===t.learnerId),scale={...defaultGradeScale(),...((owner?.gradeScales||defaultGradeScales())[subject]||{})};return {...t,gradeScaleSnapshot:t.gradeScaleSnapshot||scale,suggestedGrade:t.suggestedGrade||suggestGradeFromScale(t.percent,scale)}});
-  return hardenState(s);
+  const hardened=hardenState(s);backfillPairReviewSignatures(hardened);return hardened;
 }
 function save(){persistOnly();window.VTFamilySync?.markLocalChange();renderAll();}

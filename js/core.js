@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.18.14';
+const VERSION = '0.18.15';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';
@@ -150,6 +150,26 @@ function currentBook(learnerId=state?.activeLearnerId,subject=state?.activeSubje
 function assignBookToLearner(learnerId,subject,bookId,opts={}){if(!bookById(bookId))throw new Error('Lehrwerk nicht gefunden');(state.learnerBooks||[]).forEach(x=>{if(x.learnerId===learnerId&&x.subject===subject)x.active=false});let a=(state.learnerBooks||[]).find(x=>x.learnerId===learnerId&&x.subject===subject&&x.bookId===bookId&&x.schoolYear===(opts.schoolYear||currentSchoolYear()));if(!a){a={id:uid('lb'),learnerId,subject,bookId,gradeLevel:String(opts.gradeLevel||''),schoolYear:opts.schoolYear||currentSchoolYear(),active:true,createdAt:new Date().toISOString()};state.learnerBooks.push(a)}else{a.active=true;a.gradeLevel=String(opts.gradeLevel||a.gradeLevel||'')}return a}
 function unassignBook(learnerId,subject){(state.learnerBooks||[]).forEach(x=>{if(x.learnerId===learnerId&&x.subject===subject)x.active=false})}
 function bookUsage(bookId){const rows=(state?.bookVocabulary||[]).filter(x=>x.bookId===bookId);return {sections:new Set(rows.map(x=>x.section||'Lernset')).size,vocabulary:new Set(rows.map(x=>x.vocabId)).size,rows:rows.length}}
+function pairReviewSignatureForSet(setId,s=state){
+  const uniqSorted=values=>[...new Set((values||[]).map(x=>String(x||'').trim()).filter(Boolean))].sort((a,b)=>a<b?-1:a>b?1:0);
+  const rows=(s?.setVocabulary||[]).filter(x=>String(x?.setId||'')===String(setId||'')).map(link=>{
+    const v=(s?.vocabulary||[]).find(x=>x.id===link.vocabId),sense=v&&(v.senses||[]).find(x=>x.id===link.senseId);if(!v||!sense)return null;
+    return {
+      term:String(link.termOverride||v.term||'').trim(),
+      terms:uniqSorted([v.term,...(v.termVariants||[]),...(link.acceptedTermOverrides||[])]),
+      translation:String(link.translationOverride||sense.translation||'').trim(),
+      translations:uniqSorted([sense.translation,...(sense.translations||[]),...(link.acceptedTranslationOverrides||[])]),
+      extra:String(link.extraOverride||v.extra||'').trim()
+    };
+  }).filter(Boolean).sort((a,b)=>{const aa=JSON.stringify(a),bb=JSON.stringify(b);return aa<bb?-1:aa>bb?1:0});
+  const raw=JSON.stringify(rows);let a=2166136261>>>0,b=5381>>>0;
+  for(let i=0;i<raw.length;i++){const code=raw.charCodeAt(i);a=Math.imul(a^code,16777619)>>>0;b=(Math.imul(b,33)^code)>>>0;}
+  return `${rows.length}:${raw.length}:${a.toString(36)}:${b.toString(36)}`;
+}
+function pairReviewSignatureMismatch(set,s=state){
+  const approved=String(set?.pairVerifiedSignature||'');
+  return !!(approved&&set?.pairVerifiedAt&&approved!==pairReviewSignatureForSet(set.id,s));
+}
 function ensureBookVocabulary(bookId,vocabId,opts={}){
   if(!bookId||!vocabId)return null;const v=(state.vocabulary||[]).find(x=>x.id===vocabId);if(!v)return null;const sense=senseById(v,opts.senseId)||senseMatch(v,opts.translationOverride)||primarySense(v);if(!sense)return null;
   const section=String(opts.section||'Lernset').trim()||'Lernset',verifiedAt=String(opts.verifiedAt||'').trim();let row=(state.bookVocabulary||[]).find(x=>x.bookId===bookId&&x.senseId===sense.id&&x.section===section);
@@ -160,7 +180,7 @@ function ensureBookVocabulary(bookId,vocabId,opts={}){
 function knownBookSections(bookId){const rows=(state?.bookVocabulary||[]).filter(x=>x.bookId===bookId&&x.verifiedAt&&!x.verificationBlocked);const m=new Map();for(const r of rows){const key=r.section||'Lernset';if(!m.has(key))m.set(key,[]);m.get(key).push(r)}return [...m.entries()].map(([section,items])=>({section,items:items.sort((a,b)=>(a.position||0)-(b.position||0))})).sort((a,b)=>a.section.localeCompare(b.section,'de'))}
 function syncSetToBookVocabulary(setId,verifiedAt=''){
   const set=(state.sets||[]).find(s=>s.id===setId);if(!set?.bookId)return 0;
-  if(set.pairReviewRequired&&!verifiedAt)return 0;
+  if((set.pairReviewRequired||pairReviewSignatureMismatch(set))&&!verifiedAt)return 0;
   const at=String(verifiedAt||set.pairVerifiedAt||new Date().toISOString()),links=(state.setVocabulary||[]).filter(x=>x.setId===setId);
   for(const link of links)ensureBookVocabulary(set.bookId,link.vocabId,{senseId:link.senseId,section:set.bookSection||set.title,position:link.position,termOverride:link.termOverride,translationOverride:link.translationOverride,acceptedTermOverrides:link.acceptedTermOverrides,acceptedTranslationOverrides:link.acceptedTranslationOverrides,extraOverride:link.extraOverride,exampleOverride:link.exampleOverride,verifiedAt:at});
   return links.length;
