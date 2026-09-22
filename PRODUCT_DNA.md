@@ -39,7 +39,7 @@ Für den Erstkontakt gilt:
 - Die Vorlage wird anschließend abgedeckt; die Wortform wird einmal aktiv aus dem Gedächtnis geschrieben.
 - Danach wird mit der fachlich geprüften Wortform verglichen. Die App bewertet die Handschrift nicht automatisch.
 - Kurze Blockwiederholungen unterbrechen lange Abschreibserien und fordern erneut aktiven Abruf.
-- **Vorkenntnis-Ausnahme:** Der schriftliche Karteikartenmodus darf bereits vor diesem Abschreib-Erstkontakt genutzt werden. Wird eine fachlich geprüfte neue Vokabel dort ohne Hilfe und orthographisch korrekt aus dem Gedächtnis geschrieben, gilt das Wort als bereits bekannt; der Abschreibblock für dieses Wort entfällt und es geht direkt in die verteilte Wiederholung.
+- **Vorkenntnis-Ausnahme:** Der schriftliche Karteikartenmodus darf bereits vor diesem Abschreib-Erstkontakt genutzt werden. Wird eine fachlich geprüfte neue Vokabel dort **beim ersten unbeeinflussten Versuch**, ohne Hilfe und orthographisch korrekt aus dem Gedächtnis geschrieben, gilt das Wort als bereits bekannt; der Abschreibblock für dieses Wort entfällt und es geht direkt in die verteilte Wiederholung.
 - Dieser Beweis erzeugt ausdrücklich **keine Mastery** und setzt das Wort nicht auf „nachhaltig gemeistert“. Die normalen Spacing- und Mastery-Kriterien gelten unverändert.
 - Erst nach dem regulären Erstkontakt **oder** einem erfolgreichen Vorkenntnis-Beweis wird die Vokabel für den normalen adaptiven Lernpfad freigegeben.
 - Wird die fachliche Wortform oder Bedeutung später geändert, verliert die betroffene Zuordnung ihre Erstkontakt-Freigabe.
