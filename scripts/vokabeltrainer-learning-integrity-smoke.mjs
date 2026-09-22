@@ -55,6 +55,21 @@ const passed=vm.runInContext(`
   assert(session.correct===1,'semantic retrieval success remains credited');
 
   state=defaultState();
+  const isbnBase='978000000000',approvalBook=makeBook(isbnBase+isbn13Checksum(isbnBase),'english',{id:'approval_book',title:'Approval Book'});
+  state.books.push(approvalBook);
+  const approvalSet={id:'approval_set',learnerId:'learner_demo',subject:'english',title:'Approval Unit',schoolYear:currentSchoolYear(),bookId:approvalBook.id,bookSection:'Approval Unit',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:'2026-09-22T05:00:00.000Z',pairVerifiedSignature:''};
+  state.sets.push(approvalSet);
+  const approvalLinked=attachVocabularyToSet(approvalSet.id,{term:'write',translation:'schreiben',source:'book-library',verified:false});
+  ensureBookVocabulary(approvalBook.id,approvalLinked.vocab.id,{senseId:approvalLinked.sense.id,section:'Approval Unit',position:1});
+  approvalSet.pairVerifiedSignature=pairReviewSignatureForSet(approvalSet.id);
+  const restarted=migrate(JSON.parse(JSON.stringify(state)));state=restarted;
+  const restartedSet=state.sets.find(x=>x.id==='approval_set');
+  assert(!setNeedsPairReview(restartedSet),'confirmed vocabulary pairs stay approved after startup migration');
+  assert(!!state.bookVocabulary.find(x=>x.bookId==='approval_book')?.verifiedAt,'startup repairs missing library verification from the existing parent approval');
+  state.setVocabulary.find(x=>x.setId==='approval_set').translationOverride='anders';
+  assert(setNeedsPairReview(restartedSet),'a real word↔meaning content change invalidates the stored approval');
+
+  state=defaultState();
   const localSet={id:'local_wording_set',learnerId:'learner_demo',subject:'english',title:'Unit Wortlaut',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:''};
   state.sets.push(localSet);
   const local=attachVocabularyToSet(localSet.id,{term:'look',translation:'schauen',source:'integrity',verified:true});
