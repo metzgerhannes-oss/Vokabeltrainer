@@ -180,7 +180,7 @@ function startSession(mode='adaptive',setId=null,wordIds=null,isDaily=false){
   if(blocked){const blockedSet=state.sets.find(s=>s.id===blocked.setId);toast('Vor dem Lernen bitte zuerst die erkannten Vokabelpaare bestätigen.','warn');showView('homeView');renderAll();setTimeout(()=>openSetPairAudit?.(blockedSet?.id),80);return}
   const introBlocked=mode==='cards'?null:queue.find(w=>!wordFirstContactReady(w));
   if(introBlocked){const blockedSet=state.sets.find(s=>s.id===introBlocked.setId),links=queue.filter(w=>w.setId===introBlocked.setId&&!wordFirstContactReady(w)).map(w=>w.setLinkId);toast('Neue Vokabeln werden zuerst kennengelernt und abgeschrieben.','warn');startFirstContact(blockedSet?.id,links,{isDaily});return}
-  session={mode,setId,queue:queue.map(quizQueueRef),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString(),currentQuestion:null,currentQuestionIssues:[]}; showView('learnView'); $('#modePill').textContent=modeLabel(mode); renderStudy();
+  session={mode,setId,queue:queue.map(quizQueueRef),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},proofFailedWords:{},hintUsed:false,isDaily,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString(),currentQuestion:null,currentQuestionIssues:[]}; showView('learnView'); $('#modePill').textContent=modeLabel(mode); renderStudy();
 }
 function modeLabel(m){return ({adaptive:'Adaptiv',flash:'Wortblitz',shower:'Vokabeldusche',chunks:'Wortbausteine',handwriting:'Handschrift',firstContact:'Kennenlernen',recognition:'Erkennen',recall:'Abrufen',reverseRecall:'Bedeutung abrufen',spelling:'Schreiben',listening:'Hören',context:'Kontext',latinGrammar:'Latein Formen',practiceTest:'Prüfung',cards:'Karteikarten'})[m]||m}
 function currentWord(){const token=session?.queue?.[session.index];return resolveQuizQueueRef(token,session?.setId||'')}
@@ -240,8 +240,11 @@ function renderLeitnerCard(w){
 }
 function gradeLeitnerCard(w,answer,q){
   if(session.locked)return;const targetSession=session;session.locked=true;
-  const grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w),wasPending=!wordFirstContactReady(w);
-  const proved=wasPending&&ok&&grade.orthographyOk!==false?markWordKnownByProof(w)>0:false;
+  const grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w),wasPending=!wordFirstContactReady(w),proofKey=w.setLinkId||w.id;
+  session.proofFailedWords=session.proofFailedWords||{};
+  const proofEligible=wasPending&&!session.proofFailedWords[proofKey];
+  if(wasPending&&!ok)session.proofFailedWords[proofKey]=true;
+  const proved=proofEligible&&ok&&grade.orthographyOk!==false?markWordKnownByProof(w)>0:false;
   recordResult(w,ok,'retrieval',ok?null:'retrieval',{orthographyOk:grade.orthographyOk});
   const move=session.lastLeitnerMove||{before,after:leitnerBox(w),moved:false,blockedBySpacing:false};
   const movement=!ok?`Box ${move.before} → Box ${move.after}`:move.moved?`Box ${move.before} → Box ${move.after}`:move.blockedBySpacing?`Bleibt in Box ${move.after}: Für die nächste Stufe braucht es einen richtigen Abruf an einem späteren Tag.`:`Bleibt in Box ${move.after}.`;
