@@ -239,7 +239,7 @@ function dailyPacePlan(pendingCount,weakCount,ctx,lrsMode=false){
     if(window.acquisitionDays<1){requiredPerDay=pendingCount;overload=true}
     else{
       requiredPerDay=Math.ceil(pendingCount/window.acquisitionDays);
-      quota=Math.min(pendingCount,requiredPerDay<=3?Math.max(1,requiredPerDay):Math.min(7,requiredPerDay));
+      quota=Math.min(pendingCount,requiredPerDay<=3?3:Math.min(7,requiredPerDay));
       overload=requiredPerDay>7;
     }
   }
