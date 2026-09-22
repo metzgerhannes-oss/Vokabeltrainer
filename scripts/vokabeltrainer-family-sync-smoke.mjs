@@ -3,6 +3,8 @@ import fs from 'node:fs';
 const read=p=>fs.readFileSync(p,'utf8');
 const core=read('js/core.js');
 const sync=read('js/family-sync.js');
+const pairing=read('js/device-pairing.js');
+const app=read('js/app.js');
 const html=read('index.html');
 const sw=read('sw.js');
 const sql=read('supabase/vt_family_sync_v1.sql');
@@ -14,12 +16,17 @@ const version=core.match(/const VERSION\s*=\s*'([^']+)'/)?.[1]||'';
 
 assert(html.includes('js/family-sync.js?v='+version),'family sync module is loaded with current app version');
 assert(sw.includes("'./js/family-sync.js?v="+version+"'"),'family sync module is cached in the offline shell');
+assert(sw.includes("'./js/device-pairing.js?v="+version+"'"),'device pairing module is cached in the offline shell');
 assert(html.includes("connect-src 'self' https://ilfblkqxbldkzmqczbgo.supabase.co"),'CSP allows only the configured Supabase endpoint in addition to self');
 assert(sync.includes("sb_publishable_")&&!sync.includes('sb_secret_')&&!sync.includes('service_role'),'browser code contains only a publishable Supabase key');
 
 assert(sync.includes("shared:{")&&sync.includes("'/setup'")&&sync.includes("'/progress'"),'state is split into shared, setup and progress documents');
 assert(sync.includes("return key==='profile/'+cfg.profileId+'/progress'"),'child devices can write only their own progress document');
 assert(sync.includes("vt_create_child_invite")&&sync.includes("vt_claim_child_invite"),'one-time child-device enrollment is implemented');
+assert(pairing.includes("Verbindungslink erstellen")&&pairing.includes('navigator.share'),'parent UI hands the invite off as a shareable link instead of exposing the raw token');
+assert(pairing.includes("claimChildInvite(token")&&pairing.includes("Dieses Gerät verbinden"),'child device can consume the invite link in one guided step');
+assert(pairing.includes("location.hash")&&!pairing.includes("searchParams.set('childInvite'"),'invite secret is transported in the URL fragment, not the query string');
+assert(app.includes('handleChildInviteFromUrl'),'bootstrap detects child-device invite links');
 assert(sync.includes("sha256Hex(familyId+'|'")&&!/pin\s*:/.test(sync),'family PIN is derived locally and not persisted as a config field');
 assert(sync.includes("p_base_revision")&&sync.includes("pushed?.conflict"),'client uses optimistic revisions and detects conflicts');
 
