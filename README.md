@@ -10,7 +10,19 @@ Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in diese
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
 
-## v0.18.12 – schriftlicher Karteikartenmodus mit fünf Boxen
+## v0.18.12 – dynamische Testplanung nach tatsächlichem Lernstand
+
+- Testtage werden als lokale Kalendertage gerechnet; „in 7 Tagen“ entspricht exakt sieben Datumswechseln und ist unabhängig von Sommer-/Winterzeit
+- der ausgewählte Testumfang wird unverändert als konkrete Vokabelmenge übernommen
+- bei mindestens zwei Tagen Vorlauf wird der letzte Tag vor dem Test bewusst als Wiederholungstag ohne geplante neue Wörter reserviert
+- das Pensum wird an jedem neuen Lerntag aus dem tatsächlich verbleibenden Lernstoff neu berechnet
+- Rückstand erhöht zunächst die Zahl neuer Wörter bis maximal 7 und danach die Wiederholungen; das Gesamtziel kann vorübergehend bis 14 Kontakte steigen
+- Vorsprung reduziert die Belastung bis auf kleine 3er-Blöcke neuer Wörter und etwa 8 Kontakte
+- bereits kennengelernte, aber noch unsichere Wörter fließen ebenfalls in die dynamische Wiederholungsmenge ein
+- neue Wörter am Tag vor dem Test werden ausdrücklich als Spacing-Risiko markiert; am Testtag selbst werden keine neuen Wörter mehr angesetzt
+- Vorschau im Testplan und tatsächlicher Tagesplan verwenden dieselbe Berechnungslogik
+
+## v0.18.11 – schriftlicher Karteikartenmodus mit fünf Boxen
 
 - neuer Lernmodus **Karteikarten** unter „Mehr üben“: Bedeutung sehen, Vokabel vollständig schreiben, automatisch prüfen
 - fünf sichtbare Stufen: **Neu → Im Lernen → Bekannt → Sicher → Nachhaltig gemeistert**
