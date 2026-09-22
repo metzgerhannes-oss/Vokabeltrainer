@@ -633,7 +633,7 @@ function renderParentOverview(){
   box.querySelector('[data-parent-plan-first]')?.addEventListener('click',openTestDatePlanner);
   box.querySelector('[data-parent-newset]')?.addEventListener('click',()=>openLearningContentPlanner());
 }
-function isDesktopLayout(){return !!window.matchMedia?.('(min-width: 1000px)').matches}
+function isDesktopLayout(){return !!window.matchMedia?.('(min-width: 1100px)').matches}
 function syncResponsiveHomeLayout(){
   const practice=$('#practiceDisclosure');if(practice)practice.open=isDesktopLayout();
 }
