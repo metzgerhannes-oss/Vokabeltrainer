@@ -57,6 +57,8 @@ try{
   // Retry of the first word: correct now, but no proof because feedback was seen before.
   await page.waitForSelector('#answerField');
   assert((await page.locator('.study-prompt').textContent())?.includes('nicht können'),'failed word returns for retry');
+  assert((await page.locator('#answerBtn').textContent())==='Prüfen','retry is no longer presented as a prior-knowledge proof');
+  assert((await page.locator('#studyArea').textContent())?.includes('ersetzt für dieses Wort aber nicht mehr den Kennenlernblock'),'retry explains that first-contact is still required');
   await page.fill('#answerField',"can't");
   await page.click('#answerBtn');
   await page.waitForSelector('#continueStudyBtn');
