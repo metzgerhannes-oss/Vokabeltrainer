@@ -96,8 +96,10 @@ const passed=vm.runInContext(`
   assert(aheadPace.requiredPerDay===5&&aheadPace.quota===5&&aheadPace.dailyTarget===10,'extra learning automatically reduces the next daily target');
   const farAhead=dailyPacePlan(6,0,{days:7},false);
   assert(farAhead.requiredPerDay===1&&farAhead.quota===3&&farAhead.dailyTarget===8,'large headroom keeps a small three-word block and lowers daily contacts');
+  const tomorrow=dailyPacePlan(6,0,{days:1},false);
+  assert(tomorrow.quota===6&&tomorrow.spacingRisk===true,'new vocabulary one day before the test is flagged as too late for distributed practice');
   const testToday=dailyPacePlan(5,0,{days:0},false);
-  assert(testToday.quota===0&&testToday.overload===true,'test day never introduces new vocabulary');
+  assert(testToday.quota===0&&testToday.overload===true&&testToday.spacingRisk===true,'test day never introduces new vocabulary and remains a spacing warning');
 
   const card=makeLearnerVocabulary('learner_demo','v_card','sense_card');
   assert(leitnerBox(card)===1,'new vocabulary starts in Leitner box 1');
