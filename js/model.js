@@ -9,8 +9,8 @@ function mySets(subject=state.activeSubject){ return state.sets.filter(s=>s.lear
 function setNeedsPairReview(set){return !!set?.pairReviewRequired}
 function firstContactStatus(setId){
   const links=(state?.setVocabulary||[]).filter(x=>x.setId===setId),total=links.length;
-  const copied=links.filter(x=>x.firstContactCopiedAt).length,recalled=links.filter(x=>x.firstContactRecalledAt).length,completed=links.filter(x=>x.firstContactCompletedAt).length;
-  return {total,copied,recalled,completed,pending:Math.max(0,total-completed),pct:total?Math.round(completed/total*100):0};
+  const copied=links.filter(x=>x.firstContactCopiedAt).length,recalled=links.filter(x=>x.firstContactRecalledAt).length,proved=links.filter(x=>x.firstContactProvedAt).length,completed=links.filter(firstContactLinkReady).length;
+  return {total,copied,recalled,proved,completed,pending:Math.max(0,total-completed),pct:total?Math.round(completed/total*100):0};
 }
 function setNeedsFirstContact(set){return !!set&&!setNeedsPairReview(set)&&firstContactStatus(set.id).pending>0}
 function vocabularyPairSignature(v){
@@ -19,12 +19,22 @@ function vocabularyPairSignature(v){
 }
 function requirePairReviewForVocabulary(vocabId){
   const links=(state.setVocabulary||[]).filter(x=>x.vocabId===vocabId),setIds=new Set(links.map(x=>x.setId));let changed=0;
-  for(const link of links){link.firstContactCopiedAt='';link.firstContactRecalledAt='';link.firstContactCompletedAt='';}
+  for(const link of links){link.firstContactCopiedAt='';link.firstContactRecalledAt='';link.firstContactCompletedAt='';link.firstContactProvedAt='';}
   for(const set of (state.sets||[])){if(!setIds.has(set.id))continue;if(!set.pairReviewRequired||set.pairVerifiedAt)changed++;set.pairReviewRequired=true;set.pairVerifiedAt='';}
   for(const row of (state.bookVocabulary||[])){if(row.vocabId!==vocabId)continue;row.verifiedAt='';}
   return changed;
 }
-function wordFirstContactReady(w){return !!w?.firstContactCompletedAt}
+function firstContactLinkReady(link){return !!(link?.firstContactCompletedAt||link?.firstContactProvedAt)}
+function wordFirstContactReady(w){return !!(w?.firstContactCompletedAt||w?.firstContactProvedAt)}
+function markWordKnownByProof(w){
+  if(!w?.senseId)return 0;
+  const setIds=new Set((state.sets||[]).filter(s=>s.learnerId===state.activeLearnerId&&s.subject===w.subject).map(s=>s.id)),now=new Date().toISOString();let changed=0;
+  for(const link of (state.setVocabulary||[])){
+    if(!setIds.has(link.setId)||link.senseId!==w.senseId||firstContactLinkReady(link))continue;
+    link.firstContactProvedAt=now;changed++;
+  }
+  return changed;
+}
 function learningReadySets(subject=state.activeSubject){return mySets(subject).filter(s=>!setNeedsPairReview(s)&&setWords(s.id).some(wordFirstContactReady))}
 function schoolYearSets(subject=state.activeSubject,schoolYear=currentSchoolYear()){ return mySets(subject).filter(s=>s.schoolYear===schoolYear); }
 function myWords(subject=state.activeSubject){const ids=new Set(mySets(subject).filter(s=>!setNeedsPairReview(s)).map(s=>s.id));return uniqueWords(state.words.filter(w=>ids.has(w.setId)&&wordFirstContactReady(w)));}
