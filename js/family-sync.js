@@ -68,6 +68,10 @@
     const m=String(key||'').match(/^profile\/([A-Za-z0-9_-]{3,120})\/(setup|progress)$/);
     return m?m[1]:'';
   }
+  function documentRank(key){
+    const k=String(key||'');
+    return k==='shared'?0:k.endsWith('/setup')?1:k.endsWith('/progress')?2:3;
+  }
   function learnerById(id){return (state.learners||[]).find(x=>x.id===id)||null}
   function ensureLearner(id,seed={}){
     let l=learnerById(id);
@@ -199,7 +203,7 @@
     runtime.applying=true;
     try{
       state.learners=[];state.sets=[];state.setVocabulary=[];state.learnerBooks=[];state.learnerVocabulary=[];state.grades=[];state.practiceTests=[];state.activity=[];
-      for(const d of (result.documents||[]).sort((a,b)=>String(a.key).localeCompare(String(b.key)))){applyDocument(d.key,d.payload);revisions[d.key]=Number(d.revision)||0}
+      for(const d of (result.documents||[]).sort((a,b)=>documentRank(a.key)-documentRank(b.key)||String(a.key).localeCompare(String(b.key)))){applyDocument(d.key,d.payload);revisions[d.key]=Number(d.revision)||0}
       state.activeLearnerId=result.profile_id;ensureActiveSubject();await persistState();
     }finally{runtime.applying=false}
     const cfg={enabled:true,familyId:result.family_id,deviceId,deviceSecret,role:'child',profileId:result.profile_id,revisions,dirtyKeys:[],conflicts:{},lastSync:new Date().toISOString()};
@@ -215,10 +219,7 @@
       if(!pulled?.ok)throw new Error(pulled?.error||'Cloud-Stand nicht erreichbar.');
       cfg.role=pulled.role==='child'?'child':'parent';cfg.profileId=String(pulled.profile_id||cfg.profileId||'');
       const dirty=new Set(cfg.dirtyKeys||[]),conflicts={...cfg.conflicts};let changed=false;
-      const remoteDocs=(pulled.documents||[]).sort((a,b)=>{
-        const rank=k=>k==='shared'?0:k.endsWith('/setup')?1:2;
-        return rank(a.key)-rank(b.key)||String(a.key).localeCompare(String(b.key));
-      });
+      const remoteDocs=(pulled.documents||[]).sort((a,b)=>documentRank(a.key)-documentRank(b.key)||String(a.key).localeCompare(String(b.key)));
       for(const d of remoteDocs){
         const key=String(d.key||''),remoteRev=Number(d.revision)||0,localRev=Number(cfg.revisions[key])||0;
         if(remoteRev>localRev){
