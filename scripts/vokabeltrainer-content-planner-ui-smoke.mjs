@@ -43,16 +43,19 @@ try{
   await page.locator('#testPlanDate').fill(await page.evaluate(()=>datePlusDays(7)));
   assert((await page.locator('#planSelectionCount').textContent())?.startsWith('6 '),'selection counter follows the range selection');
   const preview=await page.locator('#planDailyPreview').textContent();
-  assert(preview?.includes('6 ausgewählt')&&preview?.includes('neue Wörter pro Tag'),'daily learning preview is calculated before save');
+  assert(preview?.includes('6 ausgewählt')&&preview?.includes('Test in 7 Tagen'),'preview shows the exact selected vocabulary count and calendar distance to the test');
+  assert(preview?.includes('3 neue Wörter')&&preview?.includes('8 Kontakte'),'preview uses the same adaptive pacing formula as the daily plan');
   await page.click('#saveTestPlan');
   await page.waitForSelector('#parentView.active');
 
   const saved=await page.evaluate(()=>{
     const ctx=upcomingTestContext('english');
     const set=ctx?.sets?.[0];
-    return {count:ctx?.words?.length||0,mode:set?.testScopeMode||'',selected:set?.testSelectedLinkIds?.length||0,title:set?.title||'',links:set?setWords(set.id).length:0};
+    const plan=buildDailyPlan('english');
+    return {count:ctx?.words?.length||0,days:ctx?.days,mode:set?.testScopeMode||'',selected:set?.testSelectedLinkIds?.length||0,title:set?.title||'',links:set?setWords(set.id).length:0,intro:plan.introCount,target:plan.dailyTarget,acquisitionDays:plan.acquisitionDays};
   });
-  assert(saved.count===6&&saved.mode==='selected'&&saved.selected===6&&saved.links>=6,'test plan automatically adds selected vocabulary to the child learning content');
+  assert(saved.count===6&&saved.days===7&&saved.mode==='selected'&&saved.selected===6&&saved.links>=6,'test plan keeps exact vocabulary count and exact test-day distance');
+  assert(saved.intro===3&&saved.target===8&&saved.acquisitionDays===6,'saved daily plan matches the preview and adapts workload to the available time');
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer unified content planner UI smoke: passed');
