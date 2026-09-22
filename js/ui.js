@@ -206,7 +206,7 @@ function renderToday(){
     $('#todayContext').textContent=ctx?testContextLabel(ctx):(mix.length?mix.join(' · '):'Automatisch aus fälligen und unsicheren Vokabeln');
     const mins=Math.max(2,Math.ceil(status.remaining*(learner().lrsMode?.9:.65))),phaseText=plan.phase==='acquire'?' · Neue Wörter früh aufbauen.':plan.phase==='consolidate'?' · Schwerpunkt: aktiv festigen.':plan.phase==='rehearse'?' · Kurz vor dem Test: überwiegend abrufen und wiederholen.':'';
     const maintenance=plan.maintenanceCount?` · ${plan.maintenanceCount} ältere Wiederholung${plan.maintenanceCount===1?'':'en'} dabei.`:'',deadline=plan.deadlineOverload?` · Mit maximal 7 neuen Wörtern pro Tag reicht die Zeit bis zum Test rechnerisch nicht ganz; Testumfang oder Starttermin prüfen.`:'';
-    const paceText=ctx?(plan.pace==='ahead'?' · Du liegst vor dem Plan; das Tagesziel wurde reduziert.':plan.pace==='catchup'?' · Es gibt Nachholbedarf; das Tagesziel wurde erhöht.':plan.pace==='overload'?' · Deutlicher Rückstand: maximale neue Wörter plus zusätzliche Wiederholungen.':' · Das Tagesziel passt zum aktuellen Lernstand.'):'';
+    const paceText=ctx?(plan.spacingRisk?' · Der Test ist sehr nah; für neue Wörter fehlt ausreichender Wiederholungsabstand.':plan.pace==='ahead'?' · Du liegst vor dem Plan; das Tagesziel wurde reduziert.':plan.pace==='catchup'?' · Es gibt Nachholbedarf; das Tagesziel wurde erhöht.':plan.pace==='overload'?' · Deutlicher Rückstand: maximale neue Wörter plus zusätzliche Wiederholungen.':' · Das Tagesziel passt zum aktuellen Lernstand.'):'';
     $('#todayEstimate').textContent=`${status.units} kurze ${status.units===1?'Einheit':'Einheiten'} · ca. ${mins} Min. · Ziel heute: ${plan.dailyTarget} Kontakte.${phaseText}${maintenance}${paceText}${deadline}`;
   }
   $('#todayProgress').max=Math.max(1,status.total); $('#todayProgress').value=status.done; $('#todayProgress').setAttribute('aria-valuetext',`${status.done} von ${status.total} Vokabeln heute erledigt`); $('#todayProgressText').textContent=status.total?`${status.done} / ${status.total} erledigt`:'';
@@ -340,6 +340,7 @@ function contentPlanPreviewText(rows,learnerId,testDate=''){
   if(days<1)return `${count} Vokabeln ausgewählt · Test ist heute. Für neue Wörter bleibt kein sinnvoller Lernabstand mehr; heute nur gezielt wiederholen.`;
   const windowText=pace.reviewOnlyDays?`${pace.acquisitionDays} Tag${pace.acquisitionDays===1?'':'e'} für neue Wörter + 1 Wiederholungstag`:`${pace.acquisitionDays} Lerntag${pace.acquisitionDays===1?'':'e'} vor dem Test`;
   if(pace.overload)return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · ${newCount} noch neu · rechnerisch ${pace.requiredPerDay} neue Wörter pro Lerntag nötig. Maximal 7 werden angesetzt; das Tagesziel steigt auf bis zu etwa ${pace.dailyTarget} Kontakte. Zeit bis zum Test ist zu knapp für den vorgesehenen Abstand.`;
+  if(pace.spacingRisk)return `${count} ausgewählt · Test ${days===1?'morgen':'heute'} · ${newCount} noch neu. Neue Wörter können noch begonnen werden, aber für verteilte Wiederholungen bleibt zu wenig Zeit. Der Plan priorisiert deshalb die wichtigsten Abrufe und markiert die Situation als knapp.`;
   if(!newCount)return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · alle Wörter kennengelernt. Das Tagesziel wird anhand der noch unsicheren Wörter dynamisch auf etwa ${pace.dailyTarget} Kontakte angepasst.`;
   return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · ${newCount} noch neu · ${windowText}. Aktuell etwa ${pace.quota} neue Wörter und insgesamt ${pace.dailyTarget} Kontakte pro Tag. Der Plan wird jeden Tag aus dem tatsächlichen Lernstand neu berechnet.`;
 }
@@ -451,7 +452,7 @@ function openTestDatePlanner(){
   };
   const updatePreview=()=>{
     const selected=selectedRows(),when=plannedDate();counter.textContent=`${selected.length} von ${rows.length} ausgewählt`;preview.className='notice subtle';preview.textContent=contentPlanPreviewText(selected,learnerEl.value,when);
-    const pace=contentPlanPreviewData(selected,learnerEl.value,when).pace;if(pace.overload)preview.className='notice warn';
+    const pace=contentPlanPreviewData(selected,learnerEl.value,when).pace;if(pace.overload||pace.spacingRisk)preview.className='notice warn';
   };
   const renderRows=()=>{
     const group=knownBookSections(bookEl.value).find(g=>g.section===sectionEl.value);rows=group?.items||[];const existing=new Set(selectedRowIdsFromSet(matchingSet())),useExisting=existing.size>0;
