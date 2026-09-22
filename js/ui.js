@@ -633,12 +633,16 @@ function renderParentOverview(){
   box.querySelector('[data-parent-plan-first]')?.addEventListener('click',openTestDatePlanner);
   box.querySelector('[data-parent-newset]')?.addEventListener('click',()=>openLearningContentPlanner());
 }
+function isDesktopLayout(){return !!window.matchMedia?.('(min-width: 1000px)').matches}
+function syncResponsiveHomeLayout(){
+  const practice=$('#practiceDisclosure');if(practice)practice.open=isDesktopLayout();
+}
 function showView(id){
   if(id!=='battleView'&&document.body.classList.contains('battle-immersive'))closeBattleImmersive();
   if(PARENT_VIEW_IDS.has(id)&&!isParentMode()){toast('Diese Funktion liegt im Elternbereich.','subtle');id='homeView'}
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
   document.querySelectorAll('.nav-btn[data-view]').forEach(b=>{const active=!isParentMode()&&b.dataset.view===id;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
-  if(id==='homeView')document.querySelectorAll('.home-disclosure').forEach(d=>{d.open=false});
+  if(id==='homeView')document.querySelectorAll('.home-disclosure').forEach(d=>{d.open=isDesktopLayout()&&d.id==='practiceDisclosure'});
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   window.scrollTo({top:0,behavior:reduced?'auto':'smooth'});
 }
@@ -662,6 +666,7 @@ function bind(){
   const openIosInstallGuide=()=>modal(`<div class="eyebrow">iPhone / iPad</div><h2>Ohne Safari-Leiste öffnen</h2><p>Wie bei Johanna´s Gartenwelt muss der Vokabeltrainer einmal als Web-App auf den Home-Bildschirm gelegt werden:</p><ol><li>Unten in Safari auf <strong>Teilen</strong> tippen.</li><li><strong>Zum Home-Bildschirm</strong> wählen.</li><li><strong>Als Web-App öffnen</strong> eingeschaltet lassen.</li><li><strong>Hinzufügen</strong> bestätigen.</li><li>Safari schließen und künftig das neue <strong>Vokabeltrainer</strong>-Symbol öffnen.</li></ol><p>Dann läuft die App im Standalone-Modus ohne Safari-Navigationsleiste.</p><div class="modal-actions"><button value="ok" class="primary">Verstanden</button></div>`);
   const syncInstallUi=()=>{const iosSafariMode=isiOS&&!standalone();$('#iosInstallCard')?.classList.toggle('hidden',!iosSafariMode);if(iosSafariMode)$('#installBtn')?.classList.add('hidden')};
   syncInstallUi();$('#iosInstallBtn').onclick=openIosInstallGuide;
+  syncResponsiveHomeLayout();window.addEventListener('resize',syncResponsiveHomeLayout,{passive:true});
   window.addEventListener('pagehide',()=>persistOnly());document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')persistOnly()});
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;if(!isiOS)$('#installBtn').classList.remove('hidden')}); $('#installBtn').onclick=async()=>{if(installPrompt){installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$('#installBtn').classList.add('hidden');return}openIosInstallGuide()};
 }
