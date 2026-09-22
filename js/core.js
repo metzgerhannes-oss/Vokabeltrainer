@@ -127,7 +127,7 @@ function makeVocabulary(subject,term,translation,opts={}){
 }
 function makeSetVocabulary(setId,vocabId,senseIdOrOpts='',opts={}){
   if(senseIdOrOpts&&typeof senseIdOrOpts==='object'){opts=senseIdOrOpts;senseIdOrOpts=opts.senseId||''}
-  return {id:opts.id||uid('sv'),setId,vocabId,senseId:String(senseIdOrOpts||opts.senseId||''),position:Number(opts.position)||0,termOverride:opts.termOverride||'',translationOverride:opts.translationOverride||'',acceptedTermOverrides:Array.isArray(opts.acceptedTermOverrides)?opts.acceptedTermOverrides.filter(Boolean):[],acceptedTranslationOverrides:Array.isArray(opts.acceptedTranslationOverrides)?opts.acceptedTranslationOverrides.filter(Boolean):[],extraOverride:opts.extraOverride||'',exampleOverride:opts.exampleOverride||'',source:opts.source||'',firstContactCopiedAt:opts.firstContactCopiedAt||'',firstContactRecalledAt:opts.firstContactRecalledAt||'',firstContactCompletedAt:opts.firstContactCompletedAt||'',createdAt:opts.createdAt||new Date().toISOString()};
+  return {id:opts.id||uid('sv'),setId,vocabId,senseId:String(senseIdOrOpts||opts.senseId||''),position:Number(opts.position)||0,termOverride:opts.termOverride||'',translationOverride:opts.translationOverride||'',acceptedTermOverrides:Array.isArray(opts.acceptedTermOverrides)?opts.acceptedTermOverrides.filter(Boolean):[],acceptedTranslationOverrides:Array.isArray(opts.acceptedTranslationOverrides)?opts.acceptedTranslationOverrides.filter(Boolean):[],extraOverride:opts.extraOverride||'',exampleOverride:opts.exampleOverride||'',source:opts.source||'',firstContactCopiedAt:opts.firstContactCopiedAt||'',firstContactRecalledAt:opts.firstContactRecalledAt||'',firstContactCompletedAt:opts.firstContactCompletedAt||'',firstContactProvedAt:opts.firstContactProvedAt||'',createdAt:opts.createdAt||new Date().toISOString()};
 }
 
 function isbn13Checksum(digits12){let sum=0;for(let i=0;i<12;i++)sum+=Number(digits12[i])*(i%2?3:1);return String((10-(sum%10))%10)}
@@ -170,7 +170,7 @@ function cloneKnownBookToLearner(bookId,learnerId){const book=bookById(bookId),l
 function learnerAlreadyKnowsSense(learnerId,senseId){
   if(!learnerId||!senseId)return false;
   const progress=(state.learnerVocabulary||[]).find(p=>p.learnerId===learnerId&&p.senseId===senseId);
-  if(progress&&((progress.repetitions||0)>0||(progress.activePracticeDays||[]).length||(progress.activeSuccessDays||[]).length))return true;
+  if(progress&&((progress.successes||0)>0||(progress.activeSuccessDays||[]).length))return true;
   const learnerSetIds=new Set((state.sets||[]).filter(s=>s.learnerId===learnerId).map(s=>s.id));
   return (state.setVocabulary||[]).some(link=>learnerSetIds.has(link.setId)&&link.senseId===senseId&&link.firstContactCompletedAt);
 }
@@ -190,7 +190,7 @@ function assignBookRowsToLearner(bookId,section,learnerId,rowIds=[]){
     let link=(state.setVocabulary||[]).find(x=>x.setId===set.id&&x.senseId===sense.id);
     if(!link){
       const known=learnerAlreadyKnowsSense(learnerId,sense.id),knownAt=known?new Date().toISOString():'';
-      link=makeSetVocabulary(set.id,v.id,sense.id,{position:r.position,termOverride:r.termOverride,translationOverride:r.translationOverride,acceptedTermOverrides:r.acceptedTermOverrides,acceptedTranslationOverrides:r.acceptedTranslationOverrides,extraOverride:r.extraOverride,exampleOverride:r.exampleOverride,source:'book-library',firstContactCopiedAt:knownAt,firstContactRecalledAt:knownAt,firstContactCompletedAt:knownAt});
+      link=makeSetVocabulary(set.id,v.id,sense.id,{position:r.position,termOverride:r.termOverride,translationOverride:r.translationOverride,acceptedTermOverrides:r.acceptedTermOverrides,acceptedTranslationOverrides:r.acceptedTranslationOverrides,extraOverride:r.extraOverride,exampleOverride:r.exampleOverride,source:'book-library',firstContactCopiedAt:knownAt,firstContactRecalledAt:knownAt,firstContactCompletedAt:knownAt,firstContactProvedAt:''});
       state.setVocabulary.push(link);ensureLearnerVocabulary(learnerId,v.id,sense.id);links++;
     }
     linkIds.push(link.id);
@@ -317,11 +317,11 @@ function attachVocabularyToSet(setId,data={}){
   const up=upsertVocabulary(set.subject,data.term,canonicalTranslation,{...data,setId,verified:data.verified!==false});const v=up.vocab,sense=up.sense;if(!sense)throw new Error('Bedeutung fehlt');const p=ensureLearnerVocabulary(set.learnerId,v.id,sense.id);
   let link=(state.setVocabulary||[]).find(x=>x.setId===setId&&x.senseId===sense.id),alreadyLinked=!!link;
   const beforeLink=link?JSON.stringify({senseId:link.senseId,termOverride:link.termOverride||'',translationOverride:link.translationOverride||'',acceptedTermOverrides:link.acceptedTermOverrides||[],acceptedTranslationOverrides:link.acceptedTranslationOverrides||[],extraOverride:link.extraOverride||'',exampleOverride:link.exampleOverride||''}):'';
-  if(!link){const pos=Math.max(0,...(state.setVocabulary||[]).filter(x=>x.setId===setId).map(x=>Number(x.position)||0))+1;link=makeSetVocabulary(setId,v.id,sense.id,{position:pos,source:data.source||'manual',firstContactCopiedAt:data.firstContactCopiedAt||'',firstContactRecalledAt:data.firstContactRecalledAt||'',firstContactCompletedAt:data.firstContactCompletedAt||''});state.setVocabulary.push(link);}
+  if(!link){const pos=Math.max(0,...(state.setVocabulary||[]).filter(x=>x.setId===setId).map(x=>Number(x.position)||0))+1;link=makeSetVocabulary(setId,v.id,sense.id,{position:pos,source:data.source||'manual',firstContactCopiedAt:data.firstContactCopiedAt||'',firstContactRecalledAt:data.firstContactRecalledAt||'',firstContactCompletedAt:data.firstContactCompletedAt||'',firstContactProvedAt:data.firstContactProvedAt||''});state.setVocabulary.push(link);}
   const term=String(data.term||'').trim(),tr=String(data.translation||canonicalTranslation).trim(),extra=String(data.extra||'').trim(),example=String(data.example||'').trim();
   link.termOverride=term&&term!==v.term?term:'';link.translationOverride=tr&&tr!==sense.translation?tr:'';link.acceptedTermOverrides=Array.isArray(data.acceptedTerms)?[...new Set(data.acceptedTerms.filter(Boolean))]:link.acceptedTermOverrides||[];link.acceptedTranslationOverrides=Array.isArray(data.acceptedTranslations)?[...new Set(data.acceptedTranslations.filter(Boolean))]:link.acceptedTranslationOverrides||[];link.extraOverride=extra&&extra!==(v.extra||'')?extra:'';link.exampleOverride=example&&example!==((sense.examples||[])[0]||'')?example:'';if(data.source)link.source=data.source;
   const afterLink=JSON.stringify({senseId:link.senseId,termOverride:link.termOverride||'',translationOverride:link.translationOverride||'',acceptedTermOverrides:link.acceptedTermOverrides||[],acceptedTranslationOverrides:link.acceptedTranslationOverrides||[],extraOverride:link.extraOverride||'',exampleOverride:link.exampleOverride||''});
-  if(alreadyLinked&&beforeLink!==afterLink){link.firstContactCopiedAt='';link.firstContactRecalledAt='';link.firstContactCompletedAt='';}
+  if(alreadyLinked&&beforeLink!==afterLink){link.firstContactCopiedAt='';link.firstContactRecalledAt='';link.firstContactCompletedAt='';link.firstContactProvedAt='';}
   if(set.bookId&&data.verified!==false)ensureBookVocabulary(set.bookId,v.id,{senseId:sense.id,section:set.bookSection||set.title,position:link.position,termOverride:link.termOverride,translationOverride:link.translationOverride,acceptedTermOverrides:link.acceptedTermOverrides,acceptedTranslationOverrides:link.acceptedTranslationOverrides,extraOverride:link.extraOverride,exampleOverride:link.exampleOverride,verifiedAt:new Date().toISOString()});
   rebuildWordIndexes();return {word:wordViewForLink(link),vocab:v,sense,progress:p,newVocabulary:up.created,newSense:up.senseCreated,translationAdded:up.senseCreated,alreadyLinked,newLink:!alreadyLinked};
 }
