@@ -243,6 +243,7 @@ function dailyPacePlan(pendingCount,weakCount,ctx,lrsMode=false){
       overload=requiredPerDay>7;
     }
   }
+  const spacingRisk=!!(pendingCount&&window.daysToTest<=1);
   const reviewDays=Math.max(1,window.studyDaysBeforeTest),requiredReviewPerDay=weakCount?Math.ceil(weakCount/reviewDays):0;
   let dailyTarget=quota?quota+5:8;
   dailyTarget=Math.max(dailyTarget,quota+requiredReviewPerDay);
@@ -250,8 +251,8 @@ function dailyPacePlan(pendingCount,weakCount,ctx,lrsMode=false){
   if(window.daysToTest<=3&&weakCount>0)dailyTarget+=1;
   const cap=lrsMode?12:14;
   dailyTarget=clamp(dailyTarget,Math.min(8,cap),cap);
-  const pace=overload?'overload':dailyTarget<10?'ahead':dailyTarget>12?'catchup':'normal';
-  return {quota,requiredPerDay,requiredReviewPerDay,overload,dailyTarget,pace,...window};
+  const pace=overload?'overload':spacingRisk?'catchup':dailyTarget<10?'ahead':dailyTarget>12?'catchup':'normal';
+  return {quota,requiredPerDay,requiredReviewPerDay,overload,spacingRisk,dailyTarget,pace,...window};
 }
 function dailyIntroQuota(pendingCount,ctx,weakCount=0,lrsMode=false){return dailyPacePlan(pendingCount,weakCount,ctx,lrsMode)}
 function buildDailyPlan(subject=state.activeSubject){
@@ -285,7 +286,7 @@ function buildDailyPlan(subject=state.activeSubject){
     wordIds:selected.map(w=>w.id),wordRefs:selected.map(w=>({wordId:w.id,setLinkId:w.setLinkId||''})),
     introRefs:introWords.map(w=>({wordId:w.id,setLinkId:w.setLinkId||''})),introSetId,
     introCount:introWords.length,reviewCount:selected.length,dailyTarget,requiredNewPerDay:introPlan.requiredPerDay,requiredReviewPerDay:introPlan.requiredReviewPerDay,
-    deadlineOverload:introPlan.overload,pace:introPlan.pace,studyDaysBeforeTest:introPlan.studyDaysBeforeTest,acquisitionDays:introPlan.acquisitionDays,reviewOnlyDays:introPlan.reviewOnlyDays,
+    deadlineOverload:introPlan.overload,spacingRisk:introPlan.spacingRisk,pace:introPlan.pace,studyDaysBeforeTest:introPlan.studyDaysBeforeTest,acquisitionDays:introPlan.acquisitionDays,reviewOnlyDays:introPlan.reviewOnlyDays,
     sessionSize,urgent,phase,maintenanceCount,createdAt:new Date().toISOString()
   };
   l.dailyPlans[key]=plan;Object.keys(l.dailyPlans).filter(k=>k<`${datePlusDays(-21)}:`).forEach(k=>delete l.dailyPlans[k]);persistOnly();return plan;
