@@ -20,9 +20,11 @@ try{
     const set={id:'cards_set',learnerId:'learner_demo',subject:'english',title:'Cards Unit',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
     state.sets.push(set);
     attachVocabularyToSet(set.id,{term:"can't",translation:'nicht können',source:'cards-smoke',verified:true});
-    rebuildWordIndexes();renderAll();startSession('cards',set.id,null,false);
+    rebuildWordIndexes();renderAll();showView('homeView');
   });
 
+  assert(!(await page.locator('#quickCardsBtn').isDisabled()),'cards quick action is enabled even while the word is still new');
+  await page.click('#quickCardsBtn');
   await page.waitForSelector('#answerField');
   assert((await page.locator('#modePill').textContent())?.includes('Karteikarten · Beweisen'),'cards mode is available before first-contact and clearly labels the proof path');
   assert(await page.locator('.proof-notice').count()===1,'new vocabulary explains that a correct written proof can skip copying');
