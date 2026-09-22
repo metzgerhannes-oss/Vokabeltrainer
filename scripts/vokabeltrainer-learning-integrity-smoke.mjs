@@ -79,11 +79,25 @@ const passed=vm.runInContext(`
   pacedLinks.slice(0,6).forEach(link=>{link.firstContactCopiedAt=new Date().toISOString();link.firstContactRecalledAt=link.firstContactCopiedAt;link.firstContactCompletedAt=link.firstContactCopiedAt});
   rebuildWordIndexes();
   const pacedPlan=buildDailyPlan('english'),pacedStatus=dailyPlanStatus(pacedPlan);
-  assert(pacedPlan.introCount===5,'daily plan introduces five new words when the deadline allows it');
-  assert(pacedPlan.reviewCount===6&&pacedStatus.total===11,'daily plan mixes available reviews to stay around ten to twelve words');
+  assert(pacedPlan.introCount===3&&pacedPlan.acquisitionDays===3,'daily plan spreads remaining new words across the real pre-test acquisition window');
+  assert(pacedPlan.reviewCount===5&&pacedStatus.total===8,'ahead-of-plan learning reduces the daily contact target instead of forcing ten to twelve');
   pacedSet.testDate=datePlusDays(2);learner().dailyPlans={};
   const urgentPlan=buildDailyPlan('english');
-  assert(urgentPlan.introCount===7&&urgentPlan.deadlineOverload===true&&urgentPlan.requiredNewPerDay>7,'deadline formula caps new words at seven and flags an impossible pace');
+  assert(urgentPlan.introCount===7&&urgentPlan.deadlineOverload===true&&urgentPlan.requiredNewPerDay===9,'deadline formula caps new words at seven and flags an impossible pace');
+  assert(urgentPlan.dailyTarget===14,'clear backlog raises the total daily contact target within the safety cap');
+
+  assert(daysUntil(datePlusDays(7))===7,'test date uses exact calendar-day distance without an off-by-one');
+  const normalPace=dailyPacePlan(31,0,{days:7},false);
+  assert(normalPace.acquisitionDays===6&&normalPace.reviewOnlyDays===1,'seven days to test reserves the final day for review and leaves six acquisition days');
+  assert(normalPace.requiredPerDay===6&&normalPace.quota===6&&normalPace.dailyTarget===11,'31 new words with seven days yields six new words and eleven contacts today');
+  const missedPace=dailyPacePlan(31,0,{days:6},false);
+  assert(missedPace.requiredPerDay===7&&missedPace.quota===7&&missedPace.dailyTarget===12,'missed learning automatically raises the next daily target');
+  const aheadPace=dailyPacePlan(21,0,{days:6},false);
+  assert(aheadPace.requiredPerDay===5&&aheadPace.quota===5&&aheadPace.dailyTarget===10,'extra learning automatically reduces the next daily target');
+  const farAhead=dailyPacePlan(6,0,{days:7},false);
+  assert(farAhead.requiredPerDay===1&&farAhead.quota===3&&farAhead.dailyTarget===8,'large headroom keeps a small three-word block and lowers daily contacts');
+  const testToday=dailyPacePlan(5,0,{days:0},false);
+  assert(testToday.quota===0&&testToday.overload===true,'test day never introduces new vocabulary');
 
   const card=makeLearnerVocabulary('learner_demo','v_card','sense_card');
   assert(leitnerBox(card)===1,'new vocabulary starts in Leitner box 1');
