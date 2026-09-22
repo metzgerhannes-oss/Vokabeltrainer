@@ -617,6 +617,7 @@ body.battle-immersive{overflow:hidden;background:#0f172a}.battle-immersive .topb
   #practiceDisclosure .recommend strong{grid-area:title;margin:0}
   #practiceDisclosure .recommend small{grid-area:sub}
   .child-progress-shell,.parent-shell,.parent-subnav{max-width:1180px}
+  .parent-mode .app-shell{padding-left:38px}
   .parent-mode .topbar{max-width:1180px}
   .parent-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
   .parent-grid .menu-card{min-height:112px;grid-template-columns:34px 1fr}
