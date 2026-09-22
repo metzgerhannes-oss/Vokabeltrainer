@@ -59,7 +59,8 @@ function chooseAdaptiveMode(w){
   return w.example&&(w.errorProfile?.context||0)>0&&s.context<2?'context':(s.retrieval<=s.spelling?'recall':'spelling');
 }
 function buildQueue(mode,setId=null,wordIds=null){
-  const chosen=Array.isArray(wordIds)?wordIds.map(ref=>{if(ref&&typeof ref==='object')return ref.setLinkId?wordByLinkId(ref.setLinkId):wordById(ref.wordId||ref.progressId,setId||ref.setId||'');return wordById(ref,setId||'')}).filter(Boolean):null; const pool=chosen||(setId?setWords(setId):schoolYearWords()); if(chosen)return pool; if(mode==='shower'||mode==='flash') return pool.filter(Boolean);
+  const chosen=Array.isArray(wordIds)?wordIds.map(ref=>{if(ref&&typeof ref==='object')return ref.setLinkId?wordByLinkId(ref.setLinkId):wordById(ref.wordId||ref.progressId,setId||ref.setId||'');return wordById(ref,setId||'')}).filter(Boolean):null;
+  const defaultPool=mode==='cards'?schoolYearVerifiedWords():schoolYearWords(),pool=chosen||(setId?setWords(setId):defaultPool); if(chosen)return pool; if(mode==='shower'||mode==='flash') return pool.filter(Boolean);
   if(mode==='latinGrammar'){const all=pool.filter(latinGrammarEligible),need=all.filter(w=>!grammarReady(w)),src=need.length?need:all;return src.sort((a,b)=>(a.grammarSuccessDays||[]).length-(b.grammarSuccessDays||[]).length||Math.min(...grammarKeys(a).map(k=>(a.grammarSkills||{})[k]||0))-Math.min(...grammarKeys(b).map(k=>(b.grammarSkills||{})[k]||0))).slice(0,learner().lrsMode?6:10);}
   if(mode==='handwriting'){const src=[...pool].filter(Boolean).sort((a,b)=>((b.errorProfile?.spelling||0)-(a.errorProfile?.spelling||0))||((a.skills?.spelling||0)-(b.skills?.spelling||0))||masteryScore(a)-masteryScore(b));return src.slice(0,learner().lrsMode?4:6);}
   if(mode==='cards'){let src=pool.filter(w=>!isMastered(w));if(!src.length)src=pool;const due=src.filter(w=>!w.dueDate||w.dueDate<=today());if(due.length)src=due;return [...src].sort((a,b)=>leitnerBox(a)-leitnerBox(b)||(a.dueDate||'').localeCompare(b.dueDate||'')||masteryScore(a)-masteryScore(b)).slice(0,learner().lrsMode?6:10);}
@@ -100,20 +101,20 @@ function finishPracticeTest(){
 
 function firstContactBlockSize(){return learner()?.lrsMode?4:5}
 function firstContactLink(linkId){return (state.setVocabulary||[]).find(x=>x.id===linkId)||null}
-function firstContactPendingWords(setId){return setWords(setId).filter(w=>!w.firstContactCompletedAt)}
+function firstContactPendingWords(setId){return setWords(setId).filter(w=>!wordFirstContactReady(w))}
 function startFirstContact(setId,linkIds=null,opts={}){
   const set=state.sets.find(x=>x.id===setId&&x.learnerId===state.activeLearnerId);if(!set)return;
   if(setNeedsPairReview(set)){if(typeof isParentMode==='function'&&isParentMode()){toast('Bitte zuerst die Vokabelpaare prüfen.','warn');setTimeout(()=>openSetPairAudit?.(set.id),80)}else{toast('Diese Wörter werden noch von einem Erwachsenen geprüft.','subtle');showView('homeView');renderAll()}return}
   const pendingAll=firstContactPendingWords(setId),requested=Array.isArray(linkIds)&&linkIds.length?new Set(linkIds):null;
   const pending=requested?pendingAll.filter(w=>requested.has(w.setLinkId)):pendingAll;
-  if(!pending.length){toast(opts.isDaily?'Die neuen Wörter für heute sind bereits kennengelernt.':'Diese Lektion ist bereits kennengelernt.','good');showView('homeView');renderAll();return}
+  if(!pending.length){toast(opts.isDaily?'Die neuen Wörter für heute sind bereits kennengelernt oder nachgewiesen.':'Diese Lektion ist bereits kennengelernt oder nachgewiesen.','good');showView('homeView');renderAll();return}
   const first=pending[0],link=firstContactLink(first.setLinkId);
   session={mode:'firstContact',setId,queue:pending.map(w=>w.setLinkId),index:0,phase:link?.firstContactCopiedAt?'recall':'copy',blockSize:firstContactBlockSize(),isDaily:!!opts.isDaily,startedAt:new Date().toISOString()};
   showView('learnView');renderFirstContact();
 }
 function firstContactWord(){const linkId=session?.queue?.[session?.index||0];return linkId?wordByLinkId(linkId):null}
 function firstContactProgressText(){
-  if(session?.isDaily){const done=(session.queue||[]).map(firstContactLink).filter(x=>x?.firstContactCompletedAt).length,total=session.queue?.length||0;return total?`${done} von ${total} heute`:''}
+  if(session?.isDaily){const done=(session.queue||[]).map(firstContactLink).filter(firstContactLinkReady).length,total=session.queue?.length||0;return total?`${done} von ${total} heute`:''}
   const status=firstContactStatus(session?.setId||'');return status.total?`${status.completed} von ${status.total} kennengelernt`:'';
 }
 function firstContactHeader(eyebrow){
@@ -123,9 +124,9 @@ function renderFirstContact(){
   if(!session||session.mode!=='firstContact')return;
   if(session.index>=session.queue.length){renderFirstContactFinish();return}
   const w=firstContactWord();if(!w){session.index++;renderFirstContact();return}
-  const link=firstContactLink(w.setLinkId);if(link?.firstContactCompletedAt){session.index++;renderFirstContact();return}
+  const link=firstContactLink(w.setLinkId);if(firstContactLinkReady(link)){session.index++;renderFirstContact();return}
   $('#modePill').textContent='Kennenlernen';
-  const status=firstContactStatus(session.setId),batchTotal=session.queue.length,batchDone=session.queue.map(firstContactLink).filter(x=>x?.firstContactCompletedAt).length;$('#sessionPill').textContent=session.isDaily?`${Math.min(batchDone+1,batchTotal)} / ${batchTotal}`:`${Math.min(status.completed+1,status.total)} / ${status.total}`;
+  const status=firstContactStatus(session.setId),batchTotal=session.queue.length,batchDone=session.queue.map(firstContactLink).filter(firstContactLinkReady).length;$('#sessionPill').textContent=session.isDaily?`${Math.min(batchDone+1,batchTotal)} / ${batchTotal}`:`${Math.min(status.completed+1,status.total)} / ${status.total}`;
   if(session.phase==='blockRecall'||session.phase==='blockReveal'){renderFirstContactBlockReview();return}
   if(session.phase==='recall')return renderFirstContactRecall(w);
   if(session.phase==='compare')return renderFirstContactCompare(w);
@@ -165,7 +166,7 @@ function renderFirstContactFinish(){
   if(daily){
     $('#studyArea').innerHTML=`<div class="study-card first-contact-card first-contact-finish"><div class="eyebrow">Neue Wörter für heute</div><div class="study-prompt">✓</div><h2>${esc(set?.title||'Lernset')}</h2><p><strong>${batchTotal}</strong> neue Vokabel${batchTotal===1?'':'n'} wurden abgeschrieben, abgedeckt und aktiv erinnert.</p><div class="notice good">Als Nächstes kommen die vorgesehenen Wiederholungen. Weitere neue Wörter warten bis zu einem späteren Tagesziel.</div>${battleEarned?'<div class="battle-unlock"><strong>⚔ Angriff verdient!</strong><span>Diese Lerneinheit ist geschafft. Deine Armee darf jetzt angreifen.</span><button id="firstContactBattleBtn" class="battle-unlock-btn" type="button">Zur Schlacht</button></div>':''}<div class="row gap center-actions wrap top-space"><button id="firstContactDoneBtn" class="secondary" type="button">Zur Übersicht</button><button id="firstContactLearnBtn" class="primary" type="button">Mit Tagesziel weiter</button></div></div>`;
   }else{
-    $('#studyArea').innerHTML=`<div class="study-card first-contact-card first-contact-finish"><div class="eyebrow">Lektion vorbereitet</div><div class="study-prompt">✓</div><h2>${esc(set?.title||'Lernset')}</h2><p><strong>${status.completed} von ${status.total}</strong> Vokabeln wurden abgeschrieben, abgedeckt und aktiv erinnert.</p><div class="notice good">Diese Vokabeln sind für den normalen Lernpfad freigegeben.</div>${battleEarned?'<div class="battle-unlock"><strong>⚔ Schlacht freigeschaltet!</strong><span>Deine Armee wartet auf deinen Befehl.</span><button id="firstContactBattleBtn" class="battle-unlock-btn" type="button">Zur Schlacht</button></div>':''}<div class="row gap center-actions wrap top-space"><button id="firstContactDoneBtn" class="secondary" type="button">Zur Übersicht</button><button id="firstContactLearnBtn" class="primary" type="button">Jetzt lernen</button></div></div>`;
+    $('#studyArea').innerHTML=`<div class="study-card first-contact-card first-contact-finish"><div class="eyebrow">Lektion vorbereitet</div><div class="study-prompt">✓</div><h2>${esc(set?.title||'Lernset')}</h2><p><strong>${status.completed} von ${status.total}</strong> Vokabeln sind jetzt für den Lernpfad freigegeben.</p><div class="notice good">Freigabe erfolgt entweder durch Abschreiben + Abruf oder durch einen erfolgreichen Vorkenntnis-Beweis im Karteikartenmodus.</div>${battleEarned?'<div class="battle-unlock"><strong>⚔ Schlacht freigeschaltet!</strong><span>Deine Armee wartet auf deinen Befehl.</span><button id="firstContactBattleBtn" class="battle-unlock-btn" type="button">Zur Schlacht</button></div>':''}<div class="row gap center-actions wrap top-space"><button id="firstContactDoneBtn" class="secondary" type="button">Zur Übersicht</button><button id="firstContactLearnBtn" class="primary" type="button">Jetzt lernen</button></div></div>`;
   }
   renderAll();persistOnly();
   $('#firstContactBattleBtn')?.addEventListener('click',()=>{session=null;openBattleView()});
@@ -177,9 +178,9 @@ function startSession(mode='adaptive',setId=null,wordIds=null,isDaily=false){
   const queue=buildQueue(mode,setId,wordIds); if(!queue.length){toast('Noch keine geprüften Vokabeln vorhanden.','warn');return}
   const blocked=queue.find(w=>setNeedsPairReview(state.sets.find(s=>s.id===w.setId)));
   if(blocked){const blockedSet=state.sets.find(s=>s.id===blocked.setId);toast('Vor dem Lernen bitte zuerst die erkannten Vokabelpaare bestätigen.','warn');showView('homeView');renderAll();setTimeout(()=>openSetPairAudit?.(blockedSet?.id),80);return}
-  const introBlocked=queue.find(w=>!wordFirstContactReady(w));
+  const introBlocked=mode==='cards'?null:queue.find(w=>!wordFirstContactReady(w));
   if(introBlocked){const blockedSet=state.sets.find(s=>s.id===introBlocked.setId),links=queue.filter(w=>w.setId===introBlocked.setId&&!wordFirstContactReady(w)).map(w=>w.setLinkId);toast('Neue Vokabeln werden zuerst kennengelernt und abgeschrieben.','warn');startFirstContact(blockedSet?.id,links,{isDaily});return}
-  session={mode,setId,queue:queue.map(quizQueueRef),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString(),currentQuestion:null,currentQuestionIssues:[]}; showView('learnView'); $('#modePill').textContent=modeLabel(mode); renderStudy();
+  session={mode,setId,queue:queue.map(quizQueueRef),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},proofFailedWords:{},hintUsed:false,isDaily,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString(),currentQuestion:null,currentQuestionIssues:[]}; showView('learnView'); $('#modePill').textContent=modeLabel(mode); renderStudy();
 }
 function modeLabel(m){return ({adaptive:'Adaptiv',flash:'Wortblitz',shower:'Vokabeldusche',chunks:'Wortbausteine',handwriting:'Handschrift',firstContact:'Kennenlernen',recognition:'Erkennen',recall:'Abrufen',reverseRecall:'Bedeutung abrufen',spelling:'Schreiben',listening:'Hören',context:'Kontext',latinGrammar:'Latein Formen',practiceTest:'Prüfung',cards:'Karteikarten'})[m]||m}
 function currentWord(){const token=session?.queue?.[session.index];return resolveQuizQueueRef(token,session?.setId||'')}
@@ -232,20 +233,24 @@ function leitnerBoxesHtml(w){
 }
 function renderLeitnerCard(w){
   session.currentSubmode='cards';
-  const q=setCurrentQuizQuestion(w,'recall',{strictOrthography:true}).question,box=leitnerBox(w);
-  $('#modePill').textContent='Karteikarten';
-  $('#studyArea').innerHTML=`<div class="study-card leitner-card"><div class="eyebrow">Karteikarten · Box ${box} von 5</div>${leitnerBoxesHtml(w)}<div class="study-prompt">${esc(q.prompt)}</div><div class="study-sub">Schreibe die Vokabel vollständig aus dem Gedächtnis. Nur eine automatisch richtige Antwort kann die Karte weiterbewegen.</div><input id="answerField" class="answer-input" aria-label="Deine Antwort" autocomplete="off" autocapitalize="none" spellcheck="false"><div class="top-space"><button id="answerBtn" class="primary">Prüfen</button></div></div>`;
+  const q=setCurrentQuizQuestion(w,'recall',{strictOrthography:true}).question,box=leitnerBox(w),proofKey=w.setLinkId||w.id,pending=!wordFirstContactReady(w),proving=pending&&!session.proofFailedWords?.[proofKey],proofRetry=pending&&!proving;
+  $('#modePill').textContent=proving?'Karteikarten · Beweisen':'Karteikarten';
+  $('#studyArea').innerHTML=`<div class="study-card leitner-card"><div class="eyebrow">Karteikarten · Box ${box} von 5</div>${leitnerBoxesHtml(w)}${proving?'<div class="notice subtle proof-notice"><strong>Schon bekannt?</strong><br>Dann beweise es: Schreibe die Vokabel jetzt ohne Abschreiben richtig. Bei Erfolg überspringst du für dieses Wort den Kennenlernblock und es kommt nur noch zur Wiederholung.</div>':proofRetry?'<div class="notice subtle"><strong>Weiter üben</strong><br>Der erste Beweisversuch war nicht richtig. Diese Wiederholung hilft beim Lernen, ersetzt für dieses Wort aber nicht mehr den Kennenlernblock.</div>':''}<div class="study-prompt">${esc(q.prompt)}</div><div class="study-sub">Schreibe die Vokabel vollständig aus dem Gedächtnis. Nur eine automatisch richtige Antwort kann die Karte weiterbewegen.</div><input id="answerField" class="answer-input" aria-label="Deine Antwort" autocomplete="off" autocapitalize="none" spellcheck="false"><div class="top-space"><button id="answerBtn" class="primary">${proving?'Beweisen':'Prüfen'}</button></div></div>`;
   const submit=()=>gradeLeitnerCard(w,$('#answerField').value,q);$('#answerBtn').onclick=submit;$('#answerField').onkeydown=e=>{if(e.key==='Enter')submit()};setTimeout(()=>$('#answerField')?.focus(),40);
 }
 function gradeLeitnerCard(w,answer,q){
   if(session.locked)return;const targetSession=session;session.locked=true;
-  const grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w);
+  const grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w),wasPending=!wordFirstContactReady(w),proofKey=w.setLinkId||w.id;
+  session.proofFailedWords=session.proofFailedWords||{};
+  const proofEligible=wasPending&&!session.proofFailedWords[proofKey];
+  if(wasPending&&!ok)session.proofFailedWords[proofKey]=true;
+  const proved=proofEligible&&ok&&grade.orthographyOk!==false?markWordKnownByProof(w)>0:false;
   recordResult(w,ok,'retrieval',ok?null:'retrieval',{orthographyOk:grade.orthographyOk});
   const move=session.lastLeitnerMove||{before,after:leitnerBox(w),moved:false,blockedBySpacing:false};
   const movement=!ok?`Box ${move.before} → Box ${move.after}`:move.moved?`Box ${move.before} → Box ${move.after}`:move.blockedBySpacing?`Bleibt in Box ${move.after}: Für die nächste Stufe braucht es einen richtigen Abruf an einem späteren Tag.`:`Bleibt in Box ${move.after}.`;
   const mastered=move.after===5&&isMastered(w),track=$('#studyArea .leitner-track');
   if(track){const holder=document.createElement('div');holder.innerHTML=leitnerBoxesHtml(w);const next=holder.firstElementChild;if(next){next.classList.add(move.moved?'just-moved':'just-confirmed');track.replaceWith(next)}}
-  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}"><strong>${ok?'Richtig.':'Noch nicht richtig.'}</strong><br>${ok?'':errorFeedbackHtml(answer,q.targets)}<div class="leitner-move ${ok?'forward':'back'}">${esc(movement)}</div>${mastered?'<div class="leitner-mastered">✓ Nachhaltig gemeistert</div>':''}</div>`);
+  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}"><strong>${ok?'Richtig.':'Noch nicht richtig.'}</strong><br>${proved?'<div class="proof-success"><strong>Beweis geschafft.</strong> Dieses Wort musst du nicht mehr abschreiben. Ab jetzt wird es nur noch wiederholt.</div>':''}${ok?'':errorFeedbackHtml(answer,q.targets)}<div class="leitner-move ${ok?'forward':'back'}">${esc(movement)}</div>${mastered?'<div class="leitner-mastered">✓ Nachhaltig gemeistert</div>':''}</div>`);
   logSessionResult(w,{answer,target:q.targets,correct:ok,skill:'cards',orthographyOk:grade.orthographyOk,prompt:q.prompt,note:movement});
   if(typeof focusedDisableAnswerControls==='function'&&typeof focusedContinue==='function'){focusedDisableAnswerControls();focusedContinue(ok,w)}
   else scheduleSessionAdvance(targetSession,ok,w,ok?1000:2600);

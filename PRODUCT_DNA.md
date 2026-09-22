@@ -35,11 +35,13 @@ Die verbindliche Reihenfolge lautet:
 Für den Erstkontakt gilt:
 
 - Nach OCR, Import oder Bibliotheksübernahme werden zuerst die exakten Wort↔Bedeutung-Paare geprüft.
-- Danach schreibt das Kind jede neue Vokabel bewusst **von Hand auf Papier oder in ein beliebiges Heft** ab; die App setzt kein spezielles Vokabelheft voraus.
+- Standardmäßig schreibt das Kind jede neue Vokabel bewusst **von Hand auf Papier oder in ein beliebiges Heft** ab; die App setzt kein spezielles Vokabelheft voraus.
 - Die Vorlage wird anschließend abgedeckt; die Wortform wird einmal aktiv aus dem Gedächtnis geschrieben.
 - Danach wird mit der fachlich geprüften Wortform verglichen. Die App bewertet die Handschrift nicht automatisch.
 - Kurze Blockwiederholungen unterbrechen lange Abschreibserien und fordern erneut aktiven Abruf.
-- Erst nach diesem Erstkontakt wird die Vokabel für den normalen adaptiven Lernpfad freigegeben.
+- **Vorkenntnis-Ausnahme:** Der schriftliche Karteikartenmodus darf bereits vor diesem Abschreib-Erstkontakt genutzt werden. Wird eine fachlich geprüfte neue Vokabel dort **beim ersten unbeeinflussten Versuch**, ohne Hilfe und orthographisch korrekt aus dem Gedächtnis geschrieben, gilt das Wort als bereits bekannt; der Abschreibblock für dieses Wort entfällt und es geht direkt in die verteilte Wiederholung.
+- Dieser Beweis erzeugt ausdrücklich **keine Mastery** und setzt das Wort nicht auf „nachhaltig gemeistert“. Die normalen Spacing- und Mastery-Kriterien gelten unverändert.
+- Erst nach dem regulären Erstkontakt **oder** einem erfolgreichen Vorkenntnis-Beweis wird die Vokabel für den normalen adaptiven Lernpfad freigegeben.
 - Wird die fachliche Wortform oder Bedeutung später geändert, verliert die betroffene Zuordnung ihre Erstkontakt-Freigabe.
 - Bestehende, bereits verwendete Lernsets werden bei Einführung dieser Logik nicht rückwirkend gesperrt.
 
@@ -144,6 +146,9 @@ Retrieval- und Spacing-Modells.
     für zusätzlichen Lernstoff ohne konkreten Testtermin gedacht. Bibliothek, Lernbereich,
     Buchzuordnung und Import sind technische Ebenen im Hintergrund oder Verwaltungs-/
     Korrekturwege und dürfen kein Verständnis des Datenmodells voraussetzen.
+    Auf Desktop wird die gleiche Informationsarchitektur als echter Workspace dargestellt:
+    dauerhafte Seitennavigation, Tagesziel und freiwillige Übungen gleichzeitig sichtbar sowie
+    mehrspaltige Eltern-/Verwaltungsansichten. Desktop ist keine bloß verbreiterte Mobilansicht.
 
 ---
 

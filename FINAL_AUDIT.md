@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 21.09.2026 · App v0.18.12
+Stand: 22.09.2026 · App v0.18.13
 
 ## Ergebnis
 
@@ -22,11 +22,11 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 
 ### Lernprozess
 
-- verbindliche Reihenfolge: Erfassen → prüfen → kennenlernen/abschreiben → aktiv abrufen → verteilt wiederholen → nachhaltig meistern
-- Erstkontakt enthält handschriftliches Abschreiben auf beliebigem Papier/Heft, Abdecken, Erinnern, Vergleichen und Blockabruf
+- verbindliche Reihenfolge: Erfassen → prüfen → kennenlernen/abschreiben oder Vorkenntnis schriftlich beweisen → aktiv abrufen → verteilt wiederholen → nachhaltig meistern
+- Erstkontakt enthält standardmäßig handschriftliches Abschreiben auf beliebigem Papier/Heft, Abdecken, Erinnern, Vergleichen und Blockabruf; alternativ kann ein bereits bekanntes, fachlich geprüftes Wort durch eine orthographisch korrekte schriftliche Karteikartenantwort beim ersten unbeeinflussten Versuch freigegeben werden
 - Erstkontakt wird pro Vokabel freigegeben; ein großer Lernbereich sperrt bereits kennengelernte Wörter nicht mehr
 - Tagespensum: normalerweise 5–7 neue Vokabeln und etwa 10–12 Kontakte; täglich dynamisch aus Restlernstand, Testabstand und Unsicherheiten neu berechnet (Vorsprung bis ca. 8 Kontakte, Rückstand bis ca. 14, max. 7 neue Wörter). Letzter Tag vor dem Test wird bei ausreichendem Vorlauf für Wiederholung reserviert; Testtag führt keine neuen Wörter ein.
-- Karteikartenmodus: fünf sichtbare Leitner-Boxen, ausschließlich schriftliche automatische Bewertung; richtig maximal +1 Box, falsch −1 Box, höhere Stufen durch Spacing begrenzt, Box 5 nur bei nachhaltiger Mastery
+- Karteikartenmodus: jederzeit für alle fachlich geprüften Wörter verfügbar; fünf sichtbare Leitner-Boxen, ausschließlich schriftliche automatische Bewertung; richtig maximal +1 Box, falsch −1 Box, höhere Stufen durch Spacing begrenzt, Box 5 nur bei nachhaltiger Mastery. Ein erfolgreicher Vorkenntnis-Beweis überspringt nur den Abschreib-Erstkontakt, nicht die Mastery-Kriterien.
 - Eltern-UX: Steht ein Test an, ist „Test planen“ der Standardweg und übernimmt die ausgewählten Vokabeln automatisch als Lernstoff. „Ohne Test lernen“ dient ausschließlich zusätzlichem Lernstoff ohne Termin.
 - Vokabelauswahl unterstützt Einzelauswahl, Alle/Keine und eine inklusive Von–Bis-Spanne; gespeicherte Einzel-/Bereichsauswahl bleibt reload-stabil.
 - Einmalige Datenbereinigung entfernt alte Lern-/Test-/Noten-/Importdaten und alle nicht fest eingebauten Vokabeln; Profile/Grundeinstellungen bleiben, die geprüfte Lehrwerksbibliothek wird neu aufgebaut.
@@ -42,6 +42,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - offene Erwachsenenaufgaben werden dem Kind nur als verständlicher Status angezeigt
 - Elternbereich ist ein bewusster Rollenwechsel
 - Hilfe ist rollenabhängig
+- Desktop ab 1100 px nutzt eine linke Seitennavigation, zweispaltige Heute-Ansicht und dauerhaft sichtbare freiwillige Übungen; Tablet/Mobil bleiben kompakt
 - Lernprofile können in der Kinderansicht direkt und eindeutig gewechselt werden
 
 ### Schlachtmodus / Gamification

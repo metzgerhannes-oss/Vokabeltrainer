@@ -170,7 +170,8 @@ function renderTestCheck(){
   $('#testReadyDetail').textContent=r.ready===r.total?'Alle Wörter sind nach dem Lernmodell testbereit.':`${r.total-r.ready} ${r.total-r.ready===1?'Wort braucht':'Wörter brauchen'} noch Festigung.`;
 }
 function renderToday(){
-  const parent=isParentMode(),reviewSet=mySets().find(setNeedsPairReview),practiceDisclosure=$('#practiceDisclosure');
+  const parent=isParentMode(),reviewSet=mySets().find(setNeedsPairReview),practiceDisclosure=$('#practiceDisclosure'),cardCount=schoolYearVerifiedWords().length,cardsBtn=$('#quickCardsBtn');
+  if(cardsBtn){cardsBtn.disabled=!cardCount;cardsBtn.textContent=cardCount?'▥ Karteikarten':'▥ Noch keine Karten'}
   practiceDisclosure?.classList.remove('hidden');
   if(reviewSet){
     const count=setWords(reviewSet.id).length,progressRow=$('#todayProgress')?.closest('.today-progress-row');
@@ -217,8 +218,8 @@ function renderToday(){
   const l=learner(), due=dueWords(), weak=schoolYearWords().filter(w=>!isMastered(w)).sort((a,b)=>masteryScore(a)-masteryScore(b));
   const recs=[];
   recs.push({icon:'✦',title:'Adaptiv lernen',sub:due.length?`${Math.min(due.length,l.lrsMode?6:10)} fällige Wörter`:'Schwächste Wörter festigen',mode:'adaptive'});
-  const boxes=leitnerDistribution(),cardDue=schoolYearWords().filter(w=>!w.dueDate||w.dueDate<=today()).length;
-  recs.push({icon:'▥',title:'Karteikarten',sub:`schriftlich · 5 Boxen · ${cardDue} fällig · ${boxes[5]} gemeistert`,mode:'cards'});
+  const cardPool=schoolYearVerifiedWords(),boxes=leitnerDistribution(cardPool),cardDue=cardPool.filter(w=>!w.dueDate||w.dueDate<=today()).length,cardProof=cardPool.filter(w=>!wordFirstContactReady(w)).length;
+  recs.push({icon:'▥',title:'Karteikarten',sub:cardProof?`immer möglich · ${cardProof} neue Wörter können sich beweisen`:`schriftlich · 5 Boxen · ${cardDue} fällig · ${boxes[5]} gemeistert`,mode:'cards'});
   recs.push({icon:'⚡',title:'Wortblitz',sub:l.lrsMode?'ruhiges Tempo · Audio zuerst':'Leseflüssigkeit ohne Wertungsdruck',mode:'flash'});
   recs.push({icon:'🔊',title:'Vokabeldusche',sub:'aktiv mit Denkpause oder passiv anhören',mode:'shower'});
   recs.push({icon:'🧩',title:'Wortbausteine',sub:weak.length?'Schreibmuster gezielt festigen':'Bausteine zusammensetzen',mode:'chunks'});
@@ -633,18 +634,22 @@ function renderParentOverview(){
   box.querySelector('[data-parent-plan-first]')?.addEventListener('click',openTestDatePlanner);
   box.querySelector('[data-parent-newset]')?.addEventListener('click',()=>openLearningContentPlanner());
 }
+function isDesktopLayout(){return !!window.matchMedia?.('(min-width: 1100px)').matches}
+function syncResponsiveHomeLayout(){
+  const practice=$('#practiceDisclosure');if(practice)practice.open=isDesktopLayout();
+}
 function showView(id){
   if(id!=='battleView'&&document.body.classList.contains('battle-immersive'))closeBattleImmersive();
   if(PARENT_VIEW_IDS.has(id)&&!isParentMode()){toast('Diese Funktion liegt im Elternbereich.','subtle');id='homeView'}
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
   document.querySelectorAll('.nav-btn[data-view]').forEach(b=>{const active=!isParentMode()&&b.dataset.view===id;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
-  if(id==='homeView')document.querySelectorAll('.home-disclosure').forEach(d=>{d.open=false});
+  if(id==='homeView')document.querySelectorAll('.home-disclosure').forEach(d=>{d.open=isDesktopLayout()&&d.id==='practiceDisclosure'});
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   window.scrollTo({top:0,behavior:reduced?'auto':'smooth'});
 }
 
 function bind(){
-  $$('.nav-btn[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view)); $('[data-action="quickLearn"]').onclick=startDailyTodo; $('#quickLearnHeroBtn').onclick=startDailyTodo; $('#todayTestBtn').onclick=openTestDatePlanner; $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
+  $$('.nav-btn[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view)); $('[data-action="quickLearn"]').onclick=startDailyTodo; $('#quickLearnHeroBtn').onclick=startDailyTodo; $('#quickCardsBtn').onclick=()=>startSession('cards'); $('#todayTestBtn').onclick=openTestDatePlanner; $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
   $('#newSetBtn').onclick=()=>openLearningContentPlanner(); $('#addGradeBtn').onclick=()=>addGrade(); $('#practiceTestBtn').onclick=openPracticeTestChooser; $('#addProfileBtn').onclick=addProfile; $('#profileBtn').onclick=openProfileSwitcher; $('#attackBtn').onclick=openBattleView; $('#duelBtn').onclick=openDuel;
   $('#battleBackBtn').onclick=()=>showView('childProgressView'); $('#battleReturnBtn').onclick=()=>showView('childProgressView'); $('#battleAttackBtn').onclick=runBattleAnimation; $('#battleFullscreenBtn').onclick=toggleBattleFullscreen;
   $('#battleAttackChoices').addEventListener('click',e=>{const b=e.target.closest('[data-battle-attack]');if(b&&!b.disabled)selectBattleAttack(b.dataset.battleAttack)});
@@ -662,6 +667,7 @@ function bind(){
   const openIosInstallGuide=()=>modal(`<div class="eyebrow">iPhone / iPad</div><h2>Ohne Safari-Leiste öffnen</h2><p>Wie bei Johanna´s Gartenwelt muss der Vokabeltrainer einmal als Web-App auf den Home-Bildschirm gelegt werden:</p><ol><li>Unten in Safari auf <strong>Teilen</strong> tippen.</li><li><strong>Zum Home-Bildschirm</strong> wählen.</li><li><strong>Als Web-App öffnen</strong> eingeschaltet lassen.</li><li><strong>Hinzufügen</strong> bestätigen.</li><li>Safari schließen und künftig das neue <strong>Vokabeltrainer</strong>-Symbol öffnen.</li></ol><p>Dann läuft die App im Standalone-Modus ohne Safari-Navigationsleiste.</p><div class="modal-actions"><button value="ok" class="primary">Verstanden</button></div>`);
   const syncInstallUi=()=>{const iosSafariMode=isiOS&&!standalone();$('#iosInstallCard')?.classList.toggle('hidden',!iosSafariMode);if(iosSafariMode)$('#installBtn')?.classList.add('hidden')};
   syncInstallUi();$('#iosInstallBtn').onclick=openIosInstallGuide;
+  syncResponsiveHomeLayout();window.addEventListener('resize',syncResponsiveHomeLayout,{passive:true});
   window.addEventListener('pagehide',()=>persistOnly());document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')persistOnly()});
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;if(!isiOS)$('#installBtn').classList.remove('hidden')}); $('#installBtn').onclick=async()=>{if(installPrompt){installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$('#installBtn').classList.add('hidden');return}openIosInstallGuide()};
 }

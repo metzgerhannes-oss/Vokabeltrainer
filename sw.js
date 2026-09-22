@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='0.18.12';
+const APP_VERSION='0.18.13';
 const RESOURCE_REVISION='1';
 const SHELL_CACHE=`vokabeltrainer-shell-v${APP_VERSION}`;
 const RESOURCE_CACHE=`vokabeltrainer-resources-v${RESOURCE_REVISION}`;
@@ -10,9 +10,9 @@ const LEGACY_CACHE_PREFIX='vokabeltrainer-v';
 const LEGACY_APP_BASES=['/JohannasGartenwelt/vokabeltrainer/'];
 
 const ASSETS=[
-  './','./index.html','./css/app.css?v=0.18.12','./js/core.js?v=0.18.12','./js/help.js?v=0.18.12','./js/library.js?v=0.18.12','./js/storage.js?v=0.18.12',
-  './js/builtin-library.js?v=0.18.12','./js/model.js?v=0.18.12','./js/quiz-engine.js?v=0.18.12','./js/learning.js?v=0.18.12','./js/translation.js?v=0.18.12',
-  './js/io.js?v=0.18.12','./js/family-sync.js?v=0.18.12','./js/ui.js?v=0.18.12','./js/library-ui.js?v=0.18.12','./js/focus-ui.js?v=0.18.12','./js/app.js?v=0.18.12','./manifest.webmanifest',
+  './','./index.html','./css/app.css?v=0.18.13','./js/core.js?v=0.18.13','./js/help.js?v=0.18.13','./js/library.js?v=0.18.13','./js/storage.js?v=0.18.13',
+  './js/builtin-library.js?v=0.18.13','./js/model.js?v=0.18.13','./js/quiz-engine.js?v=0.18.13','./js/learning.js?v=0.18.13','./js/translation.js?v=0.18.13',
+  './js/io.js?v=0.18.13','./js/family-sync.js?v=0.18.13','./js/ui.js?v=0.18.13','./js/library-ui.js?v=0.18.13','./js/focus-ui.js?v=0.18.13','./js/app.js?v=0.18.13','./manifest.webmanifest',
   './data/camden-town-1-welcome.tsv','./data/camden-town-1-theme1.tsv',
   './assets/icons/icon-180.png','./assets/icons/icon-192.png','./assets/icons/icon-512.png'
 ];
