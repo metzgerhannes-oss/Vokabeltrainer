@@ -12,7 +12,6 @@ function firstContactStatus(setId){
   const copied=links.filter(x=>x.firstContactCopiedAt).length,recalled=links.filter(x=>x.firstContactRecalledAt).length,proved=links.filter(x=>x.firstContactProvedAt).length,completed=links.filter(x=>x.firstContactCompletedAt).length;
   return {total,copied,recalled,proved,completed,pending:Math.max(0,total-completed),pct:total?Math.round(completed/total*100):0};
 }
-function setNeedsFirstContact(set){return !!set&&!setNeedsPairReview(set)&&firstContactStatus(set.id).pending>0}
 function vocabularyPairSignature(v){
   if(!v)return '';
   return JSON.stringify({term:String(v.term||''),termVariants:[...(v.termVariants||[])],senses:(v.senses||[]).map(s=>({id:String(s.id||''),translation:String(s.translation||''),translations:[...(s.translations||[])]}))});
@@ -22,17 +21,6 @@ function requirePairReviewForVocabulary(vocabId){
   for(const link of links){link.firstContactCopiedAt='';link.firstContactRecalledAt='';link.firstContactCompletedAt='';link.firstContactProvedAt='';}
   for(const set of (state.sets||[])){if(!setIds.has(set.id))continue;if(!set.pairReviewRequired||set.pairVerifiedAt||set.pairVerifiedSignature)changed++;set.pairReviewRequired=true;set.pairVerifiedAt='';set.pairVerifiedSignature='';}
   for(const row of (state.bookVocabulary||[])){if(row.vocabId!==vocabId)continue;row.verifiedAt='';}
-  return changed;
-}
-function firstContactLinkReady(link){return !!(link?.firstContactCompletedAt||link?.firstContactProvedAt)}
-function wordFirstContactReady(w){return !!(w?.firstContactCompletedAt||w?.firstContactProvedAt)}
-function markWordKnownByProof(w){
-  if(!w?.senseId)return 0;
-  const learnerId=w.learnerId||state.activeLearnerId,setIds=new Set((state.sets||[]).filter(s=>s.learnerId===learnerId&&s.subject===w.subject).map(s=>s.id)),now=new Date().toISOString();let changed=0;
-  for(const link of (state.setVocabulary||[])){
-    if(!setIds.has(link.setId)||link.senseId!==w.senseId||firstContactLinkReady(link))continue;
-    link.firstContactProvedAt=now;changed++;
-  }
   return changed;
 }
 function learningReadySets(subject=state.activeSubject){return mySets(subject).filter(s=>!setNeedsPairReview(s)&&setWords(s.id).length)}
