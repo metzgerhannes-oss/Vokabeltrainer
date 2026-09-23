@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 23.09.2026 · App v0.18.26
+Stand: 23.09.2026 · App v0.18.27
 
 ## Ergebnis
 
@@ -53,6 +53,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 
 - die Schlacht besitzt eine eigene Ergebnisansicht; sie liest ausschließlich bereits feststehende Kampfdaten und zeigt bei Sieg nur reale Werte (+20 XP, Lernfortschritt, Armeestärke, nächstes Kampagnenziel)
 - die Ergebnisansicht schreibt keine Mastery- oder Lernwerte und verändert die bestehende Kampagnenlogik nicht
+- die Battle-Grafik wird zusätzlich in getrennte visuelle Ebenen für Hintergrund, Armee, Festung und Atmosphäre aufgeteilt; dies ist rein präsentational und verändert keinerlei Lern- oder Kampflogik
 - die englische Schlacht verwendet ein eigenes UI-freies Battlefield-Asset über den getrennten Loader `VTBattleArt`; Armee-/Lagergrafik und Battle-Grafik sind technisch getrennt
 - das dedizierte Battlefield ist lokal/offline gecacht; CSS-Landschaft bleibt als Lade-/Fehler-Fallback erhalten und die bestehende Kampfmechanik liegt unverändert darüber
 - die illustrierte englische Armee-Grafik wird ausschließlich aus lokalen, offline gecachten PWA-Ressourcen aufgebaut; keine externe Bildquelle und keine Lockerung der CSP

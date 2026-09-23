@@ -3,35 +3,65 @@
 (() => {
   let applying=false;
 
+  function removeBattleArt(stage){
+    stage.classList.remove('battle-art-ready','battle-art-layered');
+    stage.querySelector('[data-battle-art-stack]')?.remove();
+  }
+
+  function layer(name,className,src){
+    const img=document.createElement('img');
+    img.className=className;
+    img.setAttribute('data-battle-layer',name);
+    img.alt='';
+    img.setAttribute('aria-hidden','true');
+    img.src=src;
+    return img;
+  }
+
   function applyBattleArt(){
     if(applying)return;
     const stage=document.querySelector('#battleStage');
     if(!stage)return;
     if(!stage.classList.contains('subject-english')){
-      stage.classList.remove('battle-art-ready');
-      stage.querySelector('[data-battle-scene-art]')?.remove();
+      removeBattleArt(stage);
       return;
     }
     const art=window.VTBattleArt;
     if(!art?.ready)return;
 
-    let img=stage.querySelector('[data-battle-scene-art]');
-    if(!img){
+    let stack=stage.querySelector('[data-battle-art-stack]');
+    if(!stack){
       applying=true;
-      img=document.createElement('img');
-      img.className='battle-scene-art';
-      img.setAttribute('data-battle-scene-art','');
-      img.alt='';
-      img.setAttribute('aria-hidden','true');
-      stage.prepend(img);
+      stack=document.createElement('div');
+      stack.className='battle-art-stack';
+      stack.setAttribute('data-battle-art-stack','');
+      stack.setAttribute('aria-hidden','true');
+
+      const background=layer('background','battle-art-layer battle-art-background',art.sceneUrl);
+      background.setAttribute('data-battle-scene-art','');
+      background.dataset.battleAsset='dedicated';
+      const army=layer('army','battle-art-layer battle-art-army',art.sceneUrl);
+      const fortress=layer('fortress','battle-art-layer battle-art-fortress',art.sceneUrl);
+      const atmosphere=document.createElement('div');
+      atmosphere.className='battle-art-atmosphere';
+      atmosphere.setAttribute('data-battle-layer','atmosphere');
+
+      stack.append(background,army,fortress,atmosphere);
+      stage.prepend(stack);
       applying=false;
+
+      let loaded=0;
+      const markLoaded=()=>{
+        loaded+=1;
+        if(loaded>=3){
+          stage.classList.add('battle-art-ready','battle-art-layered');
+        }
+      };
+      [background,army,fortress].forEach(img=>{
+        img.addEventListener('load',markLoaded,{once:true});
+        if(img.complete&&img.naturalWidth)markLoaded();
+      });
     }
-    if(img.dataset.battleArtBound)return;
-    img.dataset.battleArtBound='1';
-    img.addEventListener('load',()=>stage.classList.add('battle-art-ready'),{once:true});
-    img.dataset.battleAsset='dedicated';
-    img.src=art.sceneUrl;
-    if(img.complete&&img.naturalWidth)stage.classList.add('battle-art-ready');
   }
 
   function boot(){
