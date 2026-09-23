@@ -48,6 +48,8 @@ assert(css.includes('min-height:44px'),'primary pointer targets have a 44px mini
 assert(css.includes('prefers-reduced-motion:reduce'),'reduced-motion preference is respected');
 assert(css.includes('.lrs-mode .eyebrow{text-transform:none'),'LRS mode avoids forced uppercase helper labels');
 assert(ui.includes("document.querySelectorAll('.view').forEach")&&ui.includes("document.querySelectorAll('.nav-btn[data-view]').forEach"),'view navigation iterates element lists');
+assert(ui.includes('function isPairedChildDevice()')&&ui.includes("s.role==='child'"),'paired child-device role is recognized in UI');
+assert(ui.includes("Der Elternbereich ist auf diesem Kindergerät gesperrt."),'paired child device has an explicit administration guard');
 assert(focusUi.includes("cardExtras=function(){return ''}"),'retrieval diagnostics are removed before answering');
 assert(['gradeText=function','gradeChoice=function','gradeGrammar=function'].every(x=>focusUi.includes(x)),'all evaluated feedback paths use focused overrides');
 assert(!/setTimeout\s*\(\s*\(\)\s*=>\s*nextStudy/.test(focusUi),'focused feedback never auto-advances');
@@ -82,6 +84,7 @@ assert(css.includes('body.learning-focus .help-popover{display:none!important}')
 
 assert(manifest.start_url==='./'&&manifest.scope==='./','manifest remains repository-path safe');
 assert(manifest.display==='standalone'&&manifest.lang==='de','manifest standalone mode and language are explicit');
+assert(manifest.orientation==='any','installed app supports both portrait and landscape');
 
 const refs=[...html.matchAll(/(?:src|href)="((?:css|js)\/[^"]+\?v=[^"]+)"/g)].map(m=>m[1]);
 for(const ref of refs)assert(sw.includes("'./"+ref+"'"),'app-shell caches '+ref);
