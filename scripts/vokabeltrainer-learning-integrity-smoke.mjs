@@ -186,7 +186,7 @@ const passed=vm.runInContext(`
   assert(chooseAdaptiveMode(adaptiveWord)==='recall','an overdue word after a long gap is tested productively before more scaffolding');
 
   const chunkLinked=attachVocabularyToSet(allSet.id,{term:'unhelpful',translation:'nicht hilfreich',source:'scheduler-smoke',verified:true});
-  rebuildWordIndexes();const chunkWord=wordByLinkId(chunkLinked.link.id);
+  rebuildWordIndexes();const chunkWord=chunkLinked.word;
   chunkWord.skills={...defaultSkills(),retrieval:2,spelling:0};chunkWord.independentSuccesses=1;chunkWord.repetitions=2;chunkWord.recentActiveResults=[true];chunkWord.errorProfile.spelling=2;chunkWord.modesSeen=['recognition'];
   session={mode:'adaptive',isDaily:false,index:0,scaffoldedWords:{},currentSubmode:null};
   assert(chooseAdaptiveMode(chunkWord)==='chunks','word chunks are triggered by a real spelling error pattern');
