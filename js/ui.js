@@ -2,7 +2,8 @@
 
 let appRole='child';
 const PARENT_VIEW_IDS=new Set(['parentView','libraryView','dashboardView','settingsView']);
-function isParentMode(){return appRole==='parent'}
+function isPairedChildDevice(){const s=window.VTFamilySync?.status?.();return !!(s?.enabled&&s.role==='child')}
+function isParentMode(){return appRole==='parent'&&!isPairedChildDevice()}
 
 
 let battleAttackMode='charge';
@@ -653,16 +654,19 @@ function modal(html){$('#modalContent').innerHTML=html;$('#modal').showModal()}
 function closeModal(){$('#modal').close()}
 function toast(text,type='subtle'){const el=$('#toastRegion');if(!el)return;clearTimeout(toastTimer);el.className=`toast-region show ${type}`;el.textContent=text;toastTimer=setTimeout(()=>{el.className='toast-region';el.textContent=''},4200)}
 function applyRoleUi(){
-  document.body.classList.toggle('parent-mode',isParentMode());
-  $('#parentAreaBtn')?.classList.toggle('hidden',isParentMode());
-  $('#childModeBtn')?.classList.toggle('hidden',!isParentMode());
-  $('#appTitle').textContent=isParentMode()?'Vokabeltrainer · Eltern':'Vokabeltrainer';
+  if(isPairedChildDevice())appRole='child';
+  const parent=isParentMode(),childDevice=isPairedChildDevice();
+  document.body.classList.toggle('parent-mode',parent);
+  $('#parentAreaBtn')?.classList.toggle('hidden',parent||childDevice);
+  $('#childModeBtn')?.classList.toggle('hidden',!parent);
+  $('#appTitle').textContent=parent?'Vokabeltrainer · Eltern':'Vokabeltrainer';
 }
 function openParentGate(target='parentView'){
+  if(isPairedChildDevice()){toast('Der Elternbereich ist auf diesem Kindergerät gesperrt.','subtle');return}
   modal('<div class="eyebrow">Rollenwechsel</div><h2>Elternbereich öffnen?</h2><p>Hier werden Lernstoff, Testpläne, Noten, Profile, Lehrwerke und Datensicherung verwaltet.</p><p class="notice subtle">Der Kindermodus bleibt bewusst frei von diesen Verwaltungsaufgaben.</p><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="confirmParentMode" class="primary">Elternbereich öffnen</button></div>');
   $('#confirmParentMode').onclick=()=>{closeModal();enterParentMode(target)};
 }
-function enterParentMode(target='parentView'){appRole='parent';applyRoleUi();showView(target);renderAll()}
+function enterParentMode(target='parentView'){if(isPairedChildDevice()){appRole='child';applyRoleUi();showView('homeView');toast('Der Elternbereich ist auf diesem Kindergerät gesperrt.','subtle');return false}appRole='parent';applyRoleUi();showView(target);renderAll();return true}
 function exitParentMode(){appRole='child';session=null;applyRoleUi();showView('homeView');renderAll()}
 function familySyncTime(value){if(!value)return 'noch nie';try{return new Date(value).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}catch(_){return value}}
 function renderFamilySync(){
@@ -726,7 +730,7 @@ function syncResponsiveHomeLayout(){
 }
 function showView(id){
   if(id!=='battleView'&&document.body.classList.contains('battle-immersive'))closeBattleImmersive();
-  if(PARENT_VIEW_IDS.has(id)&&!isParentMode()){toast('Diese Funktion liegt im Elternbereich.','subtle');id='homeView'}
+  if(PARENT_VIEW_IDS.has(id)&&!isParentMode()){toast(isPairedChildDevice()?'Der Elternbereich ist auf diesem Kindergerät gesperrt.':'Diese Funktion liegt im Elternbereich.','subtle');id='homeView'}
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
   document.querySelectorAll('.nav-btn[data-view]').forEach(b=>{const active=!isParentMode()&&b.dataset.view===id;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
   if(id==='homeView')document.querySelectorAll('.home-disclosure').forEach(d=>{d.open=isDesktopLayout()&&d.id==='practiceDisclosure'});
