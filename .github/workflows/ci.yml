@@ -99,6 +99,9 @@ jobs:
       - name: WebKit animated battle mode
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-battle-ui-smoke.mjs
 
+      - name: WebKit My Army overview
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-army-ui-smoke.mjs
+
       - name: WebKit contextual help smoke
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-help-ui-smoke.mjs
 

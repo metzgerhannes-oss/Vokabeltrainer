@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 23.09.2026 · App v0.18.19
+Stand: 23.09.2026 · App v0.18.20
 
 ## Ergebnis
 
@@ -50,6 +50,8 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 
 ### Schlachtmodus / Gamification
 
+- „Meine Armee“ ist eine vorgelagerte, jederzeit betrachtbare Erlebnisansicht; Einheitstufen und Boni werden nur aus vorhandenem Lernfortschritt abgeleitet und schreiben keinen fachlichen Lernstand
+- die Armeeansicht besitzt keine eigenständige Spielwährung; Aufwertungen entstehen automatisch durch Lernen und nachhaltige Wiederholung
 - Schlacht ist ein separater Erlebnisbereich nach einer abgeschlossenen Lerneinheit
 - Angriffe sind begrenzt und werden als Belohnung nach jeder abgeschlossenen Lerneinheit freigeschaltet; ein abgeschlossener Kennenlern- oder Karteikartenblock zählt dabei mit
 - Animationen, Einheiten, Festungen, Jahreszeiten, Rang und Ausrüstung liegen außerhalb der Abfrage
