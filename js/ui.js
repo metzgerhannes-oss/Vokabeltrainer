@@ -278,7 +278,7 @@ function renderToday(){
   if(ctx){$('#todayTestPill').textContent=(ctx.source==='series'||ctx.source==='mixed')?`↻ ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]} · ${formatDateShort(ctx.date)}`:`Test ${formatDateShort(ctx.date)}`;$('#todayTestPill').classList.remove('hidden');if(parent){$('#todayTestBtn').textContent='Testplan ändern';$('#todayTestBtn').classList.remove('hidden');$('#todayTestBtn').dataset.setId=ctx.sets[0]?.id||'';}else $('#todayTestBtn').classList.add('hidden');}
   else{$('#todayTestPill').classList.add('hidden');if(parent&&mySets().length){$('#todayTestBtn').textContent='Testplan festlegen';$('#todayTestBtn').classList.remove('hidden');}else $('#todayTestBtn').classList.add('hidden');}
 }function renderRecommendations(){
-  const l=learner(),cardPool=schoolYearVerifiedWords(),weak=cardPool.filter(w=>!isMastered(w)).sort((a,b)=>masteryScore(a)-masteryScore(b)),chunkWords=cardPool.filter(chunkEligibleWord),contextWords=cardPool.filter(w=>String(w.example||'').trim());
+  const l=learner(),cardPool=schoolYearVerifiedWords(),weak=cardPool.filter(w=>!isMastered(w)).sort((a,b)=>masteryScore(a)-masteryScore(b)),chunkWords=cardPool.filter(w=>chunkEligibleWord(w)&&(w.errorProfile?.spelling||0)>0),contextWords=cardPool.filter(w=>String(w.example||'').trim());
   const cards=$('#practiceCardsBtn'),weakBtn=$('#practiceWeakBtn'),allBtn=$('#practiceAllBtn'),specialBtn=$('#practiceSpecialBtn');
   if(cards)cards.disabled=!cardPool.length;if(weakBtn)weakBtn.disabled=!weak.length;if(allBtn)allBtn.disabled=!cardPool.length;if(specialBtn)specialBtn.disabled=!cardPool.length;
   const copyPending=cardPool.filter(w=>!w.firstContactCompletedAt).length;
@@ -291,7 +291,7 @@ function renderToday(){
     {icon:'⚡',title:'Wortblitz',sub:l.lrsMode?'ruhiges Tempo · ohne Mastery-Wertung':'Leseflüssigkeit ohne Mastery-Wertung',mode:'flash'},
     {icon:'🔊',title:'Vokabeldusche',sub:'mit Denkpause oder passiv anhören',mode:'shower'}
   ];
-  if(chunkWords.length)recs.splice(2,0,{icon:'🧩',title:'Wortbausteine',sub:`${chunkWords.length} geeignete Wörter · keine ganzen Sätze`,mode:'chunks'});
+  if(chunkWords.length)recs.splice(2,0,{icon:'🧩',title:'Wortbausteine',sub:`${chunkWords.length} Rechtschreib-Lernwörter · keine ganzen Sätze`,mode:'chunks'});
   if(subjectHasCapability(state.activeSubject,'latinGrammar'))recs.push({icon:'Ⅳ',title:'Latein Formen',sub:'Genitiv · Genus · Stammformen · Anwendung',mode:'latinGrammar'});
   $('#recommendations').innerHTML=recs.map(r=>`<button class="recommend" data-mode="${r.mode}" ${r.disabled?'disabled':''}><span class="icon">${r.icon}</span><strong>${r.title}</strong><small>${r.sub}</small></button>`).join('');
   document.querySelectorAll('#recommendations [data-mode]').forEach(b=>b.onclick=()=>{const mode=b.dataset.mode;if(mode==='copy')startCopyPractice();else if(mode==='context')startSession('context',null,contextWords.map(w=>w.id));else startSession(mode)});
