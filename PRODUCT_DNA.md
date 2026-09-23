@@ -154,9 +154,11 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
     für zusätzlichen Lernstoff ohne konkreten Testtermin gedacht. Bibliothek, Lernbereich,
     Buchzuordnung und Import sind technische Ebenen im Hintergrund oder Verwaltungs-/
     Korrekturwege und dürfen kein Verständnis des Datenmodells voraussetzen.
-    Auf Desktop wird die gleiche Informationsarchitektur als echter Workspace dargestellt:
-    dauerhafte Seitennavigation, Tagesziel und freiwillige Übungen gleichzeitig sichtbar sowie
-    mehrspaltige Eltern-/Verwaltungsansichten. Desktop ist keine bloß verbreiterte Mobilansicht.
+    Auf Desktop wird dieselbe klare Informationsarchitektur als echter Workspace dargestellt:
+    dauerhafte Seitennavigation mit **Heute · Üben · Fortschritt · Armee**, großzügigere
+    Inhaltsflächen sowie mehrspaltige Eltern-/Verwaltungsansichten. „Heute“ bleibt dabei
+    bewusst auf die Tagesaufgabe fokussiert; freiwilliges Training liegt auch auf Desktop
+    im eigenen Bereich „Üben“. Desktop ist keine bloß verbreiterte Mobilansicht.
 
 ---
 
@@ -183,7 +185,9 @@ Ziel: Orientierung, Unterstützung und Organisation – keine Überwachung.
 
 Der Elternbereich ist ein bewusster Rollenwechsel und kein Untermenü des Kind-Modus.
 Beim App-Start wird immer der Kind-Modus verwendet; Verwaltungsfunktionen werden erst
-nach dem expliziten Wechsel in den Elternbereich sichtbar.
+nach dem expliziten Wechsel in den Elternbereich sichtbar. Ein als **Kindergerät**
+gekoppeltes Gerät bleibt technisch im Kind-Modus: Der Elternbereich wird dort weder
+angeboten noch durch direkte Navigation geöffnet.
 
 Dashboard soll insbesondere beantworten:
 
