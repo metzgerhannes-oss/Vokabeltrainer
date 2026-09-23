@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 23.09.2026 · App v0.18.21
+Stand: 23.09.2026 · App v0.18.22
 
 ## Ergebnis
 
@@ -51,6 +51,8 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 ### Schlachtmodus / Gamification
 
 - die illustrierte englische Armee-Grafik wird ausschließlich aus lokalen, offline gecachten PWA-Ressourcen aufgebaut; keine externe Bildquelle und keine Lockerung der CSP
+- jede Einheit besitzt eine eigene Detailansicht mit fünfstufigem Aufwertungspfad; aktuelle Stufe, nächste sichtbare Verbesserung und exakte Lernbedingung werden transparent angezeigt
+- die Einheitendetailansicht ist rein lesend und verändert weder Mastery noch Lernfortschritt
 - „Meine Armee“ ist eine vorgelagerte, jederzeit betrachtbare Erlebnisansicht; Einheitstufen und Boni werden nur aus vorhandenem Lernfortschritt abgeleitet und schreiben keinen fachlichen Lernstand
 - die Armeeansicht besitzt keine eigenständige Spielwährung; Aufwertungen entstehen automatisch durch Lernen und nachhaltige Wiederholung
 - Schlacht ist ein separater Erlebnisbereich nach einer abgeschlossenen Lerneinheit
