@@ -45,6 +45,35 @@ try{
   assert(await page.locator('#battleStage [data-battle-layer="background"]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'layered battle background loads');
   assert(await page.locator('#battleStage [data-battle-layer="army"]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'army artwork layer loads');
   assert(await page.locator('#battleStage [data-battle-layer="fortress"]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'fortress artwork layer loads');
+
+  const reducedTransforms=await page.evaluate(()=>({
+    stack:getComputedStyle(document.querySelector('#battleStage [data-battle-art-stack]')).transform,
+    army:getComputedStyle(document.querySelector('#battleStage [data-battle-layer="army"]')).transform,
+    fortress:getComputedStyle(document.querySelector('#battleStage [data-battle-layer="fortress"]')).transform
+  }));
+  assert(reducedTransforms.stack==='none'&&reducedTransforms.army==='none'&&reducedTransforms.fortress==='none','reduced-motion keeps layered battle artwork static');
+
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  const motionTransforms=await page.evaluate(async()=>{
+    const stage=document.querySelector('#battleStage');
+    const stack=document.querySelector('#battleStage [data-battle-art-stack]');
+    const army=document.querySelector('#battleStage [data-battle-layer="army"]');
+    const fortress=document.querySelector('#battleStage [data-battle-layer="fortress"]');
+    stage.classList.add('battle-sequence','phase-advance');
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const advance={stack:getComputedStyle(stack).transform,army:getComputedStyle(army).transform,fortress:getComputedStyle(fortress).transform};
+    stage.classList.remove('phase-advance');
+    stage.classList.add('phase-impact');
+    await new Promise(resolve=>setTimeout(resolve,80));
+    const impact={stack:getComputedStyle(stack).transform,army:getComputedStyle(army).transform,fortress:getComputedStyle(fortress).transform};
+    stage.classList.remove('battle-sequence','phase-impact');
+    return {advance,impact};
+  });
+  assert(motionTransforms.advance.army!=='none','advance phase moves the army artwork layer');
+  assert(motionTransforms.impact.fortress!=='none','impact phase focuses the fortress artwork layer');
+  assert(motionTransforms.advance.army!==motionTransforms.impact.army,'army artwork changes position between advance and impact');
+  assert(motionTransforms.advance.fortress!==motionTransforms.impact.fortress,'fortress artwork changes focus between advance and impact');
+  await page.emulateMedia({reducedMotion:'reduce'});
   assert(await page.locator('#battleStage [data-battle-scene-art]').getAttribute('data-battle-asset')==='dedicated','battle image comes from dedicated battlefield asset');
   assert((await page.evaluate(()=>window.VTBattleArt?.source))==='dedicated-battlefield','dedicated battlefield loader is active');
   assert(await page.locator('#battleStage .battle-unit').count()>=6,'animated army contains multiple units');
