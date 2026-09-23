@@ -34,10 +34,12 @@ try{
 
   await page.click('#attackBtn');
   await page.waitForSelector('#battleView.active');
-  await page.waitForFunction(()=>window.VTArmyArt?.ready===true);
+  await page.waitForFunction(()=>window.VTBattleArt?.ready===true);
   await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
   assert(await page.locator('#battleStage [data-battle-scene-art]').count()===1,'battle stage receives one illustrated background layer');
   assert(await page.locator('#battleStage [data-battle-scene-art]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'illustrated battle background loads');
+  assert(await page.locator('#battleStage [data-battle-scene-art]').getAttribute('data-battle-asset')==='dedicated','battle image comes from dedicated battlefield asset');
+  assert((await page.evaluate(()=>window.VTBattleArt?.source))==='dedicated-battlefield','dedicated battlefield loader is active');
   assert(await page.locator('#battleStage .battle-unit').count()>=6,'animated army contains multiple units');
   assert(await page.locator('#battleStage .unit-archer').count()>=1,'progress unlocks archer units');
   assert(await page.locator('#battleStage .unit-cavalry').count()>=1,'high progress unlocks cavalry units');

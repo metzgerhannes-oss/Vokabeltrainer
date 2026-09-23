@@ -12,7 +12,7 @@
       stage.querySelector('[data-battle-scene-art]')?.remove();
       return;
     }
-    const art=window.VTArmyArt;
+    const art=window.VTBattleArt;
     if(!art?.ready)return;
 
     let img=stage.querySelector('[data-battle-scene-art]');
@@ -29,7 +29,8 @@
     if(img.dataset.battleArtBound)return;
     img.dataset.battleArtBound='1';
     img.addEventListener('load',()=>stage.classList.add('battle-art-ready'),{once:true});
-    img.src=art.heroUrl;
+    img.dataset.battleAsset='dedicated';
+    img.src=art.sceneUrl;
     if(img.complete&&img.naturalWidth)stage.classList.add('battle-art-ready');
   }
 
@@ -39,7 +40,7 @@
     const observer=new MutationObserver(()=>queueMicrotask(applyBattleArt));
     observer.observe(stage,{childList:true});
     applyBattleArt();
-    document.addEventListener('vt-army-art-ready',applyBattleArt);
+    document.addEventListener('vt-battle-art-ready',applyBattleArt);
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
