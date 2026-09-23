@@ -46,6 +46,10 @@ try{
   await page.click('[data-battle-attack="ram"]');
   assert(await page.locator('[data-battle-attack="ram"].active').count()===1,'attack type can be selected');
   assert((await page.locator('#battleTicketPill').textContent())?.includes('1'),'battle screen shows earned attack');
+  assert(await page.locator('.battle-phase-strip [data-battle-phase]').count()===5,'battle shows a five-phase sequence');
+  const attackButtonRect=await page.locator('#battleAttackBtn').boundingBox();
+  const viewport=page.viewportSize();
+  assert(!!attackButtonRect&&!!viewport&&attackButtonRect.y>=0&&attackButtonRect.y+attackButtonRect.height<=viewport.height,'primary battle action stays inside the visible iPhone viewport without scrolling');
 
   await page.click('#battleFullscreenBtn');
   assert(await page.locator('body.battle-immersive').count()===1,'immersive fullscreen fallback activates');
