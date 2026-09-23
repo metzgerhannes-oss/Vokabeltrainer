@@ -24,19 +24,22 @@ try{
   });
 
   await page.waitForSelector('#homeView.active');
-  assert(await page.locator('#practiceDisclosure').evaluate(el=>el.open),'practice area stays open on desktop');
-  assert(await page.locator('#optionalLearningCard').isVisible(),'optional learning is visible without expanding a disclosure on desktop');
-
   const today=await page.locator('.today-focus').boundingBox();
-  const optional=await page.locator('#optionalLearningCard').boundingBox();
   const nav=await page.locator('.bottom-nav').boundingBox();
-  assert(today&&optional&&optional.x>today.x+today.width-10,'desktop home uses a real two-column layout');
+  assert(today&&today.width>600,'desktop home keeps the daily task broad and focused');
   assert(nav&&nav.x<today.x&&nav.width<170&&nav.y<180,'mobile bottom navigation becomes a compact desktop side rail');
-  assert(await page.locator('#recommendations .recommend').count()>=4,'desktop practice column shows the learning modes');
+
+  await page.evaluate(()=>showView('practiceView'));
+  await page.waitForSelector('#practiceView.active');
+  assert(await page.locator('.practice-primary-grid .practice-path').count()===4,'practice hub shows exactly four primary routes');
+  assert(!(await page.locator('#optionalLearningCard').isVisible()),'special training starts collapsed');
+  await page.click('#practiceSpecialBtn');
+  assert(await page.locator('#optionalLearningCard').isVisible(),'special training expands on demand');
+  assert(await page.locator('#recommendations .recommend').count()>=5,'special training shows targeted learning modes');
 
   await page.setViewportSize({width:820,height:900});
   await page.evaluate(()=>syncResponsiveHomeLayout());
-  assert(!(await page.locator('#practiceDisclosure').evaluate(el=>el.open)),'tablet/mobile layout keeps optional practice collapsed');
+  assert(await page.locator('.practice-primary-grid .practice-path').count()===4,'tablet keeps the four practice routes');
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer desktop UI smoke: passed');
