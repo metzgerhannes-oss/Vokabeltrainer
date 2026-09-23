@@ -90,16 +90,25 @@
     const rewards=root.querySelector('#battleResultRewards');
     const cont=root.querySelector('#battleResultContinue');
 
-    if(win){
+    if(win&&entry.rewarded!==false){
       title.textContent=boss?'Boss besiegt!':'Festung erobert!';
       lead.textContent=`${fortress?.name||'Die Festung'} ist gefallen. ${attack?.label||'Der Angriff'} war erfolgreich.`;
       rewards.innerHTML=[
-        rewardTile('★','+20 XP','Belohnung für den Sieg'),
+        rewardTile('★','+20 XP','Tagesbelohnung für den Sieg'),
         rewardTile('▰',`${entry.progress}%`,'Lernfortschritt'),
         rewardTile('♜',next?next.name:'Jahresfeldzug gewonnen',next?'Nächstes Ziel':'Alle Festungen bezwungen'),
         rewardTile('⚔',String(strength),rank? `Armeestärke · ${rank}` : 'Armeestärke')
       ].join('');
       cont.textContent=next?'Weiter zur nächsten Festung':'Kampagne ansehen';
+    }else if(win){
+      title.textContent='Trainingssieg!';
+      lead.textContent=`${attack?.label||'Der Angriff'} war erfolgreich. Die Schlacht bleibt heute offen; die Tagesbelohnung ist bereits vergeben.`;
+      rewards.innerHTML=[
+        rewardTile('▰',`${entry.progress}%`,'Lernfortschritt'),
+        rewardTile('⚔',attack?.label||'Angriff','gewählte Taktik'),
+        rewardTile('♜',fortress?.name||'Festung','keine zweite Tagesbelohnung')
+      ].join('');
+      cont.textContent='Zurück zur Schlacht';
     }else{
       title.textContent=boss?`${boss.name} hält stand`:'Die Verteidigung hält';
       lead.textContent=missing>0
