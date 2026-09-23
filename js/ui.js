@@ -217,7 +217,7 @@ function renderAll(){
   $('#fortressRequirement').textContent=!nf?'Kein Test geplant':secured?`Erobert · Test ${formatDateShort(nf.testDate)}`:`${nf.defense} Verteidigung · Test ${formatDateShort(nf.testDate)}`;
   $('#attackBtn').disabled=!nf;$('#attackBtn').textContent=!nf?'Keine Festung':tickets?(secured?'Sicherung bereit':'Angriff bereit'):'Zur Festung';
   $('#campaignMessage').className=`notice ${tickets?'good':'subtle'}`;$('#campaignMessage').textContent=!nf?'Für einen geplanten Test entsteht automatisch eine Festung.':tickets?(secured?'Dein heutiger Sicherungseinsatz ist bereit.':'Dein Tagesangriff ist bereit.'):secured?`Festung erobert. Bis zum Test ${formatDateShort(nf.testDate)} sichern.`:usedToday?`Heute angegriffen · noch ${nf.defense} Verteidigung.`:`Noch ${nf.defense} Verteidigung. Nach dem Tagesziel kannst du angreifen.`;
-  const hasSubjectWords=myWords().length>0; $('#campaignCard').classList.toggle('hidden',!hasSubjectWords); $('#optionalLearningCard').classList.toggle('hidden',!hasSubjectWords); renderCardboxOverview(); renderToday(); renderTestCheck(); renderBattlefield(); renderBattleView(); renderRecommendations(); renderSets(); renderDashboard(); renderLibrary(); renderProfiles();
+  const hasSubjectWords=myWords().length>0; $('#campaignCard').classList.toggle('hidden',!hasSubjectWords); if(!hasSubjectWords){$('#optionalLearningCard')?.classList.add('hidden');$('#practiceSpecialBtn')?.setAttribute('aria-expanded','false')} renderCardboxOverview(); renderToday(); renderTestCheck(); renderBattlefield(); renderBattleView(); renderRecommendations(); renderSets(); renderDashboard(); renderLibrary(); renderProfiles();
   $('#fontSizeRange').value=l.fontSize; $('#letterSpacingRange').value=l.letterSpacing; $('#flashSpeedSelect').value=String(l.flashSpeed); if($('#autoSpeakCorrection'))$('#autoSpeakCorrection').checked=l.autoSpeakCorrection!==false;
   renderParentOverview(); renderFamilySync(); checkHundredPercent(); renderStorageStatus();
 }
@@ -233,9 +233,7 @@ function renderTestCheck(){
   $('#testReadyDetail').textContent=r.ready===r.total?'Alle Wörter sind nach dem Lernmodell testbereit.':`${r.total-r.ready} ${r.total-r.ready===1?'Wort braucht':'Wörter brauchen'} noch Festigung.`;
 }
 function renderToday(){
-  const parent=isParentMode(),reviewSet=mySets().find(setNeedsPairReview),practiceDisclosure=$('#practiceDisclosure'),cardCount=schoolYearVerifiedWords().length,cardsBtn=$('#quickCardsBtn');
-  if(cardsBtn){cardsBtn.disabled=!cardCount;cardsBtn.textContent=cardCount?'▥ Karteikarten':'▥ Noch keine Karten'}
-  practiceDisclosure?.classList.remove('hidden');
+  const parent=isParentMode(),reviewSet=mySets().find(setNeedsPairReview);
   if(reviewSet){
     const count=setWords(reviewSet.id).length,progressRow=$('#todayProgress')?.closest('.today-progress-row');
     progressRow?.classList.add('hidden');$('#todayProgressText').textContent='';
@@ -258,7 +256,6 @@ function renderToday(){
   }
   progressRow?.classList.remove('hidden');
   if(!hasWords){
-    practiceDisclosure?.classList.add('hidden');
     $('#todaySummary').textContent=parent?'Noch keine Vokabeln':'Heute ist noch nichts vorbereitet';
     $('#todayContext').textContent=parent?'Plane einen Test oder bereite Vokabeln ohne Testtermin vor.':'Bitte einen Erwachsenen, neue Vokabeln vorzubereiten.';
     $('#todayEstimate').textContent=parent?'Danach erscheinen die freigegebenen Wörter automatisch im Kindermodus.':'Sobald alles vorbereitet ist, erscheint hier automatisch deine nächste Lernaufgabe.';
@@ -274,27 +271,30 @@ function renderToday(){
     $('#todayEstimate').textContent=`${status.units} kurze ${status.units===1?'Einheit':'Einheiten'} · ca. ${mins} Min. · Ziel heute: ${plan.dailyTarget} Kontakte.${phaseText}${maintenance}${paceText}${deadline}`;
   }
   $('#todayProgress').max=Math.max(1,status.total); $('#todayProgress').value=status.done; $('#todayProgress').setAttribute('aria-valuetext',`${status.done} von ${status.total} Vokabeln heute erledigt`); $('#todayProgressText').textContent=status.total?`${status.done} / ${status.total} erledigt`:'';
-  $('#quickLearnHeroBtn').disabled=!hasWords||!status.remaining; $('#quickLearnHeroBtn').textContent=!hasWords?'Noch nicht bereit':!status.remaining?'Heute erledigt ✓':status.done?'Weiterlernen':'Tagesziel starten';
+  $('#quickLearnHeroBtn').disabled=!hasWords||!status.remaining; $('#quickLearnHeroBtn').textContent=!hasWords?'Noch nicht bereit':!status.remaining?'Heute erledigt ✓':status.done?'Weiterlernen':'Heute lernen';
   if(ctx){$('#todayTestPill').textContent=(ctx.source==='series'||ctx.source==='mixed')?`↻ ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]} · ${formatDateShort(ctx.date)}`:`Test ${formatDateShort(ctx.date)}`;$('#todayTestPill').classList.remove('hidden');if(parent){$('#todayTestBtn').textContent='Testplan ändern';$('#todayTestBtn').classList.remove('hidden');$('#todayTestBtn').dataset.setId=ctx.sets[0]?.id||'';}else $('#todayTestBtn').classList.add('hidden');}
   else{$('#todayTestPill').classList.add('hidden');if(parent&&mySets().length){$('#todayTestBtn').textContent='Testplan festlegen';$('#todayTestBtn').classList.remove('hidden');}else $('#todayTestBtn').classList.add('hidden');}
 }function renderRecommendations(){
-  const l=learner(),due=dueWords(),cardPool=schoolYearVerifiedWords(),weak=cardPool.filter(w=>!isMastered(w)).sort((a,b)=>masteryScore(a)-masteryScore(b)),chunkWords=cardPool.filter(chunkEligibleWord);
-  const recs=[];
-  recs.push({icon:'∞',title:'Alle Vokabeln',sub:`${cardPool.length} Wörter · Bereich frei wählen`,mode:'allWords'});
-  recs.push({icon:'◎',title:'Unsichere üben',sub:weak.length?`${weak.length} noch nicht sicher`:'Aktuell nichts offen',mode:'weakWords',disabled:!weak.length});
-  recs.push({icon:'✦',title:'Adaptiv lernen',sub:due.length?`${Math.min(due.length,l.lrsMode?6:10)} fällige Wörter`:'Schwächste Wörter festigen',mode:'adaptive'});
-  const boxes=leitnerDistribution(cardPool),cardDue=cardPool.filter(w=>!w.dueDate||w.dueDate<=today()).length;
-  recs.push({icon:'▥',title:'Karteikarten',sub:`schriftlich · 5 Boxen · ${cardDue} fällig · ${boxes[5]} gemeistert`,mode:'cards'});
-  const copyPending=cardPool.filter(w=>!w.firstContactCompletedAt).length;
-  recs.push({icon:'📝',title:'Abschreiben',sub:copyPending?`freiwillig · ${copyPending} noch nicht gemacht`:'freiwillig · als zusätzliche Schreibeinheit',mode:'copy'});
-  recs.push({icon:'⚡',title:'Wortblitz',sub:l.lrsMode?'ruhiges Tempo · Audio zuerst':'Leseflüssigkeit ohne Wertungsdruck',mode:'flash'});
-  recs.push({icon:'🔊',title:'Vokabeldusche',sub:'aktiv mit Denkpause oder passiv anhören',mode:'shower'});
-  if(chunkWords.length)recs.push({icon:'🧩',title:'Wortbausteine',sub:`${chunkWords.length} geeignete Wörter · keine ganzen Sätze`,mode:'chunks'});
-  const spellingWeak=weak.filter(w=>(w.errorProfile?.spelling||0)>0||(w.skills?.spelling||0)<2);
-  if(l.lrsMode||spellingWeak.length)recs.push({icon:'✍️',title:'Handschrift',sub:'nachfahren · abdecken · aus dem Gedächtnis schreiben',mode:'handwriting'});
+  const l=learner(),cardPool=schoolYearVerifiedWords(),weak=cardPool.filter(w=>!isMastered(w)).sort((a,b)=>masteryScore(a)-masteryScore(b)),chunkWords=cardPool.filter(chunkEligibleWord),contextWords=cardPool.filter(w=>String(w.example||'').trim());
+  const cardsBtn=$('#practiceCardsBtn'),weakBtn=$('#practiceWeakBtn'),allBtn=$('#practiceAllBtn'),specialBtn=$('#practiceSpecialBtn');
+  if(cardsBtn){cardsBtn.disabled=!cardPool.length;cardsBtn.querySelector('small').textContent=cardPool.length?`Schriftlich · 5 Boxen · ${cardPool.length} Karten`:'Noch keine Karten'}
+  if(weakBtn){weakBtn.disabled=!weak.length;weakBtn.querySelector('small').textContent=weak.length?`${weak.length} noch nicht sicher`:'Aktuell nichts offen'}
+  if(allBtn){allBtn.disabled=!cardPool.length;allBtn.querySelector('small').textContent=cardPool.length?`${cardPool.length} Vokabeln · Bereich wählen`:'Noch keine Vokabeln'}
+  if(specialBtn)specialBtn.disabled=!cardPool.length;
+  const copyPending=cardPool.filter(w=>!w.firstContactCompletedAt).length,spellingWeak=weak.filter(w=>(w.errorProfile?.spelling||0)>0||(w.skills?.spelling||0)<2);
+  const recs=[
+    {icon:'🔊',title:'Hören',sub:'Aussprache und Lautform gezielt trainieren',mode:'listening'},
+    {icon:'✎',title:'Rechtschreibung',sub:'Diktat: hören und genau schreiben',mode:'spelling'},
+    {icon:'▣',title:'Kontext',sub:contextWords.length?`${contextWords.length} Wörter mit Beispielsatz`:'Noch keine Beispielsätze',mode:'context',disabled:!contextWords.length},
+    {icon:'📝',title:'Abschreiben',sub:copyPending?`freiwillig · ${copyPending} noch nicht gemacht`:'freiwillige zusätzliche Schreibeinheit',mode:'copy'},
+    {icon:'⚡',title:'Wortblitz',sub:l.lrsMode?'ruhiges Tempo · Audio verfügbar':'Leseflüssigkeit ohne Mastery-Wertung',mode:'flash'},
+    {icon:'🔊',title:'Vokabeldusche',sub:'aktiv mit Denkpause oder passiv anhören',mode:'shower'}
+  ];
+  if(chunkWords.length)recs.splice(3,0,{icon:'🧩',title:'Wortbausteine',sub:`${chunkWords.length} geeignete Wörter · keine ganzen Sätze`,mode:'chunks'});
+  if(l.lrsMode||spellingWeak.length)recs.splice(Math.min(4,recs.length),0,{icon:'✍️',title:'Handschrift',sub:'nachfahren · abdecken · selbst vergleichen',mode:'handwriting'});
   if(subjectHasCapability(state.activeSubject,'latinGrammar'))recs.push({icon:'Ⅳ',title:'Latein Formen',sub:'Genitiv · Genus · Stammformen · Anwendung',mode:'latinGrammar'});
   $('#recommendations').innerHTML=recs.map(r=>`<button class="recommend" data-mode="${r.mode}" ${r.disabled?'disabled':''}><span class="icon">${r.icon}</span><strong>${r.title}</strong><small>${r.sub}</small></button>`).join('');
-  $$('#recommendations [data-mode]').forEach(b=>b.onclick=()=>{const mode=b.dataset.mode;if(mode==='copy')startCopyPractice();else if(mode==='allWords')openAllWordsPracticeChooser();else if(mode==='weakWords')startWeakWordsPractice();else startSession(mode)});
+  $$('#recommendations [data-mode]').forEach(b=>b.onclick=()=>{const mode=b.dataset.mode;if(mode==='copy')startCopyPractice();else if(mode==='context')startSession('context',null,contextWords.slice(0,l.lrsMode?6:10).map(w=>w.id),false);else startSession(mode)});
 }
 function setPairAuditText(setId){
   const s=state.sets.find(x=>x.id===setId),words=s?setWords(setId):[];
@@ -721,21 +721,19 @@ function renderParentOverview(){
   box.querySelector('[data-parent-newset]')?.addEventListener('click',()=>openLearningContentPlanner());
 }
 function isDesktopLayout(){return !!window.matchMedia?.('(min-width: 1100px)').matches}
-function syncResponsiveHomeLayout(){
-  const practice=$('#practiceDisclosure');if(practice)practice.open=isDesktopLayout();
-}
+function syncResponsiveHomeLayout(){}
 function showView(id){
   if(id!=='battleView'&&document.body.classList.contains('battle-immersive'))closeBattleImmersive();
   if(PARENT_VIEW_IDS.has(id)&&!isParentMode()){toast('Diese Funktion liegt im Elternbereich.','subtle');id='homeView'}
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
   document.querySelectorAll('.nav-btn[data-view]').forEach(b=>{const active=!isParentMode()&&b.dataset.view===id;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
-  if(id==='homeView')document.querySelectorAll('.home-disclosure').forEach(d=>{d.open=isDesktopLayout()&&d.id==='practiceDisclosure'});
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   window.scrollTo({top:0,behavior:reduced?'auto':'smooth'});
 }
 
 function bind(){
-  document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view)); $('[data-action="quickLearn"]').onclick=startDailyTodo; $('#quickLearnHeroBtn').onclick=startDailyTodo; $('#quickCardsBtn').onclick=()=>startSession('cards'); $('#cardboxPracticeBtn').onclick=()=>startSession('cards'); $('#todayTestBtn').onclick=openTestDatePlanner; $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
+  document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='armyView'&&window.VTArmyUi?.open)window.VTArmyUi.open();else showView(b.dataset.view)}); $('#quickLearnHeroBtn').onclick=startDailyTodo; $('#cardboxPracticeBtn').onclick=()=>startSession('cards'); $('#todayTestBtn').onclick=openTestDatePlanner; $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
+  $('#practiceCardsBtn')?.addEventListener('click',()=>startSession('cards'));$('#practiceWeakBtn')?.addEventListener('click',startWeakWordsPractice);$('#practiceAllBtn')?.addEventListener('click',openAllWordsPracticeChooser);$('#practiceSpecialBtn')?.addEventListener('click',()=>{const panel=$('#optionalLearningCard'),btn=$('#practiceSpecialBtn');if(!panel)return;const opening=panel.classList.contains('hidden');panel.classList.toggle('hidden',!opening);btn.setAttribute('aria-expanded',String(opening));if(opening)panel.scrollIntoView({block:'nearest',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})});
   $('#newSetBtn').onclick=()=>openLearningContentPlanner(); $('#addGradeBtn').onclick=()=>addGrade(); $('#practiceTestBtn').onclick=openPracticeTestChooser; $('#addProfileBtn').onclick=addProfile; $('#profileBtn').onclick=openProfileSwitcher; $('#attackBtn').onclick=openBattleView; $('#duelBtn').onclick=openDuel;
   $('#battleBackBtn').onclick=()=>showView('childProgressView'); $('#battleReturnBtn').onclick=()=>showView('childProgressView'); $('#battleAttackBtn').onclick=runBattleAnimation; $('#battleFullscreenBtn').onclick=toggleBattleFullscreen;
   $('#battleAttackChoices').addEventListener('click',e=>{const b=e.target.closest('[data-battle-attack]');if(b&&!b.disabled)selectBattleAttack(b.dataset.battleAttack)});
