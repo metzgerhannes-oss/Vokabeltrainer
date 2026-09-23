@@ -210,3 +210,9 @@ body.lrs-mode .army-unit-card,body.lrs-mode .army-command,body.lrs-mode .army-un
   .army-unit-art{width:100px}
   .army-camp-strength{min-width:0;width:150px;max-width:58%}
 }
+
+
+@media(max-width:400px){
+  .army-bonus-grid{grid-template-columns:1fr}
+  .army-bonus{min-width:0}
+}
