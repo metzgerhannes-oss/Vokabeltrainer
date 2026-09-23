@@ -4,11 +4,23 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.33**
+App-Version: **v0.18.34**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.34 – sichtbare Festungseroberung
+
+- beim tatsächlichen Sieg wird die Eroberung jetzt sichtbar ausgespielt: **Tor fällt**, **Gegnerflagge verschwindet**, **eigene Fahne wird gesetzt**
+- der Ergebnisbildschirm erscheint erst nach dieser kurzen Eroberungssequenz, damit der Sieg sichtbar bleibt
+- nach der Animation wechselt die Festung in den dauerhaften `captured`-Zustand
+- beim späteren Öffnen wird dieser Zustand direkt aus `capturedAt` wiederhergestellt
+- auch die kleine Kampagnenansicht zeigt die eigene Fahne auf der bereits eroberten Festung
+- Englisch nutzt eine blau-goldene, Latein eine rot-goldene Fahne
+- `prefers-reduced-motion` überspringt die Bewegung, zeigt aber sofort denselben finalen Eroberungszustand
+- keine neue Spielmechanik: Siegbedingung, XP, Mastery, Angriffsschaden, Testfestungslogik, OCR und Sync bleiben unverändert
+- der Battle-WebKit-Test prüft Animation, Reduced Motion und den persistenten Zustand nach erneutem Rendern
 
 ## v0.18.33 – dauerhafte Karteikasten-Übersicht
 

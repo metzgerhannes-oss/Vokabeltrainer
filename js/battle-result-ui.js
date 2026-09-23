@@ -3,6 +3,7 @@
 (() => {
   let overlay=null;
   let lastSignature='';
+  let pendingShowTimer=null;
 
   function escResult(value){
     const text=String(value??'');
@@ -148,9 +149,19 @@
     const sync=()=>{
       const finished=stage.classList.contains('battle-finished');
       if(finished){
-        queueMicrotask(show);
-      }else if(!overlay?.classList.contains('hidden')){
-        hide();
+        if(stage.classList.contains('conquest-transition')){
+          if(pendingShowTimer)return;
+          const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+          pendingShowTimer=setTimeout(()=>{
+            pendingShowTimer=null;
+            if(stage.classList.contains('battle-finished'))show();
+          },reduced?40:1140);
+          return;
+        }
+        if(!pendingShowTimer)queueMicrotask(show);
+      }else{
+        if(pendingShowTimer){clearTimeout(pendingShowTimer);pendingShowTimer=null}
+        if(!overlay?.classList.contains('hidden'))hide();
       }
     };
     new MutationObserver(sync).observe(stage,{attributes:true,attributeFilter:['class'],childList:true});

@@ -56,8 +56,8 @@ function battleUnitsMarkup(count,large=false,pct=subjectProgress().pct){
 function fortressMarkup(f,large=false){
   if(!f)return '';
   const id=f.id||'outpost',name=f.name||'Festung',captured=!!f.capturedAt;
-  if(!large)return `<div class="fortress fortress-${esc(id)} ${captured?'captured':''}" aria-label="${esc(name)}"><div class="gate"></div><div class="flag"></div><div class="mini-keep"></div></div>`;
-  return `<div class="battle-fortress fortress-${esc(id)} ${captured?'captured':''}"><div class="tower tower-left"></div><div class="tower tower-right"></div><div class="wall"><div class="battle-gate"></div><div class="crack c1"></div><div class="crack c2"></div><div class="crack c3"></div><div class="crack c4"></div><div class="crack c5"></div><div class="battle-rubble" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></div><div class="battle-keep"></div><div class="battle-enemy-flag"></div></div>`;
+  if(!large)return `<div class="fortress fortress-${esc(id)} ${captured?'captured':''}" aria-label="${esc(name)}"><div class="gate"></div><div class="flag enemy-flag"></div><div class="own-flag" aria-hidden="true"></div><div class="mini-keep"></div></div>`;
+  return `<div class="battle-fortress fortress-${esc(id)} ${captured?'captured':''}"><div class="tower tower-left"></div><div class="tower tower-right"></div><div class="wall"><div class="battle-gate"></div><div class="crack c1"></div><div class="crack c2"></div><div class="crack c3"></div><div class="crack c4"></div><div class="crack c5"></div><div class="battle-rubble" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></div><div class="battle-keep"></div><div class="battle-enemy-flag"></div><div class="battle-own-flag" aria-hidden="true"></div></div>`;
 }
 function seasonEffectsMarkup(){
   return `<div class="battle-season-fx" aria-hidden="true">${Array.from({length:12},(_,i)=>`<i class="season-particle season-d${i%6}"></i>`).join('')}</div>`;
@@ -161,7 +161,12 @@ function runBattleAnimation(){
   setTimeout(()=>{stage.classList.add('is-impact');setPhase('impact',phaseCopy.impact);},timing.impact);
   setTimeout(()=>{
     const result=resolveTestFortressAction(secureBefore?'secure':battleAttackMode);const won=result?.result==='win',secured=result?.result==='secure';
-    stage.classList.remove('is-attacking','is-barrage');stage.classList.add('battle-finished',(won||secured)?'is-victory':'is-hold');setPhase('result');
+    stage.classList.remove('is-attacking','is-barrage');stage.classList.add('battle-finished',(won||secured)?'is-victory':'is-hold');if(won)stage.classList.add('conquest-transition');setPhase('result');
+    if(won){
+      const conquered=stage.querySelector('.battle-fortress');
+      const settle=()=>{conquered?.classList.add('captured');stage.classList.remove('conquest-transition');};
+      setTimeout(settle,reduced?25:1080);
+    }
     if(secured){$('#battleMessage').className='battle-message victory';$('#battleMessage').innerHTML='<strong>Festung gesichert!</strong><span>Die Stellung bleibt bis zum Test unter Kontrolle.</span>';}
     else if(won){$('#battleMessage').className='battle-message victory';$('#battleMessage').innerHTML=`<strong>${boss?'Boss besiegt!':'Festung erobert!'}</strong><span>${esc(f.name)} ist gefallen. +20 XP · Jetzt bis zum Test sichern.</span>`;}
     else{$('#battleMessage').className='battle-message hold';$('#battleMessage').innerHTML=`<strong>Angriff gelungen!</strong><span>${result?.damage||0} Schaden. Noch ${result?.remaining||0} Verteidigung bis zur Eroberung.</span>`;}
