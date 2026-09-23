@@ -10,7 +10,7 @@ Der geprüfte Stand besitzt eine ungewöhnlich starke automatisierte Absicherung
 Im Deep Audit wurden drei konkrete UI-/Rollenthemen gefunden und in v0.18.39 gehärtet:
 
 1. Ein als Kindergerät gekoppeltes Gerät durfte lokal noch den Elternmodus öffnen. Der Server begrenzte zwar dessen Sync-Rechte, die Oberfläche war aber nicht hart genug getrennt. **Behoben:** Kindergeräte erkennen ihre Sync-Rolle und sperren Eltern-/Administrationsansichten auch lokal.
-2. Die Armee-Ansicht erzeugte bei 320 px Breite horizontalen Overflow. **Behoben:** zusätzlicher Narrow-Phone-Layoutschutz; der neue Deep-UI-Test prüft 320/375/390/820/1440 px.
+2. Die Armee-Ansicht erzeugte im Deep-UI-Test bei sehr schmalen Geräten (320 px, anschließend noch ein Bonus-Grid-Fall bei 375 px) horizontalen Overflow. **Behoben:** zusätzlicher Narrow-Phone-Layoutschutz; der neue Deep-UI-Test prüft 320/375/390/820/1440 px.
 3. Die neuen Bibliotheks-Audio-Buttons waren nur 42×36 px groß. **Behoben:** mindestens 44×44 px, passend zum eigenen UI-Standard und zu Apples allgemeiner Touch-Empfehlung.
 
 Nach diesen Härtungen gibt es aus dem Code-/Daten-Audit **keinen bekannten P0-Release-Blocker**. Vor einem formalen v1.0-Label bleiben einige P2/P3-Punkte, vor allem manuelle Accessibility-Abnahme, technische Modularisierung und Deployment-Optimierung.
