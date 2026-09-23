@@ -4,11 +4,27 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.35**
+App-Version: **v0.19.0**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.19.0 – Evidence-based Learning Core
+
+- Kinderbereich auf vier klare Ziele reduziert: **Heute · Üben · Fortschritt · Armee**
+- „Heute“ hat einen zentralen Einstieg **Heute lernen**; freiwillige Übungen liegen getrennt unter „Üben“
+- „Üben“ bietet genau vier Wege: **Karteikarten · Unsichere Wörter · Alle Vokabeln · Spezialtraining**
+- Spezialtraining bündelt Hören, Rechtschreibung/Diktat, Wortbausteine, Kontext, Handschrift, Abschreiben, Wortblitz und Vokabeldusche
+- Mastery-Score basiert nur noch auf produktiven Lernsignalen: Abruf, Schreibung und Kontext plus zeitliche Stabilität
+- Erkennen, Hören und Wortbausteine sind Support: sie können eine Vokabel nicht in eine höhere Karteikastenstufe bringen
+- normale Deutsch→Fremdsprache-Abfragen lesen die Lösung niemals vor der Antwort vor
+- sichtbare Fremdsprachenwörter bieten Audio auf Knopfdruck; falsche Antworten können die richtige Wortform nach der Bewertung automatisch vorlesen
+- die automatische Fehleraussprache ist pro Lernprofil abschaltbar
+- Audio ist zusätzlich in Bibliothek, Wortdetail, Eltern-Paarprüfung, Abschreib-/Handschriftvergleich, Fehlerfeedback und Ergebnisübersicht verfügbar
+- Rechtschreib-Audio ist als **Diktat** gekennzeichnet und damit klar von Bedeutungsabruf getrennt
+- Fehler bleiben zeitversetzt wiederholt: dieselbe Vokabel wird nach anderen Karten erneut abgerufen statt sofort mehrfach hintereinander
+- eigener CI-Smoke schützt Audio-Leak-Regeln, produktive Mastery und die neue Navigation
 
 ## v0.18.35 – transparente Ergebnisübersicht
 
