@@ -77,7 +77,7 @@ try{
   await page.waitForFunction(()=>document.querySelector('#battleFortressName')?.textContent?.includes('Wachturm'));
   assert((await page.locator('#battleFortressName').textContent())?.includes('Wachturm'),'winning advances to a visually different fortress');
   await page.click('#battleResultContinue');
-  await page.waitForSelector('#battleResultOverlay.hidden');
+  await page.waitForSelector('#battleResultOverlay',{state:'hidden'});
 
   await page.evaluate(()=>{
     const wins=fortressWins();wins.splice(0,wins.length,'outpost','tower','wall');
@@ -95,7 +95,7 @@ try{
   assert((await page.locator('#battleResultTitle').textContent())?.includes('Boss besiegt'),'boss victory uses the cinematic result view');
   assert(await page.evaluate(()=>subjectProgress().pct)===100,'boss and special attack do not change academic mastery');
   await page.click('#battleResultClose');
-  await page.waitForSelector('#battleResultOverlay.hidden');
+  await page.waitForSelector('#battleResultOverlay',{state:'hidden'});
 
   const privacy=await page.evaluate(()=>{const p=duelPayload(),raw=JSON.parse(decodeURIComponent(escape(atob(encodeDuel(p)))));return {payload:p,raw,profile:learner().name}});
   assert(privacy.raw.name!==privacy.profile,'duel code never contains the learner profile name');
