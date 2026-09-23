@@ -1,12 +1,22 @@
 # Finales Audit
 
-Stand: 23.09.2026 · App v0.18.35
+Stand: 23.09.2026 · App v0.19.0
 
 ## Ergebnis
 
 Der aktuelle Stand ist technisch und fachlich für den realen Kind-End-to-End-Test freigegeben.
 Die automatisierte CI muss für den Release-Commit vollständig grün sein. Ein grüner CI-Stand
 ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
+
+## v0.19.0 – Evidence-based Learning Core
+
+- **Produktive Mastery:** Erkennen, Hören und Wortbausteine sind unterstützende Übungen und können weder Mastery-Score noch Karteikastenstufe eigenständig erhöhen.
+- **Audio-Leak-Schutz:** Bei normalen Deutsch→Fremdsprache-Aufgaben wird die gesuchte Fremdsprachenlösung vor der Bewertung nicht gesprochen. Audio vor der Antwort ist nur erlaubt, wenn die fremdsprachliche Form ohnehin sichtbar ist oder die Aufgabe ausdrücklich ein Diktat/Hörtraining ist.
+- **Fehlerfeedback:** Nach der Bewertung ist die korrekte Fremdsprachenform mit Audio verfügbar; automatische Aussprache nach Fehlern ist standardmäßig aktiv und pro Profil abschaltbar.
+- **Spacing:** Fehler werden weiterhin erst nach mehreren anderen Karten erneut eingeplant.
+- **Informationsarchitektur:** Kinderbereich = Heute · Üben · Fortschritt · Armee. Elternfunktionen bleiben davon getrennt.
+- **Spezialtraining:** Abschreiben, Handschrift, Wortblitz und Vokabeldusche bleiben Zusatzübungen ohne künstliche Mastery.
+- **Regression Gate:** Ein eigener Evidence-Core-Smoke prüft diese Regeln zusätzlich zur bestehenden Lernintegritäts-, Browser-, OCR-, Offline- und Kampf-CI.
 
 ## Release-Blocker geprüft
 
