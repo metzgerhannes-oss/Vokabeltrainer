@@ -57,7 +57,7 @@ function fortressMarkup(f,large=false){
   if(!f)return '';
   const id=f.id||'outpost',name=f.name||'Festung',captured=!!f.capturedAt;
   if(!large)return `<div class="fortress fortress-${esc(id)} ${captured?'captured':''}" aria-label="${esc(name)}"><div class="gate"></div><div class="flag"></div><div class="mini-keep"></div></div>`;
-  return `<div class="battle-fortress fortress-${esc(id)} ${captured?'captured':''}"><div class="tower tower-left"></div><div class="tower tower-right"></div><div class="wall"><div class="battle-gate"></div><div class="crack c1"></div><div class="crack c2"></div></div><div class="battle-keep"></div><div class="battle-enemy-flag"></div></div>`;
+  return `<div class="battle-fortress fortress-${esc(id)} ${captured?'captured':''}"><div class="tower tower-left"></div><div class="tower tower-right"></div><div class="wall"><div class="battle-gate"></div><div class="crack c1"></div><div class="crack c2"></div><div class="crack c3"></div><div class="crack c4"></div><div class="crack c5"></div><div class="battle-rubble" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></div><div class="battle-keep"></div><div class="battle-enemy-flag"></div></div>`;
 }
 function seasonEffectsMarkup(){
   return `<div class="battle-season-fx" aria-hidden="true">${Array.from({length:12},(_,i)=>`<i class="season-particle season-d${i%6}"></i>`).join('')}</div>`;
@@ -69,6 +69,7 @@ function renderBattlefield(){
   const damagePct=f?clamp(Math.round((1-(Number(f.defense)||0)/Math.max(1,Number(f.maxDefense)||1))*100),0,100):0;
   field.className=`battlefield ${sea.class} subject-${state.activeSubject} gear-${gearTier(p.pct)} ${tickets?'battle-ready':''} ${f?.capturedAt?'battle-captured':''}`;
   field.dataset.damage=damagePct>=66?'high':damagePct>=33?'mid':damagePct>0?'low':'none';
+  field.dataset.damagePercent=String(damagePct);
   field.setAttribute('aria-label',`${campaign.unitLabel}: ${p.pct}% Schuljahresfortschritt, Rang ${rankFor(p.pct,state.activeSubject)}, ${f?`Testfestung ${f.name} am ${formatDateShort(f.testDate)}`:'kein Test geplant'}`);
   field.innerHTML=`<div class="sun"></div><div class="preview-cloud cloud-a"></div><div class="preview-cloud cloud-b"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army"><div class="preview-standard"></div>${battleUnitsMarkup(count,false,p.pct)}${siege}</div>${fortressMarkup(f,false)}`;
 }
@@ -112,6 +113,7 @@ function renderBattleView(){
   if(!secure&&f)renderBattleAttackChoices(p.pct);else if($('#battleAttackChoices'))$('#battleAttackChoices').innerHTML='';
   stage.className=`battle-stage season-${sea.class} subject-${state.activeSubject} gear-${gearTier(p.pct)} fortress-stage-${f?.id||'none'} ${boss?'boss-stage':''} ${secure?'fortress-secured':''}`;
   stage.dataset.damage=damagePct>=66?'high':damagePct>=33?'mid':damagePct>0?'low':'none';
+  stage.dataset.damagePercent=String(damagePct);
   stage.setAttribute('aria-label',f?`${campaign.unitLabel} im Rang ${rank} vor ${f.name}. Festungsschaden ${damagePct} Prozent. Test am ${formatDateShort(f.testDate)}.`:`${campaign.unitLabel}: aktuell keine Testfestung.`);
   stage.innerHTML=`<div class="battle-sky"><i class="battle-sun"></i><i class="battle-cloud cloud-1"></i><i class="battle-cloud cloud-2"></i></div>${seasonEffectsMarkup()}<div class="battle-hills"></div><div class="battle-ground"></div><div class="battle-phase-strip" aria-hidden="true"><span data-battle-phase="rally"><i>1</i>${secure?'Sammeln':'Sammeln'}</span><span data-battle-phase="advance"><i>2</i>${secure?'Beziehen':'Vorrücken'}</span><span data-battle-phase="barrage"><i>3</i>${secure?'Patrouille':'Angriff'}</span><span data-battle-phase="impact"><i>4</i>${secure?'Sichern':'Einschlag'}</span><span data-battle-phase="result"><i>5</i>Ergebnis</span></div><div class="battle-rank-badge"><span>${esc(rank)}</span><small>${esc(gear)}</small></div><div class="battle-army"><div class="battle-standard"><i></i></div>${battleUnitsMarkup(count,true,p.pct)}${p.pct>=35?'<div class="battle-ram"><i></i><b></b></div>':''}</div><div class="battle-projectiles">${Array.from({length:9},(_,i)=>`<i class="arrow arrow-${i+1}"></i>`).join('')}</div><div class="battle-impact"><i></i><i></i><i></i></div><div class="battle-special-flare"><i></i><i></i><i></i></div><div class="battle-shockwave"></div>${boss?`<div class="battle-boss-character boss-${esc(f.id)}" aria-label="${esc(boss.name)}"><i class="boss-helmet"></i><i class="boss-body"></i><i class="boss-shield"></i></div>`:''}${fortressMarkup(f,true)}<div class="battle-dust"></div>`;
 }

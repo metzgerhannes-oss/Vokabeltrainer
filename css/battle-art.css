@@ -356,7 +356,67 @@
   100%{opacity:0}
 }
 
+
+/* v0.18.32 – persistente Schäden auch auf der illustrierten Festung */
+.battle-art-stack::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:4;
+  pointer-events:none;
+  opacity:0;
+  background:
+    radial-gradient(ellipse at 76% 58%,rgba(22,24,25,.64) 0 3%,rgba(42,39,35,.32) 7%,transparent 16%),
+    radial-gradient(ellipse at 69% 44%,rgba(28,29,30,.52) 0 2.5%,rgba(56,51,43,.22) 6%,transparent 13%),
+    radial-gradient(ellipse at 84% 72%,rgba(31,31,30,.46) 0 3%,rgba(57,50,40,.18) 7%,transparent 15%);
+  mix-blend-mode:multiply;
+  transition:opacity .35s ease;
+}
+.battle-stage[data-damage="low"] .battle-art-stack::after{opacity:.18}
+.battle-stage[data-damage="mid"] .battle-art-stack::after{opacity:.42}
+.battle-stage[data-damage="high"] .battle-art-stack::after{opacity:.72}
+
+.battle-stage[data-damage="low"] .battle-art-fortress{
+  filter:saturate(.91) contrast(1.08) brightness(.84);
+}
+.battle-stage[data-damage="mid"] .battle-art-fortress{
+  filter:saturate(.76) contrast(1.12) brightness(.75) sepia(.08);
+}
+.battle-stage[data-damage="high"] .battle-art-fortress{
+  filter:saturate(.58) contrast(1.17) brightness(.65) sepia(.16);
+}
+.battle-stage.fortress-secured .battle-art-fortress{
+  filter:saturate(.56) contrast(1.16) brightness(.63) sepia(.17);
+}
+
+.battle-art-atmosphere::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:0;
+  background:
+    radial-gradient(ellipse at 76% 50%,rgba(210,207,196,.23) 0 5%,rgba(148,145,137,.11) 11%,transparent 24%),
+    radial-gradient(ellipse at 83% 40%,rgba(198,196,188,.18) 0 4%,rgba(141,139,133,.08) 10%,transparent 22%);
+  filter:blur(1.4px);
+  transform:translateY(0) scale(1);
+}
+.battle-stage[data-damage="mid"] .battle-art-atmosphere::after{
+  opacity:.38;
+  animation:battleDamageSmoke 5.8s ease-in-out infinite alternate;
+}
+.battle-stage[data-damage="high"] .battle-art-atmosphere::after,
+.battle-stage.fortress-secured .battle-art-atmosphere::after{
+  opacity:.66;
+  animation:battleDamageSmoke 4.5s ease-in-out infinite alternate;
+}
+@keyframes battleDamageSmoke{
+  from{transform:translate3d(0,6px,0) scale(.96);filter:blur(1.2px)}
+  to{transform:translate3d(-.8%,-10px,0) scale(1.06);filter:blur(2.2px)}
+}
+
 @media(prefers-reduced-motion:reduce){
+  .battle-stage[data-damage] .battle-art-atmosphere::after{animation:none!important}
   .battle-stage.battle-art-layered.phase-impact.is-impact .battle-impact,
   .battle-stage.battle-art-layered.phase-impact.is-impact .battle-impact::before,
   .battle-stage.battle-art-layered.phase-impact.is-impact .battle-impact::after,

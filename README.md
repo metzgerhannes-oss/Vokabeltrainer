@@ -4,11 +4,23 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.31**
+App-Version: **v0.18.32**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.32 – dauerhafte Festungsschäden
+
+- der bereits gespeicherte Belagerungszustand aus `defense/maxDefense` wird jetzt deutlich sichtbar auf der Testfestung dargestellt
+- **leicht beschädigt:** erste Risse und dezente Verdunkelung
+- **mittel beschädigt:** zusätzliche Risse, sichtbares Geröll, Ruß/Abplatzungen und erster Rauch
+- **schwer beschädigt:** alle Risse sichtbar, starkes Geröll, dunklere Mauer-/Torflächen und deutlich mehr Rauch
+- die illustrierte Festungs-Layer wird parallel zur CSS-Festung sichtbar abgenutzt; der Schaden bleibt deshalb auch zwischen Lerntagen konsistent
+- die kleine Kampagnenansicht übernimmt dieselbe Schadensstufe
+- der exakte Schadenswert wird als `data-damage-percent` aus dem gespeicherten Verteidigungswert abgeleitet und nicht separat gespeichert
+- der Battle-WebKit-Test prüft 25 %, 50 % und 80 % Schaden sowie Risse, Geröll, Rauch und die illustrierte Festung
+- keine neue Spielmechanik: Mastery, XP, Angriffsschaden, Testfestungslogik, OCR und Sync bleiben unverändert
 
 ## v0.18.31 – stärkere Trefferwirkung
 
