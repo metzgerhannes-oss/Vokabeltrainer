@@ -356,6 +356,8 @@ Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Joh
 - [LIBRARY_INDEX.md](LIBRARY_INDEX.md)
 - [FOCUSED_LEARNING_UI.md](FOCUSED_LEARNING_UI.md)
 - [FINAL_AUDIT.md](FINAL_AUDIT.md)
+- [docs/DEEP_AUDIT_v0.18.39.md](docs/DEEP_AUDIT_v0.18.39.md) – technisches Deep Audit vor v1.0
+- [docs/PAEDAGOGISCHE_DOKUMENTATION.md](docs/PAEDAGOGISCHE_DOKUMENTATION.md) – Ziel, Lernlogik und Grenzen für Eltern und Schulpädagogen
 - [QUIZ_ENGINE.md](QUIZ_ENGINE.md)
 
 
