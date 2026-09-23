@@ -11,8 +11,9 @@ const css=fs.readFileSync('css/app.css','utf8');
 const dna=fs.readFileSync('PRODUCT_DNA.md','utf8');
 
 const nav=html.match(/<nav class="bottom-nav"[\s\S]*?<\/nav>/)?.[0]||'';
-assert((nav.match(/<button\b/g)||[]).length===3,'Kindernavigation hat genau drei Hauptaktionen');
-for(const label of ['Heute','Lernen','Erfolge'])assert(nav.includes('>'+label+'</button>'),'Kindernavigation enthält '+label);
+assert((nav.match(/<button\b/g)||[]).length===4,'Kindernavigation hat genau vier Hauptaktionen');
+for(const label of ['Heute','Üben','Fortschritt','Armee'])assert(nav.includes('>'+label+'</button>'),'Kindernavigation enthält '+label);
+assert(html.includes('id="practiceView"')&&html.includes('id="practiceCardsBtn"')&&html.includes('id="practiceWeakBtn"')&&html.includes('id="practiceAllBtn"')&&html.includes('id="practiceSpecialBtn"'),'Üben hat genau die vier vorgesehenen Einstiege');
 for(const admin of ['Vokabeln','Einstellungen','Fortschritt & Noten'])assert(!nav.includes(admin),'Administration fehlt in Kindernavigation: '+admin);
 
 assert(html.includes('id="parentAreaBtn"')&&html.includes('id="childModeBtn"'),'expliziter Rollenwechsel existiert');
