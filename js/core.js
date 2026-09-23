@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.18.28';
+const VERSION = '0.18.29';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';
@@ -240,7 +240,7 @@ function clearLearnerLearningData(learnerId){
   state.practiceTests=(state.practiceTests||[]).filter(t=>t.learnerId!==learnerId);
   state.activity=(state.activity||[]).filter(a=>a.learnerId!==learnerId);
   state.grades=(state.grades||[]).filter(g=>g.learnerId!==learnerId||!g.practiceTestId);
-  l.xp=0;l.streakDays=[];l.milestones={};l.fortressWins=defaultSubjectArrays();l.fortressWinsByYear={};l.battleTickets=defaultSubjectNumbers();l.campaignLog=[];l.dailyPlans={};l.testSeries=defaultTestSeries();
+  l.xp=0;l.streakDays=[];l.milestones={};l.fortressWins=defaultSubjectArrays();l.fortressWinsByYear={};l.battleTickets=defaultSubjectNumbers();l.battleDays={};l.campaignLog=[];l.dailyPlans={};l.testSeries=defaultTestSeries();
   rebuildWordIndexes();return {sets:setIds.size,links:linksBefore,progress:progressBefore,orphanVocabulary:beforeVocabulary-(state.vocabulary||[]).length};
 }
 
@@ -248,7 +248,7 @@ function defaultState(){
   const s={
     version: VERSION,senseModelVersion:1,spellingLeakRepairVersion:1,pairAuditVersion:1,firstContactVersion:1,
     activeLearnerId: 'learner_demo',activeSubject: 'english',
-    learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',activeSubjects:['english'],xp:0,lrsMode:false,fontSize:17,letterSpacing:0,flashSpeed:1600,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
+    learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',activeSubjects:['english'],xp:0,lrsMode:false,fontSize:17,letterSpacing:0,flashSpeed:1600,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),battleDays:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
     books:[],learnerBooks:[],bookVocabulary:[],sets:[],vocabulary:[],setVocabulary:[],learnerVocabulary:[],grades:[],practiceTests:[],activity:[]
   };
   attachRuntimeWordApi(s);return s;
