@@ -9,13 +9,13 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Vokabeltrainer">
-  <title>Vokabeltrainer – Beta v0.18.35</title>
+  <title>Vokabeltrainer – Beta v0.19.0</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
-  <link rel="stylesheet" href="css/app.css?v=0.18.35">
-  <link rel="stylesheet" href="css/army.css?v=0.18.35">
-  <link rel="stylesheet" href="css/battle-art.css?v=0.18.35">
-  <link rel="stylesheet" href="css/battle-result.css?v=0.18.35">
+  <link rel="stylesheet" href="css/app.css?v=0.19.0">
+  <link rel="stylesheet" href="css/army.css?v=0.19.0">
+  <link rel="stylesheet" href="css/battle-art.css?v=0.19.0">
+  <link rel="stylesheet" href="css/battle-result.css?v=0.19.0">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Zum Inhalt</a>
@@ -23,7 +23,7 @@
     <header class="topbar">
       <div class="app-title-row">
         <h1 id="appTitle">Vokabeltrainer</h1>
-        <span id="versionBadge" class="version-badge" aria-label="App-Version">v0.18.35</span>
+        <span id="versionBadge" class="version-badge" aria-label="App-Version">v0.19.0</span>
       </div>
       <div class="top-actions">
         <button id="installBtn" class="ghost hidden">Installieren</button>
@@ -58,8 +58,7 @@
             <p id="todayEstimate" class="muted-line"></p>
           </div>
           <div class="today-actions">
-            <button id="quickLearnHeroBtn" class="primary today-cta">Tagesziel starten</button>
-            <button id="quickCardsBtn" class="secondary">▥ Karteikarten</button>
+            <button id="quickLearnHeroBtn" class="primary today-cta">Heute lernen</button>
             <button id="todayTestBtn" class="ghost hidden">Testdatum setzen</button>
           </div>
         </article>
@@ -80,24 +79,30 @@
           </div>
         </article>
 
-        <details id="practiceDisclosure" class="home-disclosure child-practice-disclosure">
-          <summary>
-            <span><strong>Mehr üben</strong><small>Freiwillig · zählt nicht zum Tagesziel</small></span>
-            <span class="disclosure-chevron" aria-hidden="true">›</span>
-          </summary>
-          <div class="home-disclosure-body">
-            <section id="optionalLearningCard" class="card">
-              <div class="row spread align-center">
-                <div>
-                  <div class="eyebrow">Optional</div>
-                  <h2>Weitere Lernarten</h2>
-                </div>
-                <span id="lrsBadge" class="pill hidden">LRS aktiv</span>
-              </div>
-              <div id="recommendations" class="recommend-grid"></div>
-            </section>
+      </section>
+
+      <section id="practiceView" class="view">
+        <div class="practice-hub">
+          <article class="card practice-hero">
+            <div class="eyebrow">Üben</div>
+            <h2>Was möchtest du üben?</h2>
+            <p class="muted-line">Freiwilliges Training außerhalb des Tagesziels. Nur eigenständiger Abruf kann den fachlichen Lernstand erhöhen.</p>
+          </article>
+          <div class="practice-primary-grid" aria-label="Übungswege">
+            <button id="practiceCardsBtn" class="practice-path" type="button"><span>▥</span><strong>Karteikarten</strong><small>Schriftlich · 5 Boxen</small></button>
+            <button id="practiceWeakBtn" class="practice-path" type="button"><span>◎</span><strong>Unsichere Wörter</strong><small>Gezielt festigen</small></button>
+            <button id="practiceAllBtn" class="practice-path" type="button"><span>∞</span><strong>Alle Vokabeln</strong><small>Bereich komplett üben</small></button>
+            <button id="practiceSpecialBtn" class="practice-path" type="button" aria-expanded="false"><span>✦</span><strong>Spezialtraining</strong><small>Hören · Rechtschreibung · Kontext</small></button>
           </div>
-        </details>
+          <section id="optionalLearningCard" class="card practice-special-card hidden">
+            <div class="row spread align-center wrap">
+              <div><div class="eyebrow">Spezialtraining</div><h2>Gezielte Hilfen</h2></div>
+              <span id="lrsBadge" class="pill hidden">LRS aktiv</span>
+            </div>
+            <p class="muted-line">Diese Übungen unterstützen das Lernen. Erkennen, Hören, Wortbausteine, Wortblitz, Vokabeldusche und Abschreiben machen eine Vokabel allein nicht „sicher“.</p>
+            <div id="recommendations" class="recommend-grid"></div>
+          </section>
+        </div>
       </section>
 
       <section id="childProgressView" class="view">
@@ -372,6 +377,7 @@
             <label>Blitzlesen-Tempo
               <select id="flashSpeedSelect"><option value="2200">ruhig</option><option value="1600">normal</option><option value="1100">schnell</option></select>
             </label>
+            <label class="switch-row"><span><strong>Richtige Lösung nach einem Fehler automatisch vorlesen</strong><small>Audio startet nur nach der Bewertung. Bei normalen Deutsch→Fremdsprache-Abfragen wird die Lösung nie vorab vorgelesen.</small></span><input id="autoSpeakCorrection" type="checkbox" checked></label>
           </article>
           <article class="card family-sync-card">
             <div class="eyebrow">Familie & Geräte</div>
@@ -408,8 +414,9 @@
 
     <nav class="bottom-nav" aria-label="Navigation">
       <button data-view="homeView" class="nav-btn active" aria-current="page"><span aria-hidden="true">⌂</span>Heute</button>
-      <button data-action="quickLearn" class="nav-btn"><span aria-hidden="true">✦</span>Lernen</button>
-      <button data-view="childProgressView" class="nav-btn"><span aria-hidden="true">★</span>Erfolge</button>
+      <button data-view="practiceView" class="nav-btn"><span aria-hidden="true">✦</span>Üben</button>
+      <button data-view="childProgressView" class="nav-btn"><span aria-hidden="true">★</span>Fortschritt</button>
+      <button data-view="armyView" class="nav-btn"><span aria-hidden="true">⚔</span>Armee</button>
     </nav>
   </div>
 
@@ -419,25 +426,25 @@
   <input id="fileInput" type="file" class="hidden" accept=".csv,.json,text/csv,application/json">
   <input id="photoInput" type="file" class="hidden" accept="image/*">
   <input id="isbnPhotoInput" type="file" class="hidden" accept="image/*" capture="environment">
-  <script src="js/core.js?v=0.18.35" defer></script>
-  <script src="js/help.js?v=0.18.35" defer></script>
-  <script src="js/library.js?v=0.18.35" defer></script>
-  <script src="js/builtin-library.js?v=0.18.35" defer></script>
-  <script src="js/storage.js?v=0.18.35" defer></script>
-  <script src="js/model.js?v=0.18.35" defer></script>
-  <script src="js/family-sync.js?v=0.18.35" defer></script>
-  <script src="js/quiz-engine.js?v=0.18.35" defer></script>
-  <script src="js/learning.js?v=0.18.35" defer></script>
-  <script src="js/translation.js?v=0.18.35" defer></script>
-  <script src="js/io.js?v=0.18.35" defer></script>
-  <script src="js/ui.js?v=0.18.35" defer></script>
-  <script src="js/army-art.js?v=0.18.35" defer></script>
-  <script src="js/battle-art.js?v=0.18.35" defer></script>
-  <script src="js/battle-art-ui.js?v=0.18.35" defer></script>
-  <script src="js/battle-result-ui.js?v=0.18.35" defer></script>
-  <script src="js/army-ui.js?v=0.18.35" defer></script>
-  <script src="js/library-ui.js?v=0.18.35" defer></script>
-  <script src="js/focus-ui.js?v=0.18.35" defer></script>
-  <script src="js/app.js?v=0.18.35" defer></script>
+  <script src="js/core.js?v=0.19.0" defer></script>
+  <script src="js/help.js?v=0.19.0" defer></script>
+  <script src="js/library.js?v=0.19.0" defer></script>
+  <script src="js/builtin-library.js?v=0.19.0" defer></script>
+  <script src="js/storage.js?v=0.19.0" defer></script>
+  <script src="js/model.js?v=0.19.0" defer></script>
+  <script src="js/family-sync.js?v=0.19.0" defer></script>
+  <script src="js/quiz-engine.js?v=0.19.0" defer></script>
+  <script src="js/learning.js?v=0.19.0" defer></script>
+  <script src="js/translation.js?v=0.19.0" defer></script>
+  <script src="js/io.js?v=0.19.0" defer></script>
+  <script src="js/ui.js?v=0.19.0" defer></script>
+  <script src="js/army-art.js?v=0.19.0" defer></script>
+  <script src="js/battle-art.js?v=0.19.0" defer></script>
+  <script src="js/battle-art-ui.js?v=0.19.0" defer></script>
+  <script src="js/battle-result-ui.js?v=0.19.0" defer></script>
+  <script src="js/army-ui.js?v=0.19.0" defer></script>
+  <script src="js/library-ui.js?v=0.19.0" defer></script>
+  <script src="js/focus-ui.js?v=0.19.0" defer></script>
+  <script src="js/app.js?v=0.19.0" defer></script>
 </body>
 </html>
