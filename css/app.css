@@ -1247,3 +1247,7 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
 }
 @media(max-width:760px){.practice-path-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:420px){.practice-path-grid{grid-template-columns:1fr}}
+
+@media(max-width:1099px){
+  .bottom-nav{grid-template-columns:repeat(4,1fr);width:min(650px,calc(100% - 24px))}
+}
