@@ -23,7 +23,10 @@ async function seed(page){
 }
 
 async function noOverflow(page,label){
-  const m=await page.evaluate(()=>({sw:document.documentElement.scrollWidth,iw:window.innerWidth,bw:document.body.scrollWidth}));
+  const m=await page.evaluate(()=>{
+    const iw=window.innerWidth,offenders=[...document.querySelectorAll('body *')].map(el=>{const r=el.getBoundingClientRect();return {tag:el.tagName,id:el.id||'',cls:String(el.className||'').slice(0,80),left:Math.round(r.left),right:Math.round(r.right),width:Math.round(r.width)}}).filter(x=>x.right>iw+2||x.left<-2||x.width>iw+2).slice(0,8);
+    return {sw:document.documentElement.scrollWidth,iw,bw:document.body.scrollWidth,offenders};
+  });
   assert(m.sw<=m.iw+2&&m.bw<=m.iw+2,label+' has horizontal overflow: '+JSON.stringify(m));
 }
 async function targetSize(page,selector,label){
