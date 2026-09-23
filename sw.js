@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='0.18.20';
+const APP_VERSION='0.18.21';
 const RESOURCE_REVISION='1';
 const SHELL_CACHE=`vokabeltrainer-shell-v${APP_VERSION}`;
 const RESOURCE_CACHE=`vokabeltrainer-resources-v${RESOURCE_REVISION}`;
@@ -10,12 +10,14 @@ const LEGACY_CACHE_PREFIX='vokabeltrainer-v';
 const LEGACY_APP_BASES=['/JohannasGartenwelt/vokabeltrainer/'];
 
 const ASSETS=[
-  './','./index.html','./css/app.css?v=0.18.20','./css/army.css?v=0.18.20','./js/core.js?v=0.18.20','./js/help.js?v=0.18.20','./js/library.js?v=0.18.20','./js/storage.js?v=0.18.20',
-  './js/builtin-library.js?v=0.18.20','./js/model.js?v=0.18.20','./js/quiz-engine.js?v=0.18.20','./js/learning.js?v=0.18.20','./js/translation.js?v=0.18.20',
-  './js/io.js?v=0.18.20','./js/family-sync.js?v=0.18.20',
-  './js/device-pairing.js?v=0.18.20','./js/ui.js?v=0.18.20','./js/army-ui.js?v=0.18.20','./js/library-ui.js?v=0.18.20','./js/focus-ui.js?v=0.18.20','./js/app.js?v=0.18.20','./manifest.webmanifest',
+  './','./index.html','./css/app.css?v=0.18.21','./css/army.css?v=0.18.21','./js/core.js?v=0.18.21','./js/help.js?v=0.18.21','./js/library.js?v=0.18.21','./js/storage.js?v=0.18.21',
+  './js/builtin-library.js?v=0.18.21','./js/model.js?v=0.18.21','./js/quiz-engine.js?v=0.18.21','./js/learning.js?v=0.18.21','./js/translation.js?v=0.18.21',
+  './js/io.js?v=0.18.21','./js/family-sync.js?v=0.18.21',
+  './js/device-pairing.js?v=0.18.21','./js/ui.js?v=0.18.21','./js/army-art.js?v=0.18.21','./js/army-ui.js?v=0.18.21','./js/library-ui.js?v=0.18.21','./js/focus-ui.js?v=0.18.21','./js/app.js?v=0.18.21','./manifest.webmanifest',
   './data/camden-town-1-welcome.tsv','./data/camden-town-1-theme1.tsv',
-  './assets/icons/icon-180.png','./assets/icons/icon-192.png','./assets/icons/icon-512.png'
+  './assets/icons/icon-180.png','./assets/icons/icon-192.png','./assets/icons/icon-512.png',
+  './assets/army/hero/part-01.b64','./assets/army/hero/part-02.b64','./assets/army/hero/part-03.b64','./assets/army/hero/part-04.b64','./assets/army/hero/part-05.b64','./assets/army/hero/part-06.b64',
+  './assets/army/units/part-01.b64','./assets/army/units/part-02.b64','./assets/army/units/part-03.b64','./assets/army/units/part-04.b64','./assets/army/units/part-05.b64'
 ];
 
 function appBasePath(){

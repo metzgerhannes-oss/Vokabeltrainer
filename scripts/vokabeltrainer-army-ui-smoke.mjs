@@ -31,6 +31,11 @@ try{
   const before=await page.evaluate(()=>subjectProgress().pct);
   await page.click('#armyBtn');
   await page.waitForSelector('#armyView.active');
+  await page.waitForFunction(()=>window.VTArmyArt?.ready===true);
+  await page.waitForFunction(()=>document.querySelector('[data-army-hero-art]')?.naturalWidth>0);
+  await page.waitForFunction(()=>document.querySelectorAll('#armyUnitGrid .army-unit-art.art-loaded').length===6);
+  assert(await page.locator('[data-army-hero-art]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'illustrated camp artwork loads');
+  assert(await page.locator('#armyUnitGrid .army-unit-art.art-loaded').count()===6,'six illustrated unit artworks load');
   assert(await page.locator('#armyUnitGrid .army-unit-card').count()===6,'six unit cards are shown');
   assert((await page.locator('#armyViewTitle').textContent())?.includes('Meine Armee'),'army view has a clear title');
   assert((await page.locator('#armyRankLabel').textContent())?.length>0,'rank is visible');

@@ -107,6 +107,7 @@
   function heroMarkup(c){
     const morale=moraleMeta(c);
     return `
+      <img class="army-camp-art" data-army-hero-art alt="" aria-hidden="true">
       <div class="army-camp-sky" aria-hidden="true"></div>
       <div class="army-camp-banner" aria-hidden="true"><span>♜</span></div>
       <div class="army-camp-copy">
@@ -139,7 +140,7 @@
     const s=unitState(def,c),name=subjectName(def);
     return `<button type="button" class="army-unit-card unit-${safe(def.id)} ${s.unlocked?'unlocked':'locked'} ${selectedUnitId===def.id?'selected':''}" data-army-unit="${safe(def.id)}" aria-pressed="${selectedUnitId===def.id?'true':'false'}">
       <span class="army-unit-level">Stufe <b>${s.level||0}</b></span>
-      <span class="army-unit-emblem" aria-hidden="true">${def.icon}</span>
+      <span class="army-unit-art unit-art-${safe(def.id)}" aria-hidden="true"><img data-army-unit-art alt=""><b>${def.icon}</b></span>
       <strong>${safe(name)}</strong>
       <small>${safe(def.description?.[state.activeSubject]||def.description.english)}</small>
       <progress class="army-unit-progress" max="100" value="${s.progress}" aria-label="Fortschritt zur nächsten Stufe"></progress>
@@ -150,7 +151,7 @@
   function previewMarkup(def,c){
     const s=unitState(def,c),name=subjectName(def);
     return `
-      <div class="army-preview-emblem unit-${safe(def.id)}" aria-hidden="true">${def.icon}</div>
+      <div class="army-preview-art unit-art-${safe(def.id)}" aria-hidden="true"><img data-army-unit-art alt=""><b>${def.icon}</b></div>
       <div class="army-preview-copy">
         <span class="army-kicker">Einheit</span>
         <h3>${safe(name)}</h3>
@@ -167,6 +168,31 @@
         <small>Aufwertungen entstehen automatisch aus dem Lernfortschritt.</small>
       </div>
     `;
+  }
+
+  function applyArmyArt(){
+    const art=window.VTArmyArt;
+    const command=document.querySelector('.army-command');
+    if(state?.activeSubject!=='english'){
+      command?.classList.remove('art-ready');
+      return;
+    }
+    if(!art?.ready)return;
+    const hero=document.querySelector('[data-army-hero-art]');
+    if(hero&&!hero.dataset.armyArtBound){
+      hero.dataset.armyArtBound='1';
+      hero.addEventListener('load',()=>hero.closest('.army-command')?.classList.add('art-ready'),{once:true});
+      hero.src=art.heroUrl;
+      if(hero.complete&&hero.naturalWidth)hero.closest('.army-command')?.classList.add('art-ready');
+    }
+    document.querySelectorAll('[data-army-unit-art]').forEach(img=>{
+      if(img.dataset.armyArtBound)return;
+      img.dataset.armyArtBound='1';
+      const wrap=img.closest('.army-unit-art,.army-preview-art');
+      img.addEventListener('load',()=>wrap?.classList.add('art-loaded'),{once:true});
+      img.src=art.unitsUrl;
+      if(img.complete&&img.naturalWidth)wrap?.classList.add('art-loaded');
+    });
   }
 
   function render(){
@@ -210,6 +236,7 @@
       battle.disabled=c.tickets<1;
       battle.textContent=c.tickets>0?`Zur Schlacht · ${c.tickets}`:'Schlacht nach dem Lernen';
     }
+    applyArmyArt();
   }
 
   function open(){
@@ -238,6 +265,7 @@
     });
   }
 
-  window.VTArmyUi={render,open,select};
+  document.addEventListener('vt-army-art-ready',applyArmyArt);
+  window.VTArmyUi={render,open,select,applyArt:applyArmyArt};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});else bind();
 })();
