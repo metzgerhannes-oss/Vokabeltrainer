@@ -34,8 +34,8 @@ try{
   assert(await page.locator('#battleAttackBtn').isDisabled(),'only the attack action is locked before the daily goal');
   await page.click('#battleReturnBtn');
   await page.waitForSelector('#childProgressView.active');
-  await page.evaluate(()=>{grantBattleTicket('smoke');renderAll();});
-  assert(await page.evaluate(()=>grantBattleTicket('duplicate-smoke'))===false,'same day cannot earn a second battle action');
+  await page.evaluate(()=>{grantBattleTicket('dailyGoal');renderAll();});
+  assert(await page.evaluate(()=>grantBattleTicket('dailyGoal'))===false,'same day cannot earn a second battle action');
   assert((await page.locator('#attackBtn').textContent())?.includes('Angriff'),'completed daily goal marks the attack as ready');
 
   await page.click('#attackBtn');
