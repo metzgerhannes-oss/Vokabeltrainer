@@ -21,14 +21,28 @@ try{
     state.sets.push(set);
     attachVocabularyToSet(set.id,{term:"can't",translation:'nicht können',source:'cards-smoke',verified:true});
     attachVocabularyToSet(set.id,{term:'window',translation:'Fenster',source:'cards-smoke',verified:true});
-    rebuildWordIndexes();renderAll();showView('homeView');
+    rebuildWordIndexes();
+    const words=schoolYearWords('english');
+    words[0].leitnerBox=1;
+    words[1].leitnerBox=4;
+    renderAll();showView('childProgressView');
   });
+
+  assert(await page.locator('#cardboxOverviewCard:not(.hidden)').count()===1,'progress view shows the current card box overview');
+  assert(await page.locator('#cardboxOverview [data-cardbox-box]').count()===5,'card box overview always shows all five boxes');
+  assert((await page.locator('#cardboxTotalPill').textContent())?.includes('2 Karten'),'card box overview shows the current card total');
+  assert((await page.locator('#cardboxDuePill').textContent())?.includes('2 heute fällig'),'card box overview shows currently due cards');
+  assert((await page.locator('[data-cardbox-box="1"] .cardbox-stage-top strong').textContent())==='1','box 1 count reflects the current Leitner state');
+  assert((await page.locator('[data-cardbox-box="4"] .cardbox-stage-top strong').textContent())==='1','box 4 count reflects the current Leitner state');
+  assert((await page.locator('[data-cardbox-box="5"] .cardbox-stage-top strong').textContent())==='0','unused boxes remain visible with zero cards');
+  const overviewDistribution=await page.evaluate(()=>leitnerDistribution());
+  assert(overviewDistribution[1]===1&&overviewDistribution[4]===1,'rendering the overview does not change card boxes');
+  await page.click('#cardboxPracticeBtn');
+  await page.waitForSelector('#answerField');
 
   assert(await page.evaluate(()=>schoolYearWords('english').length)===2,'new verified vocabulary is immediately in the normal learning pool');
   assert((await page.evaluate(()=>firstContactStatus('cards_set').pending))===2,'optional copy status remains independent');
-  assert(!(await page.locator('#quickCardsBtn').isDisabled()),'cards quick action is enabled for new verified vocabulary');
-  await page.click('#quickCardsBtn');
-  await page.waitForSelector('#answerField');
+  assert((await page.locator('#modePill').textContent())==='Karteikarten','progress overview starts the existing cards mode');
   assert((await page.locator('#modePill').textContent())==='Karteikarten','cards mode keeps only the compact mode label');
   assert(await page.locator('.leitner-box').count()===0,'Leitner diagnostics stay out of the retrieval moment');
   assert((await page.locator('#answerBtn').textContent())==='Prüfen','card uses one neutral submit action');

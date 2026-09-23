@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 23.09.2026 · App v0.18.32
+Stand: 23.09.2026 · App v0.18.33
 
 ## Ergebnis
 
@@ -53,6 +53,8 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 
 - die Schlacht besitzt eine eigene Ergebnisansicht; sie liest ausschließlich bereits feststehende Kampfdaten und zeigt bei Sieg nur reale Werte (+20 XP, Lernfortschritt, Armeestärke, nächstes Kampagnenziel)
 - die Ergebnisansicht schreibt keine Mastery- oder Lernwerte und verändert die bestehende Kampagnenlogik nicht
+- der Karteikasten wird unter „Mein Fortschritt“ dauerhaft mit allen fünf Leitner-Stufen dargestellt; Zahlen und Fälligkeit werden ausschließlich aus dem bestehenden Lernmodell gelesen
+- die Karteikasten-Übersicht ist rein lesend und verändert weder Leitner-Boxen noch Mastery
 - sichtbare Festungsschäden werden ausschließlich aus dem bereits gespeicherten Verhältnis `defense/maxDefense` abgeleitet; es gibt keinen separaten visuellen Spielfortschritt
 - leichte, mittlere und schwere Schadensstufen verändern Risse, Geröll, Ruß, Rauch und die illustrierte Festungs-Layer; die fachliche und kampagnenlogische Bewertung bleibt unverändert
 - die Trefferphase nutzt ausschließlich vorhandene UI-Elemente für größeren Impact-Burst, Torblitz, Staubwolke und Shockwave; bei `prefers-reduced-motion` werden diese Animationen deaktiviert

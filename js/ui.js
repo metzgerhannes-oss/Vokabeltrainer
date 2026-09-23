@@ -176,6 +176,30 @@ function runBattleAnimation(){
     renderBattlefield();
   },timing.ready);
 }
+function renderCardboxOverview(){
+  const card=$('#cardboxOverviewCard'),root=$('#cardboxOverview');
+  if(!card||!root)return;
+  const words=schoolYearVerifiedWords(),total=words.length,counts=leitnerDistribution(words);
+  const due=words.filter(w=>!w.dueDate||w.dueDate<=today()).length;
+  card.classList.toggle('hidden',!total);
+  if(!total){root.innerHTML='';return}
+  $('#cardboxDuePill').textContent=`${due} heute fällig`;
+  $('#cardboxTotalPill').textContent=`${total} ${total===1?'Karte':'Karten'}`;
+  $('#cardboxOverviewText').textContent=due
+    ?`${due} ${due===1?'Karte ist':'Karten sind'} heute zur Wiederholung fällig.`
+    :'Heute ist keine Karte fällig. Du kannst trotzdem freiwillig üben.';
+  root.innerHTML=[1,2,3,4,5].map(box=>{
+    const count=counts[box]||0,pct=total?Math.round(count/total*100):0;
+    return `<div class="cardbox-stage" data-cardbox-box="${box}">
+      <div class="cardbox-stage-top"><span>Box ${box}</span><strong>${count}</strong></div>
+      <b>${esc(leitnerLabel(box))}</b>
+      <progress class="cardbox-stage-progress" max="100" value="${pct}" aria-label="${pct} Prozent des Karteikastens in ${esc(leitnerLabel(box))}"></progress>
+      <small>${pct}% des Karteikastens</small>
+    </div>`;
+  }).join('');
+  const practice=$('#cardboxPracticeBtn');if(practice){practice.disabled=!total;practice.textContent=due?`▥ ${due} fällige ${due===1?'Karte':'Karten'} üben`:'▥ Karteikarten üben'}
+}
+
 function renderAll(){
   const l=learner(); if(!l) return; ensureActiveSubject();applyPreferences();
   const profileBtn=$('#profileBtn');profileBtn.textContent=l.name;profileBtn.setAttribute('aria-label',`Lernprofil wechseln. Aktiv: ${l.name}`);profileBtn.title='Profil wechseln'; $('#lrsBadge').classList.toggle('hidden',!l.lrsMode); applyRoleUi();
@@ -188,7 +212,7 @@ function renderAll(){
   $('#fortressRequirement').textContent=!nf?'Kein Test geplant':secured?`Erobert · Test ${formatDateShort(nf.testDate)}`:`${nf.defense} Verteidigung · Test ${formatDateShort(nf.testDate)}`;
   $('#attackBtn').disabled=!nf;$('#attackBtn').textContent=!nf?'Keine Festung':tickets?(secured?'Sicherung bereit':'Angriff bereit'):'Zur Festung';
   $('#campaignMessage').className=`notice ${tickets?'good':'subtle'}`;$('#campaignMessage').textContent=!nf?'Für einen geplanten Test entsteht automatisch eine Festung.':tickets?(secured?'Dein heutiger Sicherungseinsatz ist bereit.':'Dein Tagesangriff ist bereit.'):secured?`Festung erobert. Bis zum Test ${formatDateShort(nf.testDate)} sichern.`:usedToday?`Heute angegriffen · noch ${nf.defense} Verteidigung.`:`Noch ${nf.defense} Verteidigung. Nach dem Tagesziel kannst du angreifen.`;
-  const hasSubjectWords=myWords().length>0; $('#campaignCard').classList.toggle('hidden',!hasSubjectWords); $('#optionalLearningCard').classList.toggle('hidden',!hasSubjectWords); renderToday(); renderTestCheck(); renderBattlefield(); renderBattleView(); renderRecommendations(); renderSets(); renderDashboard(); renderLibrary(); renderProfiles();
+  const hasSubjectWords=myWords().length>0; $('#campaignCard').classList.toggle('hidden',!hasSubjectWords); $('#optionalLearningCard').classList.toggle('hidden',!hasSubjectWords); renderCardboxOverview(); renderToday(); renderTestCheck(); renderBattlefield(); renderBattleView(); renderRecommendations(); renderSets(); renderDashboard(); renderLibrary(); renderProfiles();
   $('#fontSizeRange').value=l.fontSize; $('#letterSpacingRange').value=l.letterSpacing; $('#flashSpeedSelect').value=String(l.flashSpeed);
   renderParentOverview(); renderFamilySync(); checkHundredPercent(); renderStorageStatus();
 }
@@ -706,7 +730,7 @@ function showView(id){
 }
 
 function bind(){
-  $$('.nav-btn[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view)); $('[data-action="quickLearn"]').onclick=startDailyTodo; $('#quickLearnHeroBtn').onclick=startDailyTodo; $('#quickCardsBtn').onclick=()=>startSession('cards'); $('#todayTestBtn').onclick=openTestDatePlanner; $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
+  document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view)); $('[data-action="quickLearn"]').onclick=startDailyTodo; $('#quickLearnHeroBtn').onclick=startDailyTodo; $('#quickCardsBtn').onclick=()=>startSession('cards'); $('#cardboxPracticeBtn').onclick=()=>startSession('cards'); $('#todayTestBtn').onclick=openTestDatePlanner; $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
   $('#newSetBtn').onclick=()=>openLearningContentPlanner(); $('#addGradeBtn').onclick=()=>addGrade(); $('#practiceTestBtn').onclick=openPracticeTestChooser; $('#addProfileBtn').onclick=addProfile; $('#profileBtn').onclick=openProfileSwitcher; $('#attackBtn').onclick=openBattleView; $('#duelBtn').onclick=openDuel;
   $('#battleBackBtn').onclick=()=>showView('childProgressView'); $('#battleReturnBtn').onclick=()=>showView('childProgressView'); $('#battleAttackBtn').onclick=runBattleAnimation; $('#battleFullscreenBtn').onclick=toggleBattleFullscreen;
   $('#battleAttackChoices').addEventListener('click',e=>{const b=e.target.closest('[data-battle-attack]');if(b&&!b.disabled)selectBattleAttack(b.dataset.battleAttack)});

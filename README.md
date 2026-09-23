@@ -4,11 +4,22 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.32**
+App-Version: **v0.18.33**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.33 – dauerhafte Karteikasten-Übersicht
+
+- **„Mein Fortschritt“** zeigt jetzt den aktuellen Karteikasten dauerhaft außerhalb einer laufenden Übung
+- alle fünf Leitner-Stufen bleiben sichtbar: **Neu → Im Lernen → Bekannt → Sicher → Nachhaltig gemeistert**
+- jede Box zeigt aktuelle Kartenanzahl und Anteil am gesamten Karteikasten
+- zusätzlich werden die Gesamtzahl der Karten und die heute fälligen Karten angezeigt
+- der Button **„Karteikarten üben“** startet unverändert den bestehenden schriftlichen Karteikartenmodus
+- die Übersicht ist rein lesend und verwendet direkt `leitnerDistribution()`; sie verändert weder Boxen noch Mastery
+- die Übersicht bleibt auch bei leeren Boxen vollständig sichtbar, damit der Lernweg verständlich bleibt
+- der bestehende Karteikarten-WebKit-Test prüft die Fünf-Boxen-Übersicht, reale Verteilung, Fälligkeit und Nicht-Veränderung des Lernstands
 
 ## v0.18.32 – dauerhafte Festungsschäden
 
