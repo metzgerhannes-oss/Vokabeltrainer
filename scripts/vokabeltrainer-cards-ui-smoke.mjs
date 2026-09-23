@@ -24,51 +24,43 @@ try{
     rebuildWordIndexes();renderAll();showView('homeView');
   });
 
-  assert(!(await page.locator('#quickCardsBtn').isDisabled()),'cards quick action is enabled while vocabulary is still new');
+  assert(await page.evaluate(()=>schoolYearWords('english').length)===2,'new verified vocabulary is immediately in the normal learning pool');
+  assert((await page.evaluate(()=>firstContactStatus('cards_set').pending))===2,'optional copy status remains independent');
+  assert(!(await page.locator('#quickCardsBtn').isDisabled()),'cards quick action is enabled for new verified vocabulary');
   await page.click('#quickCardsBtn');
   await page.waitForSelector('#answerField');
   assert((await page.locator('#modePill').textContent())==='Karteikarten','cards mode keeps only the compact mode label');
-  assert(await page.locator('.proof-notice').count()===0,'proof explanation stays out of the retrieval moment');
   assert(await page.locator('.leitner-box').count()===0,'Leitner diagnostics stay out of the retrieval moment');
   assert((await page.locator('#answerBtn').textContent())==='Prüfen','card uses one neutral submit action');
   assert((await page.locator('#answerField').getAttribute('placeholder'))==='Vokabel eingeben','input is the visible action focus');
   await page.waitForFunction(()=>document.activeElement?.id==='answerField',{timeout:1000});
-  assert(await page.evaluate(()=>document.activeElement?.id==='answerField'),'answer field receives focus after render');
 
-  // First word: fail once. The later retry must no longer count as proof,
-  // because the correct answer was already shown in the feedback.
   await page.fill('#answerField','cant');
   await page.click('#answerBtn');
   await page.waitForSelector('#continueStudyBtn');
   let feedback=await page.locator('.feedback').textContent();
   assert(/Noch nicht richtig/.test(feedback||''),'missing apostrophe is rejected');
-  assert((await page.evaluate(()=>firstContactStatus('cards_set').pending))===2,'failed proof releases no new word');
+  assert(!/Beweis geschafft/.test(feedback||''),'cards no longer contain a copy-bypass proof concept');
+  assert((await page.evaluate(()=>firstContactStatus('cards_set').pending))===2,'card answers do not mark optional copying complete');
   await page.click('#continueStudyBtn');
 
-  // Second word: correct on the first untouched attempt -> valid prior-knowledge proof.
   await page.waitForSelector('#answerField');
-  assert((await page.locator('.study-prompt').textContent())?.includes('Fenster'),'second untouched card is shown');
+  assert((await page.locator('.study-prompt').textContent())?.includes('Fenster'),'second card is shown');
   await page.fill('#answerField','window');
   await page.click('#answerBtn');
   await page.waitForSelector('#continueStudyBtn');
   feedback=await page.locator('.feedback').textContent();
-  assert(/Beweis geschafft/.test(feedback||'')&&/nur noch wiederholt/.test(feedback||''),'first-attempt correct answer skips copying');
-  assert((await page.evaluate(()=>firstContactStatus('cards_set').pending))===1,'one successfully proved word leaves first-contact');
-  assert((await page.evaluate(()=>firstContactStatus('cards_set').proved))===1,'successful proof is tracked separately');
+  assert(/Richtig/.test(feedback||'')&&!/Beweis geschafft/.test(feedback||''),'correct card stays normal Leitner learning');
+  assert((await page.evaluate(()=>firstContactStatus('cards_set').pending))===2,'correct cards remain independent from optional copying');
   await page.click('#continueStudyBtn');
 
-  // Retry of the first word: correct now, but no proof because feedback was seen before.
   await page.waitForSelector('#answerField');
   assert((await page.locator('.study-prompt').textContent())?.includes('nicht können'),'failed word returns for retry');
-  assert((await page.locator('#answerBtn').textContent())==='Prüfen','retry keeps the same neutral submit action');
-  assert(!(await page.locator('#studyArea').textContent())?.includes('Kennenlernblock'),'retry keeps learning-system explanations out of the retrieval moment');
   await page.fill('#answerField',"can't");
   await page.click('#answerBtn');
   await page.waitForSelector('#continueStudyBtn');
   feedback=await page.locator('.feedback').textContent();
-  assert(/Richtig/.test(feedback||'')&&!/Beweis geschafft/.test(feedback||''),'retry can be correct without falsely proving prior knowledge');
-  assert((await page.evaluate(()=>firstContactStatus('cards_set').pending))===1,'retry-correct word still requires normal first-contact');
-  assert(await page.evaluate(()=>schoolYearWords('english').length)===1,'only the genuinely proved word joins the normal review pool');
+  assert(/Richtig/.test(feedback||''),'retry can be answered correctly');
   await page.click('#continueStudyBtn');
 
   await page.waitForSelector('.session-finish-card');
@@ -78,8 +70,9 @@ try{
   await page.evaluate(async()=>{await persistState()});
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>state!==null&&typeof firstContactStatus==='function');
-  assert((await page.evaluate(()=>firstContactStatus('cards_set').pending))===1,'proof state survives persistence without releasing failed words');
-  assert((await page.evaluate(()=>firstContactStatus('cards_set').proved))===1,'proof is stored separately from handwritten first-contact');
+  assert(await page.evaluate(()=>schoolYearWords('english').length)===2,'learning availability survives persistence');
+  assert((await page.evaluate(()=>firstContactStatus('cards_set').pending))===2,'optional copy status survives independently');
+  assert((await page.evaluate(()=>firstContactStatus('cards_set').proved))===0,'cards create no legacy proof state');
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer written Leitner cards UI smoke: passed');
