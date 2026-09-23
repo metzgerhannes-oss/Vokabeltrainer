@@ -28,7 +28,7 @@ try{
   });
 
   assert(await page.locator('#attackBtn').isDisabled(),'battle area is locked before a lesson reward');
-  await page.evaluate(()=>{grantBattleTicket('smoke');renderAll();});
+  await page.evaluate(()=>{grantBattleTicket('dailyGoal');renderAll();});
   assert(!(await page.locator('#attackBtn').isDisabled()),'completed lesson reward unlocks battle area');
   assert((await page.locator('#attackBtn').textContent())?.includes('Schlacht'),'campaign card points to battle area');
 
@@ -87,7 +87,7 @@ try{
   assert(!(await page.locator('[data-battle-attack="ram"]').isDisabled()),'ram attack unlocks from learning progress');
   await page.click('[data-battle-attack="ram"]');
   assert(await page.locator('[data-battle-attack="ram"].active').count()===1,'attack type can be selected');
-  assert((await page.locator('#battleTicketPill').textContent())?.includes('1'),'battle screen shows earned attack');
+  assert((await page.locator('#battleTicketPill').textContent())?.includes('Heute frei'),'battle screen shows day-long access');
   assert(await page.locator('.battle-phase-strip [data-battle-phase]').count()===5,'battle shows a five-phase sequence');
   const attackButtonRect=await page.locator('#battleAttackBtn').boundingBox();
   const viewport=page.viewportSize();
@@ -106,7 +106,8 @@ try{
   assert(resultText?.includes('100%'),'result view shows the actual learning progress');
   assert(resultText?.includes('Wachturm'),'result view shows the actual next fortress');
   assert(await page.locator('#battleResultArt').evaluate(img=>img.naturalWidth>0),'result view reuses a loaded local battle illustration');
-  assert(await page.evaluate(()=>battleTickets())===0,'attack consumes exactly one earned battle ticket');
+  assert(await page.evaluate(()=>battleTickets())===1,'battle remains unlocked after the first fight');
+  assert(await page.evaluate(()=>battleRewardAvailableToday())===false,'first victory consumes only the daily reward, not battle access');
   assert(await page.evaluate(()=>learner().campaignLog.length)===1,'battle result is stored in campaign log');
   assert(await page.evaluate(()=>learner().campaignLog[0]?.attack)==='ram','selected attack is stored only as campaign presentation metadata');
   assert(await page.evaluate(()=>subjectProgress().pct)===100,'battle presentation does not alter academic mastery');
@@ -117,7 +118,7 @@ try{
 
   await page.evaluate(()=>{
     const wins=fortressWins();wins.splice(0,wins.length,'outpost','tower','wall');
-    grantBattleTicket('boss-smoke');renderBattleView();
+    renderBattleView();
   });
   assert(await page.locator('#battleBossPanel:not(.hidden)').count()===1,'citadel opens a boss fight panel');
   assert((await page.locator('#battleBossName').textContent())?.includes('Torwächter'),'boss fight has a child-friendly named opponent');
@@ -128,7 +129,9 @@ try{
   await page.click('#battleAttackBtn');
   await page.waitForSelector('#battleStage.attack-special.battle-finished',{timeout:3000});
   await page.waitForSelector('#battleResultOverlay.visible');
-  assert((await page.locator('#battleResultTitle').textContent())?.includes('Boss besiegt'),'boss victory uses the cinematic result view');
+  assert((await page.locator('#battleResultTitle').textContent())?.includes('Trainingssieg'),'later same-day victory is shown without a second reward');
+  assert(await page.evaluate(()=>learner().campaignLog.at(-1)?.rewarded===false),'later same-day victory is stored as unrewarded');
+  assert(await page.evaluate(()=>learner().xp===20),'later same-day victory does not award XP again');
   assert(await page.evaluate(()=>subjectProgress().pct)===100,'boss and special attack do not change academic mastery');
   await page.click('#battleResultClose');
   await page.waitForSelector('#battleResultOverlay',{state:'hidden'});
