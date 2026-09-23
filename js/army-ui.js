@@ -116,7 +116,7 @@
       </div>
       <div class="army-camp-strength">
         <span>Armeestärke</span><strong>${safe(c.strength)}</strong>
-        <div class="army-morale-line"><i style="width:${morale.score}%"></i></div>
+        <progress class="army-morale-progress" max="100" value="${morale.score}" aria-label="Moral"></progress>
         <small>Moral: ${safe(morale.label)}</small>
       </div>
       <div class="army-camp-campaign" aria-label="${safe(c.wins.length)} von ${fortresses.length} Festungen erobert">
@@ -142,7 +142,7 @@
       <span class="army-unit-emblem" aria-hidden="true">${def.icon}</span>
       <strong>${safe(name)}</strong>
       <small>${safe(def.description?.[state.activeSubject]||def.description.english)}</small>
-      <span class="army-unit-meter"><i style="width:${s.progress}%"></i></span>
+      <progress class="army-unit-progress" max="100" value="${s.progress}" aria-label="Fortschritt zur nächsten Stufe"></progress>
       <span class="army-unit-state">${s.unlocked?metricText(def,s):`Freischaltung: ${nextText(def,s)}`}</span>
       <span class="army-unit-next">${s.unlocked?nextText(def,s):'Noch nicht freigeschaltet'}</span>
     </button>`;
