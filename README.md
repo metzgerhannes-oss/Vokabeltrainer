@@ -4,11 +4,22 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.25**
+App-Version: **v0.18.26**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.26 – hochwertige Sieg-/Ergebnisansicht
+
+- ein abgeschlossener Kampf öffnet eine eigene, bildschirmfüllende Ergebnisansicht im freigegebenen dunkelblau/goldenen Kampagnenstil
+- Siege zeigen ausschließlich echte App-Daten: eroberte Festung, tatsächliche **+20 XP**, aktuellen Lernfortschritt, Armeestärke und das nächste reale Kampagnenziel
+- Boss-Siege werden als eigener „Boss besiegt!“-Zustand dargestellt
+- bei nicht ausreichendem Lernfortschritt zeigt die Ergebnisansicht sachlich den noch fehlenden Fortschritt; es gibt keine erfundenen Belohnungen
+- die Ergebnisansicht verwendet die bereits lokale/offline verfügbare Battle-Illustration als Hintergrund und bleibt ohne externe Bildquelle oder laufende Kosten
+- „Weiter“ führt zurück in die bestehende Schlacht, „Meine Armee“ direkt in die Armeeübersicht
+- die Ansicht ist rein präsentational und verändert weder Mastery noch Kampagnenlogik
+- der Battle-WebKit-Test prüft Ergebnisansicht, echte XP-Belohnung, Lernfortschritt, nächstes Ziel und Boss-Ergebnis
 
 ## v0.18.25 – dediziertes Battlefield
 
