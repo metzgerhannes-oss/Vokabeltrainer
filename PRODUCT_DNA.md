@@ -83,16 +83,16 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    gekennzeichnet. Nach einem Fehler darf die richtige Fremdsprachenform direkt gehört
    werden; automatisches Vorlesen bleibt abschaltbar.
 
-14. **Feedback direkt nach dem Abruf**
+6. **Feedback direkt nach dem Abruf**
    Fehler werden konkret rückgemeldet und später erneut abgefragt. Falsche Antworten führen
    zu neuer Lerngelegenheit, nicht zu Bestrafung.
 
-15. **Mastery bleibt fachlich und konservativ**
+7. **Mastery bleibt fachlich und konservativ**
    XP, Legion/Kampagne und Belohnungen sind strikt vom fachlichen Fortschritt getrennt.
    100 % bedeutet: nach den Kriterien der App nachhaltig gemeistert, nicht objektiv
    'für immer gelernt'.
 
-6. **Tagesziel beantwortet: Was muss ich heute lernen?**
+8. **Tagesziel beantwortet: Was muss ich heute lernen?**
    Testdatum, Testumfang, fällige Wiederholungen und schwache Wörter steuern das Tagespensum.
    Kurze, realistische Einheiten haben Vorrang vor langen Sessions.
    Als Richtgröße werden pro Tag **5–7 neue Vokabeln** eingeführt. Fällige und unsichere
@@ -106,16 +106,16 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    dem Test werden als Spacing-Risiko gekennzeichnet; am Testtag selbst werden keine neuen
    Wörter eingeplant. Vorschau und Tagesplan müssen dieselbe Formel verwenden.
 
-7. **Neue Wörter im Kontext, Wiederholung gemischt**
+9. **Neue Wörter im Kontext, Wiederholung gemischt**
    Erstaneignung respektiert soweit sinnvoll Buch-/Unit-Reihenfolge und Zusammenhang.
    Wiederholung mischt bewusst, damit kein reines Reihenfolgenlernen entsteht.
 
-8. **LRS und Barrierefreiheit sind Teil des Grunddesigns**
+10. **LRS und Barrierefreiheit sind Teil des Grunddesigns**
    Ruhige Oberfläche, gut lesbare Sans-Serif-Schrift, ausreichende Größe/Abstände,
-   reduzierte Ablenkung, kurze Einheiten, Audio und multisensorische Optionen.
+   reduzierte Ablenkung, kurze Einheiten sowie gezielte Audio-, Handschrift- und Wortbausteinoptionen.
    Keine unbewiesenen 'Wunderschriften' oder Zeitdruck als Lernprinzip.
 
-9. **Lernen fokussiert, Motivation außen herum**
+11. **Lernen fokussiert, Motivation außen herum**
    Während des Abrufs: möglichst wenig Ablenkung.
    Abenteuer, Legion/Kampagne, XP und Belohnungen: vor oder nach der Lernsequenz.
    Gamification darf Aufmerksamkeit nicht vom Lerninhalt wegziehen.
@@ -141,22 +141,22 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    Bossdarstellung, Story und Freundschaftsduelle dürfen fachliche Leistung niemals
    vortäuschen, ersetzen oder zufällig verändern.
 
-10. **Globale Wissensbasis, getrennte Bedeutungen**
+12. **Globale Wissensbasis, getrennte Bedeutungen**
     Ein Lexem wird global gespeichert, Bedeutungen/Senses werden getrennt geführt.
     Lernfortschritt hängt an der Bedeutung und am Lernenden, nicht nur an der Zeichenfolge.
     Schulbuchform und akzeptierte Antworten bleiben set-/sense-spezifisch.
 
-11. **Sprachen sind fachlich eigenständige Module**
+13. **Sprachen sind fachlich eigenständige Module**
     Englisch, Latein und später Französisch teilen technische Grundlagen, aber
     sprachspezifische Lernanforderungen werden explizit modelliert. Lateinische Formen,
     französische Akzente usw. werden nicht in ein Englisch-Schema gezwängt.
 
-12. **Evidenz vor Gewohnheit**
+14. **Evidenz vor Gewohnheit**
     Größere Produktentscheidungen werden regelmäßig gegen aktuelle Lernforschung,
     UX-/Cognitive-Load-Forschung und Barrierefreiheitsstandards geprüft.
     Wenn Produktwunsch und Evidenz kollidieren, wird der Zielkonflikt offengelegt.
 
-13. **Ohne Erklärung bedienbar**
+15. **Ohne Erklärung bedienbar**
     Der kritische Kind-Pfad muss selbsterklärend sein: Auf jedem Bildschirm ist klar,
     wo das Kind ist, was jetzt zu tun ist und wie es weitergeht. Der tägliche Einstieg
     zeigt eine dominante Hauptaktion; Verwaltung, Detailstatistik und alternative Wege
