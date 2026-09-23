@@ -69,17 +69,49 @@ try{
     await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
     const advance={stack:getComputedStyle(stack).transform,army:getComputedStyle(army).transform,fortress:getComputedStyle(fortress).transform};
     stage.classList.remove('phase-advance');
-    stage.classList.add('phase-impact');
+    stage.classList.add('phase-impact','is-impact');
     await new Promise(resolve=>setTimeout(resolve,80));
-    const impact={stack:getComputedStyle(stack).transform,army:getComputedStyle(army).transform,fortress:getComputedStyle(fortress).transform};
-    stage.classList.remove('battle-sequence','phase-impact');
+    const impactEl=document.querySelector('#battleStage .battle-impact');
+    const gate=document.querySelector('#battleStage .battle-gate');
+    const dust=document.querySelector('#battleStage .battle-dust');
+    const shock=document.querySelector('#battleStage .battle-shockwave');
+    const impact={
+      stack:getComputedStyle(stack).transform,
+      army:getComputedStyle(army).transform,
+      fortress:getComputedStyle(fortress).transform,
+      impactAnimation:getComputedStyle(impactEl).animationName,
+      gateAnimation:getComputedStyle(gate).animationName,
+      dustAnimation:getComputedStyle(dust).animationName,
+      shockAnimation:getComputedStyle(shock).animationName,
+      impactWidth:getComputedStyle(impactEl).width
+    };
+    stage.classList.remove('battle-sequence','phase-impact','is-impact');
     return {advance,impact};
   });
   assert(motionTransforms.advance.army!=='none','advance phase moves the army artwork layer');
   assert(motionTransforms.impact.fortress!=='none','impact phase focuses the fortress artwork layer');
   assert(motionTransforms.advance.army!==motionTransforms.impact.army,'army artwork changes position between advance and impact');
   assert(motionTransforms.advance.fortress!==motionTransforms.impact.fortress,'fortress artwork changes focus between advance and impact');
+  assert(motionTransforms.impact.impactAnimation.includes('battleImpactBloom'),'impact phase runs the cinematic impact burst');
+  assert(motionTransforms.impact.gateAnimation.includes('battleGateFlash'),'impact phase flashes the fortress gate');
+  assert(motionTransforms.impact.dustAnimation.includes('battleDustCloud'),'impact phase raises a deeper dust cloud');
+  assert(motionTransforms.impact.shockAnimation.includes('battleShockDepth'),'impact phase expands the shockwave');
+  assert(parseFloat(motionTransforms.impact.impactWidth)>=100,'impact burst has a visibly larger footprint');
+
   await page.emulateMedia({reducedMotion:'reduce'});
+  const reducedImpactAnimations=await page.evaluate(()=>{
+    const stage=document.querySelector('#battleStage');
+    stage.classList.add('phase-impact','is-impact');
+    const result={
+      impact:getComputedStyle(document.querySelector('#battleStage .battle-impact')).animationName,
+      gate:getComputedStyle(document.querySelector('#battleStage .battle-gate')).animationName,
+      dust:getComputedStyle(document.querySelector('#battleStage .battle-dust')).animationName,
+      shock:getComputedStyle(document.querySelector('#battleStage .battle-shockwave')).animationName
+    };
+    stage.classList.remove('phase-impact','is-impact');
+    return result;
+  });
+  assert(Object.values(reducedImpactAnimations).every(name=>name==='none'),'reduced-motion disables all new cinematic impact animations');
   assert(await page.locator('#battleStage [data-battle-scene-art]').getAttribute('data-battle-asset')==='dedicated','battle image comes from dedicated battlefield asset');
   assert((await page.evaluate(()=>window.VTBattleArt?.source))==='dedicated-battlefield','dedicated battlefield loader is active');
   assert(await page.locator('#battleStage .battle-unit').count()>=6,'animated army contains multiple units');

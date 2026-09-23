@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='0.18.30';
+const APP_VERSION='0.18.31';
 const RESOURCE_REVISION='1';
 const SHELL_CACHE=`vokabeltrainer-shell-v${APP_VERSION}`;
 const RESOURCE_CACHE=`vokabeltrainer-resources-v${RESOURCE_REVISION}`;
@@ -10,10 +10,10 @@ const LEGACY_CACHE_PREFIX='vokabeltrainer-v';
 const LEGACY_APP_BASES=['/JohannasGartenwelt/vokabeltrainer/'];
 
 const ASSETS=[
-  './','./index.html','./css/app.css?v=0.18.30','./css/army.css?v=0.18.30','./css/battle-art.css?v=0.18.30','./css/battle-result.css?v=0.18.30','./js/core.js?v=0.18.30','./js/help.js?v=0.18.30','./js/library.js?v=0.18.30','./js/storage.js?v=0.18.30',
-  './js/builtin-library.js?v=0.18.30','./js/model.js?v=0.18.30','./js/quiz-engine.js?v=0.18.30','./js/learning.js?v=0.18.30','./js/translation.js?v=0.18.30',
-  './js/io.js?v=0.18.30','./js/family-sync.js?v=0.18.30',
-  './js/device-pairing.js?v=0.18.30','./js/ui.js?v=0.18.30','./js/army-art.js?v=0.18.30','./js/battle-art.js?v=0.18.30','./js/battle-art-ui.js?v=0.18.30','./js/battle-result-ui.js?v=0.18.30','./js/army-ui.js?v=0.18.30','./js/library-ui.js?v=0.18.30','./js/focus-ui.js?v=0.18.30','./js/app.js?v=0.18.30','./manifest.webmanifest',
+  './','./index.html','./css/app.css?v=0.18.31','./css/army.css?v=0.18.31','./css/battle-art.css?v=0.18.31','./css/battle-result.css?v=0.18.31','./js/core.js?v=0.18.31','./js/help.js?v=0.18.31','./js/library.js?v=0.18.31','./js/storage.js?v=0.18.31',
+  './js/builtin-library.js?v=0.18.31','./js/model.js?v=0.18.31','./js/quiz-engine.js?v=0.18.31','./js/learning.js?v=0.18.31','./js/translation.js?v=0.18.31',
+  './js/io.js?v=0.18.31','./js/family-sync.js?v=0.18.31',
+  './js/device-pairing.js?v=0.18.31','./js/ui.js?v=0.18.31','./js/army-art.js?v=0.18.31','./js/battle-art.js?v=0.18.31','./js/battle-art-ui.js?v=0.18.31','./js/battle-result-ui.js?v=0.18.31','./js/army-ui.js?v=0.18.31','./js/library-ui.js?v=0.18.31','./js/focus-ui.js?v=0.18.31','./js/app.js?v=0.18.31','./manifest.webmanifest',
   './data/camden-town-1-welcome.tsv','./data/camden-town-1-theme1.tsv',
   './assets/icons/icon-180.png','./assets/icons/icon-192.png','./assets/icons/icon-512.png',
   './assets/army/hero/part-01.b64','./assets/army/hero/part-02.b64','./assets/army/hero/part-03.b64','./assets/army/hero/part-04.b64','./assets/army/hero/part-05.b64','./assets/army/hero/part-06.b64',
