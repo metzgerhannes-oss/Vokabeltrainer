@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#172033">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; media-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-src 'none'">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Kampfszene – Vokabeltrainer</title>
+  <link rel="stylesheet" href="css/app.css?v=0.18.19">
+  <link rel="stylesheet" href="css/battle-demo.css?v=1">
+</head>
+<body class="battle-demo-body">
+  <main class="battle-demo-main">
+    <section class="battle-view active" aria-labelledby="battleDemoTitle">
+      <div class="battle-shell battle-demo-shell">
+        <div class="battle-demo-meta">
+          <span class="battle-ticket-pill">Vorschau</span>
+          <span>Keine Lern- oder Sync-Daten werden verändert.</span>
+        </div>
+
+        <header class="battle-head battle-demo-head">
+          <div class="battle-kicker">Schlacht · Direktvorschau</div>
+          <h1 id="battleDemoTitle">Die Bergzitadelle</h1>
+          <p>Die Sequenz entspricht dem aktuellen 5-Phasen-Kampfablauf.</p>
+        </header>
+
+        <section class="battle-boss-panel" aria-label="Bosskampf">
+          <div>
+            <small>Bosskampf</small>
+            <strong>Der Torwächter</strong>
+            <span>Er hält den Zugang zur Bergzitadelle.</span>
+          </div>
+          <div class="battle-boss-meter">
+            <small>Durchbruch durch Lernen</small>
+            <progress max="100" value="72" aria-label="Fortschritt im Bosskampf"></progress>
+            <span>72%</span>
+          </div>
+        </section>
+
+        <div class="battle-stage-wrap battle-demo-stage-wrap">
+          <div id="battleDemoStage" class="battle-stage season-autumn subject-english gear-3 fortress-stage-citadel boss-stage" role="img" aria-label="Animierte Armee vor der Bergzitadelle">
+            <div class="battle-sky"><i class="battle-sun"></i><i class="battle-cloud cloud-1"></i><i class="battle-cloud cloud-2"></i></div>
+            <div class="battle-hills"></div>
+            <div class="battle-ground"></div>
+
+            <div class="battle-phase-strip" aria-hidden="true">
+              <span data-battle-phase="rally"><i>1</i>Sammeln</span>
+              <span data-battle-phase="advance"><i>2</i>Vorrücken</span>
+              <span data-battle-phase="barrage"><i>3</i>Angriff</span>
+              <span data-battle-phase="impact"><i>4</i>Einschlag</span>
+              <span data-battle-phase="result"><i>5</i>Ergebnis</span>
+            </div>
+
+            <div class="battle-rank-badge"><span>Hauptmann</span><small>Belagerungsausrüstung</small></div>
+
+            <div class="battle-army">
+              <div class="battle-standard"><i></i></div>
+              <div class="battle-unit unit-0 unit-infantry subject-english delay-0"><i class="mount"></i><i class="helmet"></i><i class="body"></i><i class="shield"></i><i class="weapon"></i><i class="spear"></i></div>
+              <div class="battle-unit unit-1 unit-infantry subject-english delay-1"><i class="mount"></i><i class="helmet"></i><i class="body"></i><i class="shield"></i><i class="weapon"></i><i class="spear"></i></div>
+              <div class="battle-unit unit-2 unit-archer subject-english delay-2"><i class="mount"></i><i class="helmet"></i><i class="body"></i><i class="shield"></i><i class="weapon"></i><i class="spear"></i></div>
+              <div class="battle-unit unit-0 unit-elite subject-english delay-3"><i class="mount"></i><i class="helmet"></i><i class="body"></i><i class="shield"></i><i class="weapon"></i><i class="spear"></i></div>
+              <div class="battle-unit unit-1 unit-cavalry subject-english delay-4"><i class="mount"></i><i class="helmet"></i><i class="body"></i><i class="shield"></i><i class="weapon"></i><i class="spear"></i></div>
+              <div class="battle-unit unit-2 unit-infantry subject-english delay-5"><i class="mount"></i><i class="helmet"></i><i class="body"></i><i class="shield"></i><i class="weapon"></i><i class="spear"></i></div>
+              <div class="battle-unit unit-0 unit-archer subject-english delay-6"><i class="mount"></i><i class="helmet"></i><i class="body"></i><i class="shield"></i><i class="weapon"></i><i class="spear"></i></div>
+              <div class="battle-unit unit-1 unit-elite subject-english delay-7"><i class="mount"></i><i class="helmet"></i><i class="body"></i><i class="shield"></i><i class="weapon"></i><i class="spear"></i></div>
+              <div class="battle-unit unit-2 unit-cavalry subject-english delay-0"><i class="mount"></i><i class="helmet"></i><i class="body"></i><i class="shield"></i><i class="weapon"></i><i class="spear"></i></div>
+              <div class="battle-unit unit-0 unit-infantry subject-english delay-1"><i class="mount"></i><i class="helmet"></i><i class="body"></i><i class="shield"></i><i class="weapon"></i><i class="spear"></i></div>
+              <div class="battle-ram"><i></i><b></b></div>
+            </div>
+
+            <div class="battle-projectiles">
+              <i class="arrow arrow-1"></i><i class="arrow arrow-2"></i><i class="arrow arrow-3"></i>
+              <i class="arrow arrow-4"></i><i class="arrow arrow-5"></i><i class="arrow arrow-6"></i>
+              <i class="arrow arrow-7"></i><i class="arrow arrow-8"></i><i class="arrow arrow-9"></i>
+            </div>
+            <div class="battle-impact"><i></i><i></i><i></i></div>
+            <div class="battle-special-flare"><i></i><i></i><i></i></div>
+            <div class="battle-shockwave"></div>
+
+            <div class="battle-boss-character boss-citadel" aria-label="Der Torwächter"><i class="boss-helmet"></i><i class="boss-body"></i><i class="boss-shield"></i></div>
+            <div class="battle-fortress fortress-citadel">
+              <div class="tower tower-left"></div><div class="tower tower-right"></div>
+              <div class="wall"><div class="battle-gate"></div><div class="crack c1"></div><div class="crack c2"></div></div>
+              <div class="battle-keep"></div><div class="battle-enemy-flag"></div>
+            </div>
+            <div class="battle-dust"></div>
+          </div>
+
+          <div class="battle-action-dock battle-demo-action-dock" aria-label="Schlachtaktion">
+            <div class="battle-action-dock-copy">
+              <strong id="battleDemoActionTitle">Angriff bereit</strong>
+              <span id="battleDemoActionHint">Die Vorschau startet direkt mit der aktuellen Kampfdauer.</span>
+            </div>
+            <button id="battleDemoStart" class="battle-primary" type="button">Sequenz abspielen</button>
+          </div>
+        </div>
+
+        <div id="battleDemoMessage" class="battle-message">Bereit für die Vorschau.</div>
+
+        <div class="battle-demo-controls" aria-label="Angriffsart">
+          <button type="button" class="battle-attack-choice active" data-demo-attack="charge"><span>⚔</span><strong>Sturm</strong><small>bereit</small></button>
+          <button type="button" class="battle-attack-choice" data-demo-attack="volley"><span>➶</span><strong>Pfeile</strong><small>bereit</small></button>
+          <button type="button" class="battle-attack-choice" data-demo-attack="ram"><span>▰</span><strong>Rammbock</strong><small>bereit</small></button>
+          <button type="button" class="battle-attack-choice" data-demo-attack="cavalry"><span>♞</span><strong>Reiter</strong><small>bereit</small></button>
+          <button type="button" class="battle-attack-choice special" data-demo-attack="special"><span>★</span><strong>Elite</strong><small>bereit</small></button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="js/battle-demo.js?v=1"></script>
+</body>
+</html>
