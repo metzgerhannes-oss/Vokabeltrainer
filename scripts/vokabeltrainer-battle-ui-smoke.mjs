@@ -63,12 +63,21 @@ try{
   await page.waitForSelector('#battleStage.attack-ram.battle-finished',{timeout:3000});
   const msg=await page.locator('#battleMessage').textContent();
   assert(/Angriff|Festung|Mauer/i.test(msg||''),'battle ends with a visible result');
+  await page.waitForSelector('#battleResultOverlay.visible');
+  assert((await page.locator('#battleResultTitle').textContent())?.includes('Festung erobert'),'victory opens a dedicated cinematic result view');
+  const resultText=await page.locator('#battleResultOverlay').textContent();
+  assert(resultText?.includes('+20 XP'),'result view shows the actual XP reward');
+  assert(resultText?.includes('100%'),'result view shows the actual learning progress');
+  assert(resultText?.includes('Wachturm'),'result view shows the actual next fortress');
+  assert(await page.locator('#battleResultArt').evaluate(img=>img.naturalWidth>0),'result view reuses a loaded local battle illustration');
   assert(await page.evaluate(()=>battleTickets())===0,'attack consumes exactly one earned battle ticket');
   assert(await page.evaluate(()=>learner().campaignLog.length)===1,'battle result is stored in campaign log');
   assert(await page.evaluate(()=>learner().campaignLog[0]?.attack)==='ram','selected attack is stored only as campaign presentation metadata');
   assert(await page.evaluate(()=>subjectProgress().pct)===100,'battle presentation does not alter academic mastery');
   await page.waitForFunction(()=>document.querySelector('#battleFortressName')?.textContent?.includes('Wachturm'));
   assert((await page.locator('#battleFortressName').textContent())?.includes('Wachturm'),'winning advances to a visually different fortress');
+  await page.click('#battleResultContinue');
+  await page.waitForSelector('#battleResultOverlay',{state:'hidden'});
 
   await page.evaluate(()=>{
     const wins=fortressWins();wins.splice(0,wins.length,'outpost','tower','wall');
@@ -82,7 +91,11 @@ try{
   await page.click('[data-battle-attack="special"]');
   await page.click('#battleAttackBtn');
   await page.waitForSelector('#battleStage.attack-special.battle-finished',{timeout:3000});
+  await page.waitForSelector('#battleResultOverlay.visible');
+  assert((await page.locator('#battleResultTitle').textContent())?.includes('Boss besiegt'),'boss victory uses the cinematic result view');
   assert(await page.evaluate(()=>subjectProgress().pct)===100,'boss and special attack do not change academic mastery');
+  await page.click('#battleResultClose');
+  await page.waitForSelector('#battleResultOverlay',{state:'hidden'});
 
   const privacy=await page.evaluate(()=>{const p=duelPayload(),raw=JSON.parse(decodeURIComponent(escape(atob(encodeDuel(p)))));return {payload:p,raw,profile:learner().name}});
   assert(privacy.raw.name!==privacy.profile,'duel code never contains the learner profile name');
