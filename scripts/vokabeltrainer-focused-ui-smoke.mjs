@@ -64,11 +64,13 @@ try{
     index:session.index,
     feedback:document.querySelector('.feedback')?.textContent||'',
     active:document.activeElement?.id||'',
-    answerDisabled:!!document.querySelector('#answerField')?.disabled
+    answerDisabled:!!document.querySelector('#answerField')?.disabled,
+    audioButtons:document.querySelectorAll('.feedback [data-speak]').length
   }));
   assert(afterAnswer.index===0,'feedback must not auto-advance');
   assert(/Noch nicht richtig/.test(afterAnswer.feedback),'corrective feedback must be immediate');
   assert(afterAnswer.answerDisabled,'answered input must be locked');
+  assert(afterAnswer.audioButtons>=1,'corrective feedback must expose pronunciation on demand');
   await page.waitForTimeout(1000);
   assert((await page.evaluate(()=>session.index))===0,'feedback must remain until learner continues');
   assert((await page.evaluate(()=>document.activeElement?.id||''))==='continueStudyBtn','continue control should receive focus');
@@ -127,6 +129,7 @@ try{
   assert(review?.includes('nicht können')&&review?.includes('cant')&&review?.includes("can't"),'result overview shows question, learner answer and expected answer');
   assert(review?.includes('Richtig erinnert · Schreibweise'),'result overview distinguishes semantic recall from spelling accuracy');
   assert(await page.locator('#copySessionResultsBtn').count()===1,'result overview offers a copyable diagnostic');
+  assert(await page.locator('.session-review [data-speak]').count()>=1,'result overview keeps pronunciation available for the foreign word');
 
   console.log('Vokabeltrainer focused learning WebKit smoke: passed');
   console.log('✓ retrieval hides navigation and diagnostics');

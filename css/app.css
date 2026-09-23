@@ -1251,3 +1251,12 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
 @media(max-width:1099px){
   .bottom-nav{grid-template-columns:repeat(4,1fr);width:min(650px,calc(100% - 24px))}
 }
+
+
+/* v0.18.38 – Audio direkt an sichtbaren Fremdsprachenstellen */
+.library-term-audio,.session-result-vocab,.focused-answer-audio{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.library-audio-btn{min-width:42px;min-height:36px;padding:5px 8px}
+.library-word-audio-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:stretch}
+.session-result-vocab{margin:8px 0;padding:7px 9px;border-radius:10px;background:#f8fafc}
+.focused-answer-audio{margin-top:10px}
+@media(max-width:620px){.session-result-vocab{align-items:flex-start;justify-content:space-between}.library-audio-btn{align-self:stretch}}

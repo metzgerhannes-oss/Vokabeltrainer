@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 const read=p=>fs.readFileSync(p,'utf8');
-const core=read('js/core.js'),model=read('js/model.js'),quiz=read('js/quiz-engine.js'),learning=read('js/learning.js'),index=read('index.html'),storage=read('js/storage.js');
+const core=read('js/core.js'),model=read('js/model.js'),quiz=read('js/quiz-engine.js'),learning=read('js/learning.js'),focus=read('js/focus-ui.js'),libraryUi=read('js/library-ui.js'),index=read('index.html'),storage=read('js/storage.js');
 const ok=(v,m)=>{if(!v)throw new Error(m)};
-ok(core.includes("const VERSION = '0.18.37';"),'version missing');
+ok(core.includes("const VERSION = '0.18.38';"),'version missing');
 ok(index.includes('id="autoSpeakCorrection"'),'audio setting missing');
 ok(storage.includes('autoSpeakCorrection:l.autoSpeakCorrection!==false'),'audio setting migration missing');
 const mastery=model.slice(model.indexOf('function masteryScore'),model.indexOf('function meetsMasteryCriteria'));
@@ -16,4 +16,9 @@ const recall=learning.slice(learning.indexOf('function renderRecall'),learning.i
 ok(!recall.includes('audioButtonHtml(q.term')&&!recall.includes('speak(q.term)'),'normal recall leaks target audio');
 const reverse=learning.slice(learning.indexOf('function renderReverseRecall'),learning.indexOf('function renderSpelling'));
 ok(reverse.includes("audioButtonHtml(q.term,'Wort anhören')"),'safe visible prompt audio missing');
+ok(learning.includes("term:String(q?.term||w?.term||'')"),'session results must retain the foreign term for audio');
+ok(learning.includes("session-result-vocab"),'result overview vocabulary audio missing');
+ok(focus.includes('maybeSpeakCorrection(w)'),'focused learning must apply automatic correction audio');
+ok(focus.includes('focused-answer-audio'),'focused feedback must expose on-demand pronunciation');
+ok(libraryUi.includes('library-audio-btn')&&libraryUi.includes('data-speak'),'library pronunciation controls missing');
 console.log('Evidence core guard: ok');
