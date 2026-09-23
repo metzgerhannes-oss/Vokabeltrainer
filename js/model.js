@@ -136,10 +136,10 @@ function chunkEligibleWord(w,term=w?.term){return learningChunksFor(w,term).leng
 
 function masteryScore(w){
   const s={...defaultSkills(),...(w.skills||{})};
-  const skillCore=(s.retrieval*.35)+(s.spelling*.30)+(s.context*.15)+(s.recognition*.10)+(s.listening*.10);
+  const productiveCore=(s.retrieval*.45)+(s.spelling*.35)+(s.context*.20);
   const activeDays=Math.min(4,(w.activeSuccessDays||[]).length);
   const delayed=w.maxActiveGapDays>=7?4:w.maxActiveGapDays>=3?3:w.maxActiveGapDays>=1?2:0;
-  return (skillCore*.68)+(activeDays*.20)+(delayed*.12);
+  return (productiveCore*.68)+(activeDays*.20)+(delayed*.12);
 }
 function meetsMasteryCriteria(w){
   const s={...defaultSkills(),...(w.skills||{})};
