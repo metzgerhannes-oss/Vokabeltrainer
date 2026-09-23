@@ -101,32 +101,46 @@ function finishPracticeTest(){
 
 function firstContactBlockSize(){return learner()?.lrsMode?4:5}
 function firstContactLink(linkId){return (state.setVocabulary||[]).find(x=>x.id===linkId)||null}
-function firstContactPendingWords(setId){return setWords(setId).filter(w=>!wordFirstContactReady(w))}
+function firstContactPendingWords(setId){return setWords(setId).filter(w=>!w.firstContactCompletedAt)}
+function startCopyPractice(){
+  const sets=mySets().filter(s=>!setNeedsPairReview(s)&&setWords(s.id).length);
+  if(!sets.length){toast('Noch keine geprüften Vokabeln vorhanden.','warn');return}
+  if(sets.length===1){startCopyPracticeSet(sets[0].id);return}
+  modal(`<div class="eyebrow">Freiwillige Lerneinheit</div><h2>Welche Vokabeln abschreiben?</h2><p>Abschreiben ist optional. Du kannst jederzeit direkt lernen.</p><div class="chooser-list">${sets.map(s=>{const open=firstContactPendingWords(s.id).length;return `<button type="button" class="option-card" data-copy-set="${s.id}"><strong>${esc(s.title)}</strong><small>${open?open+' noch nicht abgeschrieben':'bereits erledigt · Wiederholung möglich'}</small></button>`}).join('')}</div><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button></div>`);
+  $$('[data-copy-set]').forEach(b=>b.onclick=()=>{const id=b.dataset.copySet;closeModal();startCopyPracticeSet(id)});
+}
+function startCopyPracticeSet(setId){
+  const all=setWords(setId);if(!all.length){toast('In diesem Lernbereich sind keine Vokabeln.','warn');return}
+  const pending=all.filter(w=>!w.firstContactCompletedAt),repeat=!pending.length;
+  const source=repeat?[...all].sort((a,b)=>masteryScore(a)-masteryScore(b)):pending;
+  const picked=source.slice(0,firstContactBlockSize());
+  startFirstContact(setId,picked.map(w=>w.setLinkId),{optional:true,forceRepeat:repeat});
+}
 function startFirstContact(setId,linkIds=null,opts={}){
   const set=state.sets.find(x=>x.id===setId&&x.learnerId===state.activeLearnerId);if(!set)return;
   if(setNeedsPairReview(set)){if(typeof isParentMode==='function'&&isParentMode()){toast('Bitte zuerst die Vokabelpaare prüfen.','warn');setTimeout(()=>openSetPairAudit?.(set.id),80)}else{toast('Diese Wörter werden noch von einem Erwachsenen geprüft.','subtle');showView('homeView');renderAll()}return}
-  const pendingAll=firstContactPendingWords(setId),requested=Array.isArray(linkIds)&&linkIds.length?new Set(linkIds):null;
-  const pending=requested?pendingAll.filter(w=>requested.has(w.setLinkId)):pendingAll;
-  if(!pending.length){toast(opts.isDaily?'Die neuen Wörter für heute sind bereits kennengelernt oder nachgewiesen.':'Diese Lektion ist bereits kennengelernt oder nachgewiesen.','good');showView('homeView');renderAll();return}
+  const all=setWords(setId),requested=Array.isArray(linkIds)&&linkIds.length?new Set(linkIds):null,requestedWords=requested?all.filter(w=>requested.has(w.setLinkId)):all;
+  const pending=opts.forceRepeat?requestedWords:requestedWords.filter(w=>!w.firstContactCompletedAt);
+  if(!pending.length){toast('Diese Abschreib-Einheit ist bereits erledigt.','good');showView('homeView');renderAll();return}
   const first=pending[0],link=firstContactLink(first.setLinkId);
-  session={mode:'firstContact',setId,queue:pending.map(w=>w.setLinkId),index:0,phase:link?.firstContactCopiedAt?'recall':'copy',blockSize:firstContactBlockSize(),isDaily:!!opts.isDaily,startedAt:new Date().toISOString()};
+  session={mode:'firstContact',setId,queue:pending.map(w=>w.setLinkId),index:0,phase:opts.forceRepeat?'copy':(link?.firstContactCopiedAt?'recall':'copy'),blockSize:firstContactBlockSize(),isDaily:false,optional:true,forceRepeat:!!opts.forceRepeat,completedInUnit:0,startedAt:new Date().toISOString()};
   showView('learnView');renderFirstContact();
 }
 function firstContactWord(){const linkId=session?.queue?.[session?.index||0];return linkId?wordByLinkId(linkId):null}
 function firstContactProgressText(){
-  if(session?.isDaily){const done=(session.queue||[]).map(firstContactLink).filter(firstContactLinkReady).length,total=session.queue?.length||0;return total?`${done} von ${total} heute`:''}
-  const status=firstContactStatus(session?.setId||'');return status.total?`${status.completed} von ${status.total} kennengelernt`:'';
+  const total=session?.queue?.length||0,done=Math.min(Number(session?.completedInUnit)||0,total);
+  return total?`${done} von ${total} in dieser Einheit`:'';
 }
 function firstContactHeader(eyebrow){
-  const set=state.sets.find(x=>x.id===session?.setId);return `<div class="first-contact-head"><div><div class="eyebrow">${esc(eyebrow)}</div><h2>${esc(set?.title||'Vokabeln kennenlernen')}</h2></div><span class="pill">${esc(firstContactProgressText())}</span></div>`;
+  const set=state.sets.find(x=>x.id===session?.setId);return `<div class="first-contact-head"><div><div class="eyebrow">${esc(eyebrow)}</div><h2>${esc(set?.title||'Vokabeln abschreiben')}</h2></div><span class="pill">${esc(firstContactProgressText())}</span></div>`;
 }
 function renderFirstContact(){
   if(!session||session.mode!=='firstContact')return;
   if(session.index>=session.queue.length){renderFirstContactFinish();return}
   const w=firstContactWord();if(!w){session.index++;renderFirstContact();return}
-  const link=firstContactLink(w.setLinkId);if(firstContactLinkReady(link)){session.index++;renderFirstContact();return}
-  $('#modePill').textContent='Kennenlernen';
-  const status=firstContactStatus(session.setId),batchTotal=session.queue.length,batchDone=session.queue.map(firstContactLink).filter(firstContactLinkReady).length;$('#sessionPill').textContent=session.isDaily?`${Math.min(batchDone+1,batchTotal)} / ${batchTotal}`:`${Math.min(status.completed+1,status.total)} / ${status.total}`;
+  const link=firstContactLink(w.setLinkId);if(!session.forceRepeat&&link?.firstContactCompletedAt){session.index++;renderFirstContact();return}
+  $('#modePill').textContent='Abschreiben';
+  const batchTotal=session.queue.length,batchDone=Math.min(Number(session.completedInUnit)||0,batchTotal);$('#sessionPill').textContent=`${Math.min(batchDone+1,batchTotal)} / ${batchTotal}`;
   if(session.phase==='blockRecall'||session.phase==='blockReveal'){renderFirstContactBlockReview();return}
   if(session.phase==='recall')return renderFirstContactRecall(w);
   if(session.phase==='compare')return renderFirstContactCompare(w);
@@ -134,7 +148,7 @@ function renderFirstContact(){
 }
 function renderFirstContactCopy(w){
   const lrs=!!learner()?.lrsMode;
-  $('#studyArea').innerHTML=`<div class="study-card first-contact-card">${firstContactHeader('1 · Anschauen & abschreiben')}<div class="first-contact-pair"><strong>${esc(w.term)}</strong><span>${esc(w.translation)}</span>${w.extra?`<small>${esc(w.extra)}</small>`:''}</div><p class="first-contact-instruction">Schreibe die Vokabel jetzt einmal <strong>von Hand auf</strong>. Nimm dafür einfach Papier oder ein Heft und achte bewusst auf die genaue Schreibweise.</p>${lrs?'<div class="notice subtle">Nimm dir Zeit. Wichtig ist die genaue Wortform, nicht die Geschwindigkeit.</div>':''}<div class="row gap center-actions wrap top-space"><button id="firstContactSpeakBtn" class="ghost" type="button">🔊 Anhören</button><button id="firstContactCopiedBtn" class="primary" type="button">Von Hand abgeschrieben</button></div></div>`;
+  $('#studyArea').innerHTML=`<div class="study-card first-contact-card">${firstContactHeader('1 · Anschauen & abschreiben')}<div class="first-contact-pair"><strong>${esc(w.term)}</strong><span>${esc(w.translation)}</span>${w.extra?`<small>${esc(w.extra)}</small>`:''}</div><p class="first-contact-instruction">Schreibe die Vokabel einmal <strong>von Hand auf</strong>. Papier oder Heft reichen – diese Einheit ist freiwillig.</p>${lrs?'<div class="notice subtle">Nimm dir Zeit. Wichtig ist die genaue Wortform, nicht die Geschwindigkeit.</div>':''}<div class="row gap center-actions wrap top-space"><button id="firstContactSpeakBtn" class="ghost" type="button">🔊 Anhören</button><button id="firstContactCopiedBtn" class="primary" type="button">Von Hand abgeschrieben</button></div></div>`;
   $('#firstContactSpeakBtn').onclick=()=>speak(w.term);
   $('#firstContactCopiedBtn').onclick=()=>{const link=firstContactLink(w.setLinkId);if(link&&!link.firstContactCopiedAt)link.firstContactCopiedAt=new Date().toISOString();session.phase='recall';persistOnly();renderFirstContact()};
 }
@@ -147,42 +161,36 @@ function renderFirstContactCompare(w){
   $('#studyArea').innerHTML=`<div class="study-card first-contact-card">${firstContactHeader('3 · Vergleichen')}<div class="first-contact-compare"><span>Geprüfte Wortform</span><strong>${esc(w.term)}</strong><small>${esc(w.translation)}</small></div><p class="first-contact-instruction">Vergleiche Buchstabe für Buchstabe mit deiner zweiten Abschrift.</p><div class="row gap center-actions wrap top-space"><button id="firstContactRetryBtn" class="ghost" type="button">${lrs?'Noch einmal anschauen':'Noch einmal'}</button><button id="firstContactCorrectBtn" class="primary" type="button">Stimmt</button></div></div>`;
   $('#firstContactRetryBtn').onclick=()=>{session.phase='copy';renderFirstContact()};
   $('#firstContactCorrectBtn').onclick=()=>{
-    const link=firstContactLink(w.setLinkId),now=new Date().toISOString();if(link){link.firstContactCopiedAt=link.firstContactCopiedAt||now;link.firstContactRecalledAt=now;link.firstContactCompletedAt=now}
-    recordActivity('firstContact',{setId:session.setId,setLinkId:w.setLinkId,vocabId:w.vocabId,senseId:w.senseId});persistOnly();session.index++;
-    if(session.index<session.queue.length&&session.index%session.blockSize===0){session.phase='blockRecall'}else{const next=firstContactWord(),nextLink=next&&firstContactLink(next.setLinkId);session.phase=nextLink?.firstContactCopiedAt?'recall':'copy'}
+    const link=firstContactLink(w.setLinkId),now=new Date().toISOString();if(link){link.firstContactCopiedAt=link.firstContactCopiedAt||now;link.firstContactRecalledAt=now;link.firstContactCompletedAt=link.firstContactCompletedAt||now}
+    recordActivity('firstContact',{setId:session.setId,setLinkId:w.setLinkId,vocabId:w.vocabId,senseId:w.senseId});persistOnly();session.completedInUnit=(Number(session.completedInUnit)||0)+1;session.index++;
+    if(session.index<session.queue.length&&session.index%session.blockSize===0){session.phase='blockRecall'}else{const next=firstContactWord(),nextLink=next&&firstContactLink(next.setLinkId);session.phase=session.forceRepeat?'copy':(nextLink?.firstContactCopiedAt?'recall':'copy')}
     renderFirstContact();
   };
 }
 function renderFirstContactBlockReview(){
   const end=session.index,start=Math.max(0,end-session.blockSize),words=session.queue.slice(start,end).map(wordByLinkId).filter(Boolean),revealed=session.phase==='blockReveal';
-  $('#modePill').textContent='Kennenlernen · kurze Wiederholung';$('#sessionPill').textContent=`Block ${Math.ceil(end/session.blockSize)}`;
+  $('#modePill').textContent='Abschreiben · kurze Wiederholung';$('#sessionPill').textContent=`Block ${Math.ceil(end/session.blockSize)}`;
   $('#studyArea').innerHTML=`<div class="study-card first-contact-card">${firstContactHeader('Kurze Wiederholung')}<p class="first-contact-instruction">Versuche zu jeder Bedeutung die Vokabel zuerst <strong>im Kopf abzurufen</strong>.</p><div class="first-contact-review-list">${words.map(w=>`<div><span>${esc(w.translation)}</span><strong class="${revealed?'':'first-contact-hidden-word'}">${revealed?esc(w.term):'••••••'}</strong></div>`).join('')}</div><div class="row center-actions top-space">${revealed?'<button id="firstContactNextBlockBtn" class="primary" type="button">Nächster Block</button>':'<button id="firstContactRevealBlockBtn" class="primary" type="button">Antworten aufdecken</button>'}</div></div>`;
-  if(revealed)$('#firstContactNextBlockBtn').onclick=()=>{const next=firstContactWord(),link=next&&firstContactLink(next.setLinkId);session.phase=link?.firstContactCopiedAt?'recall':'copy';renderFirstContact()};
+  if(revealed)$('#firstContactNextBlockBtn').onclick=()=>{const next=firstContactWord(),link=next&&firstContactLink(next.setLinkId);session.phase=session.forceRepeat?'copy':(link?.firstContactCopiedAt?'recall':'copy');renderFirstContact()};
   else $('#firstContactRevealBlockBtn').onclick=()=>{session.phase='blockReveal';renderFirstContact()};
 }
 function renderFirstContactFinish(){
-  const setId=session?.setId,set=state.sets.find(x=>x.id===setId),status=firstContactStatus(setId),daily=!!session?.isDaily,batchTotal=session?.queue?.length||0;let battleEarned=false;if(!session?.battleRewardProcessed){battleEarned=grantBattleTicket(daily?'dailyFirstContact':'firstContact');session.battleRewardProcessed=true}
-  $('#modePill').textContent='Kennenlernen';$('#sessionPill').textContent='Fertig';
-  if(daily){
-    $('#studyArea').innerHTML=`<div class="study-card first-contact-card first-contact-finish"><div class="eyebrow">Neue Wörter für heute</div><div class="study-prompt">✓</div><h2>${esc(set?.title||'Lernset')}</h2><p><strong>${batchTotal}</strong> neue Vokabel${batchTotal===1?'':'n'} wurden abgeschrieben, abgedeckt und aktiv erinnert.</p><div class="notice good">Als Nächstes kommen die vorgesehenen Wiederholungen. Weitere neue Wörter warten bis zu einem späteren Tagesziel.</div>${battleEarned?'<div class="battle-unlock"><strong>⚔ Angriff verdient!</strong><span>Diese Lerneinheit ist geschafft. Deine Armee darf jetzt angreifen.</span><button id="firstContactBattleBtn" class="battle-unlock-btn" type="button">Zur Schlacht</button></div>':''}<div class="row gap center-actions wrap top-space"><button id="firstContactDoneBtn" class="secondary" type="button">Zur Übersicht</button><button id="firstContactLearnBtn" class="primary" type="button">Mit Tagesziel weiter</button></div></div>`;
-  }else{
-    $('#studyArea').innerHTML=`<div class="study-card first-contact-card first-contact-finish"><div class="eyebrow">Lektion vorbereitet</div><div class="study-prompt">✓</div><h2>${esc(set?.title||'Lernset')}</h2><p><strong>${status.completed} von ${status.total}</strong> Vokabeln sind jetzt für den Lernpfad freigegeben.</p><div class="notice good">Freigabe erfolgt entweder durch Abschreiben + Abruf oder durch einen erfolgreichen Vorkenntnis-Beweis im Karteikartenmodus.</div>${battleEarned?'<div class="battle-unlock"><strong>⚔ Schlacht freigeschaltet!</strong><span>Deine Armee wartet auf deinen Befehl.</span><button id="firstContactBattleBtn" class="battle-unlock-btn" type="button">Zur Schlacht</button></div>':''}<div class="row gap center-actions wrap top-space"><button id="firstContactDoneBtn" class="secondary" type="button">Zur Übersicht</button><button id="firstContactLearnBtn" class="primary" type="button">Jetzt lernen</button></div></div>`;
-  }
+  const setId=session?.setId,set=state.sets.find(x=>x.id===setId),batchTotal=session?.queue?.length||0;let battleEarned=false;if(!session?.battleRewardProcessed){battleEarned=grantBattleTicket('copyPractice');session.battleRewardProcessed=true}
+  $('#modePill').textContent='Abschreiben';$('#sessionPill').textContent='Fertig';
+  $('#studyArea').innerHTML=`<div class="study-card first-contact-card first-contact-finish"><div class="eyebrow">Freiwillige Lerneinheit</div><div class="study-prompt">✓</div><h2>${esc(set?.title||'Lernbereich')}</h2><p><strong>${batchTotal}</strong> Vokabel${batchTotal===1?'':'n'} wurden abgeschrieben, abgedeckt und aktiv erinnert.</p><div class="notice good">Abschreiben ist eine zusätzliche Übung. Die Vokabeln sind auch ohne diese Einheit direkt im normalen Lernpfad verfügbar.</div>${battleEarned?'<div class="battle-unlock"><strong>⚔ Angriff verdient!</strong><span>Diese Lerneinheit ist geschafft. Deine Armee darf jetzt angreifen.</span><button id="firstContactBattleBtn" class="battle-unlock-btn" type="button">Zur Schlacht</button></div>':''}<div class="row gap center-actions wrap top-space"><button id="firstContactDoneBtn" class="secondary" type="button">Zur Übersicht</button><button id="firstContactLearnBtn" class="primary" type="button">Jetzt lernen</button></div></div>`;
   renderAll();persistOnly();
   $('#firstContactBattleBtn')?.addEventListener('click',()=>{session=null;openBattleView()});
   $('#firstContactDoneBtn').onclick=()=>{session=null;showView('homeView');renderAll()};
-  $('#firstContactLearnBtn').onclick=()=>{session=null;if(daily)startDailyTodo();else startSession('adaptive',setId,null,false)};
+  $('#firstContactLearnBtn').onclick=()=>{session=null;startSession('adaptive',setId,null,false)};
 }
 
 function startSession(mode='adaptive',setId=null,wordIds=null,isDaily=false){
   const queue=buildQueue(mode,setId,wordIds); if(!queue.length){toast('Noch keine geprüften Vokabeln vorhanden.','warn');return}
   const blocked=queue.find(w=>setNeedsPairReview(state.sets.find(s=>s.id===w.setId)));
   if(blocked){const blockedSet=state.sets.find(s=>s.id===blocked.setId);toast('Vor dem Lernen bitte zuerst die erkannten Vokabelpaare bestätigen.','warn');showView('homeView');renderAll();setTimeout(()=>openSetPairAudit?.(blockedSet?.id),80);return}
-  const introBlocked=mode==='cards'?null:queue.find(w=>!wordFirstContactReady(w));
-  if(introBlocked){const blockedSet=state.sets.find(s=>s.id===introBlocked.setId),links=queue.filter(w=>w.setId===introBlocked.setId&&!wordFirstContactReady(w)).map(w=>w.setLinkId);toast('Neue Vokabeln werden zuerst kennengelernt und abgeschrieben.','warn');startFirstContact(blockedSet?.id,links,{isDaily});return}
-  session={mode,setId,queue:queue.map(quizQueueRef),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},proofFailedWords:{},hintUsed:false,isDaily,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString(),currentQuestion:null,currentQuestionIssues:[]}; showView('learnView'); $('#modePill').textContent=modeLabel(mode); renderStudy();
+  session={mode,setId,queue:queue.map(quizQueueRef),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString(),currentQuestion:null,currentQuestionIssues:[]}; showView('learnView'); $('#modePill').textContent=modeLabel(mode); renderStudy();
 }
-function modeLabel(m){return ({adaptive:'Adaptiv',flash:'Wortblitz',shower:'Vokabeldusche',chunks:'Wortbausteine',handwriting:'Handschrift',firstContact:'Kennenlernen',recognition:'Erkennen',recall:'Abrufen',reverseRecall:'Bedeutung abrufen',spelling:'Schreiben',listening:'Hören',context:'Kontext',latinGrammar:'Latein Formen',practiceTest:'Prüfung',cards:'Karteikarten'})[m]||m}
+function modeLabel(m){return ({adaptive:'Adaptiv',flash:'Wortblitz',shower:'Vokabeldusche',chunks:'Wortbausteine',handwriting:'Handschrift',firstContact:'Abschreiben',recognition:'Erkennen',recall:'Abrufen',reverseRecall:'Bedeutung abrufen',spelling:'Schreiben',listening:'Hören',context:'Kontext',latinGrammar:'Latein Formen',practiceTest:'Prüfung',cards:'Karteikarten'})[m]||m}
 function currentWord(){const token=session?.queue?.[session.index];return resolveQuizQueueRef(token,session?.setId||'')}
 function renderStudy(){
   if(!session||session.index>=session.queue.length){finishSession();return}
@@ -233,24 +241,20 @@ function leitnerBoxesHtml(w){
 }
 function renderLeitnerCard(w){
   session.currentSubmode='cards';
-  const q=setCurrentQuizQuestion(w,'recall',{strictOrthography:true}).question,proofKey=w.setLinkId||w.id,pending=!wordFirstContactReady(w),proving=pending&&!session.proofFailedWords?.[proofKey];
+  const q=setCurrentQuizQuestion(w,'recall',{strictOrthography:true}).question;
   $('#modePill').textContent='Karteikarten';
   $('#studyArea').innerHTML=`<div class="study-card leitner-card"><div class="study-prompt">${esc(q.prompt)}</div><input id="answerField" class="answer-input" aria-label="Vokabel eingeben" placeholder="Vokabel eingeben" autocomplete="off" autocapitalize="none" spellcheck="false"><div class="top-space"><button id="answerBtn" class="primary">Prüfen</button></div></div>`;
   const submit=()=>gradeLeitnerCard(w,$('#answerField').value,q);$('#answerBtn').onclick=submit;$('#answerField').onkeydown=e=>{if(e.key==='Enter')submit()};setTimeout(()=>$('#answerField')?.focus(),40);
 }
 function gradeLeitnerCard(w,answer,q){
   if(session.locked)return;const targetSession=session;session.locked=true;
-  const grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w),wasPending=!wordFirstContactReady(w),proofKey=w.setLinkId||w.id;
-  session.proofFailedWords=session.proofFailedWords||{};
-  const proofEligible=wasPending&&!session.proofFailedWords[proofKey];
-  if(wasPending&&!ok)session.proofFailedWords[proofKey]=true;
-  const proved=proofEligible&&ok&&grade.orthographyOk!==false?markWordKnownByProof(w)>0:false;
+  const grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w);
   recordResult(w,ok,'retrieval',ok?null:'retrieval',{orthographyOk:grade.orthographyOk});
   const move=session.lastLeitnerMove||{before,after:leitnerBox(w),moved:false,blockedBySpacing:false};
   const movement=!ok?`Box ${move.before} → Box ${move.after}`:move.moved?`Box ${move.before} → Box ${move.after}`:move.blockedBySpacing?`Bleibt in Box ${move.after}: Für die nächste Stufe braucht es einen richtigen Abruf an einem späteren Tag.`:`Bleibt in Box ${move.after}.`;
   const mastered=move.after===5&&isMastered(w),track=$('#studyArea .leitner-track');
   if(track){const holder=document.createElement('div');holder.innerHTML=leitnerBoxesHtml(w);const next=holder.firstElementChild;if(next){next.classList.add(move.moved?'just-moved':'just-confirmed');track.replaceWith(next)}}
-  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}"><strong>${ok?'Richtig.':'Noch nicht richtig.'}</strong><br>${proved?'<div class="proof-success"><strong>Beweis geschafft.</strong> Dieses Wort musst du nicht mehr abschreiben. Ab jetzt wird es nur noch wiederholt.</div>':''}${ok?'':errorFeedbackHtml(answer,q.targets)}<div class="leitner-move ${ok?'forward':'back'}">${esc(movement)}</div>${mastered?'<div class="leitner-mastered">✓ Nachhaltig gemeistert</div>':''}</div>`);
+  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}"><strong>${ok?'Richtig.':'Noch nicht richtig.'}</strong><br>${ok?'':errorFeedbackHtml(answer,q.targets)}<div class="leitner-move ${ok?'forward':'back'}">${esc(movement)}</div>${mastered?'<div class="leitner-mastered">✓ Nachhaltig gemeistert</div>':''}</div>`);
   logSessionResult(w,{answer,target:q.targets,correct:ok,skill:'cards',orthographyOk:grade.orthographyOk,prompt:q.prompt,note:movement});
   if(typeof focusedDisableAnswerControls==='function'&&typeof focusedContinue==='function'){focusedDisableAnswerControls();focusedContinue(ok,w)}
   else scheduleSessionAdvance(targetSession,ok,w,ok?1000:2600);

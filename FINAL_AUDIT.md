@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 23.09.2026 · App v0.18.22
+Stand: 23.09.2026 · App v0.18.23
 
 ## Ergebnis
 
@@ -23,11 +23,12 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 
 ### Lernprozess
 
-- verbindliche Reihenfolge: Erfassen → prüfen → kennenlernen/abschreiben oder Vorkenntnis schriftlich beweisen → aktiv abrufen → verteilt wiederholen → nachhaltig meistern
-- Erstkontakt enthält standardmäßig handschriftliches Abschreiben auf beliebigem Papier/Heft, Abdecken, Erinnern, Vergleichen und Blockabruf; alternativ kann ein bereits bekanntes, fachlich geprüftes Wort durch eine orthographisch korrekte schriftliche Karteikartenantwort beim ersten unbeeinflussten Versuch freigegeben werden
-- Erstkontakt wird pro Vokabel freigegeben; ein großer Lernbereich sperrt bereits kennengelernte Wörter nicht mehr
+- verbindliche Reihenfolge: Erfassen → prüfen → direkt lernen / aktiv abrufen → verteilt wiederholen → nachhaltig meistern
+- fachlich bestätigte Vokabeln sind sofort im adaptiven Lernpfad und in den freiwilligen Übungsarten verfügbar; Abschreiben ist keine Freigabesperre mehr
+- Abschreiben ist eine eigene freiwillige Lerneinheit mit Anschauen → handschriftlich schreiben → Abdecken → Erinnern → Vergleichen; bereits ins Vokabelheft übertragene Wörter können ohne Nachteil direkt gelernt werden
+- der separate Abschreibstatus wird gespeichert, beeinflusst aber weder Lernbereitschaft noch Mastery
 - Tagespensum: normalerweise 5–7 neue Vokabeln und etwa 10–12 Kontakte; täglich dynamisch aus Restlernstand, Testabstand und Unsicherheiten neu berechnet (Vorsprung bis ca. 8 Kontakte, Rückstand bis ca. 14, max. 7 neue Wörter). Letzter Tag vor dem Test wird bei ausreichendem Vorlauf für Wiederholung reserviert; Testtag führt keine neuen Wörter ein.
-- Karteikartenmodus: jederzeit für alle fachlich geprüften Wörter verfügbar; fünf sichtbare Leitner-Boxen, ausschließlich schriftliche automatische Bewertung; richtig maximal +1 Box, falsch −1 Box, höhere Stufen durch Spacing begrenzt, Box 5 nur bei nachhaltiger Mastery. Ein erfolgreicher Vorkenntnis-Beweis überspringt nur den Abschreib-Erstkontakt, nicht die Mastery-Kriterien.
+- Karteikartenmodus: jederzeit für alle fachlich geprüften Wörter verfügbar; fünf Leitner-Boxen, ausschließlich schriftliche automatische Bewertung; richtig maximal +1 Box, falsch −1 Box, höhere Stufen durch Spacing begrenzt, Box 5 nur bei nachhaltiger Mastery
 - Eltern-UX: Steht ein Test an, ist „Test planen“ der Standardweg und übernimmt die ausgewählten Vokabeln automatisch als Lernstoff. „Ohne Test lernen“ dient ausschließlich zusätzlichem Lernstoff ohne Termin.
 - Vokabelauswahl unterstützt Einzelauswahl, Alle/Keine und eine inklusive Von–Bis-Spanne; gespeicherte Einzel-/Bereichsauswahl bleibt reload-stabil.
 - Einmalige Datenbereinigung entfernt alte Lern-/Test-/Noten-/Importdaten und alle nicht fest eingebauten Vokabeln; Profile/Grundeinstellungen bleiben, die geprüfte Lehrwerksbibliothek wird neu aufgebaut.
@@ -56,7 +57,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - „Meine Armee“ ist eine vorgelagerte, jederzeit betrachtbare Erlebnisansicht; Einheitstufen und Boni werden nur aus vorhandenem Lernfortschritt abgeleitet und schreiben keinen fachlichen Lernstand
 - die Armeeansicht besitzt keine eigenständige Spielwährung; Aufwertungen entstehen automatisch durch Lernen und nachhaltige Wiederholung
 - Schlacht ist ein separater Erlebnisbereich nach einer abgeschlossenen Lerneinheit
-- Angriffe sind begrenzt und werden als Belohnung nach jeder abgeschlossenen Lerneinheit freigeschaltet; ein abgeschlossener Kennenlern- oder Karteikartenblock zählt dabei mit
+- Angriffe sind begrenzt und werden als Belohnung nach jeder abgeschlossenen Lerneinheit freigeschaltet; ein abgeschlossener freiwilliger Abschreib- oder Karteikartenblock zählt dabei mit
 - Animationen, Einheiten, Festungen, Jahreszeiten, Rang und Ausrüstung liegen außerhalb der Abfrage
 - Bosskämpfe, Spezialangriffe und Story verändern keinen fachlichen Lernstand
 - Festungen fallen ausschließlich an den definierten Lernfortschrittsschwellen
@@ -107,7 +108,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - langlebiger OCR-/Wörterbuch-Ressourcencache
 - Service Worker aktualisiert installierte Apps mit kontrolliertem einmaligem Reload
 - Chromium-Service-Worker-/Offline-Smoke
-- WebKit/iPhone-Smokes für Shell, Lernen, Hilfe, OCR, Erstkontakt und Schlacht
+- WebKit/iPhone-Smokes für Shell, Lernen, Hilfe, OCR, optionales Abschreiben und Schlacht
 - Battle-Saisontest ist nicht mehr auf einen bestimmten Kalendermonat fest verdrahtet
 - der eigene GitHub-Pages-Workflow deployt nur nach erfolgreichem Vokabeltrainer-CI und checkt exakt den getesteten Commit aus
 - GitHub Pages ist auf „GitHub Actions“ umgestellt; der Produktions-Deploy wird damit ausschließlich nach erfolgreichem Vokabeltrainer-CI ausgelöst
@@ -140,7 +141,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 
 Der nächste entscheidende Test ist ein echter Kind-Test ohne Erklärungen. Beobachtet werden:
 - erster Blick: erkennt das Kind die heutige Hauptaktion?
-- Erstkontakt: versteht es Abschreiben → Abdecken → Erinnern → Vergleichen?
+- freiwilliges Abschreiben: erkennt das Kind, dass es die Einheit überspringen kann und versteht bei Nutzung Abschreiben → Abdecken → Erinnern → Vergleichen?
 - normale Abfrage: versteht es Fehlerfeedback und „Weiter“?
 - Abschluss: findet und versteht es die Ergebnisübersicht?
 - Belohnung: versteht es, dass eine Schlacht freigeschaltet wurde?

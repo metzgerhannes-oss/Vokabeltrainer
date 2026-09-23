@@ -26,29 +26,26 @@ Daraus folgen verbindliche Konsequenzen:
 ## Verbindliche Lernpipeline
 
 Eine neu erfasste Vokabel ist **noch keine gelernte Vokabel**. Die App trennt deshalb
-Datenerfassung, fachliche Prüfung und Erstaneignung ausdrücklich voneinander.
+Datenerfassung, fachliche Prüfung und Lernen ausdrücklich voneinander.
 
 Die verbindliche Reihenfolge lautet:
 
-**Erfassen → fachlich prüfen → kennenlernen → abrufen → verteilt wiederholen → nachhaltig meistern**
+**Erfassen → fachlich prüfen → direkt lernen / aktiv abrufen → verteilt wiederholen → nachhaltig meistern**
 
-Für den Erstkontakt gilt:
+Für neue Vokabeln gilt:
 
 - Nach OCR, Import oder Bibliotheksübernahme werden zuerst die exakten Wort↔Bedeutung-Paare geprüft.
-- Standardmäßig schreibt das Kind jede neue Vokabel bewusst **von Hand auf Papier oder in ein beliebiges Heft** ab; die App setzt kein spezielles Vokabelheft voraus.
-- Die Vorlage wird anschließend abgedeckt; die Wortform wird einmal aktiv aus dem Gedächtnis geschrieben.
-- Danach wird mit der fachlich geprüften Wortform verglichen. Die App bewertet die Handschrift nicht automatisch.
-- Kurze Blockwiederholungen unterbrechen lange Abschreibserien und fordern erneut aktiven Abruf.
-- **Vorkenntnis-Ausnahme:** Der schriftliche Karteikartenmodus darf bereits vor diesem Abschreib-Erstkontakt genutzt werden. Wird eine fachlich geprüfte neue Vokabel dort **beim ersten unbeeinflussten Versuch**, ohne Hilfe und orthographisch korrekt aus dem Gedächtnis geschrieben, gilt das Wort als bereits bekannt; der Abschreibblock für dieses Wort entfällt und es geht direkt in die verteilte Wiederholung.
-- Dieser Beweis erzeugt ausdrücklich **keine Mastery** und setzt das Wort nicht auf „nachhaltig gemeistert“. Die normalen Spacing- und Mastery-Kriterien gelten unverändert.
-- Erst nach dem regulären Erstkontakt **oder** einem erfolgreichen Vorkenntnis-Beweis wird die Vokabel für den normalen adaptiven Lernpfad freigegeben.
-- Wird die fachliche Wortform oder Bedeutung später geändert, verliert die betroffene Zuordnung ihre Erstkontakt-Freigabe.
-- Bestehende, bereits verwendete Lernsets werden bei Einführung dieser Logik nicht rückwirkend gesperrt.
+- **Sobald die Paare fachlich freigegeben sind, stehen die Vokabeln unmittelbar im normalen Lernpfad zur Verfügung.**
+- Handschriftliches **Abschreiben ist keine Freigabesperre und kein Pflicht-Einstieg**. Es ist eine freiwillige zusätzliche Lerneinheit wie Karteikarten, Wortblitz oder Vokabeldusche.
+- Die Abschreib-Einheit bleibt bewusst lernwirksam aufgebaut: anschauen und von Hand schreiben → Vorlage abdecken → aus dem Gedächtnis schreiben → mit der geprüften Wortform vergleichen.
+- Die App setzt dafür kein spezielles Vokabelheft voraus. Wurden die Wörter bereits in der Schule oder zu Hause in ein Vokabelheft übertragen, kann das Kind die Abschreib-Einheit vollständig überspringen.
+- Ein abgeschlossener Abschreibblock darf separat dokumentiert und als Lerneinheit belohnt werden, verändert aber nicht rückwirkend die fachliche Lernfreigabe.
+- Karteikarten benötigen keinen „Vorkenntnis-Beweis“ mehr: Sie sind wie der adaptive Lernpfad sofort für alle fachlich freigegebenen Wörter nutzbar.
+- Wird die fachliche Wortform oder Bedeutung später geändert, muss die Wort↔Bedeutung-Zuordnung erneut geprüft werden; der Lernpfad bleibt damit an die fachliche Korrektheit gebunden.
 
-Der Erstkontakt erzeugt **keine künstliche Mastery und keine Schreibkompetenz**. Er dokumentiert
-nur, dass die korrekte Wortform bewusst gesehen, handschriftlich verarbeitet und einmal aktiv
-erinnert wurde. Nachhaltige Beherrschung bleibt ausschließlich Sache des anschließenden
-Retrieval- und Spacing-Modells.
+Die Abschreib-Einheit erzeugt **keine künstliche Mastery und keine automatisch nachgewiesene
+Schreibkompetenz**. Nachhaltige Beherrschung bleibt ausschließlich Sache des Retrieval- und
+Spacing-Modells über mehrere unabhängige Abrufe und Tage.
 
 ## Die 13 Prinzipien
 
@@ -109,7 +106,7 @@ Retrieval- und Spacing-Modells.
    Abenteuer, Legion/Kampagne, XP und Belohnungen: vor oder nach der Lernsequenz.
    Gamification darf Aufmerksamkeit nicht vom Lerninhalt wegziehen.
    Der Schlachtmodus ist ein eigener Erlebnisbereich und wird erst durch eine abgeschlossene
-   Lerneinheit freigeschaltet. Ein vollständig abgeschlossener Kennenlern-/Abschreibblock zählt
+   Lerneinheit freigeschaltet. Ein vollständig abgeschlossener freiwilliger Abschreibblock zählt
    dabei ebenfalls als Lerneinheit. Kampfanimationen laufen niemals während einer Abfrage und
    verändern keinen fachlichen Mastery-Wert.
    Angriffsarten, Einheiten, Festungen, Jahreszeiten, Rang und Ausrüstung sind visuelle

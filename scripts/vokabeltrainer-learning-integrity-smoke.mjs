@@ -90,9 +90,9 @@ const passed=vm.runInContext(`
   const pacedSet={id:'paced_set',learnerId:'learner_demo',subject:'english',title:'Theme Test',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(4),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
   state.sets.push(pacedSet);
   for(let i=1;i<=15;i++)attachVocabularyToSet(pacedSet.id,{term:'paced'+i,translation:'bedeutung'+i,source:'paced-smoke',verified:true});
-  const pacedLinks=state.setVocabulary.filter(x=>x.setId===pacedSet.id).sort((a,b)=>a.position-b.position);
-  pacedLinks.slice(0,6).forEach(link=>{link.firstContactCopiedAt=new Date().toISOString();link.firstContactRecalledAt=link.firstContactCopiedAt;link.firstContactCompletedAt=link.firstContactCopiedAt});
   rebuildWordIndexes();
+  const pacedWords=setWords(pacedSet.id);
+  pacedWords.slice(0,6).forEach(w=>{w.repetitions=1;w.activePracticeDays=[datePlusDays(-1)];w.practiceDays=[datePlusDays(-1)]});
   const pacedPlan=buildDailyPlan('english'),pacedStatus=dailyPlanStatus(pacedPlan);
   assert(pacedPlan.introCount===3&&pacedPlan.acquisitionDays===3,'daily plan spreads remaining new words across the real pre-test acquisition window');
   assert(pacedPlan.reviewCount===5&&pacedStatus.total===8,'ahead-of-plan learning reduces the daily contact target instead of forcing ten to twelve');

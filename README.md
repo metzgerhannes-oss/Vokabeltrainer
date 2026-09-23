@@ -4,11 +4,22 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.22**
+App-Version: **v0.18.23**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.23 – Abschreiben ist freiwillig
+
+- fachlich geprüfte Vokabeln sind sofort im normalen adaptiven Lernpfad verfügbar
+- das Tagesziel startet bei neuen Wörtern direkt mit dem eigentlichen Lernen und nicht mehr automatisch mit Abschreiben
+- **Abschreiben** ist jetzt eine eigene freiwillige Lerneinheit unter „Mehr üben“, gleichrangig zu Karteikarten und anderen Zusatzübungen
+- die Abschreib-Einheit bleibt mit Anschauen, handschriftlichem Schreiben, Abdecken, aktivem Erinnern und Vergleichen erhalten
+- bereits in ein Vokabelheft übertragene Wörter können ohne Umweg direkt gelernt werden
+- der Abschreibstatus wird separat gespeichert, sperrt aber keine Vokabel und verändert keine Mastery
+- der bisherige Karteikarten-„Vorkenntnis-Beweis“ entfällt, weil keine Abschreib-Sperre mehr umgangen werden muss
+- Elternfreigabe der Wort↔Bedeutung-Paare bleibt weiterhin Voraussetzung vor dem Lernen
 
 ## v0.18.22 – Einheitendetail & Aufwertungspfad
 

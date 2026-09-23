@@ -41,6 +41,7 @@ try{
   await page.waitForSelector('#modal[open] #confirmSetPairsBtn');
   const modal=await page.locator('#modalContent').textContent();
   assert(modal?.includes('write')&&modal?.includes('schreiben'),'review shows exact word↔meaning pair used by quiz');
+  assert(modal?.includes('fürs Lernen freigeben'),'confirmation wording releases learning rather than forcing copying');
   await page.click('#confirmSetPairsBtn');
   await page.waitForSelector('#parentView.active');
   assert(await page.evaluate(()=>!!state.vocabulary[0]?.verifiedAt),'parent confirmation verifies vocabulary');
@@ -50,9 +51,11 @@ try{
   await page.click('#childModeBtn');
   await page.waitForSelector('#homeView.active');
   assert((await page.locator('#todaySummary').textContent())?.includes('Vokabel heute'),'verified words become part of the bounded daily child learning task');
+  assert(await page.evaluate(()=>schoolYearWords('english').length)===1,'verified word is immediately available without copy completion');
   await page.click('#quickLearnHeroBtn');
-  await page.waitForSelector('#firstContactCopiedBtn');
-  assert(await page.locator('body.learning-focus').count()===1,'child can start first contact only after parent verification');
+  await page.waitForFunction(()=>document.querySelector('#modePill')?.textContent?.startsWith('Adaptiv'));
+  assert(await page.locator('#firstContactCopiedBtn').count()===0,'child starts direct learning after pair verification');
+  assert(await page.locator('body.learning-focus').count()===1,'direct learning is focused');
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer pair-review UI smoke: passed');
