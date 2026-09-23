@@ -36,9 +36,11 @@ try{
   assert(await page.locator('body.learning-focus').count()===1,'daily learning starts directly');
   await page.evaluate(()=>{session=null;showView('homeView');renderAll()});
 
-  assert(await page.locator('#practiceDisclosure summary').isVisible(),'voluntary practice entry remains visible on mobile');
-  await page.click('#practiceDisclosure summary');
-  await page.waitForFunction(()=>document.querySelector('#practiceDisclosure')?.open===true);
+  await page.click('.nav-btn[data-view="practiceView"]');
+  await page.waitForSelector('#practiceView.active');
+  assert(await page.locator('#practiceSpecialBtn').isVisible(),'voluntary special training remains directly reachable on mobile');
+  await page.click('#practiceSpecialBtn');
+  await page.waitForFunction(()=>!document.querySelector('#optionalLearningCard')?.classList.contains('hidden'));
 
   const copyButton=page.locator('#recommendations [data-mode="copy"]');
   assert(await copyButton.count()===1,'copying is offered as its own optional learning unit');
