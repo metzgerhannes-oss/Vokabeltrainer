@@ -67,7 +67,7 @@ assert(focusUi.includes('gradeQuizQuestion(q,answer)'),'focused-learning overrid
 assert(quiz.includes("issues.push('sense-mismatch')")&&quiz.includes("issues.push('set-mismatch')"),'quiz integrity gate rejects set/sense identity drift');
 assert(!/split\(\/\\s\*\[\/;,\]/.test(model),'answer comparison never invents alternatives by punctuation splitting');
 assert(model.includes('setNeedsPairReview')&&learning.includes('setNeedsPairReview'),'unreviewed OCR sets are blocked from learning');
-assert(model.includes('setNeedsFirstContact')&&learning.includes('startFirstContact')&&learning.includes("mode:'firstContact'"),'new vocabulary must pass the first-contact phase before ordinary learning');
+assert(!model.includes('setNeedsFirstContact')&&learning.includes('startCopyPractice')&&learning.includes("mode:'firstContact'"),'copying is retained as an optional unit without gating ordinary learning');
 
 assert(html.includes('id="helpBtn"')&&html.includes('id="helpPopover"'),'central help and shared help popover exist');
 const childHomeMarkup=html.slice(html.indexOf('id="homeView"'),html.indexOf('id="childProgressView"'));
@@ -88,7 +88,7 @@ for(const ref of refs)assert(sw.includes("'./"+ref+"'"),'app-shell caches '+ref)
 
 assert(dna.includes('Die fachlich korrekte Vokabelabfrage ist die Daseinsberechtigung der App.')&&dna.includes('Release-Blocker'),'top product DNA keeps vocabulary correctness as release gate');
 assert(dna.includes('LRS und Barrierefreiheit sind Teil des Grunddesigns')&&dna.includes('Lernen fokussiert, Motivation außen herum'),'product DNA accessibility and focus guardrails remain present');
-assert(dna.includes('Erfassen → fachlich prüfen → kennenlernen → abrufen')&&dna.includes('Vokabelheft'),'product DNA requires first contact and handwriting before retrieval');
+assert(dna.includes('Erfassen → fachlich prüfen → direkt lernen / aktiv abrufen')&&dna.includes('Abschreiben ist keine Freigabesperre')&&dna.includes('Vokabelheft'),'product DNA keeps copying optional and direct learning available after verification');
 
 console.log('Vokabeltrainer preflight smoke: '+passed.length+' checks passed');
 for(const name of passed)console.log('✓ '+name);
