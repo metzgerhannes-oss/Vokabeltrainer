@@ -281,7 +281,7 @@ function renderToday(){
   if(l.lrsMode||spellingWeak.length)recs.push({icon:'✍️',title:'Handschrift',sub:'nachfahren · abdecken · aus dem Gedächtnis schreiben',mode:'handwriting'});
   if(subjectHasCapability(state.activeSubject,'latinGrammar'))recs.push({icon:'Ⅳ',title:'Latein Formen',sub:'Genitiv · Genus · Stammformen · Anwendung',mode:'latinGrammar'});
   $('#recommendations').innerHTML=recs.map(r=>`<button class="recommend" data-mode="${r.mode}" ${r.disabled?'disabled':''}><span class="icon">${r.icon}</span><strong>${r.title}</strong><small>${r.sub}</small></button>`).join('');
-  $('#recommendations [data-mode]').forEach(b=>b.onclick=()=>{const mode=b.dataset.mode;if(mode==='copy')startCopyPractice();else if(mode==='allWords')openAllWordsPracticeChooser();else if(mode==='weakWords')startWeakWordsPractice();else startSession(mode)});
+  $$('#recommendations [data-mode]').forEach(b=>b.onclick=()=>{const mode=b.dataset.mode;if(mode==='copy')startCopyPractice();else if(mode==='allWords')openAllWordsPracticeChooser();else if(mode==='weakWords')startWeakWordsPractice();else startSession(mode)});
 }
 function setPairAuditText(setId){
   const s=state.sets.find(x=>x.id===setId),words=s?setWords(setId):[];
