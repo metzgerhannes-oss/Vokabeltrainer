@@ -273,7 +273,7 @@
     const battle=document.querySelector('#armyBattleBtn');
     if(battle){
       battle.disabled=c.tickets<1;
-      battle.textContent=c.tickets>0?`Zur Schlacht · ${c.tickets}`:'Schlacht nach dem Lernen';
+      battle.textContent=c.tickets>0?'Zur Schlacht · heute frei':'Schlacht nach dem Tagesziel';
     }
     applyArmyArt();
   }
@@ -296,7 +296,7 @@
     const battle=document.querySelector('#armyUnitBattleBtn');
     if(battle){
       battle.disabled=c.tickets<1;
-      battle.textContent=c.tickets>0?`Zur Schlacht · ${c.tickets}`:'Schlacht nach dem Lernen';
+      battle.textContent=c.tickets>0?'Zur Schlacht · heute frei':'Schlacht nach dem Tagesziel';
     }
     applyArmyArt();
   }
