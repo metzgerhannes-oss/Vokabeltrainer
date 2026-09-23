@@ -4,11 +4,22 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.21**
+App-Version: **v0.18.22**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.22 – Einheitendetail & Aufwertungspfad
+
+- Klick auf eine Einheit in **„Meine Armee“** öffnet eine eigene Detailansicht
+- große Einheitendarstellung mit aktueller Stufe und aktueller sichtbarer Ausbaustufe
+- die **nächste sichtbare Verbesserung** wird namentlich angezeigt
+- die **exakte Lernbedingung** für die nächste Stufe wird direkt genannt
+- jede Einheit besitzt einen sichtbaren fünfstufigen Aufwertungspfad mit erreicht / aktuell / als Nächstes / gesperrt
+- keine Münzen, keine Käufe und kein eigener Spielfortschritt: alle Stufen werden weiterhin ausschließlich aus vorhandenen Lernwerten abgeleitet
+- die Detailansicht verwendet dieselben lokalen, offlinefähigen Illustrationen wie die Armeeübersicht
+- das Öffnen und Betrachten der Detailansicht verändert Mastery oder Lernfortschritt nicht
 
 ## v0.18.21 – illustrierte Armee-Grafik
 
