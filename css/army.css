@@ -1,0 +1,144 @@
+.army-view{
+  --army-navy:#0c1a2b;
+  --army-navy-2:#132d49;
+  --army-blue:#155fb6;
+  --army-blue-bright:#2a8cff;
+  --army-gold:#c7a55b;
+  --army-gold-soft:#e4cd91;
+  --army-ink:#08111d;
+  --army-panel:rgba(10,24,40,.96);
+  --army-line:rgba(228,205,145,.34);
+  color:#eef5ff;
+  background:
+    radial-gradient(circle at 72% 0%,rgba(54,104,155,.26),transparent 38rem),
+    linear-gradient(180deg,#101d2c 0%,#0a1421 70%,#07101b 100%);
+  min-height:calc(100vh - 70px);
+}
+.army-shell{max-width:1280px;margin:0 auto;padding:18px 18px 110px}
+.army-toolbar{
+  display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;margin-bottom:14px;
+}
+.army-toolbar-copy h2{font-family:Georgia,'Times New Roman',serif;font-size:clamp(1.7rem,3vw,2.6rem);margin:.05rem 0;color:#fff}
+.army-toolbar-copy p{margin:0;color:#b9c8d8;font-size:.9rem}
+.army-ghost,.army-battle-btn{
+  min-height:44px;border:1px solid var(--army-line);border-radius:10px;background:rgba(7,17,29,.78);color:#edf4fb;padding:.65rem .9rem;font-weight:800;
+}
+.army-battle-btn{background:linear-gradient(180deg,#176dcd,#0f4f9b);border-color:#5aa3f3;box-shadow:0 8px 28px rgba(0,82,174,.25)}
+.army-battle-btn:disabled{opacity:.52;box-shadow:none}
+.army-command{
+  position:relative;overflow:hidden;border:1px solid var(--army-line);border-radius:18px;background:#13263b;
+  box-shadow:0 24px 70px rgba(0,0,0,.34);min-height:330px;
+}
+.army-command::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 78% 23%,rgba(255,205,107,.18),transparent 18rem),
+    linear-gradient(90deg,rgba(4,14,26,.9),rgba(15,43,70,.45) 48%,rgba(8,20,32,.78)),
+    linear-gradient(180deg,#7d9db1 0 29%,#496a55 30% 48%,#2a382d 49% 100%);
+}
+.army-command::after{
+  content:"";position:absolute;left:36%;right:-8%;bottom:0;height:48%;
+  background:
+    radial-gradient(ellipse at 40% 82%,rgba(15,22,25,.9) 0 7%,transparent 8%),
+    radial-gradient(ellipse at 48% 74%,rgba(17,24,29,.9) 0 6%,transparent 7%),
+    radial-gradient(ellipse at 58% 80%,rgba(15,22,25,.92) 0 8%,transparent 9%),
+    linear-gradient(165deg,transparent 0 38%,rgba(16,26,25,.92) 39% 100%);
+  opacity:.82;
+}
+.army-camp-sky{
+  position:absolute;inset:0;background:
+    radial-gradient(circle at 65% 27%,rgba(248,211,139,.35),transparent 8rem),
+    linear-gradient(150deg,transparent 0 60%,rgba(0,0,0,.38) 61%);
+}
+.army-camp-banner{
+  position:absolute;left:5%;bottom:4%;width:92px;height:190px;border-left:6px solid #58452f;z-index:2;
+}
+.army-camp-banner::before{
+  content:"";position:absolute;left:5px;top:8px;width:78px;height:118px;clip-path:polygon(0 0,100% 6%,100% 80%,50% 100%,0 80%);
+  background:linear-gradient(135deg,#1d66ad,#0b2e5a);border:1px solid #d1b46e;box-shadow:0 8px 20px rgba(0,0,0,.4);
+}
+.army-camp-banner span{position:absolute;left:33px;top:42px;color:#e8d39c;z-index:3;font-size:2rem}
+.army-camp-copy{
+  position:absolute;z-index:3;left:10%;top:12%;display:flex;flex-direction:column;gap:4px;max-width:46%;
+}
+.army-kicker{text-transform:uppercase;letter-spacing:.12em;color:#d9c28d;font-weight:900;font-size:.72rem}
+.army-camp-copy strong{font-family:Georgia,'Times New Roman',serif;font-size:clamp(2rem,5vw,4.2rem);line-height:.95;text-shadow:0 3px 16px rgba(0,0,0,.6)}
+.army-camp-copy small{font-size:1rem;color:#d7e2eb}
+.army-camp-strength{
+  position:absolute;right:4%;top:11%;z-index:3;min-width:220px;padding:15px 18px;border:1px solid var(--army-line);border-radius:12px;
+  background:linear-gradient(180deg,rgba(5,15,28,.88),rgba(11,31,51,.9));box-shadow:0 16px 35px rgba(0,0,0,.3)
+}
+.army-camp-strength>span,.army-camp-strength>small{display:block;color:#b8c8d9;font-size:.76rem}
+.army-camp-strength>strong{display:block;font-size:2rem;color:#fff;margin:.1rem 0 .45rem}
+.army-morale-line{height:7px;border-radius:99px;background:#263746;overflow:hidden;margin-bottom:6px}
+.army-morale-line i{display:block;height:100%;background:linear-gradient(90deg,#4f9a49,#8fd16d)}
+.army-camp-campaign{
+  position:absolute;z-index:3;right:4%;bottom:11%;display:flex;gap:7px;padding:8px;border-radius:12px;background:rgba(5,14,25,.72);border:1px solid rgba(228,205,145,.18)
+}
+.army-fortress-step{display:grid;place-items:center;gap:2px;min-width:42px;color:#64798e}
+.army-fortress-step i{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;border:1px solid currentColor;font-style:normal}
+.army-fortress-step small{font-size:.62rem}.army-fortress-step.won{color:#8ecb72}.army-fortress-step.next{color:#62a9ff}
+.army-command-footer{
+  position:relative;z-index:4;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;margin:240px 18px 16px;padding:14px 16px;
+  border:1px solid rgba(228,205,145,.26);border-radius:12px;background:rgba(6,18,31,.88);backdrop-filter:blur(7px)
+}
+.army-command-footer strong{display:block;font-family:Georgia,'Times New Roman',serif;font-size:1.1rem}.army-command-footer small{color:#b7c7d5}
+.army-summary{
+  margin-top:14px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--army-line);border-radius:14px;overflow:hidden;background:var(--army-panel)
+}
+.army-summary>div{padding:14px 16px;border-right:1px solid var(--army-line)}.army-summary>div:last-child{border-right:0}
+.army-summary small,.army-section-head small{display:block;color:#9fb3c5;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;font-weight:800}
+.army-summary strong{display:block;margin-top:4px;color:#fff;font-size:1.05rem}
+.army-section{margin-top:20px}.army-section-head{display:flex;justify-content:space-between;gap:18px;align-items:end;margin-bottom:10px}
+.army-section-head h3{font-family:Georgia,'Times New Roman',serif;font-size:1.45rem;margin:.05rem 0;color:#fff}
+.army-section-head p{margin:0;color:#9fb3c5;font-size:.85rem}
+.army-bonus-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.army-bonus{
+  display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:center;padding:13px;border-radius:12px;border:1px solid var(--army-line);background:linear-gradient(180deg,#142c44,#0b1d30)
+}
+.army-bonus-icon{grid-row:1/4;display:grid;place-items:center;width:42px;height:42px;border:1px solid #b89653;border-radius:9px;color:#e7ce90;background:#0c1a29;font-size:1.25rem}
+.army-bonus strong{color:#fff}.army-bonus small{color:#afc0ce}.army-bonus b{font-size:.67rem;color:#e0c67f;text-transform:uppercase;letter-spacing:.07em}
+.army-bonus.locked{filter:saturate(.45);opacity:.62}
+.army-unit-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.army-unit-card{
+  position:relative;text-align:left;display:grid;grid-template-columns:auto 1fr;column-gap:12px;row-gap:4px;min-height:190px;padding:16px;
+  border-radius:14px;border:1px solid rgba(228,205,145,.28);color:#edf4fb;background:
+    radial-gradient(circle at 85% 12%,rgba(39,118,197,.2),transparent 8rem),
+    linear-gradient(160deg,#172f49,#0a1a2b 72%);
+  box-shadow:0 12px 32px rgba(0,0,0,.18);transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease
+}
+.army-unit-card:hover{transform:translateY(-2px);border-color:#b99c5d}.army-unit-card.selected{border-color:#3994f2;box-shadow:0 0 0 2px rgba(42,140,255,.18),0 14px 38px rgba(0,0,0,.24)}
+.army-unit-card.locked{filter:saturate(.45);opacity:.68}
+.army-unit-level{position:absolute;right:12px;top:10px;font-size:.7rem;color:#d9c795}.army-unit-level b{font-size:.95rem}
+.army-unit-emblem{grid-row:1/4;display:grid;place-items:center;width:66px;height:82px;border-radius:12px;border:1px solid #937d4d;background:linear-gradient(180deg,#203c59,#0a1625);font-size:2rem;color:#e1cc93}
+.army-unit-card>strong{font-family:Georgia,'Times New Roman',serif;font-size:1.22rem;align-self:end}.army-unit-card>small{color:#adbecd;line-height:1.35}
+.army-unit-meter{grid-column:1/-1;height:7px;border-radius:99px;background:#263746;overflow:hidden;margin-top:10px}.army-unit-meter i{display:block;height:100%;background:linear-gradient(90deg,#2e77bc,#52a5fa)}
+.army-unit-state,.army-unit-next{grid-column:1/-1;font-size:.72rem}.army-unit-state{font-weight:800;color:#e6d49c}.army-unit-next{color:#9cb1c2}
+.army-unit-preview{
+  margin-top:14px;display:grid;grid-template-columns:auto minmax(0,1fr) auto minmax(240px,.8fr);gap:18px;align-items:center;padding:17px;
+  border:1px solid var(--army-line);border-radius:14px;background:linear-gradient(180deg,#122a43,#091a2b)
+}
+.army-preview-emblem{display:grid;place-items:center;width:82px;height:82px;border-radius:50%;border:2px solid #b99b59;background:#0a1827;color:#ead59d;font-size:2.1rem}
+.army-preview-copy h3{font-family:Georgia,'Times New Roman',serif;font-size:1.45rem;margin:.05rem 0}.army-preview-copy p{margin:0;color:#adbfce;font-size:.84rem}
+.army-preview-level{padding:0 18px;border-left:1px solid var(--army-line);border-right:1px solid var(--army-line)}.army-preview-level span,.army-preview-upgrade span{display:block;color:#9fb3c5;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em}.army-preview-level strong{display:block;color:#fff;font-size:1.2rem;margin:.15rem 0}.army-preview-level small{color:#dcc687}
+.army-preview-upgrade strong{display:block;color:#fff;margin:.15rem 0 .5rem}.army-preview-upgrade progress{width:100%;accent-color:#2a8cff}.army-preview-upgrade small{display:block;color:#9fb3c5;margin-top:4px;text-transform:none;letter-spacing:0}
+.army-next-goal{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.army-next-goal span{color:#9fb3c5;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}.army-next-goal strong{color:#fff}.army-next-goal small{color:#e2c77f}
+.army-upgrade-focus{min-height:44px;border:1px solid #d0af68;border-radius:9px;background:linear-gradient(180deg,#1f6fc5,#104987);color:#fff;font-weight:900;padding:.65rem 1rem}
+@media(max-width:900px){
+  .army-command{min-height:300px}.army-camp-copy{left:8%;max-width:54%}.army-camp-strength{right:3%;min-width:180px}
+  .army-summary{grid-template-columns:repeat(2,1fr)}.army-summary>div:nth-child(2){border-right:0}.army-summary>div:nth-child(-n+2){border-bottom:1px solid var(--army-line)}
+  .army-bonus-grid{grid-template-columns:repeat(2,1fr)}.army-unit-grid{grid-template-columns:repeat(2,1fr)}
+  .army-unit-preview{grid-template-columns:auto 1fr}.army-preview-level{border-left:0;border-right:0;padding:0}.army-preview-upgrade{grid-column:1/-1}
+}
+@media(max-width:620px){
+  .army-shell{padding:10px 10px 95px}.army-toolbar{grid-template-columns:auto 1fr;gap:10px}.army-toolbar .army-battle-btn{grid-column:1/-1;width:100%}
+  .army-toolbar-copy p{display:none}.army-command{min-height:340px;border-radius:14px}.army-camp-copy{left:7%;top:9%;max-width:68%}.army-camp-copy strong{font-size:2.3rem}
+  .army-camp-strength{right:4%;top:45%;min-width:155px;padding:11px}.army-camp-strength>strong{font-size:1.55rem}.army-camp-campaign{left:4%;right:4%;bottom:6%;justify-content:center;overflow:hidden}
+  .army-camp-banner{opacity:.45}.army-command-footer{margin:250px 9px 9px;grid-template-columns:1fr}.army-command-footer button{width:100%}
+  .army-summary{margin-top:10px}.army-summary>div{padding:11px}.army-bonus-grid{grid-template-columns:1fr 1fr;gap:8px}.army-bonus{padding:10px;grid-template-columns:auto 1fr}.army-bonus-icon{width:36px;height:36px}
+  .army-unit-grid{grid-template-columns:1fr;gap:9px}.army-unit-card{min-height:165px}.army-section-head{align-items:start;flex-direction:column}
+  .army-unit-preview{grid-template-columns:auto 1fr;gap:12px}.army-preview-emblem{width:66px;height:66px}.army-preview-level{grid-column:1/-1}.army-preview-upgrade{grid-column:1/-1}
+}
+@media(prefers-reduced-motion:reduce){.army-unit-card{transition:none}.army-unit-card:hover{transform:none}}
+body.lrs-mode .army-view{--army-line:rgba(220,220,220,.26)}
+body.lrs-mode .army-unit-card,body.lrs-mode .army-command,body.lrs-mode .army-unit-preview{box-shadow:none}
