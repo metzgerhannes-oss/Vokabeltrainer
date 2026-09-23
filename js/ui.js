@@ -193,7 +193,7 @@ function renderCardboxOverview(){
     return `<div class="cardbox-stage" data-cardbox-box="${box}">
       <div class="cardbox-stage-top"><span>Box ${box}</span><strong>${count}</strong></div>
       <b>${esc(leitnerLabel(box))}</b>
-      <div class="cardbox-stage-bar" aria-hidden="true"><i style="width:${pct}%"></i></div>
+      <progress class="cardbox-stage-progress" max="100" value="${pct}" aria-label="${pct} Prozent des Karteikastens in ${esc(leitnerLabel(box))}"></progress>
       <small>${pct}% des Karteikastens</small>
     </div>`;
   }).join('');
