@@ -294,7 +294,7 @@ function renderToday(){
   if(chunkWords.length)recs.splice(2,0,{icon:'🧩',title:'Wortbausteine',sub:`${chunkWords.length} geeignete Wörter · keine ganzen Sätze`,mode:'chunks'});
   if(subjectHasCapability(state.activeSubject,'latinGrammar'))recs.push({icon:'Ⅳ',title:'Latein Formen',sub:'Genitiv · Genus · Stammformen · Anwendung',mode:'latinGrammar'});
   $('#recommendations').innerHTML=recs.map(r=>`<button class="recommend" data-mode="${r.mode}" ${r.disabled?'disabled':''}><span class="icon">${r.icon}</span><strong>${r.title}</strong><small>${r.sub}</small></button>`).join('');
-  $('#recommendations [data-mode]').forEach(b=>b.onclick=()=>{const mode=b.dataset.mode;if(mode==='copy')startCopyPractice();else if(mode==='context')startSession('context',null,contextWords.map(w=>w.id));else startSession(mode)});
+  $('[data-mode], #recommendations [data-mode]').filter(b=>b.closest?.('#recommendations')).forEach(b=>b.onclick=()=>{const mode=b.dataset.mode;if(mode==='copy')startCopyPractice();else if(mode==='context')startSession('context',null,contextWords.map(w=>w.id));else startSession(mode)});
 }
 function setPairAuditText(setId){
   const s=state.sets.find(x=>x.id===setId),words=s?setWords(setId):[];
