@@ -80,7 +80,11 @@ try{
   await page.waitForSelector('[data-answer]');
   const correctTranslation=await page.evaluate(()=>translationTargets(currentWord())[0]);
   await page.locator('[data-answer]').filter({hasText:correctTranslation}).first().click();
-  await page.waitForSelector('#continueStudyBtn');
+  try{await page.waitForSelector('#continueStudyBtn')}catch(e){
+    const snap=await page.evaluate(()=>({locked:session?.locked,submode:session?.currentSubmode,feedback:document.querySelector('.feedback')?.textContent||'',answered:session?.answered,correct:session?.correct,supportResults:currentWord()?.supportResults||null,html:document.querySelector('#studyArea')?.innerHTML?.slice(0,1400)||''}));
+    console.error('recognition diagnostic snapshot',JSON.stringify({snap,errors}));
+    throw e;
+  }
   const choice=await page.evaluate(()=>({feedback:document.querySelector('.feedback')?.textContent||'',last:session.results.at(-1)}));
   assert(/Richtig/.test(choice.feedback)&&choice.last?.correct===true,'recognition exact stored choice is correct');
 
