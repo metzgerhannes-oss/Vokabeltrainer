@@ -11,14 +11,16 @@ const css=fs.readFileSync('css/app.css','utf8');
 const dna=fs.readFileSync('PRODUCT_DNA.md','utf8');
 
 const nav=html.match(/<nav class="bottom-nav"[\s\S]*?<\/nav>/)?.[0]||'';
-assert((nav.match(/<button\b/g)||[]).length===3,'Kindernavigation hat genau drei Hauptaktionen');
-for(const label of ['Heute','Lernen','Erfolge'])assert(nav.includes('>'+label+'</button>'),'Kindernavigation enthält '+label);
+assert((nav.match(/<button\b/g)||[]).length===4,'Kindernavigation hat genau vier Hauptbereiche');
+for(const label of ['Heute','Üben','Fortschritt','Armee'])assert(nav.includes('>'+label+'</button>'),'Kindernavigation enthält '+label);
 for(const admin of ['Vokabeln','Einstellungen','Fortschritt & Noten'])assert(!nav.includes(admin),'Administration fehlt in Kindernavigation: '+admin);
 
 assert(html.includes('id="parentAreaBtn"')&&html.includes('id="childModeBtn"'),'expliziter Rollenwechsel existiert');
 assert(html.includes('id="profileBtn"')&&html.includes('aria-haspopup="dialog"'),'aktives Lernprofil ist als direkter Profilwechsler erkennbar');
 assert(html.includes('id="parentView"'),'Elternbereich existiert');
+assert(html.includes('id="practiceView"'),'eigene kindgerechte Übungsansicht existiert');
 assert(html.includes('id="childProgressView"'),'eigene kindgerechte Fortschrittsansicht existiert');
+for(const id of ['practiceCardsBtn','practiceWeakBtn','practiceAllBtn','practiceSpecialBtn'])assert(html.includes('id="'+id+'"'),'Üben enthält den Einstieg '+id);
 assert(!html.includes('id="moreView"'),'altes gemischtes Mehr-Menü ist entfernt');
 assert(html.indexOf('id="setList"')>html.indexOf('id="parentView"'),'Lernsets liegen im Elternbereich');
 assert(html.indexOf('id="libraryView"')>html.indexOf('id="parentView"'),'Bibliothek liegt hinter Elternbereich');
