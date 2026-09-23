@@ -1,18 +1,62 @@
-.battle-scene-art{
+.battle-art-stack{
   position:absolute;
   inset:0;
   z-index:0;
+  overflow:hidden;
+  pointer-events:none;
+}
+.battle-art-layer{
+  position:absolute;
+  inset:0;
   width:100%;
   height:100%;
   max-width:none;
   object-fit:cover;
   object-position:center center;
   opacity:0;
-  filter:saturate(.94) contrast(1.04) brightness(.84);
   transition:opacity .28s ease;
   pointer-events:none;
 }
-.battle-stage.battle-art-ready .battle-scene-art{opacity:1}
+.battle-art-background{
+  z-index:0;
+  filter:saturate(.82) contrast(1.03) brightness(.76);
+}
+.battle-art-army{
+  z-index:1;
+  filter:saturate(1.02) contrast(1.06) brightness(.9);
+  -webkit-mask-image:
+    linear-gradient(90deg,#000 0 46%,rgba(0,0,0,.96) 58%,transparent 76%),
+    linear-gradient(180deg,transparent 0 18%,#000 36% 100%);
+  -webkit-mask-composite:source-in;
+  mask-image:
+    linear-gradient(90deg,#000 0 46%,rgba(0,0,0,.96) 58%,transparent 76%),
+    linear-gradient(180deg,transparent 0 18%,#000 36% 100%);
+  mask-composite:intersect;
+}
+.battle-art-fortress{
+  z-index:2;
+  filter:saturate(.98) contrast(1.08) brightness(.88);
+  -webkit-mask-image:
+    linear-gradient(90deg,transparent 22%,rgba(0,0,0,.7) 42%,#000 58% 100%),
+    linear-gradient(180deg,transparent 0 10%,#000 30% 100%);
+  -webkit-mask-composite:source-in;
+  mask-image:
+    linear-gradient(90deg,transparent 22%,rgba(0,0,0,.7) 42%,#000 58% 100%),
+    linear-gradient(180deg,transparent 0 10%,#000 30% 100%);
+  mask-composite:intersect;
+}
+.battle-art-atmosphere{
+  position:absolute;
+  inset:0;
+  z-index:3;
+  background:
+    radial-gradient(ellipse at 23% 76%,rgba(218,202,170,.12),transparent 24%),
+    radial-gradient(ellipse at 72% 68%,rgba(219,199,164,.1),transparent 21%),
+    linear-gradient(180deg,rgba(3,10,18,.05),transparent 36%,rgba(4,11,20,.22));
+  mix-blend-mode:screen;
+  opacity:.62;
+}
+.battle-stage.battle-art-ready .battle-art-layer{opacity:1}
 .battle-stage.battle-art-ready .battle-sky,
 .battle-stage.battle-art-ready .battle-hills,
 .battle-stage.battle-art-ready .battle-ground{
@@ -23,11 +67,11 @@
   content:"";
   position:absolute;
   inset:0;
-  z-index:3;
+  z-index:4;
   pointer-events:none;
   background:
-    linear-gradient(90deg,rgba(5,15,28,.28),transparent 38%,transparent 66%,rgba(7,13,20,.22)),
-    linear-gradient(180deg,rgba(4,11,20,.12),transparent 35%,rgba(3,9,16,.3));
+    linear-gradient(90deg,rgba(5,15,28,.2),transparent 38%,transparent 66%,rgba(7,13,20,.18)),
+    linear-gradient(180deg,rgba(4,11,20,.08),transparent 35%,rgba(3,9,16,.24));
 }
 .battle-stage.battle-art-ready .battle-phase-strip,
 .battle-stage.battle-art-ready .battle-rank-badge,
@@ -42,10 +86,18 @@
   position:absolute;
 }
 @media(max-width:720px){
-  .battle-scene-art{object-position:48% center}
+  .battle-art-layer{object-position:48% center}
+  .battle-art-army{
+    -webkit-mask-image:linear-gradient(90deg,#000 0 52%,rgba(0,0,0,.92) 65%,transparent 84%);
+    mask-image:linear-gradient(90deg,#000 0 52%,rgba(0,0,0,.92) 65%,transparent 84%);
+  }
+  .battle-art-fortress{
+    -webkit-mask-image:linear-gradient(90deg,transparent 16%,rgba(0,0,0,.72) 34%,#000 54% 100%);
+    mask-image:linear-gradient(90deg,transparent 16%,rgba(0,0,0,.72) 34%,#000 54% 100%);
+  }
 }
 @media(prefers-reduced-motion:reduce){
-  .battle-scene-art,
+  .battle-art-layer,
   .battle-stage.battle-art-ready .battle-sky,
   .battle-stage.battle-art-ready .battle-hills,
   .battle-stage.battle-art-ready .battle-ground{transition:none}
