@@ -24,7 +24,7 @@ const BATTLE_STORY={
   wall:{title:'Die Grenzmauer',text:'Hinter der langen Mauer beginnt das Kernland. Neue Einheiten schließen sich deinem Feldzug an.'},
   citadel:{title:'Die Bergzitadelle',text:'Vor der Zitadelle wartet der Torwächter. Nur gefestigtes Wissen bringt die Armee durch das Tor.'},
   capital:{title:'Vor der Hauptfestung',text:'Der Hauptmann hat seine besten Truppen versammelt. Dein bisheriger Lernweg entscheidet, wie stark deine Armee ist.'},
-  final:{title:'Die Jahresfestung',text:'Die letzte Festung liegt vor dir. Sie fällt erst, wenn die Vokabeln des Schuljahres nachhaltig gemeistert sind.'}
+  final:{title:'Die große Testfestung',text:'Ein großer Testumfang liegt vor dir. Jeder abgeschlossene Lerntag schwächt die Verteidigung; gefestigtes Wissen macht die Angriffe stärker.'}
 };
 function specialAttackMeta(subject=state.activeSubject){
   return subject==='latin'
@@ -34,7 +34,11 @@ function specialAttackMeta(subject=state.activeSubject){
 function battleAttackMeta(mode){return mode==='special'?{...BATTLE_ATTACKS.special,...specialAttackMeta()}:BATTLE_ATTACKS[mode]}
 function attackUnlocked(mode,pct=subjectProgress().pct){const a=BATTLE_ATTACKS[mode];return !!a&&pct>=a.unlock}
 function battleBossFor(f){return f?BATTLE_BOSSES[f.id]||null:null}
-function battleStoryFor(f){return f?BATTLE_STORY[f.id]||{title:f.name,text:'Deine Armee bereitet den nächsten Schritt vor.'}:{title:'Feldzug gewonnen',text:'Alle Festungen dieses Schuljahres sind bezwungen.'}}
+function battleStoryFor(f){
+  if(!f)return {title:'Noch keine Testfestung',text:'Sobald ein Test geplant ist, entsteht hier automatisch die passende Festung.'};
+  const base=BATTLE_STORY[f.id]||{title:f.name,text:'Deine Armee bereitet den nächsten Schritt vor.'};
+  return {title:base.title,text:`${base.text} Diese Festung steht für ${f.scopeText||'deinen nächsten Test'} am ${formatDateShort(f.testDate)}.`};
+}
 function battleUnitType(i,pct){
   if(pct>=55&&i>2&&i%6===0)return 'cavalry';
   if(pct>=20&&i%4===2)return 'archer';
@@ -50,20 +54,23 @@ function battleUnitsMarkup(count,large=false,pct=subjectProgress().pct){
   return out;
 }
 function fortressMarkup(f,large=false){
-  const id=f?.id||'final',name=f?.name||'Festung';
-  if(!large)return `<div class="fortress fortress-${esc(id)}" aria-label="${esc(name)}"><div class="gate"></div><div class="flag"></div><div class="mini-keep"></div></div>`;
-  return `<div class="battle-fortress fortress-${esc(id)}"><div class="tower tower-left"></div><div class="tower tower-right"></div><div class="wall"><div class="battle-gate"></div><div class="crack c1"></div><div class="crack c2"></div></div><div class="battle-keep"></div><div class="battle-enemy-flag"></div></div>`;
+  if(!f)return '';
+  const id=f.id||'outpost',name=f.name||'Festung',captured=!!f.capturedAt;
+  if(!large)return `<div class="fortress fortress-${esc(id)} ${captured?'captured':''}" aria-label="${esc(name)}"><div class="gate"></div><div class="flag"></div><div class="mini-keep"></div></div>`;
+  return `<div class="battle-fortress fortress-${esc(id)} ${captured?'captured':''}"><div class="tower tower-left"></div><div class="tower tower-right"></div><div class="wall"><div class="battle-gate"></div><div class="crack c1"></div><div class="crack c2"></div></div><div class="battle-keep"></div><div class="battle-enemy-flag"></div></div>`;
 }
 function seasonEffectsMarkup(){
   return `<div class="battle-season-fx" aria-hidden="true">${Array.from({length:12},(_,i)=>`<i class="season-particle season-d${i%6}"></i>`).join('')}</div>`;
 }
 function renderBattlefield(){
-  const p=subjectProgress(),next=nextFortress(),sea=seasonInfo(),count=soldiersFor(p.pct),tickets=battleTickets();
+  const p=subjectProgress(),f=currentTestFortress(),sea=seasonInfo(),count=soldiersFor(p.pct),tickets=battleTickets();
   const siege=p.pct>=35?'<div class="siege" title="Belagerungsgerät freigeschaltet"></div>':'';
   const campaign=subjectCampaign(state.activeSubject),field=$('#battlefield');if(!field)return;
-  field.className=`battlefield ${sea.class} subject-${state.activeSubject} gear-${gearTier(p.pct)} ${tickets?'battle-ready':''}`;
-  field.setAttribute('aria-label',`${campaign.unitLabel}: ${p.pct}% Schuljahresfortschritt, Rang ${rankFor(p.pct,state.activeSubject)}, ${next?`nächstes Ziel ${next.name}`:'alle Festungen erreicht'}`);
-  field.innerHTML=`<div class="sun"></div><div class="preview-cloud cloud-a"></div><div class="preview-cloud cloud-b"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army"><div class="preview-standard"></div>${battleUnitsMarkup(count,false,p.pct)}${siege}</div>${fortressMarkup(next,false)}`;
+  const damagePct=f?clamp(Math.round((1-(Number(f.defense)||0)/Math.max(1,Number(f.maxDefense)||1))*100),0,100):0;
+  field.className=`battlefield ${sea.class} subject-${state.activeSubject} gear-${gearTier(p.pct)} ${tickets?'battle-ready':''} ${f?.capturedAt?'battle-captured':''}`;
+  field.dataset.damage=damagePct>=66?'high':damagePct>=33?'mid':damagePct>0?'low':'none';
+  field.setAttribute('aria-label',`${campaign.unitLabel}: ${p.pct}% Schuljahresfortschritt, Rang ${rankFor(p.pct,state.activeSubject)}, ${f?`Testfestung ${f.name} am ${formatDateShort(f.testDate)}`:'kein Test geplant'}`);
+  field.innerHTML=`<div class="sun"></div><div class="preview-cloud cloud-a"></div><div class="preview-cloud cloud-b"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army"><div class="preview-standard"></div>${battleUnitsMarkup(count,false,p.pct)}${siege}</div>${fortressMarkup(f,false)}`;
 }
 function renderBattleAttackChoices(pct=subjectProgress().pct){
   const box=$('#battleAttackChoices');if(!box)return;
@@ -81,31 +88,36 @@ function selectBattleAttack(mode){
 }
 function renderBattleView(){
   const stage=$('#battleStage');if(!stage)return;
-  const p=subjectProgress(),f=nextFortress(),tickets=battleTickets(),rewardReady=battleRewardAvailableToday(),count=Math.min(18,Math.max(7,soldiersFor(p.pct)+4)),damage=f?clamp(Math.round((p.pct/Math.max(1,f.req))*100),0,100):100,sea=seasonInfo();
-  const campaign=subjectCampaign(state.activeSubject),rank=rankFor(p.pct,state.activeSubject),gear=gearLabelFor(p.pct,state.activeSubject),boss=battleBossFor(f),story=battleStoryFor(f),attack=battleAttackMeta(battleAttackMode);
-  $('#battleTicketPill').textContent=tickets?(rewardReady?'Heute frei · Belohnung offen':'Heute frei · Belohnung geholt'):'Heute gesperrt';
+  const p=subjectProgress(),f=currentTestFortress(),tickets=battleTickets(),count=Math.min(18,Math.max(7,soldiersFor(p.pct)+4)),sea=seasonInfo();
+  const campaign=subjectCampaign(state.activeSubject),rank=rankFor(p.pct,state.activeSubject),gear=gearLabelFor(p.pct,state.activeSubject),secure=!!f?.capturedAt,boss=!secure?battleBossFor(f):null,story=battleStoryFor(f),attack=battleAttackMeta(battleAttackMode);
+  const damagePct=f?clamp(Math.round((1-(Number(f.defense)||0)/Math.max(1,Number(f.maxDefense)||1))*100),0,100):0;
+  const usedToday=!!battleDayState(state.activeSubject,false)?.actionUsed;
+  const grade=testFortressGrade(f);
+  $('#battleTicketPill').textContent=!f?'Kein Test':secure?(tickets?'1 Sicherung':'0 Sicherungen'):(tickets?'1 Angriff':'0 Angriffe');
   $('#battleStrength').textContent=armyStrength();
-  $('#battleFortressName').textContent=f?`${f.name} · ${f.subtitle}`:'Jahresfeldzug gewonnen';
-  $('#battleFortressProgress').textContent=f?`${p.pct}% / ${f.req}%`:'100%';
+  $('#battleFortressName').textContent=f?`${f.name} · Test ${formatDateShort(f.testDate)}`:'Kein Test geplant';
+  $('#battleFortressProgress').textContent=!f?'–':secure?'Erobert · gesichert '+(f.securedDates?.length||0)+'×':`${f.defense} / ${f.maxDefense} Verteidigung`;
   $('#battleRankGear').textContent=`${rank} · ${gear}`;
-  $('#battleTitle').textContent=f?`${campaign.unitLabel} gegen ${f.name}`:'Die Kampagne ist gewonnen';
-  $('#battleSubtitle').textContent=f?(boss?`Bosskampf: ${boss.name}`:(tickets?'Die Schlacht bleibt heute offen. Wähle eine Angriffsart.':'Schließe dein heutiges Lernziel ab, um die Schlacht freizuschalten.')):'Alle Festungen dieses Schuljahres sind bezwungen.';
-  $('#battleStoryTitle').textContent=story.title;$('#battleStoryText').textContent=story.text;$('#battleStory').classList.toggle('story-complete',!f);
+  $('#battleTitle').textContent=f?(secure?`${f.name} sichern`:`${campaign.unitLabel} gegen ${f.name}`):'Deine Armee ist bereit';
+  $('#battleSubtitle').textContent=!f?'Sobald ein Test geplant ist, erscheint hier die nächste Festung.':secure?(tickets?'Die Festung ist erobert. Heute kannst du sie für den Test sichern.':`Erobert · ${f.scopeText}${grade?` · Note ${grade.grade}`:''}`):(tickets?'Dein Tagesangriff ist bereit. Jeder Lerntag schwächt die Festung.':`${f.scopeText} · Test ${formatDateShort(f.testDate)}`);
+  $('#battleStoryTitle').textContent=story.title;$('#battleStoryText').textContent=story.text+(grade?` Ergebnis eingetragen: Note ${grade.grade}.`:'');$('#battleStory').classList.toggle('story-complete',secure);
   const bossPanel=$('#battleBossPanel');bossPanel.classList.toggle('hidden',!boss);
-  if(boss){const bossPct=clamp(Math.round((p.pct/Math.max(1,f.req))*100),0,100);$('#battleBossName').textContent=boss.name;$('#battleBossText').textContent=boss.text;$('#battleBossProgress').value=bossPct;$('#battleBossProgressText').textContent=`${bossPct}%`;}
-  $('#battleAttackBtn').disabled=!f||tickets<1;$('#battleAttackBtn').textContent=!f?'Kampagne gewonnen':tickets?`${attack.short}: Angriff starten`:'Nach dem Lernen verfügbar';
-  if($('#battleActionTitle'))$('#battleActionTitle').textContent=!f?'Kampagne gewonnen':tickets?'Dein Angriff ist bereit':'Nächster Angriff gesperrt';
-  if($('#battleActionHint'))$('#battleActionHint').textContent=!f?'Alle Festungen dieses Schuljahres sind bezwungen.':tickets?(rewardReady?`${attack.label} wählen und um die Tagesbelohnung kämpfen.`:`${attack.label} wählen. Die Tagesbelohnung ist bereits geholt.`):'Schließe zuerst dein Tagesziel ab.';
-  $('#battleMessage').className='battle-message';$('#battleMessage').textContent=tickets?`${attack.label} ist bereit.`:'Noch kein Angriff verfügbar.';
-  renderBattleAttackChoices(p.pct);
-  stage.className=`battle-stage season-${sea.class} subject-${state.activeSubject} gear-${gearTier(p.pct)} fortress-stage-${f?.id||'won'} ${boss?'boss-stage':''}`;
-  stage.dataset.damage=damage>=66?'high':damage>=33?'mid':damage>0?'low':'none';
-  stage.setAttribute('aria-label',f?`${campaign.unitLabel} im Rang ${rank} vor ${f.name}${boss?`, Bosskampf gegen ${boss.name}`:''}. Lernfortschritt ${p.pct} Prozent.`:`${campaign.unitLabel}: Jahresfeldzug gewonnen.`);
-  stage.innerHTML=`<div class="battle-sky"><i class="battle-sun"></i><i class="battle-cloud cloud-1"></i><i class="battle-cloud cloud-2"></i></div>${seasonEffectsMarkup()}<div class="battle-hills"></div><div class="battle-ground"></div><div class="battle-phase-strip" aria-hidden="true"><span data-battle-phase="rally"><i>1</i>Sammeln</span><span data-battle-phase="advance"><i>2</i>Vorrücken</span><span data-battle-phase="barrage"><i>3</i>Angriff</span><span data-battle-phase="impact"><i>4</i>Einschlag</span><span data-battle-phase="result"><i>5</i>Ergebnis</span></div><div class="battle-rank-badge"><span>${esc(rank)}</span><small>${esc(gear)}</small></div><div class="battle-army"><div class="battle-standard"><i></i></div>${battleUnitsMarkup(count,true,p.pct)}${p.pct>=35?'<div class="battle-ram"><i></i><b></b></div>':''}</div><div class="battle-projectiles">${Array.from({length:9},(_,i)=>`<i class="arrow arrow-${i+1}"></i>`).join('')}</div><div class="battle-impact"><i></i><i></i><i></i></div><div class="battle-special-flare"><i></i><i></i><i></i></div><div class="battle-shockwave"></div>${boss?`<div class="battle-boss-character boss-${esc(f.id)}" aria-label="${esc(boss.name)}"><i class="boss-helmet"></i><i class="boss-body"></i><i class="boss-shield"></i></div>`:''}${fortressMarkup(f,true)}<div class="battle-dust"></div>`;
+  if(boss){$('#battleBossName').textContent=boss.name;$('#battleBossText').textContent=boss.text;$('#battleBossProgress').value=damagePct;$('#battleBossProgressText').textContent=`${damagePct}%`;}
+  const tactics=$('#battleAttackChoices')?.closest('.battle-tactics');tactics?.classList.toggle('hidden',secure||!f);
+  $('#battleAttackBtn').disabled=!f||tickets<1;
+  $('#battleAttackBtn').textContent=!f?'Kein Test geplant':tickets?(secure?'Festung sichern':`${attack.short}: Angriff starten`):usedToday?(secure?'Heute bereits gesichert ✓':'Heute bereits angegriffen ✓'):(secure?'Nach Tagesziel: sichern':'Nach Tagesziel verfügbar');
+  if($('#battleActionTitle'))$('#battleActionTitle').textContent=!f?'Keine Festung aktiv':tickets?(secure?'Sicherungseinsatz bereit':'Dein Angriff ist bereit'):usedToday?(secure?'Heute gesichert':'Tagesangriff verbraucht'):'Tagesziel noch offen';
+  if($('#battleActionHint'))$('#battleActionHint').textContent=!f?'Plane zuerst einen Test.':tickets?(secure?'Halte die eroberte Festung bis zum Test sicher.':`${attack.label} wählen und die Festung weiter schwächen.`):usedToday?'Morgen gibt es nach dem nächsten Tagesziel wieder eine Aktion.':'Schließe zuerst dein Tagesziel ab.';
+  $('#battleMessage').className='battle-message';$('#battleMessage').textContent=!f?'Kein Test – keine Belagerung.':tickets?(secure?'Sicherung ist bereit.':`${attack.label} ist bereit. Erwarteter Schaden: ${testFortressDamage(f).damage}.`):secure?'Festung bleibt erobert.':'Jeder abgeschlossene Lerntag bringt die Belagerung voran.';
+  if(!secure&&f)renderBattleAttackChoices(p.pct);else if($('#battleAttackChoices'))$('#battleAttackChoices').innerHTML='';
+  stage.className=`battle-stage season-${sea.class} subject-${state.activeSubject} gear-${gearTier(p.pct)} fortress-stage-${f?.id||'none'} ${boss?'boss-stage':''} ${secure?'fortress-secured':''}`;
+  stage.dataset.damage=damagePct>=66?'high':damagePct>=33?'mid':damagePct>0?'low':'none';
+  stage.setAttribute('aria-label',f?`${campaign.unitLabel} im Rang ${rank} vor ${f.name}. Festungsschaden ${damagePct} Prozent. Test am ${formatDateShort(f.testDate)}.`:`${campaign.unitLabel}: aktuell keine Testfestung.`);
+  stage.innerHTML=`<div class="battle-sky"><i class="battle-sun"></i><i class="battle-cloud cloud-1"></i><i class="battle-cloud cloud-2"></i></div>${seasonEffectsMarkup()}<div class="battle-hills"></div><div class="battle-ground"></div><div class="battle-phase-strip" aria-hidden="true"><span data-battle-phase="rally"><i>1</i>${secure?'Sammeln':'Sammeln'}</span><span data-battle-phase="advance"><i>2</i>${secure?'Beziehen':'Vorrücken'}</span><span data-battle-phase="barrage"><i>3</i>${secure?'Patrouille':'Angriff'}</span><span data-battle-phase="impact"><i>4</i>${secure?'Sichern':'Einschlag'}</span><span data-battle-phase="result"><i>5</i>Ergebnis</span></div><div class="battle-rank-badge"><span>${esc(rank)}</span><small>${esc(gear)}</small></div><div class="battle-army"><div class="battle-standard"><i></i></div>${battleUnitsMarkup(count,true,p.pct)}${p.pct>=35?'<div class="battle-ram"><i></i><b></b></div>':''}</div><div class="battle-projectiles">${Array.from({length:9},(_,i)=>`<i class="arrow arrow-${i+1}"></i>`).join('')}</div><div class="battle-impact"><i></i><i></i><i></i></div><div class="battle-special-flare"><i></i><i></i><i></i></div><div class="battle-shockwave"></div>${boss?`<div class="battle-boss-character boss-${esc(f.id)}" aria-label="${esc(boss.name)}"><i class="boss-helmet"></i><i class="boss-body"></i><i class="boss-shield"></i></div>`:''}${fortressMarkup(f,true)}<div class="battle-dust"></div>`;
 }
 function openBattleView(){
   if(isParentMode())return;
-  if(battleTickets()<1){toast('Die Schlacht wird freigeschaltet, sobald dein Tagesziel geschafft ist.','subtle');return}
+  if(!currentTestFortress()){toast('Für die nächste Schlacht muss zuerst ein Test geplant sein.','subtle');return}
   renderBattleView();showView('battleView');
 }
 function closeBattleImmersive(){
@@ -118,80 +130,48 @@ function toggleBattleFullscreen(){
   if(on){const el=$('#battleView');if(el?.requestFullscreen)el.requestFullscreen().catch(()=>{});}else if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
 }
 function runBattleAnimation(){
-  const f=nextFortress(),stage=$('#battleStage'),button=$('#battleAttackBtn');if(!f||!stage||!button)return;
-  if(!spendBattleTicket()){toast('Erst das heutige Lernziel abschließen.','subtle');renderBattleView();return}
-  const p=subjectProgress(),win=p.pct>=f.req,reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,attack=battleAttackMeta(battleAttackMode)||battleAttackMeta('charge'),boss=battleBossFor(f);
-  const timing=reduced
-    ?{advance:35,barrage:70,impact:105,result:145,ready:190}
-    :{advance:1150,barrage:3200,impact:5200,result:7150,ready:8350};
-  const phaseCopy={
+  const f=currentTestFortress(),stage=$('#battleStage'),button=$('#battleAttackBtn');if(!f||!stage||!button)return;
+  const secureBefore=!!f.capturedAt;
+  if(!spendBattleTicket()){toast('Die heutige Aktion wird erst nach dem Tagesziel freigeschaltet.','subtle');renderBattleView();return}
+  const p=subjectProgress(),reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,attack=battleAttackMeta(battleAttackMode)||battleAttackMeta('charge'),boss=!secureBefore?battleBossFor(f):null;
+  const timing=reduced?{advance:35,barrage:70,impact:105,result:145,ready:190}:{advance:1150,barrage:3200,impact:5200,result:7150,ready:8350};
+  const phaseCopy=secureBefore?{
+    rally:'Die Truppen sammeln sich in der eroberten Festung.',
+    advance:'Wachen beziehen Tore und Mauern.',
+    barrage:'Patrouillen sichern die Umgebung.',
+    impact:'Vorräte und Verteidigung sind für den Testtag gesichert.'
+  }:{
     rally:'Die Reihen schließen sich. Standarten hoch!',
-    advance:'Die Armee rückt geschlossen auf die Festung vor.',
-    barrage:battleAttackMode==='volley'?'Bogenschützen eröffnen den Pfeilhagel!':battleAttackMode==='ram'?'Der Rammbock wird nach vorne gebracht!':battleAttackMode==='cavalry'?'Die Reiter setzen zum Flankenangriff an!':battleAttackMode==='special'?attack.message:'Die erste Angriffswelle beginnt!',
-    impact:battleAttackMode==='special'?(state.activeSubject==='latin'?'Die Adlerstandarte führt die Elite durch die Verteidigung!':'Die Elite trifft mit voller Wucht!'):battleAttackMode==='volley'?'Die Salven schlagen auf Zinnen und Tor ein!':battleAttackMode==='cavalry'?'Die Reiter erreichen die Festungsmauer!':battleAttackMode==='ram'?'Der Rammbock kracht gegen das Tor!':'Die Truppen prallen auf die Verteidigung!'
+    advance:'Die Armee rückt geschlossen auf die Testfestung vor.',
+    barrage:battleAttackMode==='volley'?'Bogenschützen eröffnen den Pfeilhagel!':battleAttackMode==='ram'?'Der Rammbock wird nach vorne gebracht!':battleAttackMode==='cavalry'?'Die Reiter setzen zum Flankenangriff an!':battleAttackMode==='special'?attack.message:'Die Angriffswelle beginnt!',
+    impact:battleAttackMode==='special'?(state.activeSubject==='latin'?'Die Adlerstandarte führt die Elite durch die Verteidigung!':'Die Elite trifft mit voller Wucht!'):battleAttackMode==='volley'?'Die Salven schlagen auf Zinnen und Tor ein!':battleAttackMode==='cavalry'?'Die Reiter erreichen die Festungsmauer!':battleAttackMode==='ram'?'Der Rammbock kracht gegen das Tor!':'Die Truppen treffen auf die Verteidigung!'
   };
   const setPhase=(phase,message)=>{
-    stage.dataset.phase=phase;
-    stage.classList.remove('phase-rally','phase-advance','phase-barrage','phase-impact','phase-result');
-    stage.classList.add('phase-'+phase);
-    $$('.battle-phase-strip [data-battle-phase]').forEach(el=>{
-      const order={rally:1,advance:2,barrage:3,impact:4,result:5};
-      const here=el.dataset.battlePhase;
-      el.classList.toggle('active',here===phase);
-      el.classList.toggle('done',(order[here]||0)<(order[phase]||0));
-    });
+    stage.dataset.phase=phase;stage.classList.remove('phase-rally','phase-advance','phase-barrage','phase-impact','phase-result');stage.classList.add('phase-'+phase);
+    $$('.battle-phase-strip [data-battle-phase]').forEach(el=>{const order={rally:1,advance:2,barrage:3,impact:4,result:5},here=el.dataset.battlePhase;el.classList.toggle('active',here===phase);el.classList.toggle('done',(order[here]||0)<(order[phase]||0));});
     if(message)$('#battleMessage').textContent=message;
   };
-
   button.disabled=true;$('#battleFullscreenBtn').disabled=true;$$('.battle-attack-choice').forEach(b=>b.disabled=true);
-  stage.classList.remove('battle-finished','is-victory','is-hold','is-impact','is-attacking','battle-sequence');
-  stage.classList.add('battle-sequence',`attack-${battleAttackMode}`);
-  $('#battleMessage').className='battle-message active';
-  if($('#battleActionTitle'))$('#battleActionTitle').textContent='Schlacht läuft';
-  if($('#battleActionHint'))$('#battleActionHint').textContent='Die Angriffssequenz läuft bis zum Ergebnis.';
-  setPhase('rally',phaseCopy.rally);
-
+  stage.classList.remove('battle-finished','is-victory','is-hold','is-impact','is-attacking','battle-sequence');stage.classList.add('battle-sequence',`attack-${secureBefore?'charge':battleAttackMode}`);
+  $('#battleMessage').className='battle-message active';if($('#battleActionTitle'))$('#battleActionTitle').textContent=secureBefore?'Sicherung läuft':'Schlacht läuft';if($('#battleActionHint'))$('#battleActionHint').textContent='Die Sequenz läuft bis zum Ergebnis.';setPhase('rally',phaseCopy.rally);
+  setTimeout(()=>{stage.classList.add('is-attacking');setPhase('advance',phaseCopy.advance);},timing.advance);
+  setTimeout(()=>{stage.classList.add('is-barrage');setPhase('barrage',phaseCopy.barrage);},timing.barrage);
+  setTimeout(()=>{stage.classList.add('is-impact');setPhase('impact',phaseCopy.impact);},timing.impact);
   setTimeout(()=>{
-    stage.classList.add('is-attacking');
-    setPhase('advance',phaseCopy.advance);
-  },timing.advance);
-
-  setTimeout(()=>{
-    stage.classList.add('is-barrage');
-    setPhase('barrage',phaseCopy.barrage);
-  },timing.barrage);
-
-  setTimeout(()=>{
-    stage.classList.add('is-impact');
-    setPhase('impact',phaseCopy.impact);
-  },timing.impact);
-
-  setTimeout(()=>{
-    stage.classList.remove('is-attacking','is-barrage');
-    stage.classList.add('battle-finished',win?'is-victory':'is-hold');
-    setPhase('result');
-    const rewarded=win&&claimBattleRewardToday();registerBattleAttempt(win?'win':'hold',state.activeSubject,rewarded);
-    if(win&&rewarded){
-      fortressWins().push(f.id);learner().xp+=20;learner().campaignLog.push({date:new Date().toISOString(),subject:state.activeSubject,schoolYear:p.schoolYear,fortress:f.id,result:'win',rewarded:true,progress:p.pct,attack:battleAttackMode});recordActivity('fortress',{fortress:f.id,result:'win',rewarded:true,schoolYear:p.schoolYear,attack:battleAttackMode});
-      $('#battleMessage').className='battle-message victory';$('#battleMessage').innerHTML=`<strong>${boss?'Boss besiegt!':'Festung gefallen!'}</strong><span>${boss?`${esc(boss.name)} gibt den Weg frei. `:''}${esc(f.name)} ist bezwungen. +20 XP</span>`;
-    }else if(win){
-      learner().campaignLog.push({date:new Date().toISOString(),subject:state.activeSubject,schoolYear:p.schoolYear,fortress:f.id,result:'win',rewarded:false,progress:p.pct,attack:battleAttackMode});recordActivity('fortressPractice',{fortress:f.id,result:'win',rewarded:false,schoolYear:p.schoolYear,attack:battleAttackMode});
-      $('#battleMessage').className='battle-message victory';$('#battleMessage').innerHTML='<strong>Trainingssieg!</strong><span>Die Schlacht bleibt heute offen. Die Tagesbelohnung hast du bereits erhalten.</span>';
-    }else{
-      learner().campaignLog.push({date:new Date().toISOString(),subject:state.activeSubject,schoolYear:p.schoolYear,fortress:f.id,result:'hold',rewarded:false,progress:p.pct,attack:battleAttackMode});recordActivity('fortress',{fortress:f.id,result:'hold',rewarded:false,schoolYear:p.schoolYear,attack:battleAttackMode});
-      const missing=Math.max(0,f.req-p.pct);$('#battleMessage').className='battle-message hold';$('#battleMessage').innerHTML=`<strong>${boss?`${esc(boss.name)} hält stand!`:'Die Verteidigung hält!'}</strong><span>Der Angriff war stark. Noch ${missing} Prozentpunkte Lernfortschritt bis zum Durchbruch.</span>`;
-    }
+    const result=resolveTestFortressAction(secureBefore?'secure':battleAttackMode);const won=result?.result==='win',secured=result?.result==='secure';
+    stage.classList.remove('is-attacking','is-barrage');stage.classList.add('battle-finished',(won||secured)?'is-victory':'is-hold');setPhase('result');
+    if(secured){$('#battleMessage').className='battle-message victory';$('#battleMessage').innerHTML='<strong>Festung gesichert!</strong><span>Die Stellung bleibt bis zum Test unter Kontrolle.</span>';}
+    else if(won){$('#battleMessage').className='battle-message victory';$('#battleMessage').innerHTML=`<strong>${boss?'Boss besiegt!':'Festung erobert!'}</strong><span>${esc(f.name)} ist gefallen. +20 XP · Jetzt bis zum Test sichern.</span>`;}
+    else{$('#battleMessage').className='battle-message hold';$('#battleMessage').innerHTML=`<strong>Angriff gelungen!</strong><span>${result?.damage||0} Schaden. Noch ${result?.remaining||0} Verteidigung bis zur Eroberung.</span>`;}
     persistOnly();
   },timing.result);
-
   setTimeout(()=>{
-    $('#battleFullscreenBtn').disabled=false;
-    stage.classList.remove('battle-sequence','is-impact');
-    const left=battleTickets(),rewardLeft=battleRewardAvailableToday(),next=nextFortress();$('#battleTicketPill').textContent=left?(rewardLeft?'Heute frei · Belohnung offen':'Heute frei · Belohnung geholt'):'Heute gesperrt';$('#battleStrength').textContent=armyStrength();$('#battleFortressName').textContent=next?`${next.name} · ${next.subtitle}`:'Jahresfeldzug gewonnen';$('#battleFortressProgress').textContent=next?`${subjectProgress().pct}% / ${next.req}%`:'100%';
-    button.disabled=!next||left<1;button.textContent=!next?'Kampagne gewonnen':left?`${battleAttackMeta(battleAttackMode).short}: Nochmal angreifen`:'Nach dem Tagesziel verfügbar';
-    if($('#battleActionTitle'))$('#battleActionTitle').textContent=!next?'Kampagne gewonnen':left?'Schlacht bleibt heute offen':'Schlacht gesperrt';
-    if($('#battleActionHint'))$('#battleActionHint').textContent=!next?'Alle Festungen dieses Schuljahres sind bezwungen.':left?(rewardLeft?'Die Tagesbelohnung ist noch offen.':'Du kannst weiterkämpfen; die Tagesbelohnung wurde bereits vergeben.'):'Schließe dein Tagesziel ab.';
-    renderBattlefield();renderBattleAttackChoices(subjectProgress().pct);
+    $('#battleFullscreenBtn').disabled=false;stage.classList.remove('battle-sequence','is-impact');
+    const live=currentTestFortress(),left=battleTickets(),secure=!!live?.capturedAt,usedToday=!!battleDayState(state.activeSubject,false)?.actionUsed;
+    $('#battleTicketPill').textContent=secure?(left?'1 Sicherung':'0 Sicherungen'):(left?'1 Angriff':'0 Angriffe');$('#battleStrength').textContent=armyStrength();$('#battleFortressName').textContent=live?`${live.name} · Test ${formatDateShort(live.testDate)}`:'Kein Test geplant';$('#battleFortressProgress').textContent=!live?'–':secure?'Erobert · gesichert '+(live.securedDates?.length||0)+'×':`${live.defense} / ${live.maxDefense} Verteidigung`;
+    button.disabled=!live||left<1;button.textContent=!live?'Kein Test geplant':left?(secure?'Festung sichern':`${battleAttackMeta(battleAttackMode).short}: Angriff starten`):usedToday?(secure?'Heute bereits gesichert ✓':'Heute bereits angegriffen ✓'):'Nach Tagesziel verfügbar';
+    if($('#battleActionTitle'))$('#battleActionTitle').textContent=secure?'Festung erobert':'Belagerung läuft';if($('#battleActionHint'))$('#battleActionHint').textContent=secure?'Bis zum Test bleibt diese Festung dein Ziel.':'Morgen bringt das nächste Tagesziel einen neuen Angriff.';
+    renderBattlefield();
   },timing.ready);
 }
 function renderAll(){
@@ -202,8 +182,10 @@ function renderAll(){
   $('#subjectLabel').textContent=subjectLabel(state.activeSubject);
   const p=subjectProgress(); $('#masteryPct').textContent=`${p.pct}%`; $('#masteryProgress').value=p.pct; $('#masteryProgress').setAttribute('aria-valuetext',`${p.pct} Prozent nachhaltig gemeistert`); $('#masteryWords').textContent=`${p.mastered} / ${p.total} gemeistert`; $('#schoolYearPill').textContent=p.schoolYear; $('#dueCount').textContent=dueWords().length; $('#streakCount').textContent=streak(); $('#xpCount').textContent=l.xp; $('#stableCount').textContent=p.stable;
   const campaign=subjectCampaign(state.activeSubject);$('#campaignTitle').textContent=campaign.title;$('#campaignEyebrow').textContent=campaign.eyebrow; $('#armyRank').textContent=rankFor(p.pct,state.activeSubject); $('#armyStrength').textContent=armyStrength(); $('#gearLevel').textContent=gearFor(p.pct);
-  const nf=nextFortress(),tickets=battleTickets(),battleRewardReady=battleRewardAvailableToday(); $('#fortressRequirement').textContent=nf?`${nf.req}% · ${nf.name}`:'Alle bezwungen'; $('#attackBtn').disabled=!nf||tickets<1;$('#attackBtn').textContent=tickets?'Zur Schlacht': 'Schlacht gesperrt';
-  $('#campaignMessage').className=`notice ${tickets?'good':'subtle'}`;$('#campaignMessage').textContent=tickets?(battleRewardReady?'Schlacht ist heute freigeschaltet. Die erste erfolgreiche Schlacht bringt die Tagesbelohnung.':'Schlacht bleibt heute geöffnet. Die Tagesbelohnung wurde bereits vergeben.'):'Schaffe dein heutiges Lernziel, um die Schlacht freizuschalten.';
+  const nf=currentTestFortress(),tickets=battleTickets(),usedToday=!!battleDayState(state.activeSubject,false)?.actionUsed,secured=!!nf?.capturedAt;
+  $('#fortressRequirement').textContent=!nf?'Kein Test geplant':secured?`Erobert · Test ${formatDateShort(nf.testDate)}`:`${nf.defense} Verteidigung · Test ${formatDateShort(nf.testDate)}`;
+  $('#attackBtn').disabled=!nf;$('#attackBtn').textContent=!nf?'Keine Festung':tickets?(secured?'Sicherung bereit':'Angriff bereit'):'Zur Festung';
+  $('#campaignMessage').className=`notice ${tickets?'good':'subtle'}`;$('#campaignMessage').textContent=!nf?'Für einen geplanten Test entsteht automatisch eine Festung.':tickets?(secured?'Dein heutiger Sicherungseinsatz ist bereit.':'Dein Tagesangriff ist bereit.'):secured?`Festung erobert. Bis zum Test ${formatDateShort(nf.testDate)} sichern.`:usedToday?`Heute angegriffen · noch ${nf.defense} Verteidigung.`:`Noch ${nf.defense} Verteidigung. Nach dem Tagesziel kannst du angreifen.`;
   const hasSubjectWords=myWords().length>0; $('#campaignCard').classList.toggle('hidden',!hasSubjectWords); $('#optionalLearningCard').classList.toggle('hidden',!hasSubjectWords); renderToday(); renderTestCheck(); renderBattlefield(); renderBattleView(); renderRecommendations(); renderSets(); renderDashboard(); renderLibrary(); renderProfiles();
   $('#fontSizeRange').value=l.fontSize; $('#letterSpacingRange').value=l.letterSpacing; $('#flashSpeedSelect').value=String(l.flashSpeed);
   renderParentOverview(); renderFamilySync(); checkHundredPercent(); renderStorageStatus();

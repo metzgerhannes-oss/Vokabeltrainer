@@ -17,7 +17,7 @@ try{
 
   await page.evaluate(()=>{
     state=defaultState();
-    const set={id:'battle_set',learnerId:'learner_demo',subject:'english',title:'Battle Unit',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+    const set={id:'battle_set',learnerId:'learner_demo',subject:'english',title:'Battle Unit',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(1),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
     state.sets.push(set);
     attachVocabularyToSet(set.id,{term:'shield',translation:'Schild',source:'battle-smoke',verified:true});
     for(const link of state.setVocabulary){link.firstContactCopiedAt=link.firstContactRecalledAt=link.firstContactCompletedAt=new Date().toISOString()}
@@ -27,10 +27,16 @@ try{
     rebuildWordIndexes();renderAll();showView('childProgressView');
   });
 
-  assert(await page.locator('#attackBtn').isDisabled(),'battle area is locked before a lesson reward');
+  assert(!(await page.locator('#attackBtn').isDisabled()),'planned test fortress remains viewable before the daily reward');
+  assert((await page.locator('#attackBtn').textContent())?.includes('Festung'),'campaign card points to the persistent test fortress');
+  await page.click('#attackBtn');
+  await page.waitForSelector('#battleView.active');
+  assert(await page.locator('#battleAttackBtn').isDisabled(),'only the attack action is locked before the daily goal');
+  await page.click('#battleReturnBtn');
+  await page.waitForSelector('#childProgressView.active');
   await page.evaluate(()=>{grantBattleTicket('dailyGoal');renderAll();});
-  assert(!(await page.locator('#attackBtn').isDisabled()),'completed lesson reward unlocks battle area');
-  assert((await page.locator('#attackBtn').textContent())?.includes('Schlacht'),'campaign card points to battle area');
+  assert(await page.evaluate(()=>grantBattleTicket('duplicate-smoke'))===false,'same day cannot earn a second battle action');
+  assert((await page.locator('#attackBtn').textContent())?.includes('Angriff'),'completed daily goal marks the attack as ready');
 
   await page.click('#attackBtn');
   await page.waitForSelector('#battleView.active');
@@ -87,7 +93,7 @@ try{
   assert(!(await page.locator('[data-battle-attack="ram"]').isDisabled()),'ram attack unlocks from learning progress');
   await page.click('[data-battle-attack="ram"]');
   assert(await page.locator('[data-battle-attack="ram"].active').count()===1,'attack type can be selected');
-  assert((await page.locator('#battleTicketPill').textContent())?.includes('Heute frei'),'battle screen shows day-long access');
+  assert((await page.locator('#battleTicketPill').textContent())?.includes('1'),'battle screen shows earned attack');
   assert(await page.locator('.battle-phase-strip [data-battle-phase]').count()===5,'battle shows a five-phase sequence');
   const attackButtonRect=await page.locator('#battleAttackBtn').boundingBox();
   const viewport=page.viewportSize();
@@ -102,37 +108,43 @@ try{
   await page.waitForSelector('#battleResultOverlay.visible');
   assert((await page.locator('#battleResultTitle').textContent())?.includes('Festung erobert'),'victory opens a dedicated cinematic result view');
   const resultText=await page.locator('#battleResultOverlay').textContent();
-  assert(resultText?.includes('+20 XP'),'result view shows the actual XP reward');
-  assert(resultText?.includes('100%'),'result view shows the actual learning progress');
-  assert(resultText?.includes('Wachturm'),'result view shows the actual next fortress');
+  assert(resultText?.includes('+20 XP'),'result view shows the actual conquest reward');
+  assert(resultText?.includes('Testtermin'),'result view keeps the real test as the campaign target');
   assert(await page.locator('#battleResultArt').evaluate(img=>img.naturalWidth>0),'result view reuses a loaded local battle illustration');
-  assert(await page.evaluate(()=>battleTickets())===1,'battle remains unlocked after the first fight');
-  assert(await page.evaluate(()=>battleRewardAvailableToday())===false,'first victory consumes only the daily reward, not battle access');
+  assert(await page.evaluate(()=>battleTickets())===0,'attack consumes exactly one earned battle action');
   assert(await page.evaluate(()=>learner().campaignLog.length)===1,'battle result is stored in campaign log');
   assert(await page.evaluate(()=>learner().campaignLog[0]?.attack)==='ram','selected attack is stored only as campaign presentation metadata');
   assert(await page.evaluate(()=>subjectProgress().pct)===100,'battle presentation does not alter academic mastery');
-  await page.waitForFunction(()=>document.querySelector('#battleFortressName')?.textContent?.includes('Wachturm'));
-  assert((await page.locator('#battleFortressName').textContent())?.includes('Wachturm'),'winning advances to a visually different fortress');
+  assert((await page.locator('#battleFortressProgress').textContent())?.includes('Erobert'),'winning keeps the same test fortress and switches it to securing');
   await page.click('#battleResultContinue');
   await page.waitForSelector('#battleResultOverlay',{state:'hidden'});
 
   await page.evaluate(()=>{
-    const wins=fortressWins();wins.splice(0,wins.length,'outpost','tower','wall');
-    renderBattleView();
+    const f=currentTestFortress();f.id='citadel';f.name='Zitadelle';f.subtitle='Bergzitadelle';f.capturedAt='';f.defense=100;f.maxDefense=100;
+    const day=battleDayState('english',true);day.unlocked=true;day.actionUsed=false;renderBattleView();
   });
-  assert(await page.locator('#battleBossPanel:not(.hidden)').count()===1,'citadel opens a boss fight panel');
+  assert(await page.locator('#battleBossPanel:not(.hidden)').count()===1,'a large test-fortress type can open a boss presentation');
   assert((await page.locator('#battleBossName').textContent())?.includes('Torwächter'),'boss fight has a child-friendly named opponent');
   assert(await page.locator('#battleStage .battle-boss-character').count()===1,'boss character is visible in battle stage');
-  assert((await page.locator('#battleStoryTitle').textContent())?.includes('Bergzitadelle'),'campaign story advances with the fortress');
-  assert(!(await page.locator('[data-battle-attack="special"]').isDisabled()),'high progress unlocks a special attack');
+  assert((await page.locator('#battleStoryTitle').textContent())?.includes('Bergzitadelle'),'visual fortress type selects the matching campaign story');
+  assert(!(await page.locator('[data-battle-attack="special"]').isDisabled()),'high long-term progress unlocks a special attack');
   await page.click('[data-battle-attack="special"]');
   await page.click('#battleAttackBtn');
   await page.waitForSelector('#battleStage.attack-special.battle-finished',{timeout:3000});
   await page.waitForSelector('#battleResultOverlay.visible');
-  assert((await page.locator('#battleResultTitle').textContent())?.includes('Trainingssieg'),'later same-day victory is shown without a second reward');
-  assert(await page.evaluate(()=>learner().campaignLog.at(-1)?.rewarded===false),'later same-day victory is stored as unrewarded');
-  assert(await page.evaluate(()=>learner().xp===20),'later same-day victory does not award XP again');
+  assert((await page.locator('#battleResultTitle').textContent())?.includes('Boss besiegt'),'boss conquest uses the cinematic result view');
   assert(await page.evaluate(()=>subjectProgress().pct)===100,'boss and special attack do not change academic mastery');
+  await page.click('#battleResultClose');
+  await page.waitForSelector('#battleResultOverlay',{state:'hidden'});
+
+  await page.evaluate(()=>{const day=battleDayState('english',true);day.unlocked=true;day.actionUsed=false;renderBattleView();});
+  assert(await page.locator('.battle-tactics.hidden').count()===1,'after conquest attack tactics disappear and the mission becomes securing');
+  assert((await page.locator('#battleAttackBtn').textContent())?.includes('sichern'),'captured fortress offers a securing action instead of a new target');
+  await page.click('#battleAttackBtn');
+  await page.waitForSelector('#battleStage.battle-finished',{timeout:3000});
+  await page.waitForSelector('#battleResultOverlay.visible');
+  assert((await page.locator('#battleResultTitle').textContent())?.includes('Festung gesichert'),'early conquest is followed by securing the same fortress');
+  assert(await page.evaluate(()=>currentTestFortress().securedDates.length===1),'securing is stored on the current test fortress');
   await page.click('#battleResultClose');
   await page.waitForSelector('#battleResultOverlay',{state:'hidden'});
 

@@ -51,16 +51,13 @@
     const l=typeof learner==='function'?learner():null;
     const entry=l?.campaignLog?.[l.campaignLog.length-1];
     if(!entry)return null;
-    const list=typeof fortresses!=='undefined'?fortresses:[];
-    const fortress=list.find(x=>x.id===entry.fortress)||null;
-    const attack=typeof battleAttackMeta==='function'?battleAttackMeta(entry.attack):null;
-    const next=typeof nextFortress==='function'?nextFortress():null;
+    const fortress=(entry.fortressKey&&l?.testFortresses?.[entry.fortressKey])||(typeof currentTestFortress==='function'?currentTestFortress(entry.subject):null);
+    const attack=entry.attack==='secure'?null:(typeof battleAttackMeta==='function'?battleAttackMeta(entry.attack):null);
     const campaign=typeof subjectCampaign==='function'?subjectCampaign(entry.subject):{unitLabel:'Armee'};
-    const boss=typeof battleBossFor==='function'?battleBossFor(fortress):null;
+    const boss=entry.result==='win'&&typeof battleBossFor==='function'?battleBossFor(fortress):null;
     const strength=typeof armyStrength==='function'?armyStrength():0;
     const rank=typeof rankFor==='function'?rankFor(entry.progress,entry.subject):'';
-    const missing=fortress?Math.max(0,Number(fortress.req||0)-Number(entry.progress||0)):0;
-    return {entry,fortress,attack,next,campaign,boss,strength,rank,missing};
+    return {entry,fortress,attack,campaign,boss,strength,rank};
   }
 
   function rewardTile(icon,title,text){
@@ -80,46 +77,47 @@
   function render(){
     const root=ensureOverlay(),data=resultData();
     if(!data)return;
-    const {entry,fortress,attack,next,boss,strength,rank,missing}=data;
-    const win=entry.result==='win';
-    root.classList.toggle('is-victory',win);
-    root.classList.toggle('is-hold',!win);
+    const {entry,fortress,attack,boss,strength,rank}=data;
+    const win=entry.result==='win',secure=entry.result==='secure',damage=entry.result==='damage';
+    root.classList.toggle('is-victory',win||secure);
+    root.classList.toggle('is-hold',damage);
 
     const title=root.querySelector('#battleResultTitle');
     const lead=root.querySelector('#battleResultLead');
     const rewards=root.querySelector('#battleResultRewards');
     const cont=root.querySelector('#battleResultContinue');
+    const testDate=entry.testDate||(fortress?.testDate||'');
 
-    if(win&&entry.rewarded!==false){
-      title.textContent=boss?'Boss besiegt!':'Festung erobert!';
-      lead.textContent=`${fortress?.name||'Die Festung'} ist gefallen. ${attack?.label||'Der Angriff'} war erfolgreich.`;
+    if(secure){
+      title.textContent='Festung gesichert!';
+      lead.textContent=`${fortress?.name||entry.fortressName||'Die Festung'} bleibt für den Test am ${typeof formatDateShort==='function'?formatDateShort(testDate):testDate} unter Kontrolle.`;
       rewards.innerHTML=[
-        rewardTile('★','+20 XP','Tagesbelohnung für den Sieg'),
-        rewardTile('▰',`${entry.progress}%`,'Lernfortschritt'),
-        rewardTile('♜',next?next.name:'Jahresfeldzug gewonnen',next?'Nächstes Ziel':'Alle Festungen bezwungen'),
-        rewardTile('⚔',String(strength),rank? `Armeestärke · ${rank}` : 'Armeestärke')
+        rewardTile('✓','Sicherung abgeschlossen','heutiger Lernauftrag genutzt'),
+        rewardTile('♜',String(fortress?.securedDates?.length||1),'Sicherungstage'),
+        rewardTile('◷',typeof formatDateShort==='function'?formatDateShort(testDate):testDate,'Testtermin'),
+        rewardTile('⚔',String(strength),rank?`Armeestärke · ${rank}`:'Armeestärke')
       ].join('');
-      cont.textContent=next?'Weiter zur nächsten Festung':'Kampagne ansehen';
+      cont.textContent='Festung ansehen';
     }else if(win){
-      title.textContent='Trainingssieg!';
-      lead.textContent=`${attack?.label||'Der Angriff'} war erfolgreich. Die Schlacht bleibt heute offen; die Tagesbelohnung ist bereits vergeben.`;
+      title.textContent=boss?'Boss besiegt!':'Festung erobert!';
+      lead.textContent=`${fortress?.name||entry.fortressName||'Die Testfestung'} ist gefallen. Jetzt wird sie bis zum Test am ${typeof formatDateShort==='function'?formatDateShort(testDate):testDate} gesichert.`;
       rewards.innerHTML=[
-        rewardTile('▰',`${entry.progress}%`,'Lernfortschritt'),
-        rewardTile('⚔',attack?.label||'Angriff','gewählte Taktik'),
-        rewardTile('♜',fortress?.name||'Festung','keine zweite Tagesbelohnung')
+        rewardTile('★','+20 XP','Belohnung für die Eroberung'),
+        rewardTile('⚔',String(entry.damage||0),'Schaden des letzten Angriffs'),
+        rewardTile('◷',typeof formatDateShort==='function'?formatDateShort(testDate):testDate,'Testtermin'),
+        rewardTile('♜',fortress?.scopeText||'Teststoff','Diese Festung steht für den Test')
       ].join('');
-      cont.textContent='Zurück zur Schlacht';
+      cont.textContent='Eroberte Festung ansehen';
     }else{
-      title.textContent=boss?`${boss.name} hält stand`:'Die Verteidigung hält';
-      lead.textContent=missing>0
-        ?`Noch ${missing} Prozentpunkte Lernfortschritt bis zum Durchbruch.`
-        :'Der nächste Lernschritt macht den Unterschied.';
+      title.textContent='Angriff gelungen!';
+      lead.textContent=`${entry.damage||0} Schaden. Noch ${entry.defenseAfter||0} Verteidigung bis zur Eroberung.`;
       rewards.innerHTML=[
-        rewardTile('▰',`${entry.progress}%`,'Lernfortschritt'),
-        rewardTile('⚔',attack?.label||'Angriff','gewählte Taktik'),
-        rewardTile('♜',fortress?.name||'Festung','bleibt das nächste Ziel')
+        rewardTile('⚔',String(entry.damage||0),'heutiger Schaden'),
+        rewardTile('♜',String(entry.defenseAfter||0),'Verteidigung übrig'),
+        rewardTile('▰',`${entry.readiness||0}%`,'aktuelle Testbereitschaft'),
+        rewardTile('◷',typeof formatDateShort==='function'?formatDateShort(testDate):testDate,'Testtermin')
       ].join('');
-      cont.textContent='Zurück zur Schlacht';
+      cont.textContent='Zurück zur Belagerung';
     }
     applyArt();
   }
@@ -129,7 +127,7 @@
     const root=ensureOverlay();
     const data=resultData();
     if(!data)return;
-    const signature=`${data.entry.date}|${data.entry.result}|${data.entry.fortress}`;
+    const signature=`${data.entry.date}|${data.entry.result}|${data.entry.fortressKey||data.entry.fortress}|${data.entry.defenseAfter??''}`;
     if(signature===lastSignature&&root.classList.contains('visible'))return;
     lastSignature=signature;
     root.classList.remove('hidden');

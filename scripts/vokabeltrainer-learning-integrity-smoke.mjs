@@ -96,6 +96,11 @@ const passed=vm.runInContext(`
   const pacedPlan=buildDailyPlan('english'),pacedStatus=dailyPlanStatus(pacedPlan);
   assert(pacedPlan.introCount===3&&pacedPlan.acquisitionDays===3,'daily plan spreads remaining new words across the real pre-test acquisition window');
   assert(pacedPlan.reviewCount===5&&pacedStatus.total===8,'ahead-of-plan learning reduces the daily contact target instead of forcing ten to twelve');
+  const dailyRef=[...(pacedPlan.wordRefs||[]),...(pacedPlan.introRefs||[])][0],dailyWord=dailyRef?.setLinkId?wordByLinkId(dailyRef.setLinkId):wordById(dailyRef?.wordId);
+  dailyWord.activePracticeDays=[...new Set([...(dailyWord.activePracticeDays||[]),today()])];
+  assert(dailyPlanStatus(pacedPlan).done===0,'optional practice does not complete the fixed daily goal');
+  markDailyPlanWordDone(dailyWord,pacedPlan);
+  assert(dailyPlanStatus(pacedPlan).done===1,'daily goal advances only through the explicit daily session');
   pacedSet.testDate=datePlusDays(2);learner().dailyPlans={};
   const urgentPlan=buildDailyPlan('english');
   assert(urgentPlan.introCount===7&&urgentPlan.deadlineOverload===true&&urgentPlan.requiredNewPerDay===9,'deadline formula caps new words at seven and flags an impossible pace');
@@ -139,12 +144,27 @@ const passed=vm.runInContext(`
   assert(learningChunksFor({term:'look after someone',chunks:[]}).join('|')==='look after|someone','short phrases may use meaningful phrase chunks');
 
   state=defaultState();
-  assert(battleTickets('english')===0&&!battleUnlockedToday('english'),'battle starts locked for the day');
-  assert(grantBattleTicket('cards','english')===false&&battleTickets('english')===0,'optional cards cannot unlock the daily battle');
-  assert(grantBattleTicket('dailyGoal','english')===true&&battleTickets('english')===1,'completed daily goal unlocks the battle');
-  assert(spendBattleTicket('english')===true&&battleTickets('english')===1,'entering or fighting does not consume day-long battle access');
-  assert(battleRewardAvailableToday('english')&&claimBattleRewardToday('english'),'first successful battle may claim the daily reward');
-  assert(!battleRewardAvailableToday('english')&&!claimBattleRewardToday('english')&&battleTickets('english')===1,'daily reward cannot be claimed twice while battle access remains open');
+  assert(battleTickets('english')===0&&!battleUnlockedToday('english'),'battle action starts locked for the day');
+  assert(grantBattleTicket('dailyGoal','english')===false,'without a planned test there is no fortress action to unlock');
+  const fortressSet={id:'fortress_set',learnerId:'learner_demo',subject:'english',title:'Fortress Test',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(2),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+  state.sets.push(fortressSet);
+  const fortressLinked=attachVocabularyToSet(fortressSet.id,{term:'castle',translation:'Burg',source:'fortress-smoke',verified:true});
+  rebuildWordIndexes();
+  const shortFortress=currentTestFortress('english');
+  assert(shortFortress.maxDefense===200&&shortFortress.plannedAttackDays===2,'test in two days creates a two-day fortress');
+  fortressSet.testDate=datePlusDays(5);
+  const longFortress=currentTestFortress('english');
+  assert(longFortress.maxDefense===500&&longFortress.plannedAttackDays===5,'longer test interval creates proportionally stronger fortress defense');
+  const fw=fortressLinked.word;fw.skills={recognition:4,listening:4,retrieval:4,spelling:4,context:4};fw.independentSuccesses=8;fw.activeSuccessDays=[datePlusDays(-7),datePlusDays(-3),today()];fw.maxActiveGapDays=4;fw.coldRecallDays=[datePlusDays(-3),today()];fw.intervalDays=7;refreshMastery(fw);
+  const hit=testFortressDamage(longFortress,'english');
+  assert(hit.damage>100&&hit.damage<=135,'strong test readiness adds a bounded bonus to guaranteed daily damage');
+  assert(grantBattleTicket('cards','english')===false&&battleTickets('english')===0,'optional cards cannot unlock the test-fortress action');
+  assert(grantBattleTicket('dailyGoal','english')===true&&battleTickets('english')===1,'completed daily goal unlocks exactly one fortress action');
+  assert(spendBattleTicket('english')===true&&battleTickets('english')===0,'using the action consumes it for the rest of the day');
+  assert(spendBattleTicket('english')===false,'a second same-day attack is blocked');
+  const academicBefore=subjectProgress('english').pct,resolved=resolveTestFortressAction('charge','english');
+  assert(resolved.damage===hit.damage&&resolved.remaining===longFortress.maxDefense-hit.damage,'daily attack persistently reduces the same test fortress');
+  assert(subjectProgress('english').pct===academicBefore,'battle damage never changes academic mastery');
 
   state=defaultState();
   const allSet={id:'all_words_set',learnerId:'learner_demo',subject:'english',title:'All Words',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};

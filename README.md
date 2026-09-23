@@ -4,11 +4,23 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.29**
+App-Version: **v0.18.30**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.30 – Testfestungen & tägliche Belagerung
+
+- **eine geplante Prüfung = eine Festung**; Termin und ausgewählter Vokabelumfang bestimmen das konkrete Kampagnenziel
+- die Festungsverteidigung skaliert beim Entstehen mit dem Testabstand: 100 Basispunkte pro geplantem Angriffstag, maximal 14 Tage
+- ein abgeschlossenes Tagesziel gibt genau **eine Kampfaktion pro Fach und Tag**; freiwilliges Üben erzeugt keine zusätzlichen Angriffe
+- jeder Angriff verursacht garantierten Basisschaden; höhere Testbereitschaft liefert einen begrenzten Schadensbonus
+- die Festung bleibt jederzeit anschaubar; nach dem Angriff ist nur die Tagesaktion verbraucht
+- frühe Eroberung erzeugt keine neue Festung: bis zum Test folgen **Sicherungseinsätze** an derselben Festung
+- Rang, Einheiten und Ausrüstung bleiben langfristige Schuljahresentwicklung und sind von der kurzfristigen Testbelagerung getrennt
+- eingetragene Schulnoten können an der zugehörigen Testfestung angezeigt werden, verändern aber weder Eroberung noch Mastery
+- die früheren festen Mastery-Schwellen sind keine Siegbedingung mehr; die sechs Festungen dienen nur noch als visuelle Größenstufen
 
 ## v0.18.29 – Freies Üben & Tages-Schlacht
 

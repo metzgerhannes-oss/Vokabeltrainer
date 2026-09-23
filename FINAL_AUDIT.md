@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 23.09.2026 · App v0.18.29
+Stand: 23.09.2026 · App v0.18.30
 
 ## Ergebnis
 
@@ -63,10 +63,10 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - „Meine Armee“ ist eine vorgelagerte, jederzeit betrachtbare Erlebnisansicht; Einheitstufen und Boni werden nur aus vorhandenem Lernfortschritt abgeleitet und schreiben keinen fachlichen Lernstand
 - die Armeeansicht besitzt keine eigenständige Spielwährung; Aufwertungen entstehen automatisch durch Lernen und nachhaltige Wiederholung
 - Schlacht ist ein separater Erlebnisbereich nach einer abgeschlossenen Lerneinheit
-- Angriffe sind begrenzt und werden als Belohnung nach jeder abgeschlossenen Lerneinheit freigeschaltet; ein abgeschlossener freiwilliger Abschreib- oder Karteikartenblock zählt dabei mit
+- pro Fach und Kalendertag wird höchstens eine Kampfaktion ausschließlich durch das vollständig abgeschlossene Tagesziel freigeschaltet; freiwillige Übungen zählen nicht mit
 - Animationen, Einheiten, Festungen, Jahreszeiten, Rang und Ausrüstung liegen außerhalb der Abfrage
 - Bosskämpfe, Spezialangriffe und Story verändern keinen fachlichen Lernstand
-- Festungen fallen ausschließlich an den definierten Lernfortschrittsschwellen
+- jede geplante Prüfung erzeugt eine eigene Testfestung; Testabstand bestimmt die anfängliche Verteidigung, Lernqualität den begrenzten Schadensbonus; nach früher Eroberung wird dieselbe Festung bis zum Test gesichert
 - Freundschaftsduelle sind deterministisch; kein Zufall entscheidet über das Ergebnis
 - Herausforderungscodes enthalten ab v0.17.1 keinen Profilnamen und nur die für den Vergleich nötigen Daten
 - der Battle-Browsertest prüft explizit, dass Mastery durch Kampf und Bosskampf unverändert bleibt

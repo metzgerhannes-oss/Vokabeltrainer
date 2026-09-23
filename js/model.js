@@ -41,12 +41,12 @@ function battleDayState(subject=state.activeSubject,create=true){
 }
 function battleUnlockedToday(subject=state.activeSubject){return !!battleDayState(subject,false)?.unlocked}
 function unlockBattleToday(reason='dailyGoal',subject=state.activeSubject){
-  const l=learner(),day=battleDayState(subject,true);if(!l||!day||day.unlocked)return false;
-  day.unlocked=true;day.unlockedAt=new Date().toISOString();day.reason=reason;
+  const l=learner(),fortress=currentTestFortress(subject),day=battleDayState(subject,true);if(!l||!fortress||!day||day.unlocked)return false;
+  day.unlocked=true;day.unlockedAt=new Date().toISOString();day.reason=reason;day.fortressKey=fortress.key;day.actionUsed=!!day.actionUsed;
   const cutoff=datePlusDays(-21);Object.keys(l.battleDays||{}).filter(k=>k.slice(0,10)<cutoff).forEach(k=>delete l.battleDays[k]);
   recordActivity('battleUnlock',{subject,reason,date:today()});return true;
 }
-function battleRewardAvailableToday(subject=state.activeSubject){const day=battleDayState(subject,false);return !!(day?.unlocked&&!day.rewardClaimed)}
+function battleRewardAvailableToday(subject=state.activeSubject){return battleActionAvailableToday(subject)}
 function claimBattleRewardToday(subject=state.activeSubject){
   const day=battleDayState(subject,false);if(!day?.unlocked||day.rewardClaimed)return false;
   day.rewardClaimed=true;day.rewardClaimedAt=new Date().toISOString();return true;
@@ -56,9 +56,10 @@ function registerBattleAttempt(result,subject=state.activeSubject,rewarded=false
   day.attempts=(Number(day.attempts)||0)+1;if(result==='win')day.wins=(Number(day.wins)||0)+1;
   day.lastAttemptAt=new Date().toISOString();day.lastResult=result;day.lastRewarded=!!rewarded;return true;
 }
-function battleTickets(subject=state.activeSubject){return battleUnlockedToday(subject)?1:0}
+function battleActionAvailableToday(subject=state.activeSubject){const day=battleDayState(subject,false);return !!(day?.unlocked&&!day.actionUsed)}
+function battleTickets(subject=state.activeSubject){return battleActionAvailableToday(subject)?1:0}
 function grantBattleTicket(reason='lesson',subject=state.activeSubject){return reason==='dailyGoal'?unlockBattleToday(reason,subject):false}
-function spendBattleTicket(subject=state.activeSubject){return battleUnlockedToday(subject)}
+function spendBattleTicket(subject=state.activeSubject){const day=battleDayState(subject,false);if(!day?.unlocked||day.actionUsed)return false;day.actionUsed=true;day.actionUsedAt=new Date().toISOString();return true}
 
 function semanticNormalize(s){return String(s||'').trim().toLowerCase().normalize('NFKC').replace(/[’‘`´]/g,"'").replace(/[….,;:!?()[\]{}"']/g,'').replace(/\s+/g,' ')}
 function normalize(s){return semanticNormalize(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
@@ -195,14 +196,72 @@ function armyStrength(subject=state.activeSubject,schoolYear=currentSchoolYear()
   return Math.round(p.pct*10 + avg*100);
 }
 const fortresses=[
-  {id:'outpost',name:'Vorposten',req:15,subtitle:'Holzpalisaden'},
-  {id:'tower',name:'Wachturm',req:30,subtitle:'Steinerner Turm'},
-  {id:'wall',name:'Grenzfestung',req:50,subtitle:'Doppelte Mauer'},
-  {id:'citadel',name:'Zitadelle',req:70,subtitle:'Bergzitadelle'},
-  {id:'capital',name:'Hauptfestung',req:85,subtitle:'Königsburg'},
-  {id:'final',name:'Jahresfestung',req:100,subtitle:'Goldene Festung'}
+  {id:'outpost',name:'Vorposten',subtitle:'Holzpalisaden'},
+  {id:'tower',name:'Wachturm',subtitle:'Steinerner Turm'},
+  {id:'wall',name:'Grenzfestung',subtitle:'Doppelte Mauer'},
+  {id:'citadel',name:'Zitadelle',subtitle:'Bergzitadelle'},
+  {id:'capital',name:'Hauptfestung',subtitle:'Königsburg'},
+  {id:'final',name:'Große Festung',subtitle:'Goldene Festung'}
 ];
-function nextFortress(subject=state.activeSubject,schoolYear=currentSchoolYear()){const wins=fortressWins(subject,schoolYear);return fortresses.find(f=>!wins.includes(f.id))||null}
+function testFortressHash(value){
+  let h=2166136261;for(const ch of String(value||'')){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)}return (h>>>0).toString(36);
+}
+function testFortressKey(ctx,subject=state.activeSubject){
+  if(!ctx?.date)return '';
+  const setIds=(ctx.sets||[]).map(s=>s.id).sort().join(',');
+  const words=(ctx.words||[]).map(w=>w.id).sort().join(',');
+  return `${subject}:${ctx.date}:${testFortressHash(setIds+'|'+words)}`;
+}
+function fortressArchetypeFor(ctx,plannedDays){
+  const score=Math.max(1,Number(plannedDays)||1)+Math.ceil((ctx?.words?.length||0)/15);
+  const index=score<=3?0:score<=5?1:score<=7?2:score<=9?3:score<=12?4:5;
+  return fortresses[index];
+}
+function testFortressHistory(subject=state.activeSubject){
+  const l=learner();l.testFortresses=l.testFortresses&&typeof l.testFortresses==='object'?l.testFortresses:{};
+  return Object.values(l.testFortresses).filter(f=>f?.subject===subject).sort((a,b)=>String(a.testDate||'').localeCompare(String(b.testDate||'')));
+}
+function currentTestFortress(subject=state.activeSubject){
+  const ctx=upcomingTestContext(subject);if(!ctx?.words?.length)return null;
+  const l=learner();l.testFortresses=l.testFortresses&&typeof l.testFortresses==='object'?l.testFortresses:{};
+  const key=testFortressKey(ctx,subject);let f=l.testFortresses[key];
+  if(!f){
+    const plannedAttackDays=clamp(Math.max(1,Number(ctx.days)||1),1,14),archetype=fortressArchetypeFor(ctx,plannedAttackDays),maxDefense=plannedAttackDays*100;
+    f={
+      key,id:archetype.id,name:archetype.name,subtitle:archetype.subtitle,subject,testDate:ctx.date,
+      scopeText:ctx.scopeText||ctx.sets.map(s=>s.title).join(' + '),setIds:ctx.sets.map(s=>s.id),wordCount:ctx.words.length,
+      plannedAttackDays,maxDefense,defense:maxDefense,createdDate:today(),createdAt:new Date().toISOString(),
+      capturedAt:'',securedDates:[],attacks:[]
+    };
+    l.testFortresses[key]=f;if(typeof persistOnly==='function')persistOnly();
+  }
+  return f;
+}
+function nextFortress(subject=state.activeSubject){return currentTestFortress(subject)}
+function testFortressDamage(f=currentTestFortress(),subject=state.activeSubject){
+  if(!f)return {damage:0,readiness:0,bonus:0};
+  const ctx=upcomingTestContext(subject),readiness=ctx?testReadinessForContext(ctx).avg:0,bonus=Math.round(clamp(readiness,0,100)*.35);
+  return {damage:100+bonus,readiness,bonus};
+}
+function testFortressGrade(f=currentTestFortress()){
+  if(!f)return null;return (state.grades||[]).find(g=>g.learnerId===state.activeLearnerId&&g.subject===f.subject&&g.date===f.testDate)||null;
+}
+function resolveTestFortressAction(attack='charge',subject=state.activeSubject){
+  const f=currentTestFortress(subject);if(!f)return null;
+  const l=learner(),p=subjectProgress(subject),stamp=new Date().toISOString();
+  f.securedDates=Array.isArray(f.securedDates)?f.securedDates:[];f.attacks=Array.isArray(f.attacks)?f.attacks:[];
+  if(f.capturedAt){
+    if(!f.securedDates.includes(today()))f.securedDates.push(today());
+    const entry={date:stamp,subject,schoolYear:p.schoolYear,fortress:f.id,fortressKey:f.key,fortressName:f.name,testDate:f.testDate,result:'secure',progress:p.pct,attack,damage:0,defenseAfter:0,maxDefense:f.maxDefense,readiness:testFortressDamage(f,subject).readiness};
+    l.campaignLog.push(entry);recordActivity('fortressSecure',{fortress:f.id,fortressKey:f.key,testDate:f.testDate,attack});return {entry,fortress:f,result:'secure',damage:0,remaining:0};
+  }
+  const hit=testFortressDamage(f,subject),before=Math.max(0,Number(f.defense)||0),after=Math.max(0,before-hit.damage),won=after===0;
+  f.defense=after;f.attacks.push({date:stamp,day:today(),damage:hit.damage,readiness:hit.readiness,attack,defenseBefore:before,defenseAfter:after});
+  if(won&&!f.capturedAt){f.capturedAt=stamp;l.xp+=20}
+  const entry={date:stamp,subject,schoolYear:p.schoolYear,fortress:f.id,fortressKey:f.key,fortressName:f.name,testDate:f.testDate,result:won?'win':'damage',progress:p.pct,attack,damage:hit.damage,defenseAfter:after,maxDefense:f.maxDefense,readiness:hit.readiness};
+  l.campaignLog.push(entry);recordActivity('fortress',{fortress:f.id,fortressKey:f.key,testDate:f.testDate,result:entry.result,damage:hit.damage,defenseAfter:after,attack});
+  return {entry,fortress:f,result:entry.result,damage:hit.damage,remaining:after,readiness:hit.readiness};
+}
 function rankFor(pct,subject=state.activeSubject){
   const arr=subjectCampaign(subject).ranks||SUBJECT_META.english.campaign.ranks;const i=Math.min(arr.length-1,Math.floor(pct/20));return arr[i];
 }
@@ -335,18 +394,25 @@ function buildDailyPlan(subject=state.activeSubject){
     introRefs:introWords.map(w=>({wordId:w.id,setLinkId:w.setLinkId||''})),introSetId,
     introCount:introWords.length,reviewCount:selected.length,dailyTarget,requiredNewPerDay:introPlan.requiredPerDay,requiredReviewPerDay:introPlan.requiredReviewPerDay,
     deadlineOverload:introPlan.overload,spacingRisk:introPlan.spacingRisk,pace:introPlan.pace,studyDaysBeforeTest:introPlan.studyDaysBeforeTest,acquisitionDays:introPlan.acquisitionDays,reviewOnlyDays:introPlan.reviewOnlyDays,
-    sessionSize,urgent,phase,maintenanceCount,createdAt:new Date().toISOString()
+    sessionSize,urgent,phase,maintenanceCount,completedKeys:[],createdAt:new Date().toISOString()
   };
   l.dailyPlans[key]=plan;Object.keys(l.dailyPlans).filter(k=>k<`${datePlusDays(-21)}:`).forEach(k=>delete l.dailyPlans[k]);persistOnly();return plan;
 }
 function wordPracticedToday(w){return !!(w?.activePracticeDays||[]).includes(today())}
+function dailyPlanRefKey(ref){return ref?.setLinkId?`link:${ref.setLinkId}`:ref?.wordId?`word:${ref.wordId}`:''}
+function markDailyPlanWordDone(w,plan=buildDailyPlan()){
+  if(!w||!plan||plan.date!==today()||plan.subject!==state.activeSubject)return false;
+  const key=dailyPlanRefKey({wordId:w.id,setLinkId:w.setLinkId||''});if(!key)return false;
+  plan.completedKeys=[...new Set([...(Array.isArray(plan.completedKeys)?plan.completedKeys:[]),key])];return true;
+}
 function dailyPlanStatus(plan=buildDailyPlan()){
   const reviewRefs=Array.isArray(plan.wordRefs)&&plan.wordRefs.length?plan.wordRefs:(plan.wordIds||[]).map(id=>({wordId:id,setLinkId:''}));
   const introRefs=Array.isArray(plan.introRefs)?plan.introRefs:[];
   const reviewPairs=reviewRefs.map(r=>({ref:r,word:r.setLinkId?wordByLinkId(r.setLinkId):wordById(r.wordId)})).filter(x=>x.word);
   const introPairs=introRefs.map(r=>({ref:r,word:r.setLinkId?wordByLinkId(r.setLinkId):wordById(r.wordId)})).filter(x=>x.word);
-  const reviewDone=reviewPairs.filter(x=>wordPracticedToday(x.word)),reviewRemaining=reviewPairs.filter(x=>!wordPracticedToday(x.word));
-  const introDone=introPairs.filter(x=>wordPracticedToday(x.word)),introRemaining=introPairs.filter(x=>!wordPracticedToday(x.word));
+  const completed=new Set(Array.isArray(plan.completedKeys)?plan.completedKeys:[]);
+  const reviewDone=reviewPairs.filter(x=>completed.has(dailyPlanRefKey(x.ref))),reviewRemaining=reviewPairs.filter(x=>!completed.has(dailyPlanRefKey(x.ref)));
+  const introDone=introPairs.filter(x=>completed.has(dailyPlanRefKey(x.ref))),introRemaining=introPairs.filter(x=>!completed.has(dailyPlanRefKey(x.ref)));
   const total=reviewPairs.length+introPairs.length,done=reviewDone.length+introDone.length,remaining=reviewRemaining.length+introRemaining.length;
   return {
     total,done,remaining,
