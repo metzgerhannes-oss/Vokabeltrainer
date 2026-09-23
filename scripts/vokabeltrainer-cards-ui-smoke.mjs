@@ -32,7 +32,7 @@ try{
   assert(await page.locator('.leitner-box').count()===0,'Leitner diagnostics stay out of the retrieval moment');
   assert((await page.locator('#answerBtn').textContent())==='Prüfen','card uses one neutral submit action');
   assert((await page.locator('#answerField').getAttribute('placeholder'))==='Vokabel eingeben','input is the visible action focus');
-  assert(await page.locator('#answerField').isFocused(),'answer field receives focus immediately');
+  assert(await page.evaluate(()=>document.activeElement?.id==='answerField'),'answer field receives focus immediately');
 
   // First word: fail once. The later retry must no longer count as proof,
   // because the correct answer was already shown in the feedback.
