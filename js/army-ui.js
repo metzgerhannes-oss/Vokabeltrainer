@@ -62,12 +62,13 @@
     const l=learner();
     const learningDays=new Set(l?.streakDays||[]).size;
     const currentStreak=typeof streak==='function'?streak():0;
-    const wins=typeof fortressWins==='function'?fortressWins():[];
+    const history=typeof testFortressHistory==='function'?testFortressHistory():[];
+    const captured=history.filter(f=>f.capturedAt);
+    const mission=typeof currentTestFortress==='function'?currentTestFortress():null;
     const stablePct=p.total?Math.round((p.stable/p.total)*100):0;
     return {
-      p,l,learningDays,currentStreak,wins,stablePct,
+      p,l,learningDays,currentStreak,history,captured,mission,stablePct,
       strength:armyStrength(),
-      next:nextFortress(),
       rank:rankFor(p.pct,state.activeSubject),
       gear:gearLabelFor(p.pct,state.activeSubject),
       tickets:battleTickets()
@@ -107,8 +108,12 @@
     return pending[0]||null;
   }
   function campaignStrip(c){
-    const wins=new Set(c.wins);
-    return fortresses.map(f=>`<span class="army-fortress-step ${wins.has(f.id)?'won':''} ${c.next?.id===f.id?'next':''}" title="${safe(f.name)}"><i>${wins.has(f.id)?'✓':'♜'}</i><small>${safe(f.req)}%</small></span>`).join('');
+    const list=[...c.history].slice(-6);
+    if(!list.length)return '<span class="army-fortress-step next" title="Noch kein Test geplant"><i>♜</i><small>Test</small></span>';
+    return list.map(f=>{
+      const active=c.mission?.key===f.key,won=!!f.capturedAt,grade=typeof testFortressGrade==='function'?testFortressGrade(f):null;
+      return `<span class="army-fortress-step ${won?'won':''} ${active?'next':''}" title="${safe(f.name)} · Test ${safe(formatDateShort(f.testDate))}"><i>${won?'✓':'♜'}</i><small>${grade?safe('Note '+grade.grade):safe(formatDateShort(f.testDate))}</small></span>`;
+    }).join('');
   }
   function heroMarkup(c){
     const morale=moraleMeta(c);
@@ -126,7 +131,7 @@
         <progress class="army-morale-progress" max="100" value="${morale.score}" aria-label="Moral"></progress>
         <small>Moral: ${safe(morale.label)}</small>
       </div>
-      <div class="army-camp-campaign" aria-label="${safe(c.wins.length)} von ${fortresses.length} Festungen erobert">
+      <div class="army-camp-campaign" aria-label="${safe(c.captured.length)} Testfestungen erobert">
         ${campaignStrip(c)}
       </div>
     `;
@@ -256,7 +261,7 @@
       summary.innerHTML=`
         <div><small>Armeestärke</small><strong>${safe(c.strength)}</strong></div>
         <div><small>Moral</small><strong>${safe(morale.label)}</strong></div>
-        <div><small>Festungen</small><strong>${safe(c.wins.length)} / ${safe(fortresses.length)}</strong></div>
+        <div><small>Testfestungen</small><strong>${safe(c.captured.length)}</strong></div>
         <div><small>Ausrüstung</small><strong>${safe(c.gear)}</strong></div>
       `;
     }
@@ -272,8 +277,8 @@
     }
     const battle=document.querySelector('#armyBattleBtn');
     if(battle){
-      battle.disabled=c.tickets<1;
-      battle.textContent=c.tickets>0?'Zur Schlacht · heute frei':'Schlacht nach dem Tagesziel';
+      battle.disabled=!c.mission;
+      battle.textContent=!c.mission?'Kein Test geplant':c.tickets>0?(c.mission.capturedAt?'Sicherung bereit':'Angriff bereit'):(c.mission.capturedAt?'Eroberte Festung ansehen':'Festung ansehen');
     }
     applyArmyArt();
   }
@@ -295,8 +300,8 @@
     if(detail)detail.innerHTML=detailMarkup(def,c);
     const battle=document.querySelector('#armyUnitBattleBtn');
     if(battle){
-      battle.disabled=c.tickets<1;
-      battle.textContent=c.tickets>0?'Zur Schlacht · heute frei':'Schlacht nach dem Tagesziel';
+      battle.disabled=!c.mission;
+      battle.textContent=!c.mission?'Kein Test geplant':c.tickets>0?(c.mission.capturedAt?'Sicherung bereit':'Angriff bereit'):'Zur Testfestung';
     }
     applyArmyArt();
   }
