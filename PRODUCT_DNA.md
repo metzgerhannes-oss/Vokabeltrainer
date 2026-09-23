@@ -47,7 +47,7 @@ Die Abschreib-Einheit erzeugt **keine künstliche Mastery und keine automatisch 
 Schreibkompetenz**. Nachhaltige Beherrschung bleibt ausschließlich Sache des Retrieval- und
 Spacing-Modells über mehrere unabhängige Abrufe und Tage.
 
-## Die 13 Prinzipien
+## Die 15 Prinzipien
 
 1. **Lernwirkung vor Featuremenge**
    Jede Funktion muss der fachlich korrekten Vokabelabfrage, dem Lernen, der Orientierung
@@ -69,11 +69,25 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    Boxen bleiben zusätzlich an zeitlich verteilte Abrufe gebunden. Box 5 ist ausschließlich
    bei erfüllten Mastery-Kriterien erreichbar.
 
-4. **Feedback direkt nach dem Abruf**
+4. **Support ist nicht Mastery**
+   Erkennen, Hören, Wortbausteine, Wortblitz, Vokabeldusche, Abschreiben und Handschrift
+   dürfen das Lernen unterstützen, aber eine Vokabel nicht eigenständig als sicher oder
+   gemeistert markieren. Ein Fortschritt im Karteikasten setzt produktiven, eigenständigen
+   Abruf voraus. Wortbausteine werden als gezielte Rechtschreibhilfe behandelt, nicht als
+   allgemeines Multimedia-Prinzip.
+
+5. **Audio ohne Lösungsverrat**
+   Ist die Fremdsprachenlösung die gesuchte Antwort, darf sie vor der Bewertung nicht
+   vorgelesen werden. Ist die fremdsprachliche Form bereits sichtbar, darf Audio auf
+   Knopfdruck verfügbar sein. Hör- und Diktataufgaben sind ausdrücklich als solche
+   gekennzeichnet. Nach einem Fehler darf die richtige Fremdsprachenform direkt gehört
+   werden; automatisches Vorlesen bleibt abschaltbar.
+
+14. **Feedback direkt nach dem Abruf**
    Fehler werden konkret rückgemeldet und später erneut abgefragt. Falsche Antworten führen
    zu neuer Lerngelegenheit, nicht zu Bestrafung.
 
-5. **Mastery bleibt fachlich und konservativ**
+15. **Mastery bleibt fachlich und konservativ**
    XP, Legion/Kampagne und Belohnungen sind strikt vom fachlichen Fortschritt getrennt.
    100 % bedeutet: nach den Kriterien der App nachhaltig gemeistert, nicht objektiv
    'für immer gelernt'.
