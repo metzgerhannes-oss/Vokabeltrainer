@@ -224,7 +224,7 @@ function renderToday(){
     progressRow?.classList.add('hidden');$('#todayProgressText').textContent='';
     $('#todaySummary').textContent=parent?'Vokabelpaare prüfen':'Neue Wörter werden vorbereitet';
     $('#todayContext').textContent=`${reviewSet.title} · ${count} ${count===1?'Vokabel':'Vokabeln'}`;
-    $('#todayEstimate').textContent=parent?'Prüfe Wort und Bedeutung, bevor das Kind mit dem Kennenlernen beginnt.':'Ein Erwachsener prüft noch, ob Wort und Bedeutung richtig zusammengehören.';
+    $('#todayEstimate').textContent=parent?'Prüfe Wort und Bedeutung, bevor das Kind mit diesen Vokabeln lernt.':'Ein Erwachsener prüft noch, ob Wort und Bedeutung richtig zusammengehören.';
     $('#quickLearnHeroBtn').disabled=!parent;$('#quickLearnHeroBtn').textContent=parent?'Paare prüfen':'Noch nicht bereit';
     $('#todayTestPill').classList.add('hidden');$('#todayTestBtn').classList.add('hidden');return;
   }
