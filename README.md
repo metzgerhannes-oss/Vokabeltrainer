@@ -4,11 +4,22 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.20**
+App-Version: **v0.18.21**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.21 – illustrierte Armee-Grafik
+
+- die englische Armeeansicht nutzt erstmals die freigegebene halb-realistische, epische Grafikrichtung als echte App-Ressource
+- Feldlager-Hintergrund und sechs Einheitenmotive werden lokal mit der PWA ausgeliefert; keine externen Bilddienste, keine laufenden Lizenz- oder API-Kosten
+- die sechs Einheitenbilder werden als kompaktes Sprite geladen und in den Karten sowie der Detailvorschau wiederverwendet
+- alle Grafikressourcen liegen im Service-Worker-App-Shell-Cache und funktionieren damit auch offline
+- CSP bleibt unverändert streng; die Bilder werden aus lokalen Ressourcen in Blob-URLs aufgebaut, ohne Inline-Styles oder externe Origins
+- bei fehlender Grafik bleibt eine robuste CSS-/Symbol-Fallbackdarstellung erhalten
+- Latein erhält weiterhin die neutrale Fallbackdarstellung, bis ein eigenes römisches Legion-Assetset vorliegt
+- reine Präsentationsänderung: Lernlogik, Mastery, OCR und Family-Sync bleiben unverändert
 
 ## v0.18.20 – „Meine Armee“ als eigener Erlebnisbereich
 
