@@ -24,6 +24,7 @@ try{
     const p=state.learnerVocabulary[0];
     p.skills={recognition:4,listening:4,retrieval:4,spelling:4,context:4};p.independentSuccesses=8;p.activeSuccessDays=['2026-09-10','2026-09-14','2026-09-18'];p.activePracticeDays=[...p.activeSuccessDays];p.maxActiveGapDays=7;p.coldRecallDays=['2026-09-14','2026-09-18'];p.coldRecallSuccesses=2;p.intervalDays=14;p.errorProfile={meaning:0,retrieval:0,spelling:0,listening:0,context:0,grammar:0};refreshMastery(p);
     state.learners[0].streakDays=['2026-09-19','2026-09-20','2026-09-21','2026-09-22','2026-09-23'];
+    state.learners[0].milestones[`hundred_english_${currentSchoolYear()}`]=new Date().toISOString();
     rebuildWordIndexes();renderAll();showView('childProgressView');
   });
 
