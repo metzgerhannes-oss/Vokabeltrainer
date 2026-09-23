@@ -131,6 +131,29 @@ const passed=vm.runInContext(`
   card.leitnerBox=4;card.skills={...defaultSkills(),retrieval:2,spelling:2};card.independentSuccesses=5;card.activeSuccessDays=[datePlusDays(-7),datePlusDays(-3),today()];card.maxActiveGapDays=4;card.coldRecallDays=[datePlusDays(-3),today()];card.intervalDays=7;
   move=updateLeitnerBox(card,true,{active:true,assisted:false,orthographyOk:true});
   assert(move.after===5&&isMastered(card),'box 5 requires the existing sustainable mastery criteria');
+
+  assert(autoChunks('unhelpful').join('|')==='un|help|ful','word chunks prefer meaningful prefix and suffix structure');
+  assert(autoChunks('playground').join('|')==='play|ground','word chunks preserve a recognizable compound boundary');
+  assert(isSentenceTerm('What can you see?'),'a complete sentence is recognized as a sentence');
+  assert(learningChunksFor({term:'What can you see?',chunks:['What','can','you','see?']}).length===0,'complete sentences never enter word-chunk practice');
+  assert(learningChunksFor({term:'look after someone',chunks:[]}).join('|')==='look after|someone','short phrases may use meaningful phrase chunks');
+
+  state=defaultState();
+  assert(battleTickets('english')===0&&!battleUnlockedToday('english'),'battle starts locked for the day');
+  assert(grantBattleTicket('cards','english')===false&&battleTickets('english')===0,'optional cards cannot unlock the daily battle');
+  assert(grantBattleTicket('dailyGoal','english')===true&&battleTickets('english')===1,'completed daily goal unlocks the battle');
+  assert(spendBattleTicket('english')===true&&battleTickets('english')===1,'entering or fighting does not consume day-long battle access');
+  assert(battleRewardAvailableToday('english')&&claimBattleRewardToday('english'),'first successful battle may claim the daily reward');
+  assert(!battleRewardAvailableToday('english')&&!claimBattleRewardToday('english')&&battleTickets('english')===1,'daily reward cannot be claimed twice while battle access remains open');
+
+  state=defaultState();
+  const allSet={id:'all_words_set',learnerId:'learner_demo',subject:'english',title:'All Words',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+  state.sets.push(allSet);
+  for(let i=1;i<=14;i++)attachVocabularyToSet(allSet.id,{term:'allword'+i,translation:'alle'+i,source:'all-words-smoke',verified:true});
+  rebuildWordIndexes();
+  assert(buildQueue('adaptive',allSet.id).length<=10,'adaptive practice keeps its deliberately small session size');
+  const allQueue=buildQueue('allWords',allSet.id);
+  assert(allQueue.length===14&&new Set(allQueue.map(w=>w.setLinkId||w.id)).size===14,'all-vocabulary practice includes the complete selected set exactly once per pass');
   return ok;
 })()
 `,context,{filename:'learning-integrity-runtime'});

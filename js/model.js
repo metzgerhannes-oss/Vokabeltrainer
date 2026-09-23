@@ -31,19 +31,34 @@ function schoolYearWords(subject=state.activeSubject,schoolYear=currentSchoolYea
 function setWords(setId){return (state.setVocabulary||[]).filter(x=>x.setId===setId).sort((a,b)=>(a.position||0)-(b.position||0)).map(x=>wordViewForLink(x)).filter(Boolean);}
 function fortressWins(subject=state.activeSubject,schoolYear=currentSchoolYear()){const l=learner(),key=`${subject}:${schoolYear}`;l.fortressWinsByYear=l.fortressWinsByYear||{};return l.fortressWinsByYear[key]||(l.fortressWinsByYear[key]=[]);}
 
-function battleTickets(subject=state.activeSubject){
-  const l=learner();if(!l)return 0;l.battleTickets={...defaultSubjectNumbers(),...(l.battleTickets||{})};
-  return clamp(Math.round(Number(l.battleTickets[subject])||0),0,3);
+function battleDayKey(subject=state.activeSubject){return `${today()}:${subject}`}
+function battleDayState(subject=state.activeSubject,create=true){
+  const l=learner();if(!l)return null;
+  if(!l.battleDays||typeof l.battleDays!=='object'||Array.isArray(l.battleDays))l.battleDays={};
+  const key=battleDayKey(subject);
+  if(!l.battleDays[key]&&create)l.battleDays[key]={date:today(),subject,unlocked:false,rewardClaimed:false,attempts:0,wins:0};
+  return l.battleDays[key]||null;
 }
-function grantBattleTicket(reason='lesson',subject=state.activeSubject){
-  const l=learner();if(!l)return false;l.battleTickets={...defaultSubjectNumbers(),...(l.battleTickets||{})};
-  const before=battleTickets(subject);if(before>=3)return false;
-  l.battleTickets[subject]=before+1;recordActivity('battleUnlock',{subject,reason,tickets:l.battleTickets[subject]});return true;
+function battleUnlockedToday(subject=state.activeSubject){return !!battleDayState(subject,false)?.unlocked}
+function unlockBattleToday(reason='dailyGoal',subject=state.activeSubject){
+  const l=learner(),day=battleDayState(subject,true);if(!l||!day||day.unlocked)return false;
+  day.unlocked=true;day.unlockedAt=new Date().toISOString();day.reason=reason;
+  const cutoff=datePlusDays(-21);Object.keys(l.battleDays||{}).filter(k=>k.slice(0,10)<cutoff).forEach(k=>delete l.battleDays[k]);
+  recordActivity('battleUnlock',{subject,reason,date:today()});return true;
 }
-function spendBattleTicket(subject=state.activeSubject){
-  const l=learner();if(!l)return false;l.battleTickets={...defaultSubjectNumbers(),...(l.battleTickets||{})};
-  const before=battleTickets(subject);if(before<1)return false;l.battleTickets[subject]=before-1;return true;
+function battleRewardAvailableToday(subject=state.activeSubject){const day=battleDayState(subject,false);return !!(day?.unlocked&&!day.rewardClaimed)}
+function claimBattleRewardToday(subject=state.activeSubject){
+  const day=battleDayState(subject,false);if(!day?.unlocked||day.rewardClaimed)return false;
+  day.rewardClaimed=true;day.rewardClaimedAt=new Date().toISOString();return true;
 }
+function registerBattleAttempt(result,subject=state.activeSubject,rewarded=false){
+  const day=battleDayState(subject,false);if(!day?.unlocked)return false;
+  day.attempts=(Number(day.attempts)||0)+1;if(result==='win')day.wins=(Number(day.wins)||0)+1;
+  day.lastAttemptAt=new Date().toISOString();day.lastResult=result;day.lastRewarded=!!rewarded;return true;
+}
+function battleTickets(subject=state.activeSubject){return battleUnlockedToday(subject)?1:0}
+function grantBattleTicket(reason='lesson',subject=state.activeSubject){return reason==='dailyGoal'?unlockBattleToday(reason,subject):false}
+function spendBattleTicket(subject=state.activeSubject){return battleUnlockedToday(subject)}
 
 function semanticNormalize(s){return String(s||'').trim().toLowerCase().normalize('NFKC').replace(/[’‘`´]/g,"'").replace(/[….,;:!?()[\]{}"']/g,'').replace(/\s+/g,' ')}
 function normalize(s){return semanticNormalize(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
@@ -76,14 +91,47 @@ function detectConfusions(word, pool){
   const scored=pool.filter(x=>x.id!==word.id).map(x=>({w:x,d:levenshtein(word.term,x.term)})).filter(x=>x.d<=Math.max(2,Math.floor(word.term.length*.34))).sort((a,b)=>a.d-b.d).slice(0,2);
   return scored.map(x=>x.w);
 }
-function autoChunks(term){
-  const t=String(term||'').trim(); if(t.length<7) return [t];
-  const common=['tion','ing','ment','ness','ful','less','able','ous','pre','re','un','dis','con','sub','pro','per'];
-  let out=[],rest=t;
-  const pre=common.find(x=>rest.toLowerCase().startsWith(x)&&rest.length>x.length+3); if(pre){out.push(rest.slice(0,pre.length));rest=rest.slice(pre.length)}
-  const suf=common.find(x=>rest.toLowerCase().endsWith(x)&&rest.length>x.length+3); if(suf){out.push(rest.slice(0,-suf.length));out.push(rest.slice(-suf.length));return out.filter(Boolean)}
-  while(rest.length>4){out.push(rest.slice(0,Math.min(3,rest.length-3)));rest=rest.slice(Math.min(3,rest.length-3))} if(rest)out.push(rest);return out;
+function termTokens(term){return String(term||'').trim().split(/\s+/).filter(Boolean)}
+function isSentenceTerm(term){
+  const t=String(term||'').trim(),words=termTokens(t);
+  return words.length>=4||(words.length>=2&&/[.!?](?:["'”’])?$/.test(t));
 }
+function phraseLearningChunks(term){
+  const words=termTokens(term);if(words.length<2||words.length>3)return [];
+  if(words.length===2)return words;
+  const particles=new Set(['after','away','back','down','for','from','in','into','of','off','on','out','over','to','up','with']);
+  if(particles.has(words[1].toLowerCase()))return [words.slice(0,2).join(' '),words[2]];
+  if(particles.has(words[2].toLowerCase()))return [words[0],words.slice(1).join(' ')];
+  return [words[0],words.slice(1).join(' ')];
+}
+function balancedOrthographicChunks(word){
+  const w=String(word||'');if(w.length<6)return [w];
+  const lower=w.toLowerCase(),mid=w.length/2,protectedPatterns=['tion','sion','ough','eigh','igh','tch','dge','sh','ch','th','ph','qu','ee','ea','eo','oo','ou','ow','ai','ay','oa','oi','oy'];
+  const splitInsideProtected=i=>protectedPatterns.some(p=>{let at=lower.indexOf(p);while(at>=0){if(i>at&&i<at+p.length)return true;at=lower.indexOf(p,at+1)}return false});
+  const candidates=[];for(let i=2;i<=w.length-2;i++){const penalty=splitInsideProtected(i)?20:0;candidates.push({i,score:Math.abs(i-mid)+penalty})}
+  candidates.sort((a,b)=>a.score-b.score||a.i-b.i);const cut=candidates[0]?.i||Math.floor(mid);
+  return [w.slice(0,cut),w.slice(cut)].filter(Boolean);
+}
+function autoChunks(term){
+  const t=String(term||'').trim();if(!t||isSentenceTerm(t))return [];
+  const words=termTokens(t);if(words.length>1)return phraseLearningChunks(t);
+  const prefixes=['under','inter','over','trans','super','mis','dis','pre','sub','non','un','re'];
+  const suffixes=['ation','ition','tion','sion','ment','ness','less','fully','ful','able','ible','ous','ingly','ing','edly','ed','ly'];
+  const compoundTails=['ground','room','house','work','book','ball','way','place','time','school','board','friend','thing','man','woman','day','light'];
+  let rest=t,out=[];
+  const pre=prefixes.find(x=>rest.toLowerCase().startsWith(x)&&rest.length>=x.length+4);if(pre){out.push(rest.slice(0,pre.length));rest=rest.slice(pre.length)}
+  const tail=compoundTails.find(x=>rest.toLowerCase().endsWith(x)&&rest.length>=x.length+3);if(tail){out.push(rest.slice(0,-tail.length),rest.slice(-tail.length));return out.filter(Boolean)}
+  const suf=suffixes.find(x=>rest.toLowerCase().endsWith(x)&&rest.length>=x.length+3);
+  let suffix='';if(suf){suffix=rest.slice(-suf.length);rest=rest.slice(0,-suf.length)}
+  const core=balancedOrthographicChunks(rest);out.push(...core);if(suffix)out.push(suffix);
+  return out.filter(Boolean);
+}
+function learningChunksFor(w,term=w?.term){
+  const t=String(term||'').trim();if(!t||isSentenceTerm(t))return [];
+  const custom=Array.isArray(w?.chunks)?w.chunks.map(x=>String(x||'').trim()).filter(Boolean):[];
+  return custom.length>1?custom:autoChunks(t);
+}
+function chunkEligibleWord(w,term=w?.term){return learningChunksFor(w,term).length>1}
 
 function masteryScore(w){
   const s={...defaultSkills(),...(w.skills||{})};

@@ -81,21 +81,21 @@ function selectBattleAttack(mode){
 }
 function renderBattleView(){
   const stage=$('#battleStage');if(!stage)return;
-  const p=subjectProgress(),f=nextFortress(),tickets=battleTickets(),count=Math.min(18,Math.max(7,soldiersFor(p.pct)+4)),damage=f?clamp(Math.round((p.pct/Math.max(1,f.req))*100),0,100):100,sea=seasonInfo();
+  const p=subjectProgress(),f=nextFortress(),tickets=battleTickets(),rewardReady=battleRewardAvailableToday(),count=Math.min(18,Math.max(7,soldiersFor(p.pct)+4)),damage=f?clamp(Math.round((p.pct/Math.max(1,f.req))*100),0,100):100,sea=seasonInfo();
   const campaign=subjectCampaign(state.activeSubject),rank=rankFor(p.pct,state.activeSubject),gear=gearLabelFor(p.pct,state.activeSubject),boss=battleBossFor(f),story=battleStoryFor(f),attack=battleAttackMeta(battleAttackMode);
-  $('#battleTicketPill').textContent=`${tickets} ${tickets===1?'Angriff':'Angriffe'}`;
+  $('#battleTicketPill').textContent=tickets?(rewardReady?'Heute frei · Belohnung offen':'Heute frei · Belohnung geholt'):'Heute gesperrt';
   $('#battleStrength').textContent=armyStrength();
   $('#battleFortressName').textContent=f?`${f.name} · ${f.subtitle}`:'Jahresfeldzug gewonnen';
   $('#battleFortressProgress').textContent=f?`${p.pct}% / ${f.req}%`:'100%';
   $('#battleRankGear').textContent=`${rank} · ${gear}`;
   $('#battleTitle').textContent=f?`${campaign.unitLabel} gegen ${f.name}`:'Die Kampagne ist gewonnen';
-  $('#battleSubtitle').textContent=f?(boss?`Bosskampf: ${boss.name}`:(tickets?'Dein Angriff ist freigeschaltet. Wähle eine Angriffsart.':'Schließe eine Lerneinheit ab, um den nächsten Angriff freizuschalten.')):'Alle Festungen dieses Schuljahres sind bezwungen.';
+  $('#battleSubtitle').textContent=f?(boss?`Bosskampf: ${boss.name}`:(tickets?'Die Schlacht bleibt heute offen. Wähle eine Angriffsart.':'Schließe dein heutiges Lernziel ab, um die Schlacht freizuschalten.')):'Alle Festungen dieses Schuljahres sind bezwungen.';
   $('#battleStoryTitle').textContent=story.title;$('#battleStoryText').textContent=story.text;$('#battleStory').classList.toggle('story-complete',!f);
   const bossPanel=$('#battleBossPanel');bossPanel.classList.toggle('hidden',!boss);
   if(boss){const bossPct=clamp(Math.round((p.pct/Math.max(1,f.req))*100),0,100);$('#battleBossName').textContent=boss.name;$('#battleBossText').textContent=boss.text;$('#battleBossProgress').value=bossPct;$('#battleBossProgressText').textContent=`${bossPct}%`;}
   $('#battleAttackBtn').disabled=!f||tickets<1;$('#battleAttackBtn').textContent=!f?'Kampagne gewonnen':tickets?`${attack.short}: Angriff starten`:'Nach dem Lernen verfügbar';
   if($('#battleActionTitle'))$('#battleActionTitle').textContent=!f?'Kampagne gewonnen':tickets?'Dein Angriff ist bereit':'Nächster Angriff gesperrt';
-  if($('#battleActionHint'))$('#battleActionHint').textContent=!f?'Alle Festungen dieses Schuljahres sind bezwungen.':tickets?`${attack.label} wählen und die Schlacht starten.`:'Schließe zuerst eine Lerneinheit ab.';
+  if($('#battleActionHint'))$('#battleActionHint').textContent=!f?'Alle Festungen dieses Schuljahres sind bezwungen.':tickets?(rewardReady?`${attack.label} wählen und um die Tagesbelohnung kämpfen.`:`${attack.label} wählen. Die Tagesbelohnung ist bereits geholt.`):'Schließe zuerst dein Tagesziel ab.';
   $('#battleMessage').className='battle-message';$('#battleMessage').textContent=tickets?`${attack.label} ist bereit.`:'Noch kein Angriff verfügbar.';
   renderBattleAttackChoices(p.pct);
   stage.className=`battle-stage season-${sea.class} subject-${state.activeSubject} gear-${gearTier(p.pct)} fortress-stage-${f?.id||'won'} ${boss?'boss-stage':''}`;
@@ -105,7 +105,7 @@ function renderBattleView(){
 }
 function openBattleView(){
   if(isParentMode())return;
-  if(battleTickets()<1){toast('Die Schlacht wird nach einer abgeschlossenen Lerneinheit freigeschaltet.','subtle');return}
+  if(battleTickets()<1){toast('Die Schlacht wird freigeschaltet, sobald dein Tagesziel geschafft ist.','subtle');return}
   renderBattleView();showView('battleView');
 }
 function closeBattleImmersive(){
@@ -119,7 +119,7 @@ function toggleBattleFullscreen(){
 }
 function runBattleAnimation(){
   const f=nextFortress(),stage=$('#battleStage'),button=$('#battleAttackBtn');if(!f||!stage||!button)return;
-  if(!spendBattleTicket()){toast('Erst eine Lerneinheit abschließen.','subtle');renderBattleView();return}
+  if(!spendBattleTicket()){toast('Erst das heutige Lernziel abschließen.','subtle');renderBattleView();return}
   const p=subjectProgress(),win=p.pct>=f.req,reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,attack=battleAttackMeta(battleAttackMode)||battleAttackMeta('charge'),boss=battleBossFor(f);
   const timing=reduced
     ?{advance:35,barrage:70,impact:105,result:145,ready:190}
@@ -170,11 +170,15 @@ function runBattleAnimation(){
     stage.classList.remove('is-attacking','is-barrage');
     stage.classList.add('battle-finished',win?'is-victory':'is-hold');
     setPhase('result');
-    if(win){
-      fortressWins().push(f.id);learner().xp+=20;learner().campaignLog.push({date:new Date().toISOString(),subject:state.activeSubject,schoolYear:p.schoolYear,fortress:f.id,result:'win',progress:p.pct,attack:battleAttackMode});recordActivity('fortress',{fortress:f.id,result:'win',schoolYear:p.schoolYear,attack:battleAttackMode});
+    const rewarded=win&&claimBattleRewardToday();registerBattleAttempt(win?'win':'hold',state.activeSubject,rewarded);
+    if(win&&rewarded){
+      fortressWins().push(f.id);learner().xp+=20;learner().campaignLog.push({date:new Date().toISOString(),subject:state.activeSubject,schoolYear:p.schoolYear,fortress:f.id,result:'win',rewarded:true,progress:p.pct,attack:battleAttackMode});recordActivity('fortress',{fortress:f.id,result:'win',rewarded:true,schoolYear:p.schoolYear,attack:battleAttackMode});
       $('#battleMessage').className='battle-message victory';$('#battleMessage').innerHTML=`<strong>${boss?'Boss besiegt!':'Festung gefallen!'}</strong><span>${boss?`${esc(boss.name)} gibt den Weg frei. `:''}${esc(f.name)} ist bezwungen. +20 XP</span>`;
+    }else if(win){
+      learner().campaignLog.push({date:new Date().toISOString(),subject:state.activeSubject,schoolYear:p.schoolYear,fortress:f.id,result:'win',rewarded:false,progress:p.pct,attack:battleAttackMode});recordActivity('fortressPractice',{fortress:f.id,result:'win',rewarded:false,schoolYear:p.schoolYear,attack:battleAttackMode});
+      $('#battleMessage').className='battle-message victory';$('#battleMessage').innerHTML='<strong>Trainingssieg!</strong><span>Die Schlacht bleibt heute offen. Die Tagesbelohnung hast du bereits erhalten.</span>';
     }else{
-      learner().campaignLog.push({date:new Date().toISOString(),subject:state.activeSubject,schoolYear:p.schoolYear,fortress:f.id,result:'hold',progress:p.pct,attack:battleAttackMode});recordActivity('fortress',{fortress:f.id,result:'hold',schoolYear:p.schoolYear,attack:battleAttackMode});
+      learner().campaignLog.push({date:new Date().toISOString(),subject:state.activeSubject,schoolYear:p.schoolYear,fortress:f.id,result:'hold',rewarded:false,progress:p.pct,attack:battleAttackMode});recordActivity('fortress',{fortress:f.id,result:'hold',rewarded:false,schoolYear:p.schoolYear,attack:battleAttackMode});
       const missing=Math.max(0,f.req-p.pct);$('#battleMessage').className='battle-message hold';$('#battleMessage').innerHTML=`<strong>${boss?`${esc(boss.name)} hält stand!`:'Die Verteidigung hält!'}</strong><span>Der Angriff war stark. Noch ${missing} Prozentpunkte Lernfortschritt bis zum Durchbruch.</span>`;
     }
     persistOnly();
@@ -183,10 +187,10 @@ function runBattleAnimation(){
   setTimeout(()=>{
     $('#battleFullscreenBtn').disabled=false;
     stage.classList.remove('battle-sequence','is-impact');
-    const left=battleTickets(),next=nextFortress();$('#battleTicketPill').textContent=`${left} ${left===1?'Angriff':'Angriffe'}`;$('#battleStrength').textContent=armyStrength();$('#battleFortressName').textContent=next?`${next.name} · ${next.subtitle}`:'Jahresfeldzug gewonnen';$('#battleFortressProgress').textContent=next?`${subjectProgress().pct}% / ${next.req}%`:'100%';
-    button.disabled=!next||left<1;button.textContent=!next?'Kampagne gewonnen':left?`${battleAttackMeta(battleAttackMode).short}: Nächsten Angriff`:'Nach dem Lernen verfügbar';
-    if($('#battleActionTitle'))$('#battleActionTitle').textContent=!next?'Kampagne gewonnen':left?'Noch ein Angriff bereit':'Nächster Angriff gesperrt';
-    if($('#battleActionHint'))$('#battleActionHint').textContent=!next?'Alle Festungen dieses Schuljahres sind bezwungen.':left?'Du hast noch einen verdienten Angriff.':'Schließe eine weitere Lerneinheit ab.';
+    const left=battleTickets(),rewardLeft=battleRewardAvailableToday(),next=nextFortress();$('#battleTicketPill').textContent=left?(rewardLeft?'Heute frei · Belohnung offen':'Heute frei · Belohnung geholt'):'Heute gesperrt';$('#battleStrength').textContent=armyStrength();$('#battleFortressName').textContent=next?`${next.name} · ${next.subtitle}`:'Jahresfeldzug gewonnen';$('#battleFortressProgress').textContent=next?`${subjectProgress().pct}% / ${next.req}%`:'100%';
+    button.disabled=!next||left<1;button.textContent=!next?'Kampagne gewonnen':left?`${battleAttackMeta(battleAttackMode).short}: Nochmal angreifen`:'Nach dem Tagesziel verfügbar';
+    if($('#battleActionTitle'))$('#battleActionTitle').textContent=!next?'Kampagne gewonnen':left?'Schlacht bleibt heute offen':'Schlacht gesperrt';
+    if($('#battleActionHint'))$('#battleActionHint').textContent=!next?'Alle Festungen dieses Schuljahres sind bezwungen.':left?(rewardLeft?'Die Tagesbelohnung ist noch offen.':'Du kannst weiterkämpfen; die Tagesbelohnung wurde bereits vergeben.'):'Schließe dein Tagesziel ab.';
     renderBattlefield();renderBattleAttackChoices(subjectProgress().pct);
   },timing.ready);
 }
@@ -198,8 +202,8 @@ function renderAll(){
   $('#subjectLabel').textContent=subjectLabel(state.activeSubject);
   const p=subjectProgress(); $('#masteryPct').textContent=`${p.pct}%`; $('#masteryProgress').value=p.pct; $('#masteryProgress').setAttribute('aria-valuetext',`${p.pct} Prozent nachhaltig gemeistert`); $('#masteryWords').textContent=`${p.mastered} / ${p.total} gemeistert`; $('#schoolYearPill').textContent=p.schoolYear; $('#dueCount').textContent=dueWords().length; $('#streakCount').textContent=streak(); $('#xpCount').textContent=l.xp; $('#stableCount').textContent=p.stable;
   const campaign=subjectCampaign(state.activeSubject);$('#campaignTitle').textContent=campaign.title;$('#campaignEyebrow').textContent=campaign.eyebrow; $('#armyRank').textContent=rankFor(p.pct,state.activeSubject); $('#armyStrength').textContent=armyStrength(); $('#gearLevel').textContent=gearFor(p.pct);
-  const nf=nextFortress(),tickets=battleTickets(); $('#fortressRequirement').textContent=nf?`${nf.req}% · ${nf.name}`:'Alle bezwungen'; $('#attackBtn').disabled=!nf||tickets<1;$('#attackBtn').textContent=tickets?'Zur Schlacht': 'Schlacht gesperrt';
-  $('#campaignMessage').className=`notice ${tickets?'good':'subtle'}`;$('#campaignMessage').textContent=tickets?`${tickets} ${tickets===1?'Angriff ist':'Angriffe sind'} bereit.`:'Nach einer abgeschlossenen Lerneinheit wird die Schlacht freigeschaltet.';
+  const nf=nextFortress(),tickets=battleTickets(),battleRewardReady=battleRewardAvailableToday(); $('#fortressRequirement').textContent=nf?`${nf.req}% · ${nf.name}`:'Alle bezwungen'; $('#attackBtn').disabled=!nf||tickets<1;$('#attackBtn').textContent=tickets?'Zur Schlacht': 'Schlacht gesperrt';
+  $('#campaignMessage').className=`notice ${tickets?'good':'subtle'}`;$('#campaignMessage').textContent=tickets?(battleRewardReady?'Schlacht ist heute freigeschaltet. Die erste erfolgreiche Schlacht bringt die Tagesbelohnung.':'Schlacht bleibt heute geöffnet. Die Tagesbelohnung wurde bereits vergeben.'):'Schaffe dein heutiges Lernziel, um die Schlacht freizuschalten.';
   const hasSubjectWords=myWords().length>0; $('#campaignCard').classList.toggle('hidden',!hasSubjectWords); $('#optionalLearningCard').classList.toggle('hidden',!hasSubjectWords); renderToday(); renderTestCheck(); renderBattlefield(); renderBattleView(); renderRecommendations(); renderSets(); renderDashboard(); renderLibrary(); renderProfiles();
   $('#fontSizeRange').value=l.fontSize; $('#letterSpacingRange').value=l.letterSpacing; $('#flashSpeedSelect').value=String(l.flashSpeed);
   renderParentOverview(); renderFamilySync(); checkHundredPercent(); renderStorageStatus();
@@ -261,21 +265,23 @@ function renderToday(){
   if(ctx){$('#todayTestPill').textContent=(ctx.source==='series'||ctx.source==='mixed')?`↻ ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]} · ${formatDateShort(ctx.date)}`:`Test ${formatDateShort(ctx.date)}`;$('#todayTestPill').classList.remove('hidden');if(parent){$('#todayTestBtn').textContent='Testplan ändern';$('#todayTestBtn').classList.remove('hidden');$('#todayTestBtn').dataset.setId=ctx.sets[0]?.id||'';}else $('#todayTestBtn').classList.add('hidden');}
   else{$('#todayTestPill').classList.add('hidden');if(parent&&mySets().length){$('#todayTestBtn').textContent='Testplan festlegen';$('#todayTestBtn').classList.remove('hidden');}else $('#todayTestBtn').classList.add('hidden');}
 }function renderRecommendations(){
-  const l=learner(), due=dueWords(), weak=schoolYearWords().filter(w=>!isMastered(w)).sort((a,b)=>masteryScore(a)-masteryScore(b));
+  const l=learner(),due=dueWords(),cardPool=schoolYearVerifiedWords(),weak=cardPool.filter(w=>!isMastered(w)).sort((a,b)=>masteryScore(a)-masteryScore(b)),chunkWords=cardPool.filter(chunkEligibleWord);
   const recs=[];
+  recs.push({icon:'∞',title:'Alle Vokabeln',sub:`${cardPool.length} Wörter · Bereich frei wählen`,mode:'allWords'});
+  recs.push({icon:'◎',title:'Unsichere üben',sub:weak.length?`${weak.length} noch nicht sicher`:'Aktuell nichts offen',mode:'weakWords',disabled:!weak.length});
   recs.push({icon:'✦',title:'Adaptiv lernen',sub:due.length?`${Math.min(due.length,l.lrsMode?6:10)} fällige Wörter`:'Schwächste Wörter festigen',mode:'adaptive'});
-  const cardPool=schoolYearVerifiedWords(),boxes=leitnerDistribution(cardPool),cardDue=cardPool.filter(w=>!w.dueDate||w.dueDate<=today()).length;
+  const boxes=leitnerDistribution(cardPool),cardDue=cardPool.filter(w=>!w.dueDate||w.dueDate<=today()).length;
   recs.push({icon:'▥',title:'Karteikarten',sub:`schriftlich · 5 Boxen · ${cardDue} fällig · ${boxes[5]} gemeistert`,mode:'cards'});
   const copyPending=cardPool.filter(w=>!w.firstContactCompletedAt).length;
   recs.push({icon:'📝',title:'Abschreiben',sub:copyPending?`freiwillig · ${copyPending} noch nicht gemacht`:'freiwillig · als zusätzliche Schreibeinheit',mode:'copy'});
   recs.push({icon:'⚡',title:'Wortblitz',sub:l.lrsMode?'ruhiges Tempo · Audio zuerst':'Leseflüssigkeit ohne Wertungsdruck',mode:'flash'});
   recs.push({icon:'🔊',title:'Vokabeldusche',sub:'aktiv mit Denkpause oder passiv anhören',mode:'shower'});
-  recs.push({icon:'🧩',title:'Wortbausteine',sub:weak.length?'Schreibmuster gezielt festigen':'Bausteine zusammensetzen',mode:'chunks'});
+  if(chunkWords.length)recs.push({icon:'🧩',title:'Wortbausteine',sub:`${chunkWords.length} geeignete Wörter · keine ganzen Sätze`,mode:'chunks'});
   const spellingWeak=weak.filter(w=>(w.errorProfile?.spelling||0)>0||(w.skills?.spelling||0)<2);
   if(l.lrsMode||spellingWeak.length)recs.push({icon:'✍️',title:'Handschrift',sub:'nachfahren · abdecken · aus dem Gedächtnis schreiben',mode:'handwriting'});
   if(subjectHasCapability(state.activeSubject,'latinGrammar'))recs.push({icon:'Ⅳ',title:'Latein Formen',sub:'Genitiv · Genus · Stammformen · Anwendung',mode:'latinGrammar'});
-  $('#recommendations').innerHTML=recs.map(r=>`<button class="recommend" data-mode="${r.mode}"><span class="icon">${r.icon}</span><strong>${r.title}</strong><small>${r.sub}</small></button>`).join('');
-  $$('#recommendations [data-mode]').forEach(b=>b.onclick=()=>b.dataset.mode==='copy'?startCopyPractice():startSession(b.dataset.mode));
+  $('#recommendations').innerHTML=recs.map(r=>`<button class="recommend" data-mode="${r.mode}" ${r.disabled?'disabled':''}><span class="icon">${r.icon}</span><strong>${r.title}</strong><small>${r.sub}</small></button>`).join('');
+  $$('#recommendations [data-mode]').forEach(b=>b.onclick=()=>{const mode=b.dataset.mode;if(mode==='copy')startCopyPractice();else if(mode==='allWords')openAllWordsPracticeChooser();else if(mode==='weakWords')startWeakWordsPractice();else startSession(mode)});
 }
 function setPairAuditText(setId){
   const s=state.sets.find(x=>x.id===setId),words=s?setWords(setId):[];
