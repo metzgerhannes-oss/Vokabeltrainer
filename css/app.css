@@ -1007,3 +1007,171 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
   .cardbox-stage>b{font-size:.79rem}
 }
 
+
+
+/* v0.18.34 – sichtbare und dauerhafte Festungseroberung */
+.battle-own-flag{
+  position:absolute;
+  left:15%;
+  top:-25%;
+  width:6px;
+  height:105px;
+  background:#312e2b;
+  z-index:5;
+  opacity:0;
+  transform:translateY(22px);
+  pointer-events:none;
+}
+.battle-own-flag::after{
+  content:"";
+  position:absolute;
+  left:6px;
+  top:7px;
+  width:58px;
+  height:34px;
+  background:linear-gradient(180deg,#2f78d0 0 72%,#d6b44c 72% 100%);
+  clip-path:polygon(0 0,100% 12%,82% 100%,0 86%);
+  transform-origin:left center;
+}
+.subject-latin .battle-own-flag::after{
+  background:linear-gradient(180deg,#9f1239 0 72%,#d6b44c 72% 100%);
+}
+.own-flag{
+  position:absolute;
+  left:17px;
+  top:-63px;
+  width:3px;
+  height:42px;
+  background:#333;
+  opacity:0;
+  transform:translateY(12px);
+  pointer-events:none;
+}
+.own-flag::after{
+  content:"";
+  position:absolute;
+  left:3px;
+  top:0;
+  width:26px;
+  height:20px;
+  background:linear-gradient(180deg,#2f78d0 0 72%,#d6b44c 72% 100%);
+  clip-path:polygon(0 0,100% 16%,82% 100%,0 84%);
+}
+.subject-latin .own-flag::after{
+  background:linear-gradient(180deg,#9f1239 0 72%,#d6b44c 72% 100%);
+}
+
+/* Der Moment der Eroberung: Tor fällt, Gegnerflagge verschwindet, eigene Fahne steigt. */
+.battle-stage.conquest-transition .battle-gate{
+  animation:conquestGateFall 1.02s cubic-bezier(.16,.78,.22,1) forwards!important;
+}
+.battle-stage.conquest-transition .battle-enemy-flag{
+  animation:conquestEnemyFlagExit .72s ease-in .08s forwards!important;
+}
+.battle-stage.conquest-transition .battle-enemy-flag::after{
+  animation:none!important;
+}
+.battle-stage.conquest-transition .battle-own-flag{
+  animation:conquestOwnFlagRise .82s cubic-bezier(.18,.78,.24,1) .34s forwards!important;
+}
+.battle-stage.conquest-transition .battle-own-flag::after{
+  animation:conquestOwnFlagWave 1.4s ease-in-out .72s infinite;
+}
+.battle-stage.conquest-transition .battle-rubble{
+  opacity:1;
+  animation:conquestRubbleSettle .9s ease-out both;
+}
+
+/* Dauerhafter Zustand nach der Eroberung. */
+.battle-fortress.captured .battle-gate{
+  transform:translateX(-50%) perspective(160px) rotateX(82deg)!important;
+  filter:brightness(.62) saturate(.62)!important;
+}
+.battle-fortress.captured .battle-enemy-flag{
+  opacity:0!important;
+  transform:translateY(34px) rotate(9deg)!important;
+}
+.battle-fortress.captured .battle-enemy-flag::after{
+  opacity:0!important;
+}
+.battle-fortress.captured .battle-own-flag{
+  opacity:1!important;
+  transform:translateY(0)!important;
+}
+.battle-fortress.captured .battle-own-flag::after{
+  animation:conquestOwnFlagWave 1.9s ease-in-out infinite;
+}
+.battle-fortress.captured .battle-rubble{opacity:1}
+.battle-fortress.captured{
+  filter:drop-shadow(0 9px 6px #0004) drop-shadow(0 0 18px #d6b44c45);
+}
+
+.fortress.captured .gate{
+  height:12px;
+  border-radius:8px 8px 0 0;
+  filter:brightness(.62);
+}
+.fortress.captured .enemy-flag{
+  opacity:0!important;
+}
+.fortress.captured .enemy-flag::after{
+  opacity:0!important;
+}
+.fortress.captured .own-flag{
+  opacity:1!important;
+  transform:translateY(0)!important;
+}
+.fortress.captured .own-flag::after{
+  animation:conquestOwnFlagWave 2s ease-in-out infinite;
+}
+.battlefield.battle-captured .fortress{
+  filter:drop-shadow(0 0 12px #d6b44c99) brightness(.88)!important;
+}
+
+@keyframes conquestGateFall{
+  0%{transform:translateX(-50%) perspective(160px) rotateX(0deg);filter:brightness(.72)}
+  18%{transform:translateX(-50%) perspective(160px) rotateX(-7deg);filter:brightness(1.12)}
+  100%{transform:translateX(-50%) perspective(160px) rotateX(82deg);filter:brightness(.62) saturate(.62)}
+}
+@keyframes conquestEnemyFlagExit{
+  0%{opacity:1;transform:translateY(0) rotate(0)}
+  40%{opacity:.82;transform:translateY(8px) rotate(4deg)}
+  100%{opacity:0;transform:translateY(42px) rotate(13deg)}
+}
+@keyframes conquestOwnFlagRise{
+  0%{opacity:0;transform:translateY(34px)}
+  28%{opacity:1}
+  100%{opacity:1;transform:translateY(0)}
+}
+@keyframes conquestOwnFlagWave{
+  0%,100%{transform:skewY(0deg) scaleX(1)}
+  50%{transform:skewY(-4deg) scaleX(.93)}
+}
+@keyframes conquestRubbleSettle{
+  0%{transform:translateY(-8px) scale(1.06);filter:brightness(1.25)}
+  100%{transform:translateY(0) scale(1);filter:brightness(1)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .battle-stage.conquest-transition .battle-gate,
+  .battle-stage.conquest-transition .battle-enemy-flag,
+  .battle-stage.conquest-transition .battle-own-flag,
+  .battle-stage.conquest-transition .battle-own-flag::after,
+  .battle-stage.conquest-transition .battle-rubble,
+  .battle-fortress.captured .battle-own-flag::after,
+  .fortress.captured .own-flag::after{
+    animation:none!important;
+  }
+  .battle-stage.conquest-transition .battle-gate{
+    transform:translateX(-50%) perspective(160px) rotateX(82deg)!important;
+    filter:brightness(.62)!important;
+  }
+  .battle-stage.conquest-transition .battle-enemy-flag{
+    opacity:0!important;
+  }
+  .battle-stage.conquest-transition .battle-own-flag{
+    opacity:1!important;
+    transform:none!important;
+  }
+}
+
