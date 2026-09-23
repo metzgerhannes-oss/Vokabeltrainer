@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 23.09.2026 · App v0.18.34
+Stand: 23.09.2026 · App v0.18.35
 
 ## Ergebnis
 
@@ -53,6 +53,8 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 
 - die Schlacht besitzt eine eigene Ergebnisansicht; sie liest ausschließlich bereits feststehende Kampfdaten und zeigt bei Sieg nur reale Werte (+20 XP, Lernfortschritt, Armeestärke, nächstes Kampagnenziel)
 - die Ergebnisansicht schreibt keine Mastery- oder Lernwerte und verändert die bestehende Kampagnenlogik nicht
+- bewertete Lerneinheiten zeigen nach Abschluss jede Abfrage mit Eingabe, akzeptierter Sollantwort, Bewertungsgrund und Leitner-Box-Veränderung; die zugrunde liegende fachliche Bewertungslogik wird dabei nicht verändert
+- freiwillige Wiederholungsaktionen aus der Ergebnisübersicht laufen mit `isDaily=false` und können deshalb keine zusätzliche tägliche Kampfaktion erzeugen
 - eine erfolgreiche Testfestungs-Eroberung wird rein visuell als Torbruch, Entfernen der Gegnerflagge und Setzen der eigenen Fahne dargestellt; der persistente Zustand wird ausschließlich aus `capturedAt` abgeleitet
 - der Ergebnisdialog wird bei normaler Bewegung kurz bis nach der Eroberungssequenz verzögert; bei Reduced Motion wird direkt der identische Endzustand gezeigt
 - der Karteikasten wird unter „Mein Fortschritt“ dauerhaft mit allen fünf Leitner-Stufen dargestellt; Zahlen und Fälligkeit werden ausschließlich aus dem bestehenden Lernmodell gelesen
