@@ -30,25 +30,24 @@
   box-shadow:0 24px 70px rgba(0,0,0,.34);min-height:330px;
 }
 .army-command::before{
-  content:"";position:absolute;inset:0;
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
   background:
-    radial-gradient(circle at 78% 23%,rgba(255,205,107,.18),transparent 18rem),
-    linear-gradient(90deg,rgba(4,14,26,.9),rgba(15,43,70,.45) 48%,rgba(8,20,32,.78)),
-    linear-gradient(180deg,#7d9db1 0 29%,#496a55 30% 48%,#2a382d 49% 100%);
+    radial-gradient(circle at 78% 23%,rgba(255,205,107,.16),transparent 18rem),
+    linear-gradient(90deg,rgba(4,14,26,.91),rgba(7,24,41,.38) 43%,rgba(8,20,32,.68));
 }
 .army-command::after{
-  content:"";position:absolute;left:36%;right:-8%;bottom:0;height:48%;
-  background:
-    radial-gradient(ellipse at 40% 82%,rgba(15,22,25,.9) 0 7%,transparent 8%),
-    radial-gradient(ellipse at 48% 74%,rgba(17,24,29,.9) 0 6%,transparent 7%),
-    radial-gradient(ellipse at 58% 80%,rgba(15,22,25,.92) 0 8%,transparent 9%),
-    linear-gradient(165deg,transparent 0 38%,rgba(16,26,25,.92) 39% 100%);
-  opacity:.82;
+  content:"";position:absolute;inset:auto 0 0;z-index:1;height:42%;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(5,14,24,.72));
 }
+.army-camp-art{
+  position:absolute;inset:0;z-index:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:center 48%;
+  opacity:0;filter:saturate(.9) contrast(1.04) brightness(.88);transition:opacity .3s ease;
+}
+.army-command.art-ready .army-camp-art{opacity:1}
 .army-camp-sky{
-  position:absolute;inset:0;background:
-    radial-gradient(circle at 65% 27%,rgba(248,211,139,.35),transparent 8rem),
-    linear-gradient(150deg,transparent 0 60%,rgba(0,0,0,.38) 61%);
+  position:absolute;inset:0;z-index:2;pointer-events:none;background:
+    radial-gradient(circle at 65% 27%,rgba(248,211,139,.18),transparent 8rem),
+    linear-gradient(150deg,transparent 0 60%,rgba(0,0,0,.2) 61%);
 }
 .army-camp-banner{
   position:absolute;left:5%;bottom:4%;width:92px;height:190px;border-left:6px solid #58452f;z-index:2;
@@ -70,8 +69,8 @@
 }
 .army-camp-strength>span,.army-camp-strength>small{display:block;color:#b8c8d9;font-size:.76rem}
 .army-camp-strength>strong{display:block;font-size:2rem;color:#fff;margin:.1rem 0 .45rem}
-.army-morale-line{height:7px;border-radius:99px;background:#263746;overflow:hidden;margin-bottom:6px}
-.army-morale-line i{display:block;height:100%;background:linear-gradient(90deg,#4f9a49,#8fd16d)}
+.army-morale-progress{display:block;width:100%;height:7px;margin-bottom:6px;border:0;border-radius:99px;overflow:hidden;background:#263746;accent-color:#73bb5b}
+.army-morale-progress::-webkit-progress-bar{background:#263746}.army-morale-progress::-webkit-progress-value{background:linear-gradient(90deg,#4f9a49,#8fd16d)}
 .army-camp-campaign{
   position:absolute;z-index:3;right:4%;bottom:11%;display:flex;gap:7px;padding:8px;border-radius:12px;background:rgba(5,14,25,.72);border:1px solid rgba(228,205,145,.18)
 }
@@ -110,7 +109,16 @@
 .army-unit-card:hover{transform:translateY(-2px);border-color:#b99c5d}.army-unit-card.selected{border-color:#3994f2;box-shadow:0 0 0 2px rgba(42,140,255,.18),0 14px 38px rgba(0,0,0,.24)}
 .army-unit-card.locked{filter:saturate(.45);opacity:.68}
 .army-unit-level{position:absolute;right:12px;top:10px;font-size:.7rem;color:#d9c795}.army-unit-level b{font-size:.95rem}
-.army-unit-emblem{grid-row:1/4;display:grid;place-items:center;width:66px;height:82px;border-radius:12px;border:1px solid #937d4d;background:linear-gradient(180deg,#203c59,#0a1625);font-size:2rem;color:#e1cc93}
+.army-unit-art{
+  grid-row:1/4;position:relative;width:124px;aspect-ratio:16/9;overflow:hidden;border-radius:10px;
+  border:1px solid #9f8754;background:linear-gradient(180deg,#203c59,#0a1625);color:#e1cc93;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)
+}
+.army-unit-art img,.army-preview-art img{position:absolute;width:300%;height:200%;max-width:none;display:block;opacity:0;transition:opacity .2s ease}
+.army-unit-art b,.army-preview-art b{position:absolute;inset:0;display:grid;place-items:center;font-size:2rem;color:#e1cc93}
+.army-unit-art.art-loaded img,.army-preview-art.art-loaded img{opacity:1}
+.army-unit-art.art-loaded b,.army-preview-art.art-loaded b{opacity:0}
+.unit-art-infantry img{left:0;top:0}.unit-art-archers img{left:-100%;top:0}.unit-art-cavalry img{left:-200%;top:0}
+.unit-art-ram img{left:0;top:-100%}.unit-art-shield img{left:-100%;top:-100%}.unit-art-support img{left:-200%;top:-100%}
 .army-unit-card>strong{font-family:Georgia,'Times New Roman',serif;font-size:1.22rem;align-self:end}.army-unit-card>small{color:#adbecd;line-height:1.35}
 .army-unit-progress{grid-column:1/-1;width:100%;height:7px;margin-top:10px;border:0;border-radius:99px;overflow:hidden;background:#263746;accent-color:#2a8cff}.army-unit-progress::-webkit-progress-bar{background:#263746}.army-unit-progress::-webkit-progress-value{background:linear-gradient(90deg,#2e77bc,#52a5fa)}
 .army-unit-state,.army-unit-next{grid-column:1/-1;font-size:.72rem}.army-unit-state{font-weight:800;color:#e6d49c}.army-unit-next{color:#9cb1c2}
@@ -118,7 +126,7 @@
   margin-top:14px;display:grid;grid-template-columns:auto minmax(0,1fr) auto minmax(240px,.8fr);gap:18px;align-items:center;padding:17px;
   border:1px solid var(--army-line);border-radius:14px;background:linear-gradient(180deg,#122a43,#091a2b)
 }
-.army-preview-emblem{display:grid;place-items:center;width:82px;height:82px;border-radius:50%;border:2px solid #b99b59;background:#0a1827;color:#ead59d;font-size:2.1rem}
+.army-preview-art{position:relative;width:180px;aspect-ratio:16/9;overflow:hidden;border-radius:12px;border:2px solid #b99b59;background:#0a1827;color:#ead59d}
 .army-preview-copy h3{font-family:Georgia,'Times New Roman',serif;font-size:1.45rem;margin:.05rem 0}.army-preview-copy p{margin:0;color:#adbfce;font-size:.84rem}
 .army-preview-level{padding:0 18px;border-left:1px solid var(--army-line);border-right:1px solid var(--army-line)}.army-preview-level span,.army-preview-upgrade span{display:block;color:#9fb3c5;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em}.army-preview-level strong{display:block;color:#fff;font-size:1.2rem;margin:.15rem 0}.army-preview-level small{color:#dcc687}
 .army-preview-upgrade strong{display:block;color:#fff;margin:.15rem 0 .5rem}.army-preview-upgrade progress{width:100%;accent-color:#2a8cff}.army-preview-upgrade small{display:block;color:#9fb3c5;margin-top:4px;text-transform:none;letter-spacing:0}
@@ -136,9 +144,9 @@
   .army-camp-strength{right:4%;top:45%;min-width:155px;padding:11px}.army-camp-strength>strong{font-size:1.55rem}.army-camp-campaign{left:4%;right:4%;bottom:6%;justify-content:center;overflow:hidden}
   .army-camp-banner{opacity:.45}.army-command-footer{margin:250px 9px 9px;grid-template-columns:1fr}.army-command-footer button{width:100%}
   .army-summary{margin-top:10px}.army-summary>div{padding:11px}.army-bonus-grid{grid-template-columns:1fr 1fr;gap:8px}.army-bonus{padding:10px;grid-template-columns:auto 1fr}.army-bonus-icon{width:36px;height:36px}
-  .army-unit-grid{grid-template-columns:1fr;gap:9px}.army-unit-card{min-height:165px}.army-section-head{align-items:start;flex-direction:column}
-  .army-unit-preview{grid-template-columns:auto 1fr;gap:12px}.army-preview-emblem{width:66px;height:66px}.army-preview-level{grid-column:1/-1}.army-preview-upgrade{grid-column:1/-1}
+  .army-unit-grid{grid-template-columns:1fr;gap:9px}.army-unit-card{min-height:175px;padding:13px}.army-unit-art{width:116px}.army-section-head{align-items:start;flex-direction:column}
+  .army-unit-preview{grid-template-columns:1fr;gap:12px}.army-preview-art{width:100%;max-width:300px}.army-preview-level{grid-column:1/-1}.army-preview-upgrade{grid-column:1/-1}
 }
-@media(prefers-reduced-motion:reduce){.army-unit-card{transition:none}.army-unit-card:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){.army-unit-card,.army-camp-art,.army-unit-art img,.army-preview-art img{transition:none}.army-unit-card:hover{transform:none}}
 body.lrs-mode .army-view{--army-line:rgba(220,220,220,.26)}
 body.lrs-mode .army-unit-card,body.lrs-mode .army-command,body.lrs-mode .army-unit-preview{box-shadow:none}
