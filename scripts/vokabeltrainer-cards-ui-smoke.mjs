@@ -66,6 +66,7 @@ try{
   await page.waitForSelector('.session-finish-card');
   assert(await page.locator('#rewardBattleBtn').count()===0,'optional cards session does not present a battle reward');
   assert(await page.evaluate(()=>battleTickets('english'))===0,'optional cards session cannot unlock the daily battle');
+  assert((await page.evaluate(()=>dailyPlanStatus(buildDailyPlan()).done))===0,'optional cards do not complete the fixed daily goal');
 
   await page.evaluate(async()=>{await persistState()});
   await page.reload({waitUntil:'domcontentloaded'});
