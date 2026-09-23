@@ -740,3 +740,66 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
 @media(prefers-reduced-motion:reduce){.primary,.secondary,.ghost,.profile-chip,.parent-grid .menu-card{transition:none}}
 .lrs-mode .card,.lrs-mode .study-card{box-shadow:none}.lrs-mode .today-focus{background:#fff;border-color:#d8dde5}
 
+
+
+/* v0.18.18 – längere Schlachtsequenz + dauerhaft sichtbare Hauptaktion */
+.battle-stage-wrap{position:relative}
+#battleView.active .battle-shell{padding-bottom:128px}
+.battle-action-dock{position:fixed;z-index:85;left:50%;bottom:88px;transform:translateX(-50%);width:min(700px,calc(100% - 28px));display:grid;grid-template-columns:1fr auto;align-items:center;gap:14px;padding:12px 14px;border:1px solid #ffffff33;border-radius:20px;background:linear-gradient(135deg,#111827f2,#1f2937f2);box-shadow:0 18px 55px #02061766;backdrop-filter:blur(16px);color:#fff}
+.battle-action-dock-copy{display:grid;min-width:0}.battle-action-dock-copy strong{font-size:.98rem}.battle-action-dock-copy span{color:#cbd5e1;font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.battle-action-dock .battle-primary{min-width:210px;min-height:52px;font-size:1rem;box-shadow:0 10px 30px #dc262655}
+.battle-action-dock .battle-primary:disabled{opacity:.55;filter:saturate(.45)}
+.battle-immersive .battle-action-dock{bottom:max(14px,env(safe-area-inset-bottom));z-index:1100}
+
+.battle-phase-strip{position:absolute;z-index:14;left:50%;top:14px;transform:translateX(-50%);width:min(660px,72%);display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:6px;border-radius:15px;background:#0f172ab8;border:1px solid #ffffff26;backdrop-filter:blur(7px)}
+.battle-phase-strip span{display:flex;align-items:center;justify-content:center;gap:5px;min-width:0;padding:6px 5px;border-radius:10px;color:#cbd5e1;font-size:.67rem;font-weight:900;transition:background .25s ease,color .25s ease,transform .25s ease}
+.battle-phase-strip i{display:grid;place-items:center;width:17px;height:17px;flex:none;border-radius:50%;background:#334155;color:#e2e8f0;font-style:normal;font-size:.61rem}
+.battle-phase-strip span.active{background:#f59e0b;color:#1f2937;transform:translateY(-1px)}.battle-phase-strip span.active i{background:#fff;color:#92400e}.battle-phase-strip span.done{background:#14532d;color:#dcfce7}.battle-phase-strip span.done i{background:#22c55e;color:#052e16}
+.battle-rank-badge{top:60px}
+
+.battle-stage.battle-sequence.phase-rally .battle-standard{animation:battleRallyStandard .55s ease-in-out infinite alternate}
+.battle-stage.battle-sequence.phase-rally .battle-unit{animation:battleRallyUnit .55s ease-in-out infinite alternate}
+.battle-stage.battle-sequence.is-attacking .battle-army{animation:armyAdvanceLong 4.8s cubic-bezier(.18,.7,.25,1) forwards}
+.battle-stage.battle-sequence.is-attacking .battle-unit{animation:unitCharge .38s ease-in-out infinite alternate}
+.battle-stage.battle-sequence.is-attacking .battle-ram{animation:ramChargeLong 4.5s ease-in forwards}
+.battle-stage.battle-sequence.is-barrage.attack-volley .arrow{opacity:1;animation:arrowVolleyLong 1.05s ease-in infinite}
+.battle-stage.battle-sequence.is-barrage.attack-charge .arrow{opacity:.45;animation:arrowVolleyLong 1.25s ease-in 2}
+.battle-stage.battle-sequence.is-barrage.attack-special .battle-special-flare{opacity:1;animation:specialPulseLong 1.15s ease-in-out infinite}
+.battle-stage.battle-sequence.is-barrage.attack-cavalry .unit-cavalry{animation:cavalryChargeLong .5s ease-in-out infinite alternate}
+.battle-stage.battle-sequence.phase-impact .battle-fortress{animation:fortressHitLong .44s ease-in-out 5}
+.battle-stage.battle-sequence.phase-impact .battle-impact{opacity:1;animation:impactBurstLong 1.25s ease-out}
+.battle-stage.battle-sequence.phase-impact .battle-dust{opacity:1;animation:dustRiseLong 2s ease-out}
+.battle-shockwave{position:absolute;z-index:13;right:19%;bottom:27%;width:130px;height:130px;border:5px solid #fff4;border-radius:50%;opacity:0;pointer-events:none}
+.battle-stage.battle-sequence.phase-impact .battle-shockwave{animation:battleShockwave 1.2s ease-out 2}
+.battle-stage.phase-result.is-victory .battle-gate{transform:translateX(-50%) rotateX(78deg);filter:brightness(.6)}
+.battle-stage.phase-result.is-victory .battle-enemy-flag:after{transform:rotate(72deg) translateY(14px);filter:grayscale(1)}
+
+@keyframes battleRallyUnit{from{transform:translateY(0)}to{transform:translateY(-7px)}}
+@keyframes battleRallyStandard{from{transform:rotate(-2deg) scale(1)}to{transform:rotate(3deg) scale(1.04)}}
+@keyframes armyAdvanceLong{0%{transform:translateX(0)}45%{transform:translateX(17%)}72%{transform:translateX(25%)}100%{transform:translateX(34%)}}
+@keyframes ramChargeLong{0%{transform:translateX(0)}55%{transform:translateX(35%)}100%{transform:translateX(78%) rotate(-1deg)}}
+@keyframes arrowVolleyLong{0%{transform:translate(0,0) rotate(-14deg);opacity:0}12%{opacity:1}100%{transform:translate(470px,-105px) rotate(-14deg);opacity:.15}}
+@keyframes cavalryChargeLong{to{transform:translate(12px,-8px) rotate(-3deg)}}
+@keyframes fortressHitLong{25%{transform:translateX(-8px) rotate(-.8deg)}75%{transform:translateX(8px) rotate(.8deg)}}
+@keyframes impactBurstLong{0%{transform:scale(.2);opacity:1}70%{opacity:.75}100%{transform:scale(2.25);opacity:0}}
+@keyframes dustRiseLong{0%{transform:scale(.45) translateY(26px);opacity:0}28%{opacity:1}100%{transform:scale(1.8) translateY(-35px);opacity:0}}
+@keyframes specialPulseLong{0%,100%{filter:brightness(1);transform:scale(.85)}50%{filter:brightness(1.8);transform:scale(1.2)}}
+@keyframes battleShockwave{0%{transform:scale(.25);opacity:.9}100%{transform:scale(2.8);opacity:0}}
+
+@media(max-width:720px){
+  #battleView.active .battle-shell{padding-bottom:150px}
+  .battle-action-dock{bottom:84px;grid-template-columns:1fr auto;width:calc(100% - 20px);padding:10px 11px;border-radius:17px}
+  .battle-action-dock-copy span{max-width:44vw}
+  .battle-action-dock .battle-primary{min-width:165px;min-height:50px;padding:10px 12px}
+  .battle-phase-strip{top:10px;width:calc(100% - 18px);gap:3px}
+  .battle-phase-strip span{font-size:.58rem;padding:5px 2px;gap:3px}.battle-phase-strip i{width:15px;height:15px;font-size:.55rem}
+  .battle-rank-badge{top:50px}
+}
+@media(max-width:430px){
+  .battle-action-dock{grid-template-columns:1fr;gap:8px}
+  .battle-action-dock-copy{text-align:center}.battle-action-dock-copy span{max-width:none}
+  .battle-action-dock .battle-primary{width:100%;min-width:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .battle-stage.battle-sequence .battle-standard,.battle-stage.battle-sequence .battle-unit,.battle-stage.battle-sequence .battle-army,.battle-stage.battle-sequence .battle-ram,.battle-stage.battle-sequence .arrow,.battle-stage.battle-sequence .battle-special-flare,.battle-stage.battle-sequence .battle-fortress,.battle-stage.battle-sequence .battle-impact,.battle-stage.battle-sequence .battle-dust,.battle-stage.battle-sequence .battle-shockwave{animation:none!important}
+}
