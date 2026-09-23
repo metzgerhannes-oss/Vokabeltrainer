@@ -71,9 +71,11 @@ try{
   assert(conquestMotion.own.includes('conquestOwnFlagRise'),'conquest visibly raises the player flag');
 
   await page.emulateMedia({reducedMotion:'reduce'});
-  const reducedConquest=await page.evaluate(()=>{
+  await page.waitForTimeout(60);
+  const reducedConquest=await page.evaluate(async()=>{
     const stage=document.querySelector('#battleStage');
     stage.classList.add('conquest-transition');
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
     const result={
       gate:getComputedStyle(document.querySelector('#battleStage .battle-gate')).animationName,
       enemy:getComputedStyle(document.querySelector('#battleStage .battle-enemy-flag')).animationName,
