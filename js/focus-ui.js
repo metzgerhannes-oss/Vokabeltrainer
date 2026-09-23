@@ -54,7 +54,8 @@ gradeGrammar=function(w,g,answer){
   if(session.locked)return;session.locked=true;
   const ok=grammarMatches(answer,g.target,g.key),assisted=!!session.hintUsed;
   focusedDisableAnswerControls();
-  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status"><strong>${ok?(assisted?'Richtig mit Hilfe.':'Richtig.'):'Noch nicht richtig.'}</strong><br>${ok?'':`Deine Antwort: ${esc(answer||'–')}<br>`}Richtig: <strong>${esc(g.target)}</strong>${w.example?`<br><small>Im Kontext: ${esc(w.example)}</small>`:''}</div>`);
+  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status"><strong>${ok?(assisted?'Richtig mit Hilfe.':'Richtig.'):'Noch nicht richtig.'}</strong><br>${ok?'':`Deine Antwort: ${esc(answer||'–')}<br>`}Richtig: <strong>${esc(g.target)}</strong><div class="focused-answer-audio"><strong>${esc(w.term)}</strong>${audioButtonHtml(w.term,'Anhören')}</div>${w.example?`<br><small>Im Kontext: ${esc(w.example)}</small>`:''}</div>`);
+  if(!ok)maybeSpeakCorrection(w);
   logSessionResult(w,{answer,target:[g.target],correct:ok,skill:'latinGrammar',orthographyOk:ok,assisted,prompt:g.prompt});
   recordGrammarResult(w,g.key,ok,assisted);
   focusedContinue(ok,w);
@@ -70,7 +71,8 @@ gradeChoice=function(btn,w,answer,target,skill,nonEvaluative=false,questionSnaps
   logSessionResult(w,{answer,target:q.targets,correct:ok,skill:q.mode,orthographyOk:grade.orthographyOk,assisted:false,prompt:q.prompt});
   if(nonEvaluative)recordNonEvaluative(w,'flash',ok,skill);else recordResult(w,ok,skill,ok?null:skill,{orthographyOk:grade.orthographyOk});
   const correct=focusedCorrectTarget(q.targets);
-  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status"><strong>${ok?'Richtig.':'Noch nicht richtig.'}</strong>${!ok&&correct?`<br>Richtig: <strong>${esc(correct)}</strong>`:''}${!ok?focusedConfusionHtml(w):''}</div>`);
+  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status"><strong>${ok?'Richtig.':'Noch nicht richtig.'}</strong>${!ok&&correct?`<br>Richtig: <strong>${esc(correct)}</strong>`:''}<div class="focused-answer-audio"><strong>${esc(w.term)}</strong>${audioButtonHtml(w.term,'Anhören')}</div>${!ok?focusedConfusionHtml(w):''}</div>`);
+  if(!ok)maybeSpeakCorrection(w);
   focusedContinue(ok,w);
 };
 
@@ -81,7 +83,8 @@ gradeText=function(w,answer,target,errorType,skill){
   const detail=softSpelling?(session.hintUsed?'Richtig erinnert mit Hinweis. Schreibweise beachten.':'Richtig erinnert. Schreibweise beachten.'):(ok?(session.hintUsed?'Richtig mit Hinweis.':'Richtig.'):'');
   focusedDisableAnswerControls();
   const spellingNote=softSpelling?`<br>Schreibweise: <strong>${esc(focusedCorrectTarget(q.targets))}</strong>`:'';
-  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status">${ok?`<strong>${detail}</strong>${spellingNote}`:errorFeedbackHtml(answer,q.targets)}${!ok?wordLearningCard(w)+focusedConfusionHtml(w):''}</div>`);
+  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status">${ok?`<strong>${detail}</strong>${spellingNote}`:errorFeedbackHtml(answer,q.targets)}<div class="focused-answer-audio"><strong>${esc(w.term)}</strong>${audioButtonHtml(w.term,'Anhören')}</div>${!ok?wordLearningCard(w)+focusedConfusionHtml(w):''}</div>`);
+  if(!ok||softSpelling)maybeSpeakCorrection(w);
   logSessionResult(w,{answer,target:q.targets,correct:ok,skill:q.mode,orthographyOk,assisted:!!session.hintUsed,prompt:q.prompt});
   recordResult(w,ok,skill,ok?null:errorType,{orthographyOk});
   focusedContinue(ok,w);
