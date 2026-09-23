@@ -214,7 +214,160 @@
   opacity:.7;
 }
 
+
+/* v0.18.31 – hochwertigere Trefferwirkung ohne neue Spielmechanik */
+.battle-stage.battle-art-layered.phase-barrage .battle-projectiles .arrow{
+  filter:drop-shadow(0 0 5px rgba(251,191,36,.72)) drop-shadow(0 0 10px rgba(251,146,60,.34));
+  box-shadow:-18px 0 14px -10px rgba(255,230,160,.72);
+}
+.battle-stage.battle-art-layered.phase-impact.is-impact .battle-impact{
+  right:24%;
+  bottom:30%;
+  width:112px;
+  height:112px;
+  opacity:1;
+  filter:drop-shadow(0 0 18px rgba(255,191,36,.62));
+  animation:battleImpactBloom .78s cubic-bezier(.15,.7,.2,1) both;
+}
+.battle-stage.battle-art-layered.phase-impact.is-impact .battle-impact::before,
+.battle-stage.battle-art-layered.phase-impact.is-impact .battle-impact::after{
+  content:"";
+  position:absolute;
+  inset:-32%;
+  border-radius:50%;
+  pointer-events:none;
+}
+.battle-stage.battle-art-layered.phase-impact.is-impact .battle-impact::before{
+  background:radial-gradient(circle,rgba(255,249,220,.98) 0 7%,rgba(255,193,72,.72) 12%,rgba(255,126,42,.28) 30%,transparent 62%);
+  mix-blend-mode:screen;
+  animation:battleImpactFlash .62s ease-out both;
+}
+.battle-stage.battle-art-layered.phase-impact.is-impact .battle-impact::after{
+  inset:-75%;
+  background:
+    radial-gradient(ellipse at 50% 8%,rgba(255,220,125,.95) 0 2%,transparent 4%),
+    radial-gradient(ellipse at 87% 27%,rgba(255,183,76,.82) 0 2%,transparent 4%),
+    radial-gradient(ellipse at 94% 62%,rgba(255,228,157,.88) 0 1.7%,transparent 3.8%),
+    radial-gradient(ellipse at 72% 91%,rgba(255,171,67,.78) 0 2%,transparent 4%),
+    radial-gradient(ellipse at 25% 88%,rgba(255,223,148,.86) 0 1.8%,transparent 3.8%),
+    radial-gradient(ellipse at 7% 56%,rgba(255,172,68,.78) 0 2%,transparent 4%),
+    radial-gradient(ellipse at 18% 20%,rgba(255,231,174,.88) 0 1.7%,transparent 3.8%);
+  animation:battleImpactSparks .82s cubic-bezier(.2,.65,.2,1) both;
+}
+.battle-stage.battle-art-layered.phase-impact.is-impact .battle-impact i{
+  box-shadow:0 0 10px rgba(255,239,190,.58);
+}
+.battle-stage.battle-art-layered.phase-impact.is-impact .battle-gate{
+  animation:battleGateFlash .62s ease-out both;
+}
+.battle-stage.battle-art-layered.phase-impact.is-impact .battle-dust{
+  right:18%;
+  bottom:5%;
+  width:240px;
+  height:110px;
+  opacity:1;
+  background:
+    radial-gradient(ellipse at 36% 68%,rgba(221,205,169,.82) 0 22%,rgba(182,160,124,.38) 42%,transparent 68%),
+    radial-gradient(ellipse at 68% 62%,rgba(228,214,181,.76) 0 18%,rgba(166,146,112,.28) 40%,transparent 67%);
+  filter:blur(.2px);
+  animation:battleDustCloud 1.55s cubic-bezier(.16,.64,.22,1) both;
+}
+.battle-stage.battle-art-layered.phase-impact.is-impact .battle-dust::before,
+.battle-stage.battle-art-layered.phase-impact.is-impact .battle-dust::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+}
+.battle-stage.battle-art-layered.phase-impact.is-impact .battle-dust::before{
+  left:18%;
+  bottom:6%;
+  width:105px;
+  height:78px;
+  background:radial-gradient(ellipse,rgba(213,195,158,.72) 0 31%,rgba(180,158,121,.3) 48%,transparent 71%);
+  animation:battleDustPuffLeft 1.45s ease-out both;
+}
+.battle-stage.battle-art-layered.phase-impact.is-impact .battle-dust::after{
+  right:4%;
+  bottom:3%;
+  width:118px;
+  height:86px;
+  background:radial-gradient(ellipse,rgba(232,218,185,.68) 0 28%,rgba(171,150,117,.26) 48%,transparent 72%);
+  animation:battleDustPuffRight 1.65s ease-out both;
+}
+.battle-stage.battle-art-layered.phase-impact.is-impact .battle-shockwave{
+  opacity:1;
+  animation:battleShockDepth .72s ease-out both;
+}
+.battle-stage.battle-art-layered.phase-impact .battle-art-atmosphere::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(circle at 74% 61%,rgba(255,214,126,.42) 0 3%,rgba(255,148,64,.15) 12%,transparent 30%);
+  mix-blend-mode:screen;
+  animation:battleAtmosphereFlash .7s ease-out both;
+}
+
+@keyframes battleImpactBloom{
+  0%{transform:scale(.18);opacity:0}
+  18%{opacity:1}
+  58%{transform:scale(1.18);opacity:.95}
+  100%{transform:scale(1.58);opacity:0}
+}
+@keyframes battleImpactFlash{
+  0%{transform:scale(.22);opacity:0}
+  20%{opacity:1}
+  100%{transform:scale(1.35);opacity:0}
+}
+@keyframes battleImpactSparks{
+  0%{transform:scale(.3) rotate(-6deg);opacity:0}
+  22%{opacity:1}
+  100%{transform:scale(1.22) rotate(5deg);opacity:0}
+}
+@keyframes battleGateFlash{
+  0%{filter:brightness(1);box-shadow:0 0 0 rgba(255,191,36,0)}
+  28%{filter:brightness(1.72);box-shadow:0 0 34px rgba(255,179,58,.88),0 0 70px rgba(255,132,43,.42)}
+  100%{filter:brightness(.92);box-shadow:0 0 0 rgba(255,191,36,0)}
+}
+@keyframes battleDustCloud{
+  0%{transform:translateY(18px) scale(.42);opacity:0}
+  28%{opacity:.95}
+  100%{transform:translateY(-28px) scale(1.55);opacity:0}
+}
+@keyframes battleDustPuffLeft{
+  0%{transform:translate(12px,16px) scale(.45);opacity:0}
+  24%{opacity:.82}
+  100%{transform:translate(-38px,-42px) scale(1.42);opacity:0}
+}
+@keyframes battleDustPuffRight{
+  0%{transform:translate(-8px,15px) scale(.48);opacity:0}
+  26%{opacity:.8}
+  100%{transform:translate(46px,-48px) scale(1.5);opacity:0}
+}
+@keyframes battleShockDepth{
+  0%{transform:translate(-50%,-50%) scale(.2);opacity:0}
+  24%{opacity:.72}
+  100%{transform:translate(-50%,-50%) scale(1.82);opacity:0}
+}
+@keyframes battleAtmosphereFlash{
+  0%{opacity:0}
+  20%{opacity:.95}
+  100%{opacity:0}
+}
+
 @media(prefers-reduced-motion:reduce){
+  .battle-stage.battle-art-layered.phase-impact.is-impact .battle-impact,
+  .battle-stage.battle-art-layered.phase-impact.is-impact .battle-impact::before,
+  .battle-stage.battle-art-layered.phase-impact.is-impact .battle-impact::after,
+  .battle-stage.battle-art-layered.phase-impact.is-impact .battle-gate,
+  .battle-stage.battle-art-layered.phase-impact.is-impact .battle-dust,
+  .battle-stage.battle-art-layered.phase-impact.is-impact .battle-dust::before,
+  .battle-stage.battle-art-layered.phase-impact.is-impact .battle-dust::after,
+  .battle-stage.battle-art-layered.phase-impact.is-impact .battle-shockwave,
+  .battle-stage.battle-art-layered.phase-impact .battle-art-atmosphere::before{
+    animation:none!important;
+  }
   .battle-art-stack,
   .battle-art-layer,
   .battle-art-atmosphere,
