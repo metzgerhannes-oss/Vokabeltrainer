@@ -250,7 +250,7 @@ function renderRecognition(w){
   const distractors=shuffle(pool).map(x=>reverse?x.term:x.translation);
   const opts=uniqueOptions(primary,distractors),promptAudio=!reverse?audioButtonHtml(q.term,'Wort anhören'):'';
   $('#studyArea').innerHTML=`<div class="study-card"><div class="eyebrow">Erkennen</div><div class="study-prompt">${esc(q.prompt)}</div>${promptAudio}${reverse?'':meaningCueHtml(w)}<div class="study-sub">${reverse?'Welche Vokabel passt zu dieser Bedeutung?':'Welche Bedeutung passt?'}</div><div class="answer-grid">${opts.map(o=>`<button class="answer-option" data-answer="${esc(o)}">${esc(o)}</button>`).join('')}</div>${cardExtras(w)}</div>`;
-  $('[data-answer]').forEach(b=>b.onclick=()=>gradeChoice(b,w,b.dataset.answer,q.targets,'recognition',false,q));
+  document.querySelectorAll('[data-answer]').forEach(b=>b.onclick=()=>gradeChoice(b,w,b.dataset.answer,q.targets,'recognition',false,q));
 }
 function leitnerBoxesHtml(w){
   const active=leitnerBox(w),counts=leitnerDistribution();
