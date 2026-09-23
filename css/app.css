@@ -603,19 +603,15 @@ body.battle-immersive{overflow:hidden;background:#0f172a}.battle-immersive .topb
   .nav-btn{display:grid;grid-template-columns:28px 1fr;align-items:center;gap:8px;text-align:left;padding:9px 10px;font-size:.82rem}
   .nav-btn span{display:block;font-size:1.05rem;text-align:center}
   #homeView{max-width:none;margin:0}
-  #homeView.active{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(340px,.75fr);gap:18px;align-items:start}
-  #homeView>.install-callout{grid-column:1/-1}
-  #homeView>.today-focus{grid-column:1;grid-row:1;min-height:220px;margin:0;padding:30px 32px}
-  #homeView>#testCheckCard{grid-column:1;grid-row:2;margin:0}
-  #homeView>#practiceDisclosure{grid-column:2;grid-row:1/span 2;margin:0;overflow:visible;background:transparent;border:0;box-shadow:none}
-  #practiceDisclosure>summary{display:none}
-  #practiceDisclosure>.home-disclosure-body{display:block;padding:0}
-  #practiceDisclosure #optionalLearningCard{position:sticky;top:24px;margin:0;padding:24px}
-  #practiceDisclosure .recommend-grid{grid-template-columns:1fr;gap:10px}
-  #practiceDisclosure .recommend{display:grid;grid-template-columns:38px 1fr;grid-template-areas:"icon title" "icon sub";column-gap:10px;align-items:center;padding:13px 14px}
-  #practiceDisclosure .recommend .icon{grid-area:icon}
-  #practiceDisclosure .recommend strong{grid-area:title;margin:0}
-  #practiceDisclosure .recommend small{grid-area:sub}
+  #homeView.active{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start}
+  #homeView>.install-callout{grid-column:1}
+  #homeView>.today-focus{grid-column:1;grid-row:auto;min-height:220px;margin:0;padding:30px 32px}
+  #homeView>#testCheckCard{grid-column:1;grid-row:auto;margin:0}
+  #practiceView{max-width:none;margin:0}
+  #practiceView .practice-hub{max-width:1180px;margin:0}
+  #practiceView .practice-primary-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  #practiceView #optionalLearningCard{margin:0;padding:24px}
+  #practiceView .recommend-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
   .child-progress-shell,.parent-shell,.parent-subnav{max-width:1180px}
   .parent-mode .app-shell{padding-left:38px}
   .parent-mode .topbar{max-width:1180px}
