@@ -104,6 +104,25 @@ try{
   assert((await page.evaluate(()=>firstContactStatus('cards_set').pending))===2,'optional copy status survives independently');
   assert((await page.evaluate(()=>firstContactStatus('cards_set').proved))===0,'cards create no legacy proof state');
 
+  await page.evaluate(()=>{
+    const word=schoolYearWords('english').find(w=>w.term==="can't");
+    startSession('recall','cards_set',[word.id],false);
+  });
+  await page.waitForSelector('#answerField');
+  await page.fill('#answerField','cant');
+  await page.click('#answerBtn');
+  await page.waitForSelector('#continueStudyBtn');
+  await page.click('#continueStudyBtn');
+  await page.waitForSelector('#answerField');
+  await page.fill('#answerField',"can't");
+  await page.click('#answerBtn');
+  await page.waitForSelector('#continueStudyBtn');
+  await page.click('#continueStudyBtn');
+  await page.waitForSelector('.session-finish-card');
+  assert(await page.locator('.session-result').count()===2,'normal written recall also records every evaluated attempt');
+  assert((await page.locator('.session-result').first().textContent())?.includes('Fast richtig'),'normal written recall explains a near-miss instead of only showing red');
+  assert(await page.locator('.session-result').first().locator('.session-box-move').count()===1,'normal written recall also shows the card-box transition');
+
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer written Leitner cards UI smoke: passed');
 }finally{
