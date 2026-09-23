@@ -111,7 +111,7 @@
       <div class="army-camp-banner" aria-hidden="true"><span>♜</span></div>
       <div class="army-camp-copy">
         <span class="army-kicker">${safe(state.activeSubject==='latin'?'Legion':'Armee')} · ${safe(c.p.schoolYear)}</span>
-        <strong>${safe(c.rank)}</strong>
+        <strong id="armyRankLabel">${safe(c.rank)}</strong>
         <small>${safe(c.gear)}</small>
       </div>
       <div class="army-camp-strength">
