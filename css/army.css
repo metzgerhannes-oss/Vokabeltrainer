@@ -112,7 +112,7 @@
 .army-unit-level{position:absolute;right:12px;top:10px;font-size:.7rem;color:#d9c795}.army-unit-level b{font-size:.95rem}
 .army-unit-emblem{grid-row:1/4;display:grid;place-items:center;width:66px;height:82px;border-radius:12px;border:1px solid #937d4d;background:linear-gradient(180deg,#203c59,#0a1625);font-size:2rem;color:#e1cc93}
 .army-unit-card>strong{font-family:Georgia,'Times New Roman',serif;font-size:1.22rem;align-self:end}.army-unit-card>small{color:#adbecd;line-height:1.35}
-.army-unit-meter{grid-column:1/-1;height:7px;border-radius:99px;background:#263746;overflow:hidden;margin-top:10px}.army-unit-meter i{display:block;height:100%;background:linear-gradient(90deg,#2e77bc,#52a5fa)}
+.army-unit-progress{grid-column:1/-1;width:100%;height:7px;margin-top:10px;border:0;border-radius:99px;overflow:hidden;background:#263746;accent-color:#2a8cff}.army-unit-progress::-webkit-progress-bar{background:#263746}.army-unit-progress::-webkit-progress-value{background:linear-gradient(90deg,#2e77bc,#52a5fa)}
 .army-unit-state,.army-unit-next{grid-column:1/-1;font-size:.72rem}.army-unit-state{font-weight:800;color:#e6d49c}.army-unit-next{color:#9cb1c2}
 .army-unit-preview{
   margin-top:14px;display:grid;grid-template-columns:auto minmax(0,1fr) auto minmax(240px,.8fr);gap:18px;align-items:center;padding:17px;
