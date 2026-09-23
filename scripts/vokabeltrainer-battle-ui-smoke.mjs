@@ -144,7 +144,7 @@ try{
   await page.waitForSelector('#battleStage.battle-finished',{timeout:3000});
   await page.waitForSelector('#battleResultOverlay.visible');
   assert((await page.locator('#battleResultTitle').textContent())?.includes('Festung gesichert'),'early conquest is followed by securing the same fortress');
-  assert(await page.evaluate(()=>currentTestFortress().securedDates.length===1,'securing is stored on the current test fortress');
+  assert(await page.evaluate(()=>currentTestFortress().securedDates.length===1),'securing is stored on the current test fortress');
   await page.click('#battleResultClose');
   await page.waitForSelector('#battleResultOverlay',{state:'hidden'});
 
