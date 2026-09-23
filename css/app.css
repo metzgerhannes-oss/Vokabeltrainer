@@ -803,3 +803,11 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
 @media(prefers-reduced-motion:reduce){
   .battle-stage.battle-sequence .battle-standard,.battle-stage.battle-sequence .battle-unit,.battle-stage.battle-sequence .battle-army,.battle-stage.battle-sequence .battle-ram,.battle-stage.battle-sequence .arrow,.battle-stage.battle-sequence .battle-special-flare,.battle-stage.battle-sequence .battle-fortress,.battle-stage.battle-sequence .battle-impact,.battle-stage.battle-sequence .battle-dust,.battle-stage.battle-sequence .battle-shockwave{animation:none!important}
 }
+
+/* Testfestung: sichtbarer Belagerungsfortschritt und eroberter Zustand */
+.battle-fortress.captured .battle-enemy-flag:after,.fortress.captured .flag:after{background:#d6b44c!important;filter:none!important;transform:none!important}
+.battle-fortress.captured .battle-gate{transform:translateX(-50%) rotateX(78deg);filter:brightness(.72)}
+.battlefield[data-damage="low"] .fortress{filter:brightness(.96)}
+.battlefield[data-damage="mid"] .fortress{filter:brightness(.88) contrast(1.05)}
+.battlefield[data-damage="high"] .fortress{filter:brightness(.78) contrast(1.1)}
+.battlefield.battle-captured .fortress{filter:drop-shadow(0 0 10px #d6b44c88)}
