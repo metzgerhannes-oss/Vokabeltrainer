@@ -388,8 +388,7 @@ function recordResult(w,ok,skill,errorType,opts={}){
   w.repetitions++; w.lastReviewedAt=new Date().toISOString(); w.practiceDays=[...new Set([...(w.practiceDays||[]),today()])]; w.modesSeen=[...new Set([...(w.modesSeen||[]),session.currentSubmode||session.mode])];
   const supportMode=['recognition','listening','chunks'].includes(session.currentSubmode);
   if(supportMode){
-    w.supportResults=w.supportResults||{};const key=session.currentSubmode||skill,slot=w.supportResults[key]||{successes:0,failures:0};if(ok)slot.successes++;else slot.failures++;w.supportResults[key]=slot;
-    if(!ok&&errorType)w.errorProfile[errorType]=(w.errorProfile[errorType]||0)+1;
+    const key=session.currentSubmode||skill;
     session.scaffoldedWords[w.id]=true;session.answered++;if(ok){session.correct++;learner().xp+=1}
     session.lastLeitnerMove={before:leitnerBefore,after:leitnerBefore,moved:false,blockedBySpacing:false};
     recordActivity(key,{wordId:w.id,correct:ok,errorType,support:true,active:false});persistOnly();return;
