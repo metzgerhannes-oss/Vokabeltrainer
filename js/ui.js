@@ -94,12 +94,14 @@ function renderBattleView(){
   const bossPanel=$('#battleBossPanel');bossPanel.classList.toggle('hidden',!boss);
   if(boss){const bossPct=clamp(Math.round((p.pct/Math.max(1,f.req))*100),0,100);$('#battleBossName').textContent=boss.name;$('#battleBossText').textContent=boss.text;$('#battleBossProgress').value=bossPct;$('#battleBossProgressText').textContent=`${bossPct}%`;}
   $('#battleAttackBtn').disabled=!f||tickets<1;$('#battleAttackBtn').textContent=!f?'Kampagne gewonnen':tickets?`${attack.short}: Angriff starten`:'Nach dem Lernen verfügbar';
+  if($('#battleActionTitle'))$('#battleActionTitle').textContent=!f?'Kampagne gewonnen':tickets?'Dein Angriff ist bereit':'Nächster Angriff gesperrt';
+  if($('#battleActionHint'))$('#battleActionHint').textContent=!f?'Alle Festungen dieses Schuljahres sind bezwungen.':tickets?`${attack.label} wählen und die Schlacht starten.`:'Schließe zuerst eine Lerneinheit ab.';
   $('#battleMessage').className='battle-message';$('#battleMessage').textContent=tickets?`${attack.label} ist bereit.`:'Noch kein Angriff verfügbar.';
   renderBattleAttackChoices(p.pct);
   stage.className=`battle-stage season-${sea.class} subject-${state.activeSubject} gear-${gearTier(p.pct)} fortress-stage-${f?.id||'won'} ${boss?'boss-stage':''}`;
   stage.dataset.damage=damage>=66?'high':damage>=33?'mid':damage>0?'low':'none';
   stage.setAttribute('aria-label',f?`${campaign.unitLabel} im Rang ${rank} vor ${f.name}${boss?`, Bosskampf gegen ${boss.name}`:''}. Lernfortschritt ${p.pct} Prozent.`:`${campaign.unitLabel}: Jahresfeldzug gewonnen.`);
-  stage.innerHTML=`<div class="battle-sky"><i class="battle-sun"></i><i class="battle-cloud cloud-1"></i><i class="battle-cloud cloud-2"></i></div>${seasonEffectsMarkup()}<div class="battle-hills"></div><div class="battle-ground"></div><div class="battle-rank-badge"><span>${esc(rank)}</span><small>${esc(gear)}</small></div><div class="battle-army"><div class="battle-standard"><i></i></div>${battleUnitsMarkup(count,true,p.pct)}${p.pct>=35?'<div class="battle-ram"><i></i><b></b></div>':''}</div><div class="battle-projectiles">${Array.from({length:7},(_,i)=>`<i class="arrow arrow-${i+1}"></i>`).join('')}</div><div class="battle-impact"><i></i><i></i><i></i></div><div class="battle-special-flare"><i></i><i></i><i></i></div>${boss?`<div class="battle-boss-character boss-${esc(f.id)}" aria-label="${esc(boss.name)}"><i class="boss-helmet"></i><i class="boss-body"></i><i class="boss-shield"></i></div>`:''}${fortressMarkup(f,true)}<div class="battle-dust"></div>`;
+  stage.innerHTML=`<div class="battle-sky"><i class="battle-sun"></i><i class="battle-cloud cloud-1"></i><i class="battle-cloud cloud-2"></i></div>${seasonEffectsMarkup()}<div class="battle-hills"></div><div class="battle-ground"></div><div class="battle-phase-strip" aria-hidden="true"><span data-battle-phase="rally"><i>1</i>Sammeln</span><span data-battle-phase="advance"><i>2</i>Vorrücken</span><span data-battle-phase="barrage"><i>3</i>Angriff</span><span data-battle-phase="impact"><i>4</i>Einschlag</span><span data-battle-phase="result"><i>5</i>Ergebnis</span></div><div class="battle-rank-badge"><span>${esc(rank)}</span><small>${esc(gear)}</small></div><div class="battle-army"><div class="battle-standard"><i></i></div>${battleUnitsMarkup(count,true,p.pct)}${p.pct>=35?'<div class="battle-ram"><i></i><b></b></div>':''}</div><div class="battle-projectiles">${Array.from({length:9},(_,i)=>`<i class="arrow arrow-${i+1}"></i>`).join('')}</div><div class="battle-impact"><i></i><i></i><i></i></div><div class="battle-special-flare"><i></i><i></i><i></i></div><div class="battle-shockwave"></div>${boss?`<div class="battle-boss-character boss-${esc(f.id)}" aria-label="${esc(boss.name)}"><i class="boss-helmet"></i><i class="boss-body"></i><i class="boss-shield"></i></div>`:''}${fortressMarkup(f,true)}<div class="battle-dust"></div>`;
 }
 function openBattleView(){
   if(isParentMode())return;
@@ -119,30 +121,74 @@ function runBattleAnimation(){
   const f=nextFortress(),stage=$('#battleStage'),button=$('#battleAttackBtn');if(!f||!stage||!button)return;
   if(!spendBattleTicket()){toast('Erst eine Lerneinheit abschließen.','subtle');renderBattleView();return}
   const p=subjectProgress(),win=p.pct>=f.req,reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,attack=battleAttackMeta(battleAttackMode)||battleAttackMeta('charge'),boss=battleBossFor(f);
-  const t1=reduced?40:520,t2=reduced?90:1900,t3=reduced?150:3200;
+  const timing=reduced
+    ?{advance:35,barrage:70,impact:105,result:145,ready:190}
+    :{advance:1150,barrage:3200,impact:5200,result:7150,ready:8350};
+  const phaseCopy={
+    rally:'Die Reihen schließen sich. Standarten hoch!',
+    advance:'Die Armee rückt geschlossen auf die Festung vor.',
+    barrage:battleAttackMode==='volley'?'Bogenschützen eröffnen den Pfeilhagel!':battleAttackMode==='ram'?'Der Rammbock wird nach vorne gebracht!':battleAttackMode==='cavalry'?'Die Reiter setzen zum Flankenangriff an!':battleAttackMode==='special'?attack.message:'Die erste Angriffswelle beginnt!',
+    impact:battleAttackMode==='special'?(state.activeSubject==='latin'?'Die Adlerstandarte führt die Elite durch die Verteidigung!':'Die Elite trifft mit voller Wucht!'):battleAttackMode==='volley'?'Die Salven schlagen auf Zinnen und Tor ein!':battleAttackMode==='cavalry'?'Die Reiter erreichen die Festungsmauer!':battleAttackMode==='ram'?'Der Rammbock kracht gegen das Tor!':'Die Truppen prallen auf die Verteidigung!'
+  };
+  const setPhase=(phase,message)=>{
+    stage.dataset.phase=phase;
+    stage.classList.remove('phase-rally','phase-advance','phase-barrage','phase-impact','phase-result');
+    stage.classList.add('phase-'+phase);
+    $$('.battle-phase-strip [data-battle-phase]').forEach(el=>{
+      const order={rally:1,advance:2,barrage:3,impact:4,result:5};
+      const here=el.dataset.battlePhase;
+      el.classList.toggle('active',here===phase);
+      el.classList.toggle('done',(order[here]||0)<(order[phase]||0));
+    });
+    if(message)$('#battleMessage').textContent=message;
+  };
+
   button.disabled=true;$('#battleFullscreenBtn').disabled=true;$$('.battle-attack-choice').forEach(b=>b.disabled=true);
-  $('#battleMessage').className='battle-message active';$('#battleMessage').textContent=attack.message;
-  stage.classList.add(`attack-${battleAttackMode}`,'is-attacking');
+  stage.classList.remove('battle-finished','is-victory','is-hold','is-impact','is-attacking','battle-sequence');
+  stage.classList.add('battle-sequence',`attack-${battleAttackMode}`);
+  $('#battleMessage').className='battle-message active';
+  if($('#battleActionTitle'))$('#battleActionTitle').textContent='Schlacht läuft';
+  if($('#battleActionHint'))$('#battleActionHint').textContent='Die Angriffssequenz läuft bis zum Ergebnis.';
+  setPhase('rally',phaseCopy.rally);
+
   setTimeout(()=>{
-    const impactText=battleAttackMode==='special'?(state.activeSubject==='latin'?'Die Adlerstandarte leuchtet über der Legion!':'Die Elite bricht durch die erste Verteidigung!'):battleAttackMode==='volley'?'Der Pfeilhagel trifft die Zinnen!':battleAttackMode==='cavalry'?'Die Reiter erreichen die Festung!':battleAttackMode==='ram'?'Der Rammbock trifft das Tor!':'Die Truppen erreichen die Mauer!';
-    $('#battleMessage').textContent=impactText;stage.classList.add('is-impact')
-  },t1);
+    stage.classList.add('is-attacking');
+    setPhase('advance',phaseCopy.advance);
+  },timing.advance);
+
   setTimeout(()=>{
-    stage.classList.remove('is-attacking');stage.classList.add('battle-finished',win?'is-victory':'is-hold');
+    stage.classList.add('is-barrage');
+    setPhase('barrage',phaseCopy.barrage);
+  },timing.barrage);
+
+  setTimeout(()=>{
+    stage.classList.add('is-impact');
+    setPhase('impact',phaseCopy.impact);
+  },timing.impact);
+
+  setTimeout(()=>{
+    stage.classList.remove('is-attacking','is-barrage');
+    stage.classList.add('battle-finished',win?'is-victory':'is-hold');
+    setPhase('result');
     if(win){
       fortressWins().push(f.id);learner().xp+=20;learner().campaignLog.push({date:new Date().toISOString(),subject:state.activeSubject,schoolYear:p.schoolYear,fortress:f.id,result:'win',progress:p.pct,attack:battleAttackMode});recordActivity('fortress',{fortress:f.id,result:'win',schoolYear:p.schoolYear,attack:battleAttackMode});
       $('#battleMessage').className='battle-message victory';$('#battleMessage').innerHTML=`<strong>${boss?'Boss besiegt!':'Festung gefallen!'}</strong><span>${boss?`${esc(boss.name)} gibt den Weg frei. `:''}${esc(f.name)} ist bezwungen. +20 XP</span>`;
     }else{
       learner().campaignLog.push({date:new Date().toISOString(),subject:state.activeSubject,schoolYear:p.schoolYear,fortress:f.id,result:'hold',progress:p.pct,attack:battleAttackMode});recordActivity('fortress',{fortress:f.id,result:'hold',schoolYear:p.schoolYear,attack:battleAttackMode});
-      const missing=Math.max(0,f.req-p.pct);$('#battleMessage').className='battle-message hold';$('#battleMessage').innerHTML=`<strong>${boss?`${esc(boss.name)} hält stand!`:'Starker Angriff!'}</strong><span>Die ${esc(f.name)} hält noch. Noch ${missing} Prozentpunkte Lernfortschritt bis zum Durchbruch.</span>`;
+      const missing=Math.max(0,f.req-p.pct);$('#battleMessage').className='battle-message hold';$('#battleMessage').innerHTML=`<strong>${boss?`${esc(boss.name)} hält stand!`:'Die Verteidigung hält!'}</strong><span>Der Angriff war stark. Noch ${missing} Prozentpunkte Lernfortschritt bis zum Durchbruch.</span>`;
     }
     persistOnly();
-  },t2);
+  },timing.result);
+
   setTimeout(()=>{
     $('#battleFullscreenBtn').disabled=false;
+    stage.classList.remove('battle-sequence','is-impact');
     const left=battleTickets(),next=nextFortress();$('#battleTicketPill').textContent=`${left} ${left===1?'Angriff':'Angriffe'}`;$('#battleStrength').textContent=armyStrength();$('#battleFortressName').textContent=next?`${next.name} · ${next.subtitle}`:'Jahresfeldzug gewonnen';$('#battleFortressProgress').textContent=next?`${subjectProgress().pct}% / ${next.req}%`:'100%';
-    button.disabled=!next||left<1;button.textContent=!next?'Kampagne gewonnen':left?`${battleAttackMeta(battleAttackMode).short}: Nächsten Angriff`:'Nach dem Lernen verfügbar';renderBattlefield();renderBattleAttackChoices(subjectProgress().pct);
-  },t3);
+    button.disabled=!next||left<1;button.textContent=!next?'Kampagne gewonnen':left?`${battleAttackMeta(battleAttackMode).short}: Nächsten Angriff`:'Nach dem Lernen verfügbar';
+    if($('#battleActionTitle'))$('#battleActionTitle').textContent=!next?'Kampagne gewonnen':left?'Noch ein Angriff bereit':'Nächster Angriff gesperrt';
+    if($('#battleActionHint'))$('#battleActionHint').textContent=!next?'Alle Festungen dieses Schuljahres sind bezwungen.':left?'Du hast noch einen verdienten Angriff.':'Schließe eine weitere Lerneinheit ab.';
+    renderBattlefield();renderBattleAttackChoices(subjectProgress().pct);
+  },timing.ready);
 }
 function renderAll(){
   const l=learner(); if(!l) return; ensureActiveSubject();applyPreferences();
