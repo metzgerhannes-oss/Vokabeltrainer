@@ -58,8 +58,7 @@
             <p id="todayEstimate" class="muted-line"></p>
           </div>
           <div class="today-actions">
-            <button id="quickLearnHeroBtn" class="primary today-cta">Tagesziel starten</button>
-            <button id="quickCardsBtn" class="secondary">▥ Karteikarten</button>
+            <button id="quickLearnHeroBtn" class="primary today-cta">Heute lernen</button>
             <button id="todayTestBtn" class="ghost hidden">Testdatum setzen</button>
           </div>
         </article>
@@ -80,24 +79,30 @@
           </div>
         </article>
 
-        <details id="practiceDisclosure" class="home-disclosure child-practice-disclosure">
-          <summary>
-            <span><strong>Mehr üben</strong><small>Freiwillig · zählt nicht zum Tagesziel</small></span>
-            <span class="disclosure-chevron" aria-hidden="true">›</span>
-          </summary>
-          <div class="home-disclosure-body">
-            <section id="optionalLearningCard" class="card">
-              <div class="row spread align-center">
-                <div>
-                  <div class="eyebrow">Optional</div>
-                  <h2>Weitere Lernarten</h2>
-                </div>
-                <span id="lrsBadge" class="pill hidden">LRS aktiv</span>
-              </div>
-              <div id="recommendations" class="recommend-grid"></div>
-            </section>
+      </section>
+
+      <section id="practiceView" class="view">
+        <div class="practice-hub">
+          <article class="card practice-hero">
+            <div class="eyebrow">Üben</div>
+            <h2>Was möchtest du üben?</h2>
+            <p class="muted-line">Freiwillig außerhalb des Tagesziels. Nur eigenständiger Abruf kann den fachlichen Lernstand erhöhen.</p>
+          </article>
+          <div class="practice-primary-grid" aria-label="Übungswege">
+            <button id="practiceCardsBtn" class="practice-path" type="button"><span aria-hidden="true">▥</span><strong>Karteikarten</strong><small>Schriftlich · 5 Boxen</small></button>
+            <button id="practiceWeakBtn" class="practice-path" type="button"><span aria-hidden="true">◎</span><strong>Unsichere Wörter</strong><small>Gezielt festigen</small></button>
+            <button id="practiceAllBtn" class="practice-path" type="button"><span aria-hidden="true">∞</span><strong>Alle Vokabeln</strong><small>Einen Bereich komplett üben</small></button>
+            <button id="practiceSpecialBtn" class="practice-path" type="button" aria-expanded="false"><span aria-hidden="true">✦</span><strong>Spezialtraining</strong><small>Hören · Schreiben · Kontext</small></button>
           </div>
-        </details>
+          <section id="optionalLearningCard" class="card practice-special-card hidden">
+            <div class="row spread align-center wrap">
+              <div><div class="eyebrow">Spezialtraining</div><h2>Gezielte Hilfen</h2></div>
+              <span id="lrsBadge" class="pill hidden">LRS aktiv</span>
+            </div>
+            <p class="muted-line">Diese Übungen unterstützen. Erkennen, Hören, Wortbausteine, Wortblitz, Vokabeldusche und Abschreiben machen eine Vokabel allein nicht „sicher“.</p>
+            <div id="recommendations" class="recommend-grid"></div>
+          </section>
+        </div>
       </section>
 
       <section id="childProgressView" class="view">
@@ -175,7 +180,7 @@
       <section id="armyView" class="view army-view" aria-labelledby="armyViewTitle">
         <div class="army-shell">
           <div class="army-toolbar">
-            <button id="armyBackBtn" class="army-ghost" type="button">← Erfolge</button>
+            <button id="armyBackBtn" class="army-ghost" type="button">← Fortschritt</button>
             <div class="army-toolbar-copy">
               <span id="armySubjectLabel" class="army-kicker">Englisch · Armee</span>
               <h2 id="armyViewTitle">Meine Armee</h2>
@@ -409,8 +414,9 @@
 
     <nav class="bottom-nav" aria-label="Navigation">
       <button data-view="homeView" class="nav-btn active" aria-current="page"><span aria-hidden="true">⌂</span>Heute</button>
-      <button data-action="quickLearn" class="nav-btn"><span aria-hidden="true">✦</span>Lernen</button>
-      <button data-view="childProgressView" class="nav-btn"><span aria-hidden="true">★</span>Erfolge</button>
+      <button data-view="practiceView" class="nav-btn"><span aria-hidden="true">✦</span>Üben</button>
+      <button data-view="childProgressView" class="nav-btn"><span aria-hidden="true">★</span>Fortschritt</button>
+      <button data-view="armyView" class="nav-btn"><span aria-hidden="true">⚔</span>Armee</button>
     </nav>
   </div>
 
