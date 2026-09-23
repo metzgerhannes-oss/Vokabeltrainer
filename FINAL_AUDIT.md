@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 23.09.2026 · App v0.18.31
+Stand: 23.09.2026 · App v0.18.32
 
 ## Ergebnis
 
@@ -53,6 +53,8 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 
 - die Schlacht besitzt eine eigene Ergebnisansicht; sie liest ausschließlich bereits feststehende Kampfdaten und zeigt bei Sieg nur reale Werte (+20 XP, Lernfortschritt, Armeestärke, nächstes Kampagnenziel)
 - die Ergebnisansicht schreibt keine Mastery- oder Lernwerte und verändert die bestehende Kampagnenlogik nicht
+- sichtbare Festungsschäden werden ausschließlich aus dem bereits gespeicherten Verhältnis `defense/maxDefense` abgeleitet; es gibt keinen separaten visuellen Spielfortschritt
+- leichte, mittlere und schwere Schadensstufen verändern Risse, Geröll, Ruß, Rauch und die illustrierte Festungs-Layer; die fachliche und kampagnenlogische Bewertung bleibt unverändert
 - die Trefferphase nutzt ausschließlich vorhandene UI-Elemente für größeren Impact-Burst, Torblitz, Staubwolke und Shockwave; bei `prefers-reduced-motion` werden diese Animationen deaktiviert
 - die vier Battle-Ebenen bewegen sich phasenabhängig mit dezentem Parallax/Kamerafokus; bei `prefers-reduced-motion` werden alle neuen Transform-Bewegungen deaktiviert
 - die Battle-Grafik wird zusätzlich in getrennte visuelle Ebenen für Hintergrund, Armee, Festung und Atmosphäre aufgeteilt; dies ist rein präsentational und verändert keinerlei Lern- oder Kampflogik
