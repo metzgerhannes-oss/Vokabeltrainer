@@ -34,34 +34,60 @@ function meaningCueHtml(w){const cue=senseCueText(w);return cue?`<div class="stu
 function allSenseTranslationTargets(w){const {v}=senseRecordForWord(w);return [...new Set([...(translationTargets(w)||[]),...(v?.senses||[]).flatMap(s=>[s.translation,...(s.translations||[])])].filter(Boolean))]}
 function practiceMeaningDirection(w){const ambiguity=ambiguousSenseWord(w)&&!meaningRecallHasCue(w);return {prompt:meaningPromptText(w),target:w.translation,targets:ambiguity?allSenseTranslationTargets(w):translationTargets(w),label:'Deutsch',ambiguity}}
 
+function adaptiveDaysSince(value){
+  if(!value)return null;
+  const key=String(value).slice(0,10),then=dayNumber(key),now=dayNumber(today());
+  return Number.isFinite(then)&&Number.isFinite(now)?Math.max(0,now-then):null;
+}
+function adaptiveProductiveMode(w,testCtx=null){
+  const fmt=testCtx?.testFormat||'target';
+  if(fmt==='dictation')return 'spelling';
+  if(fmt==='source')return meaningRecallHasCue(w)?'reverseRecall':'recall';
+  if(fmt==='mixed'&&meaningRecallHasCue(w))return (session?.index||0)%2?'reverseRecall':'recall';
+  return 'recall';
+}
 function chooseAdaptiveMode(w){
   const s={...defaultSkills(),...(w.skills||{})},lrs=!!learner().lrsMode,modes=new Set(w.modesSeen||[]),acc=recentActiveAccuracy(w),chunksOk=chunkEligibleWord(w);
-  if(acc!==null&&acc<.7){if(lrs&&s.listening<2)return 'listening';if(s.recognition<2)return 'recognition';if(chunksOk&&!modes.has('chunks'))return 'chunks';}
-  const testCtx=session?.isDaily?upcomingTestContext():null,fmt=testCtx?.testFormat||'target';
-  if(testCtx&&testCtx.days<=1&&(w.repetitions||0)>0){if(fmt==='source')return meaningRecallHasCue(w)?'reverseRecall':'recall';if(fmt==='dictation')return 'spelling';if(fmt==='mixed')return session.index%2&&meaningRecallHasCue(w)?'reverseRecall':'recall';}
-  if(lrs){
-    if(s.listening<1)return 'listening';
-    if(s.spelling<1&&chunksOk&&!modes.has('chunks'))return 'chunks';
-    if(s.retrieval<2)return 'recall';
-    if(s.spelling<2)return 'spelling';
-    if(w.example&&(w.errorProfile?.context||0)>0&&s.context<1)return 'context';
-    if(s.retrieval<3)return 'recall';
-    if(s.spelling<3)return 'spelling';
-    return w.example&&(w.errorProfile?.context||0)>0&&s.context<2?'context':(s.retrieval<=s.spelling?'recall':'spelling');
+  const testCtx=session?.isDaily?upcomingTestContext():null,scaffoldedNow=!!session?.scaffoldedWords?.[w.id];
+  const independent=Number(w.independentSuccesses)||0,spellingErrors=Number(w.errorProfile?.spelling)||0,contextErrors=Number(w.errorProfile?.context)||0;
+  const newWord=independent===0&&!(w.recentActiveResults||[]).length,lastGap=adaptiveDaysSince(w.lastActiveSuccessAt),dueGap=w.dueDate?Math.max(0,dayNumber(today())-dayNumber(w.dueDate)):0;
+  const productive=adaptiveProductiveMode(w,testCtx),basicKnown=s.retrieval>=1||independent>=1;
+
+  if(testCtx&&testCtx.days<=1&&(w.repetitions||0)>0)return productive;
+  if(scaffoldedNow)return productive;
+  if((w.repetitions||0)>0&&((lastGap!==null&&lastGap>=3)||dueGap>=1))return productive;
+
+  if(acc!==null&&acc<.7){
+    if(spellingErrors>0&&chunksOk&&!modes.has('chunks'))return 'chunks';
+    if(lrs&&!modes.has('listening'))return 'listening';
+    return 'recognition';
   }
-  if(s.recognition<1)return 'recognition';
+
+  if(newWord){
+    if(lrs&&!modes.has('listening'))return 'listening';
+    if(!modes.has('recognition'))return 'recognition';
+    return 'recall';
+  }
+
+  if(spellingErrors>0){
+    if(chunksOk&&!modes.has('chunks'))return 'chunks';
+    if(s.spelling<3)return 'spelling';
+  }
   if(s.retrieval<2)return 'recall';
+
+  if((!testCtx||['source','mixed'].includes(testCtx.testFormat||''))&&meaningRecallHasCue(w)&&!modes.has('reverseRecall')&&independent>=2)return 'reverseRecall';
+
   if(s.spelling<2)return 'spelling';
-  if(s.listening<1)return 'listening';
-  if(w.example&&s.context<1)return 'context';
+  if(basicKnown&&w.example&&(contextErrors>0||(s.context<1&&independent>=2)))return 'context';
   if(s.retrieval<3)return 'recall';
   if(s.spelling<3)return 'spelling';
-  return w.example&&(w.errorProfile?.context||0)>0&&s.context<2?'context':(s.retrieval<=s.spelling?'recall':'spelling');
+  if(basicKnown&&w.example&&contextErrors>0&&s.context<2)return 'context';
+  return s.retrieval<=s.spelling?'recall':'spelling';
 }
 function buildQueue(mode,setId=null,wordIds=null){
   const chosen=Array.isArray(wordIds)?wordIds.map(ref=>{if(ref&&typeof ref==='object')return ref.setLinkId?wordByLinkId(ref.setLinkId):wordById(ref.wordId||ref.progressId,setId||ref.setId||'');return wordById(ref,setId||'')}).filter(Boolean):null;
   const defaultPool=mode==='cards'?schoolYearVerifiedWords():schoolYearWords();let pool=chosen||(setId?setWords(setId):defaultPool);
-  if(mode==='chunks')pool=pool.filter(chunkEligibleWord);
+  if(mode==='chunks')pool=pool.filter(w=>chunkEligibleWord(w)&&(w.errorProfile?.spelling||0)>0);
   if(chosen)return ['allWords','weakWords'].includes(mode)?shuffle(pool):pool;
   if(mode==='allWords')return shuffle(pool.filter(Boolean));
   if(mode==='weakWords')return shuffle(pool.filter(w=>!isMastered(w)));
@@ -349,7 +375,7 @@ function renderChunks(w){
   if(!session.currentQuestion)setCurrentQuizQuestion(w,'spelling');
   const q=currentQuizQuestion(w,'spelling'),chunks=learningChunksFor(w,q.term);if(chunks.length<2){session.currentSubmode='spelling';return renderSpelling(w)}
   const shuffled=shuffle(chunks.map((x,i)=>({x,i,key:uid('c')}))),separator=/\s/.test(q.term)?' ':'';session.chunkBuilt=[];
-  $('#studyArea').innerHTML=`<div class="study-card"><div class="eyebrow">Multisensorisches Schreiben</div><button id="speakBtn" class="secondary">🔊 Anhören</button><div class="study-prompt compact-prompt">${esc(q.prompt)}</div><div class="study-sub">Baue das Wort aus sinnvollen Lernbausteinen. Bei ganzen Sätzen wird diese Übung nicht verwendet.</div><div id="assembled" class="assembled">&nbsp;</div><div class="word-chunks">${shuffled.map(c=>`<button class="chunk" data-chunk="${esc(c.x)}">${esc(c.x)}</button>`).join('')}</div><div class="row gap center-actions"><button id="chunkReset" class="ghost">Neu</button><button id="chunkCheck" class="primary">Prüfen</button></div>${cardExtras(w)}</div>`;
+  $('#studyArea').innerHTML=`<div class="study-card"><div class="eyebrow">Wortbausteine · Rechtschreibung</div><button id="speakBtn" class="secondary">🔊 Anhören</button><div class="study-prompt compact-prompt">${esc(q.prompt)}</div><div class="study-sub">Baue das Wort aus sinnvollen Lernbausteinen. Bei ganzen Sätzen wird diese Übung nicht verwendet.</div><div id="assembled" class="assembled">&nbsp;</div><div class="word-chunks">${shuffled.map(c=>`<button class="chunk" data-chunk="${esc(c.x)}">${esc(c.x)}</button>`).join('')}</div><div class="row gap center-actions"><button id="chunkReset" class="ghost">Neu</button><button id="chunkCheck" class="primary">Prüfen</button></div>${cardExtras(w)}</div>`;
   $('#speakBtn').onclick=()=>speak(q.term);$$('[data-chunk]').forEach(b=>b.onclick=()=>{if(b.classList.contains('used'))return;b.classList.add('used');session.chunkBuilt.push(b.dataset.chunk);$('#assembled').textContent=session.chunkBuilt.join(separator)});$('#chunkReset').onclick=()=>{session.chunkBuilt=[];$$('[data-chunk]').forEach(b=>b.classList.remove('used'));$('#assembled').innerHTML='&nbsp;'};$('#chunkCheck').onclick=()=>{session.hintUsed=true;session.scaffoldedWords[w.id]=true;gradeText(w,session.chunkBuilt.join(separator),q.targets,'spelling','spelling')};setTimeout(()=>speak(q.term),150);
 }
 
@@ -424,7 +450,7 @@ function scheduleSessionAdvance(targetSession,ok,w,delay){
 }
 function nextStudy(ok,w){
   if(!ok && w && !['flash','shower'].includes(session.mode))scheduleRetry(session,w);
-  if(ok&&w&&session.mode==='adaptive'&&['recognition','listening','chunks'].includes(session.currentSubmode))scheduleScaffoldFollowup(session,w);
+  if(ok&&w&&['adaptive','allWords','weakWords'].includes(session.mode)&&['recognition','listening','chunks'].includes(session.currentSubmode))scheduleScaffoldFollowup(session,w);
   session.index++;renderStudy();
 }
 function sessionResultTargets(target){
