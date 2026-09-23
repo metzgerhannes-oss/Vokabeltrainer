@@ -172,6 +172,11 @@
 
   function applyArmyArt(){
     const art=window.VTArmyArt;
+    const command=document.querySelector('.army-command');
+    if(state?.activeSubject!=='english'){
+      command?.classList.remove('art-ready');
+      return;
+    }
     if(!art?.ready)return;
     const hero=document.querySelector('[data-army-hero-art]');
     if(hero&&!hero.dataset.armyArtBound){
