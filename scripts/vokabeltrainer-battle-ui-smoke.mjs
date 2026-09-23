@@ -52,6 +52,56 @@ try{
   assert(await page.locator('#battleStage [data-battle-layer="army"]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'army artwork layer loads');
   assert(await page.locator('#battleStage [data-battle-layer="fortress"]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'fortress artwork layer loads');
 
+  const originalFortressState=await page.evaluate(()=>{
+    const f=currentTestFortress();
+    return {defense:f.defense,maxDefense:f.maxDefense,capturedAt:f.capturedAt};
+  });
+
+  async function setDamageRatio(ratio){
+    await page.evaluate(r=>{
+      const f=currentTestFortress();
+      f.capturedAt='';
+      f.defense=Math.max(0,Math.round(f.maxDefense*r));
+      renderBattleView();
+    },ratio);
+    await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
+    await page.waitForTimeout(80);
+    return page.evaluate(()=>({
+      tier:document.querySelector('#battleStage')?.dataset.damage,
+      percent:Number(document.querySelector('#battleStage')?.dataset.damagePercent||0),
+      c1:Number(getComputedStyle(document.querySelector('#battleStage .c1')).opacity),
+      c3:Number(getComputedStyle(document.querySelector('#battleStage .c3')).opacity),
+      c5:Number(getComputedStyle(document.querySelector('#battleStage .c5')).opacity),
+      rubble:Number(getComputedStyle(document.querySelector('#battleStage .battle-rubble')).opacity),
+      artFilter:getComputedStyle(document.querySelector('#battleStage [data-battle-layer="fortress"]')).filter,
+      smoke:Number(getComputedStyle(document.querySelector('#battleStage [data-battle-layer="atmosphere"]'),'::after').opacity)
+    }));
+  }
+
+  const damageLow=await setDamageRatio(.75);
+  assert(damageLow.tier==='low'&&damageLow.percent>=20&&damageLow.percent<33,'light siege damage is derived from stored fortress defense');
+  assert(damageLow.c1>.3&&damageLow.c5===0,'light damage shows only early cracks');
+
+  const damageMid=await setDamageRatio(.5);
+  assert(damageMid.tier==='mid'&&damageMid.percent>=45&&damageMid.percent<66,'medium siege damage is derived from stored fortress defense');
+  assert(damageMid.c3>.5&&damageMid.rubble>.4,'medium damage adds deeper cracks and rubble');
+  assert(damageMid.smoke>.2,'medium damage becomes visible on the illustrated fortress atmosphere');
+
+  const damageHigh=await setDamageRatio(.2);
+  assert(damageHigh.tier==='high'&&damageHigh.percent>=66,'heavy siege damage is derived from stored fortress defense');
+  assert(damageHigh.c5>.8&&damageHigh.rubble>.8,'heavy damage exposes all cracks and substantial rubble');
+  assert(damageHigh.smoke>damageMid.smoke,'heavy damage increases persistent smoke');
+  assert(damageHigh.artFilter!==damageLow.artFilter,'illustrated fortress visibly degrades with siege progress');
+
+  await page.evaluate(snapshot=>{
+    const f=currentTestFortress();
+    f.defense=snapshot.defense;
+    f.maxDefense=snapshot.maxDefense;
+    f.capturedAt=snapshot.capturedAt;
+    renderBattleView();
+  },originalFortressState);
+  await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
+
   const reducedTransforms=await page.evaluate(()=>({
     stack:getComputedStyle(document.querySelector('#battleStage [data-battle-art-stack]')).transform,
     army:getComputedStyle(document.querySelector('#battleStage [data-battle-layer="army"]')).transform,
