@@ -4,7 +4,7 @@
   const CONFIG_KEY='vokabeltrainer_family_sync_v1';
   const SUPABASE_URL='https://ilfblkqxbldkzmqczbgo.supabase.co';
   const SUPABASE_KEY='sb_publishable_zkzIhxq7Xby65AbNnAkiyQ_0ZfAAU4V';
-  const PROFILE_PROGRESS_FIELDS=['xp','streakDays','milestones','fortressWins','fortressWinsByYear','battleTickets','campaignLog','dailyPlans'];
+  const PROFILE_PROGRESS_FIELDS=['xp','streakDays','milestones','fortressWins','fortressWinsByYear','battleTickets','battleDays','testFortresses','campaignLog','dailyPlans'];
   const PROFILE_SETUP_FIELDS=['id','name','gradeLevel','activeSubjects','lrsMode','fontSize','letterSpacing','flashSpeed','testSeries','gradeScales','createdAt'];
   const runtime={applying:false,busy:false,timer:null,poll:null,snapshots:new Map()};
 
