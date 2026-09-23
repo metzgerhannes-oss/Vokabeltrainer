@@ -44,6 +44,7 @@
   opacity:0;filter:saturate(.9) contrast(1.04) brightness(.88);transition:opacity .3s ease;
 }
 .army-command.art-ready .army-camp-art{opacity:1}
+.army-command.art-ready .army-camp-banner{opacity:0}
 .army-camp-sky{
   position:absolute;inset:0;z-index:2;pointer-events:none;background:
     radial-gradient(circle at 65% 27%,rgba(248,211,139,.18),transparent 8rem),
@@ -140,7 +141,7 @@
 }
 @media(max-width:620px){
   .army-shell{padding:10px 10px 95px}.army-toolbar{grid-template-columns:auto 1fr;gap:10px}.army-toolbar .army-battle-btn{grid-column:1/-1;width:100%}
-  .army-toolbar-copy p{display:none}.army-command{min-height:340px;border-radius:14px}.army-camp-copy{left:7%;top:9%;max-width:68%}.army-camp-copy strong{font-size:2.3rem}
+  .army-toolbar-copy p{display:none}.army-command{min-height:340px;border-radius:14px}.army-camp-art{object-position:28% center}.army-camp-copy{left:7%;top:9%;max-width:68%}.army-camp-copy strong{font-size:2.3rem}
   .army-camp-strength{right:4%;top:45%;min-width:155px;padding:11px}.army-camp-strength>strong{font-size:1.55rem}.army-camp-campaign{left:4%;right:4%;bottom:6%;justify-content:center;overflow:hidden}
   .army-camp-banner{opacity:.45}.army-command-footer{margin:250px 9px 9px;grid-template-columns:1fr}.army-command-footer button{width:100%}
   .army-summary{margin-top:10px}.army-summary>div{padding:11px}.army-bonus-grid{grid-template-columns:1fr 1fr;gap:8px}.army-bonus{padding:10px;grid-template-columns:auto 1fr}.army-bonus-icon{width:36px;height:36px}
