@@ -30,6 +30,8 @@ assert(html.includes('<strong>Ohne Test lernen</strong>'),'Elternbereich benennt
 assert(ui.includes("let appRole='child'"),'App startet im Kind-Modus');
 assert(ui.includes("PARENT_VIEW_IDS.has(id)&&!isParentMode()"),'Admin-Views sind im Kind-Modus gesperrt');
 assert(ui.includes('function openParentGate('),'Elternbereich braucht bewussten Rollenwechsel');
+assert(ui.includes('function isPairedChildDevice()'),'gekoppeltes Kindergerät hat eine eigene Rollensperre');
+assert(ui.includes("if(isPairedChildDevice()){toast('Der Elternbereich ist auf diesem Kindergerät gesperrt."),'gekoppeltes Kindergerät kann Elternbereich nicht lokal öffnen');
 assert(ui.includes('function openProfileSwitcher()'),'Profilwechsler hat einen eigenen Dialog');
 assert(ui.includes("$('#profileBtn').onclick=openProfileSwitcher"),'Profilname in der Kopfleiste öffnet den Profilwechsler');
 assert(ui.includes('state.activeLearnerId=next.id'),'Profilwechsel setzt das aktive Lernprofil');
