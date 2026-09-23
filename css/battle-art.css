@@ -6,9 +6,9 @@
   height:100%;
   max-width:none;
   object-fit:cover;
-  object-position:center 56%;
+  object-position:center center;
   opacity:0;
-  filter:saturate(.9) contrast(1.05) brightness(.78);
+  filter:saturate(.94) contrast(1.04) brightness(.84);
   transition:opacity .28s ease;
   pointer-events:none;
 }
@@ -42,7 +42,7 @@
   position:absolute;
 }
 @media(max-width:720px){
-  .battle-scene-art{object-position:42% center}
+  .battle-scene-art{object-position:48% center}
 }
 @media(prefers-reduced-motion:reduce){
   .battle-scene-art,
