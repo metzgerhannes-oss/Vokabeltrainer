@@ -82,12 +82,41 @@ try{
   assert(await page.evaluate(()=>battleTickets('english'))===0,'optional cards session cannot unlock the daily battle');
   assert((await page.evaluate(()=>dailyPlanStatus(buildDailyPlan()).done))===0,'optional cards do not complete the fixed daily goal');
 
+  assert(await page.locator('.session-result').count()===3,'result review lists every evaluated card attempt including retry');
+  assert((await page.locator('.session-result').first().textContent())?.includes('cant'),'result review shows the child answer');
+  assert((await page.locator('.session-result').first().textContent())?.includes("can't"),'result review shows the accepted target answer');
+  assert((await page.locator('.session-result').first().textContent())?.includes('Bewertung'),'result review explains why an answer was marked wrong');
+  assert(await page.locator('.session-result').first().getAttribute('data-session-result')==='review','wrong or orthography-sensitive answers are marked for review');
+  assert((await page.locator('.session-result').first().locator('.session-box-move').textContent())?.includes('Box 1'),'result review shows Leitner box before and after');
+  assert((await page.locator('#repeatErrorsBtn').textContent())?.includes('(1)'),'error repeat action deduplicates the failed vocabulary');
+  assert((await page.locator('#repeatAllBtn').textContent())?.includes('(2)'),'repeat-all action deduplicates the whole session vocabulary');
+
+  await page.click('#repeatErrorsBtn');
+  await page.waitForSelector('#answerField');
+  assert(await page.evaluate(()=>session?.queue?.length)===1,'error repeat starts a focused one-word retry session');
+  assert(await page.evaluate(()=>session?.isDaily===false),'error repeat stays voluntary and cannot create another daily battle action');
+  assert((await page.locator('.study-prompt').textContent())?.includes('nicht können'),'error repeat opens the failed vocabulary again');
+
   await page.evaluate(async()=>{await persistState()});
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>state!==null&&typeof firstContactStatus==='function');
   assert(await page.evaluate(()=>schoolYearWords('english').length)===2,'learning availability survives persistence');
   assert((await page.evaluate(()=>firstContactStatus('cards_set').pending))===2,'optional copy status survives independently');
   assert((await page.evaluate(()=>firstContactStatus('cards_set').proved))===0,'cards create no legacy proof state');
+
+  await page.evaluate(()=>{
+    const word=schoolYearWords('english').find(w=>w.term==="can't");
+    startSession('recall','cards_set',[word.id],false);
+  });
+  await page.waitForSelector('#answerField');
+  await page.fill('#answerField',"can't");
+  await page.click('#answerBtn');
+  await page.waitForSelector('#continueStudyBtn');
+  await page.click('#continueStudyBtn');
+  await page.waitForSelector('.session-finish-card');
+  assert(await page.locator('.session-result').count()===1,'normal written recall also records its evaluated attempt');
+  assert((await page.locator('.session-result').first().textContent())?.includes("can't"),'normal written recall shows the entered and accepted answer');
+  assert(await page.locator('.session-result').first().locator('.session-box-move').count()===1,'normal written recall also shows the card-box transition');
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer written Leitner cards UI smoke: passed');
