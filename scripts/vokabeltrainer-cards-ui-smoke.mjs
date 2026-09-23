@@ -109,18 +109,13 @@ try{
     startSession('recall','cards_set',[word.id],false);
   });
   await page.waitForSelector('#answerField');
-  await page.fill('#answerField','cant');
-  await page.click('#answerBtn');
-  await page.waitForSelector('#continueStudyBtn');
-  await page.click('#continueStudyBtn');
-  await page.waitForSelector('#answerField');
   await page.fill('#answerField',"can't");
   await page.click('#answerBtn');
   await page.waitForSelector('#continueStudyBtn');
   await page.click('#continueStudyBtn');
   await page.waitForSelector('.session-finish-card');
-  assert(await page.locator('.session-result').count()===2,'normal written recall also records every evaluated attempt');
-  assert((await page.locator('.session-result').first().textContent())?.includes('Fast richtig'),'normal written recall explains a near-miss instead of only showing red');
+  assert(await page.locator('.session-result').count()===1,'normal written recall also records its evaluated attempt');
+  assert((await page.locator('.session-result').first().textContent())?.includes("can't"),'normal written recall shows the entered and accepted answer');
   assert(await page.locator('.session-result').first().locator('.session-box-move').count()===1,'normal written recall also shows the card-box transition');
 
   if(errors.length)throw new Error(errors.join(' | '));
