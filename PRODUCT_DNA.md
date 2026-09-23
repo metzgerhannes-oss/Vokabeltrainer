@@ -1,6 +1,6 @@
 # Vokabeltrainer – Product DNA
 
-Stand: 21.09.2026
+Stand: 23.09.2026
 
 Diese Prinzipien sind die verbindliche Leitlinie für Produktentscheidungen vor und nach v1.
 Neue Features werden gegen diese DNA geprüft. Wenn ein Wunsch davon abweicht, soll der
@@ -105,15 +105,26 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    Während des Abrufs: möglichst wenig Ablenkung.
    Abenteuer, Legion/Kampagne, XP und Belohnungen: vor oder nach der Lernsequenz.
    Gamification darf Aufmerksamkeit nicht vom Lerninhalt wegziehen.
-   Der Schlachtmodus ist ein eigener Erlebnisbereich und wird erst durch eine abgeschlossene
-   Lerneinheit freigeschaltet. Ein vollständig abgeschlossener freiwilliger Abschreibblock zählt
-   dabei ebenfalls als Lerneinheit. Kampfanimationen laufen niemals während einer Abfrage und
-   verändern keinen fachlichen Mastery-Wert.
-   Angriffsarten, Einheiten, Festungen, Jahreszeiten, Rang und Ausrüstung sind visuelle
-   Motivation. Keine dieser Darstellungen darf die fachliche Bewertung oder Siegbedingung
-   verfälschen; Festungen fallen ausschließlich an den definierten Lernfortschrittsschwellen.
-   Bosskämpfe, Spezialangriffe, Story und Freundschaftsduelle folgen derselben Regel:
-   Sie visualisieren vorhandenen Lernfortschritt und dürfen keine fachliche Leistung
+   Der Schlachtmodus ist ein eigener Erlebnisbereich außerhalb der Abfrage. Jede konkret
+   geplante Vokabelprüfung erzeugt genau eine Testfestung; die Festung steht für diesen
+   Testumfang und diesen Termin. Ihre Verteidigung wird beim Entstehen aus den verbleibenden
+   sinnvollen Lerntagen berechnet (100 Basispunkte je geplantem Angriffstag, maximal 14 Tage).
+   Das vollständig abgeschlossene Tagesziel schaltet pro Fach und Kalendertag höchstens eine
+   Aktion frei. Freiwillige Einheiten wie Abschreiben, Karteikarten, „Alle Vokabeln“,
+   „Unsichere üben“, Wortblitz oder Vokabeldusche zählen nicht zum Tagesziel und erzeugen
+   keine zusätzliche Kampfaktion.
+   Jeder Tagesangriff verursacht garantierten Basisschaden; die aktuelle Testbereitschaft
+   liefert einen begrenzten Stärkebonus. So lohnt sich jeder Lerntag, während verteiltes,
+   gefestigtes Lernen sichtbar stärkere Angriffe erzeugt. Angriffsarten ändern nur die
+   Darstellung und niemals die fachliche Bewertung.
+   Die Testfestung bleibt jederzeit anschaubar; nach verbrauchter Tagesaktion ist nur der
+   Angriff gesperrt. Wird die Festung vor dem Test erobert, entsteht keine neue Festung:
+   weitere Tagesziele schalten stattdessen einen Sicherungseinsatz für dieselbe Festung frei.
+   Ein verpasster Tag verursacht keine Strafe und Angriffe werden nicht angespart.
+   Rang, Einheiten und Ausrüstung bilden weiterhin den langfristigen Schuljahresfortschritt
+   ab. Das reale Testergebnis kann die eroberte Festung später als Auszeichnung ergänzen,
+   verändert aber weder rückwirkend die Eroberung noch den Mastery-Wert. Kampfanimationen,
+   Bossdarstellung, Story und Freundschaftsduelle dürfen fachliche Leistung niemals
    vortäuschen, ersetzen oder zufällig verändern.
 
 10. **Globale Wissensbasis, getrennte Bedeutungen**
