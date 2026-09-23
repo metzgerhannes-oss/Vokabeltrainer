@@ -38,7 +38,7 @@ const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
 assert(new Set(ids).size===ids.length,'static HTML IDs are unique');
 assert(html.includes('class="skip-link" href="#mainContent"')&&html.includes('id="mainContent" tabindex="-1"'),'skip link and focusable main landmark exist');
 const primaryNav=html.match(/<nav class="bottom-nav"[\s\S]*?<\/nav>/)?.[0]||'';
-assert((primaryNav.match(/<span aria-hidden="true">/g)||[]).length===3,'decorative primary-navigation glyphs are hidden from assistive tech');
+assert((primaryNav.match(/<span aria-hidden="true">/g)||[]).length===4,'decorative primary-navigation glyphs are hidden from assistive tech');
 
 const answerFields=[...learning.matchAll(/<input id="answerField"[^>]*>/g)].map(m=>m[0]);
 assert(answerFields.length>=5&&answerFields.every(x=>/aria-label="[^"]+"/.test(x)),'all dynamic answer fields have accessible names');
