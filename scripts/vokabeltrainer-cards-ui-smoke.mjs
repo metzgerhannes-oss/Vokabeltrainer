@@ -82,6 +82,21 @@ try{
   assert(await page.evaluate(()=>battleTickets('english'))===0,'optional cards session cannot unlock the daily battle');
   assert((await page.evaluate(()=>dailyPlanStatus(buildDailyPlan()).done))===0,'optional cards do not complete the fixed daily goal');
 
+  assert(await page.locator('.session-result').count()===3,'result review lists every evaluated card attempt including retry');
+  assert((await page.locator('.session-result').first().textContent())?.includes('cant'),'result review shows the child answer');
+  assert((await page.locator('.session-result').first().textContent())?.includes("can't"),'result review shows the accepted target answer');
+  assert((await page.locator('.session-result').first().textContent())?.includes('Bewertung'),'result review explains why an answer was marked wrong');
+  assert(await page.locator('.session-result').first().getAttribute('data-session-result')==='review','wrong or orthography-sensitive answers are marked for review');
+  assert((await page.locator('.session-result').first().locator('.session-box-move').textContent())?.includes('Box 1'),'result review shows Leitner box before and after');
+  assert((await page.locator('#repeatErrorsBtn').textContent())?.includes('(1)'),'error repeat action deduplicates the failed vocabulary');
+  assert((await page.locator('#repeatAllBtn').textContent())?.includes('(2)'),'repeat-all action deduplicates the whole session vocabulary');
+
+  await page.click('#repeatErrorsBtn');
+  await page.waitForSelector('#answerField');
+  assert(await page.evaluate(()=>session?.queue?.length)===1,'error repeat starts a focused one-word retry session');
+  assert(await page.evaluate(()=>session?.isDaily===false),'error repeat stays voluntary and cannot create another daily battle action');
+  assert((await page.locator('.study-prompt').textContent())?.includes('nicht können'),'error repeat opens the failed vocabulary again');
+
   await page.evaluate(async()=>{await persistState()});
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>state!==null&&typeof firstContactStatus==='function');
