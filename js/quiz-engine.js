@@ -91,7 +91,7 @@ function makeQuizQuestion(w,mode,opts={}){
     base.targets=reverse?terms:translations;
     base.answerSide=reverse?'term':'translation';
   }else if(actualMode==='spelling'){
-    base.prompt=base.translation;base.targets=terms;base.answerSide='term';base.strictOrthography=true;base.trackOrthography=true;base.audio=true;
+    base.prompt='🔊 Diktat';base.targets=terms;base.answerSide='term';base.strictOrthography=true;base.trackOrthography=true;base.audio=true;
   }else if(actualMode==='context'){
     base.prompt=quizContextPrompt(w);base.targets=terms;base.answerSide='term';base.trackOrthography=true;
   }else{
