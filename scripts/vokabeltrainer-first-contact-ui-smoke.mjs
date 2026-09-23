@@ -40,9 +40,11 @@ try{
   await page.click('#practiceDisclosure summary');
   await page.waitForFunction(()=>document.querySelector('#practiceDisclosure')?.open===true);
 
+  await page.locator('#practiceDisclosure').evaluate(el=>{el.open=true});
   const copyButton=page.locator('#recommendations [data-mode="copy"]');
   assert(await copyButton.count()===1,'copying is offered as its own optional learning unit');
   assert((await copyButton.textContent())?.includes('freiwillig'),'copying is explicitly labelled optional');
+  assert(await copyButton.isVisible(),'optional copy unit is visible after opening Mehr üben');
   await copyButton.click();
   await page.waitForSelector('#firstContactCopiedBtn');
   assert((await page.locator('#modePill').textContent())==='Abschreiben','optional unit has a clear copy label');
