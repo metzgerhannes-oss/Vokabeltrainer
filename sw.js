@@ -1,7 +1,7 @@
 'use strict';
 
 const APP_VERSION='0.18.36';
-const RESOURCE_REVISION='2';
+const RESOURCE_REVISION='1';
 const SHELL_CACHE=`vokabeltrainer-shell-v${APP_VERSION}`;
 const RESOURCE_CACHE=`vokabeltrainer-resources-v${RESOURCE_REVISION}`;
 const SHELL_CACHE_PREFIX='vokabeltrainer-shell-';
