@@ -27,10 +27,12 @@ try{
   assert(!(await page.locator('#quickCardsBtn').isDisabled()),'cards quick action is enabled while vocabulary is still new');
   await page.click('#quickCardsBtn');
   await page.waitForSelector('#answerField');
-  assert((await page.locator('#modePill').textContent())?.includes('Karteikarten · Beweisen'),'cards mode is available before first-contact');
-  assert(await page.locator('.proof-notice').count()===1,'new vocabulary explains the proof path');
-  assert((await page.locator('#answerBtn').textContent())==='Beweisen','new card uses the proof action');
-  assert(await page.locator('.leitner-box').count()===5,'five Leitner boxes are visible');
+  assert((await page.locator('#modePill').textContent())==='Karteikarten','cards mode keeps only the compact mode label');
+  assert(await page.locator('.proof-notice').count()===0,'proof explanation stays out of the retrieval moment');
+  assert(await page.locator('.leitner-box').count()===0,'Leitner diagnostics stay out of the retrieval moment');
+  assert((await page.locator('#answerBtn').textContent())==='Prüfen','card uses one neutral submit action');
+  assert((await page.locator('#answerField').getAttribute('placeholder'))==='Vokabel eingeben','input is the visible action focus');
+  assert(await page.locator('#answerField').isFocused(),'answer field receives focus immediately');
 
   // First word: fail once. The later retry must no longer count as proof,
   // because the correct answer was already shown in the feedback.
@@ -57,8 +59,8 @@ try{
   // Retry of the first word: correct now, but no proof because feedback was seen before.
   await page.waitForSelector('#answerField');
   assert((await page.locator('.study-prompt').textContent())?.includes('nicht können'),'failed word returns for retry');
-  assert((await page.locator('#answerBtn').textContent())==='Prüfen','retry is no longer presented as a prior-knowledge proof');
-  assert((await page.locator('#studyArea').textContent())?.includes('ersetzt für dieses Wort aber nicht mehr den Kennenlernblock'),'retry explains that first-contact is still required');
+  assert((await page.locator('#answerBtn').textContent())==='Prüfen','retry keeps the same neutral submit action');
+  assert(!(await page.locator('#studyArea').textContent())?.includes('Kennenlernblock'),'retry keeps learning-system explanations out of the retrieval moment');
   await page.fill('#answerField',"can't");
   await page.click('#answerBtn');
   await page.waitForSelector('#continueStudyBtn');
