@@ -10,7 +10,37 @@ Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in diese
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
 
-## v0.18.39 – transparente Ergebnisübersicht
+## v0.18.39 – Deep-Audit-Härtung
+
+- gekoppelte Kindergeräte können den lokalen Eltern-/Administrationsmodus nicht mehr öffnen
+- der Schutz liegt zusätzlich zur serverseitigen Sync-Rolle direkt in der Oberfläche und Navigation
+- Bibliotheks-Audio verwendet mindestens 44 × 44 CSS-Pixel große Touchziele
+- die installierte PWA unterstützt Portrait und Landscape
+- neuer WebKit-Deep-UI-Test prüft 320, 375, 390, 820 und 1440 px auf Overflow und Bediengrößen
+- zusätzlicher DOM-Sicherheits-Smoke prüft dynamische Nutzereingaben in Profil, Lernset, OCR-Paarprüfung und Vokabelbearbeitung
+
+## v0.18.38 – Audio als Grundfunktion
+
+- Aussprache ist in Bibliothek, Ergebnisübersicht, Erstkontakt, Handschriftvergleich, sicheren Erkennungsaufgaben und Kontext verfügbar
+- der fokussierte Lernmodus nutzt die Einstellung zum automatischen Vorlesen nach Fehlern
+- Deutsch → Fremdsprache bleibt vor der Antwort ohne Zielwort-Audio; die Lösung wird nicht verraten
+- Ergebnisübersichten behalten die Fremdsprachen-Vokabel als expliziten Audio-Anker
+
+## v0.18.37 – klare Kinderbereiche
+
+- Hauptnavigation: **Heute · Üben · Fortschritt · Armee**
+- „Heute“ konzentriert sich auf eine dominante Tagesaktion
+- „Üben“ bietet genau vier Einstiege: Karteikarten, Unsichere Wörter, Alle Vokabeln, Spezialtraining
+- Hören, Rechtschreibung, Kontext, Handschrift, Abschreiben, Wortblitz, Vokabeldusche und Wortbausteine sind unter Spezialtraining gebündelt
+
+## v0.18.36 – evidenzbasierter Lernkern
+
+- Mastery basiert auf produktivem Abruf; Erkennen, Hören und Wortbausteine verändern Mastery, Leitner-Box und Spacing nicht
+- Fehler werden mit späterem Wiederabruf statt unmittelbarer Massierung beantwortet
+- Audio wurde lösungssicher in den Lernkern integriert
+- eigener Evidence-Core-CI-Guard schützt diese Regeln
+
+## v0.18.35 – transparente Ergebnisübersicht
 
 - nach jeder bewerteten Lerneinheit bleibt eine vollständige Ergebnisübersicht sichtbar
 - jede Abfrage zeigt **Frage**, **eigene Antwort**, **richtige/akzeptierte Antwort** und den konkreten Bewertungsstatus
