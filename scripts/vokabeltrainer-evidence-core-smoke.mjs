@@ -2,7 +2,7 @@ import fs from 'node:fs';
 const read=p=>fs.readFileSync(p,'utf8');
 const core=read('js/core.js'),model=read('js/model.js'),quiz=read('js/quiz-engine.js'),learning=read('js/learning.js'),focus=read('js/focus-ui.js'),libraryUi=read('js/library-ui.js'),index=read('index.html'),storage=read('js/storage.js');
 const ok=(v,m)=>{if(!v)throw new Error(m)};
-ok(core.includes("const VERSION = '0.18.38';"),'version missing');
+ok(core.includes("const VERSION = '0.18.39';"),'version missing');
 ok(index.includes('id="autoSpeakCorrection"'),'audio setting missing');
 ok(storage.includes('autoSpeakCorrection:l.autoSpeakCorrection!==false'),'audio setting migration missing');
 const mastery=model.slice(model.indexOf('function masteryScore'),model.indexOf('function meetsMasteryCriteria'));
@@ -21,4 +21,8 @@ ok(learning.includes("session-result-vocab"),'result overview vocabulary audio m
 ok(focus.includes('maybeSpeakCorrection(w)'),'focused learning must apply automatic correction audio');
 ok(focus.includes('focused-answer-audio'),'focused feedback must expose on-demand pronunciation');
 ok(libraryUi.includes('library-audio-btn')&&libraryUi.includes('data-speak'),'library pronunciation controls missing');
+ok(learning.includes('function adaptiveProductiveMode')&&learning.includes('scaffoldedNow'),'adaptive scheduler must separate scaffolding from productive recall');
+ok(learning.includes("['adaptive','allWords','weakWords'].includes(session.mode)"),'support practice must schedule a later productive follow-up');
+ok(learning.includes("mode==='chunks')pool=pool.filter(w=>chunkEligibleWord(w)&&(w.errorProfile?.spelling||0)>0)"),'word chunks must be targeted to spelling-error words');
+ok(!learning.includes('Multisensorisches Schreiben'),'unsupported multisensory label must not drive the exercise');
 console.log('Evidence core guard: ok');

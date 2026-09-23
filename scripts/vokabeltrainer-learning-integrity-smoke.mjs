@@ -174,6 +174,29 @@ const passed=vm.runInContext(`
   assert(buildQueue('adaptive',allSet.id).length<=10,'adaptive practice keeps its deliberately small session size');
   const allQueue=buildQueue('allWords',allSet.id);
   assert(allQueue.length===14&&new Set(allQueue.map(w=>w.setLinkId||w.id)).size===14,'all-vocabulary practice includes the complete selected set exactly once per pass');
+
+  const adaptiveWord=allQueue[0];
+  adaptiveWord.skills={...defaultSkills()};adaptiveWord.modesSeen=[];adaptiveWord.independentSuccesses=0;adaptiveWord.recentActiveResults=[];adaptiveWord.repetitions=0;adaptiveWord.lastActiveSuccessAt='';adaptiveWord.dueDate='';
+  session={mode:'adaptive',isDaily:false,index:0,scaffoldedWords:{},currentSubmode:null};
+  assert(chooseAdaptiveMode(adaptiveWord)==='recognition','a new word gets one light recognition scaffold before productive recall');
+  adaptiveWord.modesSeen=['recognition'];session.scaffoldedWords[adaptiveWord.id]=true;
+  assert(chooseAdaptiveMode(adaptiveWord)==='recall','a scaffolded word is followed by productive recall in the same session');
+
+  adaptiveWord.independentSuccesses=2;adaptiveWord.repetitions=5;adaptiveWord.recentActiveResults=[false,true,false];adaptiveWord.lastActiveSuccessAt=datePlusDays(-4)+'T12:00:00.000Z';adaptiveWord.dueDate=datePlusDays(-1);session.scaffoldedWords={};
+  assert(chooseAdaptiveMode(adaptiveWord)==='recall','an overdue word after a long gap is tested productively before more scaffolding');
+
+  const chunkLinked=attachVocabularyToSet(allSet.id,{term:'unhelpful',translation:'nicht hilfreich',source:'scheduler-smoke',verified:true});
+  rebuildWordIndexes();const chunkWord=chunkLinked.word;
+  chunkWord.skills={...defaultSkills(),retrieval:2,spelling:0};chunkWord.independentSuccesses=1;chunkWord.repetitions=2;chunkWord.recentActiveResults=[true];chunkWord.errorProfile.spelling=2;chunkWord.modesSeen=['recognition'];
+  session={mode:'adaptive',isDaily:false,index:0,scaffoldedWords:{},currentSubmode:null};
+  assert(chooseAdaptiveMode(chunkWord)==='chunks','word chunks are triggered by a real spelling error pattern');
+  const chunkQueue=buildQueue('chunks',allSet.id);
+  assert(chunkQueue.length===1&&chunkQueue[0].term==='unhelpful','manual word-chunk practice contains only spelling-error words');
+  session.scaffoldedWords[chunkWord.id]=true;
+  assert(chooseAdaptiveMode(chunkWord)==='recall','word-chunk scaffolding returns to productive recall instead of looping');
+
+  allSet.testDate=datePlusDays(1);allSet.testFormat='source';chunkWord.repetitions=3;session={mode:'adaptive',isDaily:true,index:1,scaffoldedWords:{},currentSubmode:null};
+  assert(chooseAdaptiveMode(chunkWord)==='reverseRecall','near-test practice follows a configured source-direction test format');
   return ok;
 })()
 `,context,{filename:'learning-integrity-runtime'});
