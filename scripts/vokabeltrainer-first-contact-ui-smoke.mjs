@@ -36,6 +36,10 @@ try{
   assert(await page.locator('body.learning-focus').count()===1,'daily learning starts directly');
   await page.evaluate(()=>{session=null;showView('homeView');renderAll()});
 
+  assert(await page.locator('#practiceDisclosure summary').isVisible(),'voluntary practice entry remains visible on mobile');
+  await page.click('#practiceDisclosure summary');
+  await page.waitForFunction(()=>document.querySelector('#practiceDisclosure')?.open===true);
+
   const copyButton=page.locator('#recommendations [data-mode="copy"]');
   assert(await copyButton.count()===1,'copying is offered as its own optional learning unit');
   assert((await copyButton.textContent())?.includes('freiwillig'),'copying is explicitly labelled optional');
