@@ -36,8 +36,15 @@ try{
   await page.waitForSelector('#battleView.active');
   await page.waitForFunction(()=>window.VTBattleArt?.ready===true);
   await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
-  assert(await page.locator('#battleStage [data-battle-scene-art]').count()===1,'battle stage receives one illustrated background layer');
-  assert(await page.locator('#battleStage [data-battle-scene-art]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'illustrated battle background loads');
+  assert(await page.locator('#battleStage [data-battle-art-stack]').count()===1,'battle stage receives one layered artwork stack');
+  assert(await page.locator('#battleStage [data-battle-layer]').count()===4,'battle artwork is split into background, army, fortress and atmosphere');
+  assert(await page.locator('#battleStage [data-battle-layer="background"]').count()===1,'background layer exists');
+  assert(await page.locator('#battleStage [data-battle-layer="army"]').count()===1,'army layer exists');
+  assert(await page.locator('#battleStage [data-battle-layer="fortress"]').count()===1,'fortress layer exists');
+  assert(await page.locator('#battleStage [data-battle-layer="atmosphere"]').count()===1,'atmosphere layer exists');
+  assert(await page.locator('#battleStage [data-battle-layer="background"]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'layered battle background loads');
+  assert(await page.locator('#battleStage [data-battle-layer="army"]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'army artwork layer loads');
+  assert(await page.locator('#battleStage [data-battle-layer="fortress"]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'fortress artwork layer loads');
   assert(await page.locator('#battleStage [data-battle-scene-art]').getAttribute('data-battle-asset')==='dedicated','battle image comes from dedicated battlefield asset');
   assert((await page.evaluate(()=>window.VTBattleArt?.source))==='dedicated-battlefield','dedicated battlefield loader is active');
   assert(await page.locator('#battleStage .battle-unit').count()>=6,'animated army contains multiple units');
