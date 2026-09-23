@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 23.09.2026 · App v0.18.23
+Stand: 23.09.2026 · App v0.18.24
 
 ## Ergebnis
 
@@ -51,6 +51,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 
 ### Schlachtmodus / Gamification
 
+- die englische Schlacht verwendet zusätzlich eine lokale illustrierte Hintergrundebene; CSS-Landschaft bleibt als Lade-/Offline-Fallback erhalten und die bestehende Kampfmechanik liegt unverändert darüber
 - die illustrierte englische Armee-Grafik wird ausschließlich aus lokalen, offline gecachten PWA-Ressourcen aufgebaut; keine externe Bildquelle und keine Lockerung der CSP
 - jede Einheit besitzt eine eigene Detailansicht mit fünfstufigem Aufwertungspfad; aktuelle Stufe, nächste sichtbare Verbesserung und exakte Lernbedingung werden transparent angezeigt
 - die Einheitendetailansicht ist rein lesend und verändert weder Mastery noch Lernfortschritt
