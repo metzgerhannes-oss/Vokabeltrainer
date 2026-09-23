@@ -217,7 +217,7 @@ function renderAll(){
   $('#fortressRequirement').textContent=!nf?'Kein Test geplant':secured?`Erobert · Test ${formatDateShort(nf.testDate)}`:`${nf.defense} Verteidigung · Test ${formatDateShort(nf.testDate)}`;
   $('#attackBtn').disabled=!nf;$('#attackBtn').textContent=!nf?'Keine Festung':tickets?(secured?'Sicherung bereit':'Angriff bereit'):'Zur Festung';
   $('#campaignMessage').className=`notice ${tickets?'good':'subtle'}`;$('#campaignMessage').textContent=!nf?'Für einen geplanten Test entsteht automatisch eine Festung.':tickets?(secured?'Dein heutiger Sicherungseinsatz ist bereit.':'Dein Tagesangriff ist bereit.'):secured?`Festung erobert. Bis zum Test ${formatDateShort(nf.testDate)} sichern.`:usedToday?`Heute angegriffen · noch ${nf.defense} Verteidigung.`:`Noch ${nf.defense} Verteidigung. Nach dem Tagesziel kannst du angreifen.`;
-  const hasSubjectWords=myWords().length>0; $('#campaignCard').classList.toggle('hidden',!hasSubjectWords); $('#optionalLearningCard').classList.toggle('hidden',!hasSubjectWords); renderCardboxOverview(); renderToday(); renderTestCheck(); renderBattlefield(); renderBattleView(); renderRecommendations(); renderSets(); renderDashboard(); renderLibrary(); renderProfiles();
+  const hasSubjectWords=myWords().length>0; $('#campaignCard').classList.toggle('hidden',!hasSubjectWords); if(!hasSubjectWords)$('#optionalLearningCard')?.classList.add('hidden'); renderCardboxOverview(); renderToday(); renderTestCheck(); renderBattlefield(); renderBattleView(); renderRecommendations(); renderSets(); renderDashboard(); renderLibrary(); renderProfiles();
   $('#fontSizeRange').value=l.fontSize; $('#letterSpacingRange').value=l.letterSpacing; $('#flashSpeedSelect').value=String(l.flashSpeed); if($('#autoSpeakCorrection'))$('#autoSpeakCorrection').checked=l.autoSpeakCorrection!==false;
   renderParentOverview(); renderFamilySync(); checkHundredPercent(); renderStorageStatus();
 }
@@ -274,27 +274,27 @@ function renderToday(){
     $('#todayEstimate').textContent=`${status.units} kurze ${status.units===1?'Einheit':'Einheiten'} · ca. ${mins} Min. · Ziel heute: ${plan.dailyTarget} Kontakte.${phaseText}${maintenance}${paceText}${deadline}`;
   }
   $('#todayProgress').max=Math.max(1,status.total); $('#todayProgress').value=status.done; $('#todayProgress').setAttribute('aria-valuetext',`${status.done} von ${status.total} Vokabeln heute erledigt`); $('#todayProgressText').textContent=status.total?`${status.done} / ${status.total} erledigt`:'';
-  $('#quickLearnHeroBtn').disabled=!hasWords||!status.remaining; $('#quickLearnHeroBtn').textContent=!hasWords?'Noch nicht bereit':!status.remaining?'Heute erledigt ✓':status.done?'Weiterlernen':'Tagesziel starten';
+  $('#quickLearnHeroBtn').disabled=!hasWords||!status.remaining; $('#quickLearnHeroBtn').textContent=!hasWords?'Noch nicht bereit':!status.remaining?'Heute erledigt ✓':status.done?'Weiterlernen':'Heute lernen';
   if(ctx){$('#todayTestPill').textContent=(ctx.source==='series'||ctx.source==='mixed')?`↻ ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]} · ${formatDateShort(ctx.date)}`:`Test ${formatDateShort(ctx.date)}`;$('#todayTestPill').classList.remove('hidden');if(parent){$('#todayTestBtn').textContent='Testplan ändern';$('#todayTestBtn').classList.remove('hidden');$('#todayTestBtn').dataset.setId=ctx.sets[0]?.id||'';}else $('#todayTestBtn').classList.add('hidden');}
   else{$('#todayTestPill').classList.add('hidden');if(parent&&mySets().length){$('#todayTestBtn').textContent='Testplan festlegen';$('#todayTestBtn').classList.remove('hidden');}else $('#todayTestBtn').classList.add('hidden');}
 }function renderRecommendations(){
-  const l=learner(),due=dueWords(),cardPool=schoolYearVerifiedWords(),weak=cardPool.filter(w=>!isMastered(w)).sort((a,b)=>masteryScore(a)-masteryScore(b)),chunkWords=cardPool.filter(chunkEligibleWord);
-  const recs=[];
-  recs.push({icon:'∞',title:'Alle Vokabeln',sub:`${cardPool.length} Wörter · Bereich frei wählen`,mode:'allWords'});
-  recs.push({icon:'◎',title:'Unsichere üben',sub:weak.length?`${weak.length} noch nicht sicher`:'Aktuell nichts offen',mode:'weakWords',disabled:!weak.length});
-  recs.push({icon:'✦',title:'Adaptiv lernen',sub:due.length?`${Math.min(due.length,l.lrsMode?6:10)} fällige Wörter`:'Schwächste Wörter festigen',mode:'adaptive'});
-  const boxes=leitnerDistribution(cardPool),cardDue=cardPool.filter(w=>!w.dueDate||w.dueDate<=today()).length;
-  recs.push({icon:'▥',title:'Karteikarten',sub:`schriftlich · 5 Boxen · ${cardDue} fällig · ${boxes[5]} gemeistert`,mode:'cards'});
+  const l=learner(),cardPool=schoolYearVerifiedWords(),weak=cardPool.filter(w=>!isMastered(w)).sort((a,b)=>masteryScore(a)-masteryScore(b)),chunkWords=cardPool.filter(chunkEligibleWord),contextWords=cardPool.filter(w=>String(w.example||'').trim());
+  const cards=$('#practiceCardsBtn'),weakBtn=$('#practiceWeakBtn'),allBtn=$('#practiceAllBtn'),specialBtn=$('#practiceSpecialBtn');
+  if(cards)cards.disabled=!cardPool.length;if(weakBtn)weakBtn.disabled=!weak.length;if(allBtn)allBtn.disabled=!cardPool.length;if(specialBtn)specialBtn.disabled=!cardPool.length;
   const copyPending=cardPool.filter(w=>!w.firstContactCompletedAt).length;
-  recs.push({icon:'📝',title:'Abschreiben',sub:copyPending?`freiwillig · ${copyPending} noch nicht gemacht`:'freiwillig · als zusätzliche Schreibeinheit',mode:'copy'});
-  recs.push({icon:'⚡',title:'Wortblitz',sub:l.lrsMode?'ruhiges Tempo · Audio zuerst':'Leseflüssigkeit ohne Wertungsdruck',mode:'flash'});
-  recs.push({icon:'🔊',title:'Vokabeldusche',sub:'aktiv mit Denkpause oder passiv anhören',mode:'shower'});
-  if(chunkWords.length)recs.push({icon:'🧩',title:'Wortbausteine',sub:`${chunkWords.length} geeignete Wörter · keine ganzen Sätze`,mode:'chunks'});
-  const spellingWeak=weak.filter(w=>(w.errorProfile?.spelling||0)>0||(w.skills?.spelling||0)<2);
-  if(l.lrsMode||spellingWeak.length)recs.push({icon:'✍️',title:'Handschrift',sub:'nachfahren · abdecken · aus dem Gedächtnis schreiben',mode:'handwriting'});
+  const recs=[
+    {icon:'🔊',title:'Hören',sub:'Aussprache hören und wiedererkennen',mode:'listening'},
+    {icon:'✎',title:'Rechtschreibung',sub:'Diktat: hören und genau schreiben',mode:'spelling'},
+    {icon:'▣',title:'Kontext',sub:contextWords.length?`${contextWords.length} Wörter mit Beispielsatz`:'Noch keine Beispielsätze vorhanden',mode:'context',disabled:!contextWords.length},
+    {icon:'✍',title:'Handschrift',sub:'nachfahren · abdecken · selbst vergleichen',mode:'handwriting'},
+    {icon:'📝',title:'Abschreiben',sub:copyPending?`freiwillig · ${copyPending} noch offen`:'freiwillige zusätzliche Schreibeinheit',mode:'copy'},
+    {icon:'⚡',title:'Wortblitz',sub:l.lrsMode?'ruhiges Tempo · ohne Mastery-Wertung':'Leseflüssigkeit ohne Mastery-Wertung',mode:'flash'},
+    {icon:'🔊',title:'Vokabeldusche',sub:'mit Denkpause oder passiv anhören',mode:'shower'}
+  ];
+  if(chunkWords.length)recs.splice(2,0,{icon:'🧩',title:'Wortbausteine',sub:`${chunkWords.length} geeignete Wörter · keine ganzen Sätze`,mode:'chunks'});
   if(subjectHasCapability(state.activeSubject,'latinGrammar'))recs.push({icon:'Ⅳ',title:'Latein Formen',sub:'Genitiv · Genus · Stammformen · Anwendung',mode:'latinGrammar'});
   $('#recommendations').innerHTML=recs.map(r=>`<button class="recommend" data-mode="${r.mode}" ${r.disabled?'disabled':''}><span class="icon">${r.icon}</span><strong>${r.title}</strong><small>${r.sub}</small></button>`).join('');
-  $$('#recommendations [data-mode]').forEach(b=>b.onclick=()=>{const mode=b.dataset.mode;if(mode==='copy')startCopyPractice();else if(mode==='allWords')openAllWordsPracticeChooser();else if(mode==='weakWords')startWeakWordsPractice();else startSession(mode)});
+  $('#recommendations [data-mode]').forEach(b=>b.onclick=()=>{const mode=b.dataset.mode;if(mode==='copy')startCopyPractice();else if(mode==='context')startSession('context',null,contextWords.map(w=>w.id));else startSession(mode)});
 }
 function setPairAuditText(setId){
   const s=state.sets.find(x=>x.id===setId),words=s?setWords(setId):[];
@@ -735,7 +735,8 @@ function showView(id){
 }
 
 function bind(){
-  document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view)); $('[data-action="quickLearn"]').onclick=startDailyTodo; $('#quickLearnHeroBtn').onclick=startDailyTodo; $('#quickCardsBtn').onclick=()=>startSession('cards'); $('#cardboxPracticeBtn').onclick=()=>startSession('cards'); $('#todayTestBtn').onclick=openTestDatePlanner; $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
+  document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='armyView'&&window.VTArmyUi?.open){window.VTArmyUi.open();return}showView(b.dataset.view)}); $('#quickLearnHeroBtn').onclick=startDailyTodo; $('#quickCardsBtn')?.addEventListener('click',()=>startSession('cards')); $('#cardboxPracticeBtn').onclick=()=>startSession('cards'); $('#todayTestBtn').onclick=openTestDatePlanner; $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
+  $('#practiceCardsBtn')?.addEventListener('click',()=>startSession('cards')); $('#practiceWeakBtn')?.addEventListener('click',startWeakWordsPractice); $('#practiceAllBtn')?.addEventListener('click',openAllWordsPracticeChooser); $('#practiceSpecialBtn')?.addEventListener('click',()=>{const panel=$('#optionalLearningCard'),btn=$('#practiceSpecialBtn');if(!panel)return;const open=panel.classList.contains('hidden');panel.classList.toggle('hidden',!open);btn.setAttribute('aria-expanded',String(open));if(open)panel.scrollIntoView({block:'nearest',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})});
   $('#newSetBtn').onclick=()=>openLearningContentPlanner(); $('#addGradeBtn').onclick=()=>addGrade(); $('#practiceTestBtn').onclick=openPracticeTestChooser; $('#addProfileBtn').onclick=addProfile; $('#profileBtn').onclick=openProfileSwitcher; $('#attackBtn').onclick=openBattleView; $('#duelBtn').onclick=openDuel;
   $('#battleBackBtn').onclick=()=>showView('childProgressView'); $('#battleReturnBtn').onclick=()=>showView('childProgressView'); $('#battleAttackBtn').onclick=runBattleAnimation; $('#battleFullscreenBtn').onclick=toggleBattleFullscreen;
   $('#battleAttackChoices').addEventListener('click',e=>{const b=e.target.closest('[data-battle-attack]');if(b&&!b.disabled)selectBattleAttack(b.dataset.battleAttack)});
