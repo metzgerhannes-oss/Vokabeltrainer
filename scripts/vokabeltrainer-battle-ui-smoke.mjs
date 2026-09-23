@@ -51,6 +51,41 @@ try{
   assert(await page.locator('#battleStage [data-battle-layer="background"]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'layered battle background loads');
   assert(await page.locator('#battleStage [data-battle-layer="army"]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'army artwork layer loads');
   assert(await page.locator('#battleStage [data-battle-layer="fortress"]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'fortress artwork layer loads');
+  assert(await page.locator('#battleStage .battle-own-flag').count()===1,'battle fortress includes a dedicated player flag for conquest');
+
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  const conquestMotion=await page.evaluate(async()=>{
+    const stage=document.querySelector('#battleStage');
+    stage.classList.add('conquest-transition');
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const result={
+      gate:getComputedStyle(document.querySelector('#battleStage .battle-gate')).animationName,
+      enemy:getComputedStyle(document.querySelector('#battleStage .battle-enemy-flag')).animationName,
+      own:getComputedStyle(document.querySelector('#battleStage .battle-own-flag')).animationName
+    };
+    stage.classList.remove('conquest-transition');
+    return result;
+  });
+  assert(conquestMotion.gate.includes('conquestGateFall'),'conquest visibly drops the fortress gate');
+  assert(conquestMotion.enemy.includes('conquestEnemyFlagExit'),'conquest visibly removes the enemy flag');
+  assert(conquestMotion.own.includes('conquestOwnFlagRise'),'conquest visibly raises the player flag');
+
+  await page.emulateMedia({reducedMotion:'reduce'});
+  const reducedConquest=await page.evaluate(()=>{
+    const stage=document.querySelector('#battleStage');
+    stage.classList.add('conquest-transition');
+    const result={
+      gate:getComputedStyle(document.querySelector('#battleStage .battle-gate')).animationName,
+      enemy:getComputedStyle(document.querySelector('#battleStage .battle-enemy-flag')).animationName,
+      own:getComputedStyle(document.querySelector('#battleStage .battle-own-flag')).animationName,
+      enemyOpacity:Number(getComputedStyle(document.querySelector('#battleStage .battle-enemy-flag')).opacity),
+      ownOpacity:Number(getComputedStyle(document.querySelector('#battleStage .battle-own-flag')).opacity)
+    };
+    stage.classList.remove('conquest-transition');
+    return result;
+  });
+  assert(reducedConquest.gate==='none'&&reducedConquest.enemy==='none'&&reducedConquest.own==='none','reduced-motion disables conquest animations');
+  assert(reducedConquest.enemyOpacity===0&&reducedConquest.ownOpacity===1,'reduced-motion still shows the final conquered state');
 
   const originalFortressState=await page.evaluate(()=>{
     const f=currentTestFortress();
@@ -198,8 +233,16 @@ try{
   assert(await page.evaluate(()=>learner().campaignLog[0]?.attack)==='ram','selected attack is stored only as campaign presentation metadata');
   assert(await page.evaluate(()=>subjectProgress().pct)===100,'battle presentation does not alter academic mastery');
   assert((await page.locator('#battleFortressProgress').textContent())?.includes('Erobert'),'winning keeps the same test fortress and switches it to securing');
+  assert(await page.locator('#battleStage .battle-fortress.captured').count()===1,'winning settles the battle fortress into the persistent captured state');
+  assert(Number(await page.locator('#battleStage .battle-enemy-flag').evaluate(el=>getComputedStyle(el).opacity))===0,'captured fortress no longer shows the enemy flag');
+  assert(Number(await page.locator('#battleStage .battle-own-flag').evaluate(el=>getComputedStyle(el).opacity))===1,'captured fortress permanently shows the player flag');
+  await page.evaluate(()=>renderBattlefield());
+  assert(await page.locator('#battlefield.battle-captured .fortress.captured .own-flag').count()===1,'campaign overview also keeps the player flag on the conquered fortress');
   await page.click('#battleResultContinue');
   await page.waitForSelector('#battleResultOverlay',{state:'hidden'});
+  await page.evaluate(()=>renderBattleView());
+  await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
+  assert(await page.locator('#battleStage.fortress-secured .battle-fortress.captured .battle-own-flag').count()===1,'reopening the battle restores the conquered visual state from capturedAt');
 
   await page.evaluate(()=>{
     const f=currentTestFortress();f.id='citadel';f.name='Zitadelle';f.subtitle='Bergzitadelle';f.capturedAt='';f.defense=100;f.maxDefense=100;
