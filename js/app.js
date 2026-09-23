@@ -18,7 +18,7 @@
       if(sessionStorage.getItem(key))return;
       updateReloading=true;sessionStorage.setItem(key,'1');location.reload();
     });
-    navigator.serviceWorker.register('./sw.js?v=0.18.18')
+    navigator.serviceWorker.register('./sw.js?v=0.18.19')
       .then(reg=>reg.update().catch(()=>{}))
       .catch(console.warn);
   }
