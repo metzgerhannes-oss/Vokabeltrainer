@@ -64,7 +64,7 @@ try{
   assert(after.completed===batchSize&&after.pending===6-batchSize,'copy completion is tracked independently from learning availability');
   assert((await page.locator('#studyArea').textContent())?.includes('auch ohne diese Einheit direkt im normalen Lernpfad verfügbar'),'finish screen preserves optional semantics');
   assert(await page.evaluate(()=>schoolYearWords('english').length)===6,'copy status never changes which verified words can be learned');
-  assert(await page.evaluate(()=>battleTickets('english'))===1,'completed optional copy unit unlocks one battle attack');
+  assert(await page.evaluate(()=>battleTickets('english'))===0,'completed optional copy unit cannot unlock the daily battle');
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer optional copy UI smoke: passed');
