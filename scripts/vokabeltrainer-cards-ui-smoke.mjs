@@ -64,8 +64,8 @@ try{
   await page.click('#continueStudyBtn');
 
   await page.waitForSelector('.session-finish-card');
-  assert(await page.locator('#rewardBattleBtn').count()===1,'completed cards session earns a battle attack');
-  assert(await page.evaluate(()=>battleTickets('english'))===1,'cards session grants exactly one battle ticket');
+  assert(await page.locator('#rewardBattleBtn').count()===0,'optional cards session does not present a battle reward');
+  assert(await page.evaluate(()=>battleTickets('english'))===0,'optional cards session cannot unlock the daily battle');
 
   await page.evaluate(async()=>{await persistState()});
   await page.reload({waitUntil:'domcontentloaded'});
