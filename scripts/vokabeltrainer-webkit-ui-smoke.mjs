@@ -43,6 +43,21 @@ try{
   await page.locator('#familySyncBackBtn').click();
   await page.locator('#familySyncChildJoinChoiceBtn').waitFor({state:'visible'});
 
+  // Regression: on iOS Safari, a fresh child invite must be preserved for the
+  // Home Screen app instead of being consumed in Safari's separate storage.
+  await page.evaluate(()=>{
+    closeModal();
+    const params=new URLSearchParams();
+    params.set('childInvite','a'.repeat(48));
+    params.set('childName','Testkind');
+    history.replaceState(null,'',location.pathname+'#'+params.toString());
+    window.handleChildInviteFromUrl?.();
+  });
+  await page.locator('#copyIosHomeInviteBtn').waitFor({state:'visible'});
+  if(await page.locator('#claimChildInviteBtn').count())throw new Error('iOS Safari must not claim a child invite before Home Screen installation');
+  if(!/Home-Bildschirm/.test(await page.locator('#modalContent').textContent()||''))throw new Error('iOS Home Screen handoff guidance missing');
+  await page.evaluate(()=>{closeModal();history.replaceState(null,'',location.pathname)});
+
   const fatal=[...pageErrors,...consoleErrors].filter(x=>/ReferenceError|TypeError|SyntaxError|Content Security Policy|InvalidStateError|DOMException/i.test(x));
   if(fatal.length)throw new Error(fatal.join(' | '));
   console.log('Vokabeltrainer WebKit iPhone smoke: passed');

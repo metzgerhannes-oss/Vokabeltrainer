@@ -51,6 +51,13 @@
     return copyChildInviteLink(link);
   }
 
+  function isIOSBrowserOutsideStandalone(){
+    const ua=String(navigator.userAgent||'');
+    const ios=/iphone|ipad|ipod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+    const standalone=window.matchMedia?.('(display-mode: standalone)')?.matches||window.navigator.standalone===true;
+    return ios&&!standalone;
+  }
+
   function clearChildInviteHash(){
     const params=inviteParams();
     if(!params.has('childInvite'))return;
@@ -67,6 +74,13 @@
 
     const profileName=String(params.get('childName')||'Kind').trim().slice(0,80)||'Kind';
     const current=VTFamilySync.status();
+
+    if(isIOSBrowserOutsideStandalone()){
+      const link=childInviteLink(token,profileName);
+      modal(`<div class="eyebrow">iPhone / iPad</div><h2>Für den Home-Bildschirm vorbereiten</h2><p>Dieser Kindergeräte-Link wurde in Safari geöffnet. Auf iOS 15 speichert die Home-Bildschirm-Web-App ihre Geräteverbindung getrennt.</p><div class="notice warn"><strong>Den Link nicht in Safari verbrauchen.</strong><br>1. Verbindungslink kopieren.<br>2. Vokabeltrainer über <strong>Teilen → Zum Home-Bildschirm</strong> hinzufügen.<br>3. Das neue App-Symbol öffnen.<br>4. Dort <strong>Kindergerät verbinden</strong> wählen und den Link einfügen.</div><div class="modal-actions stack-mobile"><button value="cancel" class="ghost">Später</button><button type="button" id="copyIosHomeInviteBtn" class="primary">Verbindungslink kopieren</button></div>`);
+      $('#copyIosHomeInviteBtn').onclick=()=>copyChildInviteLink(link);
+      return true;
+    }
 
     if(current.enabled){
       clearChildInviteHash();

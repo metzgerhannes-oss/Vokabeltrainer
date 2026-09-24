@@ -4,6 +4,13 @@ let appRole='child';
 const PARENT_VIEW_IDS=new Set(['parentView','libraryView','dashboardView','settingsView']);
 function isPairedChildDevice(){const s=window.VTFamilySync?.status?.();return !!(s?.enabled&&s.role==='child')}
 function isParentMode(){return appRole==='parent'&&!isPairedChildDevice()}
+function isStandaloneWebApp(){return window.matchMedia?.('(display-mode: standalone)')?.matches||window.navigator.standalone===true}
+function isIOSDevice(){const ua=String(navigator.userAgent||'');return /iphone|ipad|ipod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}
+function renderStandaloneSyncNotice(){
+  const card=$('#iosStandaloneSyncCard');if(!card)return;
+  const connected=!!window.VTFamilySync?.status?.().enabled;
+  card.classList.toggle('hidden',!(isIOSDevice()&&isStandaloneWebApp()&&!connected));
+}
 
 
 let battleAttackMode='charge';
@@ -731,6 +738,7 @@ function enterParentMode(target='parentView'){if(isPairedChildDevice()){appRole=
 function exitParentMode(){appRole='child';session=null;applyRoleUi();showView('homeView');renderAll()}
 function familySyncTime(value){if(!value)return 'noch nie';try{return new Date(value).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}catch(_){return value}}
 function renderFamilySync(){
+  renderStandaloneSyncNotice();
   const box=$('#familySyncStatus'),setup=$('#familySyncSetupBtn'),now=$('#familySyncNowBtn'),child=$('#familySyncChildBtn'),switchBtn=$('#familySyncSwitchBtn');if(!box||!window.VTFamilySync)return;
   const s=VTFamilySync.status();
   setup.classList.toggle('hidden',s.enabled);
@@ -841,12 +849,10 @@ function bind(){
   $('#backupBtn').onclick=backup; $('#resetAppBtn').onclick=resetAppData; $('#restoreBtn').onclick=()=>{const f=$('#fileInput');f.accept='.json,application/json';f.dataset.mode='restore';f.click()}; $('#exportCsvBtn').onclick=exportCsv; $('#libraryUseBtn').onclick=openLearningContentPlanner; $('#librarySearchInput').oninput=()=>{libraryRenderLimit=200;renderLibrary()}; $('#librarySetFilter').onchange=()=>{libraryRenderLimit=200;renderLibrary()};
   $('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;const mode=e.target.dataset.mode,limit=mode==='restore'?MAX_BACKUP_BYTES:MAX_CSV_BYTES;if(f.size>limit){toast(`${mode==='restore'?'Backup':'CSV'} ist zu groß (${fmtBytes(f.size)}).`,'bad');e.target.value='';return}try{const text=await f.text();if(mode==='restore')restore(text);else importCsv(text)}catch(err){console.warn(err);toast('Datei konnte nicht gelesen werden.','bad')}e.target.value=''}; $('#photoInput').onchange=async e=>{const f=e.target.files[0];if(f)await handleScanPhoto(f);e.target.value=''}; $('#isbnPhotoInput').onchange=async e=>{const f=e.target.files[0];if(f)await handleIsbnPhoto(f);e.target.value=''};
   $('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal()}); $('#modal').addEventListener('close',()=>{if(scanImportState.imageUrl){URL.revokeObjectURL(scanImportState.imageUrl);scanImportState.imageUrl=null;}scanImportState.lastFile=null;});
-  const standalone=()=>window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
-  const ua=String(navigator.userAgent||''),isiOS=/iphone|ipad|ipod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-  const openIosInstallGuide=()=>modal(`<div class="eyebrow">iPhone / iPad</div><h2>Ohne Safari-Leiste öffnen</h2><p>Wie bei Johanna´s Gartenwelt muss der Vokabeltrainer einmal als Web-App auf den Home-Bildschirm gelegt werden:</p><ol><li>Unten in Safari auf <strong>Teilen</strong> tippen.</li><li><strong>Zum Home-Bildschirm</strong> wählen.</li><li><strong>Als Web-App öffnen</strong> eingeschaltet lassen.</li><li><strong>Hinzufügen</strong> bestätigen.</li><li>Safari schließen und künftig das neue <strong>Vokabeltrainer</strong>-Symbol öffnen.</li></ol><p>Dann läuft die App im Standalone-Modus ohne Safari-Navigationsleiste.</p><div class="modal-actions"><button value="ok" class="primary">Verstanden</button></div>`);
-  const syncInstallUi=()=>{const iosSafariMode=isiOS&&!standalone();$('#iosInstallCard')?.classList.toggle('hidden',!iosSafariMode);if(iosSafariMode)$('#installBtn')?.classList.add('hidden')};
-  syncInstallUi();$('#iosInstallBtn').onclick=openIosInstallGuide;
+  const openIosInstallGuide=()=>modal(`<div class="eyebrow">iPhone / iPad</div><h2>Ohne Safari-Leiste öffnen</h2><p>Lege den Vokabeltrainer einmal als Web-App auf den Home-Bildschirm:</p><ol><li>Unten in Safari auf <strong>Teilen</strong> tippen.</li><li><strong>Zum Home-Bildschirm</strong> wählen.</li><li><strong>Als Web-App öffnen</strong> eingeschaltet lassen.</li><li><strong>Hinzufügen</strong> bestätigen.</li><li>Danach das neue <strong>Vokabeltrainer</strong>-Symbol öffnen.</li></ol><div class="notice warn"><strong>Wichtig bei iOS 15:</strong><br>Safari und die Home-Bildschirm-Web-App verwenden getrennten lokalen Speicher. Eine Kindergeräte-Verbindung aus Safari wird deshalb nicht automatisch übernommen. Verbinde das Kindergerät nach dem Hinzufügen einmalig in der Home-Bildschirm-App mit einem frischen Verbindungslink oder Gerätecode.</div><div class="modal-actions"><button value="ok" class="primary">Verstanden</button></div>`);
+  const syncInstallUi=()=>{const iosSafariMode=isIOSDevice()&&!isStandaloneWebApp();$('#iosInstallCard')?.classList.toggle('hidden',!iosSafariMode);if(iosSafariMode)$('#installBtn')?.classList.add('hidden');renderStandaloneSyncNotice()};
+  syncInstallUi();$('#iosInstallBtn').onclick=openIosInstallGuide;$('#iosStandaloneSyncBtn').onclick=openFamilySyncChildJoin;
   syncResponsiveHomeLayout();window.addEventListener('resize',syncResponsiveHomeLayout,{passive:true});
   window.addEventListener('pagehide',()=>persistOnly());document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')persistOnly()});
-  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;if(!isiOS)$('#installBtn').classList.remove('hidden')}); $('#installBtn').onclick=async()=>{if(installPrompt){installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$('#installBtn').classList.add('hidden');return}openIosInstallGuide()};
+  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;if(!isIOSDevice())$('#installBtn').classList.remove('hidden')}); $('#installBtn').onclick=async()=>{if(installPrompt){installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$('#installBtn').classList.add('hidden');return}openIosInstallGuide()};
 }
