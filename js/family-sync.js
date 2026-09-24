@@ -188,6 +188,29 @@
     saveConfig(cfg);initSnapshots();await syncNow(true);return status();
   }
 
+  async function createParentInvite(){
+    const cfg=loadConfig();if(!cfg.enabled||cfg.role!=='parent')throw new Error('Nur ein verbundenes Eltern-Gerät kann weitere Eltern-Geräte hinzufügen.');
+    const result=await rpc('vt_create_parent_invite',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
+    if(!result?.ok)throw new Error(result?.error||'Eltern-Gerät-Code konnte nicht erzeugt werden.');
+    return result;
+  }
+
+  async function claimParentInvite(token,label='Eltern-Gerät'){
+    const deviceId=randomId('device'),deviceSecret=bytesHex(32);
+    const result=await rpc('vt_claim_parent_invite',{p_invite_token:String(token||'').trim(),p_device_id:deviceId,p_device_secret:deviceSecret,p_label:String(label||'Eltern-Gerät').slice(0,120)});
+    if(!result?.ok)throw new Error(result?.error||'Gerätecode ist ungültig oder abgelaufen.');
+    const revisions={};
+    runtime.applying=true;
+    try{
+      state.learners=[];state.sets=[];state.setVocabulary=[];state.learnerBooks=[];state.learnerVocabulary=[];state.grades=[];state.practiceTests=[];state.activity=[];
+      for(const d of (result.documents||[]).sort((a,b)=>documentRank(a.key)-documentRank(b.key)||String(a.key).localeCompare(String(b.key)))){applyDocument(d.key,d.payload);revisions[d.key]=Number(d.revision)||0}
+      if(!state.learners.some(l=>l.id===state.activeLearnerId))state.activeLearnerId=state.learners[0]?.id||'';
+      ensureActiveSubject();await persistState();
+    }finally{runtime.applying=false}
+    const cfg={enabled:true,familyId:result.family_id,deviceId,deviceSecret,role:'parent',profileId:'',revisions,dirtyKeys:[],conflicts:{},lastSync:new Date().toISOString()};
+    saveConfig(cfg);initSnapshots();renderAll();return status();
+  }
+
   async function createChildInvite(profileId){
     const cfg=loadConfig();if(!cfg.enabled||cfg.role!=='parent')throw new Error('Nur ein verbundenes Eltern-Gerät kann Kindergeräte hinzufügen.');
     const result=await rpc('vt_create_child_invite',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret,p_profile_id:profileId});
@@ -295,5 +318,5 @@
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncNow(false).catch(e=>console.warn('Family sync resume',e))});
   }
 
-  window.VTFamilySync={serializeDocuments,status,createFamily,joinParent,createChildInvite,claimChildInvite,syncNow,replaceCloudWithCurrent,markLocalChange,listDevices,revokeDevice,disconnectLocal,bootstrap};
+  window.VTFamilySync={serializeDocuments,status,createFamily,joinParent,createParentInvite,claimParentInvite,createChildInvite,claimChildInvite,syncNow,replaceCloudWithCurrent,markLocalChange,listDevices,revokeDevice,disconnectLocal,bootstrap};
 })();

@@ -596,11 +596,36 @@ function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt
 function attackFortress(){openBattleView()}
 function duelPayload(){const p=subjectProgress();return {v:3,name:subjectCampaign(state.activeSubject).unitLabel,subject:state.activeSubject,schoolYear:p.schoolYear,progress:p.pct,stability:p.total?Math.round(p.stable/p.total*1000):0,ts:Date.now()}}
 function encodeDuel(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
-function decodeDuel(code){const raw=String(code||'').trim();if(!raw||raw.length>4096)throw new Error('Ungültiger Code');const x=JSON.parse(decodeURIComponent(escape(atob(raw))));if(!x||typeof x!=='object'||!isKnownSubject(x.subject)||typeof x.schoolYear!=='string')throw new Error('Ungültiger Code');const total=Math.max(0,Math.round(safeNumber(x.total,0,100000,0))),stable=Math.max(0,Math.round(safeNumber(x.stable,0,100000,0))),legacyStability=total?Math.round(stable/total*1000):0;return {v:3,name:subjectCampaign(x.subject).unitLabel,subject:x.subject,schoolYear:safeText(x.schoolYear,24),progress:safeNumber(x.progress,0,100,0),stability:Number.isFinite(Number(x.stability))?safeNumber(x.stability,0,1000,0):legacyStability,ts:safeNumber(x.ts,0,Number.MAX_SAFE_INTEGER,0)};}
-function openDuel(){
-  const own=duelPayload(),code=encodeDuel(own); modal(`<div class="eyebrow">Freundschaftsduell</div><h2>Armeen vergleichen</h2><p>Teile deinen Herausforderungscode. Der höhere fachliche Fortschritt gewinnt; bei Gleichstand zählt die Langzeitstabilität. Keine Zufallsentscheidung.</p><p class="notice subtle">Freundschaftsmodus ohne Server: Der Code enthält keinen Profilnamen, sondern nur Fach, Schuljahr und die nötigen Vergleichswerte. Er ist nicht fälschungssicher.</p><label>Dein Code<div class="duel-code">${esc(code)}</div></label><label>Code des Gegenübers<textarea id="opponentCode" rows="5"></textarea></label><div id="duelResult"></div><div class="modal-actions"><button value="cancel" class="ghost">Schließen</button><button type="button" id="duelCompare" class="primary">Duell starten</button></div>`);
-  $('#duelCompare').onclick=()=>{try{const other=decodeDuel($('#opponentCode').value);if(other.subject!==state.activeSubject)throw new Error('Fach passt nicht');const result=compareDuel(own,other);$('#duelResult').innerHTML=`<div class="duel-arena duel-${result.outcome}" aria-label="Animiertes Freundschaftsduell"><div class="duel-side duel-own"><div class="duel-banner"></div><div class="duel-troops"><i></i><i></i><i></i></div><strong>${esc(own.name)}</strong><span>${own.progress}%</span></div><div class="duel-clash">⚔</div><div class="duel-side duel-other"><div class="duel-banner"></div><div class="duel-troops"><i></i><i></i><i></i></div><strong>${esc(other.name||'Gegner')}</strong><span>${other.progress}%</span></div></div><div class="notice ${result.outcome==='win'?'good':result.outcome==='loss'?'warn':'subtle'}"><strong>${esc(result.title)}</strong><br><small>${esc(result.reason)}</small></div>`;recordActivity('duel',{result:result.outcome,opponent:other.name||'Gegner'});persistOnly()}catch(e){$('#duelResult').innerHTML='<div class="notice bad">Der Herausforderungscode ist ungültig oder gehört zu einem anderen Fach.</div>'}}
+function duelInviteLink(code){
+  const url=new URL(location.href);url.hash='';
+  const params=new URLSearchParams();params.set('duel',String(code||''));url.hash=params.toString();
+  return url.toString();
 }
+function duelCodeFromInput(value){
+  const raw=String(value||'').trim();if(!raw)return '';
+  try{
+    const url=new URL(raw,location.href),params=new URLSearchParams(String(url.hash||'').replace(/^#/,''));
+    const fromLink=String(params.get('duel')||'').trim();if(fromLink)return fromLink;
+  }catch(_e){}
+  return raw;
+}
+function decodeDuel(code){const raw=duelCodeFromInput(code);if(!raw||raw.length>4096)throw new Error('Ungültiger Code');const x=JSON.parse(decodeURIComponent(escape(atob(raw))));if(!x||typeof x!=='object'||!isKnownSubject(x.subject)||typeof x.schoolYear!=='string')throw new Error('Ungültiger Code');const total=Math.max(0,Math.round(safeNumber(x.total,0,100000,0))),stable=Math.max(0,Math.round(safeNumber(x.stable,0,100000,0))),legacyStability=total?Math.round(stable/total*1000):0;return {v:3,name:subjectCampaign(x.subject).unitLabel,subject:x.subject,schoolYear:safeText(x.schoolYear,24),progress:safeNumber(x.progress,0,100,0),stability:Number.isFinite(Number(x.stability))?safeNumber(x.stability,0,1000,0):legacyStability,ts:safeNumber(x.ts,0,Number.MAX_SAFE_INTEGER,0)};}
+function openDuel(initialOpponent=''){
+  const own=duelPayload(),code=encodeDuel(own),link=duelInviteLink(code);
+  modal(`<div class="eyebrow">Freundschaftsduell</div><h2>Armeen vergleichen</h2><p>Zeige deinem Gegenüber den QR-Code. Alternativ kann der Link oder der Herausforderungscode geteilt werden.</p><div class="duel-qr-panel"><div id="duelQr" class="pairing-qr"></div><div><strong>QR-Code scannen</strong><small>Der höhere fachliche Fortschritt gewinnt; bei Gleichstand zählt die Langzeitstabilität.</small><div class="row gap wrap top-space"><button type="button" id="duelShareBtn" class="secondary">Duell-Link teilen</button><button type="button" id="duelCopyBtn" class="ghost">Link kopieren</button></div></div></div><p class="notice subtle">Freundschaftsmodus ohne Server: QR-Code und Link enthalten keinen Profilnamen, sondern nur Fach, Schuljahr und die nötigen Vergleichswerte. Sie sind nicht fälschungssicher.</p><details class="duel-code-fallback"><summary>Code manuell anzeigen</summary><div class="duel-code">${esc(code)}</div></details><label>Code oder Link des Gegenübers<textarea id="opponentCode" rows="4" placeholder="Code oder Duell-Link einfügen">${esc(initialOpponent)}</textarea></label><div id="duelResult"></div><div class="modal-actions"><button value="cancel" class="ghost">Schließen</button><button type="button" id="duelCompare" class="primary">Duell starten</button></div>`);
+  window.VTQr?.render?.('#duelQr',link,'QR-Code für das Freundschaftsduell');
+  $('#duelShareBtn').onclick=()=>window.VTQr?.shareUrl?.(link,'Vokabeltrainer Freundschaftsduell','Herausforderung zum Freundschaftsduell');
+  $('#duelCopyBtn').onclick=()=>window.VTQr?.copyText?.(link,'Duell-Link kopiert.');
+  const compare=()=>{try{const other=decodeDuel($('#opponentCode').value);if(other.subject!==state.activeSubject)throw new Error('Fach passt nicht');const result=compareDuel(own,other);$('#duelResult').innerHTML=`<div class="duel-arena duel-${result.outcome}" aria-label="Animiertes Freundschaftsduell"><div class="duel-side duel-own"><div class="duel-banner"></div><div class="duel-troops"><i></i><i></i><i></i></div><strong>${esc(own.name)}</strong><span>${own.progress}%</span></div><div class="duel-clash">⚔</div><div class="duel-side duel-other"><div class="duel-banner"></div><div class="duel-troops"><i></i><i></i><i></i></div><strong>${esc(other.name||'Gegner')}</strong><span>${other.progress}%</span></div></div><div class="notice ${result.outcome==='win'?'good':result.outcome==='loss'?'warn':'subtle'}"><strong>${esc(result.title)}</strong><br><small>${esc(result.reason)}</small></div>`;recordActivity('duel',{result:result.outcome,opponent:other.name||'Gegner'});persistOnly()}catch(e){$('#duelResult').innerHTML='<div class="notice bad">Der Herausforderungscode ist ungültig oder gehört zu einem anderen Fach.</div>'}};
+  $('#duelCompare').onclick=compare;
+  if(initialOpponent)setTimeout(compare,0);
+}
+window.handleDuelInviteFromUrl=function(){
+  const params=new URLSearchParams(String(location.hash||'').replace(/^#/,''));
+  const code=String(params.get('duel')||'').trim();if(!code)return false;
+  params.delete('duel');history.replaceState(null,'',location.pathname+location.search+(params.toString()?'#'+params.toString():''));
+  openDuel(code);return true;
+};
 function compareDuel(a,b){
   if(a.schoolYear!==b.schoolYear)return {outcome:'draw',title:'Nicht vergleichbar',reason:'Die Codes gehören zu unterschiedlichen Schuljahren.'};
   if(a.progress!==b.progress)return a.progress>b.progress?{outcome:'win',title:'Sieg',reason:'Mehr Schuljahresfortschritt.'}:{outcome:'loss',title:'Niederlage',reason:'Der Gegner hat mehr Schuljahresfortschritt.'};
@@ -813,11 +838,12 @@ function exitParentMode(){appRole='child';session=null;applyRoleUi();showView('h
 function familySyncTime(value){if(!value)return 'noch nie';try{return new Date(value).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}catch(_){return value}}
 function renderFamilySync(){
   renderStandaloneSyncNotice();
-  const box=$('#familySyncStatus'),setup=$('#familySyncSetupBtn'),now=$('#familySyncNowBtn'),child=$('#familySyncChildBtn'),switchBtn=$('#familySyncSwitchBtn');if(!box||!window.VTFamilySync)return;
+  const box=$('#familySyncStatus'),setup=$('#familySyncSetupBtn'),now=$('#familySyncNowBtn'),child=$('#familySyncChildBtn'),parent=$('#familySyncParentBtn'),switchBtn=$('#familySyncSwitchBtn');if(!box||!window.VTFamilySync)return;
   const s=VTFamilySync.status();
   setup.classList.toggle('hidden',s.enabled);
   now.classList.toggle('hidden',!s.enabled);
   child.classList.toggle('hidden',!s.enabled||s.role!=='parent');
+  parent?.classList.toggle('hidden',!s.enabled||s.role!=='parent');
   switchBtn?.classList.toggle('hidden',!s.enabled||s.role!=='parent');
   if(!s.enabled){box.className='notice subtle';box.innerHTML='<strong>Noch nicht verbunden.</strong><br>Neue Familie anlegen oder einem bestehenden Familienverbund beitreten.';return}
   if(s.conflicts){box.className='notice warn';box.innerHTML=`<strong>Synchronisationskonflikt</strong><br>${s.conflicts} Dokument${s.conflicts===1?'':'e'} wurde${s.conflicts===1?'':'n'} auf mehreren Geräten geändert. Nichts wird automatisch überschrieben.`;return}
@@ -866,10 +892,31 @@ function openFamilySyncCreate(){
   $('#familySyncBackBtn').onclick=openFamilySyncSetup;
   $('#familySyncCreateBtn').onclick=async()=>{const p1=$('#familyPin').value,p2=$('#familyPin2').value,err=$('#familySyncSetupError'),btn=$('#familySyncCreateBtn');if(p1.length<6){err.className='notice warn';err.textContent='Die PIN muss mindestens 6 Zeichen lang sein.';return}if(p1!==p2){err.className='notice warn';err.textContent='Die beiden PINs stimmen nicht überein.';return}btn.disabled=true;btn.textContent='Wird eingerichtet …';try{await VTFamilySync.createFamily(p1,'Eltern-Gerät');closeModal();renderFamilySync();toast('Familiensync eingerichtet.','good')}catch(e){err.className='notice bad';err.textContent=e.message||'Einrichtung fehlgeschlagen.';btn.disabled=false;btn.textContent='Familie anlegen'}};
 }
+function parentInviteTokenFromInput(value){
+  const raw=String(value||'').trim();
+  if(/^[0-9a-f]{48}$/i.test(raw))return raw.toLowerCase();
+  try{
+    const url=new URL(raw,location.href);
+    const params=new URLSearchParams(String(url.hash||'').replace(/^#/,''));
+    const token=String(params.get('parentInvite')||'').trim();
+    if(/^[0-9a-f]{48}$/i.test(token))return token.toLowerCase();
+  }catch(_e){}
+  return '';
+}
 function openFamilySyncJoin(){
-  modal('<div class="eyebrow">Familie & Geräte</div><h2>Weiteres Eltern-Gerät verbinden</h2><p>Nur für ein weiteres Eltern-Gerät: Übernimm die Familien-ID von einem bereits verbundenen Eltern-Gerät und verwende dieselbe Familien-PIN.</p><div class="notice subtle"><strong>Kein Kindergerät.</strong><br>Kindergeräte werden über „Kindergerät verbinden“ bzw. über den einmaligen Verbindungslink eingerichtet.</div><label>Familien-ID<input id="familyJoinId" type="text" autocomplete="off" spellcheck="false" placeholder="family_…"></label><label>Familien-PIN<input id="familyJoinPin" type="password" minlength="6" autocomplete="current-password" placeholder="mindestens 6 Zeichen"></label><div id="familySyncJoinError" class="notice subtle">Nach dem Beitritt wird der vorhandene Familienstand auf dieses Eltern-Gerät geladen und synchronisiert.</div><div class="modal-actions"><button type="button" id="familySyncBackBtn" class="ghost">Zurück</button><button type="button" id="familySyncJoinBtn" class="primary">Eltern-Gerät verbinden</button></div>');
+  modal('<div class="eyebrow">Familie & Geräte</div><h2>Weiteres Eltern-Gerät verbinden</h2><p>Am einfachsten: Auf einem bereits verbundenen Eltern-Gerät <strong>Eltern-Gerät hinzufügen</strong> wählen und den QR-Code scannen. Falls der Link auf iOS zuerst in Safari geöffnet wurde, kannst du ihn hier einfügen.</p><label>Einmal-Link oder Gerätecode<input id="familyParentJoinInvite" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="QR-/Verbindungslink hier einfügen"></label><details class="manual-parent-join"><summary>Stattdessen Familien-ID und PIN verwenden</summary><label>Familien-ID<input id="familyJoinId" type="text" autocomplete="off" spellcheck="false" placeholder="family_…"></label><label>Familien-PIN<input id="familyJoinPin" type="password" minlength="6" autocomplete="current-password" placeholder="mindestens 6 Zeichen"></label></details><div id="familySyncJoinError" class="notice subtle">Der einmalige QR-/Verbindungslink ist 15 Minuten gültig. Familien-ID und PIN bleiben als manueller Fallback möglich.</div><div class="modal-actions"><button type="button" id="familySyncBackBtn" class="ghost">Zurück</button><button type="button" id="familySyncJoinBtn" class="primary">Eltern-Gerät verbinden</button></div>');
   $('#familySyncBackBtn').onclick=()=>VTFamilySync.status().enabled?openFamilySyncSwitch():openFamilySyncSetup();
-  $('#familySyncJoinBtn').onclick=async()=>{const id=$('#familyJoinId').value.trim().toLowerCase(),pin=$('#familyJoinPin').value,err=$('#familySyncJoinError'),btn=$('#familySyncJoinBtn');if(!/^family_[a-z0-9]{6,40}$/.test(id)){err.className='notice warn';err.textContent='Bitte eine gültige Familien-ID eingeben.';return}if(pin.length<6){err.className='notice warn';err.textContent='Die Familien-PIN muss mindestens 6 Zeichen lang sein.';return}btn.disabled=true;btn.textContent='Wird verbunden …';try{await VTFamilySync.joinParent(id,pin,'Eltern-Gerät');closeModal();renderAll();VTFamilySync.bootstrap();toast('Eltern-Gerät ist mit der bestehenden Familie verbunden.','good')}catch(e){err.className='notice bad';err.textContent=e.message||'Beitritt fehlgeschlagen.';btn.disabled=false;btn.textContent='Eltern-Gerät verbinden'}};
+  $('#familySyncJoinBtn').onclick=async()=>{
+    const invite=parentInviteTokenFromInput($('#familyParentJoinInvite').value),id=$('#familyJoinId').value.trim().toLowerCase(),pin=$('#familyJoinPin').value,err=$('#familySyncJoinError'),btn=$('#familySyncJoinBtn');
+    if(!invite&&!/^family_[a-z0-9]{6,40}$/.test(id)){err.className='notice warn';err.textContent='Bitte den QR-/Verbindungslink einfügen oder eine gültige Familien-ID und PIN verwenden.';return}
+    if(!invite&&pin.length<6){err.className='notice warn';err.textContent='Die Familien-PIN muss mindestens 6 Zeichen lang sein.';return}
+    btn.disabled=true;btn.textContent='Wird verbunden …';
+    try{
+      if(invite)await VTFamilySync.claimParentInvite(invite,'Eltern-Gerät');
+      else await VTFamilySync.joinParent(id,pin,'Eltern-Gerät');
+      closeModal();appRole='parent';applyRoleUi();renderAll();VTFamilySync.bootstrap();toast('Eltern-Gerät ist mit der bestehenden Familie verbunden.','good');
+    }catch(e){err.className='notice bad';err.textContent=e.message||'Beitritt fehlgeschlagen.';btn.disabled=false;btn.textContent='Eltern-Gerät verbinden'}
+  };
 }
 function openFamilySyncSwitch(){
   if(!window.VTFamilySync)return;const s=VTFamilySync.status();if(!s.enabled){openFamilySyncSetup();return}
@@ -919,7 +966,7 @@ function bind(){
   $$('[data-parent-home]').forEach(b=>b.onclick=()=>showView('parentView'));
   document.addEventListener('click',e=>{const b=e.target.closest?.('[data-speak]');if(!b)return;e.preventDefault();e.stopPropagation();speak(b.dataset.speak||'')});
   $('#fontSizeRange').oninput=e=>{learner().fontSize=+e.target.value;save()}; $('#letterSpacingRange').oninput=e=>{learner().letterSpacing=+e.target.value;save()}; $('#flashSpeedSelect').onchange=e=>{learner().flashSpeed=+e.target.value;save()}; $('#autoSpeakCorrection')?.addEventListener('change',e=>{learner().autoSpeakCorrection=!!e.target.checked;save()});
-  $('#familySyncSetupBtn').onclick=openFamilySyncSetup; $('#familySyncNowBtn').onclick=runFamilySync; $('#familySyncChildBtn').onclick=()=>window.openChildDeviceInvite?window.openChildDeviceInvite():toast('Geräteverbindung konnte nicht geladen werden.','bad'); $('#familySyncSwitchBtn').onclick=openFamilySyncSwitch;
+  $('#familySyncSetupBtn').onclick=openFamilySyncSetup; $('#familySyncNowBtn').onclick=runFamilySync; $('#familySyncChildBtn').onclick=()=>window.openChildDeviceInvite?window.openChildDeviceInvite():toast('Geräteverbindung konnte nicht geladen werden.','bad'); $('#familySyncParentBtn').onclick=()=>window.openParentDeviceInvite?window.openParentDeviceInvite():toast('Geräteverbindung konnte nicht geladen werden.','bad'); $('#familySyncSwitchBtn').onclick=openFamilySyncSwitch;
   $('#backupBtn').onclick=backup; $('#resetAppBtn').onclick=resetAppData; $('#restoreBtn').onclick=()=>{const f=$('#fileInput');f.accept='.json,application/json';f.dataset.mode='restore';f.click()}; $('#exportCsvBtn').onclick=exportCsv; $('#libraryUseBtn').onclick=openLearningContentPlanner; $('#librarySearchInput').oninput=()=>{libraryRenderLimit=200;renderLibrary()}; $('#librarySetFilter').onchange=()=>{libraryRenderLimit=200;renderLibrary()};
   $('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;const mode=e.target.dataset.mode,limit=mode==='restore'?MAX_BACKUP_BYTES:MAX_CSV_BYTES;if(f.size>limit){toast(`${mode==='restore'?'Backup':'CSV'} ist zu groß (${fmtBytes(f.size)}).`,'bad');e.target.value='';return}try{const text=await f.text();if(mode==='restore')restore(text);else importCsv(text)}catch(err){console.warn(err);toast('Datei konnte nicht gelesen werden.','bad')}e.target.value=''}; $('#photoInput').onchange=async e=>{const f=e.target.files[0];if(f)await handleScanPhoto(f);e.target.value=''}; $('#isbnPhotoInput').onchange=async e=>{const f=e.target.files[0];if(f)await handleIsbnPhoto(f);e.target.value=''};
   $('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal()}); $('#modal').addEventListener('close',()=>{if(scanImportState.imageUrl){URL.revokeObjectURL(scanImportState.imageUrl);scanImportState.imageUrl=null;}scanImportState.lastFile=null;});

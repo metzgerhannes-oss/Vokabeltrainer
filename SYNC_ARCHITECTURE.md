@@ -23,7 +23,7 @@ Jedes Gerät erhält eine eigene zufällige Geräte-ID und ein eigenes Gerätege
 
 Das Familien-Passwort/PIN wird nicht gespeichert. Für die Einrichtung wird lokal `SHA-256(familyId + "|" + PIN)` gebildet; serverseitig wird auch dieser abgeleitete Wert nur als bcrypt-Hash gespeichert.
 
-Kindergeräte werden später über einen kurzlebigen Einmal-Code/QR-Code an genau ein Profil gebunden. Der Einmal-Code ist 15 Minuten gültig und danach unbrauchbar.
+Kindergeräte werden über einen kurzlebigen Einmal-Link/QR-Code an genau ein Profil gebunden. Weitere Eltern-Geräte können ebenfalls über einen eigenen kurzlebigen Einmal-Link/QR-Code aufgenommen werden, ohne die wiederverwendbare Familien-PIN offenzulegen. Beide Invite-Typen sind 15 Minuten gültig und danach unbrauchbar.
 
 ## Offline-first
 
@@ -48,6 +48,6 @@ Die öffentlichen RPC-Wrapper sind `SECURITY INVOKER`; privilegierte Implementie
 ## Gerätebeitritt und Familienwechsel
 
 - Der erste Elternstand legt einen Familienverbund an.
-- Jedes weitere Eltern-Gerät tritt mit Familien-ID und derselben Familien-PIN dem bestehenden Verbund bei; eine zweite Familie ist dafür nicht erforderlich.
+- Jedes weitere Eltern-Gerät kann bevorzugt per einmaligem 15-Minuten-QR-Code/Link beitreten; Familien-ID und Familien-PIN bleiben als manueller Fallback erhalten. Eine zweite Familie ist dafür nicht erforderlich.
 - Die lokale Verbindung eines Eltern-Geräts kann gewechselt werden, ohne lokale Lern- oder Vokabeldaten zu löschen.
 - Kindergeräte erhalten beim Erstbeitritt die Dokumente strikt in der Reihenfolge `shared` → `profile/<id>/setup` → `profile/<id>/progress`, damit die Vokabelbibliothek vor Set- und Fortschrittsreferenzen vorhanden ist.

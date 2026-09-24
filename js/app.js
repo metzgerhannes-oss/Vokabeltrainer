@@ -18,7 +18,7 @@
       if(sessionStorage.getItem(key))return;
       updateReloading=true;sessionStorage.setItem(key,'1');location.reload();
     });
-    navigator.serviceWorker.register('./sw.js?v=0.18.58')
+    navigator.serviceWorker.register('./sw.js?v=0.18.59')
       .then(reg=>reg.update().catch(()=>{}))
       .catch(console.warn);
   }
@@ -33,6 +33,7 @@
   }catch(e){console.warn(e)}
   bind();
   renderAll();
-  window.handleChildInviteFromUrl?.();
+  const handledDeviceInvite=window.handleDeviceInviteFromUrl?.();
+  if(!handledDeviceInvite)window.handleDuelInviteFromUrl?.();
   window.VTFamilySync?.bootstrap();
 })();
