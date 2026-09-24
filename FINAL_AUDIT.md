@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 24.09.2026 · App v0.18.48
+Stand: 24.09.2026 · App v0.18.49
 
 ## Ergebnis
 
@@ -69,6 +69,9 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - Reduced Motion deaktiviert die neuen Sturm-/Rammbockbewegungen und Bodenspuren, erhält aber Trefferinformation und identischen persistenten Endzustand
 - Pfeilhagel, Reiterangriff und Spezialangriff besitzen ebenfalls eigene rein visuelle Sequenzen: mehrwellige Pfeilbahnen, Flankenritt mit Staub/Bewegungsspur sowie Elite-/Adleraura mit stärkstem Licht- und Impactmoment; alle lesen nur den bereits feststehenden Angriffstyp und das berechnete Ergebnis
 - jeder Angriff besitzt einen eindeutigen kindgerechten Treffer-Callout; Reduced Motion entfernt auch diese neuen Bewegungs-Layer, lässt Schaden/Taktiktext und persistenten Festungszustand unverändert sichtbar
+- die Battle-Basisszene ist als kohärente illustrative Fantasy-Bühne neu aufgebaut; das bisherige dedizierte Battle-Artwork wird nur noch mit niedriger Opazität als Textur genutzt, während CSS-Landschaft, Angriffsweg, Formation und neu materialisierte Festung die sichtbare Komposition bilden
+- die Armee verwendet eine gestaffelte Formation statt einer flachen Reihe, die Festung erhält strukturierte Steinflächen, Schatten, Fenster und klarere Silhouette; die Leserichtung bleibt links nach rechts auf das Testziel gerichtet
+- der normale Battle-CTA ist nicht mehr als fixed Overlay über der Grafik positioniert, sondern sitzt direkt unter der Bühne; immersive Vollbildansicht behält bewusst einen fixierten CTA
 - die vier Battle-Ebenen bewegen sich phasenabhängig mit dezentem Parallax/Kamerafokus; bei `prefers-reduced-motion` werden alle neuen Transform-Bewegungen deaktiviert
 - die Battle-Grafik wird zusätzlich in getrennte visuelle Ebenen für Hintergrund, Armee, Festung und Atmosphäre aufgeteilt; dies ist rein präsentational und verändert keinerlei Lern- oder Kampflogik
 - die englische Schlacht verwendet ein eigenes UI-freies Battlefield-Asset über den getrennten Loader `VTBattleArt`; Armee-/Lagergrafik und Battle-Grafik sind technisch getrennt
