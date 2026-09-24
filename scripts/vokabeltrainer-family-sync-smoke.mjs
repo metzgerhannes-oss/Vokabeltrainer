@@ -38,6 +38,9 @@ assert(ui.includes('if(dialog.open)return')&&ui.includes("try{dialog.showModal()
 assert(css.includes('-webkit-overflow-scrolling:auto')&&css.includes('max-height:calc(100vh - 16px)'), 'iOS 15 modal scrolling and viewport fallback are present');
 assert(pairing.includes("Verbindungslink erstellen")&&pairing.includes('navigator.share'),'parent UI hands the invite off as a shareable link instead of exposing the raw token');
 assert(pairing.includes("claimChildInvite(token")&&pairing.includes("Dieses Gerät verbinden"),'child device can consume the invite link in one guided step');
+assert(html.includes('id="iosStandaloneSyncCard"')&&html.includes('id="iosStandaloneSyncBtn"'),'iOS standalone app exposes a direct family-pairing recovery path');
+assert(ui.includes('renderStandaloneSyncNotice')&&ui.includes("$('#iosStandaloneSyncBtn').onclick=openFamilySyncChildJoin"),'iOS standalone pairing notice is driven by actual sync status');
+assert(pairing.includes('isIOSBrowserOutsideStandalone')&&pairing.includes('Den Link nicht in Safari verbrauchen.')&&pairing.includes('copyIosHomeInviteBtn'),'iOS Safari preserves a fresh child invite for the Home Screen app instead of consuming it in Safari');
 assert(pairing.includes("location.hash")&&!pairing.includes("searchParams.set('childInvite'"),'invite secret is transported in the URL fragment, not the query string');
 assert(app.includes('handleChildInviteFromUrl'),'bootstrap detects child-device invite links');
 assert(sync.includes("sha256Hex(familyId+'|'")&&!/pin\s*:/.test(sync),'family PIN is derived locally and not persisted as a config field');
