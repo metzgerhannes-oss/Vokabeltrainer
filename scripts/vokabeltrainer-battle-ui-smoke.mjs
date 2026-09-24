@@ -31,6 +31,18 @@ try{
   assert((await page.locator('#attackBtn').textContent())?.includes('Festung'),'campaign card points to the persistent test fortress');
   await page.click('#attackBtn');
   await page.waitForSelector('#battleView.active');
+  await page.waitForFunction(()=>{
+    const f=currentTestFortress(),stage=document.querySelector('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
+    if(!f?.revealedAt||!stage?.classList.contains('fortress-reveal')||!overlay)return false;
+    const style=getComputedStyle(overlay);
+    return style.visibility==='visible'&&Number(style.opacity)>.9;
+  });
+  const firstFortressReveal=await page.evaluate(()=>{
+    const f=currentTestFortress(),stage=document.querySelector('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
+    return {seenAt:f?.revealedAt||'',key:f?.key||'',revealKey:stage?.dataset.revealKey||'',copy:overlay?.textContent||''};
+  });
+  assert(firstFortressReveal.seenAt&&firstFortressReveal.key===firstFortressReveal.revealKey,'new test fortress receives one visible discovery reveal');
+  assert(firstFortressReveal.copy.includes('NEUES TESTZIEL ENTDECKT')&&firstFortressReveal.copy.includes('Vokabel'),'fortress reveal explains the new target and learning scope');
   assert(await page.locator('#battleAttackBtn').isDisabled(),'only the attack action is locked before the daily goal');
   await page.click('#battleReturnBtn');
   await page.waitForSelector('#childProgressView.active');
@@ -40,6 +52,12 @@ try{
 
   await page.click('#attackBtn');
   await page.waitForSelector('#battleView.active');
+  await page.waitForTimeout(80);
+  const repeatedFortressReveal=await page.evaluate(()=>({
+    seenAt:currentTestFortress()?.revealedAt||'',
+    active:document.querySelector('#battleStage')?.classList.contains('fortress-reveal')
+  }));
+  assert(repeatedFortressReveal.seenAt===firstFortressReveal.seenAt&&!repeatedFortressReveal.active,'same test fortress is not revealed a second time');
   await page.waitForFunction(()=>window.VTBattleArt?.ready===true);
   await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
   assert(await page.locator('#battleStage [data-battle-art-stack]').count()===1,'battle stage receives one layered artwork stack');
