@@ -324,7 +324,7 @@ function renderHandwriting(w){
   session.handwritingPhase=session.handwritingPhase||'trace';
   const trace=session.handwritingPhase==='trace';
   $('#modePill').textContent='Handschrift';
-  $('#studyArea').innerHTML=`<div class="study-card handwriting-card"><div class="eyebrow">Handschrift · ${trace?'Einprägen':'Aus dem Gedächtnis'}</div><div class="study-prompt compact-prompt">${esc(trace?w.term:w.translation)}</div><div class="study-sub">${trace?'Sprich die Buchstaben leise mit und fahre das Wort mit dem Finger nach.':'Das Wort ist abgedeckt. Schreibe es jetzt aus dem Gedächtnis.'}</div><div class="handwriting-wrap ${trace?'trace-phase':''}"><canvas id="handwritingCanvas" class="handwriting-canvas" aria-label="Handschrift-Schreibfeld"></canvas>${trace?`<div class="trace-word" aria-hidden="true">${esc(w.term)}</div>`:''}</div><div class="row gap center-actions wrap top-space"><button id="undoStrokeBtn" class="ghost">↶ Rückgängig</button><button id="clearHandwritingBtn" class="ghost">Leeren</button><button id="speakHandwritingBtn" class="secondary">🔊 Anhören</button>${trace?'<button id="memoryWriteBtn" class="primary">Abdecken & schreiben</button>':'<button id="compareHandwritingBtn" class="primary">Lösung vergleichen</button>'}</div><p class="study-sub handwriting-note">Ohne Zeitdruck. Handschrift unterstützt die Einprägung; Mastery wird erst durch einen anschließend geprüften Abruf bestimmt.</p></div>`;
+  $('#studyArea').innerHTML=`<div class="study-card handwriting-card"><div class="eyebrow">Handschrift · ${trace?'Einprägen':'Aus dem Gedächtnis'}</div><div class="study-prompt compact-prompt">${esc(trace?w.term:w.translation)}</div><div class="study-sub">${trace?'Sprich die Buchstaben leise mit und fahre das Wort mit dem Finger nach.':'Das Wort ist abgedeckt. Schreibe es jetzt aus dem Gedächtnis.'}</div><div class="handwriting-wrap ${trace?'trace-phase':''}"><canvas id="handwritingCanvas" class="handwriting-canvas" aria-label="Handschrift-Schreibfeld"></canvas>${trace?`<div class="trace-word" aria-hidden="true">${esc(w.term)}</div>`:''}</div><div id="handwritingActionRow" class="row gap center-actions wrap top-space"><button id="undoStrokeBtn" class="ghost">↶ Rückgängig</button><button id="clearHandwritingBtn" class="ghost">Leeren</button><button id="speakHandwritingBtn" class="secondary">🔊 Anhören</button>${trace?'<button id="memoryWriteBtn" class="primary">Abdecken & schreiben</button>':'<button id="compareHandwritingBtn" class="primary">Lösung vergleichen</button>'}</div><div id="handwritingDecision" class="handwriting-compare-slot" aria-live="polite"></div><p class="study-sub handwriting-note">Ohne Zeitdruck. Handschrift unterstützt die Einprägung; Mastery wird erst durch einen anschließend geprüften Abruf bestimmt.</p></div>`;
   const canvas=$('#handwritingCanvas'),ctx=setupHandwritingCanvas(canvas),strokes=[];
   let current=null,drawing=false;
   const redraw=()=>{ctx.clearRect(0,0,canvas.width,canvas.height);ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#172033';ctx.lineWidth=Math.max(4,canvas.width/120);for(const stroke of strokes){if(stroke.length<2)continue;ctx.beginPath();ctx.moveTo(stroke[0].x,stroke[0].y);for(const pt of stroke.slice(1))ctx.lineTo(pt.x,pt.y);ctx.stroke()}};
@@ -349,10 +349,16 @@ function setupHandwritingCanvas(canvas){
 }
 function showHandwritingCompare(w,hasInk){
   if(!hasInk){toast('Schreibe das Wort zuerst einmal aus dem Gedächtnis.','warn');return}
-  const card=$('#studyArea .study-card');card.insertAdjacentHTML('beforeend',`<div class="feedback notice subtle handwriting-compare"><strong>Lösung: ${esc(w.term)}</strong> ${audioButtonHtml(w.term,'Anhören')}<br><small>Vergleiche Buchstabenfolge und Endung mit deiner Handschrift.</small><div class="row gap center-actions wrap top-space"><button id="handwritingAgainBtn" class="secondary">Nochmal</button><button id="handwritingMatchesBtn" class="primary">Passt</button></div></div>`);
-  $('#compareHandwritingBtn').disabled=true;
-  $('#handwritingAgainBtn').onclick=()=>{recordHandwriting(w,false);session.handwritingPhase='trace';nextStudy(false,w)};
-  $('#handwritingMatchesBtn').onclick=()=>{recordHandwriting(w,true);session.handwritingPhase='trace';nextStudy(true,w)};
+  const slot=$('#handwritingDecision'),compare=$('#compareHandwritingBtn');
+  if(!slot||slot.children.length)return;
+  if(compare){compare.disabled=true;compare.textContent='Lösung angezeigt'}
+  for(const id of ['undoStrokeBtn','clearHandwritingBtn']){const el=$('#'+id);if(el)el.disabled=true}
+  slot.innerHTML=`<div class="feedback notice subtle handwriting-compare"><strong>Lösung: ${esc(w.term)}</strong> ${audioButtonHtml(w.term,'Anhören')}<br><small>Vergleiche Buchstabenfolge und Endung mit deiner Handschrift.</small><div class="row gap center-actions wrap top-space"><button id="handwritingAgainBtn" class="secondary">Noch einmal schreiben</button><button id="handwritingMatchesBtn" class="primary">Passt · nächstes Wort</button></div></div>`;
+  let decided=false;
+  const finish=matched=>{if(decided)return;decided=true;$('#handwritingAgainBtn').disabled=true;$('#handwritingMatchesBtn').disabled=true;recordHandwriting(w,matched);session.handwritingPhase='trace';nextStudy(matched,w)};
+  $('#handwritingAgainBtn').onclick=()=>finish(false);
+  $('#handwritingMatchesBtn').onclick=()=>finish(true);
+  setTimeout(()=>{slot.scrollIntoView?.({block:'nearest'});$('#handwritingMatchesBtn')?.focus()},0);
 }
 function recordHandwriting(w,matched){
   w.modesSeen=[...new Set([...(w.modesSeen||[]),'handwriting'])];

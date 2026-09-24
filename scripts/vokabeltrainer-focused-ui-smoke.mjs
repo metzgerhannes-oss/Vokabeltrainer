@@ -31,6 +31,20 @@ async function seed(term,translation,mode='recall'){
   await page.waitForSelector('#answerField');
 }
 
+async function seedHandwritingPair(){
+  await page.evaluate(()=>{
+    state=defaultState();
+    const set={id:'handwriting_set',learnerId:'learner_demo',subject:'english',title:'Unit Handschrift',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:''};
+    state.sets.push(set);
+    attachVocabularyToSet(set.id,{term:'Camden',translation:'Camden',source:'handwriting-smoke',verified:true,firstContactCopiedAt:'test',firstContactRecalledAt:'test',firstContactCompletedAt:'test'});
+    attachVocabularyToSet(set.id,{term:'welcome',translation:'willkommen',source:'handwriting-smoke',verified:true,firstContactCopiedAt:'test',firstContactRecalledAt:'test',firstContactCompletedAt:'test'});
+    rebuildWordIndexes();
+    renderAll();
+    startSession('handwriting',set.id,setWords(set.id).map(quizQueueRef),false);
+  });
+  await page.waitForSelector('#memoryWriteBtn');
+}
+
 try{
   const response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'app must load');
@@ -130,6 +144,27 @@ try{
   assert(review?.includes('Richtig erinnert · Schreibweise'),'result overview distinguishes semantic recall from spelling accuracy');
   assert(await page.locator('#copySessionResultsBtn').count()===1,'result overview offers a copyable diagnostic');
   assert(await page.locator('.session-review [data-speak]').count()>=1,'result overview keeps pronunciation available for the foreign word');
+
+  // Livetest regression: handwriting must not appear stuck after the first word.
+  await page.click('#doneBtn');
+  await seedHandwritingPair();
+  await page.click('#memoryWriteBtn');
+  const canvas=page.locator('#handwritingCanvas');
+  const box=await canvas.boundingBox();
+  if(!box)throw new Error('handwriting canvas missing');
+  await page.mouse.move(box.x+35,box.y+70);
+  await page.mouse.down();
+  await page.mouse.move(box.x+115,box.y+110,{steps:4});
+  await page.mouse.up();
+  await page.click('#compareHandwritingBtn');
+  await page.waitForSelector('#handwritingMatchesBtn',{state:'visible'});
+  assert((await page.locator('#compareHandwritingBtn').textContent())?.includes('Lösung angezeigt'),'compare action clearly changes state instead of looking dead');
+  assert(await page.locator('#handwritingMatchesBtn').evaluate(el=>{const r=el.getBoundingClientRect();return r.top>=0&&r.bottom<=window.innerHeight}),'handwriting next-word decision is brought into the visible iPhone viewport');
+  await page.click('#handwritingMatchesBtn');
+  await page.waitForSelector('#memoryWriteBtn',{state:'visible'});
+  const handwritingAdvance=await page.evaluate(()=>({index:session?.index??-1,label:document.querySelector('#sessionPill')?.textContent||'',term:document.querySelector('.study-prompt')?.textContent||''}));
+  assert(handwritingAdvance.index===1,'handwriting confirmation advances from the first to the second word');
+  assert(handwritingAdvance.label==='Aufgabe 2','second handwriting word has clear task orientation');
 
   console.log('Vokabeltrainer focused learning WebKit smoke: passed');
   console.log('✓ retrieval hides navigation and diagnostics');
