@@ -357,6 +357,69 @@
 }
 
 
+/* v0.18.47 – Angriffsgrafik 1.0: klarer Sturm- und Rammbockfokus */
+.battle-stage.battle-art-layered.attack-charge.phase-advance .battle-art-army{
+  transform:translate3d(5.8%,-.35%,0) scale(1.075);
+  filter:saturate(1.1) contrast(1.1) brightness(.95);
+}
+.battle-stage.battle-art-layered.attack-charge.phase-barrage .battle-art-army{
+  transform:translate3d(8.8%,-.7%,0) scale(1.105);
+}
+.battle-stage.battle-art-layered.attack-charge.phase-barrage .battle-art-background{
+  transform:translate3d(-1.4%,-.2%,0) scale(1.04);
+}
+.battle-stage.battle-art-layered.attack-charge.phase-impact .battle-art-stack{
+  transform:translate3d(-1.25%,-.7%,0) scale(1.06);
+}
+.battle-stage.battle-art-layered.attack-charge.phase-impact .battle-art-fortress{
+  transform:translate3d(-4.2%,-.9%,0) scale(1.085);
+}
+
+.battle-stage.battle-art-layered.attack-ram.phase-advance .battle-art-stack{
+  transform:translate3d(.8%,-.15%,0) scale(1.026);
+}
+.battle-stage.battle-art-layered.attack-ram.phase-advance .battle-art-army{
+  transform:translate3d(3.2%,.15%,0) scale(1.04);
+  filter:saturate(.98) contrast(1.08) brightness(.9);
+}
+.battle-stage.battle-art-layered.attack-ram.phase-barrage .battle-art-stack{
+  transform:translate3d(-.4%,-.25%,0) scale(1.038);
+}
+.battle-stage.battle-art-layered.attack-ram.phase-barrage .battle-art-fortress{
+  transform:translate3d(-2.5%,-.5%,0) scale(1.06);
+}
+.battle-stage.battle-art-layered.attack-ram.phase-impact .battle-art-stack{
+  transform:translate3d(-2.2%,-.85%,0) scale(1.075);
+  transition-duration:280ms;
+}
+.battle-stage.battle-art-layered.attack-ram.phase-impact .battle-art-fortress{
+  transform:translate3d(-5.2%,-1.2%,0) scale(1.105);
+  filter:saturate(1.02) contrast(1.18) brightness(.94);
+  transition-duration:280ms;
+}
+.battle-stage.battle-art-layered.attack-ram.phase-impact .battle-art-army{
+  transform:translate3d(4.7%,-.45%,0) scale(1.06);
+}
+.battle-stage.battle-art-layered.attack-ram.phase-impact .battle-art-atmosphere::before{
+  background:radial-gradient(circle at 75% 66%,rgba(255,238,188,.68) 0 3.5%,rgba(255,169,72,.25) 13%,transparent 34%);
+}
+.battle-stage.battle-art-layered.attack-charge.phase-impact .battle-art-atmosphere::before{
+  background:radial-gradient(ellipse at 71% 61%,rgba(255,224,153,.48) 0 4%,rgba(225,158,79,.18) 16%,transparent 34%);
+}
+
+@media(prefers-reduced-motion:reduce){
+  .battle-stage.battle-art-layered.attack-charge .battle-art-stack,
+  .battle-stage.battle-art-layered.attack-charge .battle-art-background,
+  .battle-stage.battle-art-layered.attack-charge .battle-art-army,
+  .battle-stage.battle-art-layered.attack-charge .battle-art-fortress,
+  .battle-stage.battle-art-layered.attack-ram .battle-art-stack,
+  .battle-stage.battle-art-layered.attack-ram .battle-art-background,
+  .battle-stage.battle-art-layered.attack-ram .battle-art-army,
+  .battle-stage.battle-art-layered.attack-ram .battle-art-fortress{
+    transform:none!important;
+  }
+}
+
 /* v0.18.32 – persistente Schäden auch auf der illustrierten Festung */
 .battle-art-stack::after{
   content:"";

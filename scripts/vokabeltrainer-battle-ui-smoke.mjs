@@ -117,15 +117,19 @@ try{
 
   const damageLow=await setDamageRatio(.75);
   assert(damageLow.tier==='low'&&damageLow.percent>=20&&damageLow.percent<33,'light siege damage is derived from stored fortress defense');
+  assert(await page.locator('#battleStage').getAttribute('data-fortress-state')==='scratched','75 percent remaining defense is visibly labelled as damaged');
   assert(damageLow.c1>.3&&damageLow.c5===0,'light damage shows only early cracks');
 
   const damageMid=await setDamageRatio(.5);
   assert(damageMid.tier==='mid'&&damageMid.percent>=45&&damageMid.percent<66,'medium siege damage is derived from stored fortress defense');
+  assert(await page.locator('#battleStage').getAttribute('data-fortress-state')==='damaged','50 percent remaining defense is visibly labelled as strongly damaged');
   assert(damageMid.c3>.5&&damageMid.rubble>.4,'medium damage adds deeper cracks and rubble');
   assert(damageMid.smoke>.2,'medium damage becomes visible on the illustrated fortress atmosphere');
 
   const damageHigh=await setDamageRatio(.2);
   assert(damageHigh.tier==='high'&&damageHigh.percent>=66,'heavy siege damage is derived from stored fortress defense');
+  assert(await page.locator('#battleStage').getAttribute('data-fortress-state')==='critical','25 percent or less remaining defense is visibly critical');
+  assert((await page.locator('#battleStage .battle-fortress-state-badge').textContent())?.includes('Kurz vor dem Fall'),'critical fortress state is written in child-readable language');
   assert(damageHigh.c5>.8&&damageHigh.rubble>.8,'heavy damage exposes all cracks and substantial rubble');
   assert(damageHigh.smoke>damageMid.smoke,'heavy damage increases persistent smoke');
   assert(damageHigh.artFilter!==damageLow.artFilter,'illustrated fortress visibly degrades with siege progress');
@@ -185,6 +189,35 @@ try{
   assert(motionTransforms.impact.shockAnimation.includes('battleShockDepth'),'impact phase expands the shockwave');
   assert(parseFloat(motionTransforms.impact.impactWidth)>=100,'impact burst has a visibly larger footprint');
 
+  const attackIdentity=await page.evaluate(async()=>{
+    const stage=document.querySelector('#battleStage');
+    stage.classList.add('battle-sequence','attack-charge','phase-advance','is-attacking');
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const charge={
+      streak:getComputedStyle(document.querySelector('#battleStage .battle-charge-streaks i')).animationName,
+      streakOpacity:Number(getComputedStyle(document.querySelector('#battleStage .battle-charge-streaks')).opacity),
+      army:getComputedStyle(document.querySelector('#battleStage .battle-art-army')).transform
+    };
+    stage.classList.remove('attack-charge','phase-advance','is-attacking');
+    stage.classList.add('attack-ram','phase-barrage','is-attacking','is-strike');
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const ram={
+      drive:getComputedStyle(document.querySelector('#battleStage .battle-ram')).animationName,
+      trail:getComputedStyle(document.querySelector('#battleStage .battle-ram-trail i')).animationName,
+      trailOpacity:Number(getComputedStyle(document.querySelector('#battleStage .battle-ram-trail')).opacity)
+    };
+    stage.classList.remove('phase-barrage','is-attacking','is-strike');
+    stage.classList.add('phase-impact','is-impact');
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    ram.gate=getComputedStyle(document.querySelector('#battleStage .battle-gate')).animationName;
+    stage.classList.remove('battle-sequence','attack-ram','phase-impact','is-impact');
+    return {charge,ram};
+  });
+  assert(attackIdentity.charge.streak.includes('battleChargeStreak')&&attackIdentity.charge.streakOpacity===1,'sturmangriff has its own visible forward-motion streaks');
+  assert(attackIdentity.ram.drive.includes('battleRamFinalDrive'),'ram attack has a dedicated final drive animation');
+  assert(attackIdentity.ram.trail.includes('battleRamTrail')&&attackIdentity.ram.trailOpacity===1,'ram attack raises its own heavy ground trail');
+  assert(attackIdentity.ram.gate.includes('battleRamGateImpact'),'ram impact targets the fortress gate with a dedicated hit animation');
+
   await page.emulateMedia({reducedMotion:'reduce'});
   const reducedImpactAnimations=await page.evaluate(()=>{
     const stage=document.querySelector('#battleStage');
@@ -199,6 +232,17 @@ try{
     return result;
   });
   assert(Object.values(reducedImpactAnimations).every(name=>name==='none'),'reduced-motion disables all new cinematic impact animations');
+  const reducedAttackFx=await page.evaluate(()=>{
+    const stage=document.querySelector('#battleStage');
+    stage.classList.add('battle-sequence','attack-ram','phase-barrage','is-attacking','is-strike');
+    const result={
+      drive:getComputedStyle(document.querySelector('#battleStage .battle-ram')).animationName,
+      trailDisplay:getComputedStyle(document.querySelector('#battleStage .battle-ram-trail')).display
+    };
+    stage.classList.remove('battle-sequence','attack-ram','phase-barrage','is-attacking','is-strike');
+    return result;
+  });
+  assert(reducedAttackFx.drive==='none'&&reducedAttackFx.trailDisplay==='none','reduced-motion removes the new ram movement and trail effects');
   assert(await page.locator('#battleStage [data-battle-scene-art]').getAttribute('data-battle-asset')==='dedicated','battle image comes from dedicated battlefield asset');
   assert((await page.evaluate(()=>window.VTBattleArt?.source))==='dedicated-battlefield','dedicated battlefield loader is active');
   assert(await page.locator('#battleStage .battle-unit').count()>=6,'animated army contains multiple units');
@@ -222,6 +266,9 @@ try{
   assert(await page.locator('[data-battle-attack="ram"].active').count()===1,'attack type can be selected');
   assert((await page.locator('#battleMessage').textContent())?.includes('+10 Taktikschaden'),'selected attack explains its small tactical bonus');
   const expectedRamDamage=await page.evaluate(()=>testFortressDamage(currentTestFortress(),'english','ram').damage);
+  assert(await page.locator('#battleStage .battle-impact-callout').count()===1,'battle stage contains one dedicated visual hit callout');
+  assert(await page.locator('#battleStage .battle-charge-streaks i').count()===6,'battle stage contains the charge motion layer');
+  assert(await page.locator('#battleStage .battle-ram-trail i').count()===3,'battle stage contains the ram ground-impact layer');
   assert((await page.locator('#battleTicketPill').textContent())?.includes('1'),'battle screen shows earned attack');
   assert(await page.locator('.battle-phase-strip [data-battle-phase]').count()===5,'battle shows a five-phase sequence');
   const attackButtonRect=await page.locator('#battleAttackBtn').boundingBox();
@@ -231,6 +278,9 @@ try{
   await page.click('#battleFullscreenBtn');
   assert(await page.locator('body.battle-immersive').count()===1,'immersive fullscreen fallback activates');
   await page.click('#battleAttackBtn');
+  assert((await page.locator('[data-battle-impact-title]').textContent())==='TOR-TREFFER!','ram attack prepares a clear gate-hit callout immediately');
+  assert((await page.locator('[data-battle-impact-damage]').textContent())===expectedRamDamage+' Schaden','visual hit callout uses the exact calculated damage');
+  assert((await page.locator('[data-battle-impact-tactic]').textContent())?.includes('+10 durch Belagerung'),'visual hit callout explains the small tactical contribution');
   await page.waitForSelector('#battleStage.attack-ram.battle-finished',{timeout:3000});
   const msg=await page.locator('#battleMessage').textContent();
   assert(/Angriff|Festung|Mauer/i.test(msg||''),'battle ends with a visible result');
@@ -249,6 +299,8 @@ try{
   assert(await page.evaluate(()=>subjectProgress().pct)===100,'battle tactics do not alter academic mastery');
   assert((await page.locator('#battleFortressProgress').textContent())?.includes('Erobert'),'winning keeps the same test fortress and switches it to securing');
   assert(await page.locator('#battleStage .battle-fortress.captured').count()===1,'winning settles the battle fortress into the persistent captured state');
+  assert(await page.locator('#battleStage').getAttribute('data-fortress-state')==='captured','victory switches the visible fortress-state model to captured');
+  assert((await page.locator('#battleStage .battle-fortress-state-badge').textContent())?.includes('Erobert'),'victory visibly labels the fortress as conquered');
   assert(Number(await page.locator('#battleStage .battle-enemy-flag').evaluate(el=>getComputedStyle(el).opacity))===0,'captured fortress no longer shows the enemy flag');
   assert(Number(await page.locator('#battleStage .battle-own-flag').evaluate(el=>getComputedStyle(el).opacity))===1,'captured fortress permanently shows the player flag');
   await page.evaluate(()=>renderBattlefield());

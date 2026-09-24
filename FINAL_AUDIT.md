@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 24.09.2026 · App v0.18.46
+Stand: 24.09.2026 · App v0.18.47
 
 ## Ergebnis
 
@@ -64,6 +64,9 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - sichtbare Festungsschäden werden ausschließlich aus dem bereits gespeicherten Verhältnis `defense/maxDefense` abgeleitet; es gibt keinen separaten visuellen Spielfortschritt
 - leichte, mittlere und schwere Schadensstufen verändern Risse, Geröll, Ruß, Rauch und die illustrierte Festungs-Layer; die fachliche und kampagnenlogische Bewertung bleibt unverändert
 - die Trefferphase nutzt ausschließlich vorhandene UI-Elemente für größeren Impact-Burst, Torblitz, Staubwolke und Shockwave; bei `prefers-reduced-motion` werden diese Animationen deaktiviert
+- Sturmangriff und Rammbock besitzen eigene visuelle Angriffsidentitäten: Front-Vorstoß/Bewegungslinien bzw. schwere Rammbock-Anfahrt/Bodenspur/Tor-Einschlag; die Effekte lesen nur den bereits berechneten Angriff und entscheiden kein Kampfergebnis
+- der Treffer-Callout zeigt exakt den berechneten Gesamtschaden und den transparenten Taktikanteil; die sichtbaren Festungszustände Intakt/Beschädigt/Stark beschädigt/Kritisch/Erobert werden ausschließlich aus `defense/maxDefense` und `capturedAt` abgeleitet
+- Reduced Motion deaktiviert die neuen Sturm-/Rammbockbewegungen und Bodenspuren, erhält aber Trefferinformation und identischen persistenten Endzustand
 - die vier Battle-Ebenen bewegen sich phasenabhängig mit dezentem Parallax/Kamerafokus; bei `prefers-reduced-motion` werden alle neuen Transform-Bewegungen deaktiviert
 - die Battle-Grafik wird zusätzlich in getrennte visuelle Ebenen für Hintergrund, Armee, Festung und Atmosphäre aufgeteilt; dies ist rein präsentational und verändert keinerlei Lern- oder Kampflogik
 - die englische Schlacht verwendet ein eigenes UI-freies Battlefield-Asset über den getrennten Loader `VTBattleArt`; Armee-/Lagergrafik und Battle-Grafik sind technisch getrennt

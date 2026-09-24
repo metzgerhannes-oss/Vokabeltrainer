@@ -4,11 +4,23 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.46**
+App-Version: **v0.18.47**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.47 – Angriffsgrafik 1.0
+
+- **Sturmangriff** und **Rammbock** besitzen jetzt klar unterscheidbare, kindgerechte Angriffsbilder statt nur derselben Grundanimation
+- der Sturmangriff zeigt sichtbare Vorwärtsdynamik der Front mit Bewegungslinien und einem stärkeren finalen Vorstoß
+- der Rammbock erhält eine eigene schwere Anfahrt, Bodenspur, Torfokus und einen deutlich sichtbaren Tor-Einschlag
+- beim Einschlag erscheint ein kurzer visueller Callout mit **echtem Gesamtschaden** und dem bereits berechneten kleinen Taktikanteil
+- der sichtbare Festungszustand wird zusätzlich als **Intakt → Beschädigt → Stark beschädigt → Kurz vor dem Fall → Erobert** angezeigt
+- dieser Zustand wird ausschließlich aus `defense/maxDefense` bzw. `capturedAt` abgeleitet; es entsteht kein zweiter Spielstand
+- die normale Kampfsequenz wurde kompakter getaktet, damit Angriff und Treffer unmittelbarer wirken
+- Reduced Motion entfernt die neuen Bewegungs-/Spureffekte, zeigt aber weiterhin Trefferwert und Endzustand
+- Mastery, Leitner, Spacing, Testbereitschaft und fachliche Bewertung bleiben unverändert
 
 ## v0.18.46 – dynamische Feldzugskarte 1.0
 
