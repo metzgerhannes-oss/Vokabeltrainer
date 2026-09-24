@@ -2855,3 +2855,26 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
   .battle-rank-badge{max-width:118px}
   .battle-fortress-state-badge small{display:none}
 }
+
+
+/* Battle illustration regression guard – preserve progressive fortress damage */
+/* Die neue Materialdarstellung darf die bereits getestete Schadensprogression nicht nivellieren. */
+.battle-stage[data-damage="low"] .battle-fortress .c1{opacity:.38}
+.battle-stage[data-damage="low"] .battle-fortress .c2{opacity:.18}
+.battle-stage[data-damage="low"] .battle-fortress .c3,
+.battle-stage[data-damage="low"] .battle-fortress .c4,
+.battle-stage[data-damage="low"] .battle-fortress .c5{opacity:0}
+.battle-stage[data-damage="low"] .battle-rubble{opacity:0}
+
+.battle-stage[data-damage="mid"] .battle-fortress .c1,
+.battle-stage[data-damage="mid"] .battle-fortress .c2{opacity:.72}
+.battle-stage[data-damage="mid"] .battle-fortress .c3{opacity:.58}
+.battle-stage[data-damage="mid"] .battle-fortress .c4{opacity:.36}
+.battle-stage[data-damage="mid"] .battle-fortress .c5{opacity:.14}
+.battle-stage[data-damage="mid"] .battle-rubble{opacity:.54}
+
+.battle-stage[data-damage="high"] .battle-fortress .crack{opacity:.84}
+.battle-stage[data-damage="high"] .battle-rubble{opacity:.92}
+
+.battle-stage.fortress-secured .battle-fortress .crack{opacity:.84}
+.battle-stage.fortress-secured .battle-rubble{opacity:.88}
