@@ -261,6 +261,25 @@ function runBattleAnimation(){
     renderBattlefield();
   },timing.ready);
 }
+function cardboxStageDescription(box){
+  return ({
+    1:'Noch neu – diese Wörter stehen am Anfang.',
+    2:'Im Lernen – schon richtig erinnert, aber noch nicht sicher.',
+    3:'Bekannt – mehrfach richtig erinnert.',
+    4:'Sicher – über mehrere Lerntage gefestigt.',
+    5:'Nachhaltig gemeistert – langfristig sicher gelernt.'
+  })[box]||'';
+}
+function openCardboxBox(box){
+  const stage=clamp(Math.round(Number(box)||1),1,5),words=schoolYearVerifiedWords().filter(w=>leitnerBox(w)===stage)
+    .sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||'')||String(a.term||'').localeCompare(String(b.term||''),'de'));
+  const due=words.filter(w=>!w.dueDate||w.dueDate<=today()).length,label=leitnerLabel(stage);
+  const list=words.length
+    ?`<div class="cardbox-word-list">${words.map(w=>`<div class="cardbox-word-row"><div><strong>${esc(w.term)}</strong> ${audioButtonHtml(w.term,'Anhören')}<span>${esc(w.translation)}</span></div><small>${!w.dueDate||w.dueDate<=today()?'heute fällig':`wieder am ${esc(formatDateShort(w.dueDate))}`}</small></div>`).join('')}</div>`
+    :'<div class="empty-state compact"><strong>Diese Box ist noch leer.</strong><span>Beim Lernen wandern Wörter automatisch durch die fünf Stufen.</span></div>';
+  modal(`<div class="eyebrow">Karteikasten · Box ${stage}</div><h2>${esc(label)}</h2><p>${esc(cardboxStageDescription(stage))}</p><div class="notice subtle"><strong>${words.length} ${words.length===1?'Vokabel':'Vokabeln'}</strong>${words.length?` · ${due} heute fällig`:''}</div>${list}<div class="modal-actions stack-mobile"><button value="cancel" class="ghost">Schließen</button>${words.length?`<button type="button" id="practiceCardboxStageBtn" class="primary">Diese Box üben</button>`:''}</div>`);
+  $('#practiceCardboxStageBtn')?.addEventListener('click',()=>{closeModal();startSession('cards',null,words.map(quizQueueRef),false)});
+}
 function renderCardboxOverview(){
   const card=$('#cardboxOverviewCard'),root=$('#cardboxOverview');
   if(!card||!root)return;
@@ -270,18 +289,18 @@ function renderCardboxOverview(){
   if(!total){root.innerHTML='';return}
   $('#cardboxDuePill').textContent=`${due} heute fällig`;
   $('#cardboxTotalPill').textContent=`${total} ${total===1?'Karte':'Karten'}`;
-  $('#cardboxOverviewText').textContent=due
-    ?`${due} ${due===1?'Karte ist':'Karten sind'} heute zur Wiederholung fällig.`
-    :'Heute ist keine Karte fällig. Du kannst trotzdem freiwillig üben.';
+  const dueText=due?`${due} ${due===1?'Karte ist':'Karten sind'} heute fällig.`:'Heute ist keine Karte fällig.';
+  $('#cardboxOverviewText').textContent=`Wie viele Vokabeln kannst du wie sicher? ${dueText} Tippe eine Box an, um die Wörter zu sehen.`;
   root.innerHTML=[1,2,3,4,5].map(box=>{
-    const count=counts[box]||0,pct=total?Math.round(count/total*100):0;
-    return `<div class="cardbox-stage" data-cardbox-box="${box}">
+    const count=counts[box]||0,pct=total?Math.round(count/total*100):0,label=leitnerLabel(box);
+    return `<button type="button" class="cardbox-stage" data-cardbox-box="${box}" aria-label="Box ${box}: ${esc(label)}, ${count} ${count===1?'Vokabel':'Vokabeln'}. Wörter ansehen">
       <div class="cardbox-stage-top"><span>Box ${box}</span><strong>${count}</strong></div>
-      <b>${esc(leitnerLabel(box))}</b>
-      <progress class="cardbox-stage-progress" max="100" value="${pct}" aria-label="${pct} Prozent des Karteikastens in ${esc(leitnerLabel(box))}"></progress>
-      <small>${pct}% des Karteikastens</small>
-    </div>`;
+      <b>${esc(label)}</b>
+      <progress class="cardbox-stage-progress" max="100" value="${pct}" aria-label="${pct} Prozent des Karteikastens in ${esc(label)}"></progress>
+      <small>${pct}% · Wörter ansehen ›</small>
+    </button>`;
   }).join('');
+  $$('[data-cardbox-box]').forEach(b=>b.onclick=()=>openCardboxBox(b.dataset.cardboxBox));
   const practice=$('#cardboxPracticeBtn');if(practice){practice.disabled=!total;practice.textContent=due?`▥ ${due} fällige ${due===1?'Karte':'Karten'} üben`:'▥ Karteikarten üben'}
 }
 
