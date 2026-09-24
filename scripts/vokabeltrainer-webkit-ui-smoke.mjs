@@ -58,6 +58,28 @@ try{
   if(!/Home-Bildschirm/.test(await page.locator('#modalContent').textContent()||''))throw new Error('iOS Home Screen handoff guidance missing');
   await page.evaluate(()=>{closeModal();history.replaceState(null,'',location.pathname)});
 
+  // Livetest regression: a paired child device is permanently assigned to one
+  // profile. Parent devices may switch profiles, child devices may not.
+  const childLock=await page.evaluate(()=>{
+    const originalStatus=window.VTFamilySync.status;
+    const originalLearners=structuredClone(state.learners);
+    const originalActive=state.activeLearnerId;
+    try{
+      const current=learner();
+      state.learners.push({...structuredClone(current),id:'learner_other',name:'Anderes Kind'});
+      window.VTFamilySync.status=()=>({enabled:true,role:'child',profileId:originalActive,lastSync:null,dirty:0,conflicts:0,busy:false});
+      renderAll();
+      const btn=document.querySelector('#profileBtn');
+      switchLearnerProfile('learner_other');
+      return {disabled:!!btn?.disabled,locked:btn?.classList.contains('profile-locked'),active:state.activeLearnerId,aria:btn?.getAttribute('aria-label')||''};
+    }finally{
+      state.learners=originalLearners;state.activeLearnerId=originalActive;window.VTFamilySync.status=originalStatus;renderAll();
+    }
+  });
+  if(!childLock.disabled||!childLock.locked)throw new Error('paired child profile remains switchable in the header');
+  if(childLock.active==='learner_other')throw new Error('paired child device changed to another learner profile');
+  if(!/fest zugeordnet/.test(childLock.aria))throw new Error('paired child profile is not labelled as fixed');
+
   const fatal=[...pageErrors,...consoleErrors].filter(x=>/ReferenceError|TypeError|SyntaxError|Content Security Policy|InvalidStateError|DOMException/i.test(x));
   if(fatal.length)throw new Error(fatal.join(' | '));
   console.log('Vokabeltrainer WebKit iPhone smoke: passed');
