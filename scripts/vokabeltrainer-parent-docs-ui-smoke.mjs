@@ -26,7 +26,7 @@ async function pdfFromClick(selector,minPages,label){
 try{
   const response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded'});
   assert(response?.ok(),'app loads');
-  await page.waitForFunction(()=>typeof state==='object'&&typeof enterParentMode==='function'&&typeof window.VTParentDocs?.open==='function');
+  await page.waitForFunction(()=>state!==null&&typeof state==='object'&&typeof enterParentMode==='function'&&typeof window.VTParentDocs?.open==='function');
   await page.evaluate(()=>enterParentMode('parentView'));
   await page.waitForSelector('#parentView.active');
 
