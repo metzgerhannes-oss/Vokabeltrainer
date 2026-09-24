@@ -4,11 +4,21 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.43**
+App-Version: **v0.18.44**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.44 – Einheitenrollen wirken in der Schlacht
+
+- Sturm, Pfeilhagel, Rammbock und Reiterangriff greifen jetzt auf die passende sichtbare **Einheitenrolle** zurück
+- der vorhandene Rollenwert erzeugt einen bewusst kleinen **Taktikbonus von 0–10 Schaden**
+- der garantierte Basisschaden und der bestehende Testbereitschaftsbonus bleiben erhalten; kein Angriff kann durch eine schwache Einheit „scheitern“
+- der Spezialangriff verwendet den Durchschnitt der vier offensiven Rollen statt einer einzelnen Einheit
+- Angriffsauswahl, Vorschau und Ergebnis zeigen den Taktikbonus transparent an
+- Einheitenrollen und Schlacht nutzen dieselben zentralen Aufwertungsschwellen, damit Anzeige und Kampf nicht auseinanderlaufen
+- Taktik verändert ausschließlich die Kampagnenrechnung; **Mastery, Leitner, Spacing, Testbereitschaft und fachliche Bewertung bleiben unverändert**
 
 ## v0.18.43 – sichtbare Einheitenentwicklung
 
