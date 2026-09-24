@@ -2094,3 +2094,230 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
   .battle-formation .battle-unit,
   .battle-enemy-flag::after{animation:none!important}
 }
+
+
+/* Battle illustration pass 2b – distinct unit silhouettes */
+/* Rollen bleiben sofort erkennbar, wirken aber nicht mehr wie verschiedene Clip-Art-Sets. */
+.battle-formation .battle-unit.unit-archer{
+  transform-origin:center bottom;
+}
+.battle-formation .battle-unit.unit-archer .shield{
+  left:0;top:30px;
+  width:12px;height:19px;
+  border-width:1px;
+  border-radius:50%;
+  opacity:.78;
+}
+.battle-formation .battle-unit.unit-archer .weapon{
+  right:-7px;top:17px;
+  width:20px;height:40px;
+  border:2px solid #5d4028;
+  border-left-color:transparent;
+  border-radius:0 58% 58% 0;
+  transform:rotate(5deg);
+  filter:drop-shadow(1px 2px 1px rgba(0,0,0,.2));
+}
+.battle-formation .battle-unit.unit-archer .weapon::before{
+  content:"";
+  position:absolute;
+  left:5px;top:0;
+  width:1px;height:37px;
+  background:rgba(222,201,166,.85);
+  transform:rotate(-8deg);
+  transform-origin:center;
+}
+.battle-formation .battle-unit.unit-archer .weapon::after{
+  left:-7px;top:20px;
+  width:26px;height:2px;
+  background:linear-gradient(90deg,#4c3828 0 76%,#bcc4c5 77%);
+  transform:rotate(-13deg);
+  box-shadow:none;
+}
+.battle-formation .battle-unit.unit-archer .body{
+  background:
+    linear-gradient(90deg,rgba(35,25,18,.28),transparent 25% 72%,rgba(31,22,17,.3)),
+    linear-gradient(180deg,#7e6742,#665034 62%,#473824);
+  border-color:#47331f;
+}
+.battle-formation .battle-unit.unit-archer .helmet::after{
+  background:linear-gradient(90deg,#5c4630,#806342 55%,#4a3929);
+  height:9px;top:-7px;
+}
+
+/* Elite ist hochwertiger, nicht einfach heller. */
+.battle-formation .battle-unit.unit-elite .helmet{
+  background:
+    linear-gradient(105deg,rgba(255,255,255,.42),transparent 28% 68%,rgba(22,27,29,.22)),
+    linear-gradient(180deg,#c7c8bd 0%,#8e938f 58%,#555e5d 100%);
+  border-color:#555344;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.35),
+    0 0 0 1px rgba(183,143,52,.72),
+    0 3px 3px rgba(0,0,0,.17);
+}
+.battle-formation .battle-unit.unit-elite .helmet::after{
+  width:6px;height:17px;top:-15px;
+  background:linear-gradient(90deg,#8b6724,#c59a3e 48%,#76561e);
+}
+.battle-formation .battle-unit.unit-elite .body{
+  filter:none;
+  border-color:#5d4522;
+  background:
+    linear-gradient(90deg,rgba(39,22,18,.25),transparent 20% 76%,rgba(30,19,15,.28)),
+    linear-gradient(180deg,#a64837,#7b2e25 64%,#51231e);
+}
+.battle-formation .battle-unit.unit-elite .shield{
+  border-color:#75551f;
+  background:
+    radial-gradient(circle at 50% 48%,#f0cf74 0 10%,#80561b 11% 16%,transparent 17%),
+    linear-gradient(120deg,#e0bd62,#ae7828 54%,#755020);
+  box-shadow:
+    inset 3px 2px 0 rgba(255,244,198,.27),
+    inset -4px -2px 0 rgba(69,43,15,.16),
+    0 3px 4px rgba(0,0,0,.2);
+}
+
+/* Kavallerie bekommt eine zusammenhängende Pferde-Silhouette statt Oval + Stäbchenbeine. */
+.battle-formation .battle-unit.unit-cavalry{
+  width:50px;
+  height:64px;
+  z-index:2;
+}
+.battle-formation .battle-unit.unit-cavalry .mount{
+  display:block;
+  position:absolute;
+  left:1px;bottom:0;
+  width:45px;height:28px;
+  border:1px solid #3b2a20;
+  border-radius:54% 45% 38% 45%;
+  background:
+    radial-gradient(ellipse at 34% 28%,rgba(218,181,125,.12),transparent 30%),
+    linear-gradient(150deg,#735238,#5b3f2d 58%,#3f2e24);
+  box-shadow:
+    inset -7px -4px 0 rgba(34,22,17,.12),
+    0 4px 3px rgba(0,0,0,.16);
+  transform:skewX(-4deg);
+}
+.battle-formation .battle-unit.unit-cavalry .mount::before{
+  right:-8px;top:-13px;
+  width:16px;height:24px;
+  border:1px solid #3b2a20;
+  border-radius:48% 62% 37% 45%;
+  background:
+    linear-gradient(150deg,#76553b,#513827 70%);
+  transform:rotate(-16deg);
+  box-shadow:
+    -3px 2px 0 rgba(39,27,21,.12);
+}
+.battle-formation .battle-unit.unit-cavalry .mount::after{
+  left:7px;bottom:-13px;
+  width:3px;height:17px;
+  border-radius:1px;
+  background:#34271f;
+  box-shadow:
+    9px 2px #493326,
+    25px 0 #34271f,
+    31px 2px #493326;
+  transform:skewX(-7deg);
+}
+.battle-formation .battle-unit.unit-cavalry .helmet{
+  left:17px;top:0;
+}
+.battle-formation .battle-unit.unit-cavalry .body{
+  left:18px;top:17px;
+  width:21px;height:30px;
+  clip-path:polygon(12% 0,88% 0,100% 76%,77% 100%,22% 100%,0 76%);
+}
+.battle-formation .battle-unit.unit-cavalry .body::after{
+  display:none;
+}
+.battle-formation .battle-unit.unit-cavalry .shield{
+  left:8px;top:26px;
+}
+.battle-formation .battle-unit.unit-cavalry .spear{
+  right:2px;top:-8px;height:64px;
+  transform:rotate(11deg);
+}
+
+/* Der Rammbock liest sich als schweres Belagerungsgerät, nicht als brauner Kasten. */
+.battle-ram{
+  border-width:2px;
+  border-radius:8px 14px 8px 8px;
+  background:
+    linear-gradient(180deg,rgba(224,191,139,.13),transparent 24%),
+    repeating-linear-gradient(90deg,#75593d 0 11px,#60472f 11px 13px);
+  box-shadow:
+    inset 0 3px 0 rgba(235,204,157,.12),
+    inset 0 -6px 0 rgba(45,31,22,.12),
+    0 7px 8px rgba(0,0,0,.24);
+}
+.battle-ram::before{
+  border-left-color:#8d9597;
+  filter:drop-shadow(1px 1px 0 #343a3d);
+}
+.battle-ram b{
+  left:12px;top:-18px;
+  width:68px;height:27px;
+  border-width:3px;
+  border-color:#493522;
+  box-shadow:inset 0 2px 0 rgba(226,191,137,.09);
+}
+
+/* Die Festung wird durch unregelmäßige Lichtkanten und Bodenkontakt weniger geometrisch. */
+.battle-fortress .wall{
+  box-shadow:
+    inset 7px 0 0 rgba(235,224,193,.09),
+    inset -11px 0 0 rgba(21,28,31,.17),
+    inset 0 -12px 0 rgba(29,36,39,.13),
+    0 2px 0 rgba(255,255,255,.035);
+}
+.battle-fortress .tower-left{
+  box-shadow:
+    inset 7px 0 0 rgba(235,224,193,.11),
+    inset -8px 0 0 rgba(21,28,31,.16),
+    inset 0 -10px 0 rgba(29,36,39,.12);
+}
+.battle-fortress .tower-right{
+  box-shadow:
+    inset 5px 0 0 rgba(235,224,193,.07),
+    inset -11px 0 0 rgba(21,28,31,.19),
+    inset 0 -10px 0 rgba(29,36,39,.13);
+}
+.battle-fortress .battle-keep{
+  box-shadow:
+    inset 6px 0 0 rgba(235,224,193,.08),
+    inset -10px 0 0 rgba(21,28,31,.18),
+    inset 0 -10px 0 rgba(29,36,39,.12),
+    0 7px 10px rgba(0,0,0,.12);
+}
+.battle-fortress .battle-rubble{
+  filter:drop-shadow(0 2px 1px rgba(0,0,0,.2));
+}
+.battle-stage[data-damage="mid"] .battle-rubble,
+.battle-stage[data-damage="high"] .battle-rubble{
+  background:radial-gradient(ellipse at 50% 100%,rgba(81,72,59,.2),transparent 68%);
+}
+
+/* Kleine Tiefenunschärfe nur für die hinterste Reihe; Vordergrund bleibt scharf. */
+.battle-formation .battle-unit:nth-child(-n+6){
+  filter:blur(.22px) saturate(.87) drop-shadow(0 4px 3px rgba(18,22,20,.2));
+}
+.battle-formation .battle-unit:nth-child(n+13){
+  filter:saturate(1.03) drop-shadow(0 6px 3px rgba(18,22,20,.31));
+}
+
+@media(max-width:720px){
+  .battle-formation .battle-unit.unit-cavalry{width:40px;height:53px}
+  .battle-formation .battle-unit.unit-cavalry .mount{width:37px;height:23px}
+  .battle-formation .battle-unit.unit-cavalry .mount::before{width:13px;height:19px;right:-6px;top:-10px}
+  .battle-formation .battle-unit.unit-cavalry .mount::after{
+    left:6px;bottom:-11px;height:14px;
+    box-shadow:8px 1px #493326,20px 0 #34271f,26px 1px #493326;
+  }
+  .battle-formation .battle-unit.unit-cavalry .helmet{left:13px}
+  .battle-formation .battle-unit.unit-cavalry .body{left:14px;top:14px;width:18px;height:25px}
+  .battle-formation .battle-unit.unit-cavalry .shield{left:6px;top:21px}
+  .battle-formation .battle-unit.unit-archer .weapon{height:33px;top:14px}
+  .battle-formation .battle-unit.unit-archer .weapon::before{height:31px}
+  .battle-ram{right:-10%}
+}
