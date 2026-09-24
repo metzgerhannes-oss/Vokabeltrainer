@@ -4,11 +4,20 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.41**
+App-Version: **v0.18.42**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.42 – klare Einheitenrollen & Kampfstärken
+
+- alle sechs Einheiten besitzen jetzt eine klar benannte Aufgabe: **Front, Fernkampf, Mobilität, Belagerung, Schutz und Versorgung**
+- „Meine Armee“ zeigt einen eigenen Bereich **Kampfstärken** mit einem Wert von 0–100 je Rolle
+- die Rollenwerte werden ausschließlich aus den bereits vorhandenen Einheitenstufen und deren Fortschritt abgeleitet; es entsteht kein zweiter fachlicher Lernstand
+- jede Einheitenkarte zeigt ihre Rolle unmittelbar, die Detailansicht erklärt Aufgabe und aktuellen Rollenwert
+- Klick auf eine Kampfstärke führt direkt zur zugehörigen Einheit und ihrem Aufwertungspfad
+- die neuen Werte verändern in diesem Schritt weder Mastery noch Testbereitschaft noch den Schaden einer Schlacht; sie schaffen eine transparente Grundlage für spätere taktische Darstellung
 
 ## v0.18.41 – Testabschluss belohnt
 
