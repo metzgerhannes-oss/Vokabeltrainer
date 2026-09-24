@@ -4,11 +4,21 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.42**
+App-Version: **v0.18.43**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.43 – sichtbare Einheitenentwicklung
+
+- jede Einheit zeigt ihre **fünf Entwicklungsstufen** jetzt unmittelbar auf Karte und Detailansicht
+- die allgemeinen Stufen heißen in Englisch **Rekrut → Ausgebildet → Erfahren → Elite → Veteran**; Latein nutzt passende Legionsbezeichnungen
+- fünf sichtbare Stufenmarker zeigen auf einen Blick, wie weit eine Einheit entwickelt ist
+- Rahmen, Bildwirkung und Hervorhebung verändern sich mit der Stufe; hohe Stufen sind dadurch auch ohne Lesen erkennbar
+- die Detailansicht verbindet Stufenname, konkrete Ausrüstung und den bestehenden fünfstufigen Aufwertungspfad
+- die Darstellung wird ausschließlich aus dem vorhandenen Einheitenlevel berechnet und speichert keinen zusätzlichen Fortschritt
+- Mastery, Leitner, Spacing, Testbereitschaft und Schlachtschaden bleiben unverändert
 
 ## v0.18.42 – klare Einheitenrollen & Kampfstärken
 

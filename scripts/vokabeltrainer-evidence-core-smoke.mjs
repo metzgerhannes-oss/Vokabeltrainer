@@ -2,7 +2,7 @@ import fs from 'node:fs';
 const read=p=>fs.readFileSync(p,'utf8');
 const core=read('js/core.js'),model=read('js/model.js'),quiz=read('js/quiz-engine.js'),learning=read('js/learning.js'),focus=read('js/focus-ui.js'),libraryUi=read('js/library-ui.js'),index=read('index.html'),storage=read('js/storage.js');
 const ok=(v,m)=>{if(!v)throw new Error(m)};
-ok(core.includes("const VERSION = '0.18.42';"),'version missing');
+ok(core.includes("const VERSION = '0.18.43';"),'version missing');
 ok(index.includes('id="autoSpeakCorrection"'),'audio setting missing');
 ok(storage.includes('autoSpeakCorrection:l.autoSpeakCorrection!==false'),'audio setting migration missing');
 const mastery=model.slice(model.indexOf('function masteryScore'),model.indexOf('function meetsMasteryCriteria'));
