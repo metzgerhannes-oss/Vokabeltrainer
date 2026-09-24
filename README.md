@@ -4,11 +4,24 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.45**
+App-Version: **v0.18.46**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.46 – dynamische Feldzugskarte 1.0
+
+- der Kinderbereich besitzt jetzt eine eigene **Feldzugskarte** als übergeordnete Kampagnenübersicht
+- die Karte setzt ausdrücklich **keine feste Zahl von Tests** voraus: neue geplante Tests werden automatisch als neue Stationen entlang der Route ergänzt
+- bekannte Testtermine, bereits erzeugte Testfestungen und eingetragene Schulnoten werden zu einer gemeinsamen chronologischen Route zusammengeführt
+- bereits absolvierte Stationen bleiben vor später neu geplanten Tests in ihrer Reihenfolge stabil; zusätzliche zukünftige Ziele verlängern nur den Weg
+- der noch unbekannte Teil des Schuljahres bleibt als **„Unbekanntes Land“** sichtbar und erklärt, dass weitere Testziele später erscheinen
+- die **Jahresfestung** bleibt als festes Fernziel bestehen, steht aber für den langfristigen Schuljahresfortschritt und nicht für den „letzten“ oder eine vorab gezählte Anzahl von Tests
+- Stationen unterscheiden Ziel entdeckt, aktuelles Testziel, erobert, gesichert, Ergebnis offen und Test abgeschlossen; eingetragene Noten erscheinen als Abschlussmarke
+- vier datumsabhängige Landschaftsregionen strukturieren die Reise: Herbstmark, Winterwald, Frühlingslande und Sommerhöhe
+- die aktive Station führt direkt zur bestehenden Schlacht; alle Kartendaten werden aus bereits vorhandenem Test-, Festungs-, Noten- und Lernstand abgeleitet
+- die Feldzugskarte ist offline Teil des App-Shells und verändert weder Mastery, Leitner, Spacing noch fachliche Bewertung
 
 ## v0.18.45 – interaktives Heerlager
 
