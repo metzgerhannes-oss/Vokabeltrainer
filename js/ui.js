@@ -185,7 +185,7 @@ function openBattleView(){
   if(!f){toast('Für die nächste Schlacht muss zuerst ein Test geplant sein.','subtle');return}
   const reveal=!f.revealedAt;
   renderBattleView();showView('battleView');
-  if(reveal)requestAnimationFrame(()=>startBattleFortressReveal(f));
+  if(reveal)startBattleFortressReveal(f);
 }
 function closeBattleImmersive(){
   document.body.classList.remove('battle-immersive');$('#battleFullscreenBtn')?.setAttribute('aria-pressed','false');if($('#battleFullscreenBtn'))$('#battleFullscreenBtn').textContent='⛶ Vollbild';
