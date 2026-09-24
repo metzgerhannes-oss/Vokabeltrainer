@@ -255,9 +255,8 @@ function renderCardboxOverview(){
   if(!total){root.innerHTML='';return}
   $('#cardboxDuePill').textContent=`${due} heute fällig`;
   $('#cardboxTotalPill').textContent=`${total} ${total===1?'Karte':'Karten'}`;
-  $('#cardboxOverviewText').textContent=due
-    ?`${due} ${due===1?'Karte ist':'Karten sind'} heute fällig. Tippe eine Box an, um die Wörter zu sehen.`
-    :'Heute ist keine Karte fällig. Tippe eine Box an, um zu sehen, welche Wörter du wie sicher kannst.';
+  const dueText=due?`${due} ${due===1?'Karte ist':'Karten sind'} heute fällig.`:'Heute ist keine Karte fällig.';
+  $('#cardboxOverviewText').textContent=`Wie viele Vokabeln kannst du wie sicher? ${dueText} Tippe eine Box an, um die Wörter zu sehen.`;
   root.innerHTML=[1,2,3,4,5].map(box=>{
     const count=counts[box]||0,pct=total?Math.round(count/total*100):0,label=leitnerLabel(box);
     return `<button type="button" class="cardbox-stage" data-cardbox-box="${box}" aria-label="Box ${box}: ${esc(label)}, ${count} ${count===1?'Vokabel':'Vokabeln'}. Wörter ansehen">
