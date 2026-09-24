@@ -2776,3 +2776,82 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
   .battle-special-flare,
   .battle-shockwave{animation:none!important}
 }
+
+
+/* Battle illustration pass 2e – mobile composition lock */
+/* Scale bleibt auch während Boss-Animationen erhalten. */
+.battle-boss-character{
+  --boss-scale:1;
+  transform:scale(var(--boss-scale));
+}
+.battle-boss-character.boss-final{--boss-scale:1.08;transform:scale(var(--boss-scale))}
+@keyframes bossIdle{
+  0%,100%{transform:scale(var(--boss-scale)) translateY(0) rotate(.15deg)}
+  50%{transform:scale(var(--boss-scale)) translateY(-2px) rotate(-.15deg)}
+}
+@keyframes bossHit{
+  0%,100%{transform:scale(var(--boss-scale)) translateX(0) rotate(0)}
+  28%{transform:scale(var(--boss-scale)) translateX(5px) rotate(1deg)}
+  66%{transform:scale(var(--boss-scale)) translateX(-3px) rotate(-.6deg)}
+}
+@keyframes bossDefeat{
+  0%{transform:scale(var(--boss-scale)) translateY(0) rotate(0);opacity:1}
+  42%{transform:scale(var(--boss-scale)) translateY(4px) rotate(4deg);opacity:1}
+  100%{transform:scale(var(--boss-scale)) translate(12px,54px) rotate(18deg);opacity:0}
+}
+
+/* iPhone: bewusst klare Dreiteilung Armee – Freiraum – Festung. */
+@media(max-width:720px){
+  .battle-stage{
+    aspect-ratio:4 / 3;
+    min-height:0;
+    overflow:hidden;
+  }
+  .battle-sun{
+    width:42px;height:42px;
+    right:9%;top:13%;
+    box-shadow:0 0 28px rgba(244,205,120,.34);
+  }
+  .battle-cloud{opacity:.72}
+  .battle-ground-path{
+    left:28%;right:14%;bottom:-12%;height:62%;
+    opacity:.72;
+  }
+  .battle-army{
+    left:1.5%;bottom:6%;
+    width:50%;height:34%;
+  }
+  .battle-formation{
+    left:7%;right:-2%;top:5%;
+  }
+  .battle-fortress{
+    right:1.5%;bottom:5.5%;
+    width:42%;height:49%;
+  }
+  .battle-boss-character{
+    --boss-scale:.84;
+    right:31.5%;bottom:12.5%;
+    transform:scale(var(--boss-scale));
+  }
+  .battle-boss-character.boss-final{
+    --boss-scale:.91;
+    transform:scale(var(--boss-scale));
+  }
+  .battle-rank-badge{
+    max-width:132px;
+  }
+  .battle-rank-badge small{
+    max-width:74px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+}
+@media(max-width:390px){
+  .battle-army{left:.5%;width:51%}
+  .battle-fortress{right:.5%;width:43%}
+  .battle-boss-character{--boss-scale:.78;right:32.5%}
+  .battle-boss-character.boss-final{--boss-scale:.85}
+  .battle-rank-badge{max-width:118px}
+  .battle-fortress-state-badge small{display:none}
+}
