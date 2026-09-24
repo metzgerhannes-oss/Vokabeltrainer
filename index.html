@@ -14,6 +14,7 @@
   <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
   <link rel="stylesheet" href="css/app.css?v=0.18.45">
   <link rel="stylesheet" href="css/army.css?v=0.18.45">
+  <link rel="stylesheet" href="css/campaign-map.css?v=0.18.45">
   <link rel="stylesheet" href="css/battle-art.css?v=0.18.45">
   <link rel="stylesheet" href="css/battle-result.css?v=0.18.45">
 </head>
@@ -151,6 +152,7 @@
               </div>
               <div class="row gap wrap">
                 <button id="armyBtn" class="primary">Meine Armee</button>
+                <button id="campaignMapBtn" class="secondary">Feldzugskarte</button>
                 <button id="attackBtn" class="secondary">Zur Schlacht</button>
                 <button id="duelBtn" class="secondary">Freundschaftsduell</button>
               </div>
@@ -235,6 +237,33 @@
             </div>
             <div id="armyUnitGrid" class="army-unit-grid"></div>
           </section>
+        </div>
+      </section>
+
+      <section id="campaignMapView" class="view campaign-map-view" aria-labelledby="campaignMapViewTitle">
+        <div class="campaign-map-shell">
+          <div class="campaign-map-toolbar">
+            <button id="campaignMapBackBtn" class="campaign-map-back" type="button">← Fortschritt</button>
+            <div class="campaign-map-toolbar-copy">
+              <span id="campaignMapSubjectLabel" class="campaign-map-kicker">Englisch · Schuljahr</span>
+              <h2 id="campaignMapViewTitle">Mein Feldzug</h2>
+              <p id="campaignMapSummary">Die Karte wächst mit deinen geplanten Tests.</p>
+            </div>
+            <div class="campaign-map-actions">
+              <button id="campaignMapArmyBtn" type="button">Meine Armee</button>
+              <button id="campaignMapBattleBtn" class="primary hidden" type="button">Zur Schlacht</button>
+            </div>
+          </div>
+
+          <div class="campaign-map-layout">
+            <section id="campaignMapBoard" class="campaign-map-board" aria-label="Dynamische Feldzugskarte"></section>
+            <aside>
+              <div id="campaignMapDetail" class="campaign-map-detail" aria-live="polite"></div>
+              <div class="campaign-map-detail-actions">
+                <button id="campaignMapBattleBtnDuplicate" class="hidden" type="button" aria-hidden="true" tabindex="-1"></button>
+              </div>
+            </aside>
+          </div>
         </div>
       </section>
 
@@ -480,6 +509,7 @@
   <script src="js/battle-art-ui.js?v=0.18.45" defer></script>
   <script src="js/battle-result-ui.js?v=0.18.45" defer></script>
   <script src="js/army-ui.js?v=0.18.45" defer></script>
+  <script src="js/campaign-map.js?v=0.18.45" defer></script>
   <script src="js/library-ui.js?v=0.18.45" defer></script>
   <script src="js/focus-ui.js?v=0.18.45" defer></script>
   <script src="js/parent-docs.js?v=0.18.45" defer></script>
