@@ -33,6 +33,7 @@
   }catch(e){console.warn(e)}
   bind();
   renderAll();
-  window.handleChildInviteFromUrl?.();
+  const handledDeviceInvite=window.handleDeviceInviteFromUrl?.();
+  if(!handledDeviceInvite)window.handleDuelInviteFromUrl?.();
   window.VTFamilySync?.bootstrap();
 })();
