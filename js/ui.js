@@ -701,8 +701,18 @@ function openBookEditor(learnerId,subject){
 }
 function deleteProfile(id){if(id===state.activeLearnerId)return;if(!confirm('Profil mit Lernbereichen, Lernständen und Noten löschen? Die globale Vokabelbibliothek bleibt erhalten.'))return;const setIds=new Set(state.sets.filter(s=>s.learnerId===id).map(s=>s.id));state.setVocabulary=state.setVocabulary.filter(x=>!setIds.has(x.setId));state.vocabulary.forEach(v=>{v.sources=(v.sources||[]).filter(src=>!setIds.has(src.setId))});state.sets=state.sets.filter(s=>s.learnerId!==id);state.learnerBooks=state.learnerBooks.filter(x=>x.learnerId!==id);state.learnerVocabulary=state.learnerVocabulary.filter(x=>x.learnerId!==id);state.grades=state.grades.filter(g=>g.learnerId!==id);state.practiceTests=state.practiceTests.filter(t=>t.learnerId!==id);state.activity=state.activity.filter(a=>a.learnerId!==id);state.learners=state.learners.filter(l=>l.id!==id);rebuildWordIndexes();save()}
 
-function modal(html){$('#modalContent').innerHTML=html;$('#modal').showModal()}
-function closeModal(){$('#modal').close()}
+function modal(html){
+  const dialog=$('#modal');
+  $('#modalContent').innerHTML=html;
+  if(!dialog)return;
+  if(dialog.open)return;
+  try{dialog.showModal()}catch(_e){dialog.setAttribute('open','')}
+}
+function closeModal(){
+  const dialog=$('#modal');if(!dialog)return;
+  if(!dialog.open)return;
+  try{dialog.close()}catch(_e){dialog.removeAttribute('open')}
+}
 function toast(text,type='subtle'){const el=$('#toastRegion');if(!el)return;clearTimeout(toastTimer);el.className=`toast-region show ${type}`;el.textContent=text;toastTimer=setTimeout(()=>{el.className='toast-region';el.textContent=''},4200)}
 function applyRoleUi(){
   if(isPairedChildDevice())appRole='child';
