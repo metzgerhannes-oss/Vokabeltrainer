@@ -129,7 +129,7 @@ function startBattleFortressReveal(f=currentTestFortress()){
   persistOnly();
   stage.dataset.revealKey=f.key||'';
   stage.classList.remove('fortress-reveal');
-  requestAnimationFrame(()=>stage.classList.add('fortress-reveal'));
+  stage.classList.add('fortress-reveal');
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   setTimeout(()=>stage.classList.remove('fortress-reveal'),reduced?900:2900);
   return true;
