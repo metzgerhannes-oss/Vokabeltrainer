@@ -99,6 +99,19 @@ try{
   if(!/QR-Code/.test(await page.locator('#familyChildInviteResult').textContent()||''))throw new Error('child pairing does not present QR as primary handoff');
   await page.evaluate(()=>{window.__qrRestoreChild?.();delete window.__qrRestoreChild;closeModal()});
 
+  await page.evaluate(()=>{
+    const originalStatus=window.VTFamilySync.status;
+    const originalCreateParent=window.VTFamilySync.createParentInvite;
+    window.__qrRestoreParent=()=>{window.VTFamilySync.status=originalStatus;window.VTFamilySync.createParentInvite=originalCreateParent};
+    window.VTFamilySync.status=()=>({enabled:true,role:'parent',familyId:'family_smoke',lastSync:null,dirty:0,conflicts:0,busy:false});
+    window.VTFamilySync.createParentInvite=async()=>({ok:true,token:'c'.repeat(48),expires_at:new Date(Date.now()+900000).toISOString()});
+    window.openParentDeviceInvite?.();
+  });
+  await page.locator('#familyParentInviteBtn').click();
+  await page.waitForSelector('#familyParentQr svg');
+  if(!/Familien-PIN/.test(await page.locator('#familyParentInviteResult').textContent()||''))throw new Error('parent QR pairing does not keep reusable family PIN out of the handoff');
+  await page.evaluate(()=>{window.__qrRestoreParent?.();delete window.__qrRestoreParent;closeModal()});
+
   await page.evaluate(()=>{openDuel()});
   await page.waitForSelector('#duelQr svg');
   if(await page.locator('#duelShareBtn').count()!==1)throw new Error('duel QR lacks share fallback');
