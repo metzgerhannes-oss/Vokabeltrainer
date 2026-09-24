@@ -813,11 +813,12 @@ function exitParentMode(){appRole='child';session=null;applyRoleUi();showView('h
 function familySyncTime(value){if(!value)return 'noch nie';try{return new Date(value).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}catch(_){return value}}
 function renderFamilySync(){
   renderStandaloneSyncNotice();
-  const box=$('#familySyncStatus'),setup=$('#familySyncSetupBtn'),now=$('#familySyncNowBtn'),child=$('#familySyncChildBtn'),switchBtn=$('#familySyncSwitchBtn');if(!box||!window.VTFamilySync)return;
+  const box=$('#familySyncStatus'),setup=$('#familySyncSetupBtn'),now=$('#familySyncNowBtn'),child=$('#familySyncChildBtn'),parent=$('#familySyncParentBtn'),switchBtn=$('#familySyncSwitchBtn');if(!box||!window.VTFamilySync)return;
   const s=VTFamilySync.status();
   setup.classList.toggle('hidden',s.enabled);
   now.classList.toggle('hidden',!s.enabled);
   child.classList.toggle('hidden',!s.enabled||s.role!=='parent');
+  parent?.classList.toggle('hidden',!s.enabled||s.role!=='parent');
   switchBtn?.classList.toggle('hidden',!s.enabled||s.role!=='parent');
   if(!s.enabled){box.className='notice subtle';box.innerHTML='<strong>Noch nicht verbunden.</strong><br>Neue Familie anlegen oder einem bestehenden Familienverbund beitreten.';return}
   if(s.conflicts){box.className='notice warn';box.innerHTML=`<strong>Synchronisationskonflikt</strong><br>${s.conflicts} Dokument${s.conflicts===1?'':'e'} wurde${s.conflicts===1?'':'n'} auf mehreren Geräten geändert. Nichts wird automatisch überschrieben.`;return}
@@ -919,7 +920,7 @@ function bind(){
   $$('[data-parent-home]').forEach(b=>b.onclick=()=>showView('parentView'));
   document.addEventListener('click',e=>{const b=e.target.closest?.('[data-speak]');if(!b)return;e.preventDefault();e.stopPropagation();speak(b.dataset.speak||'')});
   $('#fontSizeRange').oninput=e=>{learner().fontSize=+e.target.value;save()}; $('#letterSpacingRange').oninput=e=>{learner().letterSpacing=+e.target.value;save()}; $('#flashSpeedSelect').onchange=e=>{learner().flashSpeed=+e.target.value;save()}; $('#autoSpeakCorrection')?.addEventListener('change',e=>{learner().autoSpeakCorrection=!!e.target.checked;save()});
-  $('#familySyncSetupBtn').onclick=openFamilySyncSetup; $('#familySyncNowBtn').onclick=runFamilySync; $('#familySyncChildBtn').onclick=()=>window.openChildDeviceInvite?window.openChildDeviceInvite():toast('Geräteverbindung konnte nicht geladen werden.','bad'); $('#familySyncSwitchBtn').onclick=openFamilySyncSwitch;
+  $('#familySyncSetupBtn').onclick=openFamilySyncSetup; $('#familySyncNowBtn').onclick=runFamilySync; $('#familySyncChildBtn').onclick=()=>window.openChildDeviceInvite?window.openChildDeviceInvite():toast('Geräteverbindung konnte nicht geladen werden.','bad'); $('#familySyncParentBtn').onclick=()=>window.openParentDeviceInvite?window.openParentDeviceInvite():toast('Geräteverbindung konnte nicht geladen werden.','bad'); $('#familySyncSwitchBtn').onclick=openFamilySyncSwitch;
   $('#backupBtn').onclick=backup; $('#resetAppBtn').onclick=resetAppData; $('#restoreBtn').onclick=()=>{const f=$('#fileInput');f.accept='.json,application/json';f.dataset.mode='restore';f.click()}; $('#exportCsvBtn').onclick=exportCsv; $('#libraryUseBtn').onclick=openLearningContentPlanner; $('#librarySearchInput').oninput=()=>{libraryRenderLimit=200;renderLibrary()}; $('#librarySetFilter').onchange=()=>{libraryRenderLimit=200;renderLibrary()};
   $('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;const mode=e.target.dataset.mode,limit=mode==='restore'?MAX_BACKUP_BYTES:MAX_CSV_BYTES;if(f.size>limit){toast(`${mode==='restore'?'Backup':'CSV'} ist zu groß (${fmtBytes(f.size)}).`,'bad');e.target.value='';return}try{const text=await f.text();if(mode==='restore')restore(text);else importCsv(text)}catch(err){console.warn(err);toast('Datei konnte nicht gelesen werden.','bad')}e.target.value=''}; $('#photoInput').onchange=async e=>{const f=e.target.files[0];if(f)await handleScanPhoto(f);e.target.value=''}; $('#isbnPhotoInput').onchange=async e=>{const f=e.target.files[0];if(f)await handleIsbnPhoto(f);e.target.value=''};
   $('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal()}); $('#modal').addEventListener('close',()=>{if(scanImportState.imageUrl){URL.revokeObjectURL(scanImportState.imageUrl);scanImportState.imageUrl=null;}scanImportState.lastFile=null;});
