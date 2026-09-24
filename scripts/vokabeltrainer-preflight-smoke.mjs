@@ -54,7 +54,7 @@ assert(html.includes('id="campaignMapBtn"')&&html.includes('id="campaignMapView"
 assert(html.includes('css/campaign-map.css?v='+version)&&html.includes('js/campaign-map.js?v='+version),'campaign map CSS and module use the running app version');
 assert(html.includes('id="parentGuideOpenBtn"')&&html.includes('id="parentPedagogyOpenBtn"'),'parent area exposes guide and pedagogical documentation');
 assert(html.includes('id="parentGuidePdfBtn"')&&html.includes('id="parentPedagogyPdfBtn"'),'parent documentation exposes direct PDF actions');
-assert(html.includes('js/parent-docs.js?v=0.18.48'),'parent documentation module is loaded');
+assert(html.includes('js/parent-docs.js?v=0.18.49'),'parent documentation module is loaded');
 assert(focusUi.includes("cardExtras=function(){return ''}"),'retrieval diagnostics are removed before answering');
 assert(['gradeText=function','gradeChoice=function','gradeGrammar=function'].every(x=>focusUi.includes(x)),'all evaluated feedback paths use focused overrides');
 assert(!/setTimeout\s*\(\s*\(\)\s*=>\s*nextStudy/.test(focusUi),'focused feedback never auto-advances');

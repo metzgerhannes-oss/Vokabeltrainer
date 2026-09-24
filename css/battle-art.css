@@ -585,3 +585,35 @@
     transform:none;
   }
 }
+
+
+/* v0.18.49 – Hero Base Scene: Alt-Artwork nur noch als leise Textur hinter der neuen Illustration */
+.battle-stage.battle-art-ready .battle-art-layer{opacity:.13}
+.battle-stage.battle-art-ready .battle-art-background{
+  opacity:.14;
+  filter:saturate(.28) contrast(.9) brightness(.92) blur(.65px);
+}
+.battle-stage.battle-art-ready .battle-art-army,
+.battle-stage.battle-art-ready .battle-art-fortress{
+  opacity:.05;
+  filter:saturate(.2) contrast(.88) brightness(.9) blur(.85px);
+}
+.battle-stage.battle-art-ready[data-damage="low"] .battle-art-fortress{filter:saturate(.2) contrast(.9) brightness(.86) blur(.85px)}
+.battle-stage.battle-art-ready[data-damage="mid"] .battle-art-fortress{filter:saturate(.17) contrast(.94) brightness(.78) sepia(.05) blur(.85px)}
+.battle-stage.battle-art-ready[data-damage="high"] .battle-art-fortress{filter:saturate(.13) contrast(.99) brightness(.69) sepia(.1) blur(.85px)}
+.battle-stage.battle-art-ready.fortress-secured .battle-art-fortress{filter:saturate(.12) contrast(.98) brightness(.67) sepia(.11) blur(.85px)}
+.battle-stage.battle-art-ready .battle-art-atmosphere{opacity:.16}
+.battle-stage.battle-art-ready .battle-sky,
+.battle-stage.battle-art-ready .battle-hills,
+.battle-stage.battle-art-ready .battle-ground{opacity:1}
+.battle-stage.battle-art-ready::before{
+  z-index:4;
+  background:
+    linear-gradient(90deg,rgba(24,37,47,.08),transparent 34%,transparent 69%,rgba(18,29,37,.08)),
+    linear-gradient(180deg,rgba(255,244,214,.025),transparent 40%,rgba(20,29,30,.1));
+}
+@media(prefers-reduced-motion:reduce){
+  .battle-stage.battle-art-ready .battle-art-stack,
+  .battle-stage.battle-art-ready .battle-art-layer,
+  .battle-stage.battle-art-ready .battle-art-atmosphere{transform:none!important}
+}
