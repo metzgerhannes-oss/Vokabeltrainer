@@ -1,10 +1,8 @@
 # Finales Audit
 
-Stand: 24.09.2026 · App v0.18.51
+Stand: 24.09.2026 · App v0.18.52
 
 ## Ergebnis
-
-- die sechs bestehenden Festungsstufen besitzen wieder eigenständige, im Hero-Redesign klar unterscheidbare Silhouetten; die Darstellung liegt separat in `css/battle-fortress.css` und verändert keine Lern- oder Kampflogik
 
 Der aktuelle Stand ist technisch und fachlich für den realen Kind-End-to-End-Test freigegeben.
 Die automatisierte CI muss für den Release-Commit vollständig grün sein. Ein grüner CI-Stand
@@ -182,3 +180,4 @@ Der nächste entscheidende Test ist ein echter Kind-Test ohne Erklärungen. Beob
 - Schlacht: findet es Angriffsart, Vollbild und Ergebnis ohne Hilfe?
 - Rückweg: kommt es selbständig zu Heute/Lernen zurück?
 - kritisch: erster Fehlklick, Pause >5 Sekunden, Zurückspringen oder Nachfrage werden notiert.
+\n- die sechs bestehenden Festungsstufen besitzen wieder eigenständige, im Hero-Redesign klar unterscheidbare Silhouetten; die Darstellung liegt separat in `css/battle-fortress.css` und verändert keine Lern- oder Kampflogik\n
