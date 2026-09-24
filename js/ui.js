@@ -8,11 +8,11 @@ function isParentMode(){return appRole==='parent'&&!isPairedChildDevice()}
 
 let battleAttackMode='charge';
 const BATTLE_ATTACKS={
-  charge:{label:'Sturmangriff',short:'Sturm',unlock:0,icon:'⚔',message:'Die Infanterie stürmt geschlossen vor!'},
-  volley:{label:'Pfeilhagel',short:'Pfeile',unlock:20,icon:'➶',message:'Bogenschützen legen einen Pfeilhagel auf die Mauer!'},
-  ram:{label:'Rammbock',short:'Rammbock',unlock:35,icon:'▰',message:'Der Rammbock rollt direkt auf das Tor zu!'},
-  cavalry:{label:'Reiterangriff',short:'Reiter',unlock:55,icon:'♞',message:'Die Reiter brechen aus der Flanke hervor!'},
-  special:{label:'Spezialangriff',short:'Spezial',unlock:70,icon:'★',message:'Die Elite setzt zum Spezialangriff an!'}
+  charge:{label:'Sturmangriff',short:'Sturm',unlock:0,icon:'⚔',role:'Front',message:'Die Infanterie stürmt geschlossen vor!'},
+  volley:{label:'Pfeilhagel',short:'Pfeile',unlock:20,icon:'➶',role:'Fernkampf',message:'Bogenschützen legen einen Pfeilhagel auf die Mauer!'},
+  ram:{label:'Rammbock',short:'Rammbock',unlock:35,icon:'▰',role:'Belagerung',message:'Der Rammbock rollt direkt auf das Tor zu!'},
+  cavalry:{label:'Reiterangriff',short:'Reiter',unlock:55,icon:'♞',role:'Mobilität',message:'Die Reiter brechen aus der Flanke hervor!'},
+  special:{label:'Spezialangriff',short:'Spezial',unlock:70,icon:'★',role:'Eliteverbund',message:'Die Elite setzt zum Spezialangriff an!'}
 };
 const BATTLE_BOSSES={
   citadel:{name:'Der Torwächter',text:'Er hält den Zugang zur Bergzitadelle.'},
@@ -33,6 +33,11 @@ function specialAttackMeta(subject=state.activeSubject){
     :{label:'Eliteangriff',short:'Elite',icon:'★',message:'Die Eliteeinheiten führen den Angriff an!'};
 }
 function battleAttackMeta(mode){return mode==='special'?{...BATTLE_ATTACKS.special,...specialAttackMeta()}:BATTLE_ATTACKS[mode]}
+function battleAttackTacticalMeta(mode,subject=state.activeSubject){
+  const a=BATTLE_ATTACKS[mode]||BATTLE_ATTACKS.charge;
+  const tactical=typeof battleTacticalBonusForAttack==='function'?battleTacticalBonusForAttack(mode,subject):{power:0,bonus:0};
+  return {role:a.role||'',power:tactical.power||0,bonus:tactical.bonus||0};
+}
 function attackUnlocked(mode,pct=subjectProgress().pct){const a=BATTLE_ATTACKS[mode];return !!a&&pct>=a.unlock}
 function battleBossFor(f){return f?BATTLE_BOSSES[f.id]||null:null}
 function battleStoryFor(f){
@@ -78,14 +83,16 @@ function renderBattleAttackChoices(pct=subjectProgress().pct){
   const box=$('#battleAttackChoices');if(!box)return;
   if(!attackUnlocked(battleAttackMode,pct))battleAttackMode='charge';
   box.innerHTML=Object.entries(BATTLE_ATTACKS).map(([id,a])=>{
-    const meta=battleAttackMeta(id),unlocked=attackUnlocked(id,pct),active=id===battleAttackMode;
-    return `<button type="button" class="battle-attack-choice ${active?'active':''} ${id==='special'?'special':''}" data-battle-attack="${esc(id)}" ${unlocked?'':'disabled'} aria-pressed="${active?'true':'false'}"><span>${meta.icon}</span><strong>${esc(meta.label)}</strong><small>${unlocked?'bereit':`ab ${a.unlock}%`}</small></button>`;
+    const meta=battleAttackMeta(id),tactical=battleAttackTacticalMeta(id),unlocked=attackUnlocked(id,pct),active=id===battleAttackMode;
+    const status=unlocked?`${tactical.role} · +${tactical.bonus} Taktik`:`ab ${a.unlock}%`;
+    return `<button type="button" class="battle-attack-choice ${active?'active':''} ${id==='special'?'special':''}" data-battle-attack="${esc(id)}" ${unlocked?'':'disabled'} aria-pressed="${active?'true':'false'}"><span>${meta.icon}</span><strong>${esc(meta.label)}</strong><small>${esc(status)}</small></button>`;
   }).join('');
 }
 function selectBattleAttack(mode){
   const p=subjectProgress().pct;if(!attackUnlocked(mode,p))return;
   battleAttackMode=mode;renderBattleAttackChoices(p);
-  const a=battleAttackMeta(mode);$('#battleMessage').className='battle-message';$('#battleMessage').textContent=`${a.label} gewählt. ${a.message}`;
+  const a=battleAttackMeta(mode),tactical=battleAttackTacticalMeta(mode);
+  $('#battleMessage').className='battle-message';$('#battleMessage').textContent=`${a.label} gewählt. ${a.message} ${tactical.role}: +${tactical.bonus} Taktikschaden.`;
   if($('#battleAttackBtn'))$('#battleAttackBtn').textContent=`${a.short}: Angriff starten`;
 }
 function renderBattleView(){
@@ -110,7 +117,7 @@ function renderBattleView(){
   $('#battleAttackBtn').textContent=!f?'Kein Test geplant':tickets?(secure?'Festung sichern':`${attack.short}: Angriff starten`):usedToday?(secure?'Heute bereits gesichert ✓':'Heute bereits angegriffen ✓'):(secure?'Nach Tagesziel: sichern':'Nach Tagesziel verfügbar');
   if($('#battleActionTitle'))$('#battleActionTitle').textContent=!f?'Keine Festung aktiv':tickets?(secure?'Sicherungseinsatz bereit':'Dein Angriff ist bereit'):usedToday?(secure?'Heute gesichert':'Tagesangriff verbraucht'):'Tagesziel noch offen';
   if($('#battleActionHint'))$('#battleActionHint').textContent=!f?'Plane zuerst einen Test.':tickets?(secure?'Halte die eroberte Festung bis zum Test sicher.':`${attack.label} wählen und die Festung weiter schwächen.`):usedToday?'Morgen gibt es nach dem nächsten Tagesziel wieder eine Aktion.':'Schließe zuerst dein Tagesziel ab.';
-  $('#battleMessage').className='battle-message';$('#battleMessage').textContent=!f?'Kein Test – keine Belagerung.':tickets?(secure?'Sicherung ist bereit.':`${attack.label} ist bereit. Erwarteter Schaden: ${testFortressDamage(f).damage}.`):secure?'Festung bleibt erobert.':'Jeder abgeschlossene Lerntag bringt die Belagerung voran.';
+  $('#battleMessage').className='battle-message';$('#battleMessage').textContent=!f?'Kein Test – keine Belagerung.':tickets?(secure?'Sicherung ist bereit.':`${attack.label} ist bereit. Erwarteter Schaden: ${testFortressDamage(f,state.activeSubject,battleAttackMode).damage}.`):secure?'Festung bleibt erobert.':'Jeder abgeschlossene Lerntag bringt die Belagerung voran.';
   if(!secure&&f)renderBattleAttackChoices(p.pct);else if($('#battleAttackChoices'))$('#battleAttackChoices').innerHTML='';
   stage.className=`battle-stage season-${sea.class} subject-${state.activeSubject} gear-${gearTier(p.pct)} fortress-stage-${f?.id||'none'} ${boss?'boss-stage':''} ${secure?'fortress-secured':''}`;
   stage.dataset.damage=damagePct>=66?'high':damagePct>=33?'mid':damagePct>0?'low':'none';
