@@ -46,8 +46,13 @@ try{
   await page.waitForFunction(()=>window.VTArmyArt?.ready===true);
   await page.waitForFunction(()=>document.querySelector('[data-army-hero-art]')?.naturalWidth>0);
   await page.waitForFunction(()=>document.querySelectorAll('#armyUnitGrid .army-unit-art.art-loaded').length===6);
+  await page.waitForFunction(()=>document.querySelectorAll('#armyFormationField .army-formation-art.art-loaded').length===6);
   assert(await page.locator('[data-army-hero-art]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'illustrated camp artwork loads');
   assert(await page.locator('#armyUnitGrid .army-unit-art.art-loaded').count()===6,'six illustrated unit artworks load');
+  assert(await page.locator('#armyFormationField .army-formation-unit').count()===6,'heerlager shows all six units in one formation');
+  assert(await page.locator('#armyFormationField .army-formation-art.art-loaded').count()===6,'heerlager reuses all six local illustrated unit artworks');
+  assert((await page.locator('#armyFormationField').textContent())?.includes('Fernkampf'),'heerlager exposes tactical roles directly in the formation');
+  assert((await page.locator('#armyFormationField [data-army-unit="infantry"]').textContent())?.includes('Veteran'),'formation reflects the same visible unit stage as the unit card');
   assert(await page.locator('#armyUnitGrid .army-unit-card').count()===6,'six unit cards are shown');
   assert(await page.locator('#armyUnitGrid .army-stage-badge').count()===6,'every unit card shows its visible development stage');
   assert(await page.locator('#armyUnitGrid .army-stage-pips i').count()===30,'all unit cards expose the full five-stage ladder');
@@ -64,6 +69,11 @@ try{
   assert(await page.locator('#armyRoleGrid progress').count()===6,'every role exposes a visible strength value');
   assert(await page.locator('#armyBonusGrid .army-bonus').count()===4,'four presentation bonuses are shown');
   assert(await page.locator('#armyUnitGrid .army-unit-card.unlocked').count()>=4,'high learning progress visibly unlocks units');
+  await page.click('#armyFormationField [data-army-unit="archers"]');
+  await page.waitForSelector('#armyUnitView.active');
+  assert((await page.locator('#armyUnitViewTitle').textContent())?.includes('Bogenschützen'),'formation unit opens the same dedicated detail view');
+  await page.click('#armyUnitBackBtn');
+  await page.waitForSelector('#armyView.active');
   await page.click('#armyUnitGrid [data-army-unit="support"]');
   await page.waitForSelector('#armyUnitView.active');
   assert((await page.locator('#armyUnitViewTitle').textContent())?.includes('Sanitäter'),'unit selection opens a dedicated detail view');

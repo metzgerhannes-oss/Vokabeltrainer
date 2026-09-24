@@ -4,11 +4,20 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.44**
+App-Version: **v0.18.45**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.45 – interaktives Heerlager
+
+- „Meine Armee“ besitzt jetzt zusätzlich eine **räumliche Aufstellung im Heerlager**
+- alle sechs Einheiten stehen entsprechend ihrer Aufgabe: Schutz und Infanterie vorne, Belagerung in der Mitte, Fernkampf und Versorgung hinten, Kavallerie an der Flanke
+- die Aufstellung verwendet dieselben lokalen Einheitenillustrationen, Stufen und Rollen wie die Einheitenkarten
+- jede Einheit im Heerlager ist direkt anklickbar und öffnet dieselbe Detail-/Aufwertungsansicht
+- auf kleinen Displays wird die räumliche Formation automatisch in eine übersichtliche Liste umgebaut; kein horizontaler Überlauf
+- das Heerlager ist rein präsentational und verändert keinerlei Lern-, Mastery- oder Kampfwerte
 
 ## v0.18.44 – Einheitenrollen wirken in der Schlacht
 

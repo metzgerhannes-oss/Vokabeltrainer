@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 24.09.2026 · App v0.18.44
+Stand: 24.09.2026 · App v0.18.45
 
 ## Ergebnis
 
@@ -74,6 +74,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - „Meine Armee“ ist eine vorgelagerte, jederzeit betrachtbare Erlebnisansicht; Einheitstufen und Boni werden nur aus vorhandenem Lernfortschritt abgeleitet und schreiben keinen fachlichen Lernstand
 - die sechs Einheiten besitzen transparente Rollen (Front, Fernkampf, Mobilität, Belagerung, Schutz, Versorgung); die sichtbaren Rollenwerte 0–100 werden ausschließlich aus den bestehenden Einheitenstufen abgeleitet und erzeugen keinen separaten Lern- oder Spielstand
 - jede Einheit macht ihre fünf Entwicklungsstufen zusätzlich durch Stufenname, fünf Marker sowie abgestufte Rahmen-/Bildwirkung sichtbar; diese Darstellung wird ausschließlich aus dem bereits vorhandenen Einheitenlevel berechnet und speichert keinen eigenen Fortschritt
+- das interaktive Heerlager ordnet dieselben sechs Einheitenillustrationen räumlich nach Front, Flanke, Belagerung, Fernkampf und Versorgung an; es ist vollständig aus vorhandenem Zustand abgeleitet, öffnet nur bestehende Detailansichten und schreibt keine Lern- oder Kampfwerte
 - Rollenwerte verändern weder Testbereitschaft noch Mastery noch den fachlichen Lernstand; ab v0.18.44 dürfen passende Angriffsarten daraus ausschließlich einen kleinen, auf 10 Schaden begrenzten Kampagnen-Taktikbonus ableiten
 - die Armeeansicht besitzt keine eigenständige Spielwährung; Aufwertungen entstehen automatisch durch Lernen und nachhaltige Wiederholung
 - Schlacht ist ein separater Erlebnisbereich nach einer abgeschlossenen Lerneinheit

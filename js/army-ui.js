@@ -124,6 +124,16 @@
       </button>`;
     }).join('');
   }
+  function formationMarkup(c){
+    const positions={shield:'front-left',infantry:'front-center',ram:'center',archers:'rear-left',support:'rear-right',cavalry:'flank-right'};
+    return `<div class="army-formation-ground" aria-hidden="true"><i class="camp-path"></i><i class="camp-tent tent-a"></i><i class="camp-tent tent-b"></i><i class="camp-fire"></i></div>${UNIT_DEFS.map(def=>{
+      const s=unitState(def,c),name=subjectName(def),position=positions[def.id]||'center';
+      return `<button type="button" class="army-formation-unit formation-${position} unit-${safe(def.id)} stage-${s.level} ${s.unlocked?'unlocked':'locked'}" data-army-unit="${safe(def.id)}" aria-label="${safe(name)} · ${safe(def.role)} · Stufe ${s.level} ${safe(unitStageName(s.level))}">
+        <span class="army-formation-art unit-art-${safe(def.id)} stage-${s.level}" aria-hidden="true"><img data-army-unit-art alt=""><b>${def.icon}</b>${stagePipsMarkup(s.level)}</span>
+        <span class="army-formation-copy"><strong>${safe(name)}</strong><small>${safe(def.role)} · ${safe(unitStageName(s.level))}</small></span>
+      </button>`;
+    }).join('')}`;
+  }
   function nextText(def,s){
     if(s.next===null)return 'Maximale Stufe erreicht';
     return def.suffix==='%'?`${s.next}% ${def.metricName}`:`${s.next} ${def.metricName}`;
@@ -273,7 +283,7 @@
     document.querySelectorAll('[data-army-unit-art]').forEach(img=>{
       if(img.dataset.armyArtBound)return;
       img.dataset.armyArtBound='1';
-      const wrap=img.closest('.army-unit-art,.army-detail-art');
+      const wrap=img.closest('.army-unit-art,.army-detail-art,.army-formation-art');
       img.addEventListener('load',()=>wrap?.classList.add('art-loaded'),{once:true});
       img.src=art.unitsUrl;
       if(img.complete&&img.naturalWidth)wrap?.classList.add('art-loaded');
@@ -303,6 +313,8 @@
         <div><small>Prüfungsabzeichen</small><strong>${safe(c.testBadges)}</strong></div>
       `;
     }
+    const formation=document.querySelector('#armyFormationField');
+    if(formation)formation.innerHTML=formationMarkup(c);
     const roles=document.querySelector('#armyRoleGrid');
     if(roles)roles.innerHTML=roleStrengthMarkup(c);
     const bonus=document.querySelector('#armyBonusGrid');
@@ -368,6 +380,10 @@
       if(card)openDetail(card.dataset.armyUnit);
     });
     document.querySelector('#armyRoleGrid')?.addEventListener('click',e=>{
+      const card=e.target.closest('[data-army-unit]');
+      if(card)openDetail(card.dataset.armyUnit);
+    });
+    document.querySelector('#armyFormationField')?.addEventListener('click',e=>{
       const card=e.target.closest('[data-army-unit]');
       if(card)openDetail(card.dataset.armyUnit);
     });
