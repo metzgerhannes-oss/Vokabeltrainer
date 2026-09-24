@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 24.09.2026 · App v0.18.53
+Stand: 24.09.2026 · App v0.18.54
 
 ## Ergebnis
+
+- neue Testfestungen erhalten beim ersten Öffnen einen einmaligen, persistent gespeicherten Ziel-Reveal; der Effekt verändert weder Lernfortschritt noch Kampfrechnung und respektiert `prefers-reduced-motion`
 
 Der aktuelle Stand ist technisch und fachlich für den realen Kind-End-to-End-Test freigegeben.
 Die automatisierte CI muss für den Release-Commit vollständig grün sein. Ein grüner CI-Stand
