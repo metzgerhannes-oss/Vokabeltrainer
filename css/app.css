@@ -83,8 +83,9 @@ html[data-letter-space="0"]{--letter-space:0px}html[data-letter-space="0.25"]{--
   .profile-chip{padding:7px 10px;max-width:44vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.9rem}
   .top-actions{flex-direction:row;align-items:center}
   .library-card{padding:12px 0 0;border:0;box-shadow:none;background:transparent;margin-bottom:0}
-  .library-head{padding:0 2px;margin-bottom:12px}
+  .library-head{padding:0 2px;margin-bottom:12px;align-items:stretch;flex-direction:column}
   .library-head h2{font-size:1.45rem}
+  .library-head .compact-action{width:100%}
   .compact-action{padding:9px 12px;font-size:.92rem}
   .library-filters{gap:9px;margin:8px 0 12px}
   .library-filters label{font-size:.82rem}
@@ -1255,7 +1256,7 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
 
 /* v0.18.38 – Audio direkt an sichtbaren Fremdsprachenstellen */
 .library-term-audio,.session-result-vocab,.focused-answer-audio{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.library-audio-btn{min-width:42px;min-height:36px;padding:5px 8px}
+.library-audio-btn{min-width:44px;min-height:44px;padding:6px 9px}
 .library-word-audio-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:stretch}
 .session-result-vocab{margin:8px 0;padding:7px 9px;border-radius:10px;background:#f8fafc}
 .focused-answer-audio{margin-top:10px}

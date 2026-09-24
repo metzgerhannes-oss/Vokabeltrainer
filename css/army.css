@@ -195,3 +195,24 @@ body.lrs-mode .army-unit-card,body.lrs-mode .army-command,body.lrs-mode .army-un
   .army-detail-copy h3{font-size:2rem}.army-upgrade-road{padding:12px}.army-upgrade-steps{grid-template-columns:1fr}.army-upgrade-step{min-height:0;display:grid;grid-template-columns:auto 1fr;column-gap:10px}.army-upgrade-node{grid-row:1/4;margin:0}
 }
 
+
+
+/* Deep-audit hardening for very narrow phones */
+@media(max-width:360px){
+  .army-view,.army-shell,.army-toolbar,.army-toolbar-copy,.army-command,.army-section,.army-summary,.army-bonus-grid,.army-unit-grid,.army-unit-card{min-width:0;max-width:100%}
+  .army-shell{overflow-x:hidden;padding-left:8px;padding-right:8px}
+  .army-toolbar-copy h2,.army-toolbar-copy p,.army-unit-card strong,.army-unit-card small{overflow-wrap:anywhere}
+  .army-summary{grid-template-columns:1fr}
+  .army-summary>div{border-right:0;border-bottom:1px solid var(--army-line)}
+  .army-summary>div:last-child{border-bottom:0}
+  .army-bonus-grid{grid-template-columns:1fr}
+  .army-unit-card{grid-template-columns:minmax(0,100px) minmax(0,1fr)}
+  .army-unit-art{width:100px}
+  .army-camp-strength{min-width:0;width:150px;max-width:58%}
+}
+
+
+@media(max-width:400px){
+  .army-bonus-grid{grid-template-columns:1fr}
+  .army-bonus{min-width:0}
+}
