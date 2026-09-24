@@ -598,6 +598,10 @@
   opacity:.05;
   filter:saturate(.2) contrast(.88) brightness(.9) blur(.85px);
 }
+.battle-stage.battle-art-ready[data-damage="low"] .battle-art-fortress{filter:saturate(.2) contrast(.9) brightness(.86) blur(.85px)}
+.battle-stage.battle-art-ready[data-damage="mid"] .battle-art-fortress{filter:saturate(.17) contrast(.94) brightness(.78) sepia(.05) blur(.85px)}
+.battle-stage.battle-art-ready[data-damage="high"] .battle-art-fortress{filter:saturate(.13) contrast(.99) brightness(.69) sepia(.1) blur(.85px)}
+.battle-stage.battle-art-ready.fortress-secured .battle-art-fortress{filter:saturate(.12) contrast(.98) brightness(.67) sepia(.11) blur(.85px)}
 .battle-stage.battle-art-ready .battle-art-atmosphere{opacity:.16}
 .battle-stage.battle-art-ready .battle-sky,
 .battle-stage.battle-art-ready .battle-hills,
