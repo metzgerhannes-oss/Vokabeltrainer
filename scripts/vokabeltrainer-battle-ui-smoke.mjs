@@ -43,8 +43,7 @@ try{
       visibility:style?.visibility||'',
       opacity:Number(style?.opacity||0),
       reduced:matchMedia('(prefers-reduced-motion: reduce)').matches,
-      copy:overlay?.textContent||'',
-      pageErrors:[...errors]
+      copy:overlay?.textContent||''
     };
   });
   assert(firstFortressReveal.seenAt,'new test fortress records the first reveal: '+JSON.stringify(firstFortressReveal));
