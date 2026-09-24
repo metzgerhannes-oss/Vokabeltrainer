@@ -4,11 +4,23 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.48**
+App-Version: **v0.18.49**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.49 – Hero Base Scene: Schlachtgrafik neu aufgebaut
+
+- die Schlachtfläche wurde als **einheitliche Fantasy-Bühne** neu aufgebaut: Himmel, Berge, Gelände, Angriffsweg, Armee und Festung folgen jetzt derselben stilisierten Bildsprache
+- das bisher dominante realistische Battle-Artwork bleibt nur noch als sehr dezente Textur im Hintergrund; die neue illustrative Szene trägt die eigentliche Komposition
+- die Armee steht jetzt in einer **gestaffelten Formation** mit Tiefenwirkung statt als flache Reihe einzelner Figuren
+- Festungsmauer, Türme, Tor und Keep erhalten Material, Licht, Schatten, Fenster, Steinstruktur und klarere Silhouette
+- die Leserichtung ist bewusst **Armee links → Angriffsraum in der Mitte → Festung rechts**
+- Phasenleiste, Rangplakette und Festungsstatus wurden deutlich verkleinert und in eine leichte HUD-Ebene überführt
+- die Hauptaktion **Tagesziel/Angriff** liegt im normalen Modus jetzt unterhalb der Illustration und verdeckt die Schlachtszene nicht mehr
+- auf dem iPhone nutzt die Szene eine kompaktere 4:3-Bühne; Formation, Festung und CTA passen sich responsiv an
+- bestehende Angriffsanimationen und Kampfrechnung bleiben unverändert; die Änderung ist rein präsentational
 
 ## v0.18.48 – Angriffsgrafik 1.1: alle Angriffe eigenständig
 
