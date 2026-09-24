@@ -1,6 +1,6 @@
 # Vokabeltrainer – Pädagogische Dokumentation für Eltern und Schulpädagogen
 
-**Stand:** v0.18.39 · 23.09.2026
+**Stand:** v0.18.40 · 24.09.2026
 
 ## 1. Worum es bei der App geht
 
