@@ -4,11 +4,21 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.47**
+App-Version: **v0.18.48**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.48 – Angriffsgrafik 1.1: alle Angriffe eigenständig
+
+- **Pfeilhagel** bekommt eine eigene mehrwellige Pfeilsequenz mit verdunkeltem Himmel und höherem Einschlag an Mauer/Zinnen
+- **Reiterangriff** läuft sichtbar über die Flanke, mit eigener Staubspur, schneller seitlicher Bewegung und Flanken-Treffer
+- **Spezialangriff** ist jetzt der deutlich spektakulärste Angriff: Elite-Aura, konzentrische Ringe, Stern-/Adlereffekt, stärkster Lichtimpuls und größter Impact
+- jeder Angriff zeigt einen eigenen Treffer-Callout: **PFEILHAGEL!**, **FLANKENTREFFER!**, **ELITESCHLAG!** bzw. in Latein **ADLERSCHLAG!**
+- Kamera- und Lichtführung unterscheiden sich zusätzlich pro Angriffstyp, ohne irgendeine Kampfrechnung zu verändern
+- Reduced Motion blendet alle neuen Bewegungs-Layer aus; Schaden, Taktikanteil und Endzustand bleiben vollständig sichtbar
+- damit besitzen Sturm, Pfeilhagel, Rammbock, Reiter und Spezialangriff nun jeweils eine sofort erkennbare visuelle Identität
 
 ## v0.18.47 – Angriffsgrafik 1.0
 
