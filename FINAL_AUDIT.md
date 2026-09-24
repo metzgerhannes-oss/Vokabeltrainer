@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 24.09.2026 · App v0.18.47
+Stand: 24.09.2026 · App v0.18.48
 
 ## Ergebnis
 
@@ -67,6 +67,8 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - Sturmangriff und Rammbock besitzen eigene visuelle Angriffsidentitäten: Front-Vorstoß/Bewegungslinien bzw. schwere Rammbock-Anfahrt/Bodenspur/Tor-Einschlag; die Effekte lesen nur den bereits berechneten Angriff und entscheiden kein Kampfergebnis
 - der Treffer-Callout zeigt exakt den berechneten Gesamtschaden und den transparenten Taktikanteil; die sichtbaren Festungszustände Intakt/Beschädigt/Stark beschädigt/Kritisch/Erobert werden ausschließlich aus `defense/maxDefense` und `capturedAt` abgeleitet
 - Reduced Motion deaktiviert die neuen Sturm-/Rammbockbewegungen und Bodenspuren, erhält aber Trefferinformation und identischen persistenten Endzustand
+- Pfeilhagel, Reiterangriff und Spezialangriff besitzen ebenfalls eigene rein visuelle Sequenzen: mehrwellige Pfeilbahnen, Flankenritt mit Staub/Bewegungsspur sowie Elite-/Adleraura mit stärkstem Licht- und Impactmoment; alle lesen nur den bereits feststehenden Angriffstyp und das berechnete Ergebnis
+- jeder Angriff besitzt einen eindeutigen kindgerechten Treffer-Callout; Reduced Motion entfernt auch diese neuen Bewegungs-Layer, lässt Schaden/Taktiktext und persistenten Festungszustand unverändert sichtbar
 - die vier Battle-Ebenen bewegen sich phasenabhängig mit dezentem Parallax/Kamerafokus; bei `prefers-reduced-motion` werden alle neuen Transform-Bewegungen deaktiviert
 - die Battle-Grafik wird zusätzlich in getrennte visuelle Ebenen für Hintergrund, Armee, Festung und Atmosphäre aufgeteilt; dies ist rein präsentational und verändert keinerlei Lern- oder Kampflogik
 - die englische Schlacht verwendet ein eigenes UI-freies Battlefield-Asset über den getrennten Loader `VTBattleArt`; Armee-/Lagergrafik und Battle-Grafik sind technisch getrennt
