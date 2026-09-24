@@ -53,6 +53,44 @@ try{
   assert(await page.locator('#battleStage [data-battle-layer="fortress"]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'fortress artwork layer loads');
   assert(await page.locator('#battleStage .battle-own-flag').count()===1,'battle fortress includes a dedicated player flag for conquest');
 
+  const fortressProgression=await page.evaluate(()=>{
+    const f=currentTestFortress();
+    const original={id:f.id,name:f.name};
+    const result={};
+    for(const id of ['outpost','tower','wall','citadel','capital','final']){
+      f.id=id;
+      f.name=id;
+      renderBattleView();
+      const fortress=document.querySelector('#battleStage .battle-fortress');
+      const wall=fortress.querySelector('.wall');
+      const left=fortress.querySelector('.tower-left');
+      const right=fortress.querySelector('.tower-right');
+      const keep=fortress.querySelector('.battle-keep');
+      const rect=fortress.getBoundingClientRect();
+      result[id]={
+        width:Math.round(rect.width),
+        height:Math.round(rect.height),
+        wallHeight:Math.round(wall.getBoundingClientRect().height),
+        leftTowerHeight:Math.round(left.getBoundingClientRect().height),
+        rightTowerDisplay:getComputedStyle(right).display,
+        keepDisplay:getComputedStyle(keep).display,
+        keepHeight:Math.round(keep.getBoundingClientRect().height),
+        stageClass:document.querySelector('#battleStage').className
+      };
+    }
+    f.id=original.id;
+    f.name=original.name;
+    renderBattleView();
+    return result;
+  });
+  assert(fortressProgression.outpost.height<fortressProgression.tower.height,'outpost is visibly smaller than the watchtower');
+  assert(fortressProgression.wall.width>fortressProgression.tower.width,'border wall is visibly wider than the watchtower');
+  assert(fortressProgression.citadel.keepDisplay!=='none'&&fortressProgression.citadel.keepHeight>0,'citadel unlocks a visible central keep');
+  assert(fortressProgression.capital.height>fortressProgression.citadel.height,'capital escalates beyond the citadel silhouette');
+  assert(fortressProgression.final.height>fortressProgression.capital.height,'final fortress is the largest campaign target');
+  assert(new Set(Object.values(fortressProgression).map(v=>v.width+'x'+v.height)).size>=5,'campaign fortress geometry remains materially distinct');
+  assert(Object.entries(fortressProgression).every(([id,v])=>v.stageClass.includes('fortress-stage-'+id)),'each fortress keeps its matching stage atmosphere class');
+
   await page.emulateMedia({reducedMotion:'no-preference'});
   const conquestMotion=await page.evaluate(async()=>{
     const stage=document.querySelector('#battleStage');
