@@ -314,3 +314,123 @@
   .battle-fortress.fortress-capital{width:45%!important}
   .battle-fortress.fortress-final{width:48%!important}
 }
+
+
+/* v0.18.54 – one-time fortress discovery reveal */
+.battle-target-reveal{
+  position:absolute;
+  inset:0;
+  z-index:30;
+  pointer-events:none;
+  visibility:hidden;
+  opacity:0;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 74% 48%,rgba(244,216,158,.06) 0 16%,transparent 37%),
+    linear-gradient(90deg,rgba(8,15,22,.72) 0 34%,rgba(8,15,22,.28) 55%,rgba(7,13,18,.12) 100%);
+}
+.battle-target-reveal-light{
+  position:absolute;
+  right:4%;
+  top:7%;
+  width:46%;
+  height:82%;
+  opacity:0;
+  background:radial-gradient(ellipse at 52% 48%,rgba(255,226,164,.32) 0 5%,rgba(225,190,120,.14) 18%,transparent 55%);
+  filter:blur(4px);
+}
+.battle-target-reveal-copy{
+  position:absolute;
+  left:6%;
+  bottom:9%;
+  width:min(43%,330px);
+  display:grid;
+  gap:5px;
+  padding:14px 16px 13px;
+  border:1px solid rgba(232,219,188,.2);
+  border-radius:13px;
+  background:linear-gradient(135deg,rgba(26,35,42,.9),rgba(18,26,32,.76));
+  box-shadow:0 16px 34px rgba(4,9,13,.32),inset 0 1px 0 rgba(255,255,255,.05);
+  backdrop-filter:blur(7px);
+  transform:translateY(18px);
+  opacity:0;
+}
+.battle-target-reveal-copy small{color:#d8b46f;font-size:.57rem;font-weight:950;letter-spacing:.16em}
+.battle-target-reveal-copy strong{color:#fff7e8;font-family:Georgia,serif;font-size:clamp(1.25rem,2.7vw,2rem);line-height:1;text-shadow:0 2px 5px rgba(0,0,0,.3)}
+.battle-target-reveal-copy span{color:#d9e1e5;font-size:.72rem;font-weight:750}
+.battle-target-reveal-copy b{color:#f0d8a4;font-size:.65rem;font-weight:900}
+
+.battle-stage.fortress-reveal .battle-target-reveal{
+  visibility:visible;
+  opacity:1;
+  animation:fortressRevealOverlay 2.9s ease both;
+}
+.battle-stage.fortress-reveal .battle-target-reveal-light{
+  opacity:1;
+  animation:fortressRevealLight 2.9s cubic-bezier(.2,.7,.2,1) both;
+}
+.battle-stage.fortress-reveal .battle-target-reveal-copy{
+  opacity:1;
+  transform:none;
+  animation:fortressRevealCopy 2.9s cubic-bezier(.2,.72,.2,1) both;
+}
+.battle-stage.fortress-reveal .battle-army{animation:fortressRevealArmy 2.9s ease both}
+.battle-stage.fortress-reveal .battle-phase-strip,
+.battle-stage.fortress-reveal .battle-rank-badge,
+.battle-stage.fortress-reveal .battle-fortress-state-badge{animation:fortressRevealHud 2.9s ease both}
+
+@keyframes fortressRevealOverlay{
+  0%{opacity:0}
+  10%,76%{opacity:1}
+  100%{opacity:0}
+}
+@keyframes fortressRevealLight{
+  0%{opacity:0;transform:scale(.72) translateX(10%)}
+  18%,70%{opacity:1;transform:scale(1) translateX(0)}
+  100%{opacity:0;transform:scale(1.06) translateX(-2%)}
+}
+@keyframes fortressRevealCopy{
+  0%,9%{opacity:0;transform:translateY(18px)}
+  20%,74%{opacity:1;transform:translateY(0)}
+  100%{opacity:0;transform:translateY(-7px)}
+}
+@keyframes fortressRevealArmy{
+  0%,12%{filter:brightness(.7) saturate(.76)}
+  32%,72%{filter:brightness(.82) saturate(.85)}
+  100%{filter:none}
+}
+@keyframes fortressRevealHud{
+  0%,12%{opacity:1}
+  24%,70%{opacity:.18}
+  100%{opacity:1}
+}
+
+@media(max-width:720px){
+  .battle-target-reveal{
+    background:
+      radial-gradient(ellipse at 75% 47%,rgba(244,216,158,.08) 0 15%,transparent 35%),
+      linear-gradient(90deg,rgba(8,15,22,.74) 0 39%,rgba(8,15,22,.28) 61%,rgba(7,13,18,.12) 100%);
+  }
+  .battle-target-reveal-copy{left:4%;bottom:5%;width:min(58%,280px);padding:11px 12px 10px;gap:4px}
+  .battle-target-reveal-copy small{font-size:.48rem}
+  .battle-target-reveal-copy strong{font-size:1.22rem}
+  .battle-target-reveal-copy span{font-size:.61rem}
+  .battle-target-reveal-copy b{font-size:.57rem}
+  .battle-target-reveal-light{right:-2%;top:9%;width:49%;height:77%}
+}
+@media(max-width:390px){
+  .battle-target-reveal-copy{width:61%;left:3%;bottom:4%}
+  .battle-target-reveal-copy strong{font-size:1.08rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .battle-stage.fortress-reveal .battle-target-reveal,
+  .battle-stage.fortress-reveal .battle-target-reveal-light,
+  .battle-stage.fortress-reveal .battle-target-reveal-copy,
+  .battle-stage.fortress-reveal .battle-army,
+  .battle-stage.fortress-reveal .battle-phase-strip,
+  .battle-stage.fortress-reveal .battle-rank-badge,
+  .battle-stage.fortress-reveal .battle-fortress-state-badge{animation:none!important}
+  .battle-stage.fortress-reveal .battle-target-reveal{visibility:visible!important;opacity:1!important}
+  .battle-stage.fortress-reveal .battle-target-reveal-light{opacity:1!important;transform:none!important}
+  .battle-stage.fortress-reveal .battle-target-reveal-copy{opacity:1!important;transform:none!important}
+}
