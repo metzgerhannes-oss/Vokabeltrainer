@@ -20,9 +20,9 @@ try{
   await page.click('#confirmParentMode');
   await page.waitForSelector('#parentView.active');
 
-  assert((await page.locator('#parentTestPlanBtn').textContent())?.includes('Test planen'),'test planning is the primary path when a test exists');
-  assert((await page.locator('#parentLibraryBtn').textContent())?.includes('Ohne Test lernen'),'separate no-test path is explicitly labeled');
-  const order=await page.evaluate(()=>Array.from(document.querySelectorAll('.parent-grid .menu-card')).map(x=>x.id));
+  assert((await page.locator('#parentTestPlanBtn').textContent())?.includes('Test vorbereiten'),'test planning is the primary path when a test exists');
+  assert((await page.locator('#parentLibraryBtn').textContent())?.includes('Vokabeln vorbereiten')&&(await page.locator('#parentLibraryBtn').textContent())?.includes('Ohne festen Testtermin'),'separate no-test path is explicitly labeled');
+  const order=await page.evaluate(()=>Array.from(document.querySelectorAll('.parent-primary-actions .parent-primary-action')).map(x=>x.id));
   assert(order.indexOf('parentTestPlanBtn')<order.indexOf('parentLibraryBtn'),'test planning is shown before no-test learning');
   await page.click('#parentLibraryBtn');
   await page.waitForSelector('#modal[open] #contentWordPicker');
