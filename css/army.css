@@ -218,7 +218,8 @@
   .army-unit-grid{grid-template-columns:1fr;gap:9px}.army-unit-card{min-height:175px;padding:13px}.army-unit-art{width:116px}.army-stage-badge{left:5px;right:5px;bottom:5px;padding:4px 5px}.army-stage-badge>b{font-size:.58rem!important}.army-stage-pips{gap:2px}.army-stage-pips i{width:8px;height:3px}.army-section-head{align-items:start;flex-direction:column}
   .army-unit-preview{grid-template-columns:1fr;gap:12px}.army-preview-art{width:100%;max-width:300px}.army-preview-level{grid-column:1/-1}.army-preview-upgrade{grid-column:1/-1}
 }
-@media(prefers-reduced-motion:reduce){.army-unit-card,.army-formation-unit,.army-camp-art,.army-unit-art img,.army-preview-art img,.army-detail-art img,.army-formation-art img{transition:none}.army-unit-card:hover,.army-formation-unit:hover,.formation-front-center:hover{transform:none}.formation-front-center{transform:translateX(-50%)}@media(max-width:620px){.formation-front-center{transform:none}}}
+@media(prefers-reduced-motion:reduce){.army-unit-card,.army-formation-unit,.army-camp-art,.army-unit-art img,.army-preview-art img,.army-detail-art img,.army-formation-art img{transition:none}.army-unit-card:hover,.army-formation-unit:hover{transform:none}.formation-front-center,.formation-front-center:hover{transform:translateX(-50%)}}
+@media(max-width:620px) and (prefers-reduced-motion:reduce){.formation-front-center,.formation-front-center:hover{transform:none}}
 body.lrs-mode .army-view{--army-line:rgba(220,220,220,.26)}
 body.lrs-mode .army-unit-card,body.lrs-mode .army-command,body.lrs-mode .army-unit-preview{box-shadow:none}
 
