@@ -18,6 +18,7 @@ async function seed(page){
       ['school','Schule','Our school is nearby.']
     ];
     rows.forEach(([term,translation,example])=>attachVocabularyToSet(set.id,{term,translation,example,source:'audit',verified:true,firstContactCopiedAt:'test',firstContactRecalledAt:'test',firstContactCompletedAt:'test'}));
+    set.pairVerifiedSignature=pairReviewSignatureForSet(set.id);
     rebuildWordIndexes();renderAll();showView('homeView');
   });
 }
