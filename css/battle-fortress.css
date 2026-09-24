@@ -273,6 +273,17 @@
     0 0 0 2px rgba(169,128,61,.1);
 }
 
+/* Geometry guard: progression must remain distinct even against legacy fortress rules. */
+.battle-fortress.fortress-outpost,
+.battle-fortress.fortress-tower,
+.battle-fortress.fortress-wall,
+.battle-fortress.fortress-citadel,
+.battle-fortress.fortress-capital,
+.battle-fortress.fortress-final{
+  min-width:0!important;
+  max-width:none;
+}
+
 /* Stronger campaign escalation without changing damage semantics. */
 .battle-stage.fortress-stage-outpost .battle-ground-path{opacity:.55}
 .battle-stage.fortress-stage-tower .battle-ground-path{opacity:.62}
@@ -282,12 +293,12 @@
 .battle-stage.fortress-stage-final .battle-ground-path{opacity:.9}
 
 @media(max-width:720px){
-  .battle-fortress.fortress-outpost{width:35%;height:34%;right:4%}
-  .battle-fortress.fortress-tower{width:31%;height:48%;right:5%}
-  .battle-fortress.fortress-wall{width:47%;height:38%;right:-1%}
-  .battle-fortress.fortress-citadel{width:41%;height:51%;right:1.5%}
-  .battle-fortress.fortress-capital{width:43%;height:54%;right:.5%}
-  .battle-fortress.fortress-final{width:45%;height:58%;right:-1%}
+  .battle-fortress.fortress-outpost{width:34%!important;height:34%;right:4%}
+  .battle-fortress.fortress-tower{width:28%!important;height:48%;right:5%}
+  .battle-fortress.fortress-wall{width:53%!important;height:38%;right:-2%}
+  .battle-fortress.fortress-citadel{width:41%!important;height:51%;right:1.5%}
+  .battle-fortress.fortress-capital{width:44%!important;height:54%;right:.5%}
+  .battle-fortress.fortress-final{width:47%!important;height:58%;right:-1%}
 
   .battle-fortress.fortress-outpost .battle-enemy-flag::after{width:32px;height:19px}
   .battle-fortress.fortress-tower .tower-left{left:24%;width:50%}
@@ -296,10 +307,10 @@
 }
 
 @media(max-width:390px){
-  .battle-fortress.fortress-outpost{width:36%}
-  .battle-fortress.fortress-tower{width:32%}
-  .battle-fortress.fortress-wall{width:48%}
-  .battle-fortress.fortress-citadel{width:42%}
-  .battle-fortress.fortress-capital{width:44%}
-  .battle-fortress.fortress-final{width:46%}
+  .battle-fortress.fortress-outpost{width:35%!important}
+  .battle-fortress.fortress-tower{width:29%!important}
+  .battle-fortress.fortress-wall{width:54%!important}
+  .battle-fortress.fortress-citadel{width:42%!important}
+  .battle-fortress.fortress-capital{width:45%!important}
+  .battle-fortress.fortress-final{width:48%!important}
 }
