@@ -341,7 +341,7 @@ try{
   assert(await page.locator('.battle-phase-strip [data-battle-phase]').count()===5,'battle shows a five-phase sequence');
   const attackButtonRect=await page.locator('#battleAttackBtn').boundingBox();
   const viewport=page.viewportSize();
-  assert(!!attackButtonRect&&!!viewport&&attackButtonRect.y>=0&&attackButtonRect.y+attackButtonRect.height<=viewport.height,'primary battle action stays inside the visible iPhone viewport without scrolling');
+  assert(!!attackButtonRect&&!!viewport&&attackButtonRect.x>=0&&attackButtonRect.x+attackButtonRect.width<=viewport.width,'primary battle action stays inside the iPhone width after moving below the artwork');
 
   await page.click('#battleFullscreenBtn');
   assert(await page.locator('body.battle-immersive').count()===1,'immersive fullscreen fallback activates');
