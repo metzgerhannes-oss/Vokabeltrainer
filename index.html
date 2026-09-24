@@ -368,34 +368,29 @@
         <div class="parent-shell">
           <div class="parent-head">
             <div class="eyebrow">Elternbereich</div>
-            <h2>Lernen vorbereiten & begleiten</h2>
-            <p class="muted-line">Hier werden Inhalte, Testpläne, Profile und Daten verwaltet. Im Kindermodus sind diese Funktionen nicht sichtbar.</p>
+            <h2>Was möchtest du tun?</h2>
+            <p class="muted-line">Test vorbereiten, Vokabeln ergänzen oder den Lernstand ansehen.</p>
           </div>
 
           <div id="parentAttention" class="parent-attention"></div>
 
-          <div class="parent-grid">
-            <button id="parentTestPlanBtn" class="menu-card" type="button"><span aria-hidden="true">◷</span><span><strong>Test planen</strong><small>Wenn ein Test ansteht: Termin und Vokabeln auswählen. Der Lernstoff wird automatisch übernommen.</small></span><b aria-hidden="true">›</b></button>
-            <button id="parentLibraryBtn" class="menu-card" type="button"><span aria-hidden="true">＋</span><span><strong>Ohne Test lernen</strong><small>Vokabeln vorbereiten, wenn kein konkreter Testtermin feststeht.</small></span><b aria-hidden="true">›</b></button>
-            <button id="parentDashboardBtn" class="menu-card" type="button"><span aria-hidden="true">▥</span><span><strong>Fortschritt & Noten</strong><small>Testchecks, Lernstand und Schulnoten</small></span><b aria-hidden="true">›</b></button>
-            <button id="parentSettingsBtn" class="menu-card" type="button"><span aria-hidden="true">⚙</span><span><strong>Profile, Lehrwerke & Daten</strong><small>LRS, Darstellung, Bücher und Sicherung</small></span><b aria-hidden="true">›</b></button>
-          </div>
-
-          <section class="card parent-docs-card" aria-labelledby="parentDocsTitle">
-            <div class="row spread align-center wrap">
-              <div><div class="eyebrow">Hilfe & Hintergrund</div><h2 id="parentDocsTitle">Anleitung & Pädagogik</h2></div>
-              <span class="pill">offline verfügbar</span>
+          <section class="parent-action-section" aria-labelledby="parentPrepareTitle">
+            <div class="parent-section-head">
+              <div><div class="eyebrow">Lernen vorbereiten</div><h3 id="parentPrepareTitle">Jetzt erledigen</h3></div>
             </div>
-            <p class="muted-line">Bedienung nachschlagen oder das Lernkonzept fachlich einordnen. Beide Dokumente lassen sich direkt als PDF speichern.</p>
-            <div class="parent-doc-grid">
-              <article class="parent-doc-card">
-                <div><span class="parent-doc-icon" aria-hidden="true">?</span><strong>Anleitung für Eltern</strong><small>Vom Testplan über OCR und Üben bis zu Sync, Backup und Fehlerbehebung.</small></div>
-                <div class="row gap wrap"><button id="parentGuideOpenBtn" class="secondary" type="button">Lesen</button><button id="parentGuidePdfBtn" class="ghost" type="button">PDF exportieren</button></div>
-              </article>
-              <article class="parent-doc-card">
-                <div><span class="parent-doc-icon" aria-hidden="true">§</span><strong>Pädagogische Dokumentation</strong><small>Ziel, Lernlogik, Mastery, Spacing, LRS-Einordnung, Grenzen und Forschungsgrundlagen.</small></div>
-                <div class="row gap wrap"><button id="parentPedagogyOpenBtn" class="secondary" type="button">Lesen</button><button id="parentPedagogyPdfBtn" class="ghost" type="button">PDF exportieren</button></div>
-              </article>
+            <div class="parent-primary-actions">
+              <button id="parentTestPlanBtn" class="parent-primary-action" type="button"><span class="parent-action-icon" aria-hidden="true">◷</span><span><strong>Test vorbereiten</strong><small>Termin und Lernstoff festlegen</small></span><b aria-hidden="true">›</b></button>
+              <button id="parentLibraryBtn" class="parent-primary-action" type="button"><span class="parent-action-icon" aria-hidden="true">＋</span><span><strong>Vokabeln vorbereiten</strong><small>Ohne festen Testtermin</small></span><b aria-hidden="true">›</b></button>
+            </div>
+          </section>
+
+          <section class="parent-action-section parent-management-section" aria-labelledby="parentManageTitle">
+            <div class="parent-section-head compact">
+              <div><div class="eyebrow">Überblick & Verwaltung</div><h3 id="parentManageTitle">Weitere Bereiche</h3></div>
+            </div>
+            <div class="parent-compact-actions">
+              <button id="parentDashboardBtn" class="parent-compact-action" type="button"><span aria-hidden="true">▥</span><span><strong>Fortschritt & Noten</strong><small>Lernstand, Testchecks, Schulnoten</small></span><b aria-hidden="true">›</b></button>
+              <button id="parentSettingsBtn" class="parent-compact-action" type="button"><span aria-hidden="true">⚙</span><span><strong>Einstellungen & Geräte</strong><small>Profile, Lehrwerke, LRS, Sync und Daten</small></span><b aria-hidden="true">›</b></button>
             </div>
           </section>
 
@@ -406,6 +401,29 @@
             </div>
             <div id="setList" class="set-list"></div>
           </section>
+
+          <details id="parentHelpDisclosure" class="card parent-help-disclosure">
+            <summary>
+              <span><strong>Hilfe & Hintergrund</strong><small>Anleitung, pädagogische Dokumentation und PDF-Export</small></span>
+              <span class="disclosure-chevron" aria-hidden="true">›</span>
+            </summary>
+            <div class="parent-help-body">
+              <div class="row spread align-center wrap">
+                <div><div class="eyebrow">Nachschlagen</div><h2 id="parentDocsTitle">Anleitung & Pädagogik</h2></div>
+                <span class="pill">offline verfügbar</span>
+              </div>
+              <div class="parent-doc-grid">
+                <article class="parent-doc-card">
+                  <div><span class="parent-doc-icon" aria-hidden="true">?</span><strong>Anleitung für Eltern</strong><small>Bedienung, OCR, Sync, Backup und Fehlerbehebung.</small></div>
+                  <div class="row gap wrap"><button id="parentGuideOpenBtn" class="secondary" type="button">Lesen</button><button id="parentGuidePdfBtn" class="ghost" type="button">PDF exportieren</button></div>
+                </article>
+                <article class="parent-doc-card">
+                  <div><span class="parent-doc-icon" aria-hidden="true">§</span><strong>Pädagogische Dokumentation</strong><small>Lernlogik, Mastery, Spacing, LRS und Forschungsgrundlagen.</small></div>
+                  <div class="row gap wrap"><button id="parentPedagogyOpenBtn" class="secondary" type="button">Lesen</button><button id="parentPedagogyPdfBtn" class="ghost" type="button">PDF exportieren</button></div>
+                </article>
+              </div>
+            </div>
+          </details>
         </div>
       </section>
 
