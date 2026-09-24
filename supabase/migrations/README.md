@@ -9,18 +9,19 @@ Für einen vollständigen Neuaufbau:
 2. anschließend die Vokabeltrainer-Migrationen hier anwenden,
 3. danach Security-/Performance-Advisors prüfen.
 
-Neue Vokabeltrainer-DDL-Änderungen sollen ab jetzt mit ihrer echten Supabase-Migrationsversion hier versioniert werden.
+Neue Vokabeltrainer-DDL-Änderungen sollen ab jetzt mit ihrer echten Supabase-Migrationsversion hier versioniert werden. Neue Data-API-Objekte erhalten ihre minimal nötigen `GRANT`s explizit in derselben Migration; auf automatische Default-Grants wird nicht mehr vertraut.
 
 
 ## Produktiv geprüfter gemeinsamer Sicherheitsstand
 
-Zuletzt gegen das produktive Supabase-Projekt geprüft: **23.09.2026**.
+Zuletzt gegen das produktive Supabase-Projekt geprüft: **24.09.2026**.
 
 Die folgenden gemeinsamen Migrationen liegen absichtlich im Repository `JohannasGartenwelt`
 und werden hier nicht dupliziert:
 
 - `20260921100151_harden_vt_rate_limits`
 - `20260921134427_global_rate_limit_cleanup`
+- `20260924070028_harden_data_api_default_privileges`
 
 Der PostgREST-`authenticator` ist produktiv mit
 `pgrst.db_pre_request=private.jgw_pre_request` konfiguriert. Diese Pre-Request-Funktion
