@@ -27,7 +27,7 @@ assert(sync.includes("return key==='profile/'+cfg.profileId+'/progress'"),'child
 assert(sync.includes("vt_create_child_invite")&&sync.includes("vt_claim_child_invite"),'one-time child-device enrollment is implemented');
 assert(sync.includes('function documentRank(key)')&&sync.includes("k==='shared'?0:k.endsWith('/setup')?1:k.endsWith('/progress')?2:3"),'sync has one canonical shared → setup → progress document order');
 assert((sync.match(/documentRank\(a\.key\)-documentRank\(b\.key\)/g)||[]).length>=2,'initial child claim and recurring sync both load shared vocabulary before profile documents');
-assert(ui.includes('Bestehender Familie beitreten')&&ui.includes('VTFamilySync.joinParent(id,pin'), 'parent UI can join an existing family instead of creating a duplicate family');
+assert(ui.includes('Weiteres Eltern-Gerät verbinden')&&ui.includes('VTFamilySync.joinParent(id,pin'), 'parent UI can join an existing family instead of creating a duplicate family');
 assert(ui.includes('Familie wechseln')&&ui.includes('VTFamilySync.disconnectLocal()'), 'parent UI can leave a wrong local family connection and switch families without deleting learning data');
 assert(ui.includes('familySyncChildJoinChoiceBtn')&&ui.includes('VTFamilySync.claimChildInvite(token'), 'unpaired devices have an explicit child-device enrollment path instead of being forced through parent credentials');
 assert(ui.includes('Weiteres Eltern-Gerät verbinden')&&ui.includes('<strong>Kein Kindergerät.</strong>'), 'family ID and PIN flow is explicitly labelled as parent-device enrollment');
