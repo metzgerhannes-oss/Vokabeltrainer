@@ -40,6 +40,7 @@ try{
       revealKey:stage?.dataset.revealKey||'',
       active:!!stage?.classList.contains('fortress-reveal'),
       overlay:!!overlay,
+      hidden:!!overlay?.hidden,
       visibility:style?.visibility||'',
       opacity:Number(style?.opacity||0),
       reduced:matchMedia('(prefers-reduced-motion: reduce)').matches,
@@ -48,7 +49,7 @@ try{
   });
   assert(firstFortressReveal.seenAt,'new test fortress records the first reveal: '+JSON.stringify(firstFortressReveal));
   assert(firstFortressReveal.key===firstFortressReveal.revealKey,'fortress reveal is tied to the current test target: '+JSON.stringify(firstFortressReveal));
-  assert(firstFortressReveal.active&&firstFortressReveal.overlay,'new test fortress activates its reveal layer: '+JSON.stringify(firstFortressReveal));
+  assert(firstFortressReveal.overlay&&!firstFortressReveal.hidden,'new test fortress activates its reveal layer: '+JSON.stringify(firstFortressReveal));
   assert(firstFortressReveal.visibility==='visible'&&firstFortressReveal.opacity>.9,'fortress reveal is visibly rendered: '+JSON.stringify(firstFortressReveal));
   assert(firstFortressReveal.copy.includes('NEUES TESTZIEL ENTDECKT')&&firstFortressReveal.copy.includes('Vokabel'),'fortress reveal explains the new target and learning scope');
   assert(await page.locator('#battleAttackBtn').isDisabled(),'only the attack action is locked before the daily goal');
@@ -61,11 +62,15 @@ try{
   await page.click('#attackBtn');
   await page.waitForSelector('#battleView.active');
   await page.waitForTimeout(80);
-  const repeatedFortressReveal=await page.evaluate(()=>({
-    seenAt:currentTestFortress()?.revealedAt||'',
-    active:document.querySelector('#battleStage')?.classList.contains('fortress-reveal')
-  }));
-  assert(repeatedFortressReveal.seenAt===firstFortressReveal.seenAt&&!repeatedFortressReveal.active,'same test fortress is not revealed a second time');
+  const repeatedFortressReveal=await page.evaluate(()=>{
+    const stage=document.querySelector('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
+    return {
+      seenAt:currentTestFortress()?.revealedAt||'',
+      active:stage?.classList.contains('fortress-reveal'),
+      hidden:!!overlay?.hidden
+    };
+  });
+  assert(repeatedFortressReveal.seenAt===firstFortressReveal.seenAt&&!repeatedFortressReveal.active&&repeatedFortressReveal.hidden,'same test fortress is not revealed a second time');
   await page.waitForFunction(()=>window.VTBattleArt?.ready===true);
   await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
   assert(await page.locator('#battleStage [data-battle-art-stack]').count()===1,'battle stage receives one layered artwork stack');
