@@ -218,6 +218,38 @@ try{
   assert(attackIdentity.ram.trail.includes('battleRamTrail')&&attackIdentity.ram.trailOpacity===1,'ram attack raises its own heavy ground trail');
   assert(attackIdentity.ram.gate.includes('battleRamGateImpact'),'ram impact targets the fortress gate with a dedicated hit animation');
 
+  const remainingAttackIdentity=await page.evaluate(async()=>{
+    const stage=document.querySelector('#battleStage');
+    const reset=()=>stage.classList.remove('battle-sequence','attack-volley','attack-cavalry','attack-special','phase-advance','phase-barrage','phase-impact','is-attacking','is-strike','is-impact');
+    stage.classList.add('battle-sequence','attack-volley','phase-barrage','is-attacking','is-strike');
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const volley={
+      wave:getComputedStyle(document.querySelector('#battleStage .battle-volley-sky i')).animationName,
+      opacity:Number(getComputedStyle(document.querySelector('#battleStage .battle-volley-sky')).opacity)
+    };
+    reset();
+    stage.classList.add('battle-sequence','attack-cavalry','phase-barrage','is-attacking','is-strike');
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const cavalry={
+      dust:getComputedStyle(document.querySelector('#battleStage .battle-cavalry-flank i')).animationName,
+      slash:getComputedStyle(document.querySelector('#battleStage .battle-cavalry-flank b')).animationName,
+      opacity:Number(getComputedStyle(document.querySelector('#battleStage .battle-cavalry-flank')).opacity)
+    };
+    reset();
+    stage.classList.add('battle-sequence','attack-special','phase-barrage','is-attacking','is-strike');
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const special={
+      ring:getComputedStyle(document.querySelector('#battleStage .battle-special-aura i')).animationName,
+      star:getComputedStyle(document.querySelector('#battleStage .battle-special-aura strong')).animationName,
+      opacity:Number(getComputedStyle(document.querySelector('#battleStage .battle-special-aura')).opacity)
+    };
+    reset();
+    return {volley,cavalry,special};
+  });
+  assert(remainingAttackIdentity.volley.wave.includes('battleVolleyArc')&&remainingAttackIdentity.volley.opacity===1,'pfeilhagel has a dedicated multi-wave sky animation');
+  assert(remainingAttackIdentity.cavalry.dust.includes('battleCavalryDust')&&remainingAttackIdentity.cavalry.slash.includes('battleCavalrySlash')&&remainingAttackIdentity.cavalry.opacity===1,'reiterangriff has a dedicated flank dust and slash animation');
+  assert(remainingAttackIdentity.special.ring.includes('battleSpecialRing')&&remainingAttackIdentity.special.star.includes('battleSpecialStar')&&remainingAttackIdentity.special.opacity===1,'special attack has a dedicated elite aura and star pulse');
+
   await page.emulateMedia({reducedMotion:'reduce'});
   const reducedImpactAnimations=await page.evaluate(()=>{
     const stage=document.querySelector('#battleStage');
@@ -243,6 +275,18 @@ try{
     return result;
   });
   assert(reducedAttackFx.drive==='none'&&reducedAttackFx.trailDisplay==='none','reduced-motion removes the new ram movement and trail effects');
+  const reducedRemainingFx=await page.evaluate(()=>{
+    const stage=document.querySelector('#battleStage');
+    stage.classList.add('battle-sequence','attack-special','phase-barrage','is-attacking','is-strike');
+    const result={
+      volley:getComputedStyle(document.querySelector('#battleStage .battle-volley-sky')).display,
+      cavalry:getComputedStyle(document.querySelector('#battleStage .battle-cavalry-flank')).display,
+      special:getComputedStyle(document.querySelector('#battleStage .battle-special-aura')).display
+    };
+    stage.classList.remove('battle-sequence','attack-special','phase-barrage','is-attacking','is-strike');
+    return result;
+  });
+  assert(Object.values(reducedRemainingFx).every(value=>value==='none'),'reduced-motion hides the new volley cavalry and special motion layers');
   assert(await page.locator('#battleStage [data-battle-scene-art]').getAttribute('data-battle-asset')==='dedicated','battle image comes from dedicated battlefield asset');
   assert((await page.evaluate(()=>window.VTBattleArt?.source))==='dedicated-battlefield','dedicated battlefield loader is active');
   assert(await page.locator('#battleStage .battle-unit').count()>=6,'animated army contains multiple units');
@@ -269,6 +313,9 @@ try{
   assert(await page.locator('#battleStage .battle-impact-callout').count()===1,'battle stage contains one dedicated visual hit callout');
   assert(await page.locator('#battleStage .battle-charge-streaks i').count()===6,'battle stage contains the charge motion layer');
   assert(await page.locator('#battleStage .battle-ram-trail i').count()===3,'battle stage contains the ram ground-impact layer');
+  assert(await page.locator('#battleStage .battle-volley-sky i').count()===7,'battle stage contains a dedicated multi-wave volley layer');
+  assert(await page.locator('#battleStage .battle-cavalry-flank i').count()===3,'battle stage contains a dedicated cavalry flank trail');
+  assert(await page.locator('#battleStage .battle-special-aura i').count()===3,'battle stage contains a dedicated special-attack aura');
   assert((await page.locator('#battleTicketPill').textContent())?.includes('1'),'battle screen shows earned attack');
   assert(await page.locator('.battle-phase-strip [data-battle-phase]').count()===5,'battle shows a five-phase sequence');
   const attackButtonRect=await page.locator('#battleAttackBtn').boundingBox();
@@ -322,6 +369,7 @@ try{
   assert(!(await page.locator('[data-battle-attack="special"]').isDisabled()),'high long-term progress unlocks a special attack');
   await page.click('[data-battle-attack="special"]');
   await page.click('#battleAttackBtn');
+  assert(['ELITESCHLAG!','ADLERSCHLAG!'].includes((await page.locator('[data-battle-impact-title]').textContent())||''),'special attack prepares the strongest dedicated hit callout');
   await page.waitForSelector('#battleStage.attack-special.battle-finished',{timeout:3000});
   await page.waitForSelector('#battleResultOverlay.visible');
   assert((await page.locator('#battleResultTitle').textContent())?.includes('Boss besiegt'),'boss conquest uses the cinematic result view');
