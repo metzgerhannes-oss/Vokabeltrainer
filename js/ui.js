@@ -125,9 +125,40 @@ function selectBattleAttack(mode){
   $('#battleMessage').className='battle-message';$('#battleMessage').textContent=`${a.label} gewählt. ${a.message} ${tactical.role}: +${tactical.bonus} Taktikschaden.`;
   if($('#battleAttackBtn'))$('#battleAttackBtn').textContent=`${a.short}: Angriff starten`;
 }
+let battleFortressRevealTimer=null;
+let battleFortressRevealKey='';
+let battleFortressRevealUntil=0;
+function battleFortressRevealActive(f=currentTestFortress()){
+  return !!f&&battleFortressRevealKey===f.key&&Date.now()<battleFortressRevealUntil;
+}
+function battleFortressRevealMarkup(f,active=false){
+  if(!f)return '';
+  const days=Math.max(1,Number(f.plannedAttackDays)||1),words=Math.max(0,Number(f.wordCount)||0);
+  return `<div class="battle-target-reveal" data-battle-target-reveal aria-hidden="true" ${active?'':'hidden'}><div class="battle-target-reveal-light"></div><div class="battle-target-reveal-copy"><small>NEUES TESTZIEL ENTDECKT</small><strong>${esc(f.name)}</strong><span>${esc(f.subtitle||'Testfestung')} · Test ${formatDateShort(f.testDate)}</span><b>${words} ${words===1?'Vokabel':'Vokabeln'} · ${days} ${days===1?'Lerntag':'Lerntage'} eingeplant</b></div></div>`;
+}
+function startBattleFortressReveal(f=currentTestFortress()){
+  const stage=$('#battleStage');if(!stage||!f||f.revealedAt)return false;
+  if(battleFortressRevealTimer){clearTimeout(battleFortressRevealTimer);battleFortressRevealTimer=null}
+  const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,duration=reduced?1400:2900;
+  battleFortressRevealKey=f.key||'';
+  battleFortressRevealUntil=Date.now()+duration;
+  f.revealedAt=new Date().toISOString();
+  persistOnly();
+  renderBattleView();
+  const live=$('#battleStage');if(live)live.dataset.revealKey=f.key||'';
+  battleFortressRevealTimer=setTimeout(()=>{
+    if(battleFortressRevealKey===f.key){battleFortressRevealKey='';battleFortressRevealUntil=0}
+    const stage=$('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
+    stage?.classList.remove('fortress-reveal');
+    if(overlay)overlay.hidden=true;
+    battleFortressRevealTimer=null;
+  },duration);
+  return true;
+}
+
 function renderBattleView(){
   const stage=$('#battleStage');if(!stage)return;
-  const p=subjectProgress(),f=currentTestFortress(),tickets=battleTickets(),count=Math.min(18,Math.max(7,soldiersFor(p.pct)+4)),sea=seasonInfo();
+  const p=subjectProgress(),f=currentTestFortress(),tickets=battleTickets(),count=Math.min(18,Math.max(7,soldiersFor(p.pct)+4)),sea=seasonInfo(),revealActive=battleFortressRevealActive(f);
   const campaign=subjectCampaign(state.activeSubject),rank=rankFor(p.pct,state.activeSubject),gear=gearLabelFor(p.pct,state.activeSubject),secure=!!f?.capturedAt,boss=!secure?battleBossFor(f):null,story=battleStoryFor(f),attack=battleAttackMeta(battleAttackMode);
   const damagePct=f?clamp(Math.round((1-(Number(f.defense)||0)/Math.max(1,Number(f.maxDefense)||1))*100),0,100):0,fortressVisual=battleFortressVisualState(f);
   const usedToday=!!battleDayState(state.activeSubject,false)?.actionUsed;
@@ -149,17 +180,20 @@ function renderBattleView(){
   if($('#battleActionHint'))$('#battleActionHint').textContent=!f?'Plane zuerst einen Test.':tickets?(secure?'Halte die eroberte Festung bis zum Test sicher.':`${attack.label} wählen und die Festung weiter schwächen.`):usedToday?'Morgen gibt es nach dem nächsten Tagesziel wieder eine Aktion.':'Schließe zuerst dein Tagesziel ab.';
   $('#battleMessage').className='battle-message';$('#battleMessage').textContent=!f?'Kein Test – keine Belagerung.':tickets?(secure?'Sicherung ist bereit.':`${attack.label} ist bereit. Erwarteter Schaden: ${testFortressDamage(f,state.activeSubject,battleAttackMode).damage}.`):secure?'Festung bleibt erobert.':'Jeder abgeschlossene Lerntag bringt die Belagerung voran.';
   if(!secure&&f)renderBattleAttackChoices(p.pct);else if($('#battleAttackChoices'))$('#battleAttackChoices').innerHTML='';
-  stage.className=`battle-stage season-${sea.class} subject-${state.activeSubject} gear-${gearTier(p.pct)} fortress-stage-${f?.id||'none'} fortress-visual-${fortressVisual.id} ${boss?'boss-stage':''} ${secure?'fortress-secured':''}`;
+  stage.className=`battle-stage season-${sea.class} subject-${state.activeSubject} gear-${gearTier(p.pct)} fortress-stage-${f?.id||'none'} fortress-visual-${fortressVisual.id} ${boss?'boss-stage':''} ${secure?'fortress-secured':''} ${revealActive?'fortress-reveal':''}`;
   stage.dataset.damage=damagePct>=66?'high':damagePct>=33?'mid':damagePct>0?'low':'none';
   stage.dataset.damagePercent=String(damagePct);
   stage.dataset.fortressState=fortressVisual.id;
   stage.setAttribute('aria-label',f?`${campaign.unitLabel} im Rang ${rank} vor ${f.name}. Festungsschaden ${damagePct} Prozent. Test am ${formatDateShort(f.testDate)}.`:`${campaign.unitLabel}: aktuell keine Testfestung.`);
-  stage.innerHTML=`<div class="battle-sky"><i class="battle-sun"></i><i class="battle-cloud cloud-1"></i><i class="battle-cloud cloud-2"></i></div>${seasonEffectsMarkup()}<div class="battle-hills"></div><div class="battle-ground"></div><div class="battle-ground-path" aria-hidden="true"></div><div class="battle-scene-vignette" aria-hidden="true"></div><div class="battle-fortress-state-badge" aria-hidden="true"><small>Festung</small><strong>${esc(fortressVisual.label)}</strong></div><div class="battle-phase-strip" aria-hidden="true"><span data-battle-phase="rally"><i>1</i>${secure?'Sammeln':'Sammeln'}</span><span data-battle-phase="advance"><i>2</i>${secure?'Beziehen':'Vorrücken'}</span><span data-battle-phase="barrage"><i>3</i>${secure?'Patrouille':'Angriff'}</span><span data-battle-phase="impact"><i>4</i>${secure?'Sichern':'Einschlag'}</span><span data-battle-phase="result"><i>5</i>Ergebnis</span></div><div class="battle-rank-badge"><span>${esc(rank)}</span><small>${esc(gear)}</small></div><div class="battle-army"><div class="battle-standard"><i></i></div><div class="battle-formation">${battleUnitsMarkup(count,true,p.pct)}</div>${p.pct>=35?'<div class="battle-ram"><i></i><b></b></div>':''}</div><div class="battle-projectiles">${Array.from({length:9},(_,i)=>`<i class="arrow arrow-${i+1}"></i>`).join('')}</div><div class="battle-impact"><i></i><i></i><i></i></div><div class="battle-special-flare"><i></i><i></i><i></i></div><div class="battle-shockwave"></div>${battleAttackFxMarkup()}${boss?`<div class="battle-boss-character boss-${esc(f.id)}" aria-label="${esc(boss.name)}"><i class="boss-helmet"></i><i class="boss-body"></i><i class="boss-shield"></i></div>`:''}${fortressMarkup(f,true)}<div class="battle-dust"></div>`;
+  stage.innerHTML=`<div class="battle-sky"><i class="battle-sun"></i><i class="battle-cloud cloud-1"></i><i class="battle-cloud cloud-2"></i></div>${seasonEffectsMarkup()}<div class="battle-hills"></div><div class="battle-ground"></div><div class="battle-ground-path" aria-hidden="true"></div><div class="battle-scene-vignette" aria-hidden="true"></div><div class="battle-fortress-state-badge" aria-hidden="true"><small>Festung</small><strong>${esc(fortressVisual.label)}</strong></div><div class="battle-phase-strip" aria-hidden="true"><span data-battle-phase="rally"><i>1</i>${secure?'Sammeln':'Sammeln'}</span><span data-battle-phase="advance"><i>2</i>${secure?'Beziehen':'Vorrücken'}</span><span data-battle-phase="barrage"><i>3</i>${secure?'Patrouille':'Angriff'}</span><span data-battle-phase="impact"><i>4</i>${secure?'Sichern':'Einschlag'}</span><span data-battle-phase="result"><i>5</i>Ergebnis</span></div><div class="battle-rank-badge"><span>${esc(rank)}</span><small>${esc(gear)}</small></div><div class="battle-army"><div class="battle-standard"><i></i></div><div class="battle-formation">${battleUnitsMarkup(count,true,p.pct)}</div>${p.pct>=35?'<div class="battle-ram"><i></i><b></b></div>':''}</div><div class="battle-projectiles">${Array.from({length:9},(_,i)=>`<i class="arrow arrow-${i+1}"></i>`).join('')}</div><div class="battle-impact"><i></i><i></i><i></i></div><div class="battle-special-flare"><i></i><i></i><i></i></div><div class="battle-shockwave"></div>${battleAttackFxMarkup()}${boss?`<div class="battle-boss-character boss-${esc(f.id)}" aria-label="${esc(boss.name)}"><i class="boss-helmet"></i><i class="boss-body"></i><i class="boss-shield"></i></div>`:''}${fortressMarkup(f,true)}<div class="battle-dust"></div>${battleFortressRevealMarkup(f,revealActive)}`;
 }
 function openBattleView(){
   if(isParentMode())return;
-  if(!currentTestFortress()){toast('Für die nächste Schlacht muss zuerst ein Test geplant sein.','subtle');return}
+  const f=currentTestFortress();
+  if(!f){toast('Für die nächste Schlacht muss zuerst ein Test geplant sein.','subtle');return}
+  const reveal=!f.revealedAt;
   renderBattleView();showView('battleView');
+  if(reveal)startBattleFortressReveal(f);
 }
 function closeBattleImmersive(){
   document.body.classList.remove('battle-immersive');$('#battleFullscreenBtn')?.setAttribute('aria-pressed','false');if($('#battleFullscreenBtn'))$('#battleFullscreenBtn').textContent='⛶ Vollbild';

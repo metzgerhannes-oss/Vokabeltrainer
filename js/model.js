@@ -306,7 +306,7 @@ function currentTestFortress(subject=state.activeSubject){
     f={
       key,id:archetype.id,name:archetype.name,subtitle:archetype.subtitle,subject,testDate:ctx.date,
       scopeText:ctx.scopeText||ctx.sets.map(s=>s.title).join(' + '),setIds:ctx.sets.map(s=>s.id),wordCount:ctx.words.length,
-      plannedAttackDays,maxDefense,defense:maxDefense,createdDate:today(),createdAt:new Date().toISOString(),
+      plannedAttackDays,maxDefense,defense:maxDefense,createdDate:today(),createdAt:new Date().toISOString(),revealedAt:'',
       capturedAt:'',securedDates:[],attacks:[]
     };
     l.testFortresses[key]=f;if(typeof persistOnly==='function')persistOnly();
