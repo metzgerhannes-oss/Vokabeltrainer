@@ -31,7 +31,27 @@ try{
   assert((await page.locator('#attackBtn').textContent())?.includes('Festung'),'campaign card points to the persistent test fortress');
   await page.click('#attackBtn');
   await page.waitForSelector('#battleView.active');
+  await page.waitForFunction(()=>!!currentTestFortress()?.revealedAt);
+  const firstFortressReveal=await page.evaluate(()=>({
+    seenAt:currentTestFortress()?.revealedAt||'',
+    active:document.querySelector('#battleStage')?.classList.contains('fortress-reveal'),
+    overlay:!!document.querySelector('#battleStage [data-battle-target-reveal]'),
+    copy:document.querySelector('#battleStage [data-battle-target-reveal]')?.textContent||''
+  }));
+  assert(firstFortressReveal.seenAt&&firstFortressReveal.active&&firstFortressReveal.overlay,'new test fortress receives one visible discovery reveal');
+  assert(firstFortressReveal.copy.includes('NEUES TESTZIEL ENTDECKT')&&firstFortressReveal.copy.includes('Vokabel'),'fortress reveal explains the new target and learning scope');
   assert(await page.locator('#battleAttackBtn').isDisabled(),'only the attack action is locked before the daily goal');
+  await page.waitForTimeout(950);
+  await page.click('#battleReturnBtn');
+  await page.waitForSelector('#childProgressView.active');
+  await page.click('#attackBtn');
+  await page.waitForSelector('#battleView.active');
+  await page.waitForTimeout(80);
+  const repeatedFortressReveal=await page.evaluate(()=>({
+    seenAt:currentTestFortress()?.revealedAt||'',
+    active:document.querySelector('#battleStage')?.classList.contains('fortress-reveal')
+  }));
+  assert(repeatedFortressReveal.seenAt===firstFortressReveal.seenAt&&!repeatedFortressReveal.active,'same test fortress is not revealed a second time');
   await page.click('#battleReturnBtn');
   await page.waitForSelector('#childProgressView.active');
   await page.evaluate(()=>{grantBattleTicket('dailyGoal');renderAll();});
