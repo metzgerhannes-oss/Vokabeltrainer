@@ -3,37 +3,37 @@
 (() => {
   const UNIT_DEFS = [
     {
-      id:'infantry',icon:'⚔',names:{english:'Infanterie',latin:'Legionäre'},
+      id:'infantry',icon:'⚔',names:{english:'Infanterie',latin:'Legionäre'},role:'Front',roleText:'Hält die Linie und bildet die verlässliche Basis des Heeres.',
       description:{english:'Die verlässliche Basis deiner Armee.',latin:'Das Rückgrat deiner Legion.'},
       tiers:['Grundausrüstung','Verstärkte Schilde','Stahlhelme','Veteranenrüstung','Eliteformation'],
       thresholds:[0,20,40,65,85],metric:c=>c.p.pct,metricName:'Lernfortschritt',suffix:'%'
     },
     {
-      id:'archers',icon:'➶',names:{english:'Bogenschützen',latin:'Sagittarii'},
+      id:'archers',icon:'➶',names:{english:'Bogenschützen',latin:'Sagittarii'},role:'Fernkampf',roleText:'Unterstützt Angriffe aus der Distanz und deckt das Vorrücken.',
       description:{english:'Treffen aus der Distanz und eröffnen neue Angriffsmöglichkeiten.',latin:'Fernkämpfer für gezielte Salven.'},
       tiers:['Übungsbögen','Langbögen','Große Köcher','Veteranenbogen','Präzisionssalve'],
       thresholds:[20,35,55,75,90],metric:c=>c.p.pct,metricName:'Lernfortschritt',suffix:'%'
     },
     {
-      id:'cavalry',icon:'♞',names:{english:'Kavallerie',latin:'Equites'},
+      id:'cavalry',icon:'♞',names:{english:'Kavallerie',latin:'Equites'},role:'Mobilität',roleText:'Bewegt sich schnell, flankiert und macht die Armee beweglicher.',
       description:{english:'Schnelle Eliteeinheiten für den späteren Feldzug.',latin:'Schnelle Reitereinheiten für die Flanke.'},
       tiers:['Späher','Leichte Reiterei','Gepanzerte Reiter','Veteranenreiter','Elite-Kavallerie'],
       thresholds:[55,65,75,85,95],metric:c=>c.p.pct,metricName:'Lernfortschritt',suffix:'%'
     },
     {
-      id:'ram',icon:'▰',names:{english:'Rammbock',latin:'Belagerungsgerät'},
+      id:'ram',icon:'▰',names:{english:'Rammbock',latin:'Belagerungsgerät'},role:'Belagerung',roleText:'Konzentriert die Kraft der Armee auf Tore und befestigte Ziele.',
       description:{english:'Wird mit wachsendem Feldzug immer stärker.',latin:'Schweres Gerät für befestigte Ziele.'},
       tiers:['Leichter Rammbock','Verstärkter Balken','Schutzdach','Belagerungsramme','Festungsbrecher'],
       thresholds:[35,50,70,85,100],metric:c=>c.p.pct,metricName:'Lernfortschritt',suffix:'%'
     },
     {
-      id:'shield',icon:'⬟',names:{english:'Schildträger',latin:'Scutum-Träger'},
+      id:'shield',icon:'⬟',names:{english:'Schildträger',latin:'Scutum-Träger'},role:'Schutz',roleText:'Sichert die Formation und bereits eroberte Stellungen.',
       description:{english:'Belohnt Wissen, das schon über mehrere Tage stabil bleibt.',latin:'Stabile Reihen aus nachhaltig gefestigtem Wissen.'},
       tiers:['Holzschild','Verstärkter Schild','Schildwall','Veteranenwall','Elite-Schildwall'],
       thresholds:[15,35,55,75,90],metric:c=>c.stablePct,metricName:'stabile Wörter',suffix:'%'
     },
     {
-      id:'support',icon:'✚',names:{english:'Sanitäter',latin:'Unterstützung'},
+      id:'support',icon:'✚',names:{english:'Sanitäter',latin:'Unterstützung'},role:'Versorgung',roleText:'Hält die Truppe einsatzbereit und stützt Moral und Ausdauer.',
       description:{english:'Regelmäßiges Lernen baut deine Unterstützungseinheit aus.',latin:'Regelmäßigkeit stärkt die Versorgung deiner Legion.'},
       tiers:['Feldversorgung','Verbandskiste','Versorgungswagen','Erfahrenes Team','Elite-Unterstützung'],
       thresholds:[3,7,14,30,60],metric:c=>c.learningDays,metricName:'Lerntage',suffix:''
@@ -89,6 +89,23 @@
   function metricText(def,s){
     if(def.suffix==='%')return `${Math.round(s.value)}%`;
     return `${Math.round(s.value)} ${def.metricName}`;
+  }
+  function unitPower(def,c){
+    const s=unitState(def,c);
+    if(!s.unlocked)return 0;
+    if(s.level>=5)return 100;
+    return Math.max(1,Math.min(99,Math.round(((s.level-1)+(s.progress/100))/5*100)));
+  }
+  function roleStrengthMarkup(c){
+    return UNIT_DEFS.map(def=>{
+      const s=unitState(def,c),power=unitPower(def,c),name=subjectName(def);
+      return `<button type="button" class="army-role-card ${s.unlocked?'ready':'locked'}" data-army-unit="${safe(def.id)}" aria-label="${safe(def.role)}: ${power} von 100 · ${safe(name)}">
+        <span class="army-role-icon" aria-hidden="true">${def.icon}</span>
+        <span class="army-role-copy"><small>${safe(def.role)}</small><strong>${safe(name)}</strong><em>${safe(def.roleText)}</em></span>
+        <span class="army-role-value"><b>${power}</b><small>/ 100</small></span>
+        <progress max="100" value="${power}" aria-label="${safe(def.role)} Stärke"></progress>
+      </button>`;
+    }).join('');
   }
   function nextText(def,s){
     if(s.next===null)return 'Maximale Stufe erreicht';
@@ -154,6 +171,7 @@
       <span class="army-unit-level">Stufe <b>${s.level||0}</b></span>
       <span class="army-unit-art unit-art-${safe(def.id)}" aria-hidden="true"><img data-army-unit-art alt=""><b>${def.icon}</b></span>
       <strong>${safe(name)}</strong>
+      <span class="army-unit-role">${safe(def.role)}</span>
       <small>${safe(def.description?.[state.activeSubject]||def.description.english)}</small>
       <progress class="army-unit-progress" max="100" value="${s.progress}" aria-label="Fortschritt zur nächsten Stufe"></progress>
       <span class="army-unit-state">${s.unlocked?metricText(def,s):`Freischaltung: ${nextText(def,s)}`}</span>
@@ -194,6 +212,7 @@
           <span class="army-kicker">${s.unlocked?'Freigeschaltete Einheit':'Noch gesperrt'}</span>
           <h3>${safe(name)}</h3>
           <p>${safe(def.description?.[state.activeSubject]||def.description.english)}</p>
+          <div class="army-detail-role"><small>Aufgabe in deiner Armee</small><strong>${safe(def.role)}</strong><span>${safe(def.roleText)}</span><b>${unitPower(def,c)} / 100</b></div>
           <div class="army-detail-current"><small>Aktuelle Ausbaustufe</small><strong>${safe(current)}</strong><span>${safe(metricText(def,s))}</span></div>
         </div>
         <div class="army-detail-next">
@@ -266,6 +285,8 @@
         <div><small>Prüfungsabzeichen</small><strong>${safe(c.testBadges)}</strong></div>
       `;
     }
+    const roles=document.querySelector('#armyRoleGrid');
+    if(roles)roles.innerHTML=roleStrengthMarkup(c);
     const bonus=document.querySelector('#armyBonusGrid');
     if(bonus)bonus.innerHTML=bonusMarkup(c);
     const grid=document.querySelector('#armyUnitGrid');
@@ -325,6 +346,10 @@
     document.querySelector('#armyUnitBackBtn')?.addEventListener('click',()=>{render();showView('armyView')});
     document.querySelector('#armyUpgradeFocusBtn')?.addEventListener('click',focusNextUpgrade);
     document.querySelector('#armyUnitGrid')?.addEventListener('click',e=>{
+      const card=e.target.closest('[data-army-unit]');
+      if(card)openDetail(card.dataset.armyUnit);
+    });
+    document.querySelector('#armyRoleGrid')?.addEventListener('click',e=>{
       const card=e.target.closest('[data-army-unit]');
       if(card)openDetail(card.dataset.armyUnit);
     });
