@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 24.09.2026 · App v0.18.41
+Stand: 24.09.2026 · App v0.18.42
 
 ## Ergebnis
 
@@ -72,6 +72,8 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - jede Einheit besitzt eine eigene Detailansicht mit fünfstufigem Aufwertungspfad; aktuelle Stufe, nächste sichtbare Verbesserung und exakte Lernbedingung werden transparent angezeigt
 - die Einheitendetailansicht ist rein lesend und verändert weder Mastery noch Lernfortschritt
 - „Meine Armee“ ist eine vorgelagerte, jederzeit betrachtbare Erlebnisansicht; Einheitstufen und Boni werden nur aus vorhandenem Lernfortschritt abgeleitet und schreiben keinen fachlichen Lernstand
+- die sechs Einheiten besitzen transparente Rollen (Front, Fernkampf, Mobilität, Belagerung, Schutz, Versorgung); die sichtbaren Rollenwerte 0–100 werden ausschließlich aus den bestehenden Einheitenstufen abgeleitet und erzeugen keinen separaten Lern- oder Spielstand
+- Rollenwerte und Rollenansicht sind in v0.18.42 rein erklärend und verändern weder Testbereitschaft noch Mastery noch den tatsächlichen Schlachtschaden
 - die Armeeansicht besitzt keine eigenständige Spielwährung; Aufwertungen entstehen automatisch durch Lernen und nachhaltige Wiederholung
 - Schlacht ist ein separater Erlebnisbereich nach einer abgeschlossenen Lerneinheit
 - pro Fach und Kalendertag wird höchstens eine Kampfaktion ausschließlich durch das vollständig abgeschlossene Tagesziel freigeschaltet; freiwillige Übungen zählen nicht mit
