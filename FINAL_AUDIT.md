@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 24.09.2026 · App v0.18.51
+Stand: 24.09.2026 · App v0.18.52
 
 ## Ergebnis
 
@@ -180,3 +180,4 @@ Der nächste entscheidende Test ist ein echter Kind-Test ohne Erklärungen. Beob
 - Schlacht: findet es Angriffsart, Vollbild und Ergebnis ohne Hilfe?
 - Rückweg: kommt es selbständig zu Heute/Lernen zurück?
 - kritisch: erster Fehlklick, Pause >5 Sekunden, Zurückspringen oder Nachfrage werden notiert.
+\n- die sechs bestehenden Festungsstufen besitzen wieder eigenständige, im Hero-Redesign klar unterscheidbare Silhouetten; die Darstellung liegt separat in `css/battle-fortress.css` und verändert keine Lern- oder Kampflogik\n

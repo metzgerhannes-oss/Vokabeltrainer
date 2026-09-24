@@ -1,0 +1,316 @@
+/* v0.18.51 – Fortress progression
+   Six distinct fortress silhouettes using the existing campaign IDs.
+   Presentation only: no battle or learning logic is changed. */
+
+.battle-stage.fortress-stage-outpost{
+  background:
+    radial-gradient(ellipse at 65% 50%,rgba(224,199,147,.16),transparent 28%),
+    linear-gradient(180deg,#7898ad 0%,#aebcc0 42%,#7b815f 43%,#596343 100%);
+}
+.battle-fortress.fortress-outpost{
+  width:28%;
+  height:36%;
+  right:7%;
+  bottom:7%;
+}
+.battle-fortress.fortress-outpost .tower{
+  width:27%;
+  height:76%;
+}
+.battle-fortress.fortress-outpost .wall{
+  left:9%;
+  right:9%;
+  height:57%;
+}
+.battle-fortress.fortress-outpost .battle-keep{display:none}
+.battle-fortress.fortress-outpost .battle-gate{
+  width:38%;
+  height:62%;
+  border-radius:45% 45% 0 0;
+}
+.battle-fortress.fortress-outpost .tower::before{
+  top:-12px;
+  height:17px;
+}
+.battle-fortress.fortress-outpost .battle-enemy-flag{
+  height:70px;
+  top:-18%;
+}
+.battle-fortress.fortress-outpost .battle-enemy-flag::after{
+  width:39px;
+  height:23px;
+}
+
+.battle-stage.fortress-stage-tower{
+  background:
+    radial-gradient(ellipse at 67% 42%,rgba(197,205,204,.14),transparent 24%),
+    linear-gradient(180deg,#6f8799 0%,#a6b2b5 43%,#717b60 44%,#515c42 100%);
+}
+.battle-fortress.fortress-tower{
+  width:27%;
+  height:51%;
+  right:7%;
+  bottom:7%;
+}
+.battle-fortress.fortress-tower .tower-left{
+  left:26%;
+  width:48%;
+  height:100%;
+}
+.battle-fortress.fortress-tower .tower-right{
+  right:2%;
+  width:19%;
+  height:64%;
+  opacity:.8;
+}
+.battle-fortress.fortress-tower .wall{
+  left:18%;
+  right:10%;
+  height:44%;
+}
+.battle-fortress.fortress-tower .battle-keep{display:none}
+.battle-fortress.fortress-tower .battle-gate{
+  width:31%;
+  height:70%;
+}
+.battle-fortress.fortress-tower .tower-left::after{
+  top:18%;
+  box-shadow:0 42px 0 #172126,0 84px 0 #172126;
+}
+
+.battle-stage.fortress-stage-wall{
+  background:
+    radial-gradient(ellipse at 70% 52%,rgba(215,201,160,.12),transparent 29%),
+    linear-gradient(180deg,#708da2 0%,#a8b8bd 42%,#747d58 43%,#515d3e 100%);
+}
+.battle-fortress.fortress-wall{
+  width:44%;
+  height:40%;
+  right:2%;
+  bottom:7%;
+}
+.battle-fortress.fortress-wall .tower{
+  width:21%;
+  height:82%;
+}
+.battle-fortress.fortress-wall .wall{
+  left:4%;
+  right:4%;
+  height:67%;
+}
+.battle-fortress.fortress-wall .battle-keep{
+  display:block;
+  left:42%;
+  right:42%;
+  bottom:44%;
+  height:46%;
+  opacity:.78;
+}
+.battle-fortress.fortress-wall .battle-gate{
+  width:24%;
+  height:58%;
+}
+.battle-fortress.fortress-wall .battle-enemy-flag{
+  right:8%;
+}
+
+.battle-stage.fortress-stage-citadel .battle-hills{
+  filter:saturate(.55) contrast(1.02) brightness(.82);
+}
+.battle-stage.fortress-stage-citadel{
+  background:
+    radial-gradient(ellipse at 71% 44%,rgba(204,196,172,.14),transparent 25%),
+    linear-gradient(180deg,#667e92 0%,#9da9ad 41%,#687058 42%,#46513d 100%);
+}
+.battle-fortress.fortress-citadel{
+  width:36%;
+  height:56%;
+  right:4%;
+  bottom:6%;
+}
+.battle-fortress.fortress-citadel .battle-keep{
+  display:block;
+  left:29%;
+  right:29%;
+  bottom:22%;
+  height:86%;
+}
+.battle-fortress.fortress-citadel .tower{
+  width:28%;
+  height:91%;
+}
+.battle-fortress.fortress-citadel .wall{
+  height:64%;
+}
+.battle-fortress.fortress-citadel .battle-gate{
+  width:28%;
+}
+.battle-fortress.fortress-citadel .wall,
+.battle-fortress.fortress-citadel .tower,
+.battle-fortress.fortress-citadel .battle-keep{
+  background:
+    linear-gradient(112deg,rgba(242,236,216,.12),transparent 20% 72%,rgba(17,24,28,.22)),
+    repeating-linear-gradient(90deg,transparent 0 28px,rgba(38,45,48,.14) 29px 31px),
+    repeating-linear-gradient(0deg,#70797e 0 18px,#566167 19px 21px,#798186 22px 37px,#4f5a60 38px 40px)!important;
+}
+
+.battle-stage.fortress-stage-capital{
+  background:
+    radial-gradient(ellipse at 72% 41%,rgba(231,197,135,.14),transparent 27%),
+    linear-gradient(180deg,#637f98 0%,#9dabb1 40%,#6c7458 41%,#4a553d 100%);
+}
+.battle-fortress.fortress-capital{
+  width:40%;
+  height:60%;
+  right:3%;
+  bottom:5.5%;
+}
+.battle-fortress.fortress-capital .battle-keep{
+  display:block;
+  left:27%;
+  right:27%;
+  bottom:20%;
+  height:98%;
+}
+.battle-fortress.fortress-capital .tower{
+  width:29%;
+  height:96%;
+}
+.battle-fortress.fortress-capital .wall{
+  left:8%;
+  right:8%;
+  height:72%;
+}
+.battle-fortress.fortress-capital .battle-gate{
+  width:27%;
+  height:62%;
+}
+.battle-fortress.fortress-capital .battle-enemy-flag::after{
+  background:
+    radial-gradient(circle at 28% 49%,rgba(208,164,80,.28) 0 10%,transparent 11%),
+    linear-gradient(135deg,#6e2223,#34171b 72%,#171015);
+}
+.battle-fortress.fortress-capital .battle-keep::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:22%;
+  width:11px;
+  height:23px;
+  transform:translateX(-50%);
+  border-radius:6px 6px 2px 2px;
+  background:linear-gradient(180deg,#27343a,#10181c);
+  box-shadow:0 36px 0 #172126;
+}
+
+.battle-stage.fortress-stage-final{
+  background:
+    radial-gradient(ellipse at 73% 38%,rgba(241,197,105,.18),transparent 30%),
+    linear-gradient(180deg,#596f85 0%,#8f9ca3 39%,#626a50 40%,#414a35 100%);
+}
+.battle-stage.fortress-stage-final::after{
+  background:
+    radial-gradient(ellipse at 73% 27%,rgba(255,213,119,.13),transparent 32%),
+    linear-gradient(180deg,rgba(255,239,194,.035),transparent 36%,rgba(15,23,27,.21)),
+    radial-gradient(ellipse at 50% 110%,rgba(26,22,18,.3),transparent 60%);
+}
+.battle-fortress.fortress-final{
+  width:44%;
+  height:65%;
+  right:1.5%;
+  bottom:4.5%;
+  filter:
+    drop-shadow(0 20px 14px rgba(14,19,22,.42))
+    drop-shadow(0 0 15px rgba(174,128,51,.12));
+}
+.battle-fortress.fortress-final .battle-keep{
+  display:block;
+  left:25%;
+  right:25%;
+  bottom:19%;
+  height:100%;
+}
+.battle-fortress.fortress-final .tower{
+  width:30%;
+  height:99%;
+}
+.battle-fortress.fortress-final .wall{
+  left:7%;
+  right:7%;
+  height:74%;
+}
+.battle-fortress.fortress-final .battle-gate{
+  width:26%;
+  height:65%;
+}
+.battle-fortress.fortress-final .wall,
+.battle-fortress.fortress-final .tower,
+.battle-fortress.fortress-final .battle-keep{
+  border-color:#5a4c31!important;
+  background:
+    linear-gradient(112deg,rgba(255,236,193,.15),transparent 20% 72%,rgba(18,24,27,.22)),
+    repeating-linear-gradient(90deg,transparent 0 31px,rgba(63,51,33,.15) 32px 34px),
+    repeating-linear-gradient(0deg,#817f76 0 18px,#64645e 19px 21px,#89867c 22px 37px,#5d5d57 38px 40px)!important;
+}
+.battle-fortress.fortress-final .tower::before,
+.battle-fortress.fortress-final .battle-keep::before{
+  background:
+    linear-gradient(180deg,rgba(240,214,159,.14),transparent 45%),
+    repeating-linear-gradient(90deg,#4a4437 0 11px,#8d846e 11px 17px,#4a4437 17px 25px);
+}
+.battle-fortress.fortress-final .battle-enemy-flag::after{
+  width:55px;
+  height:32px;
+  background:
+    radial-gradient(circle at 28% 49%,rgba(224,184,96,.3) 0 10%,transparent 11%),
+    linear-gradient(135deg,#782d20,#2e1714 72%,#100d0b);
+}
+.battle-fortress.fortress-final .battle-gate{
+  border-color:#3f3221;
+  box-shadow:
+    inset 0 0 23px rgba(0,0,0,.64),
+    inset 0 5px 0 rgba(205,160,86,.08),
+    0 0 0 2px rgba(169,128,61,.1);
+}
+
+/* Geometry guard: progression must remain distinct even against legacy fortress rules. */
+.battle-fortress.fortress-outpost,
+.battle-fortress.fortress-tower,
+.battle-fortress.fortress-wall,
+.battle-fortress.fortress-citadel,
+.battle-fortress.fortress-capital,
+.battle-fortress.fortress-final{
+  min-width:0!important;
+  max-width:none;
+}
+
+/* Stronger campaign escalation without changing damage semantics. */
+.battle-stage.fortress-stage-outpost .battle-ground-path{opacity:.55}
+.battle-stage.fortress-stage-tower .battle-ground-path{opacity:.62}
+.battle-stage.fortress-stage-wall .battle-ground-path{opacity:.72}
+.battle-stage.fortress-stage-citadel .battle-ground-path{opacity:.78}
+.battle-stage.fortress-stage-capital .battle-ground-path{opacity:.84}
+.battle-stage.fortress-stage-final .battle-ground-path{opacity:.9}
+
+@media(max-width:720px){
+  .battle-fortress.fortress-outpost{width:34%!important;height:34%;right:4%}
+  .battle-fortress.fortress-tower{width:28%!important;height:48%;right:5%}
+  .battle-fortress.fortress-wall{width:53%!important;height:38%;right:-2%}
+  .battle-fortress.fortress-citadel{width:41%!important;height:51%;right:1.5%}
+  .battle-fortress.fortress-capital{width:44%!important;height:54%;right:.5%}
+  .battle-fortress.fortress-final{width:47%!important;height:58%;right:-1%}
+
+  .battle-fortress.fortress-outpost .battle-enemy-flag::after{width:32px;height:19px}
+  .battle-fortress.fortress-tower .tower-left{left:24%;width:50%}
+  .battle-fortress.fortress-wall .battle-keep{left:43%;right:43%}
+  .battle-fortress.fortress-final .battle-enemy-flag::after{width:44px;height:27px}
+}
+
+@media(max-width:390px){
+  .battle-fortress.fortress-outpost{width:35%!important}
+  .battle-fortress.fortress-tower{width:29%!important}
+  .battle-fortress.fortress-wall{width:54%!important}
+  .battle-fortress.fortress-citadel{width:42%!important}
+  .battle-fortress.fortress-capital{width:45%!important}
+  .battle-fortress.fortress-final{width:48%!important}
+}
