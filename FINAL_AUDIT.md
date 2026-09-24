@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 24.09.2026 · App v0.18.43
+Stand: 24.09.2026 · App v0.18.44
 
 ## Ergebnis
 
@@ -74,13 +74,14 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - „Meine Armee“ ist eine vorgelagerte, jederzeit betrachtbare Erlebnisansicht; Einheitstufen und Boni werden nur aus vorhandenem Lernfortschritt abgeleitet und schreiben keinen fachlichen Lernstand
 - die sechs Einheiten besitzen transparente Rollen (Front, Fernkampf, Mobilität, Belagerung, Schutz, Versorgung); die sichtbaren Rollenwerte 0–100 werden ausschließlich aus den bestehenden Einheitenstufen abgeleitet und erzeugen keinen separaten Lern- oder Spielstand
 - jede Einheit macht ihre fünf Entwicklungsstufen zusätzlich durch Stufenname, fünf Marker sowie abgestufte Rahmen-/Bildwirkung sichtbar; diese Darstellung wird ausschließlich aus dem bereits vorhandenen Einheitenlevel berechnet und speichert keinen eigenen Fortschritt
-- Rollenwerte und Rollenansicht sind in v0.18.42 rein erklärend und verändern weder Testbereitschaft noch Mastery noch den tatsächlichen Schlachtschaden
+- Rollenwerte verändern weder Testbereitschaft noch Mastery noch den fachlichen Lernstand; ab v0.18.44 dürfen passende Angriffsarten daraus ausschließlich einen kleinen, auf 10 Schaden begrenzten Kampagnen-Taktikbonus ableiten
 - die Armeeansicht besitzt keine eigenständige Spielwährung; Aufwertungen entstehen automatisch durch Lernen und nachhaltige Wiederholung
 - Schlacht ist ein separater Erlebnisbereich nach einer abgeschlossenen Lerneinheit
 - pro Fach und Kalendertag wird höchstens eine Kampfaktion ausschließlich durch das vollständig abgeschlossene Tagesziel freigeschaltet; freiwillige Übungen zählen nicht mit
 - Animationen, Einheiten, Festungen, Jahreszeiten, Rang und Ausrüstung liegen außerhalb der Abfrage
 - Bosskämpfe, Spezialangriffe und Story verändern keinen fachlichen Lernstand
 - jede geplante Prüfung erzeugt eine eigene Testfestung; Testabstand bestimmt die anfängliche Verteidigung, Lernqualität den begrenzten Schadensbonus; nach früher Eroberung wird dieselbe Festung bis zum Test gesichert
+- Sturm/Front, Pfeilhagel/Fernkampf, Rammbock/Belagerung und Reiter/Mobilität verwenden dieselben zentralen Einheitsschwellen wie die Armeeansicht; Vorschau, gespeicherter Kampflog und Ergebnis weisen den Taktikanteil transparent aus
 - Freundschaftsduelle sind deterministisch; kein Zufall entscheidet über das Ergebnis
 - Herausforderungscodes enthalten ab v0.17.1 keinen Profilnamen und nur die für den Vergleich nötigen Daten
 - der Battle-Browsertest prüft explizit, dass Mastery durch Kampf und Bosskampf unverändert bleibt

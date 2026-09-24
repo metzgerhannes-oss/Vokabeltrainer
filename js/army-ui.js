@@ -6,37 +6,37 @@
       id:'infantry',icon:'⚔',names:{english:'Infanterie',latin:'Legionäre'},role:'Front',roleText:'Hält die Linie und bildet die verlässliche Basis des Heeres.',
       description:{english:'Die verlässliche Basis deiner Armee.',latin:'Das Rückgrat deiner Legion.'},
       tiers:['Grundausrüstung','Verstärkte Schilde','Stahlhelme','Veteranenrüstung','Eliteformation'],
-      thresholds:[0,20,40,65,85],metric:c=>c.p.pct,metricName:'Lernfortschritt',suffix:'%'
+      thresholds:ARMY_UNIT_THRESHOLDS.infantry,metric:c=>c.p.pct,metricName:'Lernfortschritt',suffix:'%'
     },
     {
       id:'archers',icon:'➶',names:{english:'Bogenschützen',latin:'Sagittarii'},role:'Fernkampf',roleText:'Unterstützt Angriffe aus der Distanz und deckt das Vorrücken.',
       description:{english:'Treffen aus der Distanz und eröffnen neue Angriffsmöglichkeiten.',latin:'Fernkämpfer für gezielte Salven.'},
       tiers:['Übungsbögen','Langbögen','Große Köcher','Veteranenbogen','Präzisionssalve'],
-      thresholds:[20,35,55,75,90],metric:c=>c.p.pct,metricName:'Lernfortschritt',suffix:'%'
+      thresholds:ARMY_UNIT_THRESHOLDS.archers,metric:c=>c.p.pct,metricName:'Lernfortschritt',suffix:'%'
     },
     {
       id:'cavalry',icon:'♞',names:{english:'Kavallerie',latin:'Equites'},role:'Mobilität',roleText:'Bewegt sich schnell, flankiert und macht die Armee beweglicher.',
       description:{english:'Schnelle Eliteeinheiten für den späteren Feldzug.',latin:'Schnelle Reitereinheiten für die Flanke.'},
       tiers:['Späher','Leichte Reiterei','Gepanzerte Reiter','Veteranenreiter','Elite-Kavallerie'],
-      thresholds:[55,65,75,85,95],metric:c=>c.p.pct,metricName:'Lernfortschritt',suffix:'%'
+      thresholds:ARMY_UNIT_THRESHOLDS.cavalry,metric:c=>c.p.pct,metricName:'Lernfortschritt',suffix:'%'
     },
     {
       id:'ram',icon:'▰',names:{english:'Rammbock',latin:'Belagerungsgerät'},role:'Belagerung',roleText:'Konzentriert die Kraft der Armee auf Tore und befestigte Ziele.',
       description:{english:'Wird mit wachsendem Feldzug immer stärker.',latin:'Schweres Gerät für befestigte Ziele.'},
       tiers:['Leichter Rammbock','Verstärkter Balken','Schutzdach','Belagerungsramme','Festungsbrecher'],
-      thresholds:[35,50,70,85,100],metric:c=>c.p.pct,metricName:'Lernfortschritt',suffix:'%'
+      thresholds:ARMY_UNIT_THRESHOLDS.ram,metric:c=>c.p.pct,metricName:'Lernfortschritt',suffix:'%'
     },
     {
       id:'shield',icon:'⬟',names:{english:'Schildträger',latin:'Scutum-Träger'},role:'Schutz',roleText:'Sichert die Formation und bereits eroberte Stellungen.',
       description:{english:'Belohnt Wissen, das schon über mehrere Tage stabil bleibt.',latin:'Stabile Reihen aus nachhaltig gefestigtem Wissen.'},
       tiers:['Holzschild','Verstärkter Schild','Schildwall','Veteranenwall','Elite-Schildwall'],
-      thresholds:[15,35,55,75,90],metric:c=>c.stablePct,metricName:'stabile Wörter',suffix:'%'
+      thresholds:ARMY_UNIT_THRESHOLDS.shield,metric:c=>c.stablePct,metricName:'stabile Wörter',suffix:'%'
     },
     {
       id:'support',icon:'✚',names:{english:'Sanitäter',latin:'Unterstützung'},role:'Versorgung',roleText:'Hält die Truppe einsatzbereit und stützt Moral und Ausdauer.',
       description:{english:'Regelmäßiges Lernen baut deine Unterstützungseinheit aus.',latin:'Regelmäßigkeit stärkt die Versorgung deiner Legion.'},
       tiers:['Feldversorgung','Verbandskiste','Versorgungswagen','Erfahrenes Team','Elite-Unterstützung'],
-      thresholds:[3,7,14,30,60],metric:c=>c.learningDays,metricName:'Lerntage',suffix:''
+      thresholds:ARMY_UNIT_THRESHOLDS.support,metric:c=>c.learningDays,metricName:'Lerntage',suffix:''
     }
   ];
 
@@ -108,6 +108,7 @@
   }
   function unitPower(def,c){
     const s=unitState(def,c);
+    if(typeof armyUnitPowerFromValue==='function')return armyUnitPowerFromValue(def.id,s.value);
     if(!s.unlocked)return 0;
     if(s.level>=5)return 100;
     return Math.max(1,Math.min(99,Math.round(((s.level-1)+(s.progress/100))/5*100)));

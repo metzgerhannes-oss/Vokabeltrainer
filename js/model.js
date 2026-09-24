@@ -228,6 +228,49 @@ function armyStrength(subject=state.activeSubject,schoolYear=currentSchoolYear()
   const avg=words.length?words.reduce((s,w)=>s+masteryScore(w),0)/(words.length*4):0;
   return Math.round(p.pct*10 + avg*100);
 }
+const ARMY_UNIT_THRESHOLDS=Object.freeze({
+  infantry:Object.freeze([0,20,40,65,85]),
+  archers:Object.freeze([20,35,55,75,90]),
+  cavalry:Object.freeze([55,65,75,85,95]),
+  ram:Object.freeze([35,50,70,85,100]),
+  shield:Object.freeze([15,35,55,75,90]),
+  support:Object.freeze([3,7,14,30,60])
+});
+const BATTLE_ATTACK_UNITS=Object.freeze({charge:'infantry',volley:'archers',ram:'ram',cavalry:'cavalry'});
+function armyUnitMetricValue(unitId,subject=state.activeSubject,schoolYear=currentSchoolYear()){
+  const p=subjectProgress(subject,schoolYear);
+  if(unitId==='shield')return p.total?Math.round((p.stable/p.total)*100):0;
+  if(unitId==='support')return new Set(learner()?.streakDays||[]).size;
+  return p.pct;
+}
+function armyUnitProgressFromValue(unitId,value){
+  const thresholds=ARMY_UNIT_THRESHOLDS[unitId]||[];
+  const metric=Math.max(0,Number(value)||0);
+  let level=Math.min(5,thresholds.filter(t=>metric>=t).length);
+  const next=level<5?thresholds[level]:null,previous=level?thresholds[level-1]:0;
+  const span=next===null?1:Math.max(1,next-previous);
+  const progress=next===null?100:clamp(Math.round(((metric-previous)/span)*100),0,100);
+  return {value:metric,level,unlocked:level>0,next,previous,progress};
+}
+function armyUnitPowerFromValue(unitId,value){
+  const s=armyUnitProgressFromValue(unitId,value);
+  if(!s.unlocked)return 0;
+  if(s.level>=5)return 100;
+  return clamp(Math.round(((s.level-1)+(s.progress/100))/5*100),1,99);
+}
+function armyUnitPower(unitId,subject=state.activeSubject,schoolYear=currentSchoolYear()){
+  return armyUnitPowerFromValue(unitId,armyUnitMetricValue(unitId,subject,schoolYear));
+}
+function battleTacticalBonusForAttack(attack='charge',subject=state.activeSubject,schoolYear=currentSchoolYear()){
+  if(attack==='special'){
+    const ids=['infantry','archers','cavalry','ram'];
+    const powers=ids.map(id=>armyUnitPower(id,subject,schoolYear));
+    const power=Math.round(powers.reduce((sum,v)=>sum+v,0)/powers.length);
+    return {unitId:'combined',power,bonus:Math.round(clamp(power,0,100)*.10)};
+  }
+  const unitId=BATTLE_ATTACK_UNITS[attack]||'infantry',power=armyUnitPower(unitId,subject,schoolYear);
+  return {unitId,power,bonus:Math.round(clamp(power,0,100)*.10)};
+}
 const fortresses=[
   {id:'outpost',name:'Vorposten',subtitle:'Holzpalisaden'},
   {id:'tower',name:'Wachturm',subtitle:'Steinerner Turm'},
@@ -271,10 +314,11 @@ function currentTestFortress(subject=state.activeSubject){
   return f;
 }
 function nextFortress(subject=state.activeSubject){return currentTestFortress(subject)}
-function testFortressDamage(f=currentTestFortress(),subject=state.activeSubject){
-  if(!f)return {damage:0,readiness:0,bonus:0};
+function testFortressDamage(f=currentTestFortress(),subject=state.activeSubject,attack='charge'){
+  if(!f)return {damage:0,readiness:0,bonus:0,tacticalBonus:0,tacticalPower:0};
   const ctx=upcomingTestContext(subject),readiness=ctx?testReadinessForContext(ctx).avg:0,bonus=Math.round(clamp(readiness,0,100)*.35);
-  return {damage:100+bonus,readiness,bonus};
+  const tactical=battleTacticalBonusForAttack(attack,subject);
+  return {damage:100+bonus+tactical.bonus,readiness,bonus,tacticalBonus:tactical.bonus,tacticalPower:tactical.power,tacticalUnit:tactical.unitId};
 }
 function testFortressGrade(f=currentTestFortress()){
   if(!f)return null;return (state.grades||[]).find(g=>g.learnerId===state.activeLearnerId&&g.subject===f.subject&&g.date===f.testDate)||null;
@@ -285,15 +329,15 @@ function resolveTestFortressAction(attack='charge',subject=state.activeSubject){
   f.securedDates=Array.isArray(f.securedDates)?f.securedDates:[];f.attacks=Array.isArray(f.attacks)?f.attacks:[];
   if(f.capturedAt){
     if(!f.securedDates.includes(today()))f.securedDates.push(today());
-    const entry={date:stamp,subject,schoolYear:p.schoolYear,fortress:f.id,fortressKey:f.key,fortressName:f.name,testDate:f.testDate,result:'secure',progress:p.pct,attack,damage:0,defenseAfter:0,maxDefense:f.maxDefense,readiness:testFortressDamage(f,subject).readiness};
+    const entry={date:stamp,subject,schoolYear:p.schoolYear,fortress:f.id,fortressKey:f.key,fortressName:f.name,testDate:f.testDate,result:'secure',progress:p.pct,attack,damage:0,defenseAfter:0,maxDefense:f.maxDefense,readiness:testFortressDamage(f,subject,'charge').readiness,tacticalBonus:0};
     l.campaignLog.push(entry);recordActivity('fortressSecure',{fortress:f.id,fortressKey:f.key,testDate:f.testDate,attack});return {entry,fortress:f,result:'secure',damage:0,remaining:0};
   }
-  const hit=testFortressDamage(f,subject),before=Math.max(0,Number(f.defense)||0),after=Math.max(0,before-hit.damage),won=after===0;
-  f.defense=after;f.attacks.push({date:stamp,day:today(),damage:hit.damage,readiness:hit.readiness,attack,defenseBefore:before,defenseAfter:after});
+  const hit=testFortressDamage(f,subject,attack),before=Math.max(0,Number(f.defense)||0),after=Math.max(0,before-hit.damage),won=after===0;
+  f.defense=after;f.attacks.push({date:stamp,day:today(),damage:hit.damage,readiness:hit.readiness,readinessBonus:hit.bonus,tacticalBonus:hit.tacticalBonus,tacticalPower:hit.tacticalPower,tacticalUnit:hit.tacticalUnit,attack,defenseBefore:before,defenseAfter:after});
   if(won&&!f.capturedAt){f.capturedAt=stamp;l.xp+=20}
-  const entry={date:stamp,subject,schoolYear:p.schoolYear,fortress:f.id,fortressKey:f.key,fortressName:f.name,testDate:f.testDate,result:won?'win':'damage',progress:p.pct,attack,damage:hit.damage,defenseAfter:after,maxDefense:f.maxDefense,readiness:hit.readiness};
-  l.campaignLog.push(entry);recordActivity('fortress',{fortress:f.id,fortressKey:f.key,testDate:f.testDate,result:entry.result,damage:hit.damage,defenseAfter:after,attack});
-  return {entry,fortress:f,result:entry.result,damage:hit.damage,remaining:after,readiness:hit.readiness};
+  const entry={date:stamp,subject,schoolYear:p.schoolYear,fortress:f.id,fortressKey:f.key,fortressName:f.name,testDate:f.testDate,result:won?'win':'damage',progress:p.pct,attack,damage:hit.damage,defenseAfter:after,maxDefense:f.maxDefense,readiness:hit.readiness,readinessBonus:hit.bonus,tacticalBonus:hit.tacticalBonus,tacticalPower:hit.tacticalPower,tacticalUnit:hit.tacticalUnit};
+  l.campaignLog.push(entry);recordActivity('fortress',{fortress:f.id,fortressKey:f.key,testDate:f.testDate,result:entry.result,damage:hit.damage,defenseAfter:after,attack,tacticalBonus:hit.tacticalBonus});
+  return {entry,fortress:f,result:entry.result,damage:hit.damage,remaining:after,readiness:hit.readiness,readinessBonus:hit.bonus,tacticalBonus:hit.tacticalBonus,tacticalPower:hit.tacticalPower};
 }
 function rankFor(pct,subject=state.activeSubject){
   const arr=subjectCampaign(subject).ranks||SUBJECT_META.english.campaign.ranks;const i=Math.min(arr.length-1,Math.floor(pct/20));return arr[i];

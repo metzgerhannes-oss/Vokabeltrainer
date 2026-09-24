@@ -156,8 +156,10 @@ const passed=vm.runInContext(`
   const longFortress=currentTestFortress('english');
   assert(longFortress.maxDefense===500&&longFortress.plannedAttackDays===5,'longer test interval creates proportionally stronger fortress defense');
   const fw=fortressLinked.word;fw.skills={recognition:4,listening:4,retrieval:4,spelling:4,context:4};fw.independentSuccesses=8;fw.activeSuccessDays=[datePlusDays(-7),datePlusDays(-3),today()];fw.maxActiveGapDays=4;fw.coldRecallDays=[datePlusDays(-3),today()];fw.intervalDays=7;refreshMastery(fw);
-  const hit=testFortressDamage(longFortress,'english');
-  assert(hit.damage>100&&hit.damage<=135,'strong test readiness adds a bounded bonus to guaranteed daily damage');
+  const hit=testFortressDamage(longFortress,'english','charge');
+  assert(hit.bonus>=0&&hit.bonus<=35,'test readiness bonus remains bounded to 35 damage');
+  assert(hit.tacticalBonus>=0&&hit.tacticalBonus<=10,'unit-role tactical bonus remains bounded to 10 damage');
+  assert(hit.damage===100+hit.bonus+hit.tacticalBonus,'daily damage is transparent base plus readiness plus tactical bonus');
   assert(grantBattleTicket('cards','english')===false&&battleTickets('english')===0,'optional cards cannot unlock the test-fortress action');
   assert(grantBattleTicket('dailyGoal','english')===true&&battleTickets('english')===1,'completed daily goal unlocks exactly one fortress action');
   assert(spendBattleTicket('english')===true&&battleTickets('english')===0,'using the action consumes it for the rest of the day');

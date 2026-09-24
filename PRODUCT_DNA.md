@@ -120,8 +120,11 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    keine zusätzliche Kampfaktion.
    Jeder Tagesangriff verursacht garantierten Basisschaden; die aktuelle Testbereitschaft
    liefert einen begrenzten Stärkebonus. So lohnt sich jeder Lerntag, während verteiltes,
-   gefestigtes Lernen sichtbar stärkere Angriffe erzeugt. Angriffsarten ändern nur die
-   Darstellung und niemals die fachliche Bewertung.
+   gefestigtes Lernen sichtbar stärkere Angriffe erzeugt. Angriffsarten dürfen zusätzlich
+   einen kleinen, transparenten Taktikbonus aus der jeweils passenden bereits sichtbaren
+   Einheitenrolle erhalten. Dieser Bonus bleibt bewusst auf maximal 10 Schaden begrenzt,
+   damit die Wahl motiviert, aber nicht über Sieg oder Frust entscheidet. Er verändert
+   niemals Mastery, Spacing, Testbereitschaft oder die fachliche Bewertung.
    Die Testfestung bleibt jederzeit anschaubar; nach verbrauchter Tagesaktion ist nur der
    Angriff gesperrt. Wird die Festung vor dem Test erobert, entsteht keine neue Festung:
    weitere Tagesziele schalten stattdessen einen Sicherungseinsatz für dieselbe Festung frei.

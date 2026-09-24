@@ -209,9 +209,19 @@ try{
   assert(await page.locator('#battleStage.season-'+expectedSeason).count()===1,'current season changes the battle stage dynamically');
   assert((await page.locator('#battleRankGear').textContent())?.length>3,'rank and equipment are visible');
   assert(await page.locator('[data-battle-attack]').count()===5,'four standard attacks plus one special attack are available');
+  const rolePowerSpread=await page.evaluate(()=>({
+    front:armyUnitPowerFromValue('infantry',30),
+    ranged:armyUnitPowerFromValue('archers',30),
+    mobility:armyUnitPowerFromValue('cavalry',30)
+  }));
+  assert(rolePowerSpread.front>rolePowerSpread.ranged&&rolePowerSpread.ranged>rolePowerSpread.mobility,'different unit progressions create distinct tactical role strength');
   assert(!(await page.locator('[data-battle-attack="ram"]').isDisabled()),'ram attack unlocks from learning progress');
+  assert((await page.locator('[data-battle-attack="ram"] small').textContent())?.includes('Belagerung'),'attack choice names the matching army role');
+  assert((await page.locator('[data-battle-attack="ram"] small').textContent())?.includes('+10 Taktik'),'maxed siege unit exposes only the capped 10-point tactical bonus');
   await page.click('[data-battle-attack="ram"]');
   assert(await page.locator('[data-battle-attack="ram"].active').count()===1,'attack type can be selected');
+  assert((await page.locator('#battleMessage').textContent())?.includes('+10 Taktikschaden'),'selected attack explains its small tactical bonus');
+  const expectedRamDamage=await page.evaluate(()=>testFortressDamage(currentTestFortress(),'english','ram').damage);
   assert((await page.locator('#battleTicketPill').textContent())?.includes('1'),'battle screen shows earned attack');
   assert(await page.locator('.battle-phase-strip [data-battle-phase]').count()===5,'battle shows a five-phase sequence');
   const attackButtonRect=await page.locator('#battleAttackBtn').boundingBox();
@@ -228,12 +238,15 @@ try{
   assert((await page.locator('#battleResultTitle').textContent())?.includes('Festung erobert'),'victory opens a dedicated cinematic result view');
   const resultText=await page.locator('#battleResultOverlay').textContent();
   assert(resultText?.includes('+20 XP'),'result view shows the actual conquest reward');
+  assert(resultText?.includes('+10 Taktik'),'result view transparently shows the role-based tactical part of the damage');
   assert(resultText?.includes('Testtermin'),'result view keeps the real test as the campaign target');
   assert(await page.locator('#battleResultArt').evaluate(img=>img.naturalWidth>0),'result view reuses a loaded local battle illustration');
   assert(await page.evaluate(()=>battleTickets())===0,'attack consumes exactly one earned battle action');
   assert(await page.evaluate(()=>learner().campaignLog.length)===1,'battle result is stored in campaign log');
-  assert(await page.evaluate(()=>learner().campaignLog[0]?.attack)==='ram','selected attack is stored only as campaign presentation metadata');
-  assert(await page.evaluate(()=>subjectProgress().pct)===100,'battle presentation does not alter academic mastery');
+  assert(await page.evaluate(()=>learner().campaignLog[0]?.attack)==='ram','selected tactical attack is stored in the campaign log');
+  assert(await page.evaluate(()=>learner().campaignLog[0]?.tacticalBonus)===10,'campaign log stores the capped tactical bonus');
+  assert(await page.evaluate(()=>learner().campaignLog[0]?.damage)===expectedRamDamage,'stored damage exactly matches the transparent attack preview');
+  assert(await page.evaluate(()=>subjectProgress().pct)===100,'battle tactics do not alter academic mastery');
   assert((await page.locator('#battleFortressProgress').textContent())?.includes('Erobert'),'winning keeps the same test fortress and switches it to securing');
   assert(await page.locator('#battleStage .battle-fortress.captured').count()===1,'winning settles the battle fortress into the persistent captured state');
   assert(Number(await page.locator('#battleStage .battle-enemy-flag').evaluate(el=>getComputedStyle(el).opacity))===0,'captured fortress no longer shows the enemy flag');
