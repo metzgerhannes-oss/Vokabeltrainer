@@ -805,6 +805,76 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
   .battle-stage.battle-sequence .battle-standard,.battle-stage.battle-sequence .battle-unit,.battle-stage.battle-sequence .battle-army,.battle-stage.battle-sequence .battle-ram,.battle-stage.battle-sequence .arrow,.battle-stage.battle-sequence .battle-special-flare,.battle-stage.battle-sequence .battle-fortress,.battle-stage.battle-sequence .battle-impact,.battle-stage.battle-sequence .battle-dust,.battle-stage.battle-sequence .battle-shockwave{animation:none!important}
 }
 
+/* v0.18.47 – Angriffsgrafik 1.0 */
+.battle-attack-fx{position:absolute;inset:0;z-index:10;overflow:hidden;pointer-events:none}
+.battle-charge-streaks,.battle-ram-trail{position:absolute;inset:0;opacity:0;pointer-events:none}
+.battle-charge-streaks i{position:absolute;left:5%;width:28%;height:3px;border-radius:999px;background:linear-gradient(90deg,transparent,rgba(242,218,161,.8),transparent);filter:blur(.2px);transform:translateX(-26%) skewX(-18deg)}
+.battle-charge-streaks i:nth-child(1){bottom:25%}.battle-charge-streaks i:nth-child(2){bottom:31%;width:23%}.battle-charge-streaks i:nth-child(3){bottom:37%;width:31%}.battle-charge-streaks i:nth-child(4){bottom:43%;width:20%}.battle-charge-streaks i:nth-child(5){bottom:50%;width:25%}.battle-charge-streaks i:nth-child(6){bottom:57%;width:18%}
+.battle-stage.attack-charge.phase-advance .battle-charge-streaks,.battle-stage.attack-charge.phase-barrage .battle-charge-streaks{opacity:1}
+.battle-stage.attack-charge.is-attacking .battle-charge-streaks i{animation:battleChargeStreak 1s linear infinite}
+.battle-stage.attack-charge.is-attacking .battle-charge-streaks i:nth-child(2){animation-delay:.12s}.battle-stage.attack-charge.is-attacking .battle-charge-streaks i:nth-child(3){animation-delay:.22s}.battle-stage.attack-charge.is-attacking .battle-charge-streaks i:nth-child(4){animation-delay:.32s}.battle-stage.attack-charge.is-attacking .battle-charge-streaks i:nth-child(5){animation-delay:.42s}.battle-stage.attack-charge.is-attacking .battle-charge-streaks i:nth-child(6){animation-delay:.52s}
+.battle-stage.attack-charge.is-strike .battle-army{animation:armyChargeFinal .92s cubic-bezier(.18,.8,.22,1) forwards}
+.battle-stage.attack-charge.is-strike .battle-unit{filter:drop-shadow(0 5px 5px rgba(22,15,9,.32))}
+.battle-stage.attack-charge.phase-impact .battle-impact{right:23%;bottom:31%}
+
+.battle-ram-trail i{position:absolute;left:27%;bottom:17%;width:26%;height:22%;border-radius:50%;background:radial-gradient(ellipse,rgba(218,196,153,.52) 0 20%,rgba(177,151,111,.2) 43%,transparent 70%);filter:blur(2px);transform:scale(.35);transform-origin:left bottom}
+.battle-ram-trail i:nth-child(2){left:34%;bottom:14%;opacity:.76}.battle-ram-trail i:nth-child(3){left:41%;bottom:12%;opacity:.48}
+.battle-stage.attack-ram.phase-advance .battle-ram-trail,.battle-stage.attack-ram.phase-barrage .battle-ram-trail{opacity:1}
+.battle-stage.attack-ram.is-attacking .battle-ram-trail i{animation:battleRamTrail 1.15s ease-out infinite}
+.battle-stage.attack-ram.is-attacking .battle-ram-trail i:nth-child(2){animation-delay:.18s}.battle-stage.attack-ram.is-attacking .battle-ram-trail i:nth-child(3){animation-delay:.36s}
+.battle-stage.attack-ram.is-strike .battle-ram{animation:battleRamFinalDrive 1.05s cubic-bezier(.2,.76,.18,1) forwards!important;filter:drop-shadow(0 8px 8px rgba(0,0,0,.38))}
+.battle-stage.attack-ram.phase-impact .battle-impact{right:25.5%;bottom:28%;width:128px;height:128px}
+.battle-stage.attack-ram.phase-impact .battle-gate{animation:battleRamGateImpact .72s cubic-bezier(.2,.7,.2,1) both!important}
+.battle-stage.attack-ram.phase-impact .battle-shockwave{right:21%;bottom:23%;border-width:7px;border-color:rgba(255,228,168,.5)}
+.battle-stage.attack-ram.phase-impact .battle-dust{right:15%;width:270px}
+
+.battle-impact-callout{
+  position:absolute;z-index:18;right:12%;top:26%;display:grid;gap:5px;min-width:180px;padding:12px 15px;
+  border:1px solid rgba(255,231,171,.58);border-radius:14px;background:linear-gradient(145deg,rgba(18,28,40,.95),rgba(88,47,17,.9));
+  color:#fff;box-shadow:0 15px 35px rgba(0,0,0,.36),0 0 26px rgba(245,158,11,.18);opacity:0;transform:translateY(16px) scale(.9);pointer-events:none
+}
+.battle-impact-callout>strong{font-family:Georgia,'Times New Roman',serif;font-size:1.32rem;letter-spacing:.06em;color:#ffe3a3;text-shadow:0 2px 9px rgba(0,0,0,.35)}
+.battle-impact-callout>span{display:grid;gap:1px}.battle-impact-callout b{font-size:1.05rem}.battle-impact-callout small{color:#f5cf85;font-weight:850}
+.battle-stage.show-impact-callout .battle-impact-callout{opacity:1;animation:battleImpactCallout 1.35s cubic-bezier(.18,.75,.24,1) both}
+.battle-stage.attack-ram .battle-impact-callout{right:10%}
+
+.battle-fortress-state-badge{
+  position:absolute;z-index:16;right:14px;top:64px;display:grid;gap:1px;min-width:124px;padding:7px 10px;text-align:right;
+  border:1px solid rgba(255,255,255,.2);border-radius:10px;background:rgba(8,18,29,.76);color:#fff;backdrop-filter:blur(6px);pointer-events:none
+}
+.battle-fortress-state-badge small{color:#b9c6d0;font-size:.58rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.battle-fortress-state-badge strong{font-size:.76rem}
+.battle-stage.fortress-visual-intact .battle-fortress-state-badge strong{color:#d8e1e8}
+.battle-stage.fortress-visual-scratched .battle-fortress-state-badge strong{color:#f1d38a}
+.battle-stage.fortress-visual-damaged .battle-fortress-state-badge strong{color:#f3ad65}
+.battle-stage.fortress-visual-critical .battle-fortress-state-badge{border-color:rgba(248,113,113,.42);background:rgba(78,24,18,.78)}
+.battle-stage.fortress-visual-critical .battle-fortress-state-badge strong{color:#fecaca}
+.battle-stage.fortress-visual-captured .battle-fortress-state-badge{border-color:rgba(216,180,76,.56);background:rgba(36,61,34,.82)}
+.battle-stage.fortress-visual-captured .battle-fortress-state-badge strong{color:#f6e0a3}
+
+.battle-stage.fortress-visual-scratched .battle-fortress{filter:drop-shadow(0 9px 6px #0004) brightness(.96)}
+.battle-stage.fortress-visual-damaged .battle-fortress{filter:drop-shadow(0 9px 7px #0005) brightness(.88) saturate(.86)}
+.battle-stage.fortress-visual-critical .battle-fortress{filter:drop-shadow(0 9px 9px #0007) brightness(.78) saturate(.68) contrast(1.08)}
+.battle-stage.fortress-visual-critical .battle-rubble{opacity:1}
+.battle-stage.fortress-visual-critical .battle-dust{background:radial-gradient(ellipse,rgba(196,184,154,.48) 0 30%,transparent 68%)}
+
+@keyframes battleChargeStreak{0%{transform:translateX(-35%) skewX(-18deg);opacity:0}18%{opacity:.9}100%{transform:translateX(250%) skewX(-18deg);opacity:0}}
+@keyframes armyChargeFinal{0%{transform:translateX(20%)}72%{transform:translateX(43%)}100%{transform:translateX(48%)}}
+@keyframes battleRamTrail{0%{transform:translateX(-8%) scale(.3);opacity:0}28%{opacity:.75}100%{transform:translateX(95%) scale(1.5);opacity:0}}
+@keyframes battleRamFinalDrive{0%{transform:translateX(42%) scale(1)}74%{transform:translateX(112%) scale(1.03)}100%{transform:translateX(120%) scale(1.04)}}
+@keyframes battleRamGateImpact{0%{transform:translateX(-50%) rotateX(0);filter:brightness(1)}22%{transform:translateX(-54%) rotateZ(-1.5deg);filter:brightness(1.8)}46%{transform:translateX(-47%) rotateZ(1.3deg);filter:brightness(1.25)}100%{transform:translateX(-50%) rotateX(0);filter:brightness(.88)}}
+@keyframes battleImpactCallout{0%{opacity:0;transform:translateY(18px) scale(.86)}16%{opacity:1;transform:translateY(-2px) scale(1.04)}72%{opacity:1;transform:translateY(-6px) scale(1)}100%{opacity:0;transform:translateY(-14px) scale(.98)}}
+
+@media(max-width:720px){
+  .battle-impact-callout{right:6%;top:23%;min-width:150px;padding:9px 11px}.battle-impact-callout>strong{font-size:1.05rem}.battle-impact-callout b{font-size:.9rem}
+  .battle-fortress-state-badge{right:8px;top:49px;min-width:105px;padding:6px 8px}
+}
+@media(prefers-reduced-motion:reduce){
+  .battle-charge-streaks,.battle-ram-trail{display:none!important}
+  .battle-stage.attack-charge.is-strike .battle-army,.battle-stage.attack-ram.is-strike .battle-ram,.battle-stage.attack-ram.phase-impact .battle-gate{animation:none!important}
+  .battle-stage.show-impact-callout .battle-impact-callout{animation:none!important;opacity:1;transform:none}
+}
+
 /* Testfestung: sichtbarer Belagerungsfortschritt und eroberter Zustand */
 .battle-fortress.captured .battle-enemy-flag:after,.fortress.captured .flag:after{background:#d6b44c!important;filter:none!important;transform:none!important}
 .battle-fortress.captured .battle-gate{transform:translateX(-50%) rotateX(78deg);filter:brightness(.72)}
