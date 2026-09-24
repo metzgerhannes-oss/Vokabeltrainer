@@ -4,11 +4,20 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.49**
+App-Version: **v0.18.50**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.50 – Familiencode & Kinder-Einladung vereinfacht
+
+- die technische Familien-ID bleibt intern unverändert, wird für Menschen aber als lesbarer **Familiencode** wie `8DEC-1826-8742` angezeigt
+- beim Beitritt eines weiteren Eltern-Geräts werden Code mit oder ohne Bindestriche sowie die bisherige technische ID akzeptiert
+- Kindergeräte werden über **„Kindergerät hinzufügen“ → Einladungslink** verbunden; Familien-ID und Familien-PIN müssen dort nicht mehr eingegeben werden
+- der Einladungslink trägt Familien- und Profilkontext im URL-Fragment; die eigentliche Berechtigung bleibt weiterhin an den einmaligen, 15 Minuten gültigen Server-Token gebunden
+- die UI leitet die Kindergeräte-Kopplung jetzt sicher in den geführten Link-Flow aus `device-pairing.js` statt in den alten Rohcode-Fallback
+- PWA-/Service-Worker-Version auf **0.18.50** erhöht, damit die geänderte Pairing-Logik zuverlässig ausgerollt wird
 
 ## v0.18.49 – Hero Base Scene: Schlachtgrafik neu aufgebaut
 
