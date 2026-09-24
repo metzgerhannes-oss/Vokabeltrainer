@@ -30,6 +30,11 @@ try{
   await page.evaluate(()=>enterParentMode('parentView'));
   await page.waitForSelector('#parentView.active');
 
+  assert(await page.locator('.parent-primary-action').count()===2,'parent home prioritizes exactly two frequent preparation actions');
+  assert(await page.locator('.parent-compact-action').count()===2,'secondary parent functions are visually grouped below the primary actions');
+  assert(!(await page.locator('#parentHelpDisclosure').getAttribute('open')),'help and background stay collapsed by default to reduce visual load');
+  await page.click('#parentHelpDisclosure > summary');
+
   assert(await page.locator('#parentGuideOpenBtn').isVisible(),'parent guide entry is visible');
   assert(await page.locator('#parentGuidePdfBtn').isVisible(),'parent guide PDF action is visible');
   assert(await page.locator('#parentPedagogyOpenBtn').isVisible(),'pedagogical documentation entry is visible');
