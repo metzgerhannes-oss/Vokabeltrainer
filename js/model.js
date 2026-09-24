@@ -5,6 +5,39 @@ function gradeScaleFor(subject=state.activeSubject){const l=learner();l.gradeSca
 function suggestGradeFromScale(percent,scale){const s={...defaultGradeScale(),...(scale||{})};const p=Number(percent)||0;if(p>=s.n1)return '1';if(p>=s.n2)return '2';if(p>=s.n3)return '3';if(p>=s.n4)return '4';if(p>=s.n5)return '5';return '6';}
 function gradeScaleText(scale=gradeScaleFor()){return `1 ab ${scale.n1}% · 2 ab ${scale.n2}% · 3 ab ${scale.n3}% · 4 ab ${scale.n4}% · 5 ab ${scale.n5}% · darunter 6`;}
 function actualGradeForPractice(practiceId){return state.grades.find(g=>g.learnerId===state.activeLearnerId&&g.practiceTestId===practiceId)||null;}
+function parseSchoolGrade(value){
+  const raw=String(value??'').trim().replace(',', '.');
+  if(!raw)return null;
+  const signed=raw.match(/^([1-6])\s*([+-])$/);
+  if(signed){
+    const base=Number(signed[1]),adjust=signed[2]==='+'?-0.3:0.3;
+    return clamp(base+adjust,1,6);
+  }
+  if(!/^\d(?:\.\d+)?$/.test(raw))return null;
+  const n=Number(raw);
+  return Number.isFinite(n)&&n>=1&&n<=6?n:null;
+}
+function testGradeReward(value){
+  const grade=parseSchoolGrade(value);if(grade===null)return null;
+  const baseXp=50,bonusXp=Math.round(clamp(6-grade,0,5)*2);
+  return {grade,baseXp,bonusXp,totalXp:baseXp+bonusXp};
+}
+function testBadgeCount(subject=state.activeSubject,learnerId=state.activeLearnerId){
+  return (state.grades||[]).filter(g=>g.learnerId===learnerId&&g.subject===subject&&parseSchoolGrade(g.grade)!==null).length;
+}
+function grantTestGradeReward(gradeRow){
+  if(!gradeRow||gradeRow.rewardGrantedAt)return null;
+  const reward=testGradeReward(gradeRow.grade);if(!reward)return null;
+  const l=(state.learners||[]).find(x=>x.id===gradeRow.learnerId);if(!l)return null;
+  l.xp=(Number(l.xp)||0)+reward.totalXp;
+  gradeRow.rewardKind='completedTest';
+  gradeRow.rewardGrantedAt=new Date().toISOString();
+  gradeRow.rewardBaseXp=reward.baseXp;
+  gradeRow.rewardBonusXp=reward.bonusXp;
+  gradeRow.rewardXp=reward.totalXp;
+  recordActivity('testGradeReward',{gradeId:gradeRow.id,subject:gradeRow.subject,testDate:gradeRow.date,rewardXp:reward.totalXp,bonusXp:reward.bonusXp});
+  return reward;
+}
 function mySets(subject=state.activeSubject){ return state.sets.filter(s=>s.learnerId===state.activeLearnerId && s.subject===subject); }
 function setNeedsPairReview(set){return !!set&&(set.pairReviewRequired===true||pairReviewSignatureMismatch(set))}
 function firstContactStatus(setId){
