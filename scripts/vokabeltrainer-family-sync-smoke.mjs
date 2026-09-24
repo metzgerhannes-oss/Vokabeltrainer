@@ -41,6 +41,7 @@ assert(pairing.includes("claimChildInvite(token")&&pairing.includes("Dieses Ger√
 assert(html.includes('id="iosStandaloneSyncCard"')&&html.includes('id="iosStandaloneSyncBtn"'),'iOS standalone app exposes a direct family-pairing recovery path');
 assert(ui.includes('renderStandaloneSyncNotice')&&ui.includes("$('#iosStandaloneSyncBtn').onclick=openFamilySyncChildJoin"),'iOS standalone pairing notice is driven by actual sync status');
 assert(pairing.includes('isIOSBrowserOutsideStandalone')&&pairing.includes('Den Link nicht in Safari verbrauchen.')&&pairing.includes('copyIosHomeInviteBtn'),'iOS Safari preserves a fresh child invite for the Home Screen app instead of consuming it in Safari');
+assert(ui.includes("if(isPairedChildDevice()){toast('Dieses Kinderger√§t ist fest mit einem Lernprofil verbunden.'")&&ui.includes("profileBtn.disabled=lockedChild")&&ui.includes("profile-locked"),'paired child devices are locked to their assigned learner profile in both logic and UI');
 assert(pairing.includes("location.hash")&&!pairing.includes("searchParams.set('childInvite'"),'invite secret is transported in the URL fragment, not the query string');
 assert(app.includes('handleChildInviteFromUrl'),'bootstrap detects child-device invite links');
 assert(sync.includes("sha256Hex(familyId+'|'")&&!/pin\s*:/.test(sync),'family PIN is derived locally and not persisted as a config field');

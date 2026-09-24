@@ -306,7 +306,7 @@ function renderCardboxOverview(){
 
 function renderAll(){
   const l=learner(); if(!l) return; ensureActiveSubject();applyPreferences();
-  const profileBtn=$('#profileBtn');profileBtn.textContent=l.name;profileBtn.setAttribute('aria-label',`Lernprofil wechseln. Aktiv: ${l.name}`);profileBtn.title='Profil wechseln'; $('#lrsBadge').classList.toggle('hidden',!l.lrsMode); applyRoleUi();
+  const profileBtn=$('#profileBtn'),lockedChild=isPairedChildDevice();profileBtn.textContent=l.name;profileBtn.disabled=lockedChild;profileBtn.classList.toggle('profile-locked',lockedChild);profileBtn.setAttribute('aria-label',lockedChild?`Kinderprofil: ${l.name}. Dieses Gerät ist fest zugeordnet.`:`Lernprofil wechseln. Aktiv: ${l.name}`);profileBtn.title=lockedChild?`Dieses Kindergerät ist fest mit ${l.name} verbunden`:'Profil wechseln'; $('#lrsBadge').classList.toggle('hidden',!l.lrsMode); applyRoleUi();
   const activeSubjects=learnerActiveSubjects(l),switcher=$('#subjectSwitcher');
   if(switcher){switcher.innerHTML=activeSubjects.map(subject=>`<button data-subject="${esc(subject)}" class="subject-btn ${subject===state.activeSubject?'active':''}" aria-pressed="${subject===state.activeSubject?'true':'false'}">${esc(subjectShort(subject))}</button>`).join('');switcher.classList.toggle('hidden',activeSubjects.length<=1);$$('.subject-btn').forEach(b=>b.onclick=()=>{if(!isSubjectActive(b.dataset.subject))return;state.activeSubject=b.dataset.subject;save()})}
   $('#subjectLabel').textContent=subjectLabel(state.activeSubject);
@@ -725,12 +725,14 @@ function addGrade(opts={}){
   }
 }
 function switchLearnerProfile(id){
+  if(isPairedChildDevice()){toast('Dieses Kindergerät ist fest mit einem Lernprofil verbunden.','subtle');return}
   const next=state.learners.find(x=>x.id===id);if(!next){closeModal();return}
   if(next.id===state.activeLearnerId){closeModal();return}
   state.activeLearnerId=next.id;session=null;ensureActiveSubject();closeModal();showView('homeView');save();toast(`${next.name} ist jetzt aktiv.`,'good');
 }
 function openProfileSwitcher(){
   const learners=state.learners||[];if(!learners.length)return;
+  if(isPairedChildDevice()){toast(`Dieses Kindergerät gehört zum Lernprofil ${learner()?.name||''}.`,'subtle');return}
   modal(`<div class="eyebrow">Lernprofil</div><h2>Profil wechseln</h2><p class="muted-line">Wer lernt gerade?</p><div class="profile-switch-list">${learners.map(l=>{const active=l.id===state.activeLearnerId,meta=[l.gradeLevel?`Klasse ${esc(l.gradeLevel)}`:'',learnerActiveSubjects(l).map(subjectShort).join(' · ')].filter(Boolean).join(' · ');return `<button type="button" class="profile-switch-option ${active?'active':''}" data-profile-switch="${esc(l.id)}" aria-pressed="${active?'true':'false'}"><span><strong>${esc(l.name)}</strong><small>${esc(meta||'Lernprofil')}</small></span><b>${active?'Aktiv':'Wechseln'}</b></button>`}).join('')}</div><div class="modal-actions wrap"><button type="button" id="manageProfilesBtn" class="ghost">Profile verwalten</button><button value="cancel" class="primary">Schließen</button></div>`);
   $$('[data-profile-switch]').forEach(b=>b.onclick=()=>switchLearnerProfile(b.dataset.profileSwitch));
   $('#manageProfilesBtn').onclick=()=>{closeModal();openParentGate('settingsView')};
