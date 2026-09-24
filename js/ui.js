@@ -81,6 +81,9 @@ function battleAttackFxMarkup(){
   return `<div class="battle-attack-fx" aria-hidden="true">
     <div class="battle-charge-streaks">${Array.from({length:6},(_,i)=>`<i class="charge-streak charge-streak-${i+1}"></i>`).join('')}</div>
     <div class="battle-ram-trail"><i></i><i></i><i></i></div>
+    <div class="battle-volley-sky">${Array.from({length:7},(_,i)=>`<i class="volley-wave volley-wave-${i+1}"></i>`).join('')}</div>
+    <div class="battle-cavalry-flank"><i></i><i></i><i></i><b></b></div>
+    <div class="battle-special-aura"><i></i><i></i><i></i><strong>★</strong></div>
   </div>
   <div class="battle-impact-callout" data-battle-impact-callout aria-hidden="true">
     <strong data-battle-impact-title>TREFFER!</strong>
@@ -185,7 +188,7 @@ function runBattleAnimation(){
   };
   button.disabled=true;$('#battleFullscreenBtn').disabled=true;$$('.battle-attack-choice').forEach(b=>b.disabled=true);
   const impactTitle=stage.querySelector('[data-battle-impact-title]'),impactDamage=stage.querySelector('[data-battle-impact-damage]'),impactTactic=stage.querySelector('[data-battle-impact-tactic]');
-  if(impactTitle)impactTitle.textContent=secureBefore?'GESICHERT!':battleAttackMode==='ram'?'TOR-TREFFER!':'TREFFER!';
+  if(impactTitle)impactTitle.textContent=secureBefore?'GESICHERT!':battleAttackMode==='ram'?'TOR-TREFFER!':battleAttackMode==='volley'?'PFEILHAGEL!':battleAttackMode==='cavalry'?'FLANKENTREFFER!':battleAttackMode==='special'?(state.activeSubject==='latin'?'ADLERSCHLAG!':'ELITESCHLAG!'):'TREFFER!';
   if(impactDamage)impactDamage.textContent=secureBefore?'Stellung gehalten':`${visualHit?.damage||0} Schaden`;
   if(impactTactic)impactTactic.textContent=secureBefore?'':tactical.bonus?`+${tactical.bonus} durch ${tactical.role}`:'Basisschaden';
   stage.classList.remove('battle-finished','is-victory','is-hold','is-impact','is-attacking','is-strike','show-impact-callout','battle-sequence');stage.classList.add('battle-sequence',`attack-${secureBefore?'charge':battleAttackMode}`);
