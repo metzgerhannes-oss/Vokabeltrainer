@@ -32,42 +32,12 @@ try{
   await page.click('#attackBtn');
   await page.waitForSelector('#battleView.active');
   await page.waitForFunction(()=>!!currentTestFortress()?.revealedAt);
-  const revealCssState=await page.evaluate(()=>{
+  await page.waitForFunction(()=>{
     const stage=document.querySelector('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
-    const matchedRules=[];
-    const visit=(rules,media='')=>{
-      for(const rule of [...(rules||[])]){
-        if(rule.cssRules){
-          const next=rule.conditionText||rule.media?.mediaText||media;
-          visit(rule.cssRules,next);
-          continue;
-        }
-        if(!rule.selectorText||!overlay)continue;
-        let matches=false;try{matches=overlay.matches(rule.selectorText)}catch(_){}
-        if(rule.selectorText.includes('battle-target-reveal'))matchedRules.push({
-          selector:rule.selectorText,matches,media,
-          visibility:rule.style?.visibility||'',opacity:rule.style?.opacity||'',animation:rule.style?.animation||''
-        });
-      }
-    };
-    const sheets=[];
-    for(const sheet of [...document.styleSheets]){
-      let rules=[];try{rules=sheet.cssRules;visit(rules)}catch(_){}
-      sheets.push(sheet.href||'inline');
-    }
-    const style=overlay?getComputedStyle(overlay):null,f=currentTestFortress();
-    return {
-      seenAt:f?.revealedAt||'',
-      stageClass:stage?.className||'',
-      active:!!stage?.classList.contains('fortress-reveal'),
-      overlay:!!overlay,
-      visibility:style?.visibility||'',
-      opacity:Number(style?.opacity||0),
-      reduced:matchMedia('(prefers-reduced-motion: reduce)').matches,
-      sheets,matchedRules
-    };
-  });
-  assert(revealCssState.active&&revealCssState.overlay&&revealCssState.visibility==='visible'&&revealCssState.opacity>.9,'new fortress reveal becomes visibly active: '+JSON.stringify(revealCssState));
+    if(!stage?.classList.contains('fortress-reveal')||!overlay)return false;
+    const style=getComputedStyle(overlay);
+    return style.visibility==='visible'&&Number(style.opacity)>.9;
+  },null,{timeout:3000});
   const firstFortressReveal=await page.evaluate(()=>{
     const f=currentTestFortress(),stage=document.querySelector('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
     return {
