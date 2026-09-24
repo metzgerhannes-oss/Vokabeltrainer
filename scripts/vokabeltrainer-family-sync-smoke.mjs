@@ -33,7 +33,7 @@ assert(ui.includes('Weiteres Eltern-Gerät verbinden')&&ui.includes('VTFamilySyn
 assert(ui.includes('familyParentJoinInvite')&&ui.includes('parentInviteTokenFromInput')&&ui.includes('VTFamilySync.claimParentInvite(invite'), 'installed parent app can consume a copied one-time QR/link invite without reusing the family PIN');
 assert(ui.includes('Familie wechseln')&&ui.includes('VTFamilySync.disconnectLocal()'), 'parent UI can leave a wrong local family connection and switch families without deleting learning data');
 assert(ui.includes('familySyncChildJoinChoiceBtn')&&ui.includes('VTFamilySync.claimChildInvite(token'), 'unpaired devices have an explicit child-device enrollment path instead of being forced through parent credentials');
-assert(ui.includes('Weiteres Eltern-Gerät verbinden')&&ui.includes('<strong>Kein Kindergerät.</strong>'), 'family ID and PIN flow is explicitly labelled as parent-device enrollment');
+assert(ui.includes('Einmal-Link oder Gerätecode')&&ui.includes('Stattdessen Familien-ID und PIN verwenden')&&ui.includes('VTFamilySync.joinParent(id,pin'), 'parent device enrollment is QR/link-first with family ID and PIN as explicit fallback');
 assert(!ui.includes('function openChildDeviceInvite(){')&&ui.includes('window.openChildDeviceInvite?window.openChildDeviceInvite()'), 'guided share-link pairing from device-pairing.js is not shadowed by the obsolete raw-token UI');
 assert(!ui.includes('QR-/Übernahmeschritt für die Kinder-App folgt'), 'obsolete unfinished child-pairing message is removed');
 assert(css.includes('overflow-y:auto')&&css.includes('100dvh')&&css.includes('.modal-actions.stack-mobile'), 'family setup dialogs remain scrollable and actionable on compact mobile viewports');
