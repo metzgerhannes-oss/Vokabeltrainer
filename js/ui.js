@@ -609,9 +609,22 @@ function addGrade(opts={}){
   const practiceId=opts&&typeof opts==='object'&&!('target' in opts)?opts.practiceTestId||'':'';
   const pt=practiceId?state.practiceTests.find(t=>t.id===practiceId&&t.learnerId===learner().id):null;
   const defaultDate=pt?.testDate||today(),subject=pt?.subject||state.activeSubject;
-  modal(`<div class="eyebrow">Vokabeltest</div><h2>Schulnote eintragen</h2>${pt?`<div class="notice subtle"><strong>Übung davor:</strong> ${pt.percent}% · Notenvorschlag ${esc(pt.suggestedGrade||'–')}<br>${esc(pt.scopeText||'Testbereich')}</div>`:''}<label>Datum<input id="gradeDate" type="date" value="${esc(defaultDate)}"></label><label>Fach<select id="gradeSubject">${learnerActiveSubjects().map(x=>`<option value="${x}">${subjectLabel(x)}</option>`).join('')}</select></label><label>Note<input id="gradeValue" placeholder="z. B. 2+ oder 1,7"></label><label>Kommentar<input id="gradeNote"></label><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="saveGrade" class="primary">Speichern</button></div>`);
+  modal(`<div class="eyebrow">Vokabeltest</div><h2>Schulnote eintragen</h2>${pt?`<div class="notice subtle"><strong>Übung davor:</strong> ${pt.percent}% · Notenvorschlag ${esc(pt.suggestedGrade||'–')}<br>${esc(pt.scopeText||'Testbereich')}</div>`:''}<div class="notice subtle"><strong>Jeder absolvierte Test zählt.</strong><br>Eine eingetragene Note von 1 bis 6 gibt immer ein Prüfungsabzeichen und 50 Abschluss-XP. Die Note verändert nur einen kleinen Bonus von 0 bis 10 XP.</div><label>Datum<input id="gradeDate" type="date" value="${esc(defaultDate)}"></label><label>Fach<select id="gradeSubject">${learnerActiveSubjects().map(x=>`<option value="${x}">${subjectLabel(x)}</option>`).join('')}</select></label><label>Note<input id="gradeValue" inputmode="decimal" placeholder="z. B. 2+ oder 1,7"></label><label>Kommentar<input id="gradeNote"></label><div id="gradeRewardPreview" class="notice subtle">Auch eine 6 erhält die volle Abschlussbelohnung.</div><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="saveGrade" class="primary">Speichern</button></div>`);
   $('#gradeSubject').value=subject; if(pt)$('#gradeSubject').disabled=true;
-  $('#saveGrade').onclick=()=>{if(!$('#gradeValue').value.trim())return;const existing=practiceId?state.grades.find(g=>g.learnerId===learner().id&&g.practiceTestId===practiceId):null;const data={learnerId:learner().id,date:$('#gradeDate').value,subject:$('#gradeSubject').value,grade:$('#gradeValue').value.trim(),note:$('#gradeNote').value.trim(),practiceTestId:practiceId||null};if(existing)Object.assign(existing,data);else state.grades.push({id:uid('g'),...data});closeModal();save();}
+  const preview=()=>{const reward=testGradeReward($('#gradeValue').value),box=$('#gradeRewardPreview');if(!box)return;if(!$('#gradeValue').value.trim()){box.className='notice subtle';box.textContent='Auch eine 6 erhält die volle Abschlussbelohnung.';return}if(!reward){box.className='notice warn';box.textContent='Bitte eine Schulnote von 1 bis 6 eingeben, z. B. 2+, 3 oder 1,7.';return}box.className='notice good';box.textContent=`Prüfungsabzeichen +1 · ${reward.baseXp} Abschluss-XP${reward.bonusXp?` + ${reward.bonusXp} Bonus-XP`:''} = ${reward.totalXp} XP`;};
+  $('#gradeValue').addEventListener('input',preview);
+  $('#saveGrade').onclick=()=>{
+    const grade=$('#gradeValue').value.trim(),rewardPreview=testGradeReward(grade),error=$('#gradeRewardPreview');
+    if(!rewardPreview){if(error){error.className='notice warn';error.textContent='Bitte eine Schulnote von 1 bis 6 eingeben, z. B. 2+, 3 oder 1,7.';}return}
+    const existing=practiceId?state.grades.find(g=>g.learnerId===learner().id&&g.practiceTestId===practiceId):null;
+    const data={learnerId:learner().id,date:$('#gradeDate').value,subject:$('#gradeSubject').value,grade,note:$('#gradeNote').value.trim(),practiceTestId:practiceId||null};
+    let row=existing;
+    if(row)Object.assign(row,data);else{row={id:uid('g'),...data};state.grades.push(row)}
+    const reward=grantTestGradeReward(row);
+    closeModal();save();
+    if(reward)toast(`Test eingetragen · Prüfungsabzeichen +1 · +${reward.totalXp} XP`,'good');
+    else toast('Schulnote gespeichert.','good');
+  }
 }
 function switchLearnerProfile(id){
   const next=state.learners.find(x=>x.id===id);if(!next){closeModal();return}

@@ -77,6 +77,11 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    XP, Legion/Kampagne und Belohnungen sind strikt vom fachlichen Fortschritt getrennt.
    100 % bedeutet: nach den Kriterien der App nachhaltig gemeistert, nicht objektiv
    'für immer gelernt'.
+   Ein eingetragener realer Vokabeltest darf als Abschlussereignis positiv belohnt werden,
+   aber nicht als zusätzlicher Lernnachweis. Jede gültige Schulnote von 1 bis 6 erhält
+   dieselbe deutliche Basisbelohnung; die Notenhöhe darf nur einen kleinen Bonus verändern.
+   Auch eine 6 bleibt damit ein positiver Eintrag statt eines Grundes, das Ergebnis zu
+   verschweigen. Schulnoten verändern niemals Mastery, Leitner-Boxen oder Spacing.
 
 6. **Tagesziel beantwortet: Was muss ich heute lernen?**
    Testdatum, Testumfang, fällige Wiederholungen und schwache Wörter steuern das Tagespensum.

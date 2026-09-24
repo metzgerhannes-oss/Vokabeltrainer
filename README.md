@@ -4,11 +4,21 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.40**
+App-Version: **v0.18.41**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.41 – Testabschluss belohnt
+
+- jede eingetragene reale Schulnote von **1 bis 6** dokumentiert einen absolvierten Vokabeltest und erzeugt ein **Prüfungsabzeichen**
+- jeder eingetragene Test vergibt **50 Abschluss-XP**, unabhängig von der Note
+- die Note beeinflusst nur einen kleinen Bonus von **0 bis 10 XP**; Note 6 erhält damit weiterhin die volle positive Abschlussbelohnung
+- Noten mit Plus/Minus und Dezimalnoten wie **2+** oder **1,7** werden unterstützt
+- dieselbe Noteneintragung kann XP nur einmal vergeben
+- „Meine Armee“ zeigt die Zahl der Prüfungsabzeichen sichtbar in der Armeeübersicht
+- Schulnoten verändern weiterhin **weder Mastery, Leitner-Boxen, Spacing noch die fachliche Bewertung**
 
 ## v0.18.40 – Elternanleitung & pädagogische Dokumentation
 

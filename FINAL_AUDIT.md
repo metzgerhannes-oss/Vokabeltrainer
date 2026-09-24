@@ -1,6 +1,6 @@
 # Finales Audit
 
-Stand: 23.09.2026 · App v0.18.40
+Stand: 24.09.2026 · App v0.18.41
 
 ## Ergebnis
 
@@ -52,6 +52,8 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 ### Schlachtmodus / Gamification
 
 - die Schlacht besitzt eine eigene Ergebnisansicht; sie liest ausschließlich bereits feststehende Kampfdaten und zeigt bei Sieg nur reale Werte (+20 XP, Lernfortschritt, Armeestärke, nächstes Kampagnenziel)
+- eingetragene reale Schulnoten von 1 bis 6 erzeugen unabhängig von der Notenhöhe ein Prüfungsabzeichen und 50 Abschluss-XP; die Note steuert nur 0–10 zusätzliche Bonus-XP und verändert niemals Mastery, Leitner, Spacing oder fachliche Bewertung
+- die XP-Vergabe einer Noteneintragung ist idempotent; erneutes Speichern derselben belohnten Note erzeugt keine doppelten XP
 - die Ergebnisansicht schreibt keine Mastery- oder Lernwerte und verändert die bestehende Kampagnenlogik nicht
 - bewertete Lerneinheiten zeigen nach Abschluss jede Abfrage mit Eingabe, akzeptierter Sollantwort, Bewertungsgrund und Leitner-Box-Veränderung; die zugrunde liegende fachliche Bewertungslogik wird dabei nicht verändert
 - freiwillige Wiederholungsaktionen aus der Ergebnisübersicht laufen mit `isDaily=false` und können deshalb keine zusätzliche tägliche Kampfaktion erzeugen
