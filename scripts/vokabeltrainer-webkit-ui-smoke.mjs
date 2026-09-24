@@ -17,6 +17,25 @@ try{
   if(!/Vokabeltrainer/i.test(title))throw new Error('unexpected title: '+title);
   const html=await page.content();
   if(!/Vokabeltrainer|Lernen|Lern/i.test(html))throw new Error('app content missing');
+
+  // Regression: a compact iPhone must expose the child-device path directly.
+  await page.setViewportSize({width:375,height:667});
+  await page.locator('#parentAreaBtn').click();
+  await page.locator('#confirmParentMode').click();
+  await page.locator('#parentSettingsBtn').click();
+  await page.locator('#familySyncSetupBtn').click();
+  await page.locator('#familySyncChildJoinChoiceBtn').waitFor({state:'visible'});
+  if((await page.locator('#familySyncChildJoinChoiceBtn').textContent())?.trim()!=='Kindergerät verbinden')throw new Error('child-device choice missing');
+  if(!/Weiteres Eltern-Gerät verbinden/.test(await page.locator('#familySyncJoinChoiceBtn').textContent()||''))throw new Error('parent-device choice not clearly separated');
+  const setupDialog=await page.locator('#modal').evaluate(el=>({overflowY:getComputedStyle(el).overflowY,clientHeight:el.clientHeight,scrollHeight:el.scrollHeight}));
+  if(!['auto','scroll'].includes(setupDialog.overflowY))throw new Error('setup dialog is not vertically scrollable on compact iPhone');
+  if(setupDialog.clientHeight>667)throw new Error('setup dialog exceeds compact iPhone viewport');
+
+  await page.locator('#familySyncChildJoinChoiceBtn').click();
+  await page.locator('#familyChildJoinInput').waitFor({state:'visible'});
+  await page.locator('#familyChildJoinBtn').waitFor({state:'visible'});
+  if(!/Verbindungslink oder Gerätecode/.test(await page.locator('#modalContent').textContent()||''))throw new Error('child invite input guidance missing');
+
   const fatal=[...pageErrors,...consoleErrors].filter(x=>/ReferenceError|TypeError|SyntaxError|Content Security Policy/i.test(x));
   if(fatal.length)throw new Error(fatal.join(' | '));
   console.log('Vokabeltrainer WebKit iPhone smoke: passed');

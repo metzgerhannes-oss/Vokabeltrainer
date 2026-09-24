@@ -735,9 +735,39 @@ function renderFamilySync(){
 function openFamilySyncSetup(){
   if(!window.VTFamilySync)return;
   if(VTFamilySync.status().enabled){openFamilySyncSwitch();return}
-  modal('<div class="eyebrow">Familie & Geräte</div><h2>Familiensync einrichten</h2><p>Nutze auf allen Eltern- und Kindergeräten denselben Familienverbund.</p><div class="notice subtle"><strong>Schon auf einem anderen Gerät eingerichtet?</strong><br>Dann der bestehenden Familie beitreten – keine neue Familie anlegen.</div><div class="modal-actions stack-mobile"><button type="button" id="familySyncJoinChoiceBtn" class="primary">Bestehender Familie beitreten</button><button type="button" id="familySyncCreateChoiceBtn" class="secondary">Neue Familie anlegen</button><button value="cancel" class="ghost">Abbrechen</button></div>');
+  modal('<div class="eyebrow">Familie & Geräte</div><h2>Familiensync einrichten</h2><p>Wähle, wofür dieses Gerät verwendet wird.</p><div class="notice subtle"><strong>Kindergerät?</strong><br>Ein Kindergerät wird nicht mit Familien-ID und Familien-PIN verbunden. Es bekommt einen einmaligen Verbindungslink vom Eltern-Gerät und wird dabei direkt einem Kinderprofil zugeordnet.</div><div class="modal-actions stack-mobile"><button type="button" id="familySyncChildJoinChoiceBtn" class="primary">Kindergerät verbinden</button><button type="button" id="familySyncJoinChoiceBtn" class="secondary">Weiteres Eltern-Gerät verbinden</button><button type="button" id="familySyncCreateChoiceBtn" class="ghost">Neue Familie anlegen</button><button value="cancel" class="ghost">Abbrechen</button></div>');
+  $('#familySyncChildJoinChoiceBtn').onclick=openFamilySyncChildJoin;
   $('#familySyncJoinChoiceBtn').onclick=openFamilySyncJoin;
   $('#familySyncCreateChoiceBtn').onclick=openFamilySyncCreate;
+}
+function childInviteTokenFromInput(value){
+  const raw=String(value||'').trim();
+  if(/^[0-9a-f]{48}$/i.test(raw))return raw.toLowerCase();
+  try{
+    const url=new URL(raw,location.href);
+    const params=new URLSearchParams(String(url.hash||'').replace(/^#/,''));
+    const token=String(params.get('childInvite')||'').trim();
+    if(/^[0-9a-f]{48}$/i.test(token))return token.toLowerCase();
+  }catch(_e){}
+  return '';
+}
+function openFamilySyncChildJoin(){
+  modal('<div class="eyebrow">Kindergerät</div><h2>Kindergerät verbinden</h2><p>Auf dem Eltern-Gerät zuerst <strong>Einstellungen → Familie & Geräte → Kindergerät hinzufügen</strong> öffnen, das Kind auswählen und einen Verbindungslink erstellen.</p><label>Verbindungslink oder Gerätecode<input id="familyChildJoinInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Link hier einfügen"></label><div id="familyChildJoinError" class="notice subtle">Der Link ist einmalig und 15 Minuten gültig. Beim Verbinden wird dieses Gerät fest dem ausgewählten Kinderprofil zugeordnet. Vorhandene lokale Lerndaten auf diesem noch nicht verbundenen Gerät werden durch dieses Profil ersetzt.</div><div class="modal-actions"><button type="button" id="familySyncBackBtn" class="ghost">Zurück</button><button type="button" id="familyChildJoinBtn" class="primary">Kindergerät verbinden</button></div>');
+  $('#familySyncBackBtn').onclick=openFamilySyncSetup;
+  $('#familyChildJoinBtn').onclick=async()=>{
+    const input=$('#familyChildJoinInput'),err=$('#familyChildJoinError'),btn=$('#familyChildJoinBtn');
+    const token=childInviteTokenFromInput(input.value);
+    if(!token){err.className='notice warn';err.textContent='Bitte den Verbindungslink vom Eltern-Gerät einfügen. Falls nur der Gerätecode vorliegt, muss er vollständig übernommen werden.';return}
+    btn.disabled=true;btn.textContent='Wird verbunden …';
+    try{
+      await VTFamilySync.claimChildInvite(token,'Kindergerät');
+      appRole='child';applyRoleUi();closeModal();showView('homeView');renderAll();VTFamilySync.bootstrap();
+      toast('Kindergerät ist verbunden.','good');
+    }catch(e){
+      err.className='notice bad';err.textContent=(e.message||'Kindergerät konnte nicht verbunden werden.')+' Falls der Link älter als 15 Minuten ist, auf dem Eltern-Gerät einen neuen Verbindungslink erstellen.';
+      btn.disabled=false;btn.textContent='Erneut versuchen';
+    }
+  };
 }
 function openFamilySyncCreate(){
   modal('<div class="eyebrow">Familie & Geräte</div><h2>Neue Familie anlegen</h2><p>Nur verwenden, wenn noch auf keinem Gerät ein Familienverbund existiert. Der aktuelle Stand dieses Geräts wird als erster Familienstand hochgeladen.</p><label>Familien-PIN<input id="familyPin" type="password" minlength="6" autocomplete="new-password" placeholder="mindestens 6 Zeichen"></label><label>PIN wiederholen<input id="familyPin2" type="password" minlength="6" autocomplete="new-password"></label><div id="familySyncSetupError" class="notice subtle">Die PIN wird nicht gespeichert. Weitere Geräte treten später mit Familien-ID und PIN bei.</div><div class="modal-actions"><button type="button" id="familySyncBackBtn" class="ghost">Zurück</button><button type="button" id="familySyncCreateBtn" class="primary">Familie anlegen</button></div>');
@@ -745,9 +775,9 @@ function openFamilySyncCreate(){
   $('#familySyncCreateBtn').onclick=async()=>{const p1=$('#familyPin').value,p2=$('#familyPin2').value,err=$('#familySyncSetupError'),btn=$('#familySyncCreateBtn');if(p1.length<6){err.className='notice warn';err.textContent='Die PIN muss mindestens 6 Zeichen lang sein.';return}if(p1!==p2){err.className='notice warn';err.textContent='Die beiden PINs stimmen nicht überein.';return}btn.disabled=true;btn.textContent='Wird eingerichtet …';try{await VTFamilySync.createFamily(p1,'Eltern-Gerät');closeModal();renderFamilySync();toast('Familiensync eingerichtet.','good')}catch(e){err.className='notice bad';err.textContent=e.message||'Einrichtung fehlgeschlagen.';btn.disabled=false;btn.textContent='Familie anlegen'}};
 }
 function openFamilySyncJoin(){
-  modal('<div class="eyebrow">Familie & Geräte</div><h2>Bestehender Familie beitreten</h2><p>Übernimm die Familien-ID von einem bereits verbundenen Eltern-Gerät und verwende dieselbe Familien-PIN.</p><label>Familien-ID<input id="familyJoinId" type="text" autocomplete="off" spellcheck="false" placeholder="family_…"></label><label>Familien-PIN<input id="familyJoinPin" type="password" minlength="6" autocomplete="current-password" placeholder="mindestens 6 Zeichen"></label><div id="familySyncJoinError" class="notice subtle">Nach dem Beitritt wird der vorhandene Familienstand geladen und mit diesem Gerät synchronisiert.</div><div class="modal-actions"><button type="button" id="familySyncBackBtn" class="ghost">Zurück</button><button type="button" id="familySyncJoinBtn" class="primary">Familie beitreten</button></div>');
+  modal('<div class="eyebrow">Familie & Geräte</div><h2>Weiteres Eltern-Gerät verbinden</h2><p>Nur für ein weiteres Eltern-Gerät: Übernimm die Familien-ID von einem bereits verbundenen Eltern-Gerät und verwende dieselbe Familien-PIN.</p><div class="notice subtle"><strong>Kein Kindergerät.</strong><br>Kindergeräte werden über „Kindergerät verbinden“ bzw. über den einmaligen Verbindungslink eingerichtet.</div><label>Familien-ID<input id="familyJoinId" type="text" autocomplete="off" spellcheck="false" placeholder="family_…"></label><label>Familien-PIN<input id="familyJoinPin" type="password" minlength="6" autocomplete="current-password" placeholder="mindestens 6 Zeichen"></label><div id="familySyncJoinError" class="notice subtle">Nach dem Beitritt wird der vorhandene Familienstand auf dieses Eltern-Gerät geladen und synchronisiert.</div><div class="modal-actions"><button type="button" id="familySyncBackBtn" class="ghost">Zurück</button><button type="button" id="familySyncJoinBtn" class="primary">Eltern-Gerät verbinden</button></div>');
   $('#familySyncBackBtn').onclick=()=>VTFamilySync.status().enabled?openFamilySyncSwitch():openFamilySyncSetup();
-  $('#familySyncJoinBtn').onclick=async()=>{const id=$('#familyJoinId').value.trim().toLowerCase(),pin=$('#familyJoinPin').value,err=$('#familySyncJoinError'),btn=$('#familySyncJoinBtn');if(!/^family_[a-z0-9]{6,40}$/.test(id)){err.className='notice warn';err.textContent='Bitte eine gültige Familien-ID eingeben.';return}if(pin.length<6){err.className='notice warn';err.textContent='Die Familien-PIN muss mindestens 6 Zeichen lang sein.';return}btn.disabled=true;btn.textContent='Wird verbunden …';try{await VTFamilySync.joinParent(id,pin,'Eltern-Gerät');closeModal();renderAll();VTFamilySync.bootstrap();toast('Dieses Gerät ist jetzt mit der bestehenden Familie verbunden.','good')}catch(e){err.className='notice bad';err.textContent=e.message||'Beitritt fehlgeschlagen.';btn.disabled=false;btn.textContent='Familie beitreten'}};
+  $('#familySyncJoinBtn').onclick=async()=>{const id=$('#familyJoinId').value.trim().toLowerCase(),pin=$('#familyJoinPin').value,err=$('#familySyncJoinError'),btn=$('#familySyncJoinBtn');if(!/^family_[a-z0-9]{6,40}$/.test(id)){err.className='notice warn';err.textContent='Bitte eine gültige Familien-ID eingeben.';return}if(pin.length<6){err.className='notice warn';err.textContent='Die Familien-PIN muss mindestens 6 Zeichen lang sein.';return}btn.disabled=true;btn.textContent='Wird verbunden …';try{await VTFamilySync.joinParent(id,pin,'Eltern-Gerät');closeModal();renderAll();VTFamilySync.bootstrap();toast('Eltern-Gerät ist mit der bestehenden Familie verbunden.','good')}catch(e){err.className='notice bad';err.textContent=e.message||'Beitritt fehlgeschlagen.';btn.disabled=false;btn.textContent='Eltern-Gerät verbinden'}};
 }
 function openFamilySyncSwitch(){
   if(!window.VTFamilySync)return;const s=VTFamilySync.status();if(!s.enabled){openFamilySyncSetup();return}
@@ -757,11 +787,6 @@ function openFamilySyncSwitch(){
 }
 async function runFamilySync(){
   if(!window.VTFamilySync)return;const btn=$('#familySyncNowBtn');btn.disabled=true;renderFamilySync();try{await VTFamilySync.syncNow(true);renderAll();toast('Synchronisierung abgeschlossen.','good')}catch(e){toast(e.message||'Synchronisierung fehlgeschlagen.','bad');renderFamilySync()}finally{btn.disabled=false}
-}
-function openChildDeviceInvite(){
-  if(!window.VTFamilySync)return;const learners=state.learners||[];if(!learners.length){toast('Zuerst ein Kinderprofil anlegen.','subtle');return}
-  modal(`<div class="eyebrow">Kindergerät</div><h2>Gerät einem Kind zuordnen</h2><p>Der Gerätecode wird genau an ein Profil gebunden und ist 15 Minuten gültig.</p><label>Profil<select id="familyChildProfile">${learners.map(l=>`<option value="${esc(l.id)}">${esc(l.name)}</option>`).join('')}</select></label><div id="familyChildInviteResult" class="notice subtle">Im nächsten Schritt kann daraus ein QR-Code für das Kindergerät erzeugt werden.</div><div class="modal-actions"><button value="cancel" class="ghost">Schließen</button><button type="button" id="familyChildInviteBtn" class="primary">Gerätecode erzeugen</button></div>`);
-  $('#familyChildInviteBtn').onclick=async()=>{const btn=$('#familyChildInviteBtn'),out=$('#familyChildInviteResult'),profileId=$('#familyChildProfile').value;btn.disabled=true;try{const r=await VTFamilySync.createChildInvite(profileId);out.className='notice good';out.innerHTML=`<strong>Gerätecode erstellt</strong><br><span class="duel-code">${esc(r.token)}</span><br>Gültig bis ${esc(familySyncTime(r.expires_at))}. Der QR-/Übernahmeschritt für die Kinder-App folgt als nächster Ausbau.`;btn.textContent='Neuen Code erzeugen'}catch(e){out.className='notice bad';out.textContent=e.message||'Code konnte nicht erzeugt werden.'}finally{btn.disabled=false}};
 }
 function renderParentOverview(){
   const box=$('#parentAttention');if(!box)return;
@@ -802,7 +827,7 @@ function bind(){
   $$('[data-parent-home]').forEach(b=>b.onclick=()=>showView('parentView'));
   document.addEventListener('click',e=>{const b=e.target.closest?.('[data-speak]');if(!b)return;e.preventDefault();e.stopPropagation();speak(b.dataset.speak||'')});
   $('#fontSizeRange').oninput=e=>{learner().fontSize=+e.target.value;save()}; $('#letterSpacingRange').oninput=e=>{learner().letterSpacing=+e.target.value;save()}; $('#flashSpeedSelect').onchange=e=>{learner().flashSpeed=+e.target.value;save()}; $('#autoSpeakCorrection')?.addEventListener('change',e=>{learner().autoSpeakCorrection=!!e.target.checked;save()});
-  $('#familySyncSetupBtn').onclick=openFamilySyncSetup; $('#familySyncNowBtn').onclick=runFamilySync; $('#familySyncChildBtn').onclick=openChildDeviceInvite; $('#familySyncSwitchBtn').onclick=openFamilySyncSwitch;
+  $('#familySyncSetupBtn').onclick=openFamilySyncSetup; $('#familySyncNowBtn').onclick=runFamilySync; $('#familySyncChildBtn').onclick=()=>window.openChildDeviceInvite?window.openChildDeviceInvite():toast('Geräteverbindung konnte nicht geladen werden.','bad'); $('#familySyncSwitchBtn').onclick=openFamilySyncSwitch;
   $('#backupBtn').onclick=backup; $('#resetAppBtn').onclick=resetAppData; $('#restoreBtn').onclick=()=>{const f=$('#fileInput');f.accept='.json,application/json';f.dataset.mode='restore';f.click()}; $('#exportCsvBtn').onclick=exportCsv; $('#libraryUseBtn').onclick=openLearningContentPlanner; $('#librarySearchInput').oninput=()=>{libraryRenderLimit=200;renderLibrary()}; $('#librarySetFilter').onchange=()=>{libraryRenderLimit=200;renderLibrary()};
   $('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;const mode=e.target.dataset.mode,limit=mode==='restore'?MAX_BACKUP_BYTES:MAX_CSV_BYTES;if(f.size>limit){toast(`${mode==='restore'?'Backup':'CSV'} ist zu groß (${fmtBytes(f.size)}).`,'bad');e.target.value='';return}try{const text=await f.text();if(mode==='restore')restore(text);else importCsv(text)}catch(err){console.warn(err);toast('Datei konnte nicht gelesen werden.','bad')}e.target.value=''}; $('#photoInput').onchange=async e=>{const f=e.target.files[0];if(f)await handleScanPhoto(f);e.target.value=''}; $('#isbnPhotoInput').onchange=async e=>{const f=e.target.files[0];if(f)await handleIsbnPhoto(f);e.target.value=''};
   $('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal()}); $('#modal').addEventListener('close',()=>{if(scanImportState.imageUrl){URL.revokeObjectURL(scanImportState.imageUrl);scanImportState.imageUrl=null;}scanImportState.lastFile=null;});
