@@ -83,8 +83,9 @@ html[data-letter-space="0"]{--letter-space:0px}html[data-letter-space="0.25"]{--
   .profile-chip{padding:7px 10px;max-width:44vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.9rem}
   .top-actions{flex-direction:row;align-items:center}
   .library-card{padding:12px 0 0;border:0;box-shadow:none;background:transparent;margin-bottom:0}
-  .library-head{padding:0 2px;margin-bottom:12px}
+  .library-head{padding:0 2px;margin-bottom:12px;align-items:stretch;flex-direction:column}
   .library-head h2{font-size:1.45rem}
+  .library-head .compact-action{width:100%}
   .compact-action{padding:9px 12px;font-size:.92rem}
   .library-filters{gap:9px;margin:8px 0 12px}
   .library-filters label{font-size:.82rem}
