@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='0.18.53';
+const APP_VERSION='0.18.54';
 const RESOURCE_REVISION='1';
 const SHELL_CACHE=`vokabeltrainer-shell-v${APP_VERSION}`;
 const RESOURCE_CACHE=`vokabeltrainer-resources-v${RESOURCE_REVISION}`;
@@ -10,10 +10,10 @@ const LEGACY_CACHE_PREFIX='vokabeltrainer-v';
 const LEGACY_APP_BASES=['/JohannasGartenwelt/vokabeltrainer/'];
 
 const ASSETS=[
-  './','./index.html','./css/app.css?v=0.18.53','./css/army.css?v=0.18.53','./css/campaign-map.css?v=0.18.53','./css/battle-art.css?v=0.18.53','./css/battle-fortress.css?v=0.18.53','./css/battle-result.css?v=0.18.53','./js/core.js?v=0.18.53','./js/help.js?v=0.18.53','./js/library.js?v=0.18.53','./js/storage.js?v=0.18.53',
-  './js/builtin-library.js?v=0.18.53','./js/model.js?v=0.18.53','./js/quiz-engine.js?v=0.18.53','./js/learning.js?v=0.18.53','./js/translation.js?v=0.18.53',
-  './js/io.js?v=0.18.53','./js/family-sync.js?v=0.18.53',
-  './js/device-pairing.js?v=0.18.53','./js/ui.js?v=0.18.53','./js/army-art.js?v=0.18.53','./js/battle-art.js?v=0.18.53','./js/battle-art-ui.js?v=0.18.53','./js/battle-result-ui.js?v=0.18.53','./js/army-ui.js?v=0.18.53','./js/campaign-map.js?v=0.18.53','./js/library-ui.js?v=0.18.53','./js/focus-ui.js?v=0.18.53','./js/parent-docs.js?v=0.18.53','./js/app.js?v=0.18.53','./manifest.webmanifest','./docs/ELTERN_ANLEITUNG.md','./docs/PAEDAGOGISCHE_DOKUMENTATION.md',
+  './','./index.html','./css/app.css?v=0.18.54','./css/army.css?v=0.18.54','./css/campaign-map.css?v=0.18.54','./css/battle-art.css?v=0.18.54','./css/battle-fortress.css?v=0.18.54','./css/battle-result.css?v=0.18.54','./js/core.js?v=0.18.54','./js/help.js?v=0.18.54','./js/library.js?v=0.18.54','./js/storage.js?v=0.18.54',
+  './js/builtin-library.js?v=0.18.54','./js/model.js?v=0.18.54','./js/quiz-engine.js?v=0.18.54','./js/learning.js?v=0.18.54','./js/translation.js?v=0.18.54',
+  './js/io.js?v=0.18.54','./js/family-sync.js?v=0.18.54',
+  './js/device-pairing.js?v=0.18.54','./js/ui.js?v=0.18.54','./js/army-art.js?v=0.18.54','./js/battle-art.js?v=0.18.54','./js/battle-art-ui.js?v=0.18.54','./js/battle-result-ui.js?v=0.18.54','./js/army-ui.js?v=0.18.54','./js/campaign-map.js?v=0.18.54','./js/library-ui.js?v=0.18.54','./js/focus-ui.js?v=0.18.54','./js/parent-docs.js?v=0.18.54','./js/app.js?v=0.18.54','./manifest.webmanifest','./docs/ELTERN_ANLEITUNG.md','./docs/PAEDAGOGISCHE_DOKUMENTATION.md',
   './data/camden-town-1-welcome.tsv','./data/camden-town-1-theme1.tsv',
   './assets/icons/icon-180.png','./assets/icons/icon-192.png','./assets/icons/icon-512.png',
   './assets/army/hero/part-01.b64','./assets/army/hero/part-02.b64','./assets/army/hero/part-03.b64','./assets/army/hero/part-04.b64','./assets/army/hero/part-05.b64','./assets/army/hero/part-06.b64',
