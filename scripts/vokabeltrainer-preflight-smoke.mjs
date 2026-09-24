@@ -50,6 +50,8 @@ assert(css.includes('.lrs-mode .eyebrow{text-transform:none'),'LRS mode avoids f
 assert(ui.includes("document.querySelectorAll('.view').forEach")&&ui.includes("document.querySelectorAll('.nav-btn[data-view]').forEach"),'view navigation iterates element lists');
 assert(ui.includes('function isPairedChildDevice()')&&ui.includes("s.role==='child'"),'paired child-device role is recognized in UI');
 assert(ui.includes("Der Elternbereich ist auf diesem Kindergerät gesperrt."),'paired child device has an explicit administration guard');
+assert(html.includes('id="campaignMapBtn"')&&html.includes('id="campaignMapView"')&&html.includes('id="campaignMapBoard"'),'child campaign exposes the dynamic field-map view');
+assert(html.includes('css/campaign-map.css?v='+version)&&html.includes('js/campaign-map.js?v='+version),'campaign map CSS and module use the running app version');
 assert(html.includes('id="parentGuideOpenBtn"')&&html.includes('id="parentPedagogyOpenBtn"'),'parent area exposes guide and pedagogical documentation');
 assert(html.includes('id="parentGuidePdfBtn"')&&html.includes('id="parentPedagogyPdfBtn"'),'parent documentation exposes direct PDF actions');
 assert(html.includes('js/parent-docs.js?v=0.18.46'),'parent documentation module is loaded');
