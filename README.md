@@ -2,9 +2,18 @@
 
 Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konservativer Mastery-Logik und LRS-Unterstützung.
 
+## v0.18.51 – Unterschiedliche Festungsstufen
+
+- Vorposten, Wachturm, Grenzmauer, Bergzitadelle, Hauptfestung und Jahresfestung haben jetzt deutlich unterschiedliche Silhouetten und Größen
+- die vorhandenen Kampagnen-IDs werden rein visuell stärker genutzt; Lernlogik und Kampfrechnung bleiben unverändert
+- spätere Festungen wirken größer, massiver und atmosphärisch bedrohlicher
+- die Jahresfestung erhält eine eigene monumentale Stein-/Metalloptik statt nur eine skalierte Standardburg
+- die neue Progressionsdarstellung liegt technisch in `css/battle-fortress.css` statt weiterer Battle-Sonderregeln in `app.css`
+- iPhone-Abstufungen wurden separat optimiert
+
 ## Aktueller Stand
 
-App-Version: **v0.18.50**
+App-Version: **v0.18.51**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
