@@ -25,7 +25,7 @@ assert(!html.includes('id="moreView"'),'altes gemischtes Mehr-Menü ist entfernt
 assert(html.indexOf('id="setList"')>html.indexOf('id="parentView"'),'Lernsets liegen im Elternbereich');
 assert(html.indexOf('id="libraryView"')>html.indexOf('id="parentView"'),'Bibliothek liegt hinter Elternbereich');
 assert(html.indexOf('id="parentTestPlanBtn"')<html.indexOf('id="parentLibraryBtn"'),'Test planen steht vor Lernen ohne Test');
-assert(html.includes('<strong>Ohne Test lernen</strong>'),'Elternbereich benennt den no-test Lernweg eindeutig');
+assert(html.includes('<strong>Vokabeln vorbereiten</strong>')&&html.includes('<small>Ohne festen Testtermin</small>'),'Elternbereich benennt den no-test Lernweg eindeutig');
 
 assert(ui.includes("let appRole='child'"),'App startet im Kind-Modus');
 assert(ui.includes("PARENT_VIEW_IDS.has(id)&&!isParentMode()"),'Admin-Views sind im Kind-Modus gesperrt');
