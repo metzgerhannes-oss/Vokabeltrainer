@@ -124,6 +124,20 @@
 }
 .army-unit-card:hover{transform:translateY(-2px);border-color:#b99c5d}.army-unit-card.selected{border-color:#3994f2;box-shadow:0 0 0 2px rgba(42,140,255,.18),0 14px 38px rgba(0,0,0,.24)}
 .army-unit-card.locked{filter:saturate(.45);opacity:.68}
+.army-unit-card.stage-1 .army-unit-art{border-color:#8e7651}
+.army-unit-card.stage-2 .army-unit-art{border-color:#9caaaf;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 0 0 1px rgba(156,170,175,.12)}
+.army-unit-card.stage-3 .army-unit-art{border-color:#6c9dd0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 0 18px rgba(69,132,197,.12)}
+.army-unit-card.stage-4{border-color:rgba(216,184,107,.48);background:radial-gradient(circle at 85% 12%,rgba(210,167,70,.18),transparent 8rem),linear-gradient(160deg,#193149,#0a1a2b 72%)}
+.army-unit-card.stage-4 .army-unit-art{border-color:#c3a257;box-shadow:0 0 18px rgba(199,165,91,.18)}
+.army-unit-card.stage-5{border-color:#e1c571;box-shadow:0 0 0 1px rgba(225,197,113,.16),0 16px 38px rgba(0,0,0,.28);background:radial-gradient(circle at 84% 9%,rgba(235,198,103,.23),transparent 9rem),linear-gradient(160deg,#1a344d,#091928 72%)}
+.army-unit-card.stage-5::after{content:"✦";position:absolute;left:12px;top:10px;color:#efd88d;text-shadow:0 0 10px rgba(239,216,141,.45);font-size:.9rem}
+.army-unit-card.stage-5 .army-unit-art{border-color:#e0c36e;box-shadow:0 0 22px rgba(224,195,110,.24)}
+.army-unit-art.stage-0 img,.army-detail-art.stage-0 img{filter:grayscale(1) brightness(.55)}
+.army-unit-art.stage-1 img,.army-detail-art.stage-1 img{filter:saturate(.72) brightness(.82)}
+.army-unit-art.stage-2 img,.army-detail-art.stage-2 img{filter:saturate(.86) brightness(.9)}
+.army-unit-art.stage-3 img,.army-detail-art.stage-3 img{filter:saturate(1) brightness(.98)}
+.army-unit-art.stage-4 img,.army-detail-art.stage-4 img{filter:saturate(1.08) contrast(1.03) brightness(1.02)}
+.army-unit-art.stage-5 img,.army-detail-art.stage-5 img{filter:saturate(1.14) contrast(1.06) brightness(1.06)}
 .army-unit-level{position:absolute;right:12px;top:10px;font-size:.7rem;color:#d9c795}.army-unit-level b{font-size:.95rem}
 .army-unit-art{
   grid-row:1/4;position:relative;width:124px;aspect-ratio:16/9;overflow:hidden;border-radius:10px;
@@ -131,6 +145,11 @@
 }
 .army-unit-art img,.army-preview-art img,.army-detail-art img{position:absolute;width:300%;height:200%;max-width:none;display:block;opacity:0;transition:opacity .2s ease}
 .army-unit-art b,.army-preview-art b,.army-detail-art b{position:absolute;inset:0;display:grid;place-items:center;font-size:2rem;color:#e1cc93}
+.army-stage-badge{position:absolute;left:7px;right:7px;bottom:7px;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 7px;border:1px solid rgba(255,255,255,.18);border-radius:8px;background:rgba(5,15,25,.84);box-shadow:0 4px 12px rgba(0,0,0,.22);backdrop-filter:blur(4px)}
+.army-stage-badge>b{position:static!important;display:block!important;inset:auto!important;color:#f4e4b5!important;font-size:.66rem!important;line-height:1!important;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.army-stage-pips{display:flex;gap:3px;align-items:center}
+.army-stage-pips i{display:block;width:11px;height:4px;border-radius:99px;background:rgba(255,255,255,.18);box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.army-stage-pips i.filled{background:#d9c078;box-shadow:0 0 7px rgba(218,192,120,.28)}
 .army-unit-art.art-loaded img,.army-preview-art.art-loaded img,.army-detail-art.art-loaded img{opacity:1}
 .army-unit-art.art-loaded b,.army-preview-art.art-loaded b,.army-detail-art.art-loaded b{opacity:0}
 .unit-art-infantry img{left:0;top:0}.unit-art-archers img{left:-100%;top:0}.unit-art-cavalry img{left:-200%;top:0}
@@ -163,7 +182,7 @@
   .army-camp-strength{right:4%;top:45%;min-width:155px;padding:11px}.army-camp-strength>strong{font-size:1.55rem}.army-camp-campaign{left:4%;right:4%;bottom:6%;justify-content:center;overflow:hidden}
   .army-camp-banner{opacity:.45}.army-command-footer{margin:250px 9px 9px;grid-template-columns:1fr}.army-command-footer button{width:100%}
   .army-summary{margin-top:10px}.army-summary>div{padding:11px}.army-role-grid{grid-template-columns:1fr;gap:8px}.army-bonus-grid{grid-template-columns:1fr 1fr;gap:8px}.army-bonus{padding:10px;grid-template-columns:auto 1fr}.army-bonus-icon{width:36px;height:36px}
-  .army-unit-grid{grid-template-columns:1fr;gap:9px}.army-unit-card{min-height:175px;padding:13px}.army-unit-art{width:116px}.army-section-head{align-items:start;flex-direction:column}
+  .army-unit-grid{grid-template-columns:1fr;gap:9px}.army-unit-card{min-height:175px;padding:13px}.army-unit-art{width:116px}.army-stage-badge{left:5px;right:5px;bottom:5px;padding:4px 5px}.army-stage-badge>b{font-size:.58rem!important}.army-stage-pips{gap:2px}.army-stage-pips i{width:8px;height:3px}.army-section-head{align-items:start;flex-direction:column}
   .army-unit-preview{grid-template-columns:1fr;gap:12px}.army-preview-art{width:100%;max-width:300px}.army-preview-level{grid-column:1/-1}.army-preview-upgrade{grid-column:1/-1}
 }
 @media(prefers-reduced-motion:reduce){.army-unit-card,.army-camp-art,.army-unit-art img,.army-preview-art img,.army-detail-art img{transition:none}.army-unit-card:hover{transform:none}}
@@ -184,7 +203,12 @@ body.lrs-mode .army-unit-card,body.lrs-mode .army-command,body.lrs-mode .army-un
 }
 .army-detail-art img{position:absolute;width:300%;height:200%;max-width:none;display:block;opacity:0;transition:opacity .2s ease}
 .army-detail-art b{position:absolute;inset:0;display:grid;place-items:center;font-size:4rem;color:#e1cc93}
-.army-detail-level-badge{position:absolute;left:14px;bottom:14px;z-index:2;padding:.45rem .7rem;border:1px solid #d1b46e;border-radius:999px;background:rgba(7,18,31,.88);color:#f1dfaa;font-weight:900}
+.army-detail-level-badge{position:absolute;left:14px;bottom:14px;z-index:4;padding:.45rem .7rem;border:1px solid #d1b46e;border-radius:999px;background:rgba(7,18,31,.9);color:#f1dfaa;font-weight:900}
+.army-detail-art .army-stage-badge{left:14px;right:14px;bottom:58px;padding:7px 9px}
+.army-detail-art.stage-4,.army-detail-art.stage-5{border-width:2px}
+.army-detail-art.stage-4{border-color:#c9aa61;box-shadow:0 0 24px rgba(201,170,97,.14)}
+.army-detail-art.stage-5{border-color:#e2c873;box-shadow:0 0 30px rgba(226,200,115,.22)}
+.army-detail-hero.stage-5{border-color:rgba(226,200,115,.48);box-shadow:0 22px 60px rgba(0,0,0,.28),inset 0 0 42px rgba(226,200,115,.045)}
 .army-detail-copy{align-self:center}.army-detail-copy h3{font-family:Georgia,'Times New Roman',serif;font-size:clamp(2rem,4vw,3.4rem);line-height:1;margin:.2rem 0 .7rem;color:#fff}
 .army-detail-copy>p{color:#b8c8d6;line-height:1.5;margin:0 0 1rem}
 .army-detail-role{position:relative;margin:0 0 10px;padding:13px 62px 13px 14px;border:1px solid rgba(75,151,230,.34);border-radius:12px;background:rgba(10,38,65,.58)}
