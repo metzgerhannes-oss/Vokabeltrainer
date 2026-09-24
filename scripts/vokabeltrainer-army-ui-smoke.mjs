@@ -61,6 +61,12 @@ try{
   assert(await page.locator('#armyUnitGrid [data-army-unit="support"]').getAttribute('data-unit-stage')==='1','five learning days render support at stage one');
   assert((await page.locator('#armyUnitGrid [data-army-unit="support"] .army-unit-level').textContent())?.includes('Rekrut'),'stage one has a visible recruit label');
   assert((await page.locator('#armyViewTitle').textContent())?.includes('Meine Armee'),'army view has a clear title');
+  await page.click('#armyBattleBtn');
+  await page.waitForSelector('#battleView.active');
+  assert((await page.locator('#battleBackBtn').textContent())?.includes('Meine Armee'),'fortress opened from the army returns to the army instead of progress');
+  assert((await page.locator('#battleReturnBtn').textContent())?.includes('meiner Armee'),'bottom battle return action matches the army origin');
+  await page.click('#battleBackBtn');
+  await page.waitForSelector('#armyView.active');
   assert((await page.locator('#armyRankLabel').textContent())?.length>0,'rank is visible');
   assert((await page.locator('#armySummary').textContent())?.includes('Prüfungsabzeichen'),'army summary shows completed-test badges');
   assert(await page.locator('#armyRoleGrid .army-role-card').count()===6,'six distinct army roles are shown');
