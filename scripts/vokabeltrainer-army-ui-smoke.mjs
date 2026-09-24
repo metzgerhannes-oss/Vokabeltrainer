@@ -25,9 +25,21 @@ try{
     p.skills={recognition:4,listening:4,retrieval:4,spelling:4,context:4};p.independentSuccesses=8;p.activeSuccessDays=['2026-09-10','2026-09-14','2026-09-18'];p.activePracticeDays=[...p.activeSuccessDays];p.maxActiveGapDays=7;p.coldRecallDays=['2026-09-14','2026-09-18'];p.coldRecallSuccesses=2;p.intervalDays=14;p.errorProfile={meaning:0,retrieval:0,spelling:0,listening:0,context:0,grammar:0};refreshMastery(p);
     state.learners[0].streakDays=['2026-09-19','2026-09-20','2026-09-21','2026-09-22','2026-09-23'];
     state.learners[0].milestones[`hundred_english_${currentSchoolYear()}`]=new Date().toISOString();
+    const xpBefore=state.learners[0].xp;
+    const gradeRow={id:'grade_six',learnerId:'learner_demo',subject:'english',date:'2026-09-23',grade:'6',note:'',practiceTestId:null};
+    state.grades.push(gradeRow);
+    const lowReward=grantTestGradeReward(gradeRow);
+    const repeatedReward=grantTestGradeReward(gradeRow);
+    window.__testGradeRewardSmoke={xpBefore,lowReward,repeatedReward,xpAfter:state.learners[0].xp,topReward:testGradeReward('1'),badges:testBadgeCount('english')};
     rebuildWordIndexes();renderAll();showView('childProgressView');
   });
 
+  const rewardSmoke=await page.evaluate(()=>window.__testGradeRewardSmoke);
+  assert(rewardSmoke.lowReward?.totalXp===50,'grade 6 still receives the full 50 XP completion reward');
+  assert(rewardSmoke.topReward?.totalXp===60,'grade 1 differs only by a small 10 XP bonus');
+  assert(rewardSmoke.xpAfter-rewardSmoke.xpBefore===50,'test reward is added exactly once');
+  assert(rewardSmoke.repeatedReward===null,'saving the same rewarded grade cannot duplicate XP');
+  assert(rewardSmoke.badges===1,'every valid entered test grade creates one test badge');
   const before=await page.evaluate(()=>subjectProgress().pct);
   await page.click('#armyBtn');
   await page.waitForSelector('#armyView.active');
@@ -39,6 +51,7 @@ try{
   assert(await page.locator('#armyUnitGrid .army-unit-card').count()===6,'six unit cards are shown');
   assert((await page.locator('#armyViewTitle').textContent())?.includes('Meine Armee'),'army view has a clear title');
   assert((await page.locator('#armyRankLabel').textContent())?.length>0,'rank is visible');
+  assert((await page.locator('#armySummary').textContent())?.includes('Prüfungsabzeichen'),'army summary shows completed-test badges');
   assert(await page.locator('#armyBonusGrid .army-bonus').count()===4,'four presentation bonuses are shown');
   assert(await page.locator('#armyUnitGrid .army-unit-card.unlocked').count()>=4,'high learning progress visibly unlocks units');
   await page.click('[data-army-unit="support"]');
