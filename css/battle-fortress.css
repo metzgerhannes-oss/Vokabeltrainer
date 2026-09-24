@@ -360,6 +360,10 @@
 .battle-target-reveal-copy span{color:#d9e1e5;font-size:.72rem;font-weight:750}
 .battle-target-reveal-copy b{color:#f0d8a4;font-size:.65rem;font-weight:900}
 
+.battle-target-reveal:not([hidden]){visibility:visible;opacity:1}
+.battle-target-reveal:not([hidden]) .battle-target-reveal-light{opacity:1}
+.battle-target-reveal:not([hidden]) .battle-target-reveal-copy{opacity:1;transform:none}
+
 .battle-stage.fortress-reveal .battle-target-reveal{
   visibility:visible;
   opacity:1;
