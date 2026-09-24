@@ -15,7 +15,7 @@ Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Joh
 - eine neu geplante Testfestung wird beim ersten Öffnen der Schlacht einmalig als neues Ziel inszeniert
 - der Reveal zeigt Festungsname, Typ, Testdatum, Vokabelumfang und eingeplante Lerntage
 - derselbe Test wird nicht erneut inszeniert; der Zeitpunkt wird direkt an der bestehenden Testfestung gespeichert
-- reduzierte Bewegung wird respektiert und zeigt denselben Inhalt ohne Animation
+- reduzierte Bewegung wird respektiert und zeigt denselben Inhalt ohne unnötige Bewegung
 - Lernlogik, Tagesangriff, Schaden, XP und Mastery bleiben unverändert
 
 ## v0.18.52 – Unterschiedliche Festungsstufen
