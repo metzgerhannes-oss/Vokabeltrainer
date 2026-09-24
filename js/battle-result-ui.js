@@ -104,7 +104,7 @@
       lead.textContent=`${fortress?.name||entry.fortressName||'Die Testfestung'} ist gefallen. Jetzt wird sie bis zum Test am ${typeof formatDateShort==='function'?formatDateShort(testDate):testDate} gesichert.`;
       rewards.innerHTML=[
         rewardTile('★','+20 XP','Belohnung für die Eroberung'),
-        rewardTile('⚔',String(entry.damage||0),'Schaden des letzten Angriffs'),
+        rewardTile('⚔',String(entry.damage||0),entry.tacticalBonus?`Schaden · davon +${entry.tacticalBonus} Taktik`:'Schaden des letzten Angriffs'),
         rewardTile('◷',typeof formatDateShort==='function'?formatDateShort(testDate):testDate,'Testtermin'),
         rewardTile('♜',fortress?.scopeText||'Teststoff','Diese Festung steht für den Test')
       ].join('');
@@ -113,7 +113,7 @@
       title.textContent='Angriff gelungen!';
       lead.textContent=`${entry.damage||0} Schaden. Noch ${entry.defenseAfter||0} Verteidigung bis zur Eroberung.`;
       rewards.innerHTML=[
-        rewardTile('⚔',String(entry.damage||0),'heutiger Schaden'),
+        rewardTile('⚔',String(entry.damage||0),entry.tacticalBonus?`heutiger Schaden · +${entry.tacticalBonus} Taktik`:'heutiger Schaden'),
         rewardTile('♜',String(entry.defenseAfter||0),'Verteidigung übrig'),
         rewardTile('▰',`${entry.readiness||0}%`,'aktuelle Testbereitschaft'),
         rewardTile('◷',typeof formatDateShort==='function'?formatDateShort(testDate):testDate,'Testtermin')
