@@ -4,11 +4,20 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.39**
+App-Version: **v0.18.40**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.40 – Elternanleitung & pädagogische Dokumentation
+
+- im Elternbereich stehen **Anleitung für Eltern** und **Pädagogische Dokumentation** direkt zur Verfügung
+- beide Dokumente sind in der App lesbar und offline in der App-Shell enthalten
+- beide Dokumente können als echte PDF-Datei lokal exportiert werden
+- In-App-Ansicht und PDF verwenden dieselben Markdown-Quelldokumente, damit Inhalte nicht auseinanderlaufen
+- der PDF-Export arbeitet lokal im Browser ohne externen Dokumentendienst
+- ein WebKit-Test prüft beide Dokumente und die erzeugten PDF-Dateien
 
 ## v0.18.39 – Deep-Audit-Härtung
 
@@ -357,6 +366,7 @@ Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Joh
 - [FOCUSED_LEARNING_UI.md](FOCUSED_LEARNING_UI.md)
 - [FINAL_AUDIT.md](FINAL_AUDIT.md)
 - [docs/DEEP_AUDIT_v0.18.39.md](docs/DEEP_AUDIT_v0.18.39.md) – technisches Deep Audit vor v1.0
+- [docs/ELTERN_ANLEITUNG.md](docs/ELTERN_ANLEITUNG.md) – Bedienungsanleitung für Eltern
 - [docs/PAEDAGOGISCHE_DOKUMENTATION.md](docs/PAEDAGOGISCHE_DOKUMENTATION.md) – Ziel, Lernlogik und Grenzen für Eltern und Schulpädagogen
 - [QUIZ_ENGINE.md](QUIZ_ENGINE.md)
 

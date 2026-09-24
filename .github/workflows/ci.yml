@@ -123,6 +123,9 @@ jobs:
       - name: WebKit DOM injection safety
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-dom-safety-smoke.mjs
 
+      - name: WebKit parent documentation and PDF export
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-parent-docs-ui-smoke.mjs
+
       - name: WebKit correct-answer diagnostic
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-correct-answer-diagnostic.mjs
 
