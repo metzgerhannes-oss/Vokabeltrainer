@@ -11,7 +11,7 @@ const assert=(v,m)=>{if(!v)throw new Error('DOM safety smoke failed: '+m)};
 try{
   const response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'app loads');
-  await page.waitForFunction(()=>typeof state==='object'&&typeof renderAll==='function'&&typeof attachVocabularyToSet==='function');
+  await page.waitForFunction(()=>typeof state==='object'&&typeof renderAll==='function'&&typeof attachVocabularyToSet==='function'&&typeof openSetPairAudit==='function'&&typeof openWordEditor==='function');
   await page.evaluate(async()=>{await window.VTFamilySync?.bootstrap?.()});
 
   const seeded=await page.evaluate(()=>{
@@ -32,12 +32,12 @@ try{
   assert(await page.locator('#xss-profile,#xss-set,#xss-term,#xss-trans').count()===0,'parent overview escapes user content');
 
   await page.evaluate(()=>openSetPairAudit('xss_set'));
-  await page.waitForSelector('#modal[open]');
+  await page.waitForFunction(()=>document.querySelector('#modal')?.open===true);
   assert(await page.locator('#xss-profile,#xss-set,#xss-term,#xss-trans').count()===0,'pair review escapes OCR/user content');
   assert((await page.locator('#modal').textContent())?.includes('<img id="xss-term"'),'pair review shows literal term text');
 
   await page.evaluate(id=>{closeModal();openWordEditor(id)},seeded.vocabId);
-  await page.waitForSelector('#modal[open]');
+  await page.waitForFunction(()=>document.querySelector('#modal')?.open===true);
   assert(await page.locator('#xss-profile,#xss-set,#xss-term,#xss-trans').count()===0,'word editor escapes stored vocabulary content');
   assert((await page.locator('#wordTerm').inputValue()).includes('<img'),'word editor preserves literal value in input');
 
