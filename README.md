@@ -2,7 +2,15 @@
 
 Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konservativer Mastery-Logik und LRS-Unterstützung.
 
-## v0.18.51 – Unterschiedliche Festungsstufen
+## Aktueller Stand
+
+App-Version: **v0.18.52**
+
+Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
+
+Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.18.52 – Unterschiedliche Festungsstufen
 
 - Vorposten, Wachturm, Grenzmauer, Bergzitadelle, Hauptfestung und Jahresfestung haben jetzt deutlich unterschiedliche Silhouetten und Größen
 - die vorhandenen Kampagnen-IDs werden rein visuell stärker genutzt; Lernlogik und Kampfrechnung bleiben unverändert
@@ -10,14 +18,6 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 - die Jahresfestung erhält eine eigene monumentale Stein-/Metalloptik statt nur eine skalierte Standardburg
 - die neue Progressionsdarstellung liegt technisch in `css/battle-fortress.css` statt weiterer Battle-Sonderregeln in `app.css`
 - iPhone-Abstufungen wurden separat optimiert
-
-## Aktueller Stand
-
-App-Version: **v0.18.51**
-
-Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
-
-Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
 
 ## v0.18.49 – Hero Base Scene: Schlachtgrafik neu aufgebaut
 
