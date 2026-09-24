@@ -183,7 +183,7 @@ function runBattleAnimation(){
     $$('.battle-phase-strip [data-battle-phase]').forEach(el=>{const order={rally:1,advance:2,barrage:3,impact:4,result:5},here=el.dataset.battlePhase;el.classList.toggle('active',here===phase);el.classList.toggle('done',(order[here]||0)<(order[phase]||0));});
     if(message)$('#battleMessage').textContent=message;
   };
-  button.disabled=true;$('#battleFullscreenBtn').disabled=true;$('.battle-attack-choice').forEach(b=>b.disabled=true);
+  button.disabled=true;$('#battleFullscreenBtn').disabled=true;$$('.battle-attack-choice').forEach(b=>b.disabled=true);
   const impactTitle=stage.querySelector('[data-battle-impact-title]'),impactDamage=stage.querySelector('[data-battle-impact-damage]'),impactTactic=stage.querySelector('[data-battle-impact-tactic]');
   if(impactTitle)impactTitle.textContent=secureBefore?'GESICHERT!':battleAttackMode==='ram'?'TOR-TREFFER!':'TREFFER!';
   if(impactDamage)impactDamage.textContent=secureBefore?'Stellung gehalten':`${visualHit?.damage||0} Schaden`;
