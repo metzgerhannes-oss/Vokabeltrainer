@@ -49,6 +49,12 @@ try{
   assert(await page.locator('[data-army-hero-art]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'illustrated camp artwork loads');
   assert(await page.locator('#armyUnitGrid .army-unit-art.art-loaded').count()===6,'six illustrated unit artworks load');
   assert(await page.locator('#armyUnitGrid .army-unit-card').count()===6,'six unit cards are shown');
+  assert(await page.locator('#armyUnitGrid .army-stage-badge').count()===6,'every unit card shows its visible development stage');
+  assert(await page.locator('#armyUnitGrid .army-stage-pips i').count()===30,'all unit cards expose the full five-stage ladder');
+  assert(await page.locator('#armyUnitGrid [data-army-unit="infantry"]').getAttribute('data-unit-stage')==='5','mastered progress renders infantry at stage five');
+  assert((await page.locator('#armyUnitGrid [data-army-unit="infantry"] .army-unit-level').textContent())?.includes('Veteran'),'stage five has a visible veteran label');
+  assert(await page.locator('#armyUnitGrid [data-army-unit="support"]').getAttribute('data-unit-stage')==='1','five learning days render support at stage one');
+  assert((await page.locator('#armyUnitGrid [data-army-unit="support"] .army-unit-level').textContent())?.includes('Rekrut'),'stage one has a visible recruit label');
   assert((await page.locator('#armyViewTitle').textContent())?.includes('Meine Armee'),'army view has a clear title');
   assert((await page.locator('#armyRankLabel').textContent())?.length>0,'rank is visible');
   assert((await page.locator('#armySummary').textContent())?.includes('Prüfungsabzeichen'),'army summary shows completed-test badges');
@@ -63,6 +69,9 @@ try{
   assert((await page.locator('#armyUnitViewTitle').textContent())?.includes('Sanitäter'),'unit selection opens a dedicated detail view');
   assert((await page.locator('#armyUnitDetail .army-detail-role').textContent())?.includes('Versorgung'),'detail view explains the unit role');
   assert((await page.locator('#armyUnitDetail .army-detail-role').textContent())?.includes('/ 100'),'detail view exposes the role strength');
+  assert((await page.locator('#armyUnitDetail .army-detail-level-badge').textContent())?.includes('Stufe 1 · Rekrut'),'detail artwork shows the exact current stage');
+  assert(await page.locator('#armyUnitDetail .army-stage-pips i.filled').count()===1,'detail stage marker matches the current level');
+  assert((await page.locator('#armyUnitDetail .army-upgrade-step').nth(4).textContent())?.includes('Stufe 5 · Veteran'),'upgrade road names the fifth visual stage');
   assert(await page.locator('#armyUnitDetail .army-upgrade-step').count()===5,'detail view shows a five-step upgrade path');
   assert((await page.locator('#armyUnitDetail').textContent())?.includes('Nächste sichtbare Verbesserung'),'detail view names the next visible improvement');
   assert((await page.locator('#armyUnitDetail').textContent())?.includes('Lerne an 7 verschiedenen Tagen.'),'detail view states the exact next learning condition');
