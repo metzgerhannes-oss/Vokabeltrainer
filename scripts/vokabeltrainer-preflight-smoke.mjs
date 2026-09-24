@@ -52,7 +52,7 @@ assert(ui.includes('function isPairedChildDevice()')&&ui.includes("s.role==='chi
 assert(ui.includes("Der Elternbereich ist auf diesem Kindergerät gesperrt."),'paired child device has an explicit administration guard');
 assert(html.includes('id="parentGuideOpenBtn"')&&html.includes('id="parentPedagogyOpenBtn"'),'parent area exposes guide and pedagogical documentation');
 assert(html.includes('id="parentGuidePdfBtn"')&&html.includes('id="parentPedagogyPdfBtn"'),'parent documentation exposes direct PDF actions');
-assert(html.includes('js/parent-docs.js?v=0.18.45'),'parent documentation module is loaded');
+assert(html.includes('js/parent-docs.js?v=0.18.46'),'parent documentation module is loaded');
 assert(focusUi.includes("cardExtras=function(){return ''}"),'retrieval diagnostics are removed before answering');
 assert(['gradeText=function','gradeChoice=function','gradeGrammar=function'].every(x=>focusUi.includes(x)),'all evaluated feedback paths use focused overrides');
 assert(!/setTimeout\s*\(\s*\(\)\s*=>\s*nextStudy/.test(focusUi),'focused feedback never auto-advances');
