@@ -80,6 +80,38 @@ try{
   if(childLock.active==='learner_other')throw new Error('paired child device changed to another learner profile');
   if(!/fest zugeordnet/.test(childLock.aria))throw new Error('paired child profile is not labelled as fixed');
 
+  // Livetest: pairing and friendship challenge use local QR codes instead of
+  // forcing long links/codes to be copied manually.
+  const qrReady=await page.evaluate(()=>typeof window.qrcode==='function'&&typeof window.VTQr?.render==='function');
+  if(!qrReady)throw new Error('local QR generator did not load');
+
+  await page.evaluate(()=>{
+    closeModal();
+    const originalStatus=window.VTFamilySync.status;
+    const originalCreateChild=window.VTFamilySync.createChildInvite;
+    window.__qrRestoreChild=()=>{window.VTFamilySync.status=originalStatus;window.VTFamilySync.createChildInvite=originalCreateChild};
+    window.VTFamilySync.status=()=>({enabled:true,role:'parent',familyId:'family_smoke',lastSync:null,dirty:0,conflicts:0,busy:false});
+    window.VTFamilySync.createChildInvite=async()=>({ok:true,token:'b'.repeat(48),expires_at:new Date(Date.now()+900000).toISOString()});
+    window.openChildDeviceInvite?.();
+  });
+  await page.locator('#familyChildInviteBtn').click();
+  await page.waitForSelector('#familyChildQr svg');
+  if(!/QR-Code/.test(await page.locator('#familyChildInviteResult').textContent()||''))throw new Error('child pairing does not present QR as primary handoff');
+  await page.evaluate(()=>{window.__qrRestoreChild?.();delete window.__qrRestoreChild;closeModal()});
+
+  await page.evaluate(()=>{openDuel()});
+  await page.waitForSelector('#duelQr svg');
+  if(await page.locator('#duelShareBtn').count()!==1)throw new Error('duel QR lacks share fallback');
+  await page.evaluate(()=>{
+    closeModal();
+    const params=new URLSearchParams();params.set('duel',encodeDuel(duelPayload()));
+    history.replaceState(null,'',location.pathname+'#'+params.toString());
+    window.handleDuelInviteFromUrl?.();
+  });
+  await page.waitForSelector('#duelResult .duel-arena');
+  if(!/Unentschieden/.test(await page.locator('#duelResult').textContent()||''))throw new Error('duel QR deep link was not consumed');
+  await page.evaluate(()=>{closeModal();history.replaceState(null,'',location.pathname)});
+
   const fatal=[...pageErrors,...consoleErrors].filter(x=>/ReferenceError|TypeError|SyntaxError|Content Security Policy|InvalidStateError|DOMException/i.test(x));
   if(fatal.length)throw new Error(fatal.join(' | '));
   console.log('Vokabeltrainer WebKit iPhone smoke: passed');
