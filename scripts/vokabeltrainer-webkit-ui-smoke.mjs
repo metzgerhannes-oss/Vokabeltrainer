@@ -36,7 +36,14 @@ try{
   await page.locator('#familyChildJoinBtn').waitFor({state:'visible'});
   if(!/Verbindungslink oder Gerätecode/.test(await page.locator('#modalContent').textContent()||''))throw new Error('child invite input guidance missing');
 
-  const fatal=[...pageErrors,...consoleErrors].filter(x=>/ReferenceError|TypeError|SyntaxError|Content Security Policy/i.test(x));
+  // Regression: buttons inside an already-open dialog must remain tappable.
+  await page.locator('#familyChildJoinInput').fill('kein-gueltiger-link');
+  await page.locator('#familyChildJoinBtn').click();
+  if(!/Bitte den Verbindungslink/.test(await page.locator('#familyChildJoinError').textContent()||''))throw new Error('child connect button did not react');
+  await page.locator('#familySyncBackBtn').click();
+  await page.locator('#familySyncChildJoinChoiceBtn').waitFor({state:'visible'});
+
+  const fatal=[...pageErrors,...consoleErrors].filter(x=>/ReferenceError|TypeError|SyntaxError|Content Security Policy|InvalidStateError|DOMException/i.test(x));
   if(fatal.length)throw new Error(fatal.join(' | '));
   console.log('Vokabeltrainer WebKit iPhone smoke: passed');
 }finally{
