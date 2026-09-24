@@ -52,11 +52,17 @@ try{
   assert((await page.locator('#armyViewTitle').textContent())?.includes('Meine Armee'),'army view has a clear title');
   assert((await page.locator('#armyRankLabel').textContent())?.length>0,'rank is visible');
   assert((await page.locator('#armySummary').textContent())?.includes('Prüfungsabzeichen'),'army summary shows completed-test badges');
+  assert(await page.locator('#armyRoleGrid .army-role-card').count()===6,'six distinct army roles are shown');
+  const roleText=await page.locator('#armyRoleGrid').textContent();
+  for(const role of ['Front','Fernkampf','Mobilität','Belagerung','Schutz','Versorgung'])assert(roleText?.includes(role),'army role is visible: '+role);
+  assert(await page.locator('#armyRoleGrid progress').count()===6,'every role exposes a visible strength value');
   assert(await page.locator('#armyBonusGrid .army-bonus').count()===4,'four presentation bonuses are shown');
   assert(await page.locator('#armyUnitGrid .army-unit-card.unlocked').count()>=4,'high learning progress visibly unlocks units');
-  await page.click('[data-army-unit="support"]');
+  await page.click('#armyUnitGrid [data-army-unit="support"]');
   await page.waitForSelector('#armyUnitView.active');
   assert((await page.locator('#armyUnitViewTitle').textContent())?.includes('Sanitäter'),'unit selection opens a dedicated detail view');
+  assert((await page.locator('#armyUnitDetail .army-detail-role').textContent())?.includes('Versorgung'),'detail view explains the unit role');
+  assert((await page.locator('#armyUnitDetail .army-detail-role').textContent())?.includes('/ 100'),'detail view exposes the role strength');
   assert(await page.locator('#armyUnitDetail .army-upgrade-step').count()===5,'detail view shows a five-step upgrade path');
   assert((await page.locator('#armyUnitDetail').textContent())?.includes('Nächste sichtbare Verbesserung'),'detail view names the next visible improvement');
   assert((await page.locator('#armyUnitDetail').textContent())?.includes('Lerne an 7 verschiedenen Tagen.'),'detail view states the exact next learning condition');
