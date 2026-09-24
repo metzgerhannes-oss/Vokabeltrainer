@@ -2479,3 +2479,300 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
   .battle-stage.is-impact .battle-impact,
   .battle-stage.is-impact .battle-dust{animation:none!important}
 }
+
+
+/* Battle illustration pass 2d – boss, atmosphere and low-UI HUD */
+/* Der gegnerische Anführer wird Teil der Festungssilhouette statt freistehender CSS-Puppe. */
+.battle-boss-character{
+  right:29.5%;bottom:14.5%;
+  width:58px;height:96px;
+  filter:
+    drop-shadow(0 8px 5px rgba(14,18,20,.4))
+    drop-shadow(1px -1px 0 rgba(229,211,170,.06));
+  transform-origin:center bottom;
+}
+.battle-boss-character::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  left:-14px;right:-14px;bottom:-6px;
+  height:25px;
+  border-radius:50%;
+  background:radial-gradient(ellipse,rgba(29,29,25,.42),transparent 68%);
+  filter:blur(2px);
+}
+.battle-boss-character .boss-helmet{
+  left:9px;top:1px;width:39px;height:28px;
+  border:2px solid #1d252a;
+  border-radius:18px 18px 5px 5px;
+  background:
+    linear-gradient(105deg,rgba(255,255,255,.19),transparent 28% 68%,rgba(7,10,12,.34)),
+    linear-gradient(180deg,#515d62,#263138 70%,#161e23);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 2px 3px rgba(0,0,0,.25);
+}
+.battle-boss-character .boss-helmet::before{
+  content:"";
+  position:absolute;
+  left:7px;right:7px;bottom:-9px;height:10px;
+  border-radius:2px 2px 6px 6px;
+  background:linear-gradient(90deg,#22292d,#806e5b 45% 58%,#22292d);
+  z-index:-1;
+}
+.battle-boss-character .boss-helmet::after{
+  left:15px;top:-17px;
+  width:7px;height:20px;
+  border-radius:5px 5px 1px 1px;
+  background:linear-gradient(90deg,#631e1d,#a73a31 53%,#5e1d1b);
+  transform:rotate(-4deg);
+}
+.battle-boss-character .boss-body{
+  left:8px;top:29px;width:42px;height:58px;
+  border:2px solid #1f2528;
+  border-radius:10px 10px 5px 5px;
+  clip-path:polygon(9% 0,91% 0,100% 82%,77% 100%,23% 100%,0 82%);
+  background:
+    linear-gradient(90deg,rgba(15,17,19,.37),transparent 24% 70%,rgba(12,14,15,.4)),
+    linear-gradient(180deg,#4a3437,#33272b 60%,#211d20);
+  box-shadow:
+    inset 4px 0 0 rgba(224,199,167,.04),
+    inset -5px 0 0 rgba(0,0,0,.18);
+}
+.battle-boss-character .boss-body::before{
+  content:"";
+  position:absolute;
+  left:3px;right:3px;top:20px;height:5px;
+  background:linear-gradient(90deg,#1d2427,#886735 38% 62%,#1d2427);
+  box-shadow:0 10px 0 rgba(30,35,37,.4);
+}
+.battle-boss-character .boss-body::after{
+  content:"";
+  position:absolute;
+  left:9px;right:9px;bottom:-11px;height:13px;
+  background:linear-gradient(90deg,#242326 0 37%,transparent 38% 61%,#242326 62%);
+  z-index:-1;
+}
+.battle-boss-character .boss-shield{
+  left:-7px;top:42px;width:33px;height:44px;
+  border:2px solid #3d2b1a;
+  border-radius:16px 16px 18px 18px;
+  background:
+    radial-gradient(circle at 51% 48%,#a67b36 0 9%,#4b351b 10% 15%,transparent 16%),
+    linear-gradient(135deg,#9a7439,#5b3e24 60%,#352820);
+  box-shadow:
+    inset 3px 2px 0 rgba(228,195,130,.11),
+    inset -4px -3px 0 rgba(31,22,17,.2),
+    0 4px 4px rgba(0,0,0,.2);
+}
+.battle-boss-character.boss-capital .boss-body{
+  background:
+    linear-gradient(90deg,rgba(18,17,35,.35),transparent 24% 70%,rgba(19,13,26,.4)),
+    linear-gradient(180deg,#43395e,#302b47 58%,#211d31);
+}
+.battle-boss-character.boss-final{
+  transform:scale(1.08);
+}
+.battle-boss-character.boss-final .boss-helmet,
+.battle-boss-character.boss-final .boss-shield{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.17),
+    0 0 0 1px rgba(178,136,54,.52),
+    0 5px 5px rgba(0,0,0,.22);
+}
+.battle-boss-character.boss-final .boss-body{
+  background:
+    linear-gradient(90deg,rgba(34,16,14,.35),transparent 24% 70%,rgba(27,13,10,.38)),
+    linear-gradient(180deg,#6b3128,#51241f 62%,#331c19);
+}
+
+/* Idle und Treffer bleiben subtil und gewichtiger. */
+@keyframes bossIdle{
+  0%,100%{transform:translateY(0) rotate(.15deg)}
+  50%{transform:translateY(-2px) rotate(-.15deg)}
+}
+@keyframes bossHit{
+  0%,100%{transform:translateX(0) rotate(0)}
+  28%{transform:translateX(5px) rotate(1deg)}
+  66%{transform:translateX(-3px) rotate(-.6deg)}
+}
+@keyframes bossDefeat{
+  0%{transform:translateY(0) rotate(0);opacity:1}
+  42%{transform:translateY(4px) rotate(4deg);opacity:1}
+  100%{transform:translate(12px,54px) rotate(18deg);opacity:0}
+}
+
+/* HUD tritt visuell zurück: Information bleibt, die Landschaft ist Hauptmotiv. */
+.battle-phase-strip{
+  top:9px;
+  width:min(600px,72%);
+  padding:3px 5px;
+  gap:2px;
+  border-radius:11px;
+  background:rgba(15,27,38,.55);
+  border-color:rgba(235,230,211,.12);
+  box-shadow:0 4px 14px rgba(7,16,23,.09);
+  backdrop-filter:blur(5px);
+}
+.battle-phase-strip span{
+  padding:4px 3px;
+  font-size:.59rem;
+  color:rgba(226,232,240,.77);
+  border-radius:7px;
+  text-shadow:0 1px 2px rgba(0,0,0,.15);
+}
+.battle-phase-strip i{
+  width:14px;height:14px;
+  font-size:.53rem;
+  background:rgba(66,82,96,.66);
+  color:#e3e8eb;
+}
+.battle-phase-strip span.active{
+  background:rgba(190,137,51,.88);
+  color:#1f2428;
+  transform:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16);
+}
+.battle-phase-strip span.active i{
+  background:rgba(255,250,236,.88);
+  color:#704818;
+}
+.battle-phase-strip span.done{
+  background:rgba(52,91,58,.66);
+  color:#e0eadf;
+}
+.battle-phase-strip span.done i{
+  background:rgba(132,176,119,.9);
+  color:#17241a;
+}
+.battle-rank-badge{
+  left:10px;top:43px;
+  max-width:156px;
+  padding:5px 8px;
+  border-radius:8px;
+  background:rgba(18,29,39,.58);
+  border-color:rgba(237,229,201,.13);
+  box-shadow:0 4px 13px rgba(8,16,21,.08);
+  backdrop-filter:blur(4px);
+}
+.battle-rank-badge span{font-size:.72rem;font-weight:850}
+.battle-rank-badge small{font-size:.54rem;color:rgba(226,232,240,.76)}
+.battle-fortress-state-badge{
+  right:10px;bottom:10px;top:auto;
+  padding:4px 7px;
+  border-radius:8px;
+  min-width:0;
+  background:rgba(18,29,39,.54);
+  border-color:rgba(237,229,201,.11);
+  box-shadow:0 4px 12px rgba(8,16,21,.07);
+  backdrop-filter:blur(4px);
+}
+.battle-fortress-state-badge small{
+  font-size:.48rem;
+  color:rgba(214,224,230,.7);
+}
+.battle-fortress-state-badge strong{font-size:.64rem}
+.battle-stage.fortress-visual-critical .battle-fortress-state-badge{
+  background:rgba(73,35,27,.63);
+  border-color:rgba(230,169,139,.2);
+}
+.battle-stage.fortress-visual-captured .battle-fortress-state-badge{
+  background:rgba(40,63,39,.65);
+  border-color:rgba(219,192,105,.21);
+}
+
+/* Spezialangriff: keine Neon-Ringe; stattdessen Lichtstrahlen über der Formation. */
+.battle-special-flare{
+  left:23%;top:15%;
+  width:250px;height:190px;
+  filter:drop-shadow(0 0 10px rgba(227,191,105,.12));
+}
+.battle-special-flare i{
+  border:0;
+  border-radius:0;
+}
+.battle-special-flare i:nth-child(1){
+  inset:8% 34% 0;
+  background:linear-gradient(180deg,rgba(255,239,189,.5),rgba(239,194,90,.03) 72%,transparent);
+  clip-path:polygon(42% 0,58% 0,100% 100%,0 100%);
+  filter:blur(1px);
+}
+.battle-special-flare i:nth-child(2){
+  inset:4% 14% 4%;
+  background:
+    linear-gradient(78deg,transparent 0 41%,rgba(255,244,205,.28) 42% 46%,transparent 47%),
+    linear-gradient(104deg,transparent 0 52%,rgba(231,194,113,.25) 53% 57%,transparent 58%);
+  transform:rotate(-3deg);
+}
+.battle-special-flare i:nth-child(3){
+  inset:42% 18% 8%;
+  background:radial-gradient(ellipse at 50% 90%,rgba(231,191,97,.28),transparent 66%);
+  filter:blur(4px);
+}
+.battle-stage.subject-latin.attack-special .battle-special-flare i:nth-child(1){
+  background:linear-gradient(180deg,rgba(241,202,155,.43),rgba(166,69,54,.035) 72%,transparent);
+}
+@keyframes specialFlare{
+  0%{transform:translateY(12px) scale(.86);opacity:0}
+  28%{opacity:.85}
+  100%{transform:translateY(-7px) scale(1.08);opacity:0}
+}
+@keyframes specialPulseLong{
+  0%,100%{filter:brightness(.93);transform:translateY(4px) scale(.94);opacity:.58}
+  50%{filter:brightness(1.18);transform:translateY(-3px) scale(1.04);opacity:1}
+}
+
+/* Die Schockwelle wird als kurze Staub-/Lichtkante statt Kreis gezeichnet. */
+.battle-shockwave{
+  right:16%;bottom:20%;
+  width:170px;height:72px;
+  border:0;
+  border-radius:50%;
+  background:
+    radial-gradient(ellipse at 50% 86%,transparent 0 43%,rgba(238,222,185,.35) 45% 47%,transparent 49%),
+    radial-gradient(ellipse at 50% 90%,rgba(179,160,124,.16),transparent 62%);
+  filter:blur(.5px);
+}
+@keyframes battleShockwave{
+  0%{transform:translateY(14px) scale(.55);opacity:0}
+  22%{opacity:.72}
+  100%{transform:translateY(-13px) scale(1.45);opacity:0}
+}
+
+/* Frontale Fokussierung: Gegnerseite etwas kontrastreicher, Mittelfeld frei lesbar. */
+.battle-stage::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:3;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg,rgba(18,27,31,.055) 0%,transparent 27% 67%,rgba(18,25,29,.075) 100%),
+    radial-gradient(ellipse at 72% 52%,rgba(232,212,166,.055),transparent 27%);
+}
+.battle-army,.battle-fortress,.battle-boss-character{z-index:7}
+.battle-fortress{z-index:6}
+.battle-boss-character{z-index:8}
+
+@media(max-width:720px){
+  .battle-phase-strip{width:calc(100% - 16px);top:7px}
+  .battle-phase-strip span{font-size:.52rem;padding:3px 2px}
+  .battle-rank-badge{left:7px;top:39px;padding:4px 6px}
+  .battle-rank-badge span{font-size:.65rem}.battle-rank-badge small{font-size:.49rem}
+  .battle-fortress-state-badge{right:6px;bottom:6px}
+  .battle-boss-character{right:31%;bottom:13%;transform:scale(.86);transform-origin:center bottom}
+  .battle-boss-character.boss-final{transform:scale(.93)}
+  .battle-special-flare{left:19%;top:14%;width:190px;height:150px}
+  .battle-shockwave{right:12%;bottom:18%;width:125px;height:58px}
+}
+@media(max-width:390px){
+  .battle-phase-strip span{font-size:0}
+  .battle-phase-strip span.active{font-size:.49rem}
+  .battle-boss-character{right:32%;transform:scale(.8)}
+  .battle-boss-character.boss-final{transform:scale(.87)}
+}
+@media(prefers-reduced-motion:reduce){
+  .battle-boss-character,
+  .battle-special-flare,
+  .battle-shockwave{animation:none!important}
+}
