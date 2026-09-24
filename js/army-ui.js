@@ -68,6 +68,7 @@
     const stablePct=p.total?Math.round((p.stable/p.total)*100):0;
     return {
       p,l,learningDays,currentStreak,history,captured,mission,stablePct,
+      testBadges:typeof testBadgeCount==='function'?testBadgeCount():0,
       strength:armyStrength(),
       rank:rankFor(p.pct,state.activeSubject),
       gear:gearLabelFor(p.pct,state.activeSubject),
@@ -262,7 +263,7 @@
         <div><small>Armeestärke</small><strong>${safe(c.strength)}</strong></div>
         <div><small>Moral</small><strong>${safe(morale.label)}</strong></div>
         <div><small>Testfestungen</small><strong>${safe(c.captured.length)}</strong></div>
-        <div><small>Ausrüstung</small><strong>${safe(c.gear)}</strong></div>
+        <div><small>Prüfungsabzeichen</small><strong>${safe(c.testBadges)}</strong></div>
       `;
     }
     const bonus=document.querySelector('#armyBonusGrid');
