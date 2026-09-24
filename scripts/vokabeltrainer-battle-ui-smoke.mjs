@@ -31,17 +31,26 @@ try{
   assert((await page.locator('#attackBtn').textContent())?.includes('Festung'),'campaign card points to the persistent test fortress');
   await page.click('#attackBtn');
   await page.waitForSelector('#battleView.active');
-  await page.waitForFunction(()=>{
-    const f=currentTestFortress(),stage=document.querySelector('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
-    if(!f?.revealedAt||!stage?.classList.contains('fortress-reveal')||!overlay)return false;
-    const style=getComputedStyle(overlay);
-    return style.visibility==='visible'&&Number(style.opacity)>.9;
-  });
+  await page.waitForTimeout(120);
   const firstFortressReveal=await page.evaluate(()=>{
-    const f=currentTestFortress(),stage=document.querySelector('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
-    return {seenAt:f?.revealedAt||'',key:f?.key||'',revealKey:stage?.dataset.revealKey||'',copy:overlay?.textContent||''};
+    const f=currentTestFortress(),stage=document.querySelector('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]'),style=overlay?getComputedStyle(overlay):null;
+    return {
+      seenAt:f?.revealedAt||'',
+      key:f?.key||'',
+      revealKey:stage?.dataset.revealKey||'',
+      active:!!stage?.classList.contains('fortress-reveal'),
+      overlay:!!overlay,
+      visibility:style?.visibility||'',
+      opacity:Number(style?.opacity||0),
+      reduced:matchMedia('(prefers-reduced-motion: reduce)').matches,
+      copy:overlay?.textContent||'',
+      pageErrors:[...errors]
+    };
   });
-  assert(firstFortressReveal.seenAt&&firstFortressReveal.key===firstFortressReveal.revealKey,'new test fortress receives one visible discovery reveal');
+  assert(firstFortressReveal.seenAt,'new test fortress records the first reveal: '+JSON.stringify(firstFortressReveal));
+  assert(firstFortressReveal.key===firstFortressReveal.revealKey,'fortress reveal is tied to the current test target: '+JSON.stringify(firstFortressReveal));
+  assert(firstFortressReveal.active&&firstFortressReveal.overlay,'new test fortress activates its reveal layer: '+JSON.stringify(firstFortressReveal));
+  assert(firstFortressReveal.visibility==='visible'&&firstFortressReveal.opacity>.9,'fortress reveal is visibly rendered: '+JSON.stringify(firstFortressReveal));
   assert(firstFortressReveal.copy.includes('NEUES TESTZIEL ENTDECKT')&&firstFortressReveal.copy.includes('Vokabel'),'fortress reveal explains the new target and learning scope');
   assert(await page.locator('#battleAttackBtn').isDisabled(),'only the attack action is locked before the daily goal');
   await page.click('#battleReturnBtn');
