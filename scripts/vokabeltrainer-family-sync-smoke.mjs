@@ -27,8 +27,11 @@ assert(sync.includes("vt_create_child_invite")&&sync.includes("vt_claim_child_in
 assert(sync.includes('function documentRank(key)')&&sync.includes("k==='shared'?0:k.endsWith('/setup')?1:k.endsWith('/progress')?2:3"),'sync has one canonical shared → setup → progress document order');
 assert((sync.match(/documentRank\(a\.key\)-documentRank\(b\.key\)/g)||[]).length>=2,'initial child claim and recurring sync both load shared vocabulary before profile documents');
 assert(ui.includes('Bestehender Familie beitreten')&&ui.includes('VTFamilySync.joinParent(id,pin'), 'parent UI can join an existing family instead of creating a duplicate family');
+assert(sync.includes('function normalizeFamilyId(value)')&&sync.includes('function formatFamilyId(value)'), 'family IDs accept compact human-readable codes while retaining the canonical backend ID');
+assert(ui.includes('placeholder="8DEC-1826-8742"')&&ui.includes("VTFamilySync.normalizeFamilyId($('#familyJoinId').value)"), 'parent join accepts the short formatted family code');
 assert(ui.includes('Familie wechseln')&&ui.includes('VTFamilySync.disconnectLocal()'), 'parent UI can leave a wrong local family connection and switch families without deleting learning data');
 assert(pairing.includes("Verbindungslink erstellen")&&pairing.includes('navigator.share'),'parent UI hands the invite off as a shareable link instead of exposing the raw token');
+assert(pairing.includes("params.set('family',family)")&&pairing.includes('keine Familien-ID')&&ui.includes('window.openChildDeviceInvite||openChildDeviceInviteFallback'), 'child invite carries family context and the UI routes child pairing through the guided invite flow');
 assert(pairing.includes("claimChildInvite(token")&&pairing.includes("Dieses Gerät verbinden"),'child device can consume the invite link in one guided step');
 assert(pairing.includes("location.hash")&&!pairing.includes("searchParams.set('childInvite'"),'invite secret is transported in the URL fragment, not the query string');
 assert(app.includes('handleChildInviteFromUrl'),'bootstrap detects child-device invite links');
