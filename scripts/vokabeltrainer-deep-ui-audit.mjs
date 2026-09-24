@@ -85,7 +85,7 @@ try{
         localStorage.removeItem('vokabeltrainer_family_sync_v1');appRole='child';applyRoleUi();enterParentMode('libraryView');renderAll();
       });
       await page.waitForSelector('#libraryView.active');
-      await page.waitForSelector('.library-audio-btn');
+      await page.waitForFunction(()=>[...document.querySelectorAll('.library-audio-btn')].some(el=>{const r=el.getBoundingClientRect(),st=getComputedStyle(el);return st.display!=='none'&&st.visibility!=='hidden'&&r.width>0&&r.height>0}));
       await targetSize(page,'.library-audio-btn','library audio');
       const audioLabels=await page.locator('.library-audio-btn').evaluateAll(els=>els.every(el=>(el.getAttribute('aria-label')||'').trim().length>0));
       assert(audioLabels,'library audio buttons have accessible labels');
