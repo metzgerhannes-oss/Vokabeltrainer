@@ -5,12 +5,14 @@
     return new URLSearchParams(String(location.hash||'').replace(/^#/,''));
   }
 
-  function childInviteLink(token,profileName=''){
+  function childInviteLink(token,profileName='',familyId=''){
     const url=new URL(location.href);
     url.hash='';
     const params=new URLSearchParams();
     params.set('childInvite',String(token||''));
     if(profileName)params.set('childName',String(profileName).slice(0,80));
+    const family=window.VTFamilySync?.normalizeFamilyId?.(familyId)||'';
+    if(family)params.set('family',family);
     url.hash=params.toString();
     return url.toString();
   }
@@ -56,6 +58,7 @@
     if(!params.has('childInvite'))return;
     params.delete('childInvite');
     params.delete('childName');
+    params.delete('family');
     history.replaceState(null,'',location.pathname+location.search+(params.toString()?'#'+params.toString():''));
   }
 
@@ -66,6 +69,8 @@
     if(!token)return false;
 
     const profileName=String(params.get('childName')||'Kind').trim().slice(0,80)||'Kind';
+    const inviteFamily=VTFamilySync.normalizeFamilyId?.(params.get('family'))||'';
+    const inviteFamilyCode=VTFamilySync.formatFamilyId?.(inviteFamily)||'';
     const current=VTFamilySync.status();
 
     if(current.enabled){
@@ -74,7 +79,7 @@
       return true;
     }
 
-    modal(`<div class="eyebrow">Kindergerät</div><h2>${esc(profileName)} verbinden</h2><p>Dieses Gerät wird dem Profil <strong>${esc(profileName)}</strong> zugeordnet. Danach öffnet sich direkt die Kinderansicht.</p><div id="claimChildInviteResult" class="notice subtle">Der Verbindungslink ist einmalig und nur 15 Minuten gültig.</div><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="claimChildInviteBtn" class="primary">Dieses Gerät verbinden</button></div>`);
+    modal(`<div class="eyebrow">Kindergerät</div><h2>${esc(profileName)} verbinden</h2><p>Dieses Gerät wird dem Profil <strong>${esc(profileName)}</strong> zugeordnet. ${inviteFamilyCode?`Familie <strong>${esc(inviteFamilyCode)}</strong> wird automatisch übernommen. `:''}Danach öffnet sich direkt die Kinderansicht.</p><div id="claimChildInviteResult" class="notice subtle">Keine Familien-ID und keine Familien-PIN eingeben: Der Verbindungslink übernimmt die Zuordnung automatisch. Er ist einmalig und nur 15 Minuten gültig.</div><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="claimChildInviteBtn" class="primary">Dieses Gerät verbinden</button></div>`);
 
     $('#claimChildInviteBtn').onclick=async()=>{
       const btn=$('#claimChildInviteBtn');
@@ -119,9 +124,10 @@
       btn.textContent='Link wird erstellt …';
       try{
         const r=await VTFamilySync.createChildInvite(profileId);
-        const link=childInviteLink(r.token,profileName);
+        const family=VTFamilySync.status();
+        const link=childInviteLink(r.token,profileName,family.familyId);
         out.className='notice good';
-        out.innerHTML=`<strong>Link für ${esc(profileName)} ist bereit.</strong><br>Öffne ihn innerhalb von 15 Minuten auf dem Kindergerät.<div class="row gap wrap" style="margin-top:.75rem"><button type="button" id="familyChildShareBtn" class="primary">Link teilen</button><button type="button" id="familyChildCopyBtn" class="secondary">Link kopieren</button></div><small>Der technische Sicherheitsschlüssel bleibt verborgen und wird automatisch übergeben.</small>`;
+        out.innerHTML=`<strong>Link für ${esc(profileName)} ist bereit.</strong><br>Familie ${esc(family.familyCode||family.familyId)} und Profil werden automatisch mitgegeben. Auf dem Kindergerät muss keine Familien-ID und keine PIN eingegeben werden. Öffne den Link innerhalb von 15 Minuten.<div class="row gap wrap" style="margin-top:.75rem"><button type="button" id="familyChildShareBtn" class="primary">Link teilen</button><button type="button" id="familyChildCopyBtn" class="secondary">Link kopieren</button></div><small>Der technische Sicherheitsschlüssel bleibt verborgen und wird automatisch übergeben.</small>`;
         $('#familyChildShareBtn').onclick=()=>shareChildInviteLink(link,profileName);
         $('#familyChildCopyBtn').onclick=()=>copyChildInviteLink(link);
         btn.textContent='Neuen Link erstellen';
