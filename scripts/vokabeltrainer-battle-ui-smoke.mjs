@@ -287,8 +287,29 @@ try{
     return result;
   });
   assert(Object.values(reducedRemainingFx).every(value=>value==='none'),'reduced-motion hides the new volley cavalry and special motion layers');
-  assert(await page.locator('#battleStage [data-battle-scene-art]').getAttribute('data-battle-asset')==='dedicated','battle image comes from dedicated battlefield asset');
-  assert((await page.evaluate(()=>window.VTBattleArt?.source))==='dedicated-battlefield','dedicated battlefield loader is active');
+  assert(await page.locator('#battleStage [data-battle-scene-art]').getAttribute('data-battle-asset')==='dedicated','battle image resource remains available as a fallback texture');
+  assert((await page.evaluate(()=>window.VTBattleArt?.source))==='dedicated-battlefield','dedicated battlefield loader stays available');
+  const heroScene=await page.evaluate(()=>{
+    const stage=document.querySelector('#battleStage');
+    const art=document.querySelector('#battleStage .battle-art-background');
+    const sky=document.querySelector('#battleStage .battle-sky');
+    const dock=document.querySelector('.battle-action-dock');
+    const stageRect=stage.getBoundingClientRect(),dockRect=dock.getBoundingClientRect();
+    return {
+      artOpacity:Number(getComputedStyle(art).opacity),
+      skyOpacity:Number(getComputedStyle(sky).opacity),
+      dockPosition:getComputedStyle(dock).position,
+      dockTop:dockRect.top,
+      stageBottom:stageRect.bottom,
+      formationCount:document.querySelectorAll('#battleStage .battle-formation .battle-unit').length,
+      hasPath:!!document.querySelector('#battleStage .battle-ground-path'),
+      hasVignette:!!document.querySelector('#battleStage .battle-scene-vignette')
+    };
+  });
+  assert(heroScene.artOpacity<=.2&&heroScene.skyOpacity===1,'legacy realistic art is demoted to a subtle texture behind the illustrated fantasy base');
+  assert(heroScene.dockPosition==='static'&&heroScene.dockTop>=heroScene.stageBottom-2,'primary action sits below the battle artwork instead of covering it');
+  assert(heroScene.formationCount>=6,'army is grouped into a dedicated formation instead of a flat sticker row');
+  assert(heroScene.hasPath&&heroScene.hasVignette,'hero scene adds a readable attack path and cinematic vignette');
   assert(await page.locator('#battleStage .battle-unit').count()>=6,'animated army contains multiple units');
   assert(await page.locator('#battleStage .unit-archer').count()>=1,'progress unlocks archer units');
   assert(await page.locator('#battleStage .unit-cavalry').count()>=1,'high progress unlocks cavalry units');
