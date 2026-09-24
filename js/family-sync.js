@@ -30,6 +30,16 @@
   function bytesHex(size=24){const a=new Uint8Array(size);crypto.getRandomValues(a);return Array.from(a,x=>x.toString(16).padStart(2,'0')).join('')}
   function randomId(prefix){return prefix+'_'+bytesHex(10)}
   function randomFamilyId(){return 'family_'+bytesHex(6)}
+  function normalizeFamilyId(value){
+    const raw=String(value||'').trim().toLowerCase();if(!raw)return '';
+    if(/^family_[a-z0-9]{6,40}$/.test(raw))return raw;
+    const compact=raw.replace(/^family[-_\s]*/,'').replace(/[^a-z0-9]/g,'');
+    return /^[a-z0-9]{6,40}$/.test(compact)?'family_'+compact:'';
+  }
+  function formatFamilyId(value){
+    const id=normalizeFamilyId(value),compact=id.replace(/^family_/,'');
+    return compact?(compact.toUpperCase().match(/.{1,4}/g)||[]).join('-'):'';
+  }
   async function sha256Hex(text){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text));return Array.from(new Uint8Array(b),x=>x.toString(16).padStart(2,'0')).join('')}
   function learnerSetup(l){const out={};PROFILE_SETUP_FIELDS.forEach(k=>{if(l?.[k]!==undefined)out[k]=clone(l[k])});return out}
   function learnerProgress(l){const out={id:l?.id||''};PROFILE_PROGRESS_FIELDS.forEach(k=>{if(l?.[k]!==undefined)out[k]=clone(l[k])});return out}
@@ -179,7 +189,7 @@
 
   async function joinParent(familyId,pin,label='Eltern-Gerät'){
     if(!crypto?.subtle)throw new Error('Für die Synchronisierung ist HTTPS erforderlich.');
-    const id=String(familyId||'').trim().toLowerCase();if(!id)throw new Error('Familien-ID fehlt.');
+    const id=normalizeFamilyId(familyId);if(!id)throw new Error('Familien-ID fehlt oder ist ungültig.');
     if(String(pin||'').length<6)throw new Error('Familien-PIN fehlt.');
     const deviceId=randomId('device'),deviceSecret=bytesHex(32),familySecretHash=await sha256Hex(id+'|'+String(pin));
     const result=await rpc('vt_join_parent',{p_family_id:id,p_family_secret_hash:familySecretHash,p_device_id:deviceId,p_device_secret:deviceSecret,p_label:String(label||'Eltern-Gerät').slice(0,120)});
@@ -284,7 +294,7 @@
   }
   function status(){
     const cfg=loadConfig();return {
-      enabled:cfg.enabled,familyId:cfg.familyId,role:cfg.role,profileId:cfg.profileId,
+      enabled:cfg.enabled,familyId:cfg.familyId,familyCode:formatFamilyId(cfg.familyId),role:cfg.role,profileId:cfg.profileId,
       lastSync:cfg.lastSync,dirty:(cfg.dirtyKeys||[]).length,conflicts:Object.keys(cfg.conflicts||{}).length,busy:runtime.busy
     };
   }
@@ -295,5 +305,5 @@
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncNow(false).catch(e=>console.warn('Family sync resume',e))});
   }
 
-  window.VTFamilySync={serializeDocuments,status,createFamily,joinParent,createChildInvite,claimChildInvite,syncNow,replaceCloudWithCurrent,markLocalChange,listDevices,revokeDevice,disconnectLocal,bootstrap};
+  window.VTFamilySync={serializeDocuments,status,normalizeFamilyId,formatFamilyId,createFamily,joinParent,createChildInvite,claimChildInvite,syncNow,replaceCloudWithCurrent,markLocalChange,listDevices,revokeDevice,disconnectLocal,bootstrap};
 })();
