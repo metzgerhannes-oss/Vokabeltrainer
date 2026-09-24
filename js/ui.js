@@ -126,6 +126,11 @@ function selectBattleAttack(mode){
   if($('#battleAttackBtn'))$('#battleAttackBtn').textContent=`${a.short}: Angriff starten`;
 }
 let battleFortressRevealTimer=null;
+let battleFortressRevealKey='';
+let battleFortressRevealUntil=0;
+function battleFortressRevealActive(f=currentTestFortress()){
+  return !!f&&battleFortressRevealKey===f.key&&Date.now()<battleFortressRevealUntil;
+}
 function battleFortressRevealMarkup(f){
   if(!f)return '';
   const days=Math.max(1,Number(f.plannedAttackDays)||1),words=Math.max(0,Number(f.wordCount)||0);
@@ -134,23 +139,24 @@ function battleFortressRevealMarkup(f){
 function startBattleFortressReveal(f=currentTestFortress()){
   const stage=$('#battleStage');if(!stage||!f||f.revealedAt)return false;
   if(battleFortressRevealTimer){clearTimeout(battleFortressRevealTimer);battleFortressRevealTimer=null}
-  stage.dataset.revealKey=f.key||'';
-  stage.classList.remove('fortress-reveal');
-  void stage.offsetWidth;
-  stage.classList.add('fortress-reveal');
+  const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,duration=reduced?1400:2900;
+  battleFortressRevealKey=f.key||'';
+  battleFortressRevealUntil=Date.now()+duration;
   f.revealedAt=new Date().toISOString();
   persistOnly();
-  const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  renderBattleView();
+  const live=$('#battleStage');if(live)live.dataset.revealKey=f.key||'';
   battleFortressRevealTimer=setTimeout(()=>{
-    stage.classList.remove('fortress-reveal');
+    if(battleFortressRevealKey===f.key){battleFortressRevealKey='';battleFortressRevealUntil=0}
+    $('#battleStage')?.classList.remove('fortress-reveal');
     battleFortressRevealTimer=null;
-  },reduced?1400:2900);
+  },duration);
   return true;
 }
 
 function renderBattleView(){
   const stage=$('#battleStage');if(!stage)return;
-  const p=subjectProgress(),f=currentTestFortress(),tickets=battleTickets(),count=Math.min(18,Math.max(7,soldiersFor(p.pct)+4)),sea=seasonInfo();
+  const p=subjectProgress(),f=currentTestFortress(),tickets=battleTickets(),count=Math.min(18,Math.max(7,soldiersFor(p.pct)+4)),sea=seasonInfo(),revealActive=battleFortressRevealActive(f);
   const campaign=subjectCampaign(state.activeSubject),rank=rankFor(p.pct,state.activeSubject),gear=gearLabelFor(p.pct,state.activeSubject),secure=!!f?.capturedAt,boss=!secure?battleBossFor(f):null,story=battleStoryFor(f),attack=battleAttackMeta(battleAttackMode);
   const damagePct=f?clamp(Math.round((1-(Number(f.defense)||0)/Math.max(1,Number(f.maxDefense)||1))*100),0,100):0,fortressVisual=battleFortressVisualState(f);
   const usedToday=!!battleDayState(state.activeSubject,false)?.actionUsed;
@@ -172,7 +178,7 @@ function renderBattleView(){
   if($('#battleActionHint'))$('#battleActionHint').textContent=!f?'Plane zuerst einen Test.':tickets?(secure?'Halte die eroberte Festung bis zum Test sicher.':`${attack.label} wählen und die Festung weiter schwächen.`):usedToday?'Morgen gibt es nach dem nächsten Tagesziel wieder eine Aktion.':'Schließe zuerst dein Tagesziel ab.';
   $('#battleMessage').className='battle-message';$('#battleMessage').textContent=!f?'Kein Test – keine Belagerung.':tickets?(secure?'Sicherung ist bereit.':`${attack.label} ist bereit. Erwarteter Schaden: ${testFortressDamage(f,state.activeSubject,battleAttackMode).damage}.`):secure?'Festung bleibt erobert.':'Jeder abgeschlossene Lerntag bringt die Belagerung voran.';
   if(!secure&&f)renderBattleAttackChoices(p.pct);else if($('#battleAttackChoices'))$('#battleAttackChoices').innerHTML='';
-  stage.className=`battle-stage season-${sea.class} subject-${state.activeSubject} gear-${gearTier(p.pct)} fortress-stage-${f?.id||'none'} fortress-visual-${fortressVisual.id} ${boss?'boss-stage':''} ${secure?'fortress-secured':''}`;
+  stage.className=`battle-stage season-${sea.class} subject-${state.activeSubject} gear-${gearTier(p.pct)} fortress-stage-${f?.id||'none'} fortress-visual-${fortressVisual.id} ${boss?'boss-stage':''} ${secure?'fortress-secured':''} ${revealActive?'fortress-reveal':''}`;
   stage.dataset.damage=damagePct>=66?'high':damagePct>=33?'mid':damagePct>0?'low':'none';
   stage.dataset.damagePercent=String(damagePct);
   stage.dataset.fortressState=fortressVisual.id;
