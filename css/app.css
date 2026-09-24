@@ -1413,3 +1413,336 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
   .parent-doc-reader{max-height:64vh;padding-right:4px}
   .parent-doc-card .row button{flex:1;min-width:130px}
 }
+
+
+/* v0.18.49 – Hero Base Scene: einheitliche Fantasy-Bühne statt UI-Collage */
+.battle-stage{
+  --hero-stone:#6f7680;
+  --hero-stone-dark:#3c4650;
+  --hero-stone-light:#9ba3aa;
+  --hero-earth:#766044;
+  --hero-grass:#66784d;
+  background:
+    linear-gradient(180deg,#6f95b1 0%,#a9bfd0 43%,#74816a 44%,#586744 100%);
+  border:1px solid #2f4150;
+  border-radius:22px;
+  box-shadow:0 18px 52px rgba(17,31,45,.28);
+}
+.battle-stage::after{
+  content:"";
+  position:absolute;inset:0;z-index:4;pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(255,244,214,.06),transparent 38%,rgba(17,28,35,.16)),
+    radial-gradient(ellipse at 50% 110%,rgba(32,27,20,.24),transparent 56%);
+}
+.battle-sky{
+  z-index:0;
+  opacity:1!important;
+  background:
+    radial-gradient(circle at 78% 18%,rgba(255,224,157,.45) 0 7%,transparent 18%),
+    linear-gradient(180deg,#658ba8 0%,#9eb5c6 58%,rgba(184,190,172,.72) 100%);
+}
+.battle-sun{width:54px;height:54px;right:11%;top:11%;background:#e7bd6b;box-shadow:0 0 38px rgba(244,205,120,.42)}
+.battle-cloud{background:rgba(231,236,236,.42);filter:blur(1.2px)}
+.battle-hills{
+  z-index:1;top:30%;opacity:1!important;
+  background:
+    linear-gradient(150deg,transparent 0 13%,#61706a 13% 24%,transparent 24%),
+    linear-gradient(213deg,transparent 0 17%,#6d7872 17% 30%,transparent 30%),
+    radial-gradient(ellipse at 17% 100%,#53664d 0 28%,transparent 29%),
+    radial-gradient(ellipse at 53% 100%,#617053 0 38%,transparent 39%),
+    radial-gradient(ellipse at 89% 100%,#4e6049 0 31%,transparent 32%);
+  filter:saturate(.78) contrast(.94);
+}
+.battle-ground{
+  z-index:2;top:55%;opacity:1!important;
+  background:
+    radial-gradient(ellipse at 16% 18%,rgba(160,145,99,.25),transparent 23%),
+    radial-gradient(ellipse at 72% 30%,rgba(91,75,49,.2),transparent 25%),
+    linear-gradient(180deg,#788354 0%,#637048 42%,#4f5d3c 100%);
+}
+.battle-ground::before{
+  content:"";position:absolute;inset:0;
+  background:
+    repeating-linear-gradient(10deg,transparent 0 24px,rgba(38,48,29,.05) 24px 26px),
+    radial-gradient(ellipse at 30% 90%,rgba(60,45,29,.18),transparent 34%);
+}
+.battle-ground-path{
+  position:absolute;z-index:3;left:31%;right:18%;bottom:-8%;height:58%;
+  background:linear-gradient(90deg,transparent,rgba(132,109,77,.56) 20% 80%,transparent);
+  clip-path:polygon(18% 100%,82% 100%,62% 0,43% 0);
+  filter:blur(.2px);
+  opacity:.78;
+}
+.battle-scene-vignette{
+  position:absolute;inset:0;z-index:13;pointer-events:none;
+  box-shadow:inset 0 0 78px rgba(13,23,31,.18),inset 0 -28px 48px rgba(16,25,27,.12);
+  border-radius:inherit;
+}
+
+/* Die bisherige Szene bleibt nur als subtile Textur, nicht mehr als fotohafter Hauptlayer. */
+.battle-stage.battle-art-ready .battle-art-layer{opacity:.13!important}
+.battle-stage.battle-art-ready .battle-art-background{filter:saturate(.32) contrast(.88) brightness(.9) blur(.6px)}
+.battle-stage.battle-art-ready .battle-art-army,
+.battle-stage.battle-art-ready .battle-art-fortress{opacity:.055!important;filter:saturate(.24) contrast(.9) brightness(.9) blur(.8px)}
+.battle-stage.battle-art-ready .battle-art-atmosphere{opacity:.18!important}
+.battle-stage.battle-art-ready .battle-sky,
+.battle-stage.battle-art-ready .battle-hills,
+.battle-stage.battle-art-ready .battle-ground{opacity:1!important}
+
+/* Formation statt Sticker-Reihe */
+.battle-army{
+  z-index:7;
+  left:4.5%;
+  bottom:9.5%;
+  width:47%;
+  height:36%;
+  display:block;
+  filter:drop-shadow(0 9px 9px rgba(18,24,20,.3));
+  transform-origin:left bottom;
+}
+.battle-formation{
+  position:absolute;
+  left:11%;right:3%;bottom:0;top:7%;
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  grid-auto-rows:1fr;
+  align-items:end;
+  gap:0 1px;
+  perspective:500px;
+}
+.battle-formation .battle-unit{
+  justify-self:center;
+  width:27px;height:57px;flex:none;
+  transform-origin:center bottom;
+  filter:drop-shadow(0 4px 2px rgba(17,24,23,.28));
+}
+.battle-formation .battle-unit:nth-child(-n+6){transform:translateY(8px) scale(.88);opacity:.82}
+.battle-formation .battle-unit:nth-child(n+7):nth-child(-n+12){transform:translateY(4px) scale(.95);opacity:.92}
+.battle-formation .battle-unit:nth-child(n+13){transform:scale(1.03)}
+.battle-formation .battle-unit .helmet{
+  width:23px;height:13px;left:2px;
+  background:linear-gradient(180deg,#aab2b8,#5d6770 70%,#414a52);
+  border-color:#37414a;
+}
+.battle-formation .battle-unit .helmet:after{width:4px;height:11px;left:8px;top:-10px;background:#8c312b}
+.battle-formation .battle-unit .body{
+  left:4px;top:16px;width:21px;height:34px;border-width:1.5px;
+  background:linear-gradient(100deg,#6e2522,#a84538 48%,#6f2522);
+  box-shadow:inset 3px 0 0 rgba(255,255,255,.08),inset -3px 0 0 rgba(30,20,16,.16);
+}
+.battle-formation .battle-unit .shield{
+  left:-4px;top:24px;width:18px;height:27px;border-width:2px;
+  background:linear-gradient(135deg,#d7ab4a,#9b671e 58%,#68441c);
+  box-shadow:inset 2px 2px 0 rgba(255,239,173,.22),0 3px 3px rgba(0,0,0,.18);
+}
+.battle-formation .battle-unit .spear{height:61px;width:3px;right:-4px;background:#4c3b2e}
+.battle-standard{
+  position:absolute;
+  z-index:8;
+  left:1%;bottom:5%;
+  width:5px;height:94px;
+  background:linear-gradient(#5c452d,#34261b);
+  margin:0;
+  filter:drop-shadow(0 4px 3px rgba(0,0,0,.25));
+}
+.battle-standard i{
+  left:5px;top:7px;width:52px;height:33px;
+  background:linear-gradient(135deg,#4d4a8c,#6b5eb1 56%,#3c396f);
+  border:1px solid rgba(241,224,175,.35);
+  box-shadow:0 3px 7px rgba(0,0,0,.2);
+}
+.battle-ram{
+  position:absolute;
+  z-index:9;
+  right:-5%;bottom:1%;
+  width:94px;height:46px;
+  margin:0;
+  background:linear-gradient(180deg,#71563b,#4c3828);
+  border-color:#34271e;
+  box-shadow:inset 0 3px 0 rgba(222,190,139,.15),0 6px 7px rgba(0,0,0,.22);
+}
+
+/* Festung als illustratives Ziel mit Material, Licht und Tiefe */
+.battle-fortress{
+  z-index:6;
+  right:5.2%;
+  bottom:8%;
+  width:34%;
+  min-width:230px;
+  height:49%;
+  filter:drop-shadow(0 16px 12px rgba(20,26,29,.34));
+  transform-origin:center bottom;
+}
+.battle-fortress::before{
+  content:"";position:absolute;z-index:-2;left:-12%;right:-12%;bottom:-8%;height:28%;
+  border-radius:50%;
+  background:radial-gradient(ellipse,rgba(54,48,38,.34) 0 52%,transparent 72%);
+}
+.battle-fortress .wall,
+.battle-fortress .tower,
+.battle-fortress .battle-keep{
+  border-color:#38424a!important;
+  background:
+    linear-gradient(115deg,rgba(255,255,255,.16),transparent 18% 72%,rgba(22,29,33,.16)),
+    repeating-linear-gradient(0deg,#78818a 0 19px,#69737c 19px 21px,#828b93 21px 38px,#5d6870 38px 40px)!important;
+  box-shadow:
+    inset 4px 0 0 rgba(224,228,225,.12),
+    inset -8px 0 0 rgba(25,31,34,.13),
+    inset 0 -9px 0 rgba(33,39,42,.11);
+}
+.battle-fortress .wall{
+  left:10%;right:10%;height:65%;
+  border-width:5px;
+  border-radius:4px 4px 0 0;
+}
+.battle-fortress .tower{
+  width:28%;
+  border-width:5px;
+  border-radius:5px 5px 2px 2px;
+}
+.battle-fortress .tower:before{
+  left:-5px;right:-5px;top:-17px;height:22px;
+  background:repeating-linear-gradient(90deg,#3b464e 0 11px,#7f8990 11px 17px,#3b464e 17px 26px);
+  box-shadow:0 4px 4px rgba(0,0,0,.15);
+}
+.battle-fortress .tower:after{
+  content:"";position:absolute;left:50%;top:26%;width:10px;height:18px;transform:translateX(-50%);
+  border-radius:5px 5px 2px 2px;
+  background:linear-gradient(180deg,#24313a,#10181e);
+  box-shadow:0 34px 0 #1b252c;
+  opacity:.88;
+}
+.battle-fortress .battle-keep{
+  border-width:5px;
+  border-radius:4px 4px 0 0;
+  box-shadow:inset 5px 0 0 rgba(255,255,255,.12),inset -7px 0 0 rgba(22,29,33,.13),0 6px 8px rgba(0,0,0,.12);
+}
+.battle-fortress .battle-keep:before{
+  left:-5px;right:-5px;top:-16px;height:20px;
+  background:repeating-linear-gradient(90deg,#3b464e 0 10px,#818a91 10px 16px,#3b464e 16px 24px);
+}
+.battle-gate{
+  width:30%;height:58%;
+  border-width:4px;
+  background:
+    repeating-linear-gradient(90deg,#463428 0 8px,#2e221b 8px 10px),
+    linear-gradient(180deg,#4f392b,#231a15);
+  box-shadow:inset 0 0 18px rgba(0,0,0,.5),0 0 0 2px rgba(158,126,83,.12);
+}
+.battle-enemy-flag{
+  width:4px;height:89px;right:13%;top:-21%;
+  background:#2f2926;
+}
+.battle-enemy-flag:after{
+  width:47px;height:28px;
+  background:linear-gradient(135deg,#1f2937,#111827 72%,#0b1018);
+  border:1px solid rgba(215,199,162,.22);
+  box-shadow:0 3px 6px rgba(0,0,0,.2);
+}
+
+/* UI wird zur leichten HUD-Ebene, nicht mehr zum Hauptmotiv */
+.battle-phase-strip{
+  top:10px;
+  width:min(650px,78%);
+  gap:2px;
+  padding:4px 6px;
+  border-radius:12px;
+  background:rgba(20,31,43,.72);
+  border-color:rgba(236,226,198,.16);
+  backdrop-filter:blur(8px);
+  box-shadow:0 6px 18px rgba(6,15,25,.15);
+}
+.battle-phase-strip span{padding:4px 3px;font-size:.61rem;gap:4px;border-radius:8px}
+.battle-phase-strip i{width:15px;height:15px;font-size:.55rem}
+.battle-rank-badge{
+  left:12px;top:50px;
+  display:inline-flex;align-items:baseline;gap:7px;
+  width:auto;max-width:170px;
+  padding:6px 9px;
+  border-radius:9px;
+  background:rgba(20,31,43,.72);
+  border-color:rgba(236,226,198,.18);
+  box-shadow:0 5px 15px rgba(6,15,25,.14);
+}
+.battle-rank-badge span{font-size:.78rem}.battle-rank-badge small{font-size:.6rem;color:#d1d9df}
+.battle-fortress-state-badge{
+  top:auto;right:12px;bottom:12px;
+  min-width:0;
+  padding:5px 8px;
+  border-radius:9px;
+  background:rgba(20,31,43,.68);
+}
+.battle-fortress-state-badge small{font-size:.5rem}.battle-fortress-state-badge strong{font-size:.68rem}
+
+/* Hauptaktion unterhalb der Szene: kein dunkles Overlay mehr über der Illustration */
+.battle-stage-wrap{display:grid;gap:10px}
+#battleView.active .battle-shell{padding-bottom:30px}
+.battle-action-dock{
+  position:static;
+  transform:none;
+  width:100%;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px;
+  margin:0;
+  padding:10px 12px;
+  border:1px solid #d9dee6;
+  border-radius:15px;
+  background:linear-gradient(180deg,#fff,#f7f8fa);
+  box-shadow:0 6px 18px rgba(30,42,60,.07);
+  color:#263244;
+  backdrop-filter:none;
+}
+.battle-action-dock-copy strong{font-size:.9rem}.battle-action-dock-copy span{color:#667388;font-size:.72rem}
+.battle-action-dock .battle-primary{min-width:190px;min-height:46px;box-shadow:0 7px 18px rgba(127,29,29,.22)}
+.battle-action-dock .battle-primary:disabled{opacity:.58}
+.battle-immersive .battle-action-dock{
+  position:fixed;
+  left:50%;
+  bottom:max(14px,env(safe-area-inset-bottom));
+  transform:translateX(-50%);
+  width:min(720px,calc(100% - 28px));
+  background:rgba(17,24,39,.94);
+  color:#fff;
+  border-color:rgba(255,255,255,.18);
+  backdrop-filter:blur(14px);
+}
+.battle-immersive .battle-action-dock-copy span{color:#cbd5e1}
+
+/* Mobil: breite Film-Bühne, lesbare Formation, keine Überdeckung durch Navigation */
+@media(max-width:720px){
+  .battle-stage{
+    height:auto;
+    min-height:0;
+    aspect-ratio:4 / 3;
+    border-radius:18px;
+  }
+  .battle-phase-strip{width:calc(100% - 18px);top:8px;padding:3px 4px}
+  .battle-phase-strip span{font-size:.55rem;gap:3px}
+  .battle-phase-strip i{width:14px;height:14px}
+  .battle-rank-badge{left:8px;top:43px;padding:5px 7px;max-width:145px}
+  .battle-rank-badge span{font-size:.7rem}.battle-rank-badge small{font-size:.54rem}
+  .battle-army{left:3%;bottom:7%;width:49%;height:34%}
+  .battle-formation{left:12%;right:0;grid-template-columns:repeat(5,minmax(0,1fr))}
+  .battle-formation .battle-unit{width:22px;height:49px}
+  .battle-formation .battle-unit .helmet{width:19px;height:11px}
+  .battle-formation .battle-unit .body{width:18px;height:29px;top:14px}
+  .battle-formation .battle-unit .shield{width:15px;height:23px;top:22px}
+  .battle-standard{height:76px}.battle-standard i{width:42px;height:27px}
+  .battle-ram{width:76px;height:38px;transform:scale(.9);right:-8%}
+  .battle-fortress{right:3%;bottom:7%;width:39%;min-width:0;height:48%}
+  .battle-fortress-state-badge{right:7px;bottom:7px}
+  .battle-action-dock{grid-template-columns:1fr;padding:9px 10px;gap:8px}
+  .battle-action-dock-copy span{white-space:normal;line-height:1.3}
+  .battle-action-dock .battle-primary{width:100%;min-width:0}
+}
+@media(max-width:390px){
+  .battle-phase-strip span{font-size:0;padding:4px 2px}.battle-phase-strip span i{font-size:.55rem}
+  .battle-phase-strip span.active{font-size:.52rem}
+  .battle-fortress{width:41%;height:47%}
+  .battle-formation{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){
+  .battle-stage::after,.battle-scene-vignette{transition:none}
+}
