@@ -138,7 +138,7 @@ function startBattleFortressReveal(f=currentTestFortress()){
   stage.classList.remove('fortress-reveal');
   stage.classList.add('fortress-reveal');
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  setTimeout(()=>stage.classList.remove('fortress-reveal'),reduced?900:2900);
+  setTimeout(()=>stage.classList.remove('fortress-reveal'),reduced?2600:2900);
   return true;
 }
 
