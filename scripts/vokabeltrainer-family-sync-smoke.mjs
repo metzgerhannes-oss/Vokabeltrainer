@@ -10,6 +10,7 @@ const app=read('js/app.js');
 const html=read('index.html');
 const sw=read('sw.js');
 const sql=read('supabase/vt_family_sync_v1.sql');
+const sqlV2=read('supabase/vt_family_sync_v2_parent_invites.sql');
 const architecture=read('SYNC_ARCHITECTURE.md');
 
 const passed=[];
@@ -25,6 +26,7 @@ assert(sync.includes("sb_publishable_")&&!sync.includes('sb_secret_')&&!sync.inc
 assert(sync.includes("shared:{")&&sync.includes("'/setup'")&&sync.includes("'/progress'"),'state is split into shared, setup and progress documents');
 assert(sync.includes("return key==='profile/'+cfg.profileId+'/progress'"),'child devices can write only their own progress document');
 assert(sync.includes("vt_create_child_invite")&&sync.includes("vt_claim_child_invite"),'one-time child-device enrollment is implemented');
+assert(sync.includes("vt_create_parent_invite")&&sync.includes("vt_claim_parent_invite"),'one-time parent-device enrollment is implemented without sharing the reusable family PIN');
 assert(sync.includes('function documentRank(key)')&&sync.includes("k==='shared'?0:k.endsWith('/setup')?1:k.endsWith('/progress')?2:3"),'sync has one canonical shared → setup → progress document order');
 assert((sync.match(/documentRank\(a\.key\)-documentRank\(b\.key\)/g)||[]).length>=2,'initial child claim and recurring sync both load shared vocabulary before profile documents');
 assert(ui.includes('Weiteres Eltern-Gerät verbinden')&&ui.includes('VTFamilySync.joinParent(id,pin'), 'parent UI can join an existing family instead of creating a duplicate family');
@@ -36,16 +38,23 @@ assert(!ui.includes('QR-/Übernahmeschritt für die Kinder-App folgt'), 'obsolet
 assert(css.includes('overflow-y:auto')&&css.includes('100dvh')&&css.includes('.modal-actions.stack-mobile'), 'family setup dialogs remain scrollable and actionable on compact mobile viewports');
 assert(ui.includes('if(dialog.open)return')&&ui.includes("try{dialog.showModal()}catch(_e){dialog.setAttribute('open','')}"), 'modal lifecycle tolerates already-open and fallback dialogs');
 assert(css.includes('-webkit-overflow-scrolling:auto')&&css.includes('max-height:calc(100vh - 16px)'), 'iOS 15 modal scrolling and viewport fallback are present');
-assert(pairing.includes("Verbindungslink erstellen")&&pairing.includes('navigator.share'),'parent UI hands the invite off as a shareable link instead of exposing the raw token');
+assert(pairing.includes("QR-Code erstellen")&&pairing.includes('familyChildQr')&&pairing.includes('shareInviteLink'),'parent UI offers QR-first child pairing with share/copy fallback');
 assert(pairing.includes("claimChildInvite(token")&&pairing.includes("Dieses Gerät verbinden"),'child device can consume the invite link in one guided step');
 assert(html.includes('id="iosStandaloneSyncCard"')&&html.includes('id="iosStandaloneSyncBtn"'),'iOS standalone app exposes a direct family-pairing recovery path');
 assert(ui.includes('renderStandaloneSyncNotice')&&ui.includes("$('#iosStandaloneSyncBtn').onclick=openFamilySyncChildJoin"),'iOS standalone pairing notice is driven by actual sync status');
 assert(pairing.includes('isIOSBrowserOutsideStandalone')&&pairing.includes('Den Link nicht in Safari verbrauchen.')&&pairing.includes('copyIosHomeInviteBtn'),'iOS Safari preserves a fresh child invite for the Home Screen app instead of consuming it in Safari');
 assert(ui.includes("if(isPairedChildDevice()){toast('Dieses Kindergerät ist fest mit einem Lernprofil verbunden.'")&&ui.includes("profileBtn.disabled=lockedChild")&&ui.includes("profile-locked"),'paired child devices are locked to their assigned learner profile in both logic and UI');
 assert(pairing.includes("location.hash")&&!pairing.includes("searchParams.set('childInvite'"),'invite secret is transported in the URL fragment, not the query string');
-assert(app.includes('handleChildInviteFromUrl'),'bootstrap detects child-device invite links');
+assert(app.includes('handleDeviceInviteFromUrl')&&app.includes('handleDuelInviteFromUrl'),'bootstrap detects device and duel QR deep links');
 assert(sync.includes("sha256Hex(familyId+'|'")&&!/pin\s*:/.test(sync),'family PIN is derived locally and not persisted as a config field');
 assert(sync.includes("p_base_revision")&&sync.includes("pushed?.conflict"),'client uses optimistic revisions and detects conflicts');
+assert(sqlV2.includes('private.vt_parent_invites')&&sqlV2.includes("interval '15 minutes'"),'parent invite tokens are server-side, one-time and short-lived');
+assert(sqlV2.includes("role','parent'")&&sqlV2.includes('vt_claim_parent_invite_impl'),'parent invite claim creates a parent device without exposing the family PIN');
+assert(pairing.includes('familyParentQr')&&pairing.includes('openParentDeviceInvite'),'connected parents can create a QR code for another parent device');
+assert(html.includes('id="familySyncParentBtn"'),'settings expose the additional parent-device QR action');
+assert(html.includes('js/vendor/qrcode.js?v='+version)&&html.includes('js/qr-ui.js?v='+version),'local QR generator and helper are versioned app assets');
+assert(sw.includes("'./js/vendor/qrcode.js?v="+version+"'")&&sw.includes("'./js/qr-ui.js?v="+version+"'"),'QR support is cached for offline use');
+
 
 for(const table of ['vt_families','vt_devices','vt_documents','vt_invites']){
   assert(sql.includes('alter table private.'+table+' enable row level security'),'RLS enabled for '+table);
