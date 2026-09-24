@@ -12,6 +12,7 @@ try{
   const response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'app loads');
   await page.waitForFunction(()=>typeof state==='object'&&typeof renderAll==='function'&&typeof attachVocabularyToSet==='function');
+  await page.evaluate(async()=>{await window.VTFamilySync?.bootstrap?.()});
 
   const seeded=await page.evaluate(()=>{
     state=defaultState();
