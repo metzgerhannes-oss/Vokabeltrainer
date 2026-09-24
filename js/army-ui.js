@@ -40,6 +40,11 @@
     }
   ];
 
+  const UNIT_STAGE_NAMES = {
+    english:['Gesperrt','Rekrut','Ausgebildet','Erfahren','Elite','Veteran'],
+    latin:['Gesperrt','Tiro','Miles','Veteranus','Evocatus','Primus']
+  };
+
   const BONUS_DEFS = [
     {id:'banner',icon:'⚑',title:'Banner',text:'Moralbonus',ready:c=>c.p.pct>=15,goal:'15% Lernfortschritt'},
     {id:'armor',icon:'⛨',title:'Rüstung',text:'stabilere Formation',ready:c=>c.stablePct>=35,goal:'35% stabile Wörter'},
@@ -56,6 +61,17 @@
   }
   function subjectName(def){
     return def.names?.[state?.activeSubject]||def.names?.english||def.id;
+  }
+  function unitStageName(level,subject=state?.activeSubject){
+    const list=UNIT_STAGE_NAMES[subject]||UNIT_STAGE_NAMES.english;
+    return list[Math.max(0,Math.min(5,Number(level)||0))]||list[0];
+  }
+  function stagePipsMarkup(level){
+    const current=Math.max(0,Math.min(5,Number(level)||0));
+    return `<span class="army-stage-pips" aria-hidden="true">${[1,2,3,4,5].map(i=>`<i class="${i<=current?'filled':''}"></i>`).join('')}</span>`;
+  }
+  function stageBadgeMarkup(s){
+    return `<span class="army-stage-badge"><b>${safe(unitStageName(s.level))}</b>${stagePipsMarkup(s.level)}</span>`;
   }
   function context(){
     const p=subjectProgress();
@@ -166,15 +182,15 @@
     }).join('');
   }
   function unitCardMarkup(def,c){
-    const s=unitState(def,c),name=subjectName(def);
-    return `<button type="button" class="army-unit-card unit-${safe(def.id)} ${s.unlocked?'unlocked':'locked'} ${selectedUnitId===def.id?'selected':''}" data-army-unit="${safe(def.id)}" aria-pressed="${selectedUnitId===def.id?'true':'false'}">
-      <span class="army-unit-level">Stufe <b>${s.level||0}</b></span>
-      <span class="army-unit-art unit-art-${safe(def.id)}" aria-hidden="true"><img data-army-unit-art alt=""><b>${def.icon}</b></span>
+    const s=unitState(def,c),name=subjectName(def),currentTier=s.level?def.tiers[s.level-1]:'Noch gesperrt';
+    return `<button type="button" class="army-unit-card unit-${safe(def.id)} stage-${s.level} ${s.unlocked?'unlocked':'locked'} ${selectedUnitId===def.id?'selected':''}" data-army-unit="${safe(def.id)}" data-unit-stage="${s.level}" aria-pressed="${selectedUnitId===def.id?'true':'false'}">
+      <span class="army-unit-level">Stufe <b>${s.level||0}</b> · ${safe(unitStageName(s.level))}</span>
+      <span class="army-unit-art unit-art-${safe(def.id)} stage-${s.level}" aria-hidden="true"><img data-army-unit-art alt=""><b>${def.icon}</b>${stageBadgeMarkup(s)}</span>
       <strong>${safe(name)}</strong>
       <span class="army-unit-role">${safe(def.role)}</span>
       <small>${safe(def.description?.[state.activeSubject]||def.description.english)}</small>
       <progress class="army-unit-progress" max="100" value="${s.progress}" aria-label="Fortschritt zur nächsten Stufe"></progress>
-      <span class="army-unit-state">${s.unlocked?metricText(def,s):`Freischaltung: ${nextText(def,s)}`}</span>
+      <span class="army-unit-state">${s.unlocked?`${safe(unitStageName(s.level))} · ${safe(currentTier)}`:`Freischaltung: ${nextText(def,s)}`}</span>
       <span class="army-unit-next">${s.unlocked?nextText(def,s):'Noch nicht freigeschaltet'}</span>
       <span class="army-unit-open">Details & Aufwertung <b aria-hidden="true">›</b></span>
     </button>`;
@@ -190,7 +206,7 @@
       return `<div class="army-upgrade-step ${status}">
         <span class="army-upgrade-node">${level<s.level?'✓':level}</span>
         <div>
-          <small>Stufe ${level}</small>
+          <small>Stufe ${level} · ${safe(unitStageName(level))}</small>
           <strong>${safe(label)}</strong>
           <span>${safe(thresholdSentence(def,threshold))}</span>
         </div>
@@ -203,17 +219,18 @@
     const next=s.next===null?'Maximal ausgebaut':def.tiers[s.level];
     const condition=s.next===null?'Alle fünf Stufen sind erreicht.':thresholdSentence(def,s.next);
     return `
-      <section class="army-detail-hero unit-${safe(def.id)}">
-        <div class="army-detail-art unit-art-${safe(def.id)}" aria-hidden="true">
+      <section class="army-detail-hero unit-${safe(def.id)} stage-${s.level}">
+        <div class="army-detail-art unit-art-${safe(def.id)} stage-${s.level}" aria-hidden="true">
           <img data-army-unit-art alt=""><b>${def.icon}</b>
-          <span class="army-detail-level-badge">Stufe ${s.level}</span>
+          ${stageBadgeMarkup(s)}
+          <span class="army-detail-level-badge">Stufe ${s.level} · ${safe(unitStageName(s.level))}</span>
         </div>
         <div class="army-detail-copy">
           <span class="army-kicker">${s.unlocked?'Freigeschaltete Einheit':'Noch gesperrt'}</span>
           <h3>${safe(name)}</h3>
           <p>${safe(def.description?.[state.activeSubject]||def.description.english)}</p>
           <div class="army-detail-role"><small>Aufgabe in deiner Armee</small><strong>${safe(def.role)}</strong><span>${safe(def.roleText)}</span><b>${unitPower(def,c)} / 100</b></div>
-          <div class="army-detail-current"><small>Aktuelle Ausbaustufe</small><strong>${safe(current)}</strong><span>${safe(metricText(def,s))}</span></div>
+          <div class="army-detail-current"><small>Aktuelle Ausbaustufe</small><strong>Stufe ${s.level} · ${safe(unitStageName(s.level))}</strong><span>${safe(current)} · ${safe(metricText(def,s))}</span></div>
         </div>
         <div class="army-detail-next">
           <span class="army-kicker">Nächste sichtbare Verbesserung</span>
