@@ -892,10 +892,31 @@ function openFamilySyncCreate(){
   $('#familySyncBackBtn').onclick=openFamilySyncSetup;
   $('#familySyncCreateBtn').onclick=async()=>{const p1=$('#familyPin').value,p2=$('#familyPin2').value,err=$('#familySyncSetupError'),btn=$('#familySyncCreateBtn');if(p1.length<6){err.className='notice warn';err.textContent='Die PIN muss mindestens 6 Zeichen lang sein.';return}if(p1!==p2){err.className='notice warn';err.textContent='Die beiden PINs stimmen nicht überein.';return}btn.disabled=true;btn.textContent='Wird eingerichtet …';try{await VTFamilySync.createFamily(p1,'Eltern-Gerät');closeModal();renderFamilySync();toast('Familiensync eingerichtet.','good')}catch(e){err.className='notice bad';err.textContent=e.message||'Einrichtung fehlgeschlagen.';btn.disabled=false;btn.textContent='Familie anlegen'}};
 }
+function parentInviteTokenFromInput(value){
+  const raw=String(value||'').trim();
+  if(/^[0-9a-f]{48}$/i.test(raw))return raw.toLowerCase();
+  try{
+    const url=new URL(raw,location.href);
+    const params=new URLSearchParams(String(url.hash||'').replace(/^#/,''));
+    const token=String(params.get('parentInvite')||'').trim();
+    if(/^[0-9a-f]{48}$/i.test(token))return token.toLowerCase();
+  }catch(_e){}
+  return '';
+}
 function openFamilySyncJoin(){
-  modal('<div class="eyebrow">Familie & Geräte</div><h2>Weiteres Eltern-Gerät verbinden</h2><p>Nur für ein weiteres Eltern-Gerät: Übernimm die Familien-ID von einem bereits verbundenen Eltern-Gerät und verwende dieselbe Familien-PIN.</p><div class="notice subtle"><strong>Kein Kindergerät.</strong><br>Kindergeräte werden über „Kindergerät verbinden“ bzw. über den einmaligen Verbindungslink eingerichtet.</div><label>Familien-ID<input id="familyJoinId" type="text" autocomplete="off" spellcheck="false" placeholder="family_…"></label><label>Familien-PIN<input id="familyJoinPin" type="password" minlength="6" autocomplete="current-password" placeholder="mindestens 6 Zeichen"></label><div id="familySyncJoinError" class="notice subtle">Nach dem Beitritt wird der vorhandene Familienstand auf dieses Eltern-Gerät geladen und synchronisiert.</div><div class="modal-actions"><button type="button" id="familySyncBackBtn" class="ghost">Zurück</button><button type="button" id="familySyncJoinBtn" class="primary">Eltern-Gerät verbinden</button></div>');
+  modal('<div class="eyebrow">Familie & Geräte</div><h2>Weiteres Eltern-Gerät verbinden</h2><p>Am einfachsten: Auf einem bereits verbundenen Eltern-Gerät <strong>Eltern-Gerät hinzufügen</strong> wählen und den QR-Code scannen. Falls der Link auf iOS zuerst in Safari geöffnet wurde, kannst du ihn hier einfügen.</p><label>Einmal-Link oder Gerätecode<input id="familyParentJoinInvite" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="QR-/Verbindungslink hier einfügen"></label><details class="manual-parent-join"><summary>Stattdessen Familien-ID und PIN verwenden</summary><label>Familien-ID<input id="familyJoinId" type="text" autocomplete="off" spellcheck="false" placeholder="family_…"></label><label>Familien-PIN<input id="familyJoinPin" type="password" minlength="6" autocomplete="current-password" placeholder="mindestens 6 Zeichen"></label></details><div id="familySyncJoinError" class="notice subtle">Der einmalige QR-/Verbindungslink ist 15 Minuten gültig. Familien-ID und PIN bleiben als manueller Fallback möglich.</div><div class="modal-actions"><button type="button" id="familySyncBackBtn" class="ghost">Zurück</button><button type="button" id="familySyncJoinBtn" class="primary">Eltern-Gerät verbinden</button></div>');
   $('#familySyncBackBtn').onclick=()=>VTFamilySync.status().enabled?openFamilySyncSwitch():openFamilySyncSetup();
-  $('#familySyncJoinBtn').onclick=async()=>{const id=$('#familyJoinId').value.trim().toLowerCase(),pin=$('#familyJoinPin').value,err=$('#familySyncJoinError'),btn=$('#familySyncJoinBtn');if(!/^family_[a-z0-9]{6,40}$/.test(id)){err.className='notice warn';err.textContent='Bitte eine gültige Familien-ID eingeben.';return}if(pin.length<6){err.className='notice warn';err.textContent='Die Familien-PIN muss mindestens 6 Zeichen lang sein.';return}btn.disabled=true;btn.textContent='Wird verbunden …';try{await VTFamilySync.joinParent(id,pin,'Eltern-Gerät');closeModal();renderAll();VTFamilySync.bootstrap();toast('Eltern-Gerät ist mit der bestehenden Familie verbunden.','good')}catch(e){err.className='notice bad';err.textContent=e.message||'Beitritt fehlgeschlagen.';btn.disabled=false;btn.textContent='Eltern-Gerät verbinden'}};
+  $('#familySyncJoinBtn').onclick=async()=>{
+    const invite=parentInviteTokenFromInput($('#familyParentJoinInvite').value),id=$('#familyJoinId').value.trim().toLowerCase(),pin=$('#familyJoinPin').value,err=$('#familySyncJoinError'),btn=$('#familySyncJoinBtn');
+    if(!invite&&!/^family_[a-z0-9]{6,40}$/.test(id)){err.className='notice warn';err.textContent='Bitte den QR-/Verbindungslink einfügen oder eine gültige Familien-ID und PIN verwenden.';return}
+    if(!invite&&pin.length<6){err.className='notice warn';err.textContent='Die Familien-PIN muss mindestens 6 Zeichen lang sein.';return}
+    btn.disabled=true;btn.textContent='Wird verbunden …';
+    try{
+      if(invite)await VTFamilySync.claimParentInvite(invite,'Eltern-Gerät');
+      else await VTFamilySync.joinParent(id,pin,'Eltern-Gerät');
+      closeModal();appRole='parent';applyRoleUi();renderAll();VTFamilySync.bootstrap();toast('Eltern-Gerät ist mit der bestehenden Familie verbunden.','good');
+    }catch(e){err.className='notice bad';err.textContent=e.message||'Beitritt fehlgeschlagen.';btn.disabled=false;btn.textContent='Eltern-Gerät verbinden'}
+  };
 }
 function openFamilySyncSwitch(){
   if(!window.VTFamilySync)return;const s=VTFamilySync.status();if(!s.enabled){openFamilySyncSetup();return}
