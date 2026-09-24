@@ -35,8 +35,16 @@ try{
   assert((await page.locator('[data-cardbox-box="1"] .cardbox-stage-top strong').textContent())==='1','box 1 count reflects the current Leitner state');
   assert((await page.locator('[data-cardbox-box="4"] .cardbox-stage-top strong').textContent())==='1','box 4 count reflects the current Leitner state');
   assert((await page.locator('[data-cardbox-box="5"] .cardbox-stage-top strong').textContent())==='0','unused boxes remain visible with zero cards');
+  assert(await page.locator('[data-cardbox-box="1"]').evaluate(el=>el.tagName)==='BUTTON','each card box is directly inspectable instead of being a static graphic');
+  await page.click('[data-cardbox-box="1"]');
+  await page.waitForSelector('.cardbox-word-list');
+  const boxOneText=await page.locator('#modalContent').textContent();
+  assert(boxOneText?.includes("can't")&&boxOneText?.includes('nicht können'),'box detail tells the child which vocabulary is in this learning stage');
+  assert(!boxOneText?.includes('window'),'box detail does not mix vocabulary from another stage');
+  assert((await page.locator('#practiceCardboxStageBtn').textContent())==='Diese Box üben','box detail offers focused voluntary practice');
+  await page.click('#modal button[value="cancel"]');
   const overviewDistribution=await page.evaluate(()=>leitnerDistribution());
-  assert(overviewDistribution[1]===1&&overviewDistribution[4]===1,'rendering the overview does not change card boxes');
+  assert(overviewDistribution[1]===1&&overviewDistribution[4]===1,'inspecting the overview does not change card boxes');
   await page.click('#cardboxPracticeBtn');
   await page.waitForSelector('#answerField');
 
