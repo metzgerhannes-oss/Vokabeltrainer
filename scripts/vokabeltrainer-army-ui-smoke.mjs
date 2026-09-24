@@ -17,7 +17,7 @@ try{
 
   await page.evaluate(()=>{
     state=defaultState();
-    const set={id:'army_set',learnerId:'learner_demo',subject:'english',title:'Army Unit',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+    const set={id:'army_set',learnerId:'learner_demo',subject:'english',title:'Army Unit',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(7),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
     state.sets.push(set);
     attachVocabularyToSet(set.id,{term:'shield',translation:'Schild',source:'army-smoke',verified:true});
     for(const link of state.setVocabulary){link.firstContactCopiedAt=link.firstContactRecalledAt=link.firstContactCompletedAt=new Date().toISOString()}
@@ -93,6 +93,28 @@ try{
   assert(before===after,'opening and inspecting the army does not alter academic mastery');
   const rect=await page.locator('#armyView').boundingBox();
   assert(rect&&rect.width<=page.viewportSize().width+1,'army view does not overflow iPhone viewport');
+
+  await page.click('#armyBackBtn');
+  await page.waitForSelector('#childProgressView.active');
+  await page.click('#campaignMapBtn');
+  await page.waitForSelector('#campaignMapView.active');
+  assert(await page.locator('#campaignMapBoard .campaign-map-station').count()===3,'campaign map shows two known test stations plus the year fortress');
+  assert(await page.locator('#campaignMapBoard .campaign-map-unknown').count()===1,'unknown future remains visible instead of assuming a fixed test count');
+  assert((await page.locator('#campaignMapBoard .campaign-map-unknown').textContent())?.includes('Neue Tests erscheinen automatisch'),'map explains dynamic future growth');
+  assert(await page.locator('#campaignMapBoard .status-active').count()===1,'nearest planned test is the active map target');
+  assert((await page.locator('#campaignMapDetail').textContent())?.includes('Aktuelles Testziel'),'active target opens its real test detail');
+  const mapBefore=await page.evaluate(()=>VTCampaignMap.stations().map(x=>x.key));
+  await page.evaluate(()=>{
+    state.sets.push({id:'army_future_set',learnerId:'learner_demo',subject:'english',title:'Later Unit',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(21),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()});
+    VTCampaignMap.render();
+  });
+  const mapAfter=await page.evaluate(()=>VTCampaignMap.stations().map(x=>x.key));
+  assert(mapAfter.length===mapBefore.length+1,'adding a newly planned test grows the campaign map by exactly one station');
+  assert(mapBefore.every((key,i)=>mapAfter[i]===key),'existing earlier campaign stations keep their order when a later test is added');
+  assert(await page.locator('#campaignMapBoard .campaign-map-station').count()===4,'newly planned test appears before the year fortress without a hard-coded total');
+  const mapRect=await page.locator('#campaignMapView').boundingBox();
+  assert(mapRect&&mapRect.width<=page.viewportSize().width+1,'campaign map view does not overflow iPhone viewport');
+  assert(await page.evaluate(()=>subjectProgress().pct)===before,'campaign map never changes academic mastery');
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer army UI smoke: passed');
 }finally{
