@@ -60,7 +60,7 @@ try{
     stage?.classList.remove('fortress-reveal');
     return result;
   });
-  assert(revealPresentation.active&&revealPresentation.visibility==='visible'&&revealPresentation.opacity>.9,'fortress reveal class produces a clearly visible presentation');
+  assert(revealPresentation.active&&revealPresentation.visibility==='visible'&&revealPresentation.opacity>.9,'fortress reveal class produces a clearly visible presentation: '+JSON.stringify(revealPresentation));
   assert(revealPresentation.reduced,'battle smoke remains in reduced-motion mode during the reveal check');
   assert(await page.locator('#battleAttackBtn').isDisabled(),'only the attack action is locked before the daily goal');
   await page.click('#battleReturnBtn');
