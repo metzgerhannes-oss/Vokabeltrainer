@@ -1753,3 +1753,344 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
   .modal-actions.stack-mobile{flex-direction:column}
   .modal-actions.stack-mobile button{width:100%}
 }
+
+
+/* Battle illustration pass 2 – coherent painted army and fortress */
+.battle-stage{
+  --scene-light:rgba(247,219,159,.72);
+  --scene-shadow:rgba(17,27,31,.34);
+  isolation:isolate;
+  background:
+    radial-gradient(ellipse at 64% 48%,rgba(221,198,145,.18),transparent 28%),
+    linear-gradient(180deg,#688ca7 0%,#9fb4c1 42%,#77816a 43%,#53623f 100%);
+}
+.battle-stage::after{
+  background:
+    radial-gradient(ellipse at 72% 28%,rgba(255,230,174,.11),transparent 34%),
+    linear-gradient(180deg,rgba(255,244,214,.04),transparent 37%,rgba(17,28,35,.18)),
+    radial-gradient(ellipse at 50% 110%,rgba(32,27,20,.28),transparent 58%);
+}
+.battle-hills{
+  filter:saturate(.7) contrast(.95) brightness(.92);
+  mask-image:linear-gradient(180deg,#000 68%,rgba(0,0,0,.88) 84%,transparent 100%);
+}
+.battle-ground{
+  background:
+    radial-gradient(ellipse at 18% 14%,rgba(172,151,101,.22),transparent 24%),
+    radial-gradient(ellipse at 69% 30%,rgba(73,61,43,.18),transparent 28%),
+    linear-gradient(180deg,#768052 0%,#626d47 38%,#4b5738 100%);
+}
+.battle-ground::after{
+  content:"";
+  position:absolute;inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse at 18% 72%,rgba(29,38,25,.16),transparent 25%),
+    radial-gradient(ellipse at 73% 76%,rgba(29,33,25,.18),transparent 28%),
+    linear-gradient(180deg,transparent 0 55%,rgba(24,29,23,.08));
+  mix-blend-mode:multiply;
+}
+.battle-ground-path{
+  left:30%;right:17%;bottom:-10%;height:61%;
+  background:
+    linear-gradient(90deg,transparent 0 7%,rgba(153,126,86,.24) 16%,rgba(153,126,86,.54) 44% 58%,rgba(120,97,68,.38) 84%,transparent 95%);
+  clip-path:polygon(12% 100%,88% 100%,61% 0,44% 0);
+  opacity:.9;
+}
+.battle-scene-vignette{
+  box-shadow:
+    inset 0 0 84px rgba(10,20,28,.2),
+    inset 0 -38px 56px rgba(13,22,23,.16),
+    inset 18px 0 38px rgba(10,20,28,.08);
+}
+
+/* Cohort mass: individual pieces read as one illustrated formation. */
+.battle-formation{
+  left:9%;right:1%;top:3%;bottom:0;
+  gap:0;
+  perspective:620px;
+}
+.battle-formation::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  left:-4%;right:0;bottom:4%;
+  height:72%;
+  border-radius:48% 46% 24% 20%;
+  background:
+    radial-gradient(ellipse at 35% 70%,rgba(64,37,29,.42),transparent 43%),
+    radial-gradient(ellipse at 72% 72%,rgba(49,41,33,.35),transparent 44%);
+  filter:blur(7px);
+  opacity:.65;
+}
+.battle-formation::after{
+  content:"";
+  position:absolute;
+  z-index:12;
+  left:-10%;right:-2%;bottom:-7%;
+  height:28%;
+  background:radial-gradient(ellipse at center,rgba(142,121,82,.28),transparent 66%);
+  filter:blur(5px);
+  pointer-events:none;
+}
+.battle-formation .battle-unit{
+  width:29px;height:61px;
+  filter:
+    drop-shadow(0 5px 3px rgba(18,22,20,.28))
+    drop-shadow(1px -1px 0 rgba(242,219,167,.08));
+}
+.battle-formation .battle-unit:nth-child(-n+6){
+  transform:translateY(10px) scale(.79);
+  opacity:.72;
+  filter:blur(.15px) drop-shadow(0 4px 3px rgba(18,22,20,.22));
+}
+.battle-formation .battle-unit:nth-child(n+7):nth-child(-n+12){
+  transform:translateY(5px) scale(.92);
+  opacity:.9;
+}
+.battle-formation .battle-unit:nth-child(n+13){transform:translateY(0) scale(1.06)}
+.battle-formation .battle-unit:nth-child(3n+2){margin-left:-3px}
+.battle-formation .battle-unit:nth-child(3n){margin-right:-3px}
+.battle-formation .battle-unit .helmet{
+  left:2px;top:0;
+  width:24px;height:15px;
+  border:1px solid #313a40;
+  border-radius:13px 13px 5px 5px;
+  background:
+    linear-gradient(102deg,rgba(255,255,255,.28),transparent 27% 70%,rgba(14,20,23,.28)),
+    linear-gradient(180deg,#9ca6aa 0%,#606b70 62%,#353f45 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 2px 2px rgba(0,0,0,.16);
+}
+.battle-formation .battle-unit .helmet::before{
+  content:"";
+  position:absolute;
+  left:5px;right:4px;bottom:-8px;height:9px;
+  border-radius:2px 2px 6px 6px;
+  background:
+    linear-gradient(90deg,#32363a 0 22%,#a18a72 24% 66%,#30363a 68%);
+  box-shadow:inset 0 -3px 0 rgba(44,31,25,.2);
+  z-index:-1;
+}
+.battle-formation .battle-unit .helmet::after{
+  width:5px;height:13px;left:9px;top:-11px;
+  border-radius:4px 4px 1px 1px;
+  background:linear-gradient(90deg,#71251f,#a94738 55%,#65211e);
+  transform:rotate(-5deg);
+  transform-origin:bottom;
+}
+.battle-formation .battle-unit .body{
+  left:4px;top:17px;width:22px;height:37px;
+  border:1px solid #4b2823;
+  border-radius:7px 7px 4px 4px;
+  clip-path:polygon(11% 0,89% 0,100% 82%,77% 100%,22% 100%,0 82%);
+  background:
+    linear-gradient(90deg,rgba(35,21,18,.3),transparent 18% 74%,rgba(36,22,19,.32)),
+    linear-gradient(180deg,#aa493c 0%,#813126 62%,#5d251f 100%);
+  box-shadow:
+    inset 3px 0 0 rgba(255,225,184,.08),
+    inset -4px 0 0 rgba(28,17,15,.14);
+}
+.battle-formation .battle-unit .body::before{
+  content:"";
+  position:absolute;
+  left:1px;right:1px;top:15px;height:4px;
+  background:linear-gradient(90deg,#3f2b20,#b48a49 38% 63%,#3f2b20);
+  box-shadow:0 8px 0 rgba(63,43,32,.34);
+}
+.battle-formation .battle-unit .body::after{
+  content:"";
+  position:absolute;
+  left:5px;right:5px;bottom:-9px;height:12px;
+  background:linear-gradient(90deg,#342820 0 35%,transparent 36% 62%,#342820 63%);
+  border-radius:0 0 4px 4px;
+  z-index:-1;
+}
+.battle-formation .battle-unit .shield{
+  left:-5px;top:25px;width:19px;height:30px;
+  border:2px solid #63451d;
+  border-radius:10px 10px 12px 12px;
+  background:
+    radial-gradient(circle at 50% 48%,#d8b55a 0 10%,#6d4519 11% 16%,transparent 17%),
+    linear-gradient(120deg,#d5ac4c 0%,#a06d25 52%,#65431f 100%);
+  box-shadow:
+    inset 3px 2px 0 rgba(255,236,171,.22),
+    inset -4px -2px 0 rgba(64,40,18,.18),
+    0 3px 3px rgba(0,0,0,.2);
+}
+.battle-formation .battle-unit .shield::after{
+  inset:auto;
+  left:50%;top:50%;
+  width:5px;height:5px;
+  margin:-2.5px 0 0 -2.5px;
+  border-radius:50%;
+  background:#5a3d1e;
+  box-shadow:0 0 0 2px rgba(234,199,100,.32);
+}
+.battle-formation .battle-unit .spear{
+  right:-4px;top:-7px;width:3px;height:67px;
+  background:linear-gradient(90deg,#2e241d,#65503a 55%,#33261d);
+  transform:rotate(5deg);
+}
+.battle-formation .battle-unit .spear::before{
+  top:-9px;left:-3px;
+  border-left-width:5px;border-right-width:5px;border-bottom-width:12px;
+  border-bottom-color:#b9c0c1;
+  filter:drop-shadow(0 1px 0 #394247);
+}
+.battle-standard{
+  left:0;bottom:3%;height:98px;
+  width:5px;
+  background:linear-gradient(90deg,#2e2118,#6b5134 52%,#312319);
+}
+.battle-standard i{
+  width:54px;height:34px;
+  clip-path:polygon(0 0,100% 7%,83% 50%,100% 93%,0 100%);
+  background:
+    radial-gradient(circle at 28% 50%,rgba(225,199,116,.55) 0 8%,transparent 9%),
+    linear-gradient(135deg,#3d3e79,#6d5fa7 54%,#343264);
+  box-shadow:inset -7px 0 12px rgba(18,19,42,.2),0 4px 8px rgba(0,0,0,.22);
+}
+
+/* Fortress: less block-built, more hand-painted mass and depth. */
+.battle-fortress{
+  right:4.2%;bottom:7.5%;width:35%;height:51%;
+  filter:
+    drop-shadow(0 18px 12px rgba(17,23,27,.36))
+    drop-shadow(2px -1px 0 rgba(238,220,178,.07));
+}
+.battle-fortress::before{
+  left:-17%;right:-15%;bottom:-10%;height:31%;
+  background:
+    radial-gradient(ellipse at 50% 42%,rgba(50,43,34,.45) 0 42%,transparent 72%),
+    radial-gradient(ellipse at 44% 68%,rgba(109,91,62,.2),transparent 60%);
+  filter:blur(2px);
+}
+.battle-fortress .wall,
+.battle-fortress .tower,
+.battle-fortress .battle-keep{
+  border-color:#364047!important;
+  background:
+    linear-gradient(112deg,rgba(255,244,213,.16),transparent 20% 72%,rgba(19,26,30,.2)),
+    repeating-linear-gradient(90deg,transparent 0 31px,rgba(43,51,55,.14) 32px 34px),
+    repeating-linear-gradient(0deg,#7d858a 0 18px,#606b70 19px 21px,#858d91 22px 37px,#59646a 38px 40px)!important;
+  box-shadow:
+    inset 5px 0 0 rgba(236,230,205,.1),
+    inset -10px 0 0 rgba(21,28,31,.16),
+    inset 0 -10px 0 rgba(31,38,41,.12),
+    0 2px 0 rgba(255,255,255,.04);
+}
+.battle-fortress .wall{
+  left:9%;right:9%;height:64%;
+  border-width:4px;
+  clip-path:polygon(0 7%,8% 7%,8% 0,17% 0,17% 7%,27% 7%,27% 0,36% 0,36% 7%,64% 7%,64% 0,73% 0,73% 7%,83% 7%,83% 0,92% 0,92% 7%,100% 7%,100% 100%,0 100%);
+}
+.battle-fortress .tower{
+  width:29%;
+  border-width:4px;
+  border-radius:5px 5px 2px 2px;
+}
+.battle-fortress .tower-left{transform:perspective(320px) rotateY(3deg)}
+.battle-fortress .tower-right{transform:perspective(320px) rotateY(-3deg)}
+.battle-fortress .tower::before{
+  left:-4px;right:-4px;top:-16px;height:21px;
+  background:
+    linear-gradient(180deg,rgba(235,223,190,.12),transparent 45%),
+    repeating-linear-gradient(90deg,#39444a 0 11px,#81898d 11px 17px,#39444a 17px 25px);
+  box-shadow:0 4px 5px rgba(0,0,0,.17);
+}
+.battle-fortress .tower::after{
+  top:23%;width:9px;height:19px;
+  background:
+    radial-gradient(circle at 50% 18%,rgba(221,181,103,.16),transparent 30%),
+    linear-gradient(180deg,#253139,#10171b);
+  box-shadow:0 37px 0 #172126;
+}
+.battle-fortress .battle-keep{
+  border-width:4px;
+  filter:brightness(.98);
+}
+.battle-gate{
+  width:31%;height:59%;
+  border:4px solid #29211b;
+  border-radius:52% 52% 0 0;
+  background:
+    linear-gradient(90deg,transparent 46%,rgba(185,139,79,.13) 47% 53%,transparent 54%),
+    repeating-linear-gradient(90deg,#4a3629 0 8px,#2d211a 8px 10px);
+  box-shadow:
+    inset 0 0 19px rgba(0,0,0,.58),
+    inset 0 5px 0 rgba(191,149,94,.07),
+    0 0 0 2px rgba(143,111,74,.1);
+}
+.battle-enemy-flag{
+  width:4px;height:91px;
+  background:linear-gradient(90deg,#181716,#4c4038 60%,#1d1a18);
+}
+.battle-enemy-flag::after{
+  width:49px;height:29px;
+  clip-path:polygon(0 0,100% 9%,82% 51%,100% 91%,0 100%);
+  background:
+    radial-gradient(circle at 28% 49%,rgba(162,139,92,.22) 0 10%,transparent 11%),
+    linear-gradient(135deg,#202a36,#101720 72%,#080d13);
+}
+
+/* Light joins army and target into one composition instead of two independent widgets. */
+.battle-army{
+  filter:
+    drop-shadow(0 11px 10px rgba(18,24,20,.28))
+    drop-shadow(1px -1px 0 rgba(246,220,166,.06));
+}
+.battle-army::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  left:-8%;right:-4%;bottom:-10%;height:24%;
+  border-radius:50%;
+  background:radial-gradient(ellipse,rgba(27,31,24,.38),transparent 69%);
+  filter:blur(2px);
+}
+.battle-army::after{
+  content:"";
+  position:absolute;
+  z-index:11;
+  left:6%;right:-5%;bottom:0;height:58%;
+  pointer-events:none;
+  background:linear-gradient(102deg,transparent 0 55%,rgba(244,213,154,.055) 76%,transparent 100%);
+  mix-blend-mode:screen;
+}
+.battle-stage[data-damage="mid"] .battle-fortress,
+.battle-stage[data-damage="high"] .battle-fortress{
+  filter:
+    drop-shadow(0 18px 12px rgba(17,23,27,.38))
+    drop-shadow(2px -1px 0 rgba(238,220,178,.05));
+}
+.battle-stage[data-damage="high"] .battle-fortress .tower-left{
+  transform:perspective(320px) rotateY(3deg) rotate(-.45deg);
+}
+.battle-stage[data-damage="high"] .battle-fortress .tower-right{
+  transform:perspective(320px) rotateY(-3deg) rotate(.55deg);
+}
+
+@media(max-width:720px){
+  .battle-army{left:2%;bottom:7%;width:50%;height:35%}
+  .battle-formation{left:8%;right:-1%;top:4%}
+  .battle-formation .battle-unit{width:23px;height:51px}
+  .battle-formation .battle-unit .helmet{width:20px;height:12px;left:2px}
+  .battle-formation .battle-unit .helmet::before{left:4px;right:3px;bottom:-7px;height:8px}
+  .battle-formation .battle-unit .body{left:3px;top:14px;width:19px;height:31px}
+  .battle-formation .battle-unit .body::before{top:12px}
+  .battle-formation .battle-unit .shield{left:-4px;top:21px;width:16px;height:25px}
+  .battle-formation .battle-unit .spear{height:56px}
+  .battle-standard{height:79px}.battle-standard i{width:43px;height:28px}
+  .battle-fortress{right:2%;bottom:6%;width:41%;height:49%}
+  .battle-fortress .tower::after{width:7px;height:15px;box-shadow:0 29px 0 #172126}
+}
+@media(max-width:390px){
+  .battle-formation{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .battle-formation .battle-unit:nth-child(-n+4){transform:translateY(9px) scale(.78)}
+  .battle-formation .battle-unit:nth-child(n+5):nth-child(-n+8){transform:translateY(4px) scale(.91)}
+  .battle-fortress{width:42%;height:48%}
+}
+@media(prefers-reduced-motion:reduce){
+  .battle-formation .battle-unit,
+  .battle-enemy-flag::after{animation:none!important}
+}
