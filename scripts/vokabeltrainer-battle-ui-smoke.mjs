@@ -32,16 +32,28 @@ try{
   await page.click('#attackBtn');
   await page.waitForSelector('#battleView.active');
   await page.waitForFunction(()=>!!currentTestFortress()?.revealedAt);
-  const firstFortressReveal=await page.evaluate(()=>({
-    seenAt:currentTestFortress()?.revealedAt||'',
-    active:document.querySelector('#battleStage')?.classList.contains('fortress-reveal'),
-    overlay:!!document.querySelector('#battleStage [data-battle-target-reveal]'),
-    copy:document.querySelector('#battleStage [data-battle-target-reveal]')?.textContent||''
-  }));
-  assert(firstFortressReveal.seenAt&&firstFortressReveal.active&&firstFortressReveal.overlay,'new test fortress receives one visible discovery reveal');
+  const firstFortressReveal=await page.evaluate(()=>{
+    const f=currentTestFortress(),stage=document.querySelector('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
+    return {
+      seenAt:f?.revealedAt||'',
+      revealKey:stage?.dataset.revealKey||'',
+      fortressKey:f?.key||'',
+      overlay:!!overlay,
+      copy:overlay?.textContent||''
+    };
+  });
+  assert(firstFortressReveal.seenAt&&firstFortressReveal.revealKey===firstFortressReveal.fortressKey&&firstFortressReveal.overlay,'new test fortress receives one recorded discovery reveal');
   assert(firstFortressReveal.copy.includes('NEUES TESTZIEL ENTDECKT')&&firstFortressReveal.copy.includes('Vokabel'),'fortress reveal explains the new target and learning scope');
+  const revealPresentation=await page.evaluate(()=>{
+    const stage=document.querySelector('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
+    stage?.classList.add('fortress-reveal');
+    const style=overlay?getComputedStyle(overlay):null;
+    const result={active:!!stage?.classList.contains('fortress-reveal'),visibility:style?.visibility||'',opacity:Number(style?.opacity||0)};
+    stage?.classList.remove('fortress-reveal');
+    return result;
+  });
+  assert(revealPresentation.active&&revealPresentation.visibility==='visible'&&revealPresentation.opacity>.9,'fortress reveal class produces a visible reduced-motion presentation');
   assert(await page.locator('#battleAttackBtn').isDisabled(),'only the attack action is locked before the daily goal');
-  await page.waitForTimeout(950);
   await page.click('#battleReturnBtn');
   await page.waitForSelector('#childProgressView.active');
   await page.click('#attackBtn');
