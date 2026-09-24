@@ -53,6 +53,7 @@ assert(ui.includes("Der Elternbereich ist auf diesem Kindergerät gesperrt."),'p
 assert(html.includes('id="campaignMapBtn"')&&html.includes('id="campaignMapView"')&&html.includes('id="campaignMapBoard"'),'child campaign exposes the dynamic field-map view');
 assert(html.includes('css/campaign-map.css?v='+version)&&html.includes('js/campaign-map.js?v='+version),'campaign map CSS and module use the running app version');
 assert(html.includes('css/battle-fortress.css?v='+version),'fortress progression stylesheet uses the running app version');
+assert(!html.includes('\\n  <link rel="stylesheet" href="css/battle-fortress.css'),'battle fortress stylesheet link is separated by a real newline, not a literal backslash-n token');
 assert(sw.includes("'./css/battle-fortress.css?v="+version+"'"),'fortress progression stylesheet is part of the offline app shell');
 assert(html.includes('id="parentGuideOpenBtn"')&&html.includes('id="parentPedagogyOpenBtn"'),'parent area exposes guide and pedagogical documentation');
 assert(html.includes('id="parentGuidePdfBtn"')&&html.includes('id="parentPedagogyPdfBtn"'),'parent documentation exposes direct PDF actions');
