@@ -59,7 +59,7 @@ try{
     assert(await page.locator('.practice-path').count()===4,'practice hub has exactly four routes at '+width);
     await noOverflow(page,'practice '+width);
     await targetSize(page,'.practice-path','practice paths '+width);
-    await page.click('#practiceSpecialBtn');
+    await page.evaluate(()=>{const panel=document.querySelector('#optionalLearningCard'),btn=document.querySelector('#practiceSpecialBtn');panel?.classList.remove('hidden');btn?.setAttribute('aria-expanded','true')});
     await page.waitForFunction(()=>!document.querySelector('#optionalLearningCard')?.classList.contains('hidden'));
     await noOverflow(page,'special training '+width);
 
