@@ -2321,3 +2321,161 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
   .battle-formation .battle-unit.unit-archer .weapon::before{height:31px}
   .battle-ram{right:-10%}
 }
+
+
+/* Battle illustration pass 2c – cinematic impact and conquest */
+/* Treffer werden als Teil der Landschaft gelesen, nicht als UI-Effekt aus konzentrischen Kreisen. */
+.battle-impact{
+  right:25.5%;bottom:31%;
+  width:92px;height:86px;
+  pointer-events:none;
+  filter:drop-shadow(0 5px 6px rgba(43,31,21,.18));
+}
+.battle-impact i{
+  border:0;
+  inset:auto;
+  border-radius:0;
+}
+.battle-impact i:nth-child(1){
+  left:21px;top:20px;
+  width:50px;height:42px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 48% 50%,rgba(255,247,214,.95) 0 7%,rgba(239,184,92,.66) 9% 20%,rgba(127,83,43,.2) 42%,transparent 68%);
+  filter:blur(.3px);
+}
+.battle-impact i:nth-child(2){
+  left:8px;top:12px;
+  width:72px;height:61px;
+  background:
+    linear-gradient(68deg,transparent 0 42%,rgba(105,88,69,.8) 43% 47%,transparent 48%),
+    linear-gradient(112deg,transparent 0 53%,rgba(77,67,57,.72) 54% 58%,transparent 59%),
+    linear-gradient(35deg,transparent 0 64%,rgba(146,116,72,.7) 65% 68%,transparent 69%);
+  transform:rotate(-9deg);
+}
+.battle-impact i:nth-child(3){
+  left:28px;top:9px;
+  width:48px;height:56px;
+  background:
+    radial-gradient(circle at 8% 71%,#f0c776 0 2px,transparent 3px),
+    radial-gradient(circle at 71% 8%,#e5b65d 0 2px,transparent 3px),
+    radial-gradient(circle at 84% 66%,#c89347 0 1.5px,transparent 2.5px),
+    radial-gradient(circle at 45% 86%,#efe1b6 0 1px,transparent 2px);
+  filter:drop-shadow(0 0 3px rgba(235,185,92,.38));
+}
+.battle-dust{
+  right:18.5%;bottom:6%;
+  width:210px;height:92px;
+  border-radius:50%;
+  background:
+    radial-gradient(ellipse at 31% 62%,rgba(202,186,150,.42) 0 16%,transparent 42%),
+    radial-gradient(ellipse at 58% 48%,rgba(184,166,132,.36) 0 18%,transparent 48%),
+    radial-gradient(ellipse at 77% 68%,rgba(155,140,113,.25) 0 14%,transparent 43%);
+  filter:blur(2.2px);
+  mix-blend-mode:screen;
+}
+.battle-stage.is-impact .battle-impact{
+  opacity:1;
+  animation:illustratedImpact .72s cubic-bezier(.15,.76,.28,1);
+}
+.battle-stage.is-impact .battle-dust{
+  opacity:1;
+  animation:illustratedDust 1.55s ease-out;
+}
+@keyframes illustratedImpact{
+  0%{opacity:0;transform:translate(-8px,8px) scale(.58)}
+  18%{opacity:1;transform:translate(1px,-1px) scale(1.08)}
+  54%{opacity:.86;transform:translate(4px,-4px) scale(1)}
+  100%{opacity:0;transform:translate(9px,-10px) scale(1.12)}
+}
+@keyframes illustratedDust{
+  0%{opacity:0;transform:translateY(14px) scale(.72)}
+  22%{opacity:.82}
+  100%{opacity:0;transform:translate(-8px,-18px) scale(1.3)}
+}
+
+/* Schaden bleibt sichtbar, aber ohne schwarze Comic-Risse. */
+.battle-fortress .crack{
+  width:3px;
+  background:linear-gradient(180deg,#313a3d,#4e5350 52%,#2c3336);
+  box-shadow:1px 0 0 rgba(230,222,197,.08);
+}
+.battle-fortress .crack::after{
+  width:3px;
+  background:linear-gradient(180deg,#333b3e,#262e31);
+}
+.battle-stage[data-damage="low"] .battle-fortress .crack{opacity:.18}
+.battle-stage[data-damage="mid"] .battle-fortress .crack{opacity:.48}
+.battle-stage[data-damage="high"] .battle-fortress .crack{opacity:.82}
+.battle-stage[data-damage="mid"] .battle-fortress .wall,
+.battle-stage[data-damage="mid"] .battle-fortress .tower,
+.battle-stage[data-damage="mid"] .battle-fortress .battle-keep{
+  filter:brightness(.91) saturate(.78);
+}
+.battle-stage[data-damage="high"] .battle-fortress .wall,
+.battle-stage[data-damage="high"] .battle-fortress .tower,
+.battle-stage[data-damage="high"] .battle-fortress .battle-keep{
+  filter:brightness(.8) saturate(.6) contrast(1.08);
+}
+.battle-stage[data-damage="high"] .battle-fortress::after{
+  content:"";
+  position:absolute;
+  z-index:8;
+  right:16%;top:-7%;
+  width:72px;height:104px;
+  background:
+    radial-gradient(ellipse at 48% 82%,rgba(92,91,83,.2),transparent 42%),
+    radial-gradient(ellipse at 53% 54%,rgba(76,78,75,.16),transparent 38%),
+    radial-gradient(ellipse at 44% 24%,rgba(63,67,66,.1),transparent 34%);
+  filter:blur(5px);
+  opacity:.68;
+  transform:rotate(7deg);
+  pointer-events:none;
+}
+
+/* Erobert: die Bildgeschichte übernimmt, kein goldener App-Rahmen um die ganze Bühne. */
+.battle-stage.is-victory{
+  box-shadow:0 20px 58px rgba(17,31,45,.31);
+}
+.battle-stage.is-victory::after{
+  background:
+    radial-gradient(ellipse at 72% 29%,rgba(255,229,165,.16),transparent 36%),
+    linear-gradient(180deg,rgba(255,244,214,.055),transparent 39%,rgba(17,28,35,.14)),
+    radial-gradient(ellipse at 50% 110%,rgba(32,27,20,.22),transparent 58%);
+}
+.battle-fortress.captured{
+  filter:
+    drop-shadow(0 18px 12px rgba(17,23,27,.31))
+    saturate(.86)
+    brightness(.94);
+}
+.battle-fortress.captured .battle-own-flag{
+  filter:drop-shadow(0 3px 2px rgba(0,0,0,.22));
+}
+.battle-fortress.captured .battle-own-flag::after{
+  box-shadow:inset -8px 0 12px rgba(29,26,44,.14);
+}
+.battle-fortress.captured .battle-enemy-flag{
+  visibility:hidden;
+}
+.battle-fortress.captured .battle-gate{
+  box-shadow:
+    inset 0 0 17px rgba(0,0,0,.48),
+    0 4px 7px rgba(35,28,22,.18);
+}
+.battle-stage.fortress-secured .battle-fortress::after{
+  opacity:.24;
+}
+
+@media(max-width:720px){
+  .battle-impact{right:25%;bottom:29%;width:72px;height:68px;transform-origin:center}
+  .battle-impact i:nth-child(1){left:17px;top:16px;width:40px;height:34px}
+  .battle-impact i:nth-child(2){left:6px;top:9px;width:58px;height:50px}
+  .battle-impact i:nth-child(3){left:22px;top:7px;width:39px;height:45px}
+  .battle-dust{right:14%;bottom:5%;width:155px;height:72px}
+  .battle-stage[data-damage="high"] .battle-fortress::after{width:48px;height:74px}
+}
+@media(prefers-reduced-motion:reduce){
+  .battle-stage.is-impact .battle-impact,
+  .battle-stage.is-impact .battle-dust{animation:none!important}
+}
