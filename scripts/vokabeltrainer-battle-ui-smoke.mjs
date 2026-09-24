@@ -54,6 +54,8 @@ try{
   });
   await page.click('#attackBtn');
   await page.waitForSelector('#battleView.active');
+  assert((await page.locator('#battleBackBtn').textContent())?.includes('Fortschritt'),'battle opened from progress returns to progress');
+  assert((await page.locator('#battleReturnBtn').textContent())?.includes('Fortschritt'),'bottom return action matches progress origin');
   await page.waitForFunction(()=>window.__fortressRevealProbe?.seen===true);
   const firstFortressReveal=await page.evaluate(()=>window.__fortressRevealProbe?.snap||null);
   assert(firstFortressReveal?.seenAt,'new test fortress records the first reveal: '+JSON.stringify(firstFortressReveal));
