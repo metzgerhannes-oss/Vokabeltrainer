@@ -83,6 +83,19 @@ try{
   await page.waitForSelector('#battleView.active');
   await page.waitForFunction(()=>window.VTBattleArt?.ready===true);
   await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
+  const fortressStylesheet=await page.evaluate(()=>{
+    const sheets=[...document.styleSheets].map(sheet=>{
+      let rules=[];
+      try{rules=[...sheet.cssRules].map(rule=>rule.cssText||'')}catch(_){}
+      return {href:sheet.href||'',ruleCount:rules.length,hasReveal:rules.some(rule=>rule.includes('battle-target-reveal'))};
+    });
+    return {
+      sheets:sheets.map(s=>({href:s.href,ruleCount:s.ruleCount,hasReveal:s.hasReveal})),
+      fortress:sheets.find(s=>s.href.includes('/css/battle-fortress.css'))||null
+    };
+  });
+  assert(!!fortressStylesheet.fortress,'battle fortress stylesheet is loaded in WebKit: '+JSON.stringify(fortressStylesheet.sheets));
+  assert(fortressStylesheet.fortress.hasReveal,'battle fortress stylesheet contains the reveal rules: '+JSON.stringify(fortressStylesheet.fortress));
   assert(await page.locator('#battleStage [data-battle-art-stack]').count()===1,'battle stage receives one layered artwork stack');
   assert(await page.locator('#battleStage [data-battle-layer]').count()===4,'battle artwork is split into background, army, fortress and atmosphere');
   assert(await page.locator('#battleStage [data-battle-layer="background"]').count()===1,'background layer exists');
