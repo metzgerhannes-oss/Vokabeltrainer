@@ -78,6 +78,9 @@ try{
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer battle flow smoke: passed');
+}catch(error){
+  await diagnose('vokabeltrainer-battle-flow-ui-smoke',error);
+  throw error;
 }finally{
   await browser.close();
 }
