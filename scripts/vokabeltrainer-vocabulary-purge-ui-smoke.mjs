@@ -10,7 +10,7 @@ const assert=(v,m)=>{if(!v)throw new Error('Vocabulary purge UI smoke failed: '+
 try{
   let response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'app loads');
-  await page.waitForFunction(()=>state!==null&&typeof persistState==='function'&&typeof attachVocabularyToSet==='function');
+  await page.waitForFunction(()=>window.__VT_APP_READY__===true&&state!==null&&typeof persistState==='function'&&typeof attachVocabularyToSet==='function');
 
   await page.evaluate(async()=>{
     localStorage.removeItem(VOCABULARY_PURGE_MARKER);
@@ -35,7 +35,7 @@ try{
   });
 
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>state!==null&&document.querySelector('#profileBtn')?.textContent==='Profil bleibt');
+  await page.waitForFunction(()=>window.__VT_APP_READY__===true&&state!==null&&document.querySelector('#profileBtn')?.textContent==='Profil bleibt');
 
   const cleaned=await page.evaluate(()=>({
     marker:!!localStorage.getItem(VOCABULARY_PURGE_MARKER),
@@ -65,7 +65,7 @@ try{
     await persistState();
   });
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>state!==null);
+  await page.waitForFunction(()=>window.__VT_APP_READY__===true&&state!==null);
   const retained=await page.evaluate(()=>({
     sets:state.sets.length,
     hasNewWord:state.vocabulary.some(v=>v.term==='newword'),

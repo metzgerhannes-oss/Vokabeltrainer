@@ -11,7 +11,7 @@ const assert=(v,m)=>{if(!v)throw new Error('DOM safety smoke failed: '+m)};
 try{
   const response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'app loads');
-  await page.waitForFunction(()=>typeof state==='object'&&typeof renderAll==='function'&&typeof attachVocabularyToSet==='function'&&typeof openSetPairAudit==='function'&&typeof openWordEditor==='function');
+  await page.waitForFunction(()=>window.__VT_APP_READY__===true&&typeof state==='object'&&typeof renderAll==='function'&&typeof attachVocabularyToSet==='function'&&typeof openSetPairAudit==='function'&&typeof openWordEditor==='function');
   await page.evaluate(async()=>{await window.VTFamilySync?.bootstrap?.()});
 
   const seeded=await page.evaluate(()=>{

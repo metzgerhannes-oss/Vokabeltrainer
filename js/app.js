@@ -18,7 +18,7 @@
       if(sessionStorage.getItem(key))return;
       updateReloading=true;sessionStorage.setItem(key,'1');location.reload();
     });
-    navigator.serviceWorker.register('./sw.js?v=0.18.59')
+    navigator.serviceWorker.register('./sw.js?v=0.18.60')
       .then(reg=>reg.update().catch(()=>{}))
       .catch(console.warn);
   }
@@ -35,5 +35,11 @@
   renderAll();
   const handledDeviceInvite=window.handleDeviceInviteFromUrl?.();
   if(!handledDeviceInvite)window.handleDuelInviteFromUrl?.();
+
+  // Deterministic local bootstrap boundary for browser tests and diagnostics.
+  // This deliberately does not wait for optional network sync.
+  window.__VT_APP_READY__=true;
+  window.dispatchEvent(new Event('vt-app-ready'));
+
   window.VTFamilySync?.bootstrap();
 })();

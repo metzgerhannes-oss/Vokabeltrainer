@@ -39,3 +39,35 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
+
+      - name: Verify live deployment
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          EXPECTED_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          EXPECTED_VERSION="$(sed -n "s/^const VERSION = '\([^']*\)';$/\1/p" js/core.js)"
+          test -n "$EXPECTED_VERSION"
+          BASE="${PAGE_URL%/}"
+          OK=0
+
+          for i in {1..20}; do
+            HTML="$(curl -fsSL --max-time 15 "$BASE/index.html?release=$EXPECTED_SHA" || true)"
+            CORE="$(curl -fsSL --max-time 15 "$BASE/js/core.js?release=$EXPECTED_SHA" || true)"
+            SW="$(curl -fsSL --max-time 15 "$BASE/sw.js?release=$EXPECTED_SHA" || true)"
+
+            if printf '%s' "$HTML" | grep -Fq ">v$EXPECTED_VERSION</span>" \
+              && printf '%s' "$CORE" | grep -Fq "const VERSION = '$EXPECTED_VERSION';" \
+              && printf '%s' "$SW" | grep -Fq "APP_VERSION='$EXPECTED_VERSION'"; then
+              OK=1
+              break
+            fi
+            sleep 3
+          done
+
+          if [ "$OK" -ne 1 ]; then
+            echo "Live deployment did not expose expected version $EXPECTED_VERSION for commit $EXPECTED_SHA."
+            exit 1
+          fi
+
+          echo "Live GitHub Pages deployment verified at version $EXPECTED_VERSION."

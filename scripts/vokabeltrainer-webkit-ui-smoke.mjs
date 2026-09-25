@@ -17,6 +17,7 @@ try{
   if(!/Vokabeltrainer/i.test(title))throw new Error('unexpected title: '+title);
   const html=await page.content();
   if(!/Vokabeltrainer|Lernen|Lern/i.test(html))throw new Error('app content missing');
+  await page.waitForFunction(()=>window.__VT_APP_READY__===true);
 
   // Regression: a compact iPhone must expose the child-device path directly.
   await page.setViewportSize({width:375,height:667});
