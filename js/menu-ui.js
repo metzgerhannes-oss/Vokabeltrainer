@@ -10,13 +10,22 @@
   function applyAvatarArt(){
     const img=document.querySelector('#projectMenuAvatarArt');
     const fallback=document.querySelector('#projectMenuAvatarFallback');
-    if(!img||!fallback)return;
-    const art=window.VTArmyArt;
-    if(art?.ready&&art.heroUrl){
-      if(img.src!==art.heroUrl)img.src=art.heroUrl;
+    const frame=document.querySelector('#projectMenuAvatarFrame');
+    if(!img||!fallback||!frame||typeof state!=='object'||!state||!state.activeSubject)return;
+    const level=Math.max(1,Math.min(6,Number(frame.dataset.avatarStage)||1));
+    const key=`${state.activeSubject}-stage-${level}`;
+    const finalUrl=window.VTMenuAvatarArt?.get?.(state.activeSubject,level)||'';
+    const armyUrl=window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'';
+    const url=finalUrl||armyUrl;
+    if(url){
+      if(img.src!==url)img.src=url;
+      img.dataset.avatarFinal=finalUrl?'true':'false';
+      img.dataset.avatarArtKey=finalUrl?key:'fallback';
       img.classList.remove('hidden');
       fallback.classList.add('hidden');
     }else{
+      img.removeAttribute('data-avatar-final');
+      img.removeAttribute('data-avatar-art-key');
       img.classList.add('hidden');
       fallback.classList.remove('hidden');
     }
@@ -92,6 +101,7 @@
     document.querySelector('#menuCardboxBtn')?.addEventListener('click',()=>showProgressTarget('cardboxOverviewCard'));
     document.querySelector('#menuAchievementsBtn')?.addEventListener('click',()=>showProgressTarget('progressOverviewCard'));
     document.addEventListener('vt-army-art-ready',applyAvatarArt);
+    document.addEventListener('vt-menu-avatar-art-ready',applyAvatarArt);
     render();
   }
 

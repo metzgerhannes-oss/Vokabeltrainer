@@ -14,6 +14,7 @@ try{
   const response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'app loads');
   await page.waitForFunction(()=>window.__VT_APP_READY__===true&&!!window.VTMenuUi);
+  await page.waitForFunction(()=>window.VTMenuAvatarArt?.readySubjects?.english===true);
 
   await page.evaluate(()=>{
     state=defaultState();
@@ -53,7 +54,10 @@ try{
     avatarStage:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarStage,
     avatarKey:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarVisualKey,
     avatarLabel:document.querySelector('#menuAvatarStageLabel')?.textContent,
-    avatarPips:document.querySelectorAll('#menuAvatarStagePips i.filled').length
+    avatarPips:document.querySelectorAll('#menuAvatarStagePips i.filled').length,
+    avatarArtKey:document.querySelector('#projectMenuAvatarArt')?.dataset.avatarArtKey,
+    avatarFinal:document.querySelector('#projectMenuAvatarArt')?.dataset.avatarFinal,
+    avatarSrc:document.querySelector('#projectMenuAvatarArt')?.src||''
   }));
   assert(metrics.learned===metrics.expected,'learned KPI comes from academic progress');
   assert(metrics.castles==='1','captured fortress KPI reflects actual captured test fortresses');
@@ -63,6 +67,9 @@ try{
   assert(metrics.avatarKey==='english-stage-3','avatar exposes a stable future artwork key');
   assert(metrics.avatarLabel==='Avatar · Stufe 3/6','avatar stage label is visible');
   assert(metrics.avatarPips===3,'avatar stage pips match current stage');
+  assert(metrics.avatarFinal==='true','English menu uses final stage-specific avatar artwork');
+  assert(metrics.avatarArtKey==='english-stage-3','English avatar artwork matches the computed stage');
+  assert(metrics.avatarSrc.startsWith('blob:'),'stage artwork is reconstructed locally from offline assets');
   const boundaries=await page.evaluate(()=>[0,17,18,35,36,53,54,71,72,89,90,100].map(p=>[p,avatarStageFor(p,'english').level]));
   assert(JSON.stringify(boundaries)===JSON.stringify([[0,1],[17,1],[18,2],[35,2],[36,3],[53,3],[54,4],[71,4],[72,5],[89,5],[90,6],[100,6]]),'avatar stage thresholds stay deterministic');
 
@@ -92,6 +99,7 @@ try{
   await page.waitForFunction(()=>state.activeSubject==='latin');
   assert((await page.locator('#menuSubjectLabel').textContent())==='Latein','subject switch updates menu context');
   assert((await page.locator('#projectMenuAvatarFrame').getAttribute('data-avatar-visual-key'))==='latin-stage-1','avatar artwork key follows subject and its own academic progress');
+  assert((await page.locator('#projectMenuAvatarArt').getAttribute('data-avatar-final'))==='false','Latin intentionally keeps the shared fallback until its own six final artworks are added');
   assert(await page.evaluate(()=>subjectProgress('english').pct)===beforeSwitch,'rendering and switching avatar context never changes academic mastery');
 
   assert(errors.length===0,'menu navigation must not produce browser errors: '+errors.join(' | '));
@@ -100,6 +108,7 @@ try{
   console.log('✓ KPI banner uses existing academic/campaign data');
   console.log('✓ army, campaign, cardbox and achievements routes');
   console.log('✓ six avatar stages are deterministic and learning-derived');
+  console.log('✓ English uses the matching offline final artwork for its computed stage');
   console.log('✓ subject switching stays synchronized without changing mastery');
 }finally{
   await browser.close();

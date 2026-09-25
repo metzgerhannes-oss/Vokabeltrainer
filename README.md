@@ -4,11 +4,20 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.19.2**
+App-Version: **v0.19.3**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.19.3 – Englische Avatar-Grafiken
+
+- die sechs technischen Avatarstufen besitzen jetzt **sechs echte, voneinander unterscheidbare Englisch-Grafiken** statt nur Skalierung und CSS-Aufwertung derselben Figur
+- die Grafiken bleiben derselben Figur und demselben Stil treu; Ausrüstung, Präsenz und Rangwirkung wachsen sichtbar von Stufe 1 bis Stufe 6
+- jede Grafik liegt offline im App-Shell und wird lokal aus kompakten WebP-Base64-Ressourcen rekonstruiert
+- die Darstellung wird weiterhin ausschließlich aus dem bestehenden Mastery-Fortschritt abgeleitet; die Bilder speichern und verändern keinen Lernwert
+- Latein verwendet bis zur eigenen Grafikserie bewusst weiterhin den vorhandenen Fallback und bleibt technisch unabhängig vorbereitet
+- der Project-Menu-Browsertest prüft, dass die richtige Englisch-Grafik zur berechneten Stufe geladen wird und Latein nicht versehentlich Englisch-Artwork übernimmt
 
 ## v0.19.2 – Mitwachsender Avatar
 
