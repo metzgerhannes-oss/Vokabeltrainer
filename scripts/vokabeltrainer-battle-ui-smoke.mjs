@@ -13,7 +13,7 @@ const assert=(v,m)=>{if(!v)throw new Error('Battle UI smoke failed: '+m)};
 try{
   const response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'app loads');
-  await page.waitForFunction(()=>state!==null&&typeof grantBattleTicket==='function'&&typeof openBattleView==='function');
+  await page.waitForFunction(()=>window.__VT_APP_READY__===true&&state!==null&&typeof grantBattleTicket==='function'&&typeof openBattleView==='function');
 
   await page.evaluate(()=>{
     state=defaultState();
@@ -62,7 +62,8 @@ try{
   assert(firstFortressReveal.key===firstFortressReveal.revealKey,'fortress reveal is tied to the current test target: '+JSON.stringify(firstFortressReveal));
   assert(firstFortressReveal.copy.includes('NEUES TESTZIEL ENTDECKT')&&firstFortressReveal.copy.includes('Vokabel'),'fortress reveal explains the new target and learning scope');
   assert(await page.locator('#battleAttackBtn').isDisabled(),'only the attack action is locked before the daily goal');
-  await page.click('#battleReturnBtn');
+  await page.waitForFunction(()=>document.querySelector('#battleStage [data-battle-target-reveal]')?.hidden===true);
+  await page.locator('#battleReturnBtn').click();
   await page.waitForSelector('#childProgressView.active');
   await page.evaluate(()=>{grantBattleTicket('dailyGoal');renderAll();});
   assert(await page.evaluate(()=>grantBattleTicket('duplicate-smoke'))===false,'same day cannot earn a second battle action');
