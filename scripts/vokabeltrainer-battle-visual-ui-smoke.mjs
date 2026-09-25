@@ -1,6 +1,6 @@
 import { createBattleHarness } from './helpers/vokabeltrainer-battle-harness.mjs';
 
-const {browser,page,assert,reset,openBattle,errors}=await createBattleHarness();
+const {browser,page,assert,reset,openBattle,errors,diagnose}=await createBattleHarness();
 
 try{
   await reset({revealed:true,ticket:true});
@@ -84,6 +84,9 @@ try{
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer battle visual smoke: passed');
+}catch(error){
+  await diagnose('vokabeltrainer-battle-visual-ui-smoke',error);
+  throw error;
 }finally{
   await browser.close();
 }
