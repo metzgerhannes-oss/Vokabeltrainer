@@ -39,7 +39,16 @@ function grantTestGradeReward(gradeRow){
   return reward;
 }
 function mySets(subject=state.activeSubject){ return state.sets.filter(s=>s.learnerId===state.activeLearnerId && s.subject===subject); }
-function setNeedsPairReview(set){return !!set&&(set.pairReviewRequired===true||pairReviewSignatureMismatch(set))}
+function setHasPhotoImport(set,s=state){
+  if(!set)return false;
+  return (s?.setVocabulary||[]).some(link=>String(link?.setId||'')===String(set.id||'')&&link?.source==='photo-text-import');
+}
+function setNeedsPairReview(set,s=state){
+  if(!set)return false;
+  if(set.pairReviewRequired===true||pairReviewSignatureMismatch(set,s))return true;
+  if(!setHasPhotoImport(set,s))return false;
+  return !set.pairVerifiedAt||!set.pairVerifiedSignature;
+}
 function firstContactStatus(setId){
   const links=(state?.setVocabulary||[]).filter(x=>x.setId===setId),total=links.length;
   const copied=links.filter(x=>x.firstContactCopiedAt).length,recalled=links.filter(x=>x.firstContactRecalledAt).length,proved=links.filter(x=>x.firstContactProvedAt).length,completed=links.filter(x=>x.firstContactCompletedAt).length;
