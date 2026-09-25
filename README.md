@@ -4,11 +4,19 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.19.6**
+App-Version: **v0.19.7**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.19.7 – Stabiler Festungs-Reveal
+
+- der einmalige Hinweis auf eine neu entdeckte Testfestung besitzt jetzt einen eindeutigen Abschlusszustand statt nur von einem DOM-Timer abzuhängen
+- bei normaler Bewegung beendet das tatsächliche Animationsende die Sequenz; ein Timeout bleibt nur als Rückfallebene
+- bei **Reduced Motion** wird die transiente Entdeckungsanimation vollständig übersprungen und direkt der identische stabile Schlachtzustand gezeigt
+- der Abschluss wird intern als Ereignis signalisiert und im WebKit-Browsertest für normale sowie reduzierte Bewegung geprüft
+- Lernstand, Mastery, XP, Festungszustand und Kampfrechnung bleiben unverändert
 
 ## v0.19.6 – Konsistente Rücknavigation im Kindbereich
 
