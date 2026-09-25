@@ -113,7 +113,7 @@ function renderBattlefield(){
     ?`<img class="progress-army-art" data-progress-army-art src="${esc(window.VTArmyArt.heroUrl)}" alt="" aria-hidden="true"><div class="progress-army-art-shade" aria-hidden="true"></div>${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}${fortressMarkup(f,false)}`
     :`<div class="sun"></div><div class="preview-cloud cloud-a"></div><div class="preview-cloud cloud-b"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army"><div class="preview-standard"></div>${battleUnitsMarkup(count,false,p.pct)}${siege}</div>${fortressMarkup(f,false)}`;
 }
-if(typeof document!=='undefined'&&typeof document.addEventListener==='function')if(typeof document?.addEventListener==='function')document.addEventListener('vt-army-art-ready',()=>{if(state&&document.querySelector?.('#battlefield'))renderBattlefield()});
+if(typeof document!=='undefined'&&typeof document.addEventListener==='function')document.addEventListener('vt-army-art-ready',()=>{if(state&&document.querySelector?.('#battlefield'))renderBattlefield()});
 function renderBattleAttackChoices(pct=subjectProgress().pct){
   const box=$('#battleAttackChoices');if(!box)return;
   if(!attackUnlocked(battleAttackMode,pct))battleAttackMode='charge';
