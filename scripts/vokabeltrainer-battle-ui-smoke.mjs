@@ -9,6 +9,13 @@ const errors=[];
 page.on('pageerror',e=>errors.push(String(e?.message||e)));
 page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
 const assert=(v,m)=>{if(!v)throw new Error('Battle UI smoke failed: '+m)};
+async function activate(selector,label=selector){
+  const loc=page.locator(selector);
+  assert(await loc.count()===1,label+' exists exactly once');
+  assert(await loc.isVisible(),label+' is visible');
+  assert(!(await loc.isDisabled()),label+' is enabled');
+  await loc.evaluate(el=>el.click());
+}
 
 try{
   const response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
@@ -72,7 +79,7 @@ try{
   });
   const revealOverlay=page.locator('#battleStage [data-battle-target-reveal]');
   if(await revealOverlay.count())assert(await revealOverlay.isHidden(),'fortress reveal can be closed into its final state deterministically');
-  await page.locator('#battleReturnBtn').click();
+  await activate('#battleReturnBtn','battle return action');
   await page.waitForSelector('#childProgressView.active');
   await page.evaluate(()=>{grantBattleTicket('dailyGoal');renderAll();});
   assert(await page.evaluate(()=>grantBattleTicket('duplicate-smoke'))===false,'same day cannot earn a second battle action');
@@ -415,7 +422,7 @@ try{
   assert(!(await page.locator('[data-battle-attack="ram"]').isDisabled()),'ram attack unlocks from learning progress');
   assert((await page.locator('[data-battle-attack="ram"] small').textContent())?.includes('Belagerung'),'attack choice names the matching army role');
   assert((await page.locator('[data-battle-attack="ram"] small').textContent())?.includes('+10 Taktik'),'maxed siege unit exposes only the capped 10-point tactical bonus');
-  await page.click('[data-battle-attack="ram"]');
+  await activate('[data-battle-attack="ram"]','ram attack choice');
   assert(await page.locator('[data-battle-attack="ram"].active').count()===1,'attack type can be selected');
   assert((await page.locator('#battleMessage').textContent())?.includes('+10 Taktikschaden'),'selected attack explains its small tactical bonus');
   const expectedRamDamage=await page.evaluate(()=>testFortressDamage(currentTestFortress(),'english','ram').damage);
@@ -431,9 +438,9 @@ try{
   const viewport=page.viewportSize();
   assert(!!attackButtonRect&&!!viewport&&attackButtonRect.x>=0&&attackButtonRect.x+attackButtonRect.width<=viewport.width,'primary battle action stays inside the iPhone width after moving below the artwork');
 
-  await page.click('#battleFullscreenBtn');
+  await activate('#battleFullscreenBtn','battle fullscreen action');
   assert(await page.locator('body.battle-immersive').count()===1,'immersive fullscreen fallback activates');
-  await page.click('#battleAttackBtn');
+  await activate('#battleAttackBtn','battle primary action');
   assert((await page.locator('[data-battle-impact-title]').textContent())==='TOR-TREFFER!','ram attack prepares a clear gate-hit callout immediately');
   assert((await page.locator('[data-battle-impact-damage]').textContent())===expectedRamDamage+' Schaden','visual hit callout uses the exact calculated damage');
   assert((await page.locator('[data-battle-impact-tactic]').textContent())?.includes('+10 durch Belagerung'),'visual hit callout explains the small tactical contribution');
@@ -461,7 +468,7 @@ try{
   assert(Number(await page.locator('#battleStage .battle-own-flag').evaluate(el=>getComputedStyle(el).opacity))===1,'captured fortress permanently shows the player flag');
   await page.evaluate(()=>renderBattlefield());
   assert(await page.locator('#battlefield.battle-captured .fortress.captured .own-flag').count()===1,'campaign overview also keeps the player flag on the conquered fortress');
-  await page.click('#battleResultContinue');
+  await activate('#battleResultContinue','battle result continue');
   await page.waitForSelector('#battleResultOverlay',{state:'hidden'});
   await page.evaluate(()=>renderBattleView());
   await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
@@ -476,25 +483,25 @@ try{
   assert(await page.locator('#battleStage .battle-boss-character').count()===1,'boss character is visible in battle stage');
   assert((await page.locator('#battleStoryTitle').textContent())?.includes('Bergzitadelle'),'visual fortress type selects the matching campaign story');
   assert(!(await page.locator('[data-battle-attack="special"]').isDisabled()),'high long-term progress unlocks a special attack');
-  await page.click('[data-battle-attack="special"]');
-  await page.click('#battleAttackBtn');
+  await activate('[data-battle-attack="special"]','special attack choice');
+  await activate('#battleAttackBtn','battle primary action');
   assert(['ELITESCHLAG!','ADLERSCHLAG!'].includes((await page.locator('[data-battle-impact-title]').textContent())||''),'special attack prepares the strongest dedicated hit callout');
   await page.waitForSelector('#battleStage.attack-special.battle-finished',{timeout:3000});
   await page.waitForSelector('#battleResultOverlay.visible');
   assert((await page.locator('#battleResultTitle').textContent())?.includes('Boss besiegt'),'boss conquest uses the cinematic result view');
   assert(await page.evaluate(()=>subjectProgress().pct)===100,'boss and special attack do not change academic mastery');
-  await page.click('#battleResultClose');
+  await activate('#battleResultClose','battle result close');
   await page.waitForSelector('#battleResultOverlay',{state:'hidden'});
 
   await page.evaluate(()=>{const day=battleDayState('english',true);day.unlocked=true;day.actionUsed=false;renderBattleView();});
   assert(await page.locator('.battle-tactics.hidden').count()===1,'after conquest attack tactics disappear and the mission becomes securing');
   assert((await page.locator('#battleAttackBtn').textContent())?.includes('sichern'),'captured fortress offers a securing action instead of a new target');
-  await page.click('#battleAttackBtn');
+  await activate('#battleAttackBtn','battle primary action');
   await page.waitForSelector('#battleStage.battle-finished',{timeout:3000});
   await page.waitForSelector('#battleResultOverlay.visible');
   assert((await page.locator('#battleResultTitle').textContent())?.includes('Festung gesichert'),'early conquest is followed by securing the same fortress');
   assert(await page.evaluate(()=>currentTestFortress().securedDates.length===1),'securing is stored on the current test fortress');
-  await page.click('#battleResultClose');
+  await activate('#battleResultClose','battle result close');
   await page.waitForSelector('#battleResultOverlay',{state:'hidden'});
 
   const privacy=await page.evaluate(()=>{const p=duelPayload(),raw=JSON.parse(decodeURIComponent(escape(atob(encodeDuel(p)))));return {payload:p,raw,profile:learner().name}});
@@ -503,7 +510,7 @@ try{
   await page.evaluate(()=>openDuel());
   const duelCode=await page.evaluate(()=>encodeDuel({...duelPayload(),progress:80,stability:0}));
   await page.fill('#opponentCode',duelCode);
-  await page.click('#duelCompare');
+  await activate('#duelCompare','duel compare action');
   assert(await page.locator('.duel-arena').count()===1,'friendship duel has an animated arena');
   assert((await page.locator('#duelResult').textContent())?.includes('Sieg'),'deterministic duel still uses academic progress');
   if(errors.length)throw new Error(errors.join(' | '));
