@@ -233,9 +233,9 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           PR_DRAFT: ${{ github.event.pull_request.draft }}
           PREFLIGHT: ${{ needs.preflight.result }}
-          BROWSER_CORE: ${{ needs.browser-core.result }}
-          BROWSER_DATA: ${{ needs.browser-data.result }}
-          BROWSER_GAME: ${{ needs.browser-game.result }}
+          BROWSER_CORE: ${{ needs['browser-core'].result }}
+          BROWSER_DATA: ${{ needs['browser-data'].result }}
+          BROWSER_GAME: ${{ needs['browser-game'].result }}
         run: |
           echo "preflight=$PREFLIGHT core=$BROWSER_CORE data=$BROWSER_DATA game=$BROWSER_GAME event=$EVENT_NAME draft=$PR_DRAFT"
           test "$PREFLIGHT" = "success"
