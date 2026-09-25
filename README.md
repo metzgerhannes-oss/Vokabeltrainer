@@ -4,11 +4,20 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.19.3**
+App-Version: **v0.19.4**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.19.4 – Full-Body Avatarserie Englisch
+
+- die sechs Englisch-Stufen verwenden jetzt die neu erstellte **Ganzkörper-Serie** derselben Figur statt der bisherigen Ausschnittbilder
+- die Entwicklung bleibt klar lesbar: leichte Grundausrüstung → Schulterpanzer → verstärkte Ausrüstung → Ritterrüstung → Elite → voll ausgerüsteter Endstand
+- die Assets sind als kompakte WebP-Ressourcen eingebunden und werden weiterhin lokal/offline rekonstruiert
+- das Menü zeigt den Avatar als große Figur innerhalb der Landschaft; die Bildfläche wird nicht mehr als gerahmte Thumbnail-Karte behandelt
+- die Stufenauswahl bleibt ausschließlich an den fachlichen Mastery-Fortschritt gekoppelt und verändert keine Lern- oder Kampfdaten
+- der Browser-Test prüft zusätzlich, dass das geladene Englisch-Asset tatsächlich ein Ganzkörper-Portraitformat besitzt
 
 ## v0.19.3 – Englische Avatar-Grafiken
 

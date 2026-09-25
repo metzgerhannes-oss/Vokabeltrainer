@@ -57,7 +57,9 @@ try{
     avatarPips:document.querySelectorAll('#menuAvatarStagePips i.filled').length,
     avatarArtKey:document.querySelector('#projectMenuAvatarArt')?.dataset.avatarArtKey,
     avatarFinal:document.querySelector('#projectMenuAvatarArt')?.dataset.avatarFinal,
-    avatarSrc:document.querySelector('#projectMenuAvatarArt')?.src||''
+    avatarSrc:document.querySelector('#projectMenuAvatarArt')?.src||'',
+    avatarNaturalWidth:document.querySelector('#projectMenuAvatarArt')?.naturalWidth||0,
+    avatarNaturalHeight:document.querySelector('#projectMenuAvatarArt')?.naturalHeight||0
   }));
   assert(metrics.learned===metrics.expected,'learned KPI comes from academic progress');
   assert(metrics.castles==='1','captured fortress KPI reflects actual captured test fortresses');
@@ -70,6 +72,7 @@ try{
   assert(metrics.avatarFinal==='true','English menu uses final stage-specific avatar artwork');
   assert(metrics.avatarArtKey==='english-stage-3','English avatar artwork matches the computed stage');
   assert(metrics.avatarSrc.startsWith('blob:'),'stage artwork is reconstructed locally from offline assets');
+  assert(metrics.avatarNaturalHeight>metrics.avatarNaturalWidth*1.25,'English avatar artwork must remain a full-body portrait asset');
   const boundaries=await page.evaluate(()=>[0,17,18,35,36,53,54,71,72,89,90,100].map(p=>[p,avatarStageFor(p,'english').level]));
   assert(JSON.stringify(boundaries)===JSON.stringify([[0,1],[17,1],[18,2],[35,2],[36,3],[53,3],[54,4],[71,4],[72,5],[89,5],[90,6],[100,6]]),'avatar stage thresholds stay deterministic');
 
@@ -108,7 +111,7 @@ try{
   console.log('✓ KPI banner uses existing academic/campaign data');
   console.log('✓ army, campaign, cardbox and achievements routes');
   console.log('✓ six avatar stages are deterministic and learning-derived');
-  console.log('✓ English uses the matching offline final artwork for its computed stage');
+  console.log('✓ English uses matching full-body offline artwork for its computed stage');
   console.log('✓ subject switching stays synchronized without changing mastery');
 }finally{
   await browser.close();
