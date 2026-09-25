@@ -97,6 +97,20 @@ function battleAttackFxMarkup(){
     <span><b data-battle-impact-damage>0 Schaden</b><small data-battle-impact-tactic></small></span>
   </div>`;
 }
+function applyProgressArmyArt(){
+  const field=$('#battlefield');if(!field)return;
+  const img=field.querySelector?.('[data-progress-army-art]');
+  const url=state?.activeSubject==='english'&&window.VTArmyArt?.ready?window.VTArmyArt.heroUrl||'':'';
+  field.classList.toggle('progress-army-artwork',!!url);
+  if(!img)return;
+  if(url){
+    if(img.getAttribute('src')!==url)img.setAttribute('src',url);
+    img.hidden=false;
+  }else{
+    img.removeAttribute('src');
+    img.hidden=true;
+  }
+}
 function renderBattlefield(){
   const p=subjectProgress(),f=currentTestFortress(),sea=seasonInfo(),count=soldiersFor(p.pct),tickets=battleTickets();
   const siege=p.pct>=35?'<div class="siege" title="Belagerungsgerät freigeschaltet"></div>':'';
@@ -107,8 +121,10 @@ function renderBattlefield(){
   field.dataset.damagePercent=String(damagePct);
   field.dataset.fortressState=fortressVisual.id;
   field.setAttribute('aria-label',`${campaign.unitLabel}: ${p.pct}% Schuljahresfortschritt, Rang ${rankFor(p.pct,state.activeSubject)}, ${f?`Testfestung ${f.name} am ${formatDateShort(f.testDate)}`:'kein Test geplant'}`);
-  field.innerHTML=`<div class="sun"></div><div class="preview-cloud cloud-a"></div><div class="preview-cloud cloud-b"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army"><div class="preview-standard"></div>${battleUnitsMarkup(count,false,p.pct)}${siege}</div>${fortressMarkup(f,false)}`;
+  field.innerHTML=`<img class="progress-army-art" data-progress-army-art alt="" aria-hidden="true" hidden><div class="progress-army-art-shade" aria-hidden="true"></div><div class="sun"></div><div class="preview-cloud cloud-a"></div><div class="preview-cloud cloud-b"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army"><div class="preview-standard"></div>${battleUnitsMarkup(count,false,p.pct)}${siege}</div>${fortressMarkup(f,false)}`;
+  applyProgressArmyArt();
 }
+if(typeof document!=='undefined'&&typeof document.addEventListener==='function')document.addEventListener('vt-army-art-ready',()=>{if(state&&document.querySelector?.('#battlefield'))applyProgressArmyArt()});
 function renderBattleAttackChoices(pct=subjectProgress().pct){
   const box=$('#battleAttackChoices');if(!box)return;
   if(!attackUnlocked(battleAttackMode,pct))battleAttackMode='charge';

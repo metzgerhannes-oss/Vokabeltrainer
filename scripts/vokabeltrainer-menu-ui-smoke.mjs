@@ -15,6 +15,7 @@ try{
   assert(response?.ok(),'app loads');
   await page.waitForFunction(()=>window.__VT_APP_READY__===true&&!!window.VTMenuUi);
   await page.waitForFunction(()=>window.VTMenuAvatarArt?.readySubjects?.english===true);
+  await page.waitForFunction(()=>window.VTArmyArt?.ready===true);
 
   await page.evaluate(()=>{
     state=defaultState();
@@ -130,6 +131,8 @@ try{
   await page.click('#menuAchievementsBtn');
   await page.waitForSelector('#childProgressView.active');
   await page.waitForFunction(()=>document.activeElement?.id==='progressOverviewCard');
+  assert(await page.locator('#battlefield [data-progress-army-art]').isVisible(),'English progress view reuses the high-quality army artwork');
+  assert((await page.locator('#battlefield [data-progress-army-art]').getAttribute('src'))?.startsWith('blob:'),'progress army artwork is reconstructed locally for offline use');
   assert(await page.locator('#progressMenuBtn').isVisible(),'progress, cardbox and achievements keep an explicit route back to the menu');
   await page.click('#progressMenuBtn');
   await page.waitForSelector('#homeView.active .project-menu-stage');

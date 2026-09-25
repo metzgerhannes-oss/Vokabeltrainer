@@ -2963,3 +2963,27 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
   .child-progress-toolbar{top:4px;margin-bottom:8px}
   .child-progress-toolbar button{min-height:44px}
 }
+
+
+/* v0.19.8 – progress/campaign preview uses the same high-quality army artwork */
+.battlefield.progress-army-artwork{background:#1d2a3b;isolation:isolate}
+.battlefield.progress-army-artwork .progress-army-art{
+  position:absolute;inset:0;z-index:0;width:100%;height:100%;
+  object-fit:cover;object-position:center 62%;
+  filter:saturate(.94) contrast(1.03) brightness(.96)
+}
+.battlefield.progress-army-artwork .progress-army-art-shade{
+  position:absolute;inset:0;z-index:1;
+  background:linear-gradient(90deg,rgba(15,23,42,.06) 0 52%,rgba(15,23,42,.18) 100%);
+  pointer-events:none
+}
+.battlefield.progress-army-artwork .fortress{z-index:2;right:4%;transform:scale(.88);transform-origin:right bottom}
+.battlefield.progress-army-artwork .festive{z-index:3}
+.battlefield.progress-army-artwork .sun,
+.battlefield.progress-army-artwork .preview-cloud,
+.battlefield.progress-army-artwork .snow,
+.battlefield.progress-army-artwork .army{visibility:hidden}
+@media(max-width:520px){
+  .battlefield.progress-army-artwork .progress-army-art{object-position:42% 60%}
+  .battlefield.progress-army-artwork .fortress{right:2%;transform:scale(.74);transform-origin:right bottom}
+}
