@@ -370,7 +370,7 @@
   }
   function bind(){
     document.querySelector('#armyBtn')?.addEventListener('click',open);
-    document.querySelector('#armyBackBtn')?.addEventListener('click',()=>showView('childProgressView'));
+    document.querySelector('#armyBackBtn')?.addEventListener('click',()=>{if(window.VTMenuUi?.openHome)window.VTMenuUi.openHome();else showView('homeView')});
     document.querySelector('#armyBattleBtn')?.addEventListener('click',()=>{if(typeof openBattleView==='function')openBattleView()});
     document.querySelector('#armyUnitBattleBtn')?.addEventListener('click',()=>{if(typeof openBattleView==='function')openBattleView()});
     document.querySelector('#armyUnitBackBtn')?.addEventListener('click',()=>{render();showView('armyView')});

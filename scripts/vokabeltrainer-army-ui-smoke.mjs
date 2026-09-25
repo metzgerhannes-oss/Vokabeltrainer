@@ -101,8 +101,8 @@ try{
   assert(rect&&rect.width<=page.viewportSize().width+1,'army view does not overflow iPhone viewport');
 
   await page.click('#armyBackBtn');
-  await page.waitForSelector('#childProgressView.active');
-  await page.click('#campaignMapBtn');
+  await page.waitForSelector('#homeView.active');
+  await page.click('#menuCampaignBtn');
   await page.waitForSelector('#campaignMapView.active');
   assert(await page.locator('#campaignMapBoard .campaign-map-station').count()===3,'campaign map shows two known test stations plus the year fortress');
   assert(await page.locator('#campaignMapBoard .campaign-map-unknown').count()===1,'unknown future remains visible instead of assuming a fixed test count');

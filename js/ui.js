@@ -337,7 +337,7 @@ function renderAll(){
   $('#campaignMessage').className=`notice ${tickets?'good':'subtle'}`;$('#campaignMessage').textContent=!nf?'Für einen geplanten Test entsteht automatisch eine Festung.':tickets?(secured?'Dein heutiger Sicherungseinsatz ist bereit.':'Dein Tagesangriff ist bereit.'):secured?`Festung erobert. Bis zum Test ${formatDateShort(nf.testDate)} sichern.`:usedToday?`Heute angegriffen · noch ${nf.defense} Verteidigung.`:`Noch ${nf.defense} Verteidigung. Nach dem Tagesziel kannst du angreifen.`;
   const hasSubjectWords=myWords().length>0; $('#campaignCard').classList.toggle('hidden',!hasSubjectWords); if(!hasSubjectWords)$('#optionalLearningCard')?.classList.add('hidden'); renderCardboxOverview(); renderToday(); renderTestCheck(); renderBattlefield(); renderBattleView(); renderRecommendations(); renderSets(); renderDashboard(); renderLibrary(); renderProfiles();
   $('#fontSizeRange').value=l.fontSize; $('#letterSpacingRange').value=l.letterSpacing; $('#flashSpeedSelect').value=String(l.flashSpeed); if($('#autoSpeakCorrection'))$('#autoSpeakCorrection').checked=l.autoSpeakCorrection!==false;
-  renderParentOverview(); renderFamilySync(); checkHundredPercent(); renderStorageStatus();
+  renderParentOverview(); renderFamilySync(); checkHundredPercent(); renderStorageStatus(); window.VTMenuUi?.render?.();
 }
 function applyPreferences(){const l=learner();document.documentElement.dataset.fontSize=String(clamp(Number(l.fontSize)||17,16,24));document.documentElement.dataset.letterSpace=String(clamp(Number(l.letterSpacing)||0,0,3));document.documentElement.classList.toggle('lrs-mode',!!l.lrsMode)}
 
@@ -948,7 +948,7 @@ function showView(id){
   if(PARENT_VIEW_IDS.has(id)&&!isParentMode()){toast(isPairedChildDevice()?'Der Elternbereich ist auf diesem Kindergerät gesperrt.':'Diese Funktion liegt im Elternbereich.','subtle');id='homeView'}
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
   document.querySelectorAll('.nav-btn[data-view]').forEach(b=>{const active=!isParentMode()&&b.dataset.view===id;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
-  if(id==='homeView')document.querySelectorAll('.home-disclosure').forEach(d=>{d.open=isDesktopLayout()&&d.id==='practiceDisclosure'});
+  if(id==='homeView'){document.querySelectorAll('.home-disclosure').forEach(d=>{d.open=isDesktopLayout()&&d.id==='practiceDisclosure'});window.VTMenuUi?.render?.();}
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   window.scrollTo({top:0,behavior:reduced?'auto':'smooth'});
 }

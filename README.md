@@ -4,11 +4,20 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.19.0**
+App-Version: **v0.19.1**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.19.1 – Project Menu 1.0
+
+- die Kinder-Startseite ist als eigener 16:9-Spiel-/Lern-Hub aufgebaut; der fachliche Einstieg **„Jetzt lernen“** bleibt die dominante Aktion
+- ein eigener Avatarbereich nutzt zunächst die vorhandene Armee-Illustration als austauschbares Platzhalter-Asset; spätere Avatarstufen benötigen dadurch keinen erneuten Layoutumbau
+- das Banner zeigt ausschließlich vorhandene Fachwerte: nachhaltig gemeisterte Vokabeln und tatsächlich eroberte Testfestungen
+- vier direkte Menüwege verbinden **Meine Armee · Feldzug · Karteikasten · Erfolge** mit den bestehenden Ansichten
+- Fachwechsel ist direkt im Menü möglich; Armee und Feldzug führen über „← Menü“ wieder zum Hub zurück
+- das neue Menü verändert weder Mastery, Spacing, Tagesplanung noch Kampfrechnung
 
 ## v0.19.0 – Lernkern konsolidiert
 
