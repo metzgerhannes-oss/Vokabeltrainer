@@ -64,7 +64,8 @@ try{
   assert(firstFortressReveal.key===firstFortressReveal.revealKey,'fortress reveal is tied to the current test target: '+JSON.stringify(firstFortressReveal));
   assert(firstFortressReveal.copy.includes('NEUES TESTZIEL ENTDECKT')&&firstFortressReveal.copy.includes('Vokabel'),'fortress reveal explains the new target and learning scope');
   assert(await page.locator('#battleAttackBtn').isDisabled(),'only the attack action is locked before the daily goal');
-  await page.waitForFunction(()=>{const overlay=document.querySelector('#battleStage [data-battle-target-reveal]');return !overlay||overlay.hidden===true;});
+  assert(await page.evaluate(()=>finishBattleFortressReveal(currentTestFortress()))===true,'fortress reveal exposes a deterministic completion path');
+  assert(await page.evaluate(()=>{const overlay=document.querySelector('#battleStage [data-battle-target-reveal]');return !overlay||overlay.hidden===true;}),'fortress reveal completion hides the discovery overlay');
   await page.locator('#battleReturnBtn').click();
   await page.waitForSelector('#childProgressView.active');
   await page.evaluate(()=>{grantBattleTicket('dailyGoal');renderAll();});
