@@ -67,10 +67,18 @@
           </div>
 
           <aside class="project-menu-avatar-panel" aria-label="Dein Lernheld und Fortschritt">
-            <div class="project-menu-avatar-frame" aria-hidden="true">
+            <div id="projectMenuAvatarFrame" class="project-menu-avatar-frame" data-avatar-stage="1" data-avatar-visual-key="english-stage-1" aria-hidden="true">
+              <span class="project-menu-avatar-aura"></span>
+              <span class="project-menu-avatar-standard"></span>
+              <span class="project-menu-avatar-crest">★</span>
               <img id="projectMenuAvatarArt" class="project-menu-avatar-art hidden" alt="">
               <div id="projectMenuAvatarFallback" class="project-menu-avatar-fallback">
                 <span class="avatar-head"></span><span class="avatar-body"></span><span class="avatar-shield">V</span>
+              </div>
+              <div class="project-menu-avatar-evolution">
+                <strong id="menuAvatarStageLabel">Avatar · Stufe 1/6</strong>
+                <span id="menuAvatarStagePips" class="project-menu-avatar-stage-pips" aria-hidden="true"></span>
+                <small id="menuAvatarNextStage">Nächste Stufe bei 18%</small>
               </div>
             </div>
             <div class="project-menu-banner">
