@@ -239,13 +239,37 @@ function toggleBattleFullscreen(){
   $('#battleFullscreenBtn')?.setAttribute('aria-pressed',String(on));if($('#battleFullscreenBtn'))$('#battleFullscreenBtn').textContent=on?'✕ Vollbild verlassen':'⛶ Vollbild';
   if(on){const el=$('#battleView');if(el?.requestFullscreen)el.requestFullscreen().catch(()=>{});}else if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
 }
+let battleSequenceGeneration=0;
+const battleSequenceTimers=new Set();
+function cancelBattleSequence(){
+  battleSequenceGeneration+=1;
+  for(const id of battleSequenceTimers)clearTimeout(id);
+  battleSequenceTimers.clear();
+}
+function battleAnimationTiming(reduced){
+  if(typeof window!=='undefined'&&window.__VT_BATTLE_TEST_MODE__===true){
+    return {advance:0,barrage:0,impact:0,result:0,ready:0,settle:0};
+  }
+  return reduced?{advance:35,barrage:70,impact:105,result:145,ready:190,settle:25}:{advance:900,barrage:2450,impact:4050,result:5550,ready:6550,settle:1080};
+}
+function scheduleBattleStep(generation,delay,callback){
+  const id=setTimeout(()=>{
+    battleSequenceTimers.delete(id);
+    if(generation!==battleSequenceGeneration)return;
+    callback();
+  },Math.max(0,Number(delay)||0));
+  battleSequenceTimers.add(id);
+  return id;
+}
 function runBattleAnimation(){
   const f=currentTestFortress(),stage=$('#battleStage'),button=$('#battleAttackBtn');if(!f||!stage||!button)return;
   const secureBefore=!!f.capturedAt;
   if(!spendBattleTicket()){toast('Die heutige Aktion wird erst nach dem Tagesziel freigeschaltet.','subtle');renderBattleView();return}
+  cancelBattleSequence();
+  const generation=battleSequenceGeneration;
   const p=subjectProgress(),reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,attack=battleAttackMeta(battleAttackMode)||battleAttackMeta('charge'),boss=!secureBefore?battleBossFor(f):null;
   const visualHit=secureBefore?null:testFortressDamage(f,state.activeSubject,battleAttackMode),tactical=battleAttackTacticalMeta(battleAttackMode);
-  const timing=reduced?{advance:35,barrage:70,impact:105,result:145,ready:190}:{advance:900,barrage:2450,impact:4050,result:5550,ready:6550};
+  const timing=battleAnimationTiming(reduced);
   const phaseCopy=secureBefore?{
     rally:'Die Truppen sammeln sich in der eroberten Festung.',
     advance:'Wachen beziehen Tore und Mauern.',
@@ -269,10 +293,10 @@ function runBattleAnimation(){
   if(impactTactic)impactTactic.textContent=secureBefore?'':tactical.bonus?`+${tactical.bonus} durch ${tactical.role}`:'Basisschaden';
   stage.classList.remove('battle-finished','is-victory','is-hold','is-impact','is-attacking','is-strike','show-impact-callout','battle-sequence');stage.classList.add('battle-sequence',`attack-${secureBefore?'charge':battleAttackMode}`);
   $('#battleMessage').className='battle-message active';if($('#battleActionTitle'))$('#battleActionTitle').textContent=secureBefore?'Sicherung läuft':'Schlacht läuft';if($('#battleActionHint'))$('#battleActionHint').textContent='Die Sequenz läuft bis zum Ergebnis.';setPhase('rally',phaseCopy.rally);
-  setTimeout(()=>{stage.classList.add('is-attacking');setPhase('advance',phaseCopy.advance);},timing.advance);
-  setTimeout(()=>{stage.classList.add('is-barrage','is-strike');setPhase('barrage',phaseCopy.barrage);},timing.barrage);
-  setTimeout(()=>{stage.classList.add('is-impact','show-impact-callout');setPhase('impact',phaseCopy.impact);},timing.impact);
-  setTimeout(()=>{
+  scheduleBattleStep(generation,timing.advance,()=>{stage.classList.add('is-attacking');setPhase('advance',phaseCopy.advance);});
+  scheduleBattleStep(generation,timing.barrage,()=>{stage.classList.add('is-barrage','is-strike');setPhase('barrage',phaseCopy.barrage);});
+  scheduleBattleStep(generation,timing.impact,()=>{stage.classList.add('is-impact','show-impact-callout');setPhase('impact',phaseCopy.impact);});
+  scheduleBattleStep(generation,timing.result,()=>{
     const result=resolveTestFortressAction(secureBefore?'secure':battleAttackMode);const won=result?.result==='win',secured=result?.result==='secure';
     stage.classList.remove('is-attacking','is-barrage','is-strike');stage.classList.add('battle-finished',(won||secured)?'is-victory':'is-hold');if(won)stage.classList.add('conquest-transition');setPhase('result');
     const visual=battleFortressVisualState(f);stage.dataset.fortressState=visual.id;stage.classList.remove('fortress-visual-intact','fortress-visual-scratched','fortress-visual-damaged','fortress-visual-critical','fortress-visual-captured');stage.classList.add('fortress-visual-'+visual.id);
@@ -280,21 +304,22 @@ function runBattleAnimation(){
     if(won){
       const conquered=stage.querySelector('.battle-fortress');
       const settle=()=>{conquered?.classList.add('captured');stage.classList.remove('conquest-transition');};
-      setTimeout(settle,reduced?25:1080);
+      scheduleBattleStep(generation,timing.settle,settle);
     }
     if(secured){$('#battleMessage').className='battle-message victory';$('#battleMessage').innerHTML='<strong>Festung gesichert!</strong><span>Die Stellung bleibt bis zum Test unter Kontrolle.</span>';}
     else if(won){$('#battleMessage').className='battle-message victory';$('#battleMessage').innerHTML=`<strong>${boss?'Boss besiegt!':'Festung erobert!'}</strong><span>${esc(f.name)} ist gefallen. +20 XP · Jetzt bis zum Test sichern.</span>`;}
     else{$('#battleMessage').className='battle-message hold';$('#battleMessage').innerHTML=`<strong>Angriff gelungen!</strong><span>${result?.damage||0} Schaden. Noch ${result?.remaining||0} Verteidigung bis zur Eroberung.</span>`;}
     persistOnly();
-  },timing.result);
-  setTimeout(()=>{
+    document.dispatchEvent(new CustomEvent('vt-battle-result',{detail:{result:result?.result||'',won,secured,generation}}));
+  });
+  scheduleBattleStep(generation,timing.ready,()=>{
     $('#battleFullscreenBtn').disabled=false;stage.classList.remove('battle-sequence','is-impact','show-impact-callout');
     const live=currentTestFortress(),left=battleTickets(),secure=!!live?.capturedAt,usedToday=!!battleDayState(state.activeSubject,false)?.actionUsed;
     $('#battleTicketPill').textContent=secure?(left?'1 Sicherung':'0 Sicherungen'):(left?'1 Angriff':'0 Angriffe');$('#battleStrength').textContent=armyStrength();$('#battleFortressName').textContent=live?`${live.name} · Test ${formatDateShort(live.testDate)}`:'Kein Test geplant';$('#battleFortressProgress').textContent=!live?'–':secure?'Erobert · gesichert '+(live.securedDates?.length||0)+'×':`${live.defense} / ${live.maxDefense} Verteidigung`;
     button.disabled=!live||left<1;button.textContent=!live?'Kein Test geplant':left?(secure?'Festung sichern':`${battleAttackMeta(battleAttackMode).short}: Angriff starten`):usedToday?(secure?'Heute bereits gesichert ✓':'Heute bereits angegriffen ✓'):'Nach Tagesziel verfügbar';
     if($('#battleActionTitle'))$('#battleActionTitle').textContent=secure?'Festung erobert':'Belagerung läuft';if($('#battleActionHint'))$('#battleActionHint').textContent=secure?'Bis zum Test bleibt diese Festung dein Ziel.':'Morgen bringt das nächste Tagesziel einen neuen Angriff.';
     renderBattlefield();
-  },timing.ready);
+  });
 }
 function cardboxStageDescription(box){
   return ({
@@ -960,7 +985,11 @@ function syncResponsiveHomeLayout(){
   const practice=$('#practiceDisclosure');if(practice)practice.open=isDesktopLayout();
 }
 function showView(id){
-  if(id!=='battleView'&&document.body.classList.contains('battle-immersive'))closeBattleImmersive();
+  if(id!=='battleView'){
+    cancelBattleSequence();
+    window.VTBattleResultUi?.hide?.();
+    if(document.body.classList.contains('battle-immersive'))closeBattleImmersive();
+  }
   if(PARENT_VIEW_IDS.has(id)&&!isParentMode()){toast(isPairedChildDevice()?'Der Elternbereich ist auf diesem Kindergerät gesperrt.':'Diese Funktion liegt im Elternbereich.','subtle');id='homeView'}
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
   document.querySelectorAll('.nav-btn[data-view]').forEach(b=>{const active=!isParentMode()&&b.dataset.view===id;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});

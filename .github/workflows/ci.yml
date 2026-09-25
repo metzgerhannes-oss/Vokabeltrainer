@@ -191,7 +191,7 @@ jobs:
     needs: preflight
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -218,8 +218,15 @@ jobs:
           cat /tmp/vokabeltrainer-http.log
           exit 1
 
-      - name: WebKit animated battle mode
-        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-battle-ui-smoke.mjs
+      - name: WebKit battle stability 3x
+        run: |
+          for i in 1 2 3; do
+            echo "Battle stability round $i/3"
+            APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-battle-navigation-ui-smoke.mjs
+            APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-battle-visual-ui-smoke.mjs
+            APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-battle-flow-ui-smoke.mjs
+            APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-battle-duel-ui-smoke.mjs
+          done
 
       - name: WebKit My Army overview
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-army-ui-smoke.mjs
