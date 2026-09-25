@@ -35,5 +35,11 @@
   renderAll();
   const handledDeviceInvite=window.handleDeviceInviteFromUrl?.();
   if(!handledDeviceInvite)window.handleDuelInviteFromUrl?.();
+
+  // Deterministic local bootstrap boundary for browser tests and diagnostics.
+  // This deliberately does not wait for optional network sync.
+  window.__VT_APP_READY__=true;
+  window.dispatchEvent(new Event('vt-app-ready'));
+
   window.VTFamilySync?.bootstrap();
 })();
