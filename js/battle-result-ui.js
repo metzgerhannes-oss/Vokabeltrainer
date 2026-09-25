@@ -155,23 +155,28 @@
     },180);
   }
 
+  function scheduleShow(){
+    const stage=document.querySelector('#battleStage');
+    if(!stage?.classList.contains('battle-finished'))return;
+    if(stage.classList.contains('conquest-transition')){
+      if(pendingShowTimer)return;
+      const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      const deterministic=window.__VT_BATTLE_TEST_MODE__===true;
+      pendingShowTimer=setTimeout(()=>{
+        pendingShowTimer=null;
+        if(stage.classList.contains('battle-finished'))show();
+      },deterministic?0:(reduced?40:1140));
+      return;
+    }
+    if(!pendingShowTimer)queueMicrotask(show);
+  }
+
   function observe(){
     const stage=document.querySelector('#battleStage');
     if(!stage)return;
     const sync=()=>{
-      const finished=stage.classList.contains('battle-finished');
-      if(finished){
-        if(stage.classList.contains('conquest-transition')){
-          if(pendingShowTimer)return;
-          const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-          pendingShowTimer=setTimeout(()=>{
-            pendingShowTimer=null;
-            if(stage.classList.contains('battle-finished'))show();
-          },reduced?40:1140);
-          return;
-        }
-        if(!pendingShowTimer)queueMicrotask(show);
-      }else{
+      if(stage.classList.contains('battle-finished'))scheduleShow();
+      else{
         if(pendingShowTimer){clearTimeout(pendingShowTimer);pendingShowTimer=null}
         if(!overlay?.classList.contains('hidden'))hide();
       }
@@ -183,6 +188,7 @@
   function boot(){
     ensureOverlay();
     observe();
+    document.addEventListener('vt-battle-result',scheduleShow);
     document.addEventListener('vt-battle-art-ready',applyArt);
   }
 
