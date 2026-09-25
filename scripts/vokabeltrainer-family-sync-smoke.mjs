@@ -54,6 +54,8 @@ assert(sync.includes("p_base_revision")&&sync.includes("pushed?.conflict"),'clie
 assert(sync.includes('async function resolveConflict')&&sync.includes("strategy==='local'?'local':'remote'"), 'sync exposes explicit local/cloud conflict resolution without silent overwrite');
 assert(sync.includes('conflictKeys')&&ui.includes('openFamilySyncConflictResolver')&&ui.includes('Cloud übernehmen')&&ui.includes('Dieses Gerät behalten'), 'conflicts are surfaced as specific data areas with explicit resolution choices');
 assert(sync.includes("code==='unauthorized'")&&sync.includes('markRevoked(cfg)')&&ui.includes('Dieses Gerät wurde aus dem Familienverbund entfernt.'), 'revoked devices stop syncing and surface a clear local warning');
+assert((sync.match(/remoteFailure\(cfg,/g)||[]).length>=7, 'revoked-device handling covers sync, conflict, recovery and device-admin RPC paths');
+assert(ui.includes('familyChildBackupBtn')&&ui.includes('familyParentJoinBackupBtn')&&ui.includes('familyConflictBackupBtn'), 'destructive family-data transitions offer an explicit backup action');
 assert(sqlV2.includes('private.vt_parent_invites')&&sqlV2.includes("interval '15 minutes'"),'parent invite tokens are server-side, one-time and short-lived');
 assert(sqlV2.includes("role','parent'")&&sqlV2.includes('vt_claim_parent_invite_impl'),'parent invite claim creates a parent device without exposing the family PIN');
 assert(pairing.includes('familyParentQr')&&pairing.includes('openParentDeviceInvite'),'connected parents can create a QR code for another parent device');
