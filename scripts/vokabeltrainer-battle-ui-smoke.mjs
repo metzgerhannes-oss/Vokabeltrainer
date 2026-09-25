@@ -30,6 +30,28 @@ try{
   assert(!(await page.locator('#attackBtn').isDisabled()),'planned test fortress remains viewable before the daily reward');
   assert((await page.locator('#attackBtn').textContent())?.includes('Festung'),'campaign card points to the persistent test fortress');
   await page.evaluate(()=>{
+    window.__fortressRevealEvents=[];
+    const stage=document.querySelector('#battleStage');
+    stage?.addEventListener('vt-fortress-reveal-finished',event=>window.__fortressRevealEvents.push(event.detail||{}));
+  });
+  await page.click('#attackBtn');
+  await page.waitForSelector('#battleView.active');
+  assert((await page.locator('#battleBackBtn').textContent())?.includes('Fortschritt'),'battle opened from progress returns to progress');
+  assert((await page.locator('#battleReturnBtn').textContent())?.includes('Fortschritt'),'bottom return action matches progress origin');
+  await page.waitForFunction(()=>window.__fortressRevealEvents?.some(event=>event.reduced===true));
+  const reducedReveal=await page.evaluate(()=>({
+    seenAt:currentTestFortress()?.revealedAt||'',
+    hidden:!!document.querySelector('#battleStage [data-battle-target-reveal]')?.hidden,
+    active:document.querySelector('#battleStage')?.classList.contains('fortress-reveal')||false
+  }));
+  assert(reducedReveal.seenAt,'reduced-motion still records the one-time test target discovery');
+  assert(reducedReveal.hidden&&!reducedReveal.active,'reduced-motion skips the transient reveal and lands directly in the stable battle state');
+  assert(await page.locator('#battleAttackBtn').isDisabled(),'only the attack action is locked before the daily goal');
+
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  await page.evaluate(()=>{
+    const f=currentTestFortress();
+    f.revealedAt='';
     window.__fortressRevealProbe={seen:false,count:0,snap:null};
     const stage=document.querySelector('#battleStage');
     window.__fortressRevealObserver?.disconnect?.();
@@ -51,18 +73,24 @@ try{
       }
     });
     if(stage)window.__fortressRevealObserver.observe(stage,{attributes:true,childList:true,subtree:true});
+    startBattleFortressReveal(f);
   });
-  await page.click('#attackBtn');
-  await page.waitForSelector('#battleView.active');
-  assert((await page.locator('#battleBackBtn').textContent())?.includes('Fortschritt'),'battle opened from progress returns to progress');
-  assert((await page.locator('#battleReturnBtn').textContent())?.includes('Fortschritt'),'bottom return action matches progress origin');
   await page.waitForFunction(()=>window.__fortressRevealProbe?.seen===true);
   const firstFortressReveal=await page.evaluate(()=>window.__fortressRevealProbe?.snap||null);
-  assert(firstFortressReveal?.seenAt,'new test fortress records the first reveal: '+JSON.stringify(firstFortressReveal));
+  assert(firstFortressReveal?.seenAt,'animated test fortress reveal records discovery: '+JSON.stringify(firstFortressReveal));
   assert(firstFortressReveal.key===firstFortressReveal.revealKey,'fortress reveal is tied to the current test target: '+JSON.stringify(firstFortressReveal));
+  assert(firstFortressReveal.reduced===false,'visual discovery sequence runs only when reduced motion is not requested');
   assert(firstFortressReveal.copy.includes('NEUES TESTZIEL ENTDECKT')&&firstFortressReveal.copy.includes('Vokabel'),'fortress reveal explains the new target and learning scope');
-  assert(await page.locator('#battleAttackBtn').isDisabled(),'only the attack action is locked before the daily goal');
-  await page.waitForFunction(()=>document.querySelector('#battleStage [data-battle-target-reveal]')?.hidden===true);
+  await page.waitForFunction(()=>window.__fortressRevealEvents?.some(event=>event.reduced===false));
+  const finishedReveal=await page.evaluate(()=>({
+    hidden:!!document.querySelector('#battleStage [data-battle-target-reveal]')?.hidden,
+    active:document.querySelector('#battleStage')?.classList.contains('fortress-reveal')||false,
+    key:battleFortressRevealKey,
+    until:battleFortressRevealUntil
+  }));
+  assert(finishedReveal.hidden&&!finishedReveal.active&&!finishedReveal.key&&finishedReveal.until===0,'animated reveal reaches one deterministic finished state');
+  await page.emulateMedia({reducedMotion:'reduce'});
+
   await page.locator('#battleReturnBtn').click();
   await page.waitForSelector('#childProgressView.active');
   await page.evaluate(()=>{grantBattleTicket('dailyGoal');renderAll();});
