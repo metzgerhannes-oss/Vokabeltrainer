@@ -207,6 +207,7 @@ const result=vm.runInContext(`
   if(syncSetToBookVocabulary(photoSet.id,'2026-09-20T11:59:00.000Z')!==0)throw new Error('explicit verifiedAt bypassed open OCR pair review');
   photoSet.pairReviewRequired=false;photoSet.pairVerifiedAt='2026-09-20T12:00:00.000Z';photoSet.pairVerifiedSignature=pairReviewSignatureForSet(photoSet.id);
   if(setNeedsPairReview(photoSet))throw new Error('approved OCR set still blocked despite matching signature');
+  if(state.sets.find(setNeedsPairReview))throw new Error('pair-review predicate is not safe when used as Array.find callback');
   syncSetToBookVocabulary(photoSet.id,photoSet.pairVerifiedAt);
   if(state.bookVocabulary.length!==1||!state.bookVocabulary[0].verifiedAt)throw new Error('confirmed OCR was not published as verified book content');
   if(knownBookSections(book.id)[0]?.items?.length!==1)throw new Error('verified OCR is not reusable after approval');
