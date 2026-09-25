@@ -19,6 +19,7 @@ Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Joh
 - GitHub Pages prüft nach dem Deployment die tatsächlich ausgelieferte Version in `index.html`, `js/core.js` und `sw.js`
 - die produktiven Parent-Invite-Migrationen sind mit ihren echten Supabase-Versionen im Repository nachvollziehbar
 - Erzeugen und Einlösen von Parent-Invites ist zusätzlich im produktiven Supabase-Pre-Request-Rate-Limit enthalten
+- der Battle-Browsertest wartet nach dem einmaligen Festungs-Reveal explizit auf dessen Ende, bevor Navigation geprüft wird; damit ist die nach dem ersten v0.18.60-Merge sichtbar gewordene Timing-Flake deterministisch behoben
 
 ## v0.18.59 – QR-Verbindungen
 
