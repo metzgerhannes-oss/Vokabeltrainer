@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 24.09.2026 · Basis: v0.18.40
+Stand: 25.09.2026 · Basis: v0.19.11
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -293,6 +293,7 @@ Automatisiert:
 - [ ] Battle-Smoke grün
 - [ ] Security-/CSP-Smokes grün
 - [ ] Parent-Docs-/PDF-Test grün
+- [ ] Backup-/Restore-Browser-Smoke grün
 - [ ] Offline-/Service-Worker-Smoke grün
 - [ ] Family-Sync-Test grün
 - [ ] GitHub-Pages-Deployment grün
