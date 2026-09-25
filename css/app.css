@@ -2979,6 +2979,10 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
 }
 .battlefield.progress-army-artwork .fortress{z-index:2;right:4%;transform:scale(.88);transform-origin:right bottom}
 .battlefield.progress-army-artwork .festive{z-index:3}
+.battlefield.progress-army-artwork .sun,
+.battlefield.progress-army-artwork .preview-cloud,
+.battlefield.progress-army-artwork .snow,
+.battlefield.progress-army-artwork .army{visibility:hidden}
 @media(max-width:520px){
   .battlefield.progress-army-artwork .progress-army-art{object-position:42% 60%}
   .battlefield.progress-army-artwork .fortress{right:2%;transform:scale(.74);transform-origin:right bottom}
