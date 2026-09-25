@@ -124,6 +124,9 @@ jobs:
       - name: WebKit desktop workspace
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-desktop-ui-smoke.mjs
 
+      - name: WebKit Project Menu shell
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-menu-ui-smoke.mjs
+
       - name: WebKit deep responsive UI audit
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-deep-ui-audit.mjs
 
