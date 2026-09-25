@@ -445,10 +445,10 @@ try{
   assert((await page.locator('[data-battle-impact-title]').textContent())==='TOR-TREFFER!','ram attack prepares a clear gate-hit callout immediately');
   assert((await page.locator('[data-battle-impact-damage]').textContent())===expectedRamDamage+' Schaden','visual hit callout uses the exact calculated damage');
   assert((await page.locator('[data-battle-impact-tactic]').textContent())?.includes('+10 durch Belagerung'),'visual hit callout explains the small tactical contribution');
-  await page.waitForSelector('#battleStage.attack-ram.battle-finished',{timeout:3000});
+  await page.waitForFunction(()=>{const stage=document.querySelector('#battleStage');return !!stage&&stage.classList.contains('attack-ram')&&stage.classList.contains('battle-finished')});
   const msg=await page.locator('#battleMessage').textContent();
   assert(/Angriff|Festung|Mauer/i.test(msg||''),'battle ends with a visible result');
-  await page.waitForSelector('#battleResultOverlay.visible');
+  await page.waitForFunction(()=>document.querySelector('#battleResultOverlay')?.classList.contains('visible')===true);
   assert((await page.locator('#battleResultTitle').textContent())?.includes('Festung erobert'),'victory opens a dedicated cinematic result view');
   const resultText=await page.locator('#battleResultOverlay').textContent();
   assert(resultText?.includes('+20 XP'),'result view shows the actual conquest reward');
@@ -470,7 +470,7 @@ try{
   await page.evaluate(()=>renderBattlefield());
   assert(await page.locator('#battlefield.battle-captured .fortress.captured .own-flag').count()===1,'campaign overview also keeps the player flag on the conquered fortress');
   await activate('#battleResultContinue','battle result continue');
-  await page.waitForSelector('#battleResultOverlay',{state:'hidden'});
+  await page.waitForFunction(()=>document.querySelector('#battleResultOverlay')?.classList.contains('visible')!==true);
   await page.evaluate(()=>renderBattleView());
   await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
   assert(await page.locator('#battleStage.fortress-secured .battle-fortress.captured .battle-own-flag').count()===1,'reopening the battle restores the conquered visual state from capturedAt');
@@ -487,23 +487,23 @@ try{
   await activate('[data-battle-attack="special"]','special attack choice');
   await activate('#battleAttackBtn','battle primary action');
   assert(['ELITESCHLAG!','ADLERSCHLAG!'].includes((await page.locator('[data-battle-impact-title]').textContent())||''),'special attack prepares the strongest dedicated hit callout');
-  await page.waitForSelector('#battleStage.attack-special.battle-finished',{timeout:3000});
-  await page.waitForSelector('#battleResultOverlay.visible');
+  await page.waitForFunction(()=>{const stage=document.querySelector('#battleStage');return !!stage&&stage.classList.contains('attack-special')&&stage.classList.contains('battle-finished')});
+  await page.waitForFunction(()=>document.querySelector('#battleResultOverlay')?.classList.contains('visible')===true);
   assert((await page.locator('#battleResultTitle').textContent())?.includes('Boss besiegt'),'boss conquest uses the cinematic result view');
   assert(await page.evaluate(()=>subjectProgress().pct)===100,'boss and special attack do not change academic mastery');
   await activate('#battleResultClose','battle result close');
-  await page.waitForSelector('#battleResultOverlay',{state:'hidden'});
+  await page.waitForFunction(()=>document.querySelector('#battleResultOverlay')?.classList.contains('visible')!==true);
 
   await page.evaluate(()=>{const day=battleDayState('english',true);day.unlocked=true;day.actionUsed=false;renderBattleView();});
   assert(await page.locator('.battle-tactics.hidden').count()===1,'after conquest attack tactics disappear and the mission becomes securing');
   assert((await page.locator('#battleAttackBtn').textContent())?.includes('sichern'),'captured fortress offers a securing action instead of a new target');
   await activate('#battleAttackBtn','battle primary action');
-  await page.waitForSelector('#battleStage.battle-finished',{timeout:3000});
-  await page.waitForSelector('#battleResultOverlay.visible');
+  await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-finished')===true);
+  await page.waitForFunction(()=>document.querySelector('#battleResultOverlay')?.classList.contains('visible')===true);
   assert((await page.locator('#battleResultTitle').textContent())?.includes('Festung gesichert'),'early conquest is followed by securing the same fortress');
   assert(await page.evaluate(()=>currentTestFortress().securedDates.length===1),'securing is stored on the current test fortress');
   await activate('#battleResultClose','battle result close');
-  await page.waitForSelector('#battleResultOverlay',{state:'hidden'});
+  await page.waitForFunction(()=>document.querySelector('#battleResultOverlay')?.classList.contains('visible')!==true);
 
   const privacy=await page.evaluate(()=>{const p=duelPayload(),raw=JSON.parse(decodeURIComponent(escape(atob(encodeDuel(p)))));return {payload:p,raw,profile:learner().name}});
   assert(privacy.raw.name!==privacy.profile,'duel code never contains the learner profile name');
