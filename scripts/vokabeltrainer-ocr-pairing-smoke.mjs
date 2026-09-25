@@ -198,15 +198,46 @@ const result=vm.runInContext(`
 
   state=defaultState();state.activeSubject='english';
   const book=upsertBook('9780140449136','english',{title:'Test Book'}).book;
-  const photoSet={id:'photo_set',learnerId:'learner_demo',subject:'english',title:'Unit 1',schoolYear:currentSchoolYear(),bookId:book.id,bookSection:'Unit 1',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:true,pairVerifiedAt:''};
+  let photoSet={id:'photo_set',learnerId:'learner_demo',subject:'english',title:'Unit 1',schoolYear:currentSchoolYear(),bookId:book.id,bookSection:'Unit 1',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:true,pairVerifiedAt:''};
   state.sets.push(photoSet);
   const photo=attachVocabularyToSet(photoSet.id,{term:'look',translation:'schauen',source:'photo-text-import',verified:false});
   if(state.bookVocabulary.length!==0)throw new Error('unreviewed OCR leaked into book library');
   if(knownBookSections(book.id).length!==0)throw new Error('unreviewed OCR became reusable book content');
-  photoSet.pairReviewRequired=false;photoSet.pairVerifiedAt='2026-09-20T12:00:00.000Z';
+  if(!setNeedsPairReview(photoSet))throw new Error('fresh photo import is not blocked before review');
+  if(syncSetToBookVocabulary(photoSet.id,'2026-09-20T11:59:00.000Z')!==0)throw new Error('explicit verifiedAt bypassed open OCR pair review');
+  photoSet.pairReviewRequired=false;photoSet.pairVerifiedAt='2026-09-20T12:00:00.000Z';photoSet.pairVerifiedSignature=pairReviewSignatureForSet(photoSet.id);
+  if(setNeedsPairReview(photoSet))throw new Error('approved OCR set still blocked despite matching signature');
   syncSetToBookVocabulary(photoSet.id,photoSet.pairVerifiedAt);
   if(state.bookVocabulary.length!==1||!state.bookVocabulary[0].verifiedAt)throw new Error('confirmed OCR was not published as verified book content');
   if(knownBookSections(book.id)[0]?.items?.length!==1)throw new Error('verified OCR is not reusable after approval');
+
+  const approvedPhotoSnapshot=JSON.parse(JSON.stringify(storagePayload(state)));
+  const approvedLink=state.setVocabulary.find(x=>x.setId===photoSet.id);
+  approvedLink.translationOverride='ansehen';
+  if(!setNeedsPairReview(photoSet))throw new Error('post-approval pair change did not invalidate OCR approval');
+  if(syncSetToBookVocabulary(photoSet.id,new Date().toISOString())!==0)throw new Error('changed OCR pair bypassed approval through explicit timestamp');
+  approvedLink.translationOverride='';
+  photoSet.pairVerifiedSignature=pairReviewSignatureForSet(photoSet.id);
+  if(setNeedsPairReview(photoSet))throw new Error('restored approved OCR signature did not clear review requirement');
+
+  const missingApproval=JSON.parse(JSON.stringify(approvedPhotoSnapshot));
+  const missingApprovalSet=missingApproval.sets.find(x=>x.id==='photo_set');
+  missingApprovalSet.pairReviewRequired=false;missingApprovalSet.pairVerifiedAt='';missingApprovalSet.pairVerifiedSignature='';missingApproval.pairAuditVersion=99;
+  state=migrate(missingApproval);
+  const migratedMissingApproval=state.sets.find(x=>x.id==='photo_set');
+  if(!migratedMissingApproval?.pairReviewRequired||!setNeedsPairReview(migratedMissingApproval))throw new Error('current-version photo import without approval was not quarantined');
+
+  const changedAfterApproval=JSON.parse(JSON.stringify(approvedPhotoSnapshot));
+  const changedSet=changedAfterApproval.sets.find(x=>x.id==='photo_set');
+  const changedLink=changedAfterApproval.setVocabulary.find(x=>x.setId==='photo_set');
+  changedLink.translationOverride='falsche Bedeutung';
+  changedSet.pairReviewRequired=false;changedAfterApproval.pairAuditVersion=99;
+  state=migrate(changedAfterApproval);
+  const migratedChanged=state.sets.find(x=>x.id==='photo_set');
+  if(!migratedChanged?.pairReviewRequired||migratedChanged.pairVerifiedAt||migratedChanged.pairVerifiedSignature)throw new Error('changed approved OCR pair was not invalidated during migration');
+
+  state=migrate(JSON.parse(JSON.stringify(approvedPhotoSnapshot)));
+  photoSet=state.sets.find(x=>x.id==='photo_set');
 
   state.learners.push({...state.learners[0],id:'learner_two',name:'Zweites Profil',dailyPlans:{},streakDays:[],milestones:{},fortressWinsByYear:{},campaignLog:[]});
   const copied=cloneKnownBookToLearner(book.id,'learner_two');
@@ -254,5 +285,8 @@ console.log('✓ wide German column is preserved');
 console.log('✓ automatic dictionary/repair rows require explicit confirmation');
 console.log('✓ unreviewed OCR cannot enter reusable book content');
 console.log('✓ pair approval publishes verified book content');
+console.log('✓ explicit timestamps cannot bypass open OCR review');
+console.log('✓ post-approval pair changes invalidate learning readiness');
+console.log('✓ current-version malformed OCR approvals are quarantined during migration');
 console.log('✓ historical unverified OCR clones are quarantined');
 console.log('✓ trusted historical book rows are backfilled');
