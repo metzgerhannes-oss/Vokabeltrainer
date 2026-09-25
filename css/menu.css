@@ -106,11 +106,13 @@
 .project-menu-avatar-frame[data-avatar-stage="5"] .project-menu-avatar-aura{opacity:.55;transform:scale(.94)}
 .project-menu-avatar-frame[data-avatar-stage="6"] .project-menu-avatar-aura{opacity:1;transform:scale(1.06)}
 .project-menu-avatar-frame[data-avatar-stage="6"] .project-menu-avatar-crest{transform:scale(1) rotate(0)}
-.project-menu-avatar-frame[data-avatar-stage="2"] .project-menu-avatar-fallback,
-.project-menu-avatar-frame[data-avatar-stage="3"] .project-menu-avatar-fallback,
-.project-menu-avatar-frame[data-avatar-stage="4"] .project-menu-avatar-fallback,
-.project-menu-avatar-frame[data-avatar-stage="5"] .project-menu-avatar-fallback,
-.project-menu-avatar-frame[data-avatar-stage="6"] .project-menu-avatar-fallback{transform:scale(calc(.90 + (var(--avatar-stage-progress,0) * .08)));transform-origin:50% 100%}
+.project-menu-avatar-fallback{transform-origin:50% 100%;transition:transform .35s ease}
+.project-menu-avatar-frame[data-avatar-stage="1"] .project-menu-avatar-fallback{transform:scale(.90)}
+.project-menu-avatar-frame[data-avatar-stage="2"] .project-menu-avatar-fallback{transform:scale(.93)}
+.project-menu-avatar-frame[data-avatar-stage="3"] .project-menu-avatar-fallback{transform:scale(.96)}
+.project-menu-avatar-frame[data-avatar-stage="4"] .project-menu-avatar-fallback{transform:scale(.99)}
+.project-menu-avatar-frame[data-avatar-stage="5"] .project-menu-avatar-fallback{transform:scale(1.015)}
+.project-menu-avatar-frame[data-avatar-stage="6"] .project-menu-avatar-fallback{transform:scale(1.04)}
 .project-menu-avatar-fallback{position:relative;z-index:2;width:58%;height:83%;min-height:290px}
 .project-menu-avatar-fallback .avatar-head{
   position:absolute;left:36%;top:4%;width:29%;aspect-ratio:1;border-radius:50%;
@@ -220,5 +222,5 @@
   .project-menu-link{min-height:64px}
 }
 @media(prefers-reduced-motion:reduce){
-  .project-menu-link,.project-menu-avatar-art,.project-menu-avatar-aura,.project-menu-avatar-standard,.project-menu-avatar-crest{transition:none}
+  .project-menu-link,.project-menu-avatar-art,.project-menu-avatar-fallback,.project-menu-avatar-aura,.project-menu-avatar-standard,.project-menu-avatar-crest{transition:none}
 }
