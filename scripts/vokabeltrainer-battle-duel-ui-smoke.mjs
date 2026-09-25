@@ -1,6 +1,6 @@
 import { createBattleHarness } from './helpers/vokabeltrainer-battle-harness.mjs';
 
-const {browser,page,assert,activate,reset,errors}=await createBattleHarness();
+const {browser,page,assert,activate,reset,errors,diagnose}=await createBattleHarness();
 
 try{
   await reset({revealed:true,ticket:false});
@@ -22,6 +22,9 @@ try{
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer battle duel smoke: passed');
+}catch(error){
+  await diagnose('vokabeltrainer-battle-duel-ui-smoke',error);
+  throw error;
 }finally{
   await browser.close();
 }
