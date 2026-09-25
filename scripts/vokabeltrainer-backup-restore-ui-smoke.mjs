@@ -52,7 +52,7 @@ try{
       source:'backup-smoke',
       verified:true
     });
-    const progress=(state.learnerVocabulary||[]).find(x=>x.vocabId===attached.vocabulary.id);
+    const progress=(state.learnerVocabulary||[]).find(x=>x.vocabId===attached.vocab.id);
     progress.skills={recognition:3,listening:2,retrieval:4,spelling:3,context:2};
     progress.independentSuccesses=5;
     progress.intervalDays=7;
