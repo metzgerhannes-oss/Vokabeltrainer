@@ -66,13 +66,31 @@ try{
   assert(!!metrics.rank,'rank is rendered');
   assert(metrics.pct===50,'seed creates deterministic 50 percent mastery');
   assert(metrics.avatarStage==='3','50 percent academic progress maps to avatar stage 3');
-  assert(metrics.avatarKey==='english-stage-3','avatar exposes a stable future artwork key');
+  assert(metrics.avatarKey==='english-male-stage-3','avatar exposes a stable profile-specific artwork key');
   assert(metrics.avatarLabel==='Avatar · Stufe 3/6','avatar stage label is visible');
   assert(metrics.avatarPips===3,'avatar stage pips match current stage');
   assert(metrics.avatarFinal==='true','English menu uses final stage-specific avatar artwork');
-  assert(metrics.avatarArtKey==='english-stage-3','English avatar artwork matches the computed stage');
+  assert(metrics.avatarArtKey==='english-male-stage-3','English male avatar artwork matches the computed stage');
   assert(metrics.avatarSrc.startsWith('blob:'),'stage artwork is reconstructed locally from offline assets');
   assert(metrics.avatarNaturalHeight>metrics.avatarNaturalWidth*1.25,'English avatar artwork must remain a full-body portrait asset');
+  const styleIsolation=await page.evaluate(()=>{
+    const before=subjectProgress('english').pct;
+    learner().avatarStyle='female';
+    window.VTMenuUi.render();
+    const female={
+      style:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarStyle,
+      key:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarVisualKey,
+      final:document.querySelector('#projectMenuAvatarArt')?.dataset.avatarFinal||''
+    };
+    const after=subjectProgress('english').pct;
+    learner().avatarStyle='male';
+    window.VTMenuUi.render();
+    return {before,after,female};
+  });
+  assert(styleIsolation.female.style==='female','learner profile can select the female avatar track');
+  assert(styleIsolation.female.key==='english-female-stage-3','female profile keeps the same academic stage with its own artwork namespace');
+  assert(styleIsolation.female.final!=='true','female track uses fallback until its dedicated artwork files are added');
+  assert(styleIsolation.before===styleIsolation.after,'avatar profile style never changes academic mastery');
   const boundaries=await page.evaluate(()=>[0,17,18,35,36,53,54,71,72,89,90,100].map(p=>[p,avatarStageFor(p,'english').level]));
   assert(JSON.stringify(boundaries)===JSON.stringify([[0,1],[17,1],[18,2],[35,2],[36,3],[53,3],[54,4],[71,4],[72,5],[89,5],[90,6],[100,6]]),'avatar stage thresholds stay deterministic');
 
@@ -101,7 +119,7 @@ try{
   await page.click('[data-menu-subject="latin"]');
   await page.waitForFunction(()=>state.activeSubject==='latin');
   assert((await page.locator('#menuSubjectLabel').textContent())==='Latein','subject switch updates menu context');
-  assert((await page.locator('#projectMenuAvatarFrame').getAttribute('data-avatar-visual-key'))==='latin-stage-1','avatar artwork key follows subject and its own academic progress');
+  assert((await page.locator('#projectMenuAvatarFrame').getAttribute('data-avatar-visual-key'))==='latin-male-stage-1','avatar artwork key follows subject, profile style and its own academic progress');
   assert((await page.locator('#projectMenuAvatarArt').getAttribute('data-avatar-final'))==='false','Latin intentionally keeps the shared fallback until its own six final artworks are added');
   assert(await page.evaluate(()=>subjectProgress('english').pct)===beforeSwitch,'rendering and switching avatar context never changes academic mastery');
 
@@ -111,7 +129,8 @@ try{
   console.log('✓ KPI banner uses existing academic/campaign data');
   console.log('✓ army, campaign, cardbox and achievements routes');
   console.log('✓ six avatar stages are deterministic and learning-derived');
-  console.log('✓ English uses matching full-body offline artwork for its computed stage');
+  console.log('✓ male/female avatar style is learner-profile-specific and mastery-neutral');
+  console.log('✓ English male uses matching full-body offline artwork for its computed stage');
   console.log('✓ subject switching stays synchronized without changing mastery');
 }finally{
   await browser.close();
