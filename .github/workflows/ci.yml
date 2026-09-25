@@ -68,6 +68,9 @@ jobs:
       - name: Final release audit smoke
         run: node scripts/vokabeltrainer-release-audit-smoke.mjs
 
+      - name: Release reliability smoke
+        run: node scripts/vokabeltrainer-release-reliability-smoke.mjs
+
       - name: Child parent role separation smoke
         run: node scripts/vokabeltrainer-guided-shell-smoke.mjs
 
