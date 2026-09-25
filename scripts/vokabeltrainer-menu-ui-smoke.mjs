@@ -54,6 +54,8 @@ try{
   await page.waitForFunction(()=>learner().avatarStyle==='male');
 
   assert(await page.locator('.project-menu-link').count()===4,'menu exposes exactly four secondary routes');
+  const bottomNavGrid=await page.locator('.bottom-nav').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
+  assert(bottomNavGrid===4,'child bottom navigation uses exactly four equal columns for Heute, Üben, Fortschritt and Armee');
   assert(await page.locator('#quickLearnHeroBtn').isVisible(),'Jetzt lernen stays visible');
   assert((await page.locator('#quickLearnHeroBtn').textContent())?.includes('Jetzt lernen'),'primary CTA is Jetzt lernen');
 
