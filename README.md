@@ -4,11 +4,20 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.19.1**
+App-Version: **v0.19.2**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.19.2 – Mitwachsender Avatar
+
+- der Menü-Avatar besitzt **sechs klar definierte Entwicklungsstufen** bei 0 · 18 · 36 · 54 · 72 · 90 % nachhaltigem Schuljahresfortschritt
+- die Stufe wird ausschließlich aus dem bestehenden fachlichen Mastery-Fortschritt gelesen; Avatar, Menü und Fachwechsel schreiben keinerlei Lernfortschritt zurück
+- jede Stufe hat einen stabilen technischen Artwork-Schlüssel (z. B. `english-stage-3` bzw. `latin-stage-3`), damit die finalen Grafiken später ohne erneuten Logik- oder Layoutumbau eingesetzt werden können
+- bis zu den finalen Einzelgrafiken wächst die vorhandene Illustration sichtbar über Größe, Standarte, Rangabzeichen und Elite-Aura mit
+- die aktuelle Avatarstufe und der nächste Entwicklungspunkt werden im Menü angezeigt; bei Stufe 6 ist die Entwicklung als maximal markiert
+- Browser-Tests schützen alle Stufengrenzen sowie die Trennung zwischen visueller Entwicklung und fachlicher Mastery
 
 ## v0.19.1 – Project Menu 1.0
 
