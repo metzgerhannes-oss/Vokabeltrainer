@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
   workflow_dispatch:
 
 permissions:
@@ -14,9 +15,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  preflight:
+    name: preflight
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 8
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -69,17 +71,31 @@ jobs:
       - name: Child parent role separation smoke
         run: node scripts/vokabeltrainer-guided-shell-smoke.mjs
 
-      - name: Install Playwright browsers
+  browser-core:
+    name: browser-core
+    needs: preflight
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+
+      - name: Install WebKit
         run: |
           cp ci/browser/package.json package.json
           cp ci/browser/package-lock.json package-lock.json
           npm ci --ignore-scripts
-          npx playwright install --with-deps webkit chromium
+          npx playwright install --with-deps webkit
 
       - name: Start local server
         run: |
           python3 -m http.server 4173 >/tmp/vokabeltrainer-http.log 2>&1 &
-          echo $! > /tmp/vokabeltrainer-http.pid
           for i in {1..30}; do
             curl -fsS http://127.0.0.1:4173/index.html >/dev/null && exit 0
             sleep 1
@@ -87,23 +103,11 @@ jobs:
           cat /tmp/vokabeltrainer-http.log
           exit 1
 
-      - name: WebKit one-time vocabulary purge
-        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-vocabulary-purge-ui-smoke.mjs
-
-      - name: WebKit built-in-only clean reset
-        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-builtin-only-reset-ui-smoke.mjs
-
       - name: WebKit iPhone UI smoke
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-webkit-ui-smoke.mjs
 
       - name: WebKit unified content planner
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-content-planner-ui-smoke.mjs
-
-      - name: WebKit animated battle mode
-        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-battle-ui-smoke.mjs
-
-      - name: WebKit My Army overview
-        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-army-ui-smoke.mjs
 
       - name: WebKit contextual help smoke
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-help-ui-smoke.mjs
@@ -119,6 +123,44 @@ jobs:
 
       - name: WebKit deep responsive UI audit
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-deep-ui-audit.mjs
+
+  browser-data:
+    name: browser-data-security
+    needs: preflight
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+
+      - name: Install WebKit and Chromium
+        run: |
+          cp ci/browser/package.json package.json
+          cp ci/browser/package-lock.json package-lock.json
+          npm ci --ignore-scripts
+          npx playwright install --with-deps webkit chromium
+
+      - name: Start local server
+        run: |
+          python3 -m http.server 4173 >/tmp/vokabeltrainer-http.log 2>&1 &
+          for i in {1..30}; do
+            curl -fsS http://127.0.0.1:4173/index.html >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/vokabeltrainer-http.log
+          exit 1
+
+      - name: WebKit one-time vocabulary purge
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-vocabulary-purge-ui-smoke.mjs
+
+      - name: WebKit built-in-only clean reset
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-builtin-only-reset-ui-smoke.mjs
 
       - name: WebKit DOM injection safety
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-dom-safety-smoke.mjs
@@ -137,3 +179,71 @@ jobs:
 
       - name: Chromium service-worker offline smoke
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-sw-browser-smoke.mjs
+
+  browser-game:
+    name: browser-game
+    needs: preflight
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+
+      - name: Install WebKit
+        run: |
+          cp ci/browser/package.json package.json
+          cp ci/browser/package-lock.json package-lock.json
+          npm ci --ignore-scripts
+          npx playwright install --with-deps webkit
+
+      - name: Start local server
+        run: |
+          python3 -m http.server 4173 >/tmp/vokabeltrainer-http.log 2>&1 &
+          for i in {1..30}; do
+            curl -fsS http://127.0.0.1:4173/index.html >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/vokabeltrainer-http.log
+          exit 1
+
+      - name: WebKit animated battle mode
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-battle-ui-smoke.mjs
+
+      - name: WebKit My Army overview
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-army-ui-smoke.mjs
+
+  test:
+    name: test
+    if: ${{ always() }}
+    needs: [preflight, browser-core, browser-data, browser-game]
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Aggregate required checks
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_DRAFT: ${{ github.event.pull_request.draft }}
+          PREFLIGHT: ${{ needs.preflight.result }}
+          BROWSER_CORE: ${{ needs.browser-core.result }}
+          BROWSER_DATA: ${{ needs.browser-data.result }}
+          BROWSER_GAME: ${{ needs.browser-game.result }}
+        run: |
+          echo "preflight=$PREFLIGHT core=$BROWSER_CORE data=$BROWSER_DATA game=$BROWSER_GAME event=$EVENT_NAME draft=$PR_DRAFT"
+          test "$PREFLIGHT" = "success"
+
+          if [ "$EVENT_NAME" = "pull_request" ] && [ "$PR_DRAFT" = "true" ]; then
+            test "$BROWSER_CORE" = "skipped"
+            test "$BROWSER_DATA" = "skipped"
+            test "$BROWSER_GAME" = "skipped"
+            exit 0
+          fi
+
+          test "$BROWSER_CORE" = "success"
+          test "$BROWSER_DATA" = "success"
+          test "$BROWSER_GAME" = "success"
