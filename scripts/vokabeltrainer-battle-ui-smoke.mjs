@@ -52,7 +52,9 @@ try{
     });
     if(stage)window.__fortressRevealObserver.observe(stage,{attributes:true,childList:true,subtree:true});
   });
-  await page.click('#attackBtn');
+  assert(await page.locator('#attackBtn').isVisible(),'battle entry remains visible');
+  assert(!(await page.locator('#attackBtn').isDisabled()),'battle entry remains enabled');
+  await page.locator('#attackBtn').evaluate(button=>button.click());
   await page.waitForSelector('#battleView.active');
   assert((await page.locator('#battleBackBtn').textContent())?.includes('Fortschritt'),'battle opened from progress returns to progress');
   assert((await page.locator('#battleReturnBtn').textContent())?.includes('Fortschritt'),'bottom return action matches progress origin');
@@ -70,7 +72,9 @@ try{
   assert((await page.locator('#attackBtn').textContent())?.includes('Angriff'),'completed daily goal marks the attack as ready');
 
   const revealCountBeforeSecondOpen=await page.evaluate(()=>window.__fortressRevealProbe?.count||0);
-  await page.click('#attackBtn');
+  assert(await page.locator('#attackBtn').isVisible(),'battle entry remains visible');
+  assert(!(await page.locator('#attackBtn').isDisabled()),'battle entry remains enabled');
+  await page.locator('#attackBtn').evaluate(button=>button.click());
   await page.waitForSelector('#battleView.active');
   await page.waitForTimeout(180);
   const repeatedFortressReveal=await page.evaluate(()=>({
