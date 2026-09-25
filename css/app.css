@@ -2946,3 +2946,20 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
 .avatar-style-choice span{display:flex;flex-direction:column;gap:2px}
 .avatar-style-choice strong{font-size:.95rem}.avatar-style-choice small{color:#667085;font-size:.75rem}
 @media(max-width:520px){.avatar-style-choice{grid-template-columns:1fr}}
+
+
+/* v0.19.6 – consistent child-world return path */
+.child-progress-toolbar{
+  position:sticky;top:8px;z-index:14;display:flex;justify-content:flex-start;
+  margin:0 0 10px;pointer-events:none
+}
+.child-progress-toolbar button{
+  pointer-events:auto;min-height:44px;padding:9px 14px;
+  background:rgba(255,255,255,.94);border-color:rgba(208,213,221,.96);
+  box-shadow:0 6px 18px rgba(15,23,42,.10);backdrop-filter:blur(10px)
+}
+.child-progress-toolbar button:focus-visible{outline:3px solid #8b5cf6;outline-offset:3px}
+@media(max-width:520px){
+  .child-progress-toolbar{top:4px;margin-bottom:8px}
+  .child-progress-toolbar button{min-height:44px}
+}

@@ -104,6 +104,7 @@
     document.querySelector('#menuCampaignBtn')?.addEventListener('click',()=>window.VTCampaignMap?.open?.());
     document.querySelector('#menuCardboxBtn')?.addEventListener('click',()=>showProgressTarget('cardboxOverviewCard'));
     document.querySelector('#menuAchievementsBtn')?.addEventListener('click',()=>showProgressTarget('progressOverviewCard'));
+    document.querySelector('#progressMenuBtn')?.addEventListener('click',openHome);
     document.addEventListener('vt-army-art-ready',applyAvatarArt);
     document.addEventListener('vt-menu-avatar-art-ready',applyAvatarArt);
     render();

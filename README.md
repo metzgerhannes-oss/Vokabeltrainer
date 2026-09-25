@@ -4,11 +4,19 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.19.5**
+App-Version: **v0.19.6**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.19.6 – Konsistente Rücknavigation im Kindbereich
+
+- **Fortschritt**, **Karteikasten** und **Erfolge** besitzen jetzt einen jederzeit sichtbaren Rückweg **← Menü**
+- der Rückweg bleibt beim Scrollen im Fortschrittsbereich sichtbar und vermeidet den früheren Sackgassen-Eindruck nach einem Sprung aus dem Project Menu
+- Armee, Feldzug und Schlacht behalten ihre bereits kontextbezogenen Rückwege; damit folgt die gesamte Kinderwelt derselben Navigationslogik
+- die Änderung ist ausschließlich Navigation/UI und verändert weder Mastery, Leitner, XP, Tagesplanung noch Kampflogik
+- der Project-Menu-Browsertest prüft den neuen Rückweg explizit
 
 ## v0.19.5 – Avatarwahl pro Lernprofil
 
