@@ -37,7 +37,7 @@ assert(ui.includes('Einmal-Link oder Gerätecode')&&ui.includes('Stattdessen Fam
 assert(!ui.includes('function openChildDeviceInvite(){')&&ui.includes('window.openChildDeviceInvite?window.openChildDeviceInvite()'), 'guided share-link pairing from device-pairing.js is not shadowed by the obsolete raw-token UI');
 assert(!ui.includes('QR-/Übernahmeschritt für die Kinder-App folgt'), 'obsolete unfinished child-pairing message is removed');
 assert(css.includes('overflow-y:auto')&&css.includes('100dvh')&&css.includes('.modal-actions.stack-mobile'), 'family setup dialogs remain scrollable and actionable on compact mobile viewports');
-assert(ui.includes('if(dialog.open)return')&&ui.includes("try{dialog.showModal()}catch(_e){dialog.setAttribute('open','')}"), 'modal lifecycle tolerates already-open and fallback dialogs');
+assert(ui.includes('if(!dialog.open){')&&ui.includes("try{dialog.showModal()}catch(_e){dialog.setAttribute('open','')}" )&&ui.includes('prepareModalAccessibility(dialog)'), 'modal lifecycle tolerates already-open and fallback dialogs with accessible focus handling');
 assert(css.includes('-webkit-overflow-scrolling:auto')&&css.includes('max-height:calc(100vh - 16px)'), 'iOS 15 modal scrolling and viewport fallback are present');
 assert(pairing.includes("QR-Code erstellen")&&pairing.includes('familyChildQr')&&pairing.includes('shareInviteLink'),'parent UI offers QR-first child pairing with share/copy fallback');
 assert(pairing.includes("claimChildInvite(token")&&pairing.includes("Dieses Gerät verbinden"),'child device can consume the invite link in one guided step');
