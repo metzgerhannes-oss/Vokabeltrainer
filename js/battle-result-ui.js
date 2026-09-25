@@ -4,6 +4,8 @@
   let overlay=null;
   let lastSignature='';
   let pendingShowTimer=null;
+  let pendingHideTimer=null;
+  let pendingVisibleFrame=null;
 
   function escResult(value){
     const text=String(value??'');
@@ -129,18 +131,28 @@
     const data=resultData();
     if(!data)return;
     const signature=`${data.entry.date}|${data.entry.result}|${data.entry.fortressKey||data.entry.fortress}|${data.entry.defenseAfter??''}`;
-    if(signature===lastSignature&&root.classList.contains('visible'))return;
+    if(signature===lastSignature&&root.classList.contains('visible')&&!root.classList.contains('hidden'))return;
     lastSignature=signature;
+    if(pendingHideTimer){clearTimeout(pendingHideTimer);pendingHideTimer=null}
+    if(pendingVisibleFrame){cancelAnimationFrame(pendingVisibleFrame);pendingVisibleFrame=null}
     root.classList.remove('hidden');
-    requestAnimationFrame(()=>root.classList.add('visible'));
+    pendingVisibleFrame=requestAnimationFrame(()=>{
+      pendingVisibleFrame=null;
+      root.classList.add('visible');
+    });
     document.body.classList.add('battle-result-open');
   }
 
   function hide(){
     const root=ensureOverlay();
+    if(pendingVisibleFrame){cancelAnimationFrame(pendingVisibleFrame);pendingVisibleFrame=null}
+    if(pendingHideTimer){clearTimeout(pendingHideTimer);pendingHideTimer=null}
     root.classList.remove('visible');
     document.body.classList.remove('battle-result-open');
-    setTimeout(()=>root.classList.add('hidden'),180);
+    pendingHideTimer=setTimeout(()=>{
+      pendingHideTimer=null;
+      if(!root.classList.contains('visible'))root.classList.add('hidden');
+    },180);
   }
 
   function observe(){
