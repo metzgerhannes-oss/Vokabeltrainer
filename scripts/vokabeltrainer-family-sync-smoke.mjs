@@ -11,7 +11,7 @@ const html=read('index.html');
 const sw=read('sw.js');
 const sql=read('supabase/vt_family_sync_v1.sql');
 const sqlV2=read('supabase/vt_family_sync_v2_parent_invites.sql');
-const sqlV3=read('supabase/migrations/20260925204000_harden_vt_device_context_boundary.sql');
+const sqlV3=read('supabase/migrations/20260925205453_harden_vt_device_context_boundary.sql');
 const architecture=read('SYNC_ARCHITECTURE.md');
 
 const passed=[];
