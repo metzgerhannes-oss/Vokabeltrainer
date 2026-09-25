@@ -251,8 +251,9 @@ try{
     const stack=document.querySelector('#battleStage [data-battle-art-stack]');
     const army=document.querySelector('#battleStage [data-battle-layer="army"]');
     const fortress=document.querySelector('#battleStage [data-battle-layer="fortress"]');
+    [stack,army,fortress].forEach(el=>{el.style.transition='none'});
     stage.classList.add('battle-sequence','phase-advance');
-    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    await new Promise(resolve=>requestAnimationFrame(resolve));
     const advance={stack:getComputedStyle(stack).transform,army:getComputedStyle(army).transform,fortress:getComputedStyle(fortress).transform};
     stage.classList.remove('phase-advance');
     stage.classList.add('phase-impact','is-impact');
