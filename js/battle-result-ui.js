@@ -145,6 +145,7 @@
 
   function hide(){
     const root=ensureOverlay();
+    if(pendingShowTimer){clearTimeout(pendingShowTimer);pendingShowTimer=null}
     if(pendingVisibleFrame){cancelAnimationFrame(pendingVisibleFrame);pendingVisibleFrame=null}
     if(pendingHideTimer){clearTimeout(pendingHideTimer);pendingHideTimer=null}
     root.classList.remove('visible');
@@ -164,7 +165,8 @@
       const deterministic=window.__VT_BATTLE_TEST_MODE__===true;
       pendingShowTimer=setTimeout(()=>{
         pendingShowTimer=null;
-        if(stage.classList.contains('battle-finished'))show();
+        const battleActive=document.querySelector('#battleView')?.classList.contains('active')===true;
+        if(battleActive&&stage.classList.contains('battle-finished'))show();
       },deterministic?0:(reduced?40:1140));
       return;
     }
