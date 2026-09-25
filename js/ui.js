@@ -107,8 +107,13 @@ function renderBattlefield(){
   field.dataset.damagePercent=String(damagePct);
   field.dataset.fortressState=fortressVisual.id;
   field.setAttribute('aria-label',`${campaign.unitLabel}: ${p.pct}% Schuljahresfortschritt, Rang ${rankFor(p.pct,state.activeSubject)}, ${f?`Testfestung ${f.name} am ${formatDateShort(f.testDate)}`:'kein Test geplant'}`);
-  field.innerHTML=`<div class="sun"></div><div class="preview-cloud cloud-a"></div><div class="preview-cloud cloud-b"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army"><div class="preview-standard"></div>${battleUnitsMarkup(count,false,p.pct)}${siege}</div>${fortressMarkup(f,false)}`;
+  const highQualityArt=state.activeSubject==='english'&&window.VTArmyArt?.ready&&window.VTArmyArt.heroUrl;
+  field.classList.toggle('progress-army-artwork',!!highQualityArt);
+  field.innerHTML=highQualityArt
+    ?`<img class="progress-army-art" data-progress-army-art src="${esc(window.VTArmyArt.heroUrl)}" alt="" aria-hidden="true"><div class="progress-army-art-shade" aria-hidden="true"></div>${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}${fortressMarkup(f,false)}`
+    :`<div class="sun"></div><div class="preview-cloud cloud-a"></div><div class="preview-cloud cloud-b"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army"><div class="preview-standard"></div>${battleUnitsMarkup(count,false,p.pct)}${siege}</div>${fortressMarkup(f,false)}`;
 }
+document.addEventListener('vt-army-art-ready',()=>{if(state&&document.querySelector('#battlefield'))renderBattlefield()});
 function renderBattleAttackChoices(pct=subjectProgress().pct){
   const box=$('#battleAttackChoices');if(!box)return;
   if(!attackUnlocked(battleAttackMode,pct))battleAttackMode='charge';
