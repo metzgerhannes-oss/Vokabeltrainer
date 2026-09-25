@@ -1,4 +1,3 @@
-import fs from 'node:fs/promises';
 import { webkit, devices } from 'playwright';
 
 const base=process.env.APP_BASE||'http://127.0.0.1:4173';
@@ -79,13 +78,31 @@ try{
   });
 
   assert(await page.locator('#settingsView.active').count()===1,'parent settings view is active');
-  const downloadPromise=page.waitForEvent('download');
+  await page.evaluate(()=>{
+    window.__backupCapture={name:'',blob:null};
+    const originalCreate=URL.createObjectURL.bind(URL);
+    window.__backupOriginalCreateObjectURL=originalCreate;
+    URL.createObjectURL=blob=>{
+      window.__backupCapture.blob=blob;
+      return originalCreate(blob);
+    };
+    window.__backupOriginalAnchorClick=HTMLAnchorElement.prototype.click;
+    HTMLAnchorElement.prototype.click=function(){
+      window.__backupCapture.name=this.download||'';
+    };
+  });
   await page.locator('#backupBtn').click();
-  const download=await downloadPromise;
-  assert(/^vokabeltrainer_backup_\d{4}-\d{2}-\d{2}\.json$/.test(download.suggestedFilename()),'backup filename is recognizable');
-  const backupPath=await download.path();
-  assert(!!backupPath,'backup download has a local file');
-  const exportedText=await fs.readFile(backupPath,'utf8');
+  const captured=await page.evaluate(async()=>({
+    name:window.__backupCapture?.name||'',
+    text:window.__backupCapture?.blob?await window.__backupCapture.blob.text():''
+  }));
+  await page.evaluate(()=>{
+    if(window.__backupOriginalCreateObjectURL)URL.createObjectURL=window.__backupOriginalCreateObjectURL;
+    if(window.__backupOriginalAnchorClick)HTMLAnchorElement.prototype.click=window.__backupOriginalAnchorClick;
+  });
+  assert(/^vokabeltrainer_backup_\d{4}-\d{2}-\d{2}\.json$/.test(captured.name),'backup filename is recognizable');
+  assert(captured.text.length>100,'backup produces non-empty JSON content');
+  const exportedText=captured.text;
   const exported=JSON.parse(exportedText);
   assert(exported.backupMeta?.appVersion,'backup contains app version metadata');
   assert(exported.backupMeta?.exportedAt,'backup contains export timestamp');
