@@ -248,7 +248,7 @@ function defaultState(){
   const s={
     version: VERSION,senseModelVersion:1,spellingLeakRepairVersion:1,pairAuditVersion:1,firstContactVersion:1,
     activeLearnerId: 'learner_demo',activeSubject: 'english',
-    learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',activeSubjects:['english'],xp:0,lrsMode:false,fontSize:17,letterSpacing:0,flashSpeed:1600,autoSpeakCorrection:true,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),battleDays:{},testFortresses:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
+    learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',avatarStyle:'male',activeSubjects:['english'],xp:0,lrsMode:false,fontSize:17,letterSpacing:0,flashSpeed:1600,autoSpeakCorrection:true,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),battleDays:{},testFortresses:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
     books:[],learnerBooks:[],bookVocabulary:[],sets:[],vocabulary:[],setVocabulary:[],learnerVocabulary:[],grades:[],practiceTests:[],activity:[]
   };
   attachRuntimeWordApi(s);return s;
