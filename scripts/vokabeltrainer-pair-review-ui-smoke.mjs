@@ -59,6 +59,30 @@ try{
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer pair-review UI smoke: passed');
+}catch(error){
+  let snapshot=null;
+  try{
+    snapshot=await page.evaluate(()=>{
+      const set=state?.sets?.find(s=>s.id==='ocr_set')||null;
+      const key=`${today()}:english`;
+      return {
+        todaySummary:document.querySelector('#todaySummary')?.textContent||'',
+        quickLearnDisabled:document.querySelector('#quickLearnHeroBtn')?.disabled??null,
+        set:set?{
+          pairReviewRequired:set.pairReviewRequired===true,
+          pairVerifiedAt:set.pairVerifiedAt||'',
+          pairVerifiedSignature:set.pairVerifiedSignature||'',
+          currentSignature:pairReviewSignatureForSet(set.id),
+          needsReview:setNeedsPairReview(set)
+        }:null,
+        verifiedWords:schoolYearVerifiedWords('english').length,
+        allWords:schoolYearWords('english').length,
+        dailyPlan:learner()?.dailyPlans?.[key]||null
+      };
+    });
+  }catch(_e){}
+  console.error('PAIR_REVIEW_DIAGNOSTIC',JSON.stringify({error:String(error?.stack||error),snapshot}));
+  throw error;
 }finally{
   await browser.close();
 }
