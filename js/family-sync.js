@@ -268,6 +268,39 @@
     }finally{runtime.busy=false}
   }
 
+  async function resolveConflict(key,strategy='remote'){
+    const cfg=loadConfig(),docKey=String(key||''),mode=strategy==='local'?'local':'remote';
+    if(!cfg.enabled)throw new Error('Familiensync ist auf diesem Gerät nicht verbunden.');
+    if(!cfg.conflicts?.[docKey])return status();
+    if(runtime.busy)throw new Error('Synchronisierung läuft bereits.');
+    runtime.busy=true;
+    try{
+      const pulled=await rpc('vt_pull_documents',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
+      if(!pulled?.ok)throw new Error(pulled?.error||'Cloud-Stand nicht erreichbar.');
+      const remote=(pulled.documents||[]).find(d=>String(d.key||'')===docKey);
+      if(!remote)throw new Error('Der Konfliktstand ist in der Cloud nicht mehr vorhanden.');
+      const remoteRev=Number(remote.revision)||0,dirty=new Set(cfg.dirtyKeys||[]),conflicts={...cfg.conflicts};
+      if(mode==='remote'){
+        applyDocument(docKey,remote.payload);
+        ensureActiveSubject();
+        if(!(await persistState()))throw new Error('Cloud-Stand konnte lokal nicht sicher gespeichert werden.');
+        cfg.revisions[docKey]=remoteRev;runtime.snapshots.set(docKey,docString(remote.payload));
+      }else{
+        if(!canWrite(cfg,docKey))throw new Error('Dieses Gerät darf diesen Datenbereich nicht überschreiben.');
+        const payload=serializeDocuments()[docKey];
+        if(payload===undefined)throw new Error('Lokaler Konfliktstand ist nicht mehr vorhanden.');
+        const pushed=await rpc('vt_push_document',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret,p_doc_key:docKey,p_payload:payload,p_base_revision:remoteRev});
+        if(!pushed?.ok){
+          if(pushed?.conflict){conflicts[docKey]=Number(pushed.revision)||remoteRev||1;cfg.conflicts=conflicts;persistCfg(cfg);throw new Error('Der Cloud-Stand wurde erneut geändert. Bitte Konflikt nochmals prüfen.')}
+          throw new Error(pushed?.error||'Konflikt konnte nicht aufgelöst werden.');
+        }
+        cfg.revisions[docKey]=Number(pushed.revision)||remoteRev+1;runtime.snapshots.set(docKey,docString(payload));
+      }
+      dirty.delete(docKey);delete conflicts[docKey];cfg.dirtyKeys=[...dirty];cfg.conflicts=conflicts;cfg.lastSync=new Date().toISOString();persistCfg(cfg);
+      renderAll?.();return status();
+    }finally{runtime.busy=false}
+  }
+
   async function replaceCloudWithCurrent(){
     const cfg=loadConfig();
     if(!cfg.enabled)return {ok:true,localOnly:true};
@@ -318,5 +351,5 @@
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncNow(false).catch(e=>console.warn('Family sync resume',e))});
   }
 
-  window.VTFamilySync={serializeDocuments,status,createFamily,joinParent,createParentInvite,claimParentInvite,createChildInvite,claimChildInvite,syncNow,replaceCloudWithCurrent,markLocalChange,listDevices,revokeDevice,disconnectLocal,bootstrap};
+  window.VTFamilySync={serializeDocuments,status,createFamily,joinParent,createParentInvite,claimParentInvite,createChildInvite,claimChildInvite,syncNow,resolveConflict,replaceCloudWithCurrent,markLocalChange,listDevices,revokeDevice,disconnectLocal,bootstrap};
 })();
