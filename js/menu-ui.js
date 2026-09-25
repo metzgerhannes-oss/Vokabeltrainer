@@ -13,8 +13,10 @@
     const frame=document.querySelector('#projectMenuAvatarFrame');
     if(!img||!fallback||!frame||typeof state!=='object'||!state||!state.activeSubject)return;
     const level=Math.max(1,Math.min(6,Number(frame.dataset.avatarStage)||1));
-    const key=`${state.activeSubject}-stage-${level}`;
-    const finalUrl=window.VTMenuAvatarArt?.get?.(state.activeSubject,level)||'';
+    const style=learner()?.avatarStyle==='female'?'female':'male';
+    const key=`${state.activeSubject}-${style}-stage-${level}`;
+    frame.dataset.avatarStyle=style;
+    const finalUrl=window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'';
     const armyUrl=window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'';
     const url=finalUrl||armyUrl;
     if(url){
@@ -39,8 +41,10 @@
     if(!frame||typeof avatarStageFor!=='function')return null;
     const stage=avatarStageFor(pct,state.activeSubject);
     frame.dataset.avatarStage=String(stage.level);
-    frame.dataset.avatarVisualKey=stage.visualKey;
+    const style=learner()?.avatarStyle==='female'?'female':'male';
+    frame.dataset.avatarVisualKey=`${state.activeSubject}-${style}-stage-${stage.level}`;
     frame.dataset.avatarSubject=state.activeSubject;
+    frame.dataset.avatarStyle=style;
     if(label)label.textContent=`Avatar · Stufe ${stage.level}/${stage.maxLevel}`;
     if(pips)pips.innerHTML=Array.from({length:stage.maxLevel},(_,i)=>`<i class="${i<stage.level?'filled':''}"></i>`).join('');
     if(next)next.textContent=stage.nextAt===null?`${stage.label} · maximal entwickelt`:`${stage.label} · nächste Stufe bei ${stage.nextAt}%`;
