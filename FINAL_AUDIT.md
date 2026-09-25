@@ -4,7 +4,8 @@ Stand: 25.09.2026 · App v0.18.60
 
 ## Ergebnis
 
-- neue Testfestungen erhalten beim ersten Öffnen einen einmaligen, persistent gespeicherten Ziel-Reveal; der Effekt verändert weder Lernfortschritt noch Kampfrechnung und respektiert `prefers-reduced-motion`
+- v0.18.60 härtet primär den Release-Prozess: deterministischer App-Ready-Zustand, parallele CI-Gates, reduzierte Draft-PR-CI, produktiver Post-Deployment-Smoke sowie reproduzierbare Supabase-Migrationen und Parent-Invite-Rate-Limits
+- fachliche Lernlogik, Mastery, Leitner, Spacing und Kampfrechnung werden durch diesen Hardening-Release nicht verändert
 
 Der aktuelle Stand ist technisch und fachlich für den realen Kind-End-to-End-Test freigegeben.
 Die automatisierte CI muss für den Release-Commit vollständig grün sein. Ein grüner CI-Stand
@@ -49,7 +50,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - Elternbereich ist ein bewusster Rollenwechsel
 - Hilfe ist rollenabhängig
 - Desktop ab 1100 px nutzt eine linke Seitennavigation, zweispaltige Heute-Ansicht und dauerhaft sichtbare freiwillige Übungen; Tablet/Mobil bleiben kompakt
-- Lernprofile können in der Kinderansicht direkt und eindeutig gewechselt werden
+- auf Eltern-Geräten können Lernprofile bewusst gewechselt werden; ein verbundenes Kindergerät ist dauerhaft an genau das beim Pairing zugewiesene Lernprofil gebunden
 
 ### Schlachtmodus / Gamification
 
@@ -134,7 +135,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - Hilfe-Browsertest überwacht zusätzlich die Browser-Konsole
 - Supabase-Family-Sync nutzt ausschließlich einen Publishable Key im Browser; privilegierte Schlüssel bleiben serverseitig
 - Family-Sync-RPCs prüfen Geräte-ID und Geräteschlüssel serverseitig und begrenzen Kinderrechte unabhängig vom Frontend
-- sensible Family-Sync-RPCs sind über den Supabase-Pre-Request-Hook rate-limitiert
+- sensible Family-Sync-RPCs sind über den Supabase-Pre-Request-Hook rate-limitiert; seit v0.18.60 umfasst dies auch Erzeugen und Einlösen der neuen Parent-Invites
 
 ### PWA / Offline / Deployment
 
@@ -146,6 +147,10 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - Battle-Saisontest ist nicht mehr auf einen bestimmten Kalendermonat fest verdrahtet
 - der eigene GitHub-Pages-Workflow deployt nur nach erfolgreichem Vokabeltrainer-CI und checkt exakt den getesteten Commit aus
 - GitHub Pages ist auf „GitHub Actions“ umgestellt; der Produktions-Deploy wird damit ausschließlich nach erfolgreichem Vokabeltrainer-CI ausgelöst
+- nach dem Pages-Deploy prüft ein Live-Smoke die tatsächlich ausgelieferte Version in `index.html`, `js/core.js` und `sw.js`
+- die CI ist in parallele Gates für Preflight, Core-UI, Daten/Sicherheit und Gameplay getrennt; der Required Check `test` aggregiert diese Ergebnisse
+- Draft-PRs führen nur den schnellen Preflight aus; die vollständigen Browser-Gates starten bei Ready-for-Review
+- Browser-Smokes können auf den expliziten lokalen Bootstrap-Zustand `vt-app-ready` warten, statt nur das Vorhandensein einzelner globaler Variablen zu erraten
 
 ## Audit-Korrekturen v0.17.1
 
@@ -161,6 +166,16 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 2. **Lernfokus geschützt:** Die fokussierte Abfrage wurde nur visuell verfeinert; Abläufe, Bewertung und Mastery bleiben unverändert.
 3. **LRS geschützt:** Der LRS-Modus behält reduzierte Schatten und eine sachliche Darstellung.
 4. **Rollen geschützt:** Eltern-/Kinderlogik und Family-Sync wurden durch den Design-Pass nicht verändert.
+
+## Audit-Korrekturen v0.18.60
+
+1. **CI-Orchestrierung:** Der frühere monolithische Testjob ist in parallele Release-Gates aufgeteilt. Dadurch werden mehrere Fehler im selben Lauf sichtbar.
+2. **Flake-Härtung:** Die App setzt nach vollständiger lokaler Initialisierung `window.__VT_APP_READY__` und sendet `vt-app-ready`; die nachweislich flakigen Reload-/DOM-Smokes warten auf diesen Zustand.
+3. **Draft-PRs:** Unfertige Drafts lösen keine vollständige Browser-Suite mehr aus. Bei `ready_for_review` wird die komplette Release-CI gestartet.
+4. **Post-Deployment:** Der Pages-Workflow validiert nach dem Deployment die tatsächlich ausgelieferte Versionskonsistenz.
+5. **Backend-Reproduzierbarkeit:** Die produktive Parent-Invite-Migration `20260924203104` sowie die neue Rate-Limit-Migration `20260925041851` liegen versioniert im Vokabeltrainer-Repository.
+6. **Rate Limits:** `vt_create_parent_invite` und `vt_claim_parent_invite` sind produktiv in den gemeinsamen Supabase-Pre-Request-Schutz aufgenommen.
+7. **Offene Infrastrukturgrenze:** Die GitHub-Regel „Branch muss vor Merge auf aktuellem Main sein“ ist weiterhin administrativ zu aktivieren; sie kann über die derzeitige GitHub-Integration nicht geändert werden.
 
 ## Bewusste Grenzen vor v1
 
@@ -182,4 +197,4 @@ Der nächste entscheidende Test ist ein echter Kind-Test ohne Erklärungen. Beob
 - Schlacht: findet es Angriffsart, Vollbild und Ergebnis ohne Hilfe?
 - Rückweg: kommt es selbständig zu Heute/Lernen zurück?
 - kritisch: erster Fehlklick, Pause >5 Sekunden, Zurückspringen oder Nachfrage werden notiert.
-\n- die sechs bestehenden Festungsstufen besitzen wieder eigenständige, im Hero-Redesign klar unterscheidbare Silhouetten; die Darstellung liegt separat in `css/battle-fortress.css` und verändert keine Lern- oder Kampflogik\n
+- die sechs bestehenden Festungsstufen besitzen eigenständige, im Hero-Redesign klar unterscheidbare Silhouetten; die Darstellung liegt separat in `css/battle-fortress.css` und verändert keine Lern- oder Kampflogik
