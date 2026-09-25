@@ -911,10 +911,28 @@ function renderFamilySync(){
   child.classList.toggle('hidden',!s.enabled||s.role!=='parent');
   parent?.classList.toggle('hidden',!s.enabled||s.role!=='parent');
   switchBtn?.classList.toggle('hidden',!s.enabled||s.role!=='parent');
-  if(!s.enabled){box.className='notice subtle';box.innerHTML='<strong>Noch nicht verbunden.</strong><br>Neue Familie anlegen oder einem bestehenden Familienverbund beitreten.';return}
-  if(s.conflicts){box.className='notice warn';box.innerHTML=`<strong>Synchronisationskonflikt</strong><br>${s.conflicts} Dokument${s.conflicts===1?'':'e'} wurde${s.conflicts===1?'':'n'} auf mehreren Geräten geändert. Nichts wird automatisch überschrieben.`;return}
+  if(!s.enabled){
+    box.className=`notice ${s.revoked?'warn':'subtle'}`;
+    box.innerHTML=s.revoked?'<strong>Dieses Gerät wurde aus dem Familienverbund entfernt.</strong><br>Lokale Daten bleiben erhalten. Für erneute Synchronisierung das Gerät neu verbinden.':'<strong>Noch nicht verbunden.</strong><br>Neue Familie anlegen oder einem bestehenden Familienverbund beitreten.';
+    return
+  }
+  if(s.conflicts){box.className='notice warn';box.innerHTML=`<strong>Synchronisationskonflikt</strong><br>${s.conflicts} Datenbereich${s.conflicts===1?' wurde':'e wurden'} auf mehreren Geräten geändert. Nichts wird automatisch überschrieben.<div class="top-space"><button type="button" id="familyConflictResolveBtn" class="secondary">Konflikt lösen</button></div>`;$('#familyConflictResolveBtn').onclick=openFamilySyncConflictResolver;return}
   if(s.busy){box.className='notice subtle';box.innerHTML='<strong>Synchronisierung läuft …</strong><br>Lokales Lernen bleibt verfügbar.';return}
   box.className='notice good';box.innerHTML=`<strong>Familiensync aktiv</strong><br>Familie: ${esc(s.familyId)} · ${s.role==='parent'?'Eltern-Gerät':'Kindergerät'} · zuletzt ${esc(familySyncTime(s.lastSync))}${s.dirty?` · ${s.dirty} Änderung${s.dirty===1?'':'en'} wartet${s.dirty===1?'':'en'} auf Upload`:''}`;
+}
+function familySyncConflictLabel(key){
+  if(key==='shared')return 'Gemeinsame Vokabel- und Lehrwerksdaten';
+  const m=String(key||'').match(/^profile\/([^/]+)\/(setup|progress)$/),l=m?state.learners.find(x=>x.id===m[1]):null;
+  if(!m)return 'Synchronisierte Daten';
+  return `${l?.name||'Lernprofil'} · ${m[2]==='setup'?'Einstellungen, Lernsets und Noten':'Lernfortschritt'}`;
+}
+function openFamilySyncConflictResolver(){
+  if(!window.VTFamilySync)return;const syncStatus=VTFamilySync.status(),keys=syncStatus.conflictKeys||[];
+  if(!keys.length){renderFamilySync();toast('Kein Synchronisationskonflikt mehr vorhanden.','good');return}
+  modal(`<div class="eyebrow">Familiensync</div><h2>Konflikt lösen</h2><p>Für diese Datenbereiche gibt es Änderungen auf diesem Gerät und in der Cloud. Entscheide bewusst, welcher Stand gelten soll.</p><div class="notice warn"><strong>Es wird nichts automatisch überschrieben.</strong><br>„Cloud übernehmen“ verwirft nur den lokalen Stand des jeweiligen Datenbereichs. „Dieses Gerät behalten“ überschreibt bewusst den neueren Cloud-Stand.</div><div class="global-usage-list">${keys.map((key,i)=>`<div class="profile-row"><div><strong>${esc(familySyncConflictLabel(key))}</strong><small class="profile-meta">Konflikt ${i+1} von ${keys.length}</small></div><div class="row gap wrap"><button type="button" class="secondary" data-sync-conflict-remote="${esc(key)}">Cloud übernehmen</button><button type="button" class="ghost" data-sync-conflict-local="${esc(key)}">Dieses Gerät behalten</button></div></div>`).join('')}</div><div id="familyConflictError" class="notice subtle">Bei Unsicherheit zuerst ein Backup erstellen.</div><div class="modal-actions wrap"><button type="button" id="familyConflictBackupBtn" class="ghost">Backup erstellen</button><button value="cancel" class="primary">Später</button></div>`);
+  $('#familyConflictBackupBtn').onclick=()=>backup();
+  $('[data-sync-conflict-remote]').forEach(b=>b.onclick=async()=>{const err=$('#familyConflictError');b.disabled=true;try{await VTFamilySync.resolveConflict(b.dataset.syncConflictRemote,'remote');closeModal();renderAll();const left=VTFamilySync.status().conflicts;if(left)openFamilySyncConflictResolver();else toast('Cloud-Stand übernommen. Synchronisierung läuft wieder.','good')}catch(e){err.className='notice bad';err.textContent=e.message||'Konflikt konnte nicht aufgelöst werden.';b.disabled=false}});
+  $('[data-sync-conflict-local]').forEach(b=>b.onclick=async()=>{if(!confirm('Den Stand dieses Geräts wirklich über den neueren Cloud-Stand schreiben?'))return;const err=$('#familyConflictError');b.disabled=true;try{await VTFamilySync.resolveConflict(b.dataset.syncConflictLocal,'local');closeModal();renderAll();const left=VTFamilySync.status().conflicts;if(left)openFamilySyncConflictResolver();else toast('Stand dieses Geräts übernommen. Synchronisierung läuft wieder.','good')}catch(e){err.className='notice bad';err.textContent=e.message||'Konflikt konnte nicht aufgelöst werden.';b.disabled=false}});
 }
 function openFamilySyncSetup(){
   if(!window.VTFamilySync)return;
