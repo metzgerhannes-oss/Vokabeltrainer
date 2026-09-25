@@ -66,7 +66,9 @@ try{
   assert(await page.locator('#battleAttackBtn').isDisabled(),'only the attack action is locked before the daily goal');
   assert(await page.evaluate(()=>finishBattleFortressReveal(currentTestFortress()))===true,'fortress reveal exposes a deterministic completion path');
   assert(await page.evaluate(()=>{const overlay=document.querySelector('#battleStage [data-battle-target-reveal]');return !overlay||overlay.hidden===true;}),'fortress reveal completion hides the discovery overlay');
-  await page.locator('#battleReturnBtn').click();
+  assert(await page.locator('#battleReturnBtn').isVisible(),'battle return action remains visible');
+  assert(!(await page.locator('#battleReturnBtn').isDisabled()),'battle return action remains enabled');
+  await page.locator('#battleReturnBtn').evaluate(button=>button.click());
   await page.waitForSelector('#childProgressView.active');
   await page.evaluate(()=>{grantBattleTicket('dailyGoal');renderAll();});
   assert(await page.evaluate(()=>grantBattleTicket('duplicate-smoke'))===false,'same day cannot earn a second battle action');
