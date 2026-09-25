@@ -57,6 +57,36 @@ try{
   assert(await page.locator('#firstContactCopiedBtn').count()===0,'child starts direct learning after pair verification');
   assert(await page.locator('body.learning-focus').count()===1,'direct learning is focused');
 
+  await page.click('#backHomeBtn');
+  await page.waitForSelector('#homeView.active');
+  await page.click('#parentAreaBtn');
+  await page.waitForSelector('#modal[open] #confirmParentMode');
+  await page.click('#confirmParentMode');
+  await page.waitForSelector('#parentView.active');
+  const vocabId=await page.evaluate(()=>state.vocabulary[0].id);
+  await page.evaluate(id=>openWordEditor(id),vocabId);
+  await page.waitForSelector('#modal[open] #saveWord');
+  await page.locator('[data-sense-translation]').first().fill('aufschreiben');
+  await page.click('#saveWord');
+  await page.waitForFunction(()=>!document.querySelector('#modal')?.open);
+  const invalidated=await page.evaluate(()=>{
+    const set=state.sets.find(s=>s.id==='ocr_set');
+    return {
+      needsReview:setNeedsPairReview(set),
+      required:set.pairReviewRequired===true,
+      verifiedAt:set.pairVerifiedAt||'',
+      signature:set.pairVerifiedSignature||'',
+      translation:state.vocabulary[0]?.senses?.[0]?.translation||''
+    };
+  });
+  assert(invalidated.translation==='aufschreiben','parent edit changes the reviewed meaning');
+  assert(invalidated.needsReview&&invalidated.required,'meaning edit reopens pair review');
+  assert(!invalidated.verifiedAt&&!invalidated.signature,'meaning edit clears prior approval timestamp and signature');
+  await page.click('#childModeBtn');
+  await page.waitForSelector('#homeView.active');
+  assert((await page.locator('#todaySummary').textContent())?.includes('Neue Wörter werden vorbereitet'),'child returns to preparation status after a reviewed pair changes');
+  assert(await page.locator('#quickLearnHeroBtn').isDisabled(),'child cannot learn a pair changed after approval');
+
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer pair-review UI smoke: passed');
 }catch(error){
