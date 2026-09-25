@@ -73,8 +73,7 @@ try{
     };
     await persistState();
     renderAll();
-    appRole='parent';
-    showView('settingsView');
+    enterParentMode('settingsView');
   });
 
   assert(await page.locator('#settingsView.active').count()===1,'parent settings view is active');
@@ -122,8 +121,7 @@ try{
     state=replacement;
     await persistState();
     renderAll();
-    appRole='parent';
-    showView('settingsView');
+    enterParentMode('settingsView');
   });
   assert(await page.evaluate(()=>learner().name)==='Aktueller Gerätestand','current state differs before restore');
 
