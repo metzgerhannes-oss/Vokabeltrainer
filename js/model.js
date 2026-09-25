@@ -43,10 +43,10 @@ function setHasPhotoImport(set,s=state){
   if(!set)return false;
   return (s?.setVocabulary||[]).some(link=>String(link?.setId||'')===String(set.id||'')&&link?.source==='photo-text-import');
 }
-function setNeedsPairReview(set,s=state){
+function setNeedsPairReview(set){
   if(!set)return false;
-  if(set.pairReviewRequired===true||pairReviewSignatureMismatch(set,s))return true;
-  if(!setHasPhotoImport(set,s))return false;
+  if(set.pairReviewRequired===true||pairReviewSignatureMismatch(set,state))return true;
+  if(!setHasPhotoImport(set,state))return false;
   return !set.pairVerifiedAt||!set.pairVerifiedSignature;
 }
 function firstContactStatus(setId){
