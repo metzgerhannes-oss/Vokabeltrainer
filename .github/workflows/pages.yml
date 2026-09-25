@@ -56,9 +56,9 @@ jobs:
             CORE="$(curl -fsSL --max-time 15 "$BASE/js/core.js?release=$EXPECTED_SHA" || true)"
             SW="$(curl -fsSL --max-time 15 "$BASE/sw.js?release=$EXPECTED_SHA" || true)"
 
-            if printf '%s' "$HTML" | grep -Fq ">v$EXPECTED_VERSION</span>" \
-              && printf '%s' "$CORE" | grep -Fq "const VERSION = '$EXPECTED_VERSION';" \
-              && printf '%s' "$SW" | grep -Fq "APP_VERSION='$EXPECTED_VERSION'"; then
+            if [[ "$HTML" == *">v$EXPECTED_VERSION</span>"* ]] \
+              && [[ "$CORE" == *"const VERSION = '$EXPECTED_VERSION';"* ]] \
+              && [[ "$SW" == *"APP_VERSION='$EXPECTED_VERSION'"* ]]; then
               OK=1
               break
             fi
