@@ -11,7 +11,7 @@
     const img=document.querySelector('#projectMenuAvatarArt');
     const fallback=document.querySelector('#projectMenuAvatarFallback');
     const frame=document.querySelector('#projectMenuAvatarFrame');
-    if(!img||!fallback||!frame)return;
+    if(!img||!fallback||!frame||typeof state!=='object'||!state||!state.activeSubject)return;
     const level=Math.max(1,Math.min(6,Number(frame.dataset.avatarStage)||1));
     const key=`${state.activeSubject}-stage-${level}`;
     const finalUrl=window.VTMenuAvatarArt?.get?.(state.activeSubject,level)||'';
