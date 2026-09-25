@@ -626,7 +626,7 @@ function topError(w){const entries=Object.entries(w.errorProfile||{}).sort((a,b)
 function renderProfiles(){
   const meta=l=>{const active=learnerActiveSubjects(l).map(subjectShort).join(' · '),parts=[];if(l.gradeLevel)parts.push(`Klasse ${l.gradeLevel}`);parts.push(`Avatar ${l.avatarStyle==='female'?'weiblich':'männlich'}`);if(l.lrsMode)parts.push('LRS');if(active)parts.push(active);parts.push(`${l.xp} XP`);return parts.join(' · ')};
   const books=l=>learnerActiveSubjects(l).map(subject=>{const b=currentBook(l.id,subject);return `<span class="profile-book-chip">${subjectShort(subject)} · ${b?esc(b.title||formatIsbn(b.isbn13)):'kein Lehrwerk'}</span>`}).join('');
-  $('#profileList').innerHTML=state.learners.map(l=>`<div class="profile-row profile-row-rich"><div class="profile-main"><strong>${esc(l.name)}</strong><small class="profile-meta">${esc(meta(l))}</small><div class="profile-books">${books(l)}</div></div><div class="profile-actions"><button class="ghost" data-profile-use="${l.id}">${l.id===state.activeLearnerId?'Aktiv':'Wählen'}</button><button class="ghost" data-profile-edit="${l.id}">Bearbeiten</button><button class="ghost" data-profile-books="${l.id}">Lehrwerke</button><button class="ghost" data-profile-clear="${l.id}">Lernstoff löschen</button>${state.learners.length>1?`<button class="ghost" data-profile-del="${l.id}">×</button>`:''}</div></div>`).join('');
+  $('#profileList').innerHTML=state.learners.map(l=>`<div class="profile-row profile-row-rich"><div class="profile-main"><strong>${esc(l.name)}</strong><small class="profile-meta">${esc(meta(l))}</small><div class="profile-books">${books(l)}</div></div><div class="profile-actions"><button class="ghost" data-profile-use="${l.id}">${l.id===state.activeLearnerId?'Aktiv':'Wählen'}</button><button class="ghost" data-profile-edit="${l.id}">Bearbeiten</button><button class="ghost" data-profile-books="${l.id}">Lehrwerke</button><button class="ghost" data-profile-clear="${l.id}">Lernstoff löschen</button>${state.learners.length>1?`<button class="ghost" data-profile-del="${l.id}" aria-label="Profil ${esc(l.name)} löschen" title="Profil löschen">×</button>`:''}</div></div>`).join('');
   $$('[data-profile-use]').forEach(b=>b.onclick=()=>{state.activeLearnerId=b.dataset.profileUse;ensureActiveSubject();save()});
   $$('[data-profile-edit]').forEach(b=>b.onclick=()=>openProfileEditor(b.dataset.profileEdit));
   $$('[data-profile-books]').forEach(b=>b.onclick=()=>openBookManager(b.dataset.profileBooks));
@@ -848,17 +848,42 @@ function openBookEditor(learnerId,subject){
 }
 function deleteProfile(id){if(id===state.activeLearnerId)return;if(!confirm('Profil mit Lernbereichen, Lernständen und Noten löschen? Die globale Vokabelbibliothek bleibt erhalten.'))return;const setIds=new Set(state.sets.filter(s=>s.learnerId===id).map(s=>s.id));state.setVocabulary=state.setVocabulary.filter(x=>!setIds.has(x.setId));state.vocabulary.forEach(v=>{v.sources=(v.sources||[]).filter(src=>!setIds.has(src.setId))});state.sets=state.sets.filter(s=>s.learnerId!==id);state.learnerBooks=state.learnerBooks.filter(x=>x.learnerId!==id);state.learnerVocabulary=state.learnerVocabulary.filter(x=>x.learnerId!==id);state.grades=state.grades.filter(g=>g.learnerId!==id);state.practiceTests=state.practiceTests.filter(t=>t.learnerId!==id);state.activity=state.activity.filter(a=>a.learnerId!==id);state.learners=state.learners.filter(l=>l.id!==id);rebuildWordIndexes();save()}
 
+let modalReturnFocus=null;
+function prepareModalAccessibility(dialog){
+  const heading=dialog?.querySelector('#modalContent h1,#modalContent h2,#modalContent h3');
+  if(heading){
+    heading.id='modalTitle';
+    heading.setAttribute('tabindex','-1');
+    dialog.setAttribute('aria-labelledby','modalTitle');
+  }else dialog?.removeAttribute('aria-labelledby');
+  queueMicrotask(()=>{
+    const target=dialog?.querySelector('#modalTitle');
+    if(dialog?.open&&target)target.focus({preventScroll:true});
+  });
+}
+function restoreModalFocus(){
+  const target=modalReturnFocus;modalReturnFocus=null;
+  queueMicrotask(()=>{
+    if(target?.isConnected&&!target.disabled&&target.getClientRects().length)target.focus({preventScroll:true});
+  });
+}
 function modal(html){
   const dialog=$('#modal');
-  $('#modalContent').innerHTML=html;
   if(!dialog)return;
-  if(dialog.open)return;
-  try{dialog.showModal()}catch(_e){dialog.setAttribute('open','')}
+  if(!dialog.open){
+    const active=document.activeElement;
+    modalReturnFocus=active&&active!==document.body&&!dialog.contains(active)?active:null;
+  }
+  $('#modalContent').innerHTML=html;
+  if(!dialog.open){
+    try{dialog.showModal()}catch(_e){dialog.setAttribute('open','')}
+  }
+  prepareModalAccessibility(dialog);
 }
 function closeModal(){
   const dialog=$('#modal');if(!dialog)return;
-  if(!dialog.open)return;
-  try{dialog.close()}catch(_e){dialog.removeAttribute('open')}
+  if(!dialog.open){restoreModalFocus();return}
+  try{dialog.close()}catch(_e){dialog.removeAttribute('open');restoreModalFocus()}
 }
 function toast(text,type='subtle'){const el=$('#toastRegion');if(!el)return;clearTimeout(toastTimer);el.className=`toast-region show ${type}`;el.textContent=text;toastTimer=setTimeout(()=>{el.className='toast-region';el.textContent=''},4200)}
 function applyRoleUi(){
@@ -1014,7 +1039,7 @@ function bind(){
   $('#familySyncSetupBtn').onclick=openFamilySyncSetup; $('#familySyncNowBtn').onclick=runFamilySync; $('#familySyncChildBtn').onclick=()=>window.openChildDeviceInvite?window.openChildDeviceInvite():toast('Geräteverbindung konnte nicht geladen werden.','bad'); $('#familySyncParentBtn').onclick=()=>window.openParentDeviceInvite?window.openParentDeviceInvite():toast('Geräteverbindung konnte nicht geladen werden.','bad'); $('#familySyncSwitchBtn').onclick=openFamilySyncSwitch;
   $('#backupBtn').onclick=backup; $('#resetAppBtn').onclick=resetAppData; $('#restoreBtn').onclick=()=>{const f=$('#fileInput');f.accept='.json,application/json';f.dataset.mode='restore';f.click()}; $('#exportCsvBtn').onclick=exportCsv; $('#libraryUseBtn').onclick=openLearningContentPlanner; $('#librarySearchInput').oninput=()=>{libraryRenderLimit=200;renderLibrary()}; $('#librarySetFilter').onchange=()=>{libraryRenderLimit=200;renderLibrary()};
   $('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;const mode=e.target.dataset.mode,limit=mode==='restore'?MAX_BACKUP_BYTES:MAX_CSV_BYTES;if(f.size>limit){toast(`${mode==='restore'?'Backup':'CSV'} ist zu groß (${fmtBytes(f.size)}).`,'bad');e.target.value='';return}try{const text=await f.text();if(mode==='restore')restore(text);else importCsv(text)}catch(err){console.warn(err);toast('Datei konnte nicht gelesen werden.','bad')}e.target.value=''}; $('#photoInput').onchange=async e=>{const f=e.target.files[0];if(f)await handleScanPhoto(f);e.target.value=''}; $('#isbnPhotoInput').onchange=async e=>{const f=e.target.files[0];if(f)await handleIsbnPhoto(f);e.target.value=''};
-  $('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal()}); $('#modal').addEventListener('close',()=>{if(scanImportState.imageUrl){URL.revokeObjectURL(scanImportState.imageUrl);scanImportState.imageUrl=null;}scanImportState.lastFile=null;});
+  $('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal()}); $('#modal').addEventListener('close',()=>{restoreModalFocus();if(scanImportState.imageUrl){URL.revokeObjectURL(scanImportState.imageUrl);scanImportState.imageUrl=null;}scanImportState.lastFile=null;});
   const openIosInstallGuide=()=>modal(`<div class="eyebrow">iPhone / iPad</div><h2>Ohne Safari-Leiste öffnen</h2><p>Lege den Vokabeltrainer einmal als Web-App auf den Home-Bildschirm:</p><ol><li>Unten in Safari auf <strong>Teilen</strong> tippen.</li><li><strong>Zum Home-Bildschirm</strong> wählen.</li><li><strong>Als Web-App öffnen</strong> eingeschaltet lassen.</li><li><strong>Hinzufügen</strong> bestätigen.</li><li>Danach das neue <strong>Vokabeltrainer</strong>-Symbol öffnen.</li></ol><div class="notice warn"><strong>Wichtig bei iOS 15:</strong><br>Safari und die Home-Bildschirm-Web-App verwenden getrennten lokalen Speicher. Eine Kindergeräte-Verbindung aus Safari wird deshalb nicht automatisch übernommen. Verbinde das Kindergerät nach dem Hinzufügen einmalig in der Home-Bildschirm-App mit einem frischen Verbindungslink oder Gerätecode.</div><div class="modal-actions"><button value="ok" class="primary">Verstanden</button></div>`);
   const syncInstallUi=()=>{const iosSafariMode=isIOSDevice()&&!isStandaloneWebApp();$('#iosInstallCard')?.classList.toggle('hidden',!iosSafariMode);if(iosSafariMode)$('#installBtn')?.classList.add('hidden');renderStandaloneSyncNotice()};
   syncInstallUi();$('#iosInstallBtn').onclick=openIosInstallGuide;$('#iosStandaloneSyncBtn').onclick=openFamilySyncChildJoin;

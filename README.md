@@ -4,11 +4,22 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.19.11**
+App-Version: **v0.19.12**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.19.12 – Accessibility und Tastatur-Kernpfad
+
+- Dialoge erhalten explizite Modal-Semantik und eine programmatisch verknüpfte Überschrift
+- beim Öffnen wandert der Fokus reproduzierbar auf die Dialogüberschrift; Schließen und Escape geben ihn an den ursprünglichen Auslöser zurück
+- der Tastaturfokus wird im Browser-Test sichtbar geprüft, ebenso der aktuelle Navigationszustand über `aria-current`
+- der reine Icon-Button zum Löschen eines Profils besitzt einen spezifischen zugänglichen Namen und mindestens 44 × 44 CSS-Pixel Touchfläche
+- auch das Schließen des Hilfepopovers erfüllt nun 44 × 44 CSS-Pixel
+- der Eltern-Rückweg und Dialoge werden zusätzlich in kompakter Landscape-Ansicht auf Sichtbarkeit und horizontalen Overflow geprüft
+- der neue WebKit-Accessibility-Smoke ist verbindlicher Bestandteil von `browser-core`
+- Lernlogik, Mastery, Spacing, XP und fachliche Bewertung bleiben unverändert
 
 ## v0.19.11 – Backup/Restore als Release-Gate
 
