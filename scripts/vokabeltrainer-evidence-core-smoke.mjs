@@ -1,10 +1,17 @@
 import fs from 'node:fs';
 const read=p=>fs.readFileSync(p,'utf8');
-const core=read('js/core.js'),model=read('js/model.js'),quiz=read('js/quiz-engine.js'),learning=read('js/learning.js'),focus=read('js/focus-ui.js'),libraryUi=read('js/library-ui.js'),index=read('index.html'),storage=read('js/storage.js');
+const core=read('js/core.js'),model=read('js/model.js'),quiz=read('js/quiz-engine.js'),learning=read('js/learning.js'),focus=read('js/focus-ui.js'),libraryUi=read('js/library-ui.js'),index=read('index.html'),storage=read('js/storage.js'),ui=read('js/ui.js');
 const ok=(v,m)=>{if(!v)throw new Error(m)};
 ok(/const VERSION\s*=\s*'0\.\d+\.\d+';/.test(core),'version missing');
 ok(index.includes('id="autoSpeakCorrection"'),'audio setting missing');
+ok(index.includes('id="quickLearnHeroBtn"')&&index.includes('>Jetzt lernen</button>'),'dominant child learning CTA must say Jetzt lernen');
+ok(index.includes('id="practiceCardsBtn"')&&index.includes('id="practiceWeakBtn"')&&index.includes('id="practiceAllBtn"')&&index.includes('id="practiceSpecialBtn"'),'practice hub must keep exactly the four primary learning paths');
+ok(index.includes('Diese Übungen unterstützen das Lernen. Sie ersetzen keinen späteren eigenständigen Abruf.'),'support practice must be explained as support rather than mastery evidence');
+ok(focus.includes("document.body.classList.toggle('learning-focus',id==='learnView')"),'retrieval must enter the distraction-reduced learning focus');
+
 ok(storage.includes('autoSpeakCorrection:l.autoSpeakCorrection!==false'),'audio setting migration missing');
+ok(ui.includes("$('#quickLearnHeroBtn').onclick=startDailyTodo"),'Jetzt lernen must start the daily evidence-based plan directly');
+ok(ui.includes("status.done?'Weiterlernen':'Jetzt lernen'"),'daily CTA must stay explicit after rerender');
 const mastery=model.slice(model.indexOf('function masteryScore'),model.indexOf('function meetsMasteryCriteria'));
 ok(mastery.includes('productiveCore'),'productive mastery core missing');
 ok(!mastery.includes('recognition')&&!mastery.includes('listening'),'support leaked into mastery score');
