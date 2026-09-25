@@ -136,7 +136,7 @@
 #progressOverviewCard:focus,#cardboxOverviewCard:focus{outline:3px solid #8b5cf6;outline-offset:4px}
 
 @media(max-width:1099px){
-  .project-menu-stage{min-height:535px;max-height:none}
+  .project-menu-stage{min-height:440px;max-height:none}
   .project-menu-main{width:54%;right:2.6%;top:4%;bottom:4%}
   .project-menu-avatar-panel{left:2.5%;width:40%;top:4%;bottom:4%}
   .project-menu-learning-card{padding:14px}
