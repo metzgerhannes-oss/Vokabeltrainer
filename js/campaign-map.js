@@ -94,7 +94,7 @@
   function open(){if(typeof isParentMode==='function'&&isParentMode())return;render();if(typeof showView==='function')showView('campaignMapView')}
   function bind(){
     document.querySelector('#campaignMapBtn')?.addEventListener('click',open);
-    document.querySelector('#campaignMapBackBtn')?.addEventListener('click',()=>showView('childProgressView'));
+    document.querySelector('#campaignMapBackBtn')?.addEventListener('click',()=>window.VTMenuUi?.openHome?.()||showView('homeView'));
     document.querySelector('#campaignMapArmyBtn')?.addEventListener('click',()=>window.VTArmyUi?.open?.());
     document.querySelector('#campaignMapBattleBtn')?.addEventListener('click',()=>{if(typeof openBattleView==='function')openBattleView()});
     document.querySelector('#campaignMapBoard')?.addEventListener('click',e=>{const b=e.target.closest('[data-campaign-station]');if(b)select(b.dataset.campaignStation)});
