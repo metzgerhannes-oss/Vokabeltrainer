@@ -4,11 +4,23 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.19.12**
+App-Version: **v0.19.13**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.19.13 – OCR-/Pair-Review-Härtung
+
+- Foto-/OCR-Importe bleiben dauerhaft an eine gültige Paarfreigabe gebunden; die Sicherheit hängt nicht mehr nur an einer einmaligen Migrationsmarke
+- ein OCR-Lernset ist nur lernbereit, wenn Freigabezeitpunkt und aktuelle Paar-Signatur vorhanden und konsistent sind
+- ein explizit übergebener Verifikationszeitpunkt kann eine offene oder veraltete Paarprüfung nicht mehr beim Publizieren in die Lehrwerksbibliothek umgehen
+- neuer Fotoimport und erneutes Einlesen löschen alte Freigabesignaturen ausdrücklich
+- nachträgliche fachliche Änderungen an Wort oder Bedeutung öffnen die Paarprüfung wieder und sperren den Kind-Lernpfad bis zur erneuten Bestätigung
+- Restore/Migration quarantänisiert auch bei aktuellen Datenständen fehlende oder inhaltlich veraltete OCR-Freigaben
+- Regressionstests decken direkte Aufrufe und die Verwendung von `setNeedsPairReview` als Array-Callback ab
+- der WebKit-End-to-End-Test prüft zusätzlich die reale Bearbeitung nach Freigabe bis zurück in den gesperrten Kindmodus
+- Lernlogik, Mastery, Spacing und Bewertungsregeln bleiben unverändert
 
 ## v0.19.12 – Accessibility und Tastatur-Kernpfad
 

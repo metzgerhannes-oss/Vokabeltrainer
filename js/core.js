@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.19.12';
+const VERSION = '0.19.13';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';
@@ -180,7 +180,7 @@ function ensureBookVocabulary(bookId,vocabId,opts={}){
 function knownBookSections(bookId){const rows=(state?.bookVocabulary||[]).filter(x=>x.bookId===bookId&&x.verifiedAt&&!x.verificationBlocked);const m=new Map();for(const r of rows){const key=r.section||'Lernset';if(!m.has(key))m.set(key,[]);m.get(key).push(r)}return [...m.entries()].map(([section,items])=>({section,items:items.sort((a,b)=>(a.position||0)-(b.position||0))})).sort((a,b)=>a.section.localeCompare(b.section,'de'))}
 function syncSetToBookVocabulary(setId,verifiedAt=''){
   const set=(state.sets||[]).find(s=>s.id===setId);if(!set?.bookId)return 0;
-  if((set.pairReviewRequired||pairReviewSignatureMismatch(set))&&!verifiedAt)return 0;
+  if(typeof setNeedsPairReview==='function'&&setNeedsPairReview(set))return 0;
   const at=String(verifiedAt||set.pairVerifiedAt||new Date().toISOString()),links=(state.setVocabulary||[]).filter(x=>x.setId===setId);
   for(const link of links)ensureBookVocabulary(set.bookId,link.vocabId,{senseId:link.senseId,section:set.bookSection||set.title,position:link.position,termOverride:link.termOverride,translationOverride:link.translationOverride,acceptedTermOverrides:link.acceptedTermOverrides,acceptedTranslationOverrides:link.acceptedTranslationOverrides,extraOverride:link.extraOverride,exampleOverride:link.exampleOverride,verifiedAt:at});
   return links.length;

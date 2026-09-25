@@ -481,7 +481,7 @@ function resetSetForReimport(setId){
     if(!shared)state.bookVocabulary=(state.bookVocabulary||[]).filter(x=>!(x.bookId===s.bookId&&x.section===s.bookSection));
   }
   const owner=(state.learners||[]).find(x=>x.id===s.learnerId);if(owner?.dailyPlans){for(const key of Object.keys(owner.dailyPlans)){if(key.endsWith(':'+s.subject))delete owner.dailyPlans[key]}}
-  s.pairReviewRequired=true;s.pairVerifiedAt='';rebuildWordIndexes();return true;
+  s.pairReviewRequired=true;s.pairVerifiedAt='';s.pairVerifiedSignature='';rebuildWordIndexes();return true;
 }
 function openSetPairAudit(setId){
   const s=state.sets.find(x=>x.id===setId);if(!s)return;

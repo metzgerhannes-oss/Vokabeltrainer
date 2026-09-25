@@ -253,12 +253,18 @@ function repairPreFocusSpellingLeak(s){
 }
 
 function requireLegacyPhotoPairReview(s){
-  if(Number(s?.pairAuditVersion)>=1)return s;
   const photoSets=new Set((s?.setVocabulary||[]).filter(x=>x?.source==='photo-text-import').map(x=>String(x.setId||'')).filter(Boolean));
   for(const set of (s?.sets||[])){
-    if(photoSets.has(String(set.id||''))){set.pairReviewRequired=true;set.pairVerifiedAt='';}
+    if(!photoSets.has(String(set.id||'')))continue;
+    const approvedAt=String(set.pairVerifiedAt||''),signature=String(set.pairVerifiedSignature||'');
+    const signatureMismatch=!!(approvedAt&&signature&&signature!==pairReviewSignatureForSet(set.id,s));
+    if(!approvedAt||signatureMismatch){
+      set.pairReviewRequired=true;
+      set.pairVerifiedAt='';
+      set.pairVerifiedSignature='';
+    }
   }
-  s.pairAuditVersion=1;
+  s.pairAuditVersion=2;
   return s;
 }
 
