@@ -136,23 +136,40 @@ function battleFortressRevealMarkup(f,active=false){
   const days=Math.max(1,Number(f.plannedAttackDays)||1),words=Math.max(0,Number(f.wordCount)||0);
   return `<div class="battle-target-reveal" data-battle-target-reveal aria-hidden="true" ${active?'':'hidden'}><div class="battle-target-reveal-light"></div><div class="battle-target-reveal-copy"><small>NEUES TESTZIEL ENTDECKT</small><strong>${esc(f.name)}</strong><span>${esc(f.subtitle||'Testfestung')} · Test ${formatDateShort(f.testDate)}</span><b>${words} ${words===1?'Vokabel':'Vokabeln'} · ${days} ${days===1?'Lerntag':'Lerntage'} eingeplant</b></div></div>`;
 }
+function finishBattleFortressReveal(key=battleFortressRevealKey,reduced=false){
+  const activeKey=battleFortressRevealKey;
+  if(key&&activeKey&&key!==activeKey)return false;
+  if(battleFortressRevealTimer){clearTimeout(battleFortressRevealTimer);battleFortressRevealTimer=null}
+  battleFortressRevealKey='';
+  battleFortressRevealUntil=0;
+  const stage=$('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
+  stage?.classList.remove('fortress-reveal');
+  if(overlay)overlay.hidden=true;
+  stage?.dispatchEvent(new CustomEvent('vt-fortress-reveal-finished',{detail:{key:key||activeKey||'',reduced:!!reduced}}));
+  return true;
+}
 function startBattleFortressReveal(f=currentTestFortress()){
   const stage=$('#battleStage');if(!stage||!f||f.revealedAt)return false;
   if(battleFortressRevealTimer){clearTimeout(battleFortressRevealTimer);battleFortressRevealTimer=null}
-  const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,duration=reduced?1400:2900;
-  battleFortressRevealKey=f.key||'';
-  battleFortressRevealUntil=Date.now()+duration;
+  const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,duration=2900;
   f.revealedAt=new Date().toISOString();
   persistOnly();
+  if(reduced){
+    battleFortressRevealKey='';
+    battleFortressRevealUntil=0;
+    renderBattleView();
+    const live=$('#battleStage');if(live)live.dataset.revealKey=f.key||'';
+    finishBattleFortressReveal(f.key||'',true);
+    return true;
+  }
+  battleFortressRevealKey=f.key||'';
+  battleFortressRevealUntil=Date.now()+duration;
   renderBattleView();
   const live=$('#battleStage');if(live)live.dataset.revealKey=f.key||'';
-  battleFortressRevealTimer=setTimeout(()=>{
-    if(battleFortressRevealKey===f.key){battleFortressRevealKey='';battleFortressRevealUntil=0}
-    const stage=$('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
-    stage?.classList.remove('fortress-reveal');
-    if(overlay)overlay.hidden=true;
-    battleFortressRevealTimer=null;
-  },duration);
+  const overlay=live?.querySelector('[data-battle-target-reveal]');
+  const finish=()=>finishBattleFortressReveal(f.key||'',false);
+  overlay?.addEventListener('animationend',e=>{if(e.animationName==='fortressRevealOverlay')finish()},{once:true});
+  battleFortressRevealTimer=setTimeout(finish,duration+750);
   return true;
 }
 
