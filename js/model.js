@@ -350,6 +350,23 @@ function gearLabelFor(pct,subject=state.activeSubject){
   const latin=['Scutum & Pilum','Verstärktes Scutum','Sagittarii','Belagerungsgerät','Equites','Praetorianer-Ausrüstung'];
   return (subject==='latin'?latin:english)[tier-1];
 }
+const AVATAR_STAGE_THRESHOLDS=Object.freeze([0,18,36,54,72,90]);
+function avatarStageFor(pct,subject=state.activeSubject){
+  const value=clamp(Number(pct)||0,0,100);
+  const level=gearTier(value);
+  const start=AVATAR_STAGE_THRESHOLDS[level-1]||0;
+  const nextAt=level<AVATAR_STAGE_THRESHOLDS.length?AVATAR_STAGE_THRESHOLDS[level]:null;
+  const progress=nextAt===null?100:clamp(Math.round((value-start)/Math.max(1,nextAt-start)*100),0,100);
+  return {
+    level,
+    maxLevel:AVATAR_STAGE_THRESHOLDS.length,
+    label:gearLabelFor(value,subject),
+    rank:rankFor(value,subject),
+    nextAt,
+    progress,
+    visualKey:`${subject}-stage-${level}`
+  };
+}
 function soldiersFor(pct){return clamp(2+Math.floor(pct/9),2,13)}
 
 const streakActivityTypes=new Set(['adaptive','recognition','recall','spelling','listening','context','chunks','flash','shower','latinGrammar','handwriting','cards','firstContact','practiceTest']);
