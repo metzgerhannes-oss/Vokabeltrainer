@@ -16,6 +16,10 @@ Neue Vokabeltrainer-DDL-Änderungen sollen ab jetzt mit ihrer echten Supabase-Mi
 
 Zuletzt gegen das produktive Supabase-Projekt geprüft: **24.09.2026**.
 
+Die produktive Parent-Invite-Erweiterung ist im Vokabeltrainer-Repository mit ihrer tatsächlichen Supabase-Version nachvollziehbar:
+- `20260924203104_vt_family_sync_v2_parent_invites`
+- `20260925041851_rate_limit_vt_parent_invites`
+
 Die folgenden gemeinsamen Migrationen liegen absichtlich im Repository `JohannasGartenwelt`
 und werden hier nicht dupliziert:
 
@@ -30,7 +34,8 @@ schützt unter anderem die Vokabeltrainer-RPCs mit IP-basierten Limits:
 - Familie anlegen: 10 Anfragen / Stunde
 - Eltern-Gerät beitreten: 12 Anfragen / 15 Minuten
 - Kinder-Einladung einlösen: 30 Anfragen / 15 Minuten
-- Geräteverwaltung: 60 Anfragen / 5 Minuten
+- Eltern-Einladung einlösen: 30 Anfragen / 15 Minuten
+- Geräteverwaltung inklusive Erzeugen von Kinder-/Eltern-Einladungen: 60 Anfragen / 5 Minuten
 - Pull/Push/Status-Sync: 180 Anfragen / 5 Minuten
 
 Die `private.vt_*`-Tabellen sind für `anon` nicht direkt lesbar. Der Browser verwendet
