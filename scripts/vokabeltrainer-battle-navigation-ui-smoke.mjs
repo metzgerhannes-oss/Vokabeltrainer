@@ -1,13 +1,13 @@
 import { createBattleHarness } from './helpers/vokabeltrainer-battle-harness.mjs';
 
-const {browser,page,assert,reset,errors,diagnose}=await createBattleHarness();
+const {browser,page,assert,activate,reset,errors,diagnose}=await createBattleHarness();
 
 try{
   await reset({revealed:false,ticket:false});
   assert(!(await page.locator('#attackBtn').isDisabled()),'planned fortress remains viewable before daily reward');
   assert((await page.locator('#attackBtn').textContent())?.includes('Festung'),'campaign card points to test fortress');
 
-  await page.locator('#attackBtn').click();
+  await activate('#attackBtn','battle entry');
   await page.waitForSelector('#battleView.active');
   const first=await page.evaluate(()=>{
     const f=currentTestFortress(),stage=document.querySelector('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
@@ -33,12 +33,12 @@ try{
   });
   assert(await page.locator('#battleStage [data-battle-target-reveal]').isHidden(),'reveal reaches stable hidden state');
 
-  await page.locator('#battleReturnBtn').click();
+  await activate('#battleReturnBtn','battle return action');
   await page.waitForSelector('#childProgressView.active');
   await page.evaluate(()=>{grantBattleTicket('dailyGoal');renderAll()});
   assert(await page.evaluate(()=>grantBattleTicket('duplicate-smoke'))===false,'same day cannot earn duplicate battle action');
 
-  await page.locator('#attackBtn').click();
+  await activate('#attackBtn','battle entry');
   await page.waitForSelector('#battleView.active');
   const second=await page.evaluate(()=>({
     seenAt:currentTestFortress()?.revealedAt||'',
