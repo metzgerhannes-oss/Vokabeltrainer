@@ -59,11 +59,23 @@ export async function createBattleHarness(){
     await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
   };
 
-  const finish=async(message)=>{
-    if(errors.length)throw new Error(errors.join(' | '));
-    console.log(message);
-    await browser.close();
+  const diagnose=async(label,error)=>{
+    let snapshot=null;
+    try{
+      snapshot=await page.evaluate(()=>({
+        href:location.href,
+        activeView:document.querySelector('.view.active')?.id||'',
+        stageClass:document.querySelector('#battleStage')?.className||'',
+        phase:document.querySelector('#battleStage')?.dataset.phase||'',
+        fortressState:document.querySelector('#battleStage')?.dataset.fortressState||'',
+        resultClass:document.querySelector('#battleResultOverlay')?.className||'',
+        resultTitle:document.querySelector('#battleResultTitle')?.textContent||'',
+        ticket:document.querySelector('#battleTicketPill')?.textContent||'',
+        campaignLog:typeof learner==='function'?(learner()?.campaignLog||[]).slice(-3):[]
+      }));
+    }catch{}
+    console.error('BATTLE_DIAGNOSTIC',JSON.stringify({label,error:String(error?.stack||error),snapshot}));
   };
 
-  return {browser,context,page,errors,assert,activate,reset,openBattle,finish};
+  return {browser,context,page,errors,assert,activate,reset,openBattle,diagnose};
 }
