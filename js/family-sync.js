@@ -143,7 +143,7 @@
   }
   function persistCfg(cfg){cfg.dirtyKeys=[...new Set(cfg.dirtyKeys||[])];saveConfig(cfg)}
   function markRevoked(cfg){
-    cfg.enabled=false;cfg.revoked=true;cfg.revokedAt=new Date().toISOString();cfg.dirtyKeys=[];cfg.conflicts={};
+    cfg.enabled=false;cfg.revoked=true;cfg.revokedAt=new Date().toISOString();cfg.deviceId='';cfg.deviceSecret='';cfg.dirtyKeys=[];cfg.conflicts={};
     persistCfg(cfg);clearTimeout(runtime.timer);clearInterval(runtime.poll);runtime.snapshots.clear();
     queueMicrotask(()=>{try{renderAll?.()}catch(_e){}});
   }
