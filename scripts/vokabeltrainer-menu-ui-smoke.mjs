@@ -38,6 +38,21 @@ try{
   });
 
   await page.waitForSelector('#homeView.active .project-menu-stage');
+
+  await page.evaluate(()=>openProfileEditor(learner().id));
+  await page.waitForSelector('#modal:not(.hidden)');
+  assert(await page.locator('input[name="profileAvatarStyle"][value="male"]').count()===1,'profile settings expose male avatar option');
+  assert(await page.locator('input[name="profileAvatarStyle"][value="female"]').count()===1,'profile settings expose female avatar option');
+  await page.locator('input[name="profileAvatarStyle"][value="female"]').check();
+  await page.click('#saveProfile');
+  await page.waitForFunction(()=>learner().avatarStyle==='female');
+  assert((await page.locator('#projectMenuAvatarFrame').getAttribute('data-avatar-style'))==='female','saved profile avatar choice reaches the project menu');
+  await page.evaluate(()=>openProfileEditor(learner().id));
+  await page.waitForSelector('#modal:not(.hidden)');
+  await page.locator('input[name="profileAvatarStyle"][value="male"]').check();
+  await page.click('#saveProfile');
+  await page.waitForFunction(()=>learner().avatarStyle==='male');
+
   assert(await page.locator('.project-menu-link').count()===4,'menu exposes exactly four secondary routes');
   assert(await page.locator('#quickLearnHeroBtn').isVisible(),'Jetzt lernen stays visible');
   assert((await page.locator('#quickLearnHeroBtn').textContent())?.includes('Jetzt lernen'),'primary CTA is Jetzt lernen');
