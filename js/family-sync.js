@@ -203,7 +203,7 @@
   async function createParentInvite(){
     const cfg=loadConfig();if(!cfg.enabled||cfg.role!=='parent')throw new Error('Nur ein verbundenes Eltern-Gerät kann weitere Eltern-Geräte hinzufügen.');
     const result=await rpc('vt_create_parent_invite',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
-    if(!result?.ok)throw new Error(result?.error||'Eltern-Gerät-Code konnte nicht erzeugt werden.');
+    if(!result?.ok)remoteFailure(cfg,result,'Eltern-Gerät-Code konnte nicht erzeugt werden.');
     return result;
   }
 
@@ -226,7 +226,7 @@
   async function createChildInvite(profileId){
     const cfg=loadConfig();if(!cfg.enabled||cfg.role!=='parent')throw new Error('Nur ein verbundenes Eltern-Gerät kann Kindergeräte hinzufügen.');
     const result=await rpc('vt_create_child_invite',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret,p_profile_id:profileId});
-    if(!result?.ok)throw new Error(result?.error||'Kindergerät-Code konnte nicht erzeugt werden.');
+    if(!result?.ok)remoteFailure(cfg,result,'Kindergerät-Code konnte nicht erzeugt werden.');
     return result;
   }
 
@@ -288,7 +288,7 @@
     runtime.busy=true;
     try{
       const pulled=await rpc('vt_pull_documents',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
-      if(!pulled?.ok)throw new Error(pulled?.error||'Cloud-Stand nicht erreichbar.');
+      if(!pulled?.ok)remoteFailure(cfg,pulled,'Cloud-Stand nicht erreichbar.');
       const remote=(pulled.documents||[]).find(d=>String(d.key||'')===docKey);
       if(!remote)throw new Error('Der Konfliktstand ist in der Cloud nicht mehr vorhanden.');
       const remoteRev=Number(remote.revision)||0,dirty=new Set(cfg.dirtyKeys||[]),conflicts={...cfg.conflicts};
@@ -321,7 +321,7 @@
     runtime.busy=true;
     try{
       const pulled=await rpc('vt_pull_documents',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
-      if(!pulled?.ok)throw new Error(pulled?.error||'Cloud-Stand nicht erreichbar.');
+      if(!pulled?.ok)remoteFailure(cfg,pulled,'Cloud-Stand nicht erreichbar.');
       const remoteRev=new Map((pulled.documents||[]).map(d=>[String(d.key||''),Number(d.revision)||0]));
       const docs=serializeDocuments();
       const revisions={...cfg.revisions};
@@ -329,7 +329,7 @@
         if(!canWrite(cfg,key))continue;
         const base=remoteRev.has(key)?remoteRev.get(key):(Number(revisions[key])||0);
         const pushed=await rpc('vt_push_document',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret,p_doc_key:key,p_payload:payload,p_base_revision:base});
-        if(!pushed?.ok)throw new Error(pushed?.error||('Bereinigter Stand konnte nicht hochgeladen werden: '+key));
+        if(!pushed?.ok)remoteFailure(cfg,pushed,'Bereinigter Stand konnte nicht hochgeladen werden: '+key);
         revisions[key]=Number(pushed.revision)||base+1;
       }
       cfg.revisions=revisions;cfg.dirtyKeys=[];cfg.conflicts={};cfg.lastSync=new Date().toISOString();persistCfg(cfg);initSnapshots();
