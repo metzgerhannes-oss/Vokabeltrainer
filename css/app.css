@@ -2937,3 +2937,12 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
 
 .battle-stage.fortress-secured .battle-fortress .crack{opacity:.84}
 .battle-stage.fortress-secured .battle-rubble{opacity:.88}
+
+
+/* Learner avatar appearance choice */
+.avatar-style-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.avatar-style-choice label{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line,#d0d5dd);border-radius:14px;background:#fff;cursor:pointer}
+.avatar-style-choice input{width:18px;height:18px;margin:0}
+.avatar-style-choice span{display:flex;flex-direction:column;gap:2px}
+.avatar-style-choice strong{font-size:.95rem}.avatar-style-choice small{color:#667085;font-size:.75rem}
+@media(max-width:520px){.avatar-style-choice{grid-template-columns:1fr}}
