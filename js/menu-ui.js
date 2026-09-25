@@ -22,6 +22,23 @@
     }
   }
 
+  function renderAvatarStage(pct){
+    const frame=document.querySelector('#projectMenuAvatarFrame');
+    const label=document.querySelector('#menuAvatarStageLabel');
+    const pips=document.querySelector('#menuAvatarStagePips');
+    const next=document.querySelector('#menuAvatarNextStage');
+    if(!frame||typeof avatarStageFor!=='function')return null;
+    const stage=avatarStageFor(pct,state.activeSubject);
+    frame.dataset.avatarStage=String(stage.level);
+    frame.dataset.avatarVisualKey=stage.visualKey;
+    frame.dataset.avatarSubject=state.activeSubject;
+    frame.style.setProperty('--avatar-stage-progress',String(stage.progress/100));
+    if(label)label.textContent=`Avatar · Stufe ${stage.level}/${stage.maxLevel}`;
+    if(pips)pips.innerHTML=Array.from({length:stage.maxLevel},(_,i)=>`<i class="${i<stage.level?'filled':''}"></i>`).join('');
+    if(next)next.textContent=stage.nextAt===null?`${stage.label} · maximal entwickelt`:`${stage.label} · nächste Stufe bei ${stage.nextAt}%`;
+    return stage;
+  }
+
   function renderSubjectSwitcher(){
     const root=document.querySelector('#menuSubjectSwitcher');
     if(!root||typeof learner!=='function'||!learner())return;
@@ -45,8 +62,9 @@
     const rank=document.querySelector('#menuRankLabel');
     const learned=document.querySelector('#menuLearnedCount');
     const castles=document.querySelector('#menuFortressCount');
+    const avatarStage=renderAvatarStage(p.pct);
     if(subject)subject.textContent=subjectLabel(state.activeSubject);
-    if(rank)rank.textContent=rankFor(p.pct,state.activeSubject);
+    if(rank)rank.textContent=avatarStage?.rank||rankFor(p.pct,state.activeSubject);
     if(learned)learned.textContent=String(p.mastered||0);
     if(castles)castles.textContent=String(currentCapturedFortresses());
     renderSubjectSwitcher();
@@ -78,6 +96,6 @@
     render();
   }
 
-  window.VTMenuUi={render,openHome,showProgressTarget,applyAvatarArt};
+  window.VTMenuUi={render,openHome,showProgressTarget,applyAvatarArt,renderAvatarStage,avatarStage:()=>typeof avatarStageFor==='function'?avatarStageFor(subjectProgress().pct,state.activeSubject):null};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});else bind();
 })();
