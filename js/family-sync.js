@@ -22,9 +22,11 @@
         revisions:x.revisions&&typeof x.revisions==='object'?x.revisions:{},
         dirtyKeys:Array.isArray(x.dirtyKeys)?x.dirtyKeys:[],
         conflicts:x.conflicts&&typeof x.conflicts==='object'?x.conflicts:{},
-        lastSync:String(x.lastSync||'')
+        lastSync:String(x.lastSync||''),
+        revoked:x.revoked===true,
+        revokedAt:String(x.revokedAt||'')
       };
-    }catch(e){console.warn('Family sync config',e);return {enabled:false,familyId:'',deviceId:'',deviceSecret:'',role:'parent',profileId:'',revisions:{},dirtyKeys:[],conflicts:{},lastSync:''}}
+    }catch(e){console.warn('Family sync config',e);return {enabled:false,familyId:'',deviceId:'',deviceSecret:'',role:'parent',profileId:'',revisions:{},dirtyKeys:[],conflicts:{},lastSync:'',revoked:false,revokedAt:''}}
   }
   function saveConfig(cfg){localStorage.setItem(CONFIG_KEY,JSON.stringify(cfg))}
   function bytesHex(size=24){const a=new Uint8Array(size);crypto.getRandomValues(a);return Array.from(a,x=>x.toString(16).padStart(2,'0')).join('')}
@@ -140,6 +142,16 @@
     return key==='profile/'+cfg.profileId+'/progress';
   }
   function persistCfg(cfg){cfg.dirtyKeys=[...new Set(cfg.dirtyKeys||[])];saveConfig(cfg)}
+  function markRevoked(cfg){
+    cfg.enabled=false;cfg.revoked=true;cfg.revokedAt=new Date().toISOString();cfg.dirtyKeys=[];cfg.conflicts={};
+    persistCfg(cfg);clearTimeout(runtime.timer);clearInterval(runtime.poll);runtime.snapshots.clear();
+    queueMicrotask(()=>{try{renderAll?.()}catch(_e){}});
+  }
+  function remoteFailure(cfg,result,fallback){
+    const code=String(result?.error||'');
+    if(code==='unauthorized'){markRevoked(cfg);throw new Error('Dieses Gerät wurde aus dem Familienverbund entfernt. Lokale Daten bleiben erhalten.')}
+    throw new Error(code||fallback);
+  }
 
   function markLocalChange(){
     const cfg=loadConfig();if(!cfg.enabled||runtime.applying)return;
@@ -239,7 +251,7 @@
     runtime.busy=true;
     try{
       const pulled=await rpc('vt_pull_documents',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
-      if(!pulled?.ok)throw new Error(pulled?.error||'Cloud-Stand nicht erreichbar.');
+      if(!pulled?.ok)remoteFailure(cfg,pulled,'Cloud-Stand nicht erreichbar.');
       cfg.role=pulled.role==='child'?'child':'parent';cfg.profileId=String(pulled.profile_id||cfg.profileId||'');
       const dirty=new Set(cfg.dirtyKeys||[]),conflicts={...cfg.conflicts};let changed=false;
       const remoteDocs=(pulled.documents||[]).sort((a,b)=>documentRank(a.key)-documentRank(b.key)||String(a.key).localeCompare(String(b.key)));
@@ -328,12 +340,12 @@
   async function listDevices(){
     const cfg=loadConfig();if(!cfg.enabled||cfg.role!=='parent')return [];
     const r=await rpc('vt_list_devices',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
-    if(!r?.ok)throw new Error(r?.error||'Geräteliste konnte nicht geladen werden.');return r.devices||[];
+    if(!r?.ok)remoteFailure(cfg,r,'Geräteliste konnte nicht geladen werden.');return r.devices||[];
   }
   async function revokeDevice(deviceId){
     const cfg=loadConfig();if(!cfg.enabled||cfg.role!=='parent')throw new Error('Nur Eltern-Geräte können Geräte entfernen.');
     const r=await rpc('vt_revoke_device',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret,p_target_device_id:deviceId});
-    if(!r?.ok)throw new Error(r?.error||'Gerät konnte nicht entfernt werden.');return true;
+    if(!r?.ok)remoteFailure(cfg,r,'Gerät konnte nicht entfernt werden.');return true;
   }
   function disconnectLocal(){
     localStorage.removeItem(CONFIG_KEY);clearTimeout(runtime.timer);clearInterval(runtime.poll);runtime.snapshots.clear();
@@ -341,7 +353,8 @@
   function status(){
     const cfg=loadConfig(),conflictKeys=Object.keys(cfg.conflicts||{});return {
       enabled:cfg.enabled,familyId:cfg.familyId,role:cfg.role,profileId:cfg.profileId,
-      lastSync:cfg.lastSync,dirty:(cfg.dirtyKeys||[]).length,conflicts:conflictKeys.length,conflictKeys,busy:runtime.busy
+      lastSync:cfg.lastSync,dirty:(cfg.dirtyKeys||[]).length,conflicts:conflictKeys.length,conflictKeys,busy:runtime.busy,
+      revoked:cfg.revoked===true,revokedAt:cfg.revokedAt||''
     };
   }
   function bootstrap(){
