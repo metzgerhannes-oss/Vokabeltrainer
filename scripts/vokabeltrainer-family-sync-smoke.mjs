@@ -11,6 +11,7 @@ const html=read('index.html');
 const sw=read('sw.js');
 const sql=read('supabase/vt_family_sync_v1.sql');
 const sqlV2=read('supabase/vt_family_sync_v2_parent_invites.sql');
+const sqlV3=read('supabase/migrations/20260925204000_harden_vt_device_context_boundary.sql');
 const architecture=read('SYNC_ARCHITECTURE.md');
 
 const passed=[];
@@ -31,7 +32,8 @@ assert(sync.includes('function documentRank(key)')&&sync.includes("k==='shared'?
 assert((sync.match(/documentRank\(a\.key\)-documentRank\(b\.key\)/g)||[]).length>=2,'initial child claim and recurring sync both load shared vocabulary before profile documents');
 assert(ui.includes('Weiteres Eltern-Gerät verbinden')&&ui.includes('VTFamilySync.joinParent(id,pin'), 'parent UI can join an existing family instead of creating a duplicate family');
 assert(ui.includes('familyParentJoinInvite')&&ui.includes('parentInviteTokenFromInput')&&ui.includes('VTFamilySync.claimParentInvite(invite'), 'installed parent app can consume a copied one-time QR/link invite without reusing the family PIN');
-assert(ui.includes('Familie wechseln')&&ui.includes('VTFamilySync.disconnectLocal()'), 'parent UI can leave a wrong local family connection and switch families without deleting learning data');
+assert(ui.includes('Familie wechseln')&&ui.includes("$('#familySwitchJoinBtn').onclick=()=>openFamilySyncJoin()")&&!ui.includes("familySwitchJoinBtn').onclick=()=>{VTFamilySync.disconnectLocal()"), 'family switch preserves the existing local connection until the new join succeeds');
+assert(ui.includes('familyChildBackupBtn')&&ui.includes('familyParentJoinBackupBtn'), 'child and parent pairing offer a backup before remote family data can replace local data');
 assert(ui.includes('familySyncChildJoinChoiceBtn')&&ui.includes('VTFamilySync.claimChildInvite(token'), 'unpaired devices have an explicit child-device enrollment path instead of being forced through parent credentials');
 assert(ui.includes('Einmal-Link oder Gerätecode')&&ui.includes('Stattdessen Familien-ID und PIN verwenden')&&ui.includes('VTFamilySync.joinParent(id,pin'), 'parent device enrollment is QR/link-first with family ID and PIN as explicit fallback');
 assert(!ui.includes('function openChildDeviceInvite(){')&&ui.includes('window.openChildDeviceInvite?window.openChildDeviceInvite()'), 'guided share-link pairing from device-pairing.js is not shadowed by the obsolete raw-token UI');
@@ -49,6 +51,9 @@ assert(pairing.includes("location.hash")&&!pairing.includes("searchParams.set('c
 assert(app.includes('handleDeviceInviteFromUrl')&&app.includes('handleDuelInviteFromUrl'),'bootstrap detects device and duel QR deep links');
 assert(sync.includes("sha256Hex(familyId+'|'")&&!/pin\s*:/.test(sync),'family PIN is derived locally and not persisted as a config field');
 assert(sync.includes("p_base_revision")&&sync.includes("pushed?.conflict"),'client uses optimistic revisions and detects conflicts');
+assert(sync.includes('async function resolveConflict')&&sync.includes("strategy==='local'?'local':'remote'"), 'sync exposes explicit local/cloud conflict resolution without silent overwrite');
+assert(sync.includes('conflictKeys')&&ui.includes('openFamilySyncConflictResolver')&&ui.includes('Cloud übernehmen')&&ui.includes('Dieses Gerät behalten'), 'conflicts are surfaced as specific data areas with explicit resolution choices');
+assert(sync.includes("code==='unauthorized'")&&sync.includes('markRevoked(cfg)')&&ui.includes('Dieses Gerät wurde aus dem Familienverbund entfernt.'), 'revoked devices stop syncing and surface a clear local warning');
 assert(sqlV2.includes('private.vt_parent_invites')&&sqlV2.includes("interval '15 minutes'"),'parent invite tokens are server-side, one-time and short-lived');
 assert(sqlV2.includes("role','parent'")&&sqlV2.includes('vt_claim_parent_invite_impl'),'parent invite claim creates a parent device without exposing the family PIN');
 assert(pairing.includes('familyParentQr')&&pairing.includes('openParentDeviceInvite'),'connected parents can create a QR code for another parent device');
@@ -64,6 +69,7 @@ assert(sql.includes("extensions.crypt")&&sql.includes("extensions.gen_salt('bf',
 assert(sql.includes("interval '15 minutes'"),'child invite lifetime is limited to 15 minutes');
 assert(sql.includes("if v_ctx->>'role'='child'")&&sql.includes("'/progress'"),'server enforces child write scope');
 assert(!/create or replace function public\.vt_[\s\S]{0,250}security definer/i.test(sql),'public RPC wrappers are not SECURITY DEFINER');
+assert(sqlV3.includes('revoke execute on function private.vt_device_context(text,text,text) from anon, authenticated, public'),'internal device-context helper is not directly executable by browser roles');
 assert(architecture.includes('Kinderoberfläche')&&architecture.includes('Elternoberfläche'),'architecture records the separate child/parent target model');
 
 console.log('Vokabeltrainer family sync smoke: '+passed.length+' checks passed');
