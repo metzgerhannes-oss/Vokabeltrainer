@@ -4,11 +4,20 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.18.60**
+App-Version: **v0.19.0**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.19.0 – Lernkern konsolidiert
+
+- **„Jetzt lernen“** ist der eindeutige primäre Einstieg in den automatisch berechneten Tagesplan; nach einem begonnenen Tagesziel wird daraus „Weiterlernen“
+- die bereits eingeführte evidenzbasierte Trennung bleibt verbindlich: produktiver Abruf bestimmt Mastery, während Erkennen, Hören und Wortbausteine nur unterstützen
+- falsche bzw. orthografisch ungenaue Antworten bieten die richtige Fremdsprachenform direkt nach der Bewertung als Audio an; automatisches Vorlesen bleibt lösungssicher und abschaltbar
+- der adaptive Scheduler priorisiert fällige, schwache und testrelevante Wörter, begrenzt neue Wörter und führt nach unterstützenden Aufgaben wieder zu produktivem Abruf
+- der Kind-Pfad bleibt auf **Heute · Üben · Fortschritt · Armee** reduziert; „Üben“ behält vier Hauptwege und bündelt weitere Hilfen unter Spezialtraining
+- CI schützt diese Lernkern-Regeln jetzt zusätzlich als v0.19-Abnahmekriterien
 
 ## v0.18.60 – Release-Reliability
 
