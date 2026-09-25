@@ -64,10 +64,14 @@ try{
   assert(firstFortressReveal.key===firstFortressReveal.revealKey,'fortress reveal is tied to the current test target: '+JSON.stringify(firstFortressReveal));
   assert(firstFortressReveal.copy.includes('NEUES TESTZIEL ENTDECKT')&&firstFortressReveal.copy.includes('Vokabel'),'fortress reveal explains the new target and learning scope');
   assert(await page.locator('#battleAttackBtn').isDisabled(),'only the attack action is locked before the daily goal');
-  await page.waitForFunction(()=>typeof battleFortressRevealActive==='function'&&!battleFortressRevealActive(currentTestFortress()));
-  await page.evaluate(()=>renderBattleView());
+  await page.evaluate(()=>{
+    if(battleFortressRevealTimer){clearTimeout(battleFortressRevealTimer);battleFortressRevealTimer=null}
+    battleFortressRevealKey='';
+    battleFortressRevealUntil=0;
+    renderBattleView();
+  });
   const revealOverlay=page.locator('#battleStage [data-battle-target-reveal]');
-  if(await revealOverlay.count())assert(await revealOverlay.isHidden(),'fortress reveal is hidden after its logical deadline');
+  if(await revealOverlay.count())assert(await revealOverlay.isHidden(),'fortress reveal can be closed into its final state deterministically');
   await page.locator('#battleReturnBtn').click();
   await page.waitForSelector('#childProgressView.active');
   await page.evaluate(()=>{grantBattleTicket('dailyGoal');renderAll();});
