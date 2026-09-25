@@ -19,6 +19,8 @@ try{
   assert(await profile.isVisible(),'profile switcher is visible');
   await profile.focus();
   assert(await page.evaluate(()=>document.activeElement?.id)==='profileBtn','profile switcher receives keyboard focus');
+  const focusStyle=await profile.evaluate(el=>({style:getComputedStyle(el).outlineStyle,width:getComputedStyle(el).outlineWidth}));
+  assert(focusStyle.style!=='none'&&parseFloat(focusStyle.width)>=2,'keyboard focus is visibly outlined');
   await page.keyboard.press('Enter');
   await page.waitForSelector('#modal[open]');
   assert(await page.locator('#modal').getAttribute('aria-modal')==='true','modal exposes modal semantics');
@@ -56,7 +58,7 @@ try{
   assert(!!deleteBox&&deleteBox.width>=44&&deleteBox.height>=44,'profile delete touch target is at least 44 by 44 CSS pixels');
 
   await page.setViewportSize({width:667,height:375});
-  const parentHome=page.locator('[data-parent-home]').first();
+  const parentHome=page.locator('#settingsView [data-parent-home]');
   assert(await parentHome.isVisible(),'parent return action remains visible in landscape');
   await page.evaluate(()=>showView('homeView'));
   await page.locator('#profileBtn').focus();
@@ -76,6 +78,14 @@ try{
   assert(landscape.left>=-1&&landscape.right<=landscape.viewport+1,'modal remains inside landscape viewport');
   assert(landscape.documentWidth<=landscape.viewport+1,'modal does not create horizontal page overflow in landscape');
   assert(landscape.active==='modalTitle','modal focus rule also holds in landscape');
+
+  await page.keyboard.press('Escape');
+  await page.evaluate(()=>showView('libraryView'));
+  await page.locator('[data-help="library"]').click();
+  await page.waitForSelector('#helpPopover:not([hidden])');
+  const helpClose=page.locator('.help-popover-close');
+  const helpCloseBox=await helpClose.boundingBox();
+  assert(!!helpCloseBox&&helpCloseBox.width>=44&&helpCloseBox.height>=44,'help popover close target is at least 44 by 44 CSS pixels');
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer accessibility UI smoke: passed');
