@@ -306,9 +306,9 @@
     localStorage.removeItem(CONFIG_KEY);clearTimeout(runtime.timer);clearInterval(runtime.poll);runtime.snapshots.clear();
   }
   function status(){
-    const cfg=loadConfig();return {
+    const cfg=loadConfig(),conflictKeys=Object.keys(cfg.conflicts||{});return {
       enabled:cfg.enabled,familyId:cfg.familyId,role:cfg.role,profileId:cfg.profileId,
-      lastSync:cfg.lastSync,dirty:(cfg.dirtyKeys||[]).length,conflicts:Object.keys(cfg.conflicts||{}).length,busy:runtime.busy
+      lastSync:cfg.lastSync,dirty:(cfg.dirtyKeys||[]).length,conflicts:conflictKeys.length,conflictKeys,busy:runtime.busy
     };
   }
   function bootstrap(){
