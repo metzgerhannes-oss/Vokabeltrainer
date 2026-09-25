@@ -32,7 +32,6 @@
     frame.dataset.avatarStage=String(stage.level);
     frame.dataset.avatarVisualKey=stage.visualKey;
     frame.dataset.avatarSubject=state.activeSubject;
-    frame.style.setProperty('--avatar-stage-progress',String(stage.progress/100));
     if(label)label.textContent=`Avatar · Stufe ${stage.level}/${stage.maxLevel}`;
     if(pips)pips.innerHTML=Array.from({length:stage.maxLevel},(_,i)=>`<i class="${i<stage.level?'filled':''}"></i>`).join('');
     if(next)next.textContent=stage.nextAt===null?`${stage.label} · maximal entwickelt`:`${stage.label} · nächste Stufe bei ${stage.nextAt}%`;
