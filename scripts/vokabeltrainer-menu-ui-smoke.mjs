@@ -128,6 +128,9 @@ try{
   await page.click('#menuAchievementsBtn');
   await page.waitForSelector('#childProgressView.active');
   await page.waitForFunction(()=>document.activeElement?.id==='progressOverviewCard');
+  assert(await page.locator('#progressMenuBtn').isVisible(),'progress, cardbox and achievements keep an explicit route back to the menu');
+  await page.click('#progressMenuBtn');
+  await page.waitForSelector('#homeView.active .project-menu-stage');
 
   await page.evaluate(()=>window.VTMenuUi.openHome());
   const beforeSwitch=await page.evaluate(()=>subjectProgress('english').pct);
