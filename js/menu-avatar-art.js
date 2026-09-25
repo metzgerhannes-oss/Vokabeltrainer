@@ -2,14 +2,17 @@
 
 (() => {
   const ART_PATHS=Object.freeze({
-    english:Object.freeze([
-      'assets/menu-avatar/english/stage-1.webp.b64',
-      'assets/menu-avatar/english/stage-2.webp.b64',
-      'assets/menu-avatar/english/stage-3.webp.b64',
-      'assets/menu-avatar/english/stage-4.webp.b64',
-      'assets/menu-avatar/english/stage-5.webp.b64',
-      'assets/menu-avatar/english/stage-6.webp.b64'
-    ])
+    english:Object.freeze({
+      male:Object.freeze([
+        'assets/menu-avatar/english/stage-1.webp.b64',
+        'assets/menu-avatar/english/stage-2.webp.b64',
+        'assets/menu-avatar/english/stage-3.webp.b64',
+        'assets/menu-avatar/english/stage-4.webp.b64',
+        'assets/menu-avatar/english/stage-5.webp.b64',
+        'assets/menu-avatar/english/stage-6.webp.b64'
+      ]),
+      female:Object.freeze([])
+    })
   });
   const urls=[];
 
@@ -27,15 +30,21 @@
 
   async function boot(){
     const art={};
-    for(const [subject,paths] of Object.entries(ART_PATHS)){
-      try{art[subject]=await Promise.all(paths.map(objectUrl))}
-      catch(error){console.warn('Menu avatar artwork unavailable for '+subject+'; fallback stays active.',error)}
+    for(const [subject,styles] of Object.entries(ART_PATHS)){
+      art[subject]={};
+      for(const [style,paths] of Object.entries(styles)){
+        if(!paths.length)continue;
+        try{art[subject][style]=await Promise.all(paths.map(objectUrl))}
+        catch(error){console.warn('Menu avatar artwork unavailable for '+subject+'/'+style+'; fallback stays active.',error)}
+      }
     }
     window.VTMenuAvatarArt={
       ready:true,
-      readySubjects:Object.fromEntries(Object.keys(art).map(subject=>[subject,art[subject]?.length===6])),
-      get(subject,stage){
-        const list=art[subject];
+      readySubjects:Object.fromEntries(Object.keys(art).map(subject=>[subject,Object.values(art[subject]||{}).some(list=>list?.length===6)])),
+      readyStyles:Object.fromEntries(Object.entries(art).flatMap(([subject,styles])=>Object.entries(styles).map(([style,list])=>[`${subject}:${style}`,list?.length===6]))),
+      get(subject,style,stage){
+        if(typeof style==='number'){stage=style;style='male'}
+        const list=art[subject]?.[style==='female'?'female':'male'];
         const index=Math.max(0,Math.min(5,(Number(stage)||1)-1));
         return Array.isArray(list)?list[index]||'':'';
       }
