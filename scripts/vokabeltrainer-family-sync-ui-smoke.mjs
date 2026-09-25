@@ -88,6 +88,8 @@ try{
   assert(revokeMessage.includes('aus dem Familienverbund entfernt'),'revoked device receives clear message');
   const revoked=await page.evaluate(()=>VTFamilySync.status());
   assert(!revoked.enabled&&revoked.revoked,'revoked device disables sync locally');
+  const revokedStored=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)||'{}'),CONFIG_KEY);
+  assert(!revokedStored.deviceId&&!revokedStored.deviceSecret,'revocation discards obsolete local device credentials');
   assert(await page.evaluate(()=>learner().name)==='Lokales Kind','revocation does not delete local learning data');
   await page.evaluate(()=>renderFamilySync());
   assert((await page.locator('#familySyncStatus').textContent())?.includes('Lokale Daten bleiben erhalten'),'settings explain local data retention after revoke');
