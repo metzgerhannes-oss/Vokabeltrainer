@@ -152,6 +152,15 @@ function battleFortressRevealMarkup(f,active=false){
   const days=Math.max(1,Number(f.plannedAttackDays)||1),words=Math.max(0,Number(f.wordCount)||0);
   return `<div class="battle-target-reveal" data-battle-target-reveal aria-hidden="true" ${active?'':'hidden'}><div class="battle-target-reveal-light"></div><div class="battle-target-reveal-copy"><small>NEUES TESTZIEL ENTDECKT</small><strong>${esc(f.name)}</strong><span>${esc(f.subtitle||'Testfestung')} · Test ${formatDateShort(f.testDate)}</span><b>${words} ${words===1?'Vokabel':'Vokabeln'} · ${days} ${days===1?'Lerntag':'Lerntage'} eingeplant</b></div></div>`;
 }
+function finishBattleFortressReveal(f=currentTestFortress()){
+  if(!f)return false;
+  if(battleFortressRevealTimer){clearTimeout(battleFortressRevealTimer);battleFortressRevealTimer=null}
+  if(battleFortressRevealKey===f.key){battleFortressRevealKey='';battleFortressRevealUntil=0}
+  const stage=$('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
+  stage?.classList.remove('fortress-reveal');
+  if(overlay)overlay.hidden=true;
+  return true;
+}
 function startBattleFortressReveal(f=currentTestFortress()){
   const stage=$('#battleStage');if(!stage||!f||f.revealedAt)return false;
   if(battleFortressRevealTimer){clearTimeout(battleFortressRevealTimer);battleFortressRevealTimer=null}
@@ -162,13 +171,7 @@ function startBattleFortressReveal(f=currentTestFortress()){
   persistOnly();
   renderBattleView();
   const live=$('#battleStage');if(live)live.dataset.revealKey=f.key||'';
-  battleFortressRevealTimer=setTimeout(()=>{
-    if(battleFortressRevealKey===f.key){battleFortressRevealKey='';battleFortressRevealUntil=0}
-    const stage=$('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
-    stage?.classList.remove('fortress-reveal');
-    if(overlay)overlay.hidden=true;
-    battleFortressRevealTimer=null;
-  },duration);
+  battleFortressRevealTimer=setTimeout(()=>finishBattleFortressReveal(f),duration);
   return true;
 }
 
