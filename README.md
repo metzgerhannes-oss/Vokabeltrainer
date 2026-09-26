@@ -14,8 +14,8 @@ Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Joh
 
 - alle bewerteten Antwortfelder deaktivieren Browser-Autovervollständigung, Autokorrektur, Rechtschreibprüfung und Schreibvorschläge
 - Safari 18+ nutzt zusätzlich `writingsuggestions="false"`
-- auf älteren iOS-/iPadOS-WebKit-Versionen, die QuickType nicht zuverlässig abschalten können, wird bei bewerteten Texteingaben eine eigene Bildschirmtastatur verwendet
-- die sichere Tastatur blockiert Paste/Drop, unterstützt physische Tastaturen und enthält Buchstaben, deutsche Sonderzeichen und relevante Satzzeichen
+- auf älteren iOS-/iPadOS-WebKit-Versionen, die QuickType nicht zuverlässig abschalten können, wird **nur im Testcheck** eine eigene Bildschirmtastatur verwendet
+- die sichere Testcheck-Tastatur blockiert Paste/Drop, unterstützt physische Tastaturen und enthält Buchstaben, deutsche Sonderzeichen und relevante Satzzeichen; normales Lernen behält die native Tastatur
 - bestehende Lern- und Bewertungslogik bleibt unverändert; geändert wird nur die Eingabequelle
 
 ## v0.21.2 – P0: tolerante Satzbewertung
