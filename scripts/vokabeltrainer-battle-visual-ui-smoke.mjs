@@ -125,7 +125,12 @@ try{
   assert(actionAccess.hit,'battle action remains the topmost hit target after scrolling');
   assert(actionAccess.focused,'battle action remains keyboard-focusable');
   await page.keyboard.press('Enter');
-  await page.waitForSelector('#battleResultOverlay.visible');
+  await page.waitForFunction(()=>{
+    const el=document.querySelector('#battleResultOverlay');
+    if(!el||el.getAttribute('aria-hidden')!=='false'||!el.classList.contains('visible')||el.classList.contains('hidden'))return false;
+    const r=el.getBoundingClientRect();
+    return r.width>0&&r.height>0;
+  });
   const latinResultTitle=await page.locator('#battleResultTitle').textContent();
   assert(/Kastell|Vorstoß|Wächter/.test(latinResultTitle||''),'Latin result stays in Roman vocabulary');
   assert(!(latinResultTitle||'').includes('Festung'),'Latin result does not fall back to the English fortress label');
