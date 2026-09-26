@@ -1,9 +1,10 @@
 # Finales Audit
 
-Stand: 26.09.2026 · App v0.21.0
+Stand: 26.09.2026 · App v0.21.1
 
 ## Ergebnis
 
+- v0.21.1 setzt die freigegebene **Visual DNA** produktweit um: Start/Heute erhält ruhige Fachakzente, die Fortschrittskarte trennt englischen Kampagnenpfad und römische Marschroute, Latein erhält Legion/Kastell/SPQR sowie eine eigene römische Test- und Ergebnisinszenierung, und der fokussierte Lernmodus bleibt bewusst neutral mit nur dezenten Fachakzenten. Französisch ist als Reise-/Etappenwelt vorbereitet, bleibt aber bis zum vollständigen Fach-Aktivierungscheck deaktiviert. Die fachliche Lern-, Mastery-, Leitner-, Spacing- und Bewertungslogik bleibt unverändert.
 - v0.21.0 macht den Spielkern sichtbar: Der Armeebereich zeigt **Lernen → Angreifen → Erobern** als klaren 3-Schritt-Loop, eine Seitenfront mit eigener Armee links und Ziel rechts, konkrete Testfestung/Missionsstatus, eine dominante Angriffsaktion sowie eine dunkle dynamische Feldzugskarte mit Frontlinie und Nebel des Krieges. Die fachliche Lern-, Mastery-, Leitner-, Spacing- und Bewertungslogik bleibt unverändert.
 - v0.20.0 trennt die Kinderoberfläche strukturell in vier feste Hauptbereiche: **Heute**, **Lernen**, **Armee** und **Erfolge**. Der Start zeigt nur Lernavatar, Fachkontext und die heutige Lernaktion; Karteikasten/Testcheck liegen im Lernbereich, Kampagne/Schlacht/Duell im Spielbereich, Erfolge zeigen ausschließlich fachlichen Fortschritt. Feldzug und Schlacht kehren konsistent in den Spielbereich zurück.
 - v0.19.16 behebt den im realen iPhone-Livetest gefundenen iOS-Übergabefehler: Nach erfolgreichem Kopieren eines Kinder-/Eltern-Verbindungslinks schließt der Safari-Hinweisdialog und das Einmal-Invite wird aus der Safari-URL entfernt; der Link bleibt für die Home-Screen-App in der Zwischenablage erhalten
