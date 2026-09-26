@@ -33,6 +33,8 @@ try{
   await page.click('#parentTestPlanBtn');
   await page.waitForSelector('#modal[open] #planWordPicker');
   assert((await page.locator('#modalContent').textContent())?.includes('automatisch als Lernstoff'),'test planner explains that selected words become learning content automatically');
+  assert(await page.locator('#planSourceLibrary').count()===1&&await page.locator('#planSourceManual').count()===1&&await page.locator('#planSourceOcr').count()===1,'test planner offers library, manual and photo/OCR as explicit vocabulary sources');
+  assert((await page.locator('#modalContent').textContent())?.includes('Wähle zuerst die Quelle'),'test preparation presents date then vocabulary source as a guided flow');
   const total=await page.locator('#planWordPicker [data-plan-row]').count();
   assert(total>6,'test planner exposes individual vocabulary choices');
   await page.locator('#planRangeFrom').fill('3');
