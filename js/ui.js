@@ -121,7 +121,7 @@ function renderBattlefield(){
   field.dataset.damagePercent=String(damagePct);
   field.dataset.fortressState=fortressVisual.id;
   field.setAttribute('aria-label',`${campaign.unitLabel}: ${p.pct}% Schuljahresfortschritt, Rang ${rankFor(p.pct,state.activeSubject)}, ${f?`Testfestung ${f.name} am ${formatDateShort(f.testDate)}`:'kein Test geplant'}`);
-  field.innerHTML=`<img class="progress-army-art" data-progress-army-art alt="" aria-hidden="true" hidden><div class="progress-army-art-shade" aria-hidden="true"></div><div class="sun"></div><div class="preview-cloud cloud-a"></div><div class="preview-cloud cloud-b"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army"><div class="preview-standard"></div>${battleUnitsMarkup(count,false,p.pct)}${siege}</div>${fortressMarkup(f,false)}`;
+  field.innerHTML=`<img class="progress-army-art" data-progress-army-art alt="" aria-hidden="true" hidden><div class="progress-army-art-shade" aria-hidden="true"></div><div class="frontline-label frontline-own" aria-hidden="true">DEINE ARMEE</div><div class="frontline-label frontline-target" aria-hidden="true">ZIEL</div><div class="frontline-center" aria-hidden="true"><i></i><span>VORRÜCKEN</span></div><div class="sun"></div><div class="preview-cloud cloud-a"></div><div class="preview-cloud cloud-b"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army"><div class="preview-standard"></div>${battleUnitsMarkup(count,false,p.pct)}${siege}</div>${fortressMarkup(f,false)}`;
   applyProgressArmyArt();
 }
 if(typeof document!=='undefined'&&typeof document.addEventListener==='function')document.addEventListener('vt-army-art-ready',()=>{if(state&&document.querySelector?.('#battlefield'))applyProgressArmyArt()});
@@ -374,8 +374,21 @@ function renderAll(){
   const campaign=subjectCampaign(state.activeSubject);$('#campaignTitle').textContent=campaign.title;$('#campaignEyebrow').textContent=campaign.eyebrow; $('#armyRank').textContent=rankFor(p.pct,state.activeSubject); $('#armyStrength').textContent=armyStrength(); $('#gearLevel').textContent=gearFor(p.pct);
   const nf=currentTestFortress(),tickets=battleTickets(),usedToday=!!battleDayState(state.activeSubject,false)?.actionUsed,secured=!!nf?.capturedAt;
   $('#fortressRequirement').textContent=!nf?'Kein Test geplant':secured?`Erobert · Test ${formatDateShort(nf.testDate)}`:`${nf.defense} Verteidigung · Test ${formatDateShort(nf.testDate)}`;
-  $('#attackBtn').disabled=!nf;$('#attackBtn').textContent=!nf?'Keine Festung':tickets?(secured?'Sicherung bereit':'Angriff bereit'):'Zur Festung';
-  $('#campaignMessage').className=`notice ${tickets?'good':'subtle'}`;$('#campaignMessage').textContent=!nf?'Für einen geplanten Test entsteht automatisch eine Festung.':tickets?(secured?'Dein heutiger Sicherungseinsatz ist bereit.':'Dein Tagesangriff ist bereit.'):secured?`Festung erobert. Bis zum Test ${formatDateShort(nf.testDate)} sichern.`:usedToday?`Heute angegriffen · noch ${nf.defense} Verteidigung.`:`Noch ${nf.defense} Verteidigung. Nach dem Tagesziel kannst du angreifen.`;
+  const ticketEl=$('#gameTicketCount');if(ticketEl)ticketEl.textContent=!nf?'–':tickets?`${tickets} bereit`:usedToday?'genutzt':'gesperrt';
+  const missionStatus=$('#gameMissionStatus'),missionTitle=$('#gameMissionTitle'),missionMeta=$('#gameMissionMeta');
+  if(missionStatus){
+    missionStatus.className=`game-mission-status ${!nf?'idle':secured?'captured':tickets?'ready':usedToday?'spent':'locked'}`;
+    missionStatus.textContent=!nf?'WARTE AUF ZIEL':secured?(tickets?'SICHERUNG BEREIT':'FESTUNG EROBERT'):tickets?'ANGRIFF BEREIT':usedToday?'ANGRIFF HEUTE GENUTZT':'ANGRIFF GESPERRT';
+  }
+  if(missionTitle)missionTitle.textContent=nf?nf.name:'Noch keine Testfestung';
+  if(missionMeta)missionMeta.textContent=nf?`${nf.scopeText||'Testumfang'} · Test ${formatDateShort(nf.testDate)}`:'Sobald ein Test geplant ist, erscheint hier automatisch das nächste Ziel.';
+  const learnDone=!!nf&&(tickets>0||usedToday||secured),attackDone=!!nf&&(usedToday||secured),captureDone=!!secured;
+  const loopState=(el,done,current,locked)=>{if(!el)return;el.classList.toggle('done',done);el.classList.toggle('current',current);el.classList.toggle('locked',locked)};
+  loopState($('#gameLoopLearn'),learnDone,!!nf&&!learnDone,!nf);
+  loopState($('#gameLoopAttack'),attackDone,!!nf&&learnDone&&!attackDone,!nf||!learnDone);
+  loopState($('#gameLoopCapture'),captureDone,!!nf&&attackDone&&!captureDone,!nf||!attackDone);
+  $('#attackBtn').disabled=!nf;$('#attackBtn').textContent=!nf?'KEIN ZIEL':tickets?(secured?'FESTUNG SICHERN':'ANGRIFF STARTEN'):(secured?'FESTUNG ANSEHEN':'FESTUNG ANSEHEN');
+  $('#campaignMessage').className=`game-mission-message ${tickets?'ready':secured?'captured':usedToday?'spent':'locked'}`;$('#campaignMessage').textContent=!nf?'Plane einen Test – daraus entsteht automatisch dein nächstes Ziel.':tickets?(secured?'Heute kannst du die eroberte Festung weiter sichern.':'Dein Tagesziel ist geschafft. Eine Angriffsaktion ist bereit.'):secured?`Erobert. Bis zum Test am ${formatDateShort(nf.testDate)} hältst du die Festung.`:usedToday?`Angriff ausgeführt. Die Festung hat noch ${nf.defense} Verteidigung. Morgen kannst du erneut angreifen.`:`Erledige zuerst dein heutiges Lernziel. Dann erhältst du genau eine Angriffsaktion.`;
   const hasSubjectWords=myWords().length>0; $('#campaignCard').classList.toggle('hidden',!hasSubjectWords); if(!hasSubjectWords)$('#optionalLearningCard')?.classList.add('hidden'); renderCardboxOverview(); renderToday(); renderTestCheck(); renderBattlefield(); renderBattleView(); renderRecommendations(); renderSets(); renderDashboard(); renderLibrary(); renderProfiles();
   $('#fontSizeRange').value=l.fontSize; $('#letterSpacingRange').value=l.letterSpacing; $('#flashSpeedSelect').value=String(l.flashSpeed); if($('#autoSpeakCorrection'))$('#autoSpeakCorrection').checked=l.autoSpeakCorrection!==false;
   renderParentOverview(); renderFamilySync(); checkHundredPercent(); renderStorageStatus(); window.VTMenuUi?.render?.();
