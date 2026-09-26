@@ -3,6 +3,12 @@
 
 #homeView.active{display:block}
 .project-menu-stage{
+  --menu-surface-1:#f7f9fc;
+  --menu-surface-2:#eef3f8;
+  --menu-surface-3:#e8eef5;
+  --menu-accent:#274c77;
+  --menu-accent-soft:#dce9f5;
+  --menu-ink:#172033;
   position:relative;
   isolation:isolate;
   width:100%;
@@ -13,9 +19,22 @@
   border:1px solid #cbd5e1;
   border-radius:30px;
   background:
-    radial-gradient(circle at 18% 20%,rgba(255,255,255,.95),transparent 28%),
-    linear-gradient(145deg,#f7f9fc 0%,#eef3f8 58%,#e8eef5 100%);
+    radial-gradient(circle at 18% 20%,rgba(255,255,255,.96),transparent 28%),
+    radial-gradient(circle at 13% 82%,var(--menu-accent-soft),transparent 31%),
+    linear-gradient(145deg,var(--menu-surface-1) 0%,var(--menu-surface-2) 58%,var(--menu-surface-3) 100%);
   box-shadow:0 18px 42px rgba(23,32,51,.11);
+}
+.project-menu-stage[data-visual-theme="campaign"]{
+  --menu-surface-1:#f7fafc;--menu-surface-2:#edf3f5;--menu-surface-3:#e7efe9;
+  --menu-accent:#274c77;--menu-accent-soft:rgba(119,154,118,.20);
+}
+.project-menu-stage[data-visual-theme="roman"]{
+  --menu-surface-1:#fbf8f1;--menu-surface-2:#f1e8d8;--menu-surface-3:#e8ddca;
+  --menu-accent:#8b3f31;--menu-accent-soft:rgba(176,116,72,.18);--menu-ink:#3d2c24;
+}
+.project-menu-stage[data-visual-theme="voyage"]{
+  --menu-surface-1:#faf9f5;--menu-surface-2:#edf2f1;--menu-surface-3:#e8ece8;
+  --menu-accent:#315d73;--menu-accent-soft:rgba(107,145,142,.17);--menu-ink:#24363d;
 }
 .project-menu-scenery{position:absolute;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
 .project-menu-scenery::before{
@@ -240,6 +259,18 @@
 
 /* v0.20.0 – klare Trennung zwischen Lernen und Spiel */
 #homeView .project-menu-stage{border-color:#d8e0ea}
+#homeView .project-menu-stage[data-visual-theme="roman"]{border-color:#dfcfb8}
+#homeView .project-menu-stage[data-visual-theme="voyage"]{border-color:#d5e0de}
+#homeView .project-menu-stage .project-menu-head{color:var(--menu-ink)}
+#homeView .project-menu-stage .project-menu-subject-context>.pill{border-color:color-mix(in srgb,var(--menu-accent) 22%,#ffffff);color:var(--menu-accent)}
+#homeView .project-menu-stage .project-menu-subjects button.active{background:var(--menu-accent);color:#fff}
+#homeView .project-menu-stage .project-menu-avatar-evolution{background:color-mix(in srgb,var(--menu-ink) 88%,transparent)}
+#homeView .project-menu-stage .project-menu-avatar-stage-pips i.filled{background:color-mix(in srgb,var(--menu-accent) 72%,#f7d66f)}
+#homeView .project-menu-stage .project-menu-learning-card .today-cta{box-shadow:0 9px 22px color-mix(in srgb,var(--menu-accent) 28%,transparent)}
+#homeView .project-menu-stage[data-visual-theme="roman"] .project-menu-avatar-standard::before{background:linear-gradient(145deg,#7d3026,#a84c3c)}
+#homeView .project-menu-stage[data-visual-theme="roman"] .project-menu-avatar-crest{border-color:#8a6224;background:linear-gradient(145deg,#dfc47d,#b78032);color:#4b3517}
+#homeView .project-menu-stage[data-visual-theme="voyage"] .project-menu-avatar-standard,
+#homeView .project-menu-stage[data-visual-theme="voyage"] .project-menu-avatar-crest{display:none}
 #homeView .project-menu-avatar-frame::after{background:rgba(23,32,51,.12)}
 #homeView .project-menu-head .eyebrow{color:#667085}
 #homeView .project-menu-learning-card{align-self:center}
