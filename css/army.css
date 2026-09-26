@@ -995,3 +995,81 @@ body.lrs-mode .army-unit-card,body.lrs-mode .army-command,body.lrs-mode .army-un
   }
   #armyView .game-command-actions .game-attack-primary{grid-column:1/-1}
 }
+
+
+/* v0.21.6 – Cohesive campaign scene: one illustration, no pasted-on fortress */
+#armyView .battlefield.integrated-campaign-artwork{
+  min-height:330px;
+  background:#d7e5ec;
+  border:1px solid rgba(39,62,67,.12);
+}
+#armyView .battlefield.integrated-campaign-artwork .progress-army-art{
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center 56%;
+  opacity:1!important;
+  filter:saturate(1.02) contrast(1.02) brightness(1)!important;
+}
+#armyView .battlefield.integrated-campaign-artwork .progress-army-art-shade{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.03),transparent 58%),
+    linear-gradient(90deg,rgba(15,35,50,.08),transparent 28% 72%,rgba(25,39,45,.05));
+}
+#armyView .battlefield.integrated-campaign-artwork .army,
+#armyView .battlefield.integrated-campaign-artwork .battle-fortress,
+#armyView .battlefield.integrated-campaign-artwork .fortress,
+#armyView .battlefield.integrated-campaign-artwork .sun,
+#armyView .battlefield.integrated-campaign-artwork .preview-cloud,
+#armyView .battlefield.integrated-campaign-artwork .frontline-center{
+  display:none!important;
+}
+#armyView .battlefield.integrated-campaign-artwork .frontline-label{
+  top:15px;
+  padding:7px 11px;
+  border-color:rgba(28,54,65,.14);
+  background:rgba(251,249,239,.9);
+  color:#29454e;
+  box-shadow:0 6px 18px rgba(25,46,51,.11);
+}
+#armyView .battlefield.integrated-campaign-artwork .frontline-own{left:16px}
+#armyView .battlefield.integrated-campaign-artwork .frontline-target{right:16px}
+
+#armyView .game-frontline-stage{
+  border-radius:22px;
+  box-shadow:0 12px 30px rgba(44,61,64,.12);
+}
+#armyView .game-mission-panel{
+  background:linear-gradient(180deg,#fffdf8,#f4f0e6);
+}
+#armyView .game-mission-panel h3{
+  font-family:Georgia,'Times New Roman',serif;
+  color:#183b48;
+}
+#armyView .game-defense{
+  border-color:#d9d2c2;
+  background:#fffdfa;
+}
+#armyView .game-defense strong{color:#745f28}
+
+.nav-btn[data-view="armyView"].active{
+  background:linear-gradient(180deg,#15506f,#0b3c5a)!important;
+  color:#fff;
+  box-shadow:0 7px 18px rgba(10,52,78,.22)!important;
+}
+
+@media(max-width:620px){
+  #armyView .battlefield.integrated-campaign-artwork{min-height:255px}
+  #armyView .battlefield.integrated-campaign-artwork .progress-army-art{
+    object-position:center 54%;
+  }
+  #armyView .battlefield.integrated-campaign-artwork .frontline-label{
+    top:12px;
+    font-size:.56rem;
+  }
+  #armyView .game-mission-panel{
+    margin:-18px 12px 0;
+    border-radius:18px;
+  }
+}
