@@ -223,6 +223,75 @@ try{
   assert(!handoffState.hash.includes('childInvite')&&!handoffState.hash.includes('childName'),'iOS handoff clears the invite fragment before Home Screen installation');
   await iosHandoffContext.close();
 
+  const childRestartContext=await browser.newContext(devices['iPhone 13']);
+  await childRestartContext.addInitScript(()=>{
+    try{Object.defineProperty(navigator,'standalone',{configurable:true,get:()=>true})}catch(_e){}
+    const realFetch=window.fetch.bind(window);
+    const familyId='family_child01',profileId='learner_child_fixed';
+    const documents=[
+      {key:'shared',revision:1,payload:{schema:1,vocabulary:[],books:[],bookVocabulary:[]}},
+      {key:'profile/'+profileId+'/setup',revision:1,payload:{schema:1,learner:{id:profileId,name:'Testkind',gradeLevel:'5',activeSubjects:['english'],avatarStyle:'male'},sets:[],setVocabulary:[],learnerBooks:[],grades:[]}},
+      {key:'profile/'+profileId+'/progress',revision:1,payload:{schema:1,learner:{id:profileId,xp:12},learnerVocabulary:[],practiceTests:[],activity:[]}}
+    ];
+    window.fetch=async(input,init)=>{
+      const url=String(typeof input==='string'?input:input?.url||''),name=url.split('/').pop();
+      if(name==='vt_claim_child_invite')return new Response(JSON.stringify({ok:true,family_id:familyId,role:'child',profile_id:profileId,documents}),{status:200,headers:{'Content-Type':'application/json'}});
+      if(name==='vt_pull_documents')return new Response(JSON.stringify({ok:true,family_id:familyId,role:'child',profile_id:profileId,documents}),{status:200,headers:{'Content-Type':'application/json'}});
+      return realFetch(input,init);
+    };
+  });
+
+  let childPage=await childRestartContext.newPage();
+  childPage.setDefaultTimeout(10000);
+  childPage.on('pageerror',e=>errors.push(String(e?.message||e)));
+  let childResponse=await childPage.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
+  assert(childResponse?.ok(),'standalone child app loads');
+  await childPage.waitForFunction(()=>window.__VT_APP_READY__===true&&window.VTFamilySync&&typeof openFamilySyncChildJoin==='function');
+  assert(await childPage.evaluate(()=>isStandaloneWebApp()),'restart test runs in standalone iPhone mode');
+  await childPage.evaluate(()=>openFamilySyncChildJoin());
+  await childPage.waitForSelector('#modal[open] #familyChildJoinBtn');
+  await childPage.locator('#familyChildJoinInput').fill('e'.repeat(48));
+  await childPage.locator('#familyChildJoinBtn').click();
+  await childPage.waitForFunction(()=>window.VTFamilySync.status().enabled&&window.VTFamilySync.status().role==='child');
+  const connectedChild=await childPage.evaluate(()=>({
+    status:VTFamilySync.status(),
+    learnerId:learner()?.id||'',
+    learnerName:learner()?.name||'',
+    profileDisabled:!!document.querySelector('#profileBtn')?.disabled,
+    parentHidden:document.querySelector('#parentAreaBtn')?.classList.contains('hidden')===true,
+    standaloneCardHidden:document.querySelector('#iosStandaloneSyncCard')?.classList.contains('hidden')===true
+  }));
+  assert(connectedChild.status.profileId==='learner_child_fixed','connected child device is pinned to assigned profile');
+  assert(connectedChild.learnerId==='learner_child_fixed'&&connectedChild.learnerName==='Testkind','assigned child profile becomes active');
+  assert(connectedChild.profileDisabled,'profile switch is disabled on paired child device');
+  assert(connectedChild.parentHidden,'parent entry is hidden on paired child device');
+  assert(connectedChild.standaloneCardHidden,'standalone connection prompt disappears after pairing');
+
+  await childPage.close();
+  childPage=await childRestartContext.newPage();
+  childPage.setDefaultTimeout(10000);
+  childPage.on('pageerror',e=>errors.push(String(e?.message||e)));
+  childResponse=await childPage.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
+  assert(childResponse?.ok(),'paired standalone child app reopens');
+  await childPage.waitForFunction(()=>window.__VT_APP_READY__===true&&window.VTFamilySync);
+  await childPage.waitForTimeout(1100);
+  const reopenedChild=await childPage.evaluate(()=>({
+    status:VTFamilySync.status(),
+    learnerId:learner()?.id||'',
+    learnerName:learner()?.name||'',
+    profileDisabled:!!document.querySelector('#profileBtn')?.disabled,
+    parentHidden:document.querySelector('#parentAreaBtn')?.classList.contains('hidden')===true,
+    parentGateBlocked:enterParentMode('settingsView')===false,
+    activeView:[...document.querySelectorAll('.view')].find(el=>!el.classList.contains('hidden'))?.id||''
+  }));
+  assert(reopenedChild.status.enabled&&reopenedChild.status.role==='child','child family connection survives standalone app restart');
+  assert(reopenedChild.status.profileId==='learner_child_fixed','assigned profile id survives standalone app restart');
+  assert(reopenedChild.learnerId==='learner_child_fixed'&&reopenedChild.learnerName==='Testkind','assigned learner survives standalone app restart');
+  assert(reopenedChild.profileDisabled,'profile remains locked after standalone app restart');
+  assert(reopenedChild.parentHidden&&reopenedChild.parentGateBlocked,'parent area remains inaccessible after standalone app restart');
+  assert(reopenedChild.activeView==='homeView','blocked parent-mode attempt returns restarted child app to home');
+  await childRestartContext.close();
+
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer family sync UI smoke: passed');
 }finally{
