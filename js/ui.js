@@ -140,7 +140,7 @@ function updateBattleStoryNarrationUi(on=false){
   battleStoryNarrating=!!on;
   const btn=$('#battleStorySpeakBtn');if(!btn)return;
   btn.setAttribute('aria-pressed',String(battleStoryNarrating));
-  btn.textContent=battleStoryNarrating?'■ Stop':'▶ Geschichte hören';
+  btn.textContent=battleStoryNarrating?'Stop':'Geschichte hören';
   btn.setAttribute('aria-label',battleStoryNarrating?'Vorlesen stoppen':'Geschichte anhören');
 }
 function stopBattleStoryNarration(){
