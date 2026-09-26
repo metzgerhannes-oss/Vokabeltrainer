@@ -140,7 +140,7 @@ function updateBattleStoryNarrationUi(on=false){
   battleStoryNarrating=!!on;
   const btn=$('#battleStorySpeakBtn');if(!btn)return;
   btn.setAttribute('aria-pressed',String(battleStoryNarrating));
-  btn.textContent=battleStoryNarrating?'■ Stop':'▶ Geschichte hören';
+  btn.textContent=battleStoryNarrating?'Stop':'Geschichte hören';
   btn.setAttribute('aria-label',battleStoryNarrating?'Vorlesen stoppen':'Geschichte anhören');
 }
 function stopBattleStoryNarration(){
@@ -237,8 +237,11 @@ function battleAttackFxMarkup(){
 function applyProgressArmyArt(){
   const field=$('#battlefield');if(!field)return;
   const img=field.querySelector?.('[data-progress-army-art]');
-  const url=state?.activeSubject==='english'&&window.VTArmyArt?.ready?window.VTArmyArt.heroUrl||'':'';
+  const integrated=state?.activeSubject==='english'&&window.VTBattleArt?.ready?window.VTBattleArt.sceneUrl||'':'';
+  const fallback=state?.activeSubject==='english'&&window.VTArmyArt?.ready?window.VTArmyArt.heroUrl||'':'';
+  const url=integrated||fallback;
   field.classList.toggle('progress-army-artwork',!!url);
+  field.classList.toggle('integrated-campaign-artwork',!!integrated);
   if(!img)return;
   if(url){
     if(img.getAttribute('src')!==url)img.setAttribute('src',url);
@@ -262,14 +265,22 @@ function renderBattlefield(){
   field.innerHTML=`<img class="progress-army-art" data-progress-army-art alt="" aria-hidden="true" hidden><div class="progress-army-art-shade" aria-hidden="true"></div><div class="frontline-label frontline-own" aria-hidden="true">${esc(present.ownLabel)}</div><div class="frontline-label frontline-target" aria-hidden="true">${esc(present.targetLabel)}</div><div class="frontline-center" aria-hidden="true"><i></i><span>${esc(present.moveLabel)}</span></div><div class="sun"></div><div class="preview-cloud cloud-a"></div><div class="preview-cloud cloud-b"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army"><div class="preview-standard"></div>${battleUnitsMarkup(count,false,p.pct)}${siege}</div>${fortressMarkup(f,true)}`;
   applyProgressArmyArt();
 }
-if(typeof document!=='undefined'&&typeof document.addEventListener==='function')document.addEventListener('vt-army-art-ready',()=>{if(state&&document.querySelector?.('#battlefield'))applyProgressArmyArt()});
+if(typeof document!=='undefined'&&typeof document.addEventListener==='function'){
+  document.addEventListener('vt-army-art-ready',()=>{if(state&&document.querySelector?.('#battlefield'))applyProgressArmyArt()});
+  document.addEventListener('vt-battle-art-ready',()=>{
+    if(state&&document.querySelector?.('#battlefield'))applyProgressArmyArt();
+    if(state&&document.querySelector?.('#battleAttackChoices'))renderBattleAttackChoices(subjectProgress().pct);
+  });
+}
 function renderBattleAttackChoices(pct=subjectProgress().pct){
   const box=$('#battleAttackChoices');if(!box)return;
   if(!attackUnlocked(battleAttackMode,pct))battleAttackMode='charge';
+  const art=state?.activeSubject==='english'&&window.VTBattleArt?.ready?window.VTBattleArt.sceneUrl||'':'';
   box.innerHTML=Object.entries(BATTLE_ATTACKS).map(([id,a])=>{
     const meta=battleAttackMeta(id),tactical=battleAttackTacticalMeta(id),unlocked=attackUnlocked(id,pct),active=id===battleAttackMode;
     const status=unlocked?`${tactical.role} · +${tactical.bonus} Taktik`:`ab ${a.unlock}%`;
-    return `<button type="button" class="battle-attack-choice ${active?'active':''} ${id==='special'?'special':''}" data-battle-attack="${esc(id)}" ${unlocked?'':'disabled'} aria-pressed="${active?'true':'false'}"><span>${meta.icon}</span><strong>${esc(meta.label)}</strong><small>${esc(status)}</small></button>`;
+    const visual=art?`<img src="${esc(art)}" alt="" aria-hidden="true">`:'';
+    return `<button type="button" class="battle-attack-choice attack-${esc(id)} ${active?'active':''} ${id==='special'?'special':''}" data-battle-attack="${esc(id)}" ${unlocked?'':'disabled'} aria-pressed="${active?'true':'false'}"><span class="battle-attack-visual" aria-hidden="true">${visual}<b>${meta.icon}</b></span><span class="battle-attack-copy"><strong>${esc(meta.label)}</strong><small>${esc(status)}</small></span><i class="battle-attack-arrow" aria-hidden="true">›</i></button>`;
   }).join('');
 }
 function selectBattleAttack(mode){

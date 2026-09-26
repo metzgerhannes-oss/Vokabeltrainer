@@ -18,14 +18,23 @@ try{
   const paintedScene=await page.evaluate(()=>({
     cssArmyOpacity:parseFloat(getComputedStyle(document.querySelector('#battleStage .battle-army')).opacity||'1'),
     cssFortressOpacity:parseFloat(getComputedStyle(document.querySelector('#battleStage .battle-fortress')).opacity||'1'),
-    artBrightness:getComputedStyle(document.querySelector('#battleStage .battle-art-background')).filter
+    artOpacity:parseFloat(getComputedStyle(document.querySelector('#battleStage .battle-art-background')).opacity||'0'),
+    artBrightness:getComputedStyle(document.querySelector('#battleStage .battle-art-background')).filter,
+    readoutPosition:getComputedStyle(document.querySelector('#battleView .battle-readout')).position,
+    readoutColumns:getComputedStyle(document.querySelector('#battleView .battle-readout')).gridTemplateColumns,
+    phaseDisplay:getComputedStyle(document.querySelector('#battleStage .battle-phase-strip')).display
   }));
   assert(paintedScene.cssArmyOpacity===0&&paintedScene.cssFortressOpacity===0,'cartoon CSS army and fortress are hidden when painted artwork is ready');
+  assert(paintedScene.artOpacity>=0.95,'approved painted scene is the primary battle visual instead of a faint texture');
   assert(!paintedScene.artBrightness.includes('brightness(0.76)'),'painted battle artwork is no longer heavily darkened');
+  assert(paintedScene.readoutPosition==='absolute'&&paintedScene.readoutColumns.split(' ').length===2,'battle KPIs float as a compact 2x2 HUD over the illustration');
+  assert(paintedScene.phaseDisplay==='none','technical phase strip does not clutter the approved target scene');
   assert(await page.locator('#battleStage .battle-unit').count()>=6,'fallback army formation remains structurally available');
   assert(await page.locator('#battleStage .unit-archer').count()>=1,'progress unlocks archers');
   assert(await page.locator('#battleStage .unit-cavalry').count()>=1,'high progress unlocks cavalry');
   assert(await page.locator('[data-battle-attack]').count()===5,'battle exposes four standard attacks plus special');
+  assert(await page.locator('[data-battle-attack] .battle-attack-visual').count()===5,'every attack is presented as a large visual card');
+  assert(await page.locator('[data-battle-attack] .battle-attack-visual img').count()===5,'English attack cards reuse the campaign illustration instead of text-only controls');
 
   const fortressProgression=await page.evaluate(()=>{
     const f=currentTestFortress();

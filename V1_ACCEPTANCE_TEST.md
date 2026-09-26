@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 26.09.2026 · Basis: v0.21.5 · Release-Commit: `df7b9c5ee7553ebb2ae91573fd0c7933c9ace410` · Pages #499 live verifiziert
+Stand: 26.09.2026 · Basis: v0.21.6 · Release-Kandidat: Campaign Target Design
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
