@@ -4,11 +4,19 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.19.15**
+App-Version: **v0.19.16**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.19.16 – iOS-Home-Screen-Handoff
+
+- nach erfolgreichem Kopieren eines Kinder-/Eltern-Verbindungslinks schließt der iOS-Safari-Hinweisdialog automatisch
+- das einmalige Invite-Fragment wird anschließend aus der Safari-URL entfernt, damit der Home-Bildschirm-Eintrag auf der neutralen App-URL basiert
+- schlägt das Kopieren fehl, bleibt der Dialog offen und der Link wird nicht verworfen
+- ein eigener WebKit-iPhone-Regressionsfall prüft genau diesen Ablauf
+- Lernlogik, Sollantworten, Mastery, Leitner, Spacing, XP- und Kampflogik bleiben unverändert
 
 ## v0.19.15 – Abschließendes Deep-Audit-Hardening
 
