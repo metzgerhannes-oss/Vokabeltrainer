@@ -18,16 +18,18 @@ async function waitForContinue(){
   }
 }
 
-async function seed(term,translation,mode='recall'){
-  await page.evaluate(({term,translation,mode})=>{
+async function seed(term,translation,mode='recall',subject='english'){
+  await page.evaluate(({term,translation,mode,subject})=>{
     state=defaultState();
-    const set={id:'focus_set',learnerId:'learner_demo',subject:'english',title:'Unit Fokus',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:''};
+    state.activeSubject=subject;
+    state.learners[0].activeSubjects=[...new Set([...(state.learners[0].activeSubjects||[]),subject])];
+    const set={id:'focus_set',learnerId:'learner_demo',subject,title:subject==='latin'?'Latein Fokus':'Unit Fokus',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:''};
     state.sets.push(set);
-    attachVocabularyToSet(set.id,{term,translation,source:'focus-smoke',verified:true,firstContactCopiedAt:'test',firstContactRecalledAt:'test',firstContactCompletedAt:'test'});
+    attachVocabularyToSet(set.id,{term,translation,source:'focus-smoke',verified:true,subject,firstContactCopiedAt:'test',firstContactRecalledAt:'test',firstContactCompletedAt:'test'});
     rebuildWordIndexes();
     renderAll();
     startSession(mode,set.id,null,false);
-  },{term,translation,mode});
+  },{term,translation,mode,subject});
   await page.waitForSelector('#answerField');
 }
 
@@ -165,6 +167,20 @@ try{
   const handwritingAdvance=await page.evaluate(()=>({index:session?.index??-1,label:document.querySelector('#sessionPill')?.textContent||'',term:document.querySelector('.study-prompt')?.textContent||''}));
   assert(handwritingAdvance.index===1,'handwriting confirmation advances from the first to the second word');
   assert(handwritingAdvance.label==='Aufgabe 2','second handwriting word has clear task orientation');
+
+  await page.click('#backHomeBtn');
+  await seed('salve','sei gegrüßt','recall','latin');
+  const latinTheme=await page.evaluate(()=>({
+    theme:document.querySelector('#learnView')?.dataset.visualTheme||'',
+    subject:document.querySelector('#learnView')?.dataset.subject||'',
+    shellBg:getComputedStyle(document.querySelector('#learnView .study-shell')).backgroundColor,
+    pillBg:getComputedStyle(document.querySelector('#modePill')).backgroundColor,
+    battleDecor:document.querySelectorAll('#learnView .battle-stage,#learnView .battle-army,#learnView .battle-fortress').length
+  }));
+  assert(latinTheme.theme==='roman'&&latinTheme.subject==='latin','Latin learning view carries the Roman identity only as a theme');
+  assert(latinTheme.battleDecor===0,'focused learning never imports battle scenery');
+  assert(latinTheme.shellBg==='rgb(255, 255, 255)','learning surface stays neutral white across subjects');
+  assert(latinTheme.pillBg!=='rgba(0, 0, 0, 0)','subject accent is visible only in quiet UI chrome');
 
   console.log('Vokabeltrainer focused learning WebKit smoke: passed');
   console.log('✓ retrieval hides navigation and diagnostics');
