@@ -16,9 +16,12 @@ Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Joh
 - vorhandenes Kampagnen-Artwork wird wieder deutlich sichtbar statt stark abgedunkelt
 - alte graue Mini-CSS-Festung wird durch die detaillierte Festungssilhouette ersetzt
 - Missionspanel wird als helle, integrierte Ebene über die Szene gelegt
-- Armee-/Ziel-Szene nutzt freundlichere Campaign-World-Farben statt nahezu schwarzer Frontlinienoptik
+- eigentlicher Battle-Screen lädt wieder die vorhandene dedizierte gemalte Battle-Art; die primitive CSS-Armee/-Festung dient nur noch als technischer Fallback
+- Battle-Kennzahlen liegen nicht mehr als vier dunkle Blöcke über der Illustration; Angriffsarten und Hauptaktion werden heller und ruhiger integriert
+- Storytexte verwenden natürliche Sätze statt technischer Planertexte wie „31 ausgewählt am 28.09.“
+- Vorlesen nutzt bessere deutsche Voice-Auswahl, neutralere Tonhöhe und Satzpausen; die UI nennt es bewusst „Geschichte hören“ statt einen dramatischen Sprecher zu versprechen
 - aktive Armee-Navigation verwendet die Campaign-Farbwelt statt des globalen Violetts
-- reine Darstellungsänderung; Lern-, Test-, Mastery- und Battle-Logik bleiben unverändert
+- Lern-, Test-, Mastery-, Ticket- und Battle-Berechnungslogik bleiben unverändert
 
 ## v0.21.3 – Input-Integrity: keine Systemvorschläge
 
