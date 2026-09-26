@@ -189,6 +189,9 @@ jobs:
       - name: WebKit Family Sync conflicts and revocation
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-family-sync-ui-smoke.mjs
 
+      - name: WebKit Family Sync learning progress across devices and day boundary
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-family-sync-learning-progress-ui-smoke.mjs
+
       - name: WebKit first-contact block review
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-first-contact-ui-smoke.mjs
 
