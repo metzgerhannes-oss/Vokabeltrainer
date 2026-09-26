@@ -8,11 +8,21 @@ try{
   await page.setViewportSize({width:1180,height:720});
   await page.evaluate(()=>renderBattleView());
 
-  assert(await page.locator('#battleStage [data-battle-art-stack]').count()===0,'legacy battle artwork stack is no longer layered under the current scene');
-  assert(await page.locator('#battleStage .battle-sky').count()===1,'current fantasy scene keeps its sky layer');
-  assert(await page.locator('#battleStage .battle-hills').count()===1,'current fantasy scene keeps its landscape layer');
-  assert(await page.locator('#battleStage .battle-ground').count()===1,'current fantasy scene keeps its ground layer');
-  assert(await page.locator('#battleStage .battle-unit').count()>=6,'army formation contains multiple units');
+  await page.waitForFunction(()=>window.VTBattleArt?.ready===true);
+  await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
+  assert(await page.locator('#battleStage [data-battle-art-stack]').count()===1,'dedicated painted battle artwork is mounted in the current scene');
+  assert(await page.locator('#battleStage [data-battle-scene-art]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'dedicated battlefield artwork loads successfully');
+  assert(await page.locator('#battleStage .battle-sky').count()===1,'CSS sky remains available only as artwork fallback');
+  assert(await page.locator('#battleStage .battle-hills').count()===1,'CSS landscape remains available only as artwork fallback');
+  assert(await page.locator('#battleStage .battle-ground').count()===1,'CSS ground remains available only as artwork fallback');
+  const paintedScene=await page.evaluate(()=>({
+    cssArmyOpacity:parseFloat(getComputedStyle(document.querySelector('#battleStage .battle-army')).opacity||'1'),
+    cssFortressOpacity:parseFloat(getComputedStyle(document.querySelector('#battleStage .battle-fortress')).opacity||'1'),
+    artBrightness:getComputedStyle(document.querySelector('#battleStage .battle-art-background')).filter
+  }));
+  assert(paintedScene.cssArmyOpacity===0&&paintedScene.cssFortressOpacity===0,'cartoon CSS army and fortress are hidden when painted artwork is ready');
+  assert(!paintedScene.artBrightness.includes('brightness(0.76)'),'painted battle artwork is no longer heavily darkened');
+  assert(await page.locator('#battleStage .battle-unit').count()>=6,'fallback army formation remains structurally available');
   assert(await page.locator('#battleStage .unit-archer').count()>=1,'progress unlocks archers');
   assert(await page.locator('#battleStage .unit-cavalry').count()>=1,'high progress unlocks cavalry');
   assert(await page.locator('[data-battle-attack]').count()===5,'battle exposes four standard attacks plus special');
