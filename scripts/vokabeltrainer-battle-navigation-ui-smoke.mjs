@@ -9,6 +9,8 @@ try{
 
   await activate('#attackBtn','battle entry');
   await page.waitForSelector('#battleView.active');
+  await page.waitForFunction(()=>window.VTBattleArt?.ready===true&&document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
+  assert(await page.locator('#battleStage [data-battle-scene-art]').evaluate(img=>img.naturalWidth>0),'painted battle artwork loads on the iPhone path');
   assert(await page.locator('.battle-stage-wrap > .battle-scene-hud').count()===1,'battle KPIs live inside the scene wrapper');
   assert(await page.locator('.battle-stage-wrap > .battle-scene-tactics').count()===1,'battle tactics are attached directly to the scene');
   assert(await page.locator('#battleFullscreenBtn').isVisible(),'battle fullscreen control remains visible');
