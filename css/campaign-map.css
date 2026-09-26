@@ -301,3 +301,7 @@ body.lrs-mode .campaign-map-board{box-shadow:none}body.lrs-mode .campaign-map-st
   .campaign-war-header{grid-template-columns:1fr}
   .campaign-map-route-node b{display:none}
 }
+
+.campaign-map-detail{position:relative}
+.campaign-map-detail-close{position:absolute;top:8px;right:8px;z-index:4;width:34px;height:34px;border-radius:50%;border:1px solid rgba(220,197,139,.35);background:rgba(5,16,28,.7);color:#fff;font-size:1.25rem;line-height:1;cursor:pointer}
+.campaign-map-detail-close:hover,.campaign-map-detail-close:focus-visible{background:rgba(220,197,139,.18);outline:2px solid rgba(220,197,139,.55);outline-offset:2px}
