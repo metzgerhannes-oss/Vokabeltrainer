@@ -55,8 +55,10 @@ export async function createBattleHarness(){
   const openBattle=async()=>{
     await activate('#attackBtn','battle entry');
     await page.waitForSelector('#battleView.active');
-    await page.waitForFunction(()=>window.VTBattleArt?.ready===true);
-    await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
+    await page.waitForFunction(()=>{
+      const stage=document.querySelector('#battleStage');
+      return !!stage?.querySelector('.battle-sky')&&!!stage.querySelector('.battle-ground')&&!!stage.querySelector('.battle-fortress');
+    });
   };
 
   const diagnose=async(label,error)=>{
