@@ -2987,3 +2987,23 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
   .battlefield.progress-army-artwork .progress-army-art{object-position:42% 60%}
   .battlefield.progress-army-artwork .fortress{right:2%;transform:scale(.74);transform-origin:right bottom}
 }
+
+/* v0.21.x – Battle scene hierarchy: HUD above scene, tactics attached below */
+.battle-stage-wrap{position:relative;display:grid;gap:8px}
+.battle-scene-hud.battle-readout{position:absolute;z-index:18;left:12px;right:12px;top:12px;margin:0;grid-template-columns:repeat(4,minmax(0,1fr));pointer-events:none}
+.battle-scene-hud.battle-readout>div{min-width:0;padding:8px 10px;border:1px solid #ffffff30;background:#0f172acc;color:#fff;box-shadow:0 5px 18px #02061724;backdrop-filter:blur(7px)}
+.battle-scene-hud.battle-readout small{color:#cbd5e1;font-size:.67rem}
+.battle-scene-hud.battle-readout strong{font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.battle-scene-tactics.battle-tactics{margin:0;padding:10px 12px;border-radius:16px;background:#f8fafcf2}
+.battle-scene-tactics .battle-tactics-head{margin-bottom:7px}
+.battle-scene-tactics .battle-attack-choice{min-height:54px;padding:8px 10px}
+.battle-immersive .battle-scene-hud.battle-readout{max-width:none;margin:0}
+.battle-immersive .battle-scene-tactics{max-width:900px;width:100%;justify-self:center;background:#111827e8;border-color:#ffffff24;color:#fff}
+.battle-immersive .battle-scene-tactics .battle-tactics-head small,.battle-immersive .battle-scene-tactics .battle-tactics-head>span{color:#cbd5e1}
+@media(max-width:720px){
+  .battle-scene-hud.battle-readout{left:7px;right:7px;top:7px;grid-template-columns:1fr 1fr;gap:5px}
+  .battle-scene-hud.battle-readout>div{padding:6px 7px}
+  .battle-scene-hud.battle-readout small{font-size:.58rem}
+  .battle-scene-hud.battle-readout strong{font-size:.72rem}
+  .battle-scene-tactics.battle-tactics{padding:9px}
+}
