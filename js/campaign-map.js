@@ -71,16 +71,20 @@
     if(!st){root.innerHTML='<strong>Wähle ein Ziel auf der Karte.</strong>';battle?.classList.add('hidden');return}
     const grade=st.grade?`<div><small>Testergebnis</small><strong>Note ${safe(st.grade.grade)}</strong></div>`:'';
     const defense=st.fortress?`<div><small>Belagerung</small><strong>${st.siegePct}%</strong><span>${Math.max(0,Number(st.fortress.defense)||0)} Verteidigung übrig</span></div>`:'';
-    root.innerHTML=`<div class="campaign-map-detail-head"><small>${safe(REGIONS[st.region])}</small><h3>${safe(st.title)}</h3><p>${safe(st.statusLabel)} · ${safe(st.statusDetail)}</p></div><div class="campaign-map-detail-grid"><div><small>Test</small><strong>${safe(dateLabel(st.date))}</strong><span>${safe(st.scopeText)}</span></div><div><small>Umfang</small><strong>${st.wordCount?st.wordCount+' Vokabeln':'noch offen'}</strong><span>${st.series?'wiederkehrender Test':'geplanter Test'}</span></div>${defense}${grade}</div>${st.reviewOpen?'<div class="campaign-map-note">Die Vokabelpaare für dieses Ziel müssen im Elternbereich noch geprüft werden.</div>':''}`;
+    root.innerHTML=`<button type="button" class="campaign-map-detail-close" data-campaign-detail-close aria-label="Zielinfo schließen">×</button><div class="campaign-map-detail-head"><small>${safe(REGIONS[st.region])}</small><h3>${safe(st.title)}</h3><p>${safe(st.statusLabel)} · ${safe(st.statusDetail)}</p></div><div class="campaign-map-detail-grid"><div><small>Test</small><strong>${safe(dateLabel(st.date))}</strong><span>${safe(st.scopeText)}</span></div><div><small>Umfang</small><strong>${st.wordCount?st.wordCount+' Vokabeln':'noch offen'}</strong><span>${st.series?'wiederkehrender Test':'geplanter Test'}</span></div>${defense}${grade}</div>${st.reviewOpen?'<div class="campaign-map-note">Die Vokabelpaare für dieses Ziel müssen im Elternbereich noch geprüft werden.</div>':''}`;
     const current=typeof currentTestFortress==='function'?currentTestFortress(st.subject):null,can=current?.testDate===st.date;
     if(battle){battle.classList.toggle('hidden',!can);battle.disabled=!can;battle.textContent=st.fortress?.capturedAt?'Festung ansehen / sichern':'Zur Schlacht'}
   }
   function yearDetail(pct){
     const root=document.querySelector('#campaignMapDetail');if(!root)return;
-    root.innerHTML=`<div class="campaign-map-detail-head"><small>Fernziel</small><h3>Jahresfestung</h3><p>${pct>=100?'Das Schuljahresziel ist erreicht.':'Sie steht für deinen langfristigen Schuljahresfortschritt – nicht für eine feste Zahl von Tests.'}</p></div><div class="campaign-map-detail-grid"><div><small>Schuljahresfortschritt</small><strong>${pct}%</strong><span>nachhaltig gemeisterte Vokabeln</span></div><div><small>Regel</small><strong>Dynamischer Feldzug</strong><span>Neue Testziele werden unterwegs ergänzt.</span></div></div>`;
+    root.innerHTML=`<button type="button" class="campaign-map-detail-close" data-campaign-detail-close aria-label="Zielinfo schließen">×</button><div class="campaign-map-detail-head"><small>Fernziel</small><h3>Jahresfestung</h3><p>${pct>=100?'Das Schuljahresziel ist erreicht.':'Sie steht für deinen langfristigen Schuljahresfortschritt – nicht für eine feste Zahl von Tests.'}</p></div><div class="campaign-map-detail-grid"><div><small>Schuljahresfortschritt</small><strong>${pct}%</strong><span>nachhaltig gemeisterte Vokabeln</span></div><div><small>Regel</small><strong>Dynamischer Feldzug</strong><span>Neue Testziele werden unterwegs ergänzt.</span></div></div>`;
     document.querySelector('#campaignMapBattleBtn')?.classList.add('hidden');
   }
+  function clearSelection(){
+    selectedKey='';document.querySelectorAll('[data-campaign-station]').forEach(b=>b.classList.remove('selected'));detail(null);
+  }
   function select(key){
+    if(selectedKey===key){clearSelection();return}
     selectedKey=key;document.querySelectorAll('[data-campaign-station]').forEach(b=>b.classList.toggle('selected',b.dataset.campaignStation===key));
     const pct=subjectProgress().pct;if(key==='year-goal'){yearDetail(pct);return}detail(stations().find(s=>s.key===key)||null);
   }
@@ -98,7 +102,10 @@
     document.querySelector('#campaignMapBackBtn')?.addEventListener('click',()=>{window.VTArmyUi?.open?.()||showView('armyView')});
     document.querySelector('#campaignMapArmyBtn')?.addEventListener('click',()=>window.VTArmyUi?.open?.());
     document.querySelector('#campaignMapBattleBtn')?.addEventListener('click',()=>{if(typeof openBattleView==='function')openBattleView()});
-    document.querySelector('#campaignMapBoard')?.addEventListener('click',e=>{const b=e.target.closest('[data-campaign-station]');if(b)select(b.dataset.campaignStation)});
+    document.querySelector('#campaignMapBoard')?.addEventListener('click',e=>{const b=e.target.closest('[data-campaign-station]');if(b){select(b.dataset.campaignStation);return}if(selectedKey)clearSelection()});
+    document.addEventListener('pointerdown',e=>{if(!selectedKey||!document.querySelector('#campaignMapView')?.classList.contains('active'))return;if(e.target.closest?.('[data-campaign-station],#campaignMapDetail,#campaignMapBattleBtn'))return;clearSelection()},true);
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&selectedKey&&document.querySelector('#campaignMapView')?.classList.contains('active')){e.preventDefault();clearSelection()}});
+    document.querySelector('#campaignMapDetail')?.addEventListener('click',e=>{if(e.target.closest?.('[data-campaign-detail-close]'))clearSelection()});
   }
   window.VTCampaignMap={open,render,select,stations};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});else bind();
