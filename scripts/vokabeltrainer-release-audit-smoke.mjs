@@ -70,7 +70,7 @@ const ci=fs.readFileSync('.github/workflows/ci.yml','utf8');
 const pages=fs.readFileSync('.github/workflows/pages.yml','utf8');
 const staticChecks=[
   [focusUi.includes("setAttribute('writingsuggestions','false')")&&focusUi.includes("setAttribute('autocorrect','off')")&&focusUi.includes("setAttribute('spellcheck','false')"),'answer inputs suppress browser writing suggestions, autocorrect and spellcheck'],
-  [focusUi.includes('focusedNeedsFallbackKeyboard')&&focusUi.includes('secure-keyboard')&&focusUi.includes("input.setAttribute('inputmode','none')"),'legacy Apple fallback replaces suggestion-prone native input with a secure keyboard'],
+  [focusUi.includes("if(focusedInputMode()!=='practiceTest')return false")&&focusUi.includes('secure-keyboard')&&focusUi.includes("input.setAttribute('inputmode','none')"),'legacy Apple fallback replaces suggestion-prone native input only in testcheck'],
   [learning.includes("recordActivity('practiceTest'"),'testcheck completion records activity'],
   [learning.includes("recordActivity('firstContact'")&&learning.includes('renderFirstContactBlockReview'),'first contact records preparation and includes block review'],
   [(()=>{const s=ui.slice(ui.indexOf('function duelPayload'),ui.indexOf('function openDuel'));return s.includes('subjectCampaign(state.activeSubject).unitLabel')&&!s.includes('learner().name')&&!s.includes('mastered:p.mastered')&&!s.includes('strength:armyStrength')})(),'friendship duel code excludes profile name and unnecessary detailed learning fields'],
