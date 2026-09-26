@@ -53,6 +53,17 @@ try{
   assert((await page.locator('#attackBtn').textContent())?.includes('FESTUNG'),'primary game action clearly points to the fortress');
   assert((await page.locator('.frontline-own').textContent())?.includes('DEINE ARMEE'),'frontline labels the player side');
   assert((await page.locator('.frontline-target').textContent())?.includes('ZIEL'),'frontline labels the target side');
+  assert(await page.locator('#battlefield .battle-fortress').count()===1,'army command scene uses the detailed fortress silhouette instead of the legacy block fortress');
+  assert(await page.locator('#battlefield .fortress:not(.battle-fortress)').count()===0,'legacy mini fortress is absent from the army command scene');
+  const commandVisual=await page.evaluate(()=>({
+    loopColumns:getComputedStyle(document.querySelector('#campaignCard .game-loop')).gridTemplateColumns,
+    artOpacity:parseFloat(getComputedStyle(document.querySelector('#battlefield .progress-army-art')).opacity||'0'),
+    missionBackground:getComputedStyle(document.querySelector('#campaignCard .game-mission-panel')).backgroundColor,
+    cardRadius:getComputedStyle(document.querySelector('#campaignCard')).borderRadius
+  }));
+  assert(commandVisual.loopColumns.split(' ').length===3,'mobile learn/attack/capture loop stays compact and horizontal');
+  assert(commandVisual.artOpacity>=0.75,'campaign artwork remains clearly visible instead of being heavily darkened');
+  assert(commandVisual.cardRadius!=='0px','army command card keeps a composed card silhouette on mobile');
   assert((await page.locator('.nav-btn[data-view="armyView"]').getAttribute('aria-current'))==='page','Armee is the active primary navigation area');
   await page.waitForFunction(()=>window.VTArmyArt?.ready===true);
   await page.waitForFunction(()=>document.querySelector('[data-army-hero-art]')?.naturalWidth>0);
