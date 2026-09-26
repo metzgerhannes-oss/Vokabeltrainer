@@ -3007,3 +3007,30 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
   .battle-scene-hud.battle-readout strong{font-size:.72rem}
   .battle-scene-tactics.battle-tactics{padding:9px}
 }
+
+/* v0.21.x – immersive battle is a focused landscape scene, not a tall page */
+.battle-immersive #battleView{overflow:hidden}
+.battle-immersive .battle-shell{height:100%;display:grid;grid-template-rows:auto 1fr;gap:8px}
+.battle-immersive .battle-head,.battle-immersive .battle-story,.battle-immersive .battle-boss-panel,.battle-immersive .battle-message,.battle-immersive .battle-actions{display:none!important}
+.battle-immersive .battle-toolbar{margin:0;position:relative;z-index:1200}
+.battle-immersive .battle-stage-wrap{min-height:0;height:100%;grid-template-rows:minmax(0,1fr) auto}
+.battle-immersive .battle-stage{height:100%;min-height:0;border-radius:18px}
+.battle-immersive .battle-scene-tactics{position:absolute;z-index:20;left:50%;bottom:78px;transform:translateX(-50%);width:min(900px,calc(100% - 24px));padding:8px 10px;background:#0f172ad9;backdrop-filter:blur(8px)}
+.battle-immersive .battle-scene-tactics .battle-tactics-head{display:none}
+.battle-immersive .battle-attack-choices{gap:6px}
+.battle-immersive .battle-attack-choice{min-height:46px;background:#111827e8;color:#fff;border-color:#ffffff30}
+.battle-immersive .battle-attack-choice small{color:#cbd5e1}
+.battle-immersive .battle-attack-choice.active{background:#78350fe8;border-color:#f59e0b}
+.battle-immersive .battle-action-dock{position:absolute;left:50%;bottom:12px;width:min(700px,calc(100% - 24px))}
+@media(orientation:landscape) and (max-height:560px){
+  .battle-immersive #battleView{padding:6px max(8px,env(safe-area-inset-right)) 6px max(8px,env(safe-area-inset-left))}
+  .battle-immersive .battle-toolbar{position:absolute;top:8px;left:8px;right:8px;pointer-events:none}
+  .battle-immersive .battle-toolbar button{pointer-events:auto}
+  .battle-immersive .battle-ticket-pill{display:none}
+  .battle-immersive .battle-shell{display:block}
+  .battle-immersive .battle-stage-wrap{height:100%}
+  .battle-immersive .battle-stage{height:100%;border-radius:14px}
+  .battle-immersive .battle-scene-hud.battle-readout{left:90px;right:150px;top:8px}
+  .battle-immersive .battle-scene-tactics{bottom:68px}
+  .battle-immersive .battle-action-dock{bottom:7px}
+}
