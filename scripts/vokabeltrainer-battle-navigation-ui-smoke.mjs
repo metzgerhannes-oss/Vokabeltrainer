@@ -52,6 +52,20 @@ try{
   assert(second.hidden===true,'same fortress is not revealed twice');
   assert((await page.locator('#battleReturnBtn').textContent())?.includes('Armee'),'battle return destination remains inside the game area');
 
+  await page.evaluate(()=>{window.VTCampaignMap.open()});
+  await page.waitForSelector('#campaignMapView.active');
+  const station=page.locator('[data-campaign-station]').first();
+  await station.click();
+  assert(await page.locator('#campaignMapDetail [data-campaign-detail-close]').count()===1,'campaign target detail has an explicit close control');
+  await page.locator('#campaignMapDetail [data-campaign-detail-close]').click();
+  assert((await page.locator('#campaignMapDetail').textContent())?.includes('Wähle ein Ziel'),'campaign detail closes with explicit close control');
+  await station.click();
+  await station.click();
+  assert((await page.locator('#campaignMapDetail').textContent())?.includes('Wähle ein Ziel'),'repeated station click toggles the detail closed');
+  await station.click();
+  await page.keyboard.press('Escape');
+  assert((await page.locator('#campaignMapDetail').textContent())?.includes('Wähle ein Ziel'),'Escape closes campaign detail');
+
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer battle navigation smoke: passed');
 }catch(error){
