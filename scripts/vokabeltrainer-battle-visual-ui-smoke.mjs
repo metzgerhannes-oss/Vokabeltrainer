@@ -85,6 +85,25 @@ try{
   });
   assert(reduced.impact==='none'&&reduced.ram==='none'&&reduced.trail==='none','reduced motion disables battle movement effects');
 
+  await reset({revealed:true,ticket:true,subject:'latin'});
+  await openBattle();
+  await page.evaluate(()=>renderBattleView());
+  assert((await page.locator('#battleView').getAttribute('data-visual-theme'))==='roman','Latin battle view uses Roman visual theme');
+  assert((await page.locator('#battleStage').getAttribute('data-visual-theme'))==='roman','Latin battle stage exposes Roman theme');
+  assert((await page.locator('#battleView .battle-kicker').textContent())?.includes('Römische Prüfungsetappe'),'Latin test scene has Roman framing');
+  assert((await page.locator('#battleTitle').textContent())?.includes('Legion'),'Latin title names the legion');
+  assert((await page.locator('#battleStage .battle-fortress-state-badge').textContent())?.includes('Kastell'),'Latin target is presented as a Kastell');
+  const latinStandard=await page.locator('#battleStage .battle-standard i').evaluate(el=>getComputedStyle(el,'::after').content);
+  assert(String(latinStandard).includes('SPQR'),'Latin standard carries the Roman SPQR identity');
+
+  await page.click('#battleAttackBtn');
+  await page.waitForSelector('#battleResultOverlay.visible');
+  const latinResultTitle=await page.locator('#battleResultTitle').textContent();
+  assert(/Kastell|Vorstoß|Wächter/.test(latinResultTitle||''),'Latin result stays in Roman vocabulary');
+  assert(!(latinResultTitle||'').includes('Festung'),'Latin result does not fall back to the English fortress label');
+  assert((await page.locator('#battleResultOverlay').getAttribute('data-visual-theme'))==='roman','Latin result overlay uses Roman theme');
+  assert(await page.locator('#battleResultArt').isHidden(),'Latin result does not borrow the English campaign artwork');
+
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer battle visual smoke: passed');
 }catch(error){
