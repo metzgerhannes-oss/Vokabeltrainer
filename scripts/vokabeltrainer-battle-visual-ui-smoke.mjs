@@ -106,6 +106,13 @@ try{
   const latinStandard=await page.locator('#battleStage .battle-standard i').evaluate(el=>getComputedStyle(el,'::after').content);
   assert(String(latinStandard).includes('SPQR'),'Latin standard carries the Roman SPQR identity');
 
+  await page.locator('#battleAttackBtn').scrollIntoViewIfNeeded();
+  const actionClearance=await page.evaluate(()=>{
+    const action=document.querySelector('#battleAttackBtn')?.getBoundingClientRect();
+    const nav=document.querySelector('.bottom-nav')?.getBoundingClientRect();
+    return action&&nav?Math.round(nav.top-action.bottom):0;
+  });
+  assert(actionClearance>=0,'fixed bottom navigation never covers the battle action');
   await page.click('#battleAttackBtn');
   await page.waitForSelector('#battleResultOverlay.visible');
   const latinResultTitle=await page.locator('#battleResultTitle').textContent();
