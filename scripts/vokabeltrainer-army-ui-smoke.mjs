@@ -53,7 +53,7 @@ try{
   assert((await page.locator('#attackBtn').textContent())?.includes('FESTUNG'),'primary game action clearly points to the fortress');
   assert((await page.locator('.frontline-own').textContent())?.includes('DEINE ARMEE'),'frontline labels the player side');
   assert((await page.locator('.frontline-target').textContent())?.includes('ZIEL'),'frontline labels the target side');
-  assert(await page.locator('#battlefield .battle-fortress').count()===1,'army command scene uses the detailed fortress silhouette instead of the legacy block fortress');
+  assert(await page.locator('#battlefield .battle-fortress').count()===1,'CSS fortress remains available only as a technical fallback');
   assert(await page.locator('#battlefield .fortress:not(.battle-fortress)').count()===0,'legacy mini fortress is absent from the army command scene');
   const commandVisual=await page.evaluate(()=>({
     loopColumns:getComputedStyle(document.querySelector('#campaignCard .game-loop')).gridTemplateColumns,
@@ -65,8 +65,17 @@ try{
   assert((await page.locator('.nav-btn[data-view="armyView"]').getAttribute('aria-current'))==='page','Armee is the active primary navigation area');
   await page.waitForFunction(()=>window.VTArmyArt?.ready===true);
   await page.waitForFunction(()=>document.querySelector('#battlefield.progress-army-artwork .progress-army-art')?.naturalWidth>0);
-  const commandArtOpacity=await page.locator('#battlefield .progress-army-art').evaluate(el=>parseFloat(getComputedStyle(el).opacity||'0'));
-  assert(commandArtOpacity>=0.75,'campaign artwork remains clearly visible instead of being heavily darkened');
+  await page.waitForFunction(()=>document.querySelector('#battlefield')?.classList.contains('integrated-campaign-artwork'));
+  const commandVisualScene=await page.evaluate(()=>({
+    opacity:parseFloat(getComputedStyle(document.querySelector('#battlefield .progress-army-art')).opacity||'0'),
+    fortressDisplay:getComputedStyle(document.querySelector('#battlefield .battle-fortress')).display,
+    armyDisplay:getComputedStyle(document.querySelector('#battlefield .army')).display,
+    artSrc:document.querySelector('#battlefield .progress-army-art')?.src||'',
+    targetSrc:window.VTBattleArt?.sceneUrl||''
+  }));
+  assert(commandVisualScene.opacity>=0.95,'integrated campaign artwork is fully visible');
+  assert(commandVisualScene.fortressDisplay==='none'&&commandVisualScene.armyDisplay==='none','painted army and fortress replace pasted-on CSS geometry');
+  assert(commandVisualScene.artSrc===commandVisualScene.targetSrc,'army overview reuses the cohesive battle campaign scene instead of a separate camp background');
   await page.waitForFunction(()=>document.querySelector('[data-army-hero-art]')?.naturalWidth>0);
   await page.waitForFunction(()=>document.querySelectorAll('#armyUnitGrid .army-unit-art.art-loaded').length===6);
   await page.waitForFunction(()=>document.querySelectorAll('#armyFormationField .army-formation-art.art-loaded').length===6);
