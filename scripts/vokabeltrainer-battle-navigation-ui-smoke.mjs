@@ -36,6 +36,10 @@ try{
   await activate('#battleReturnBtn','battle return action');
   await page.waitForSelector('#armyView.active');
   await page.evaluate(()=>{grantBattleTicket('dailyGoal');renderAll()});
+  assert(await page.locator('#gameLoopLearn.done').count()===1,'learning step becomes complete after the daily reward');
+  assert(await page.locator('#gameLoopAttack.current').count()===1,'attack becomes the current game step after learning');
+  assert((await page.locator('#attackBtn').textContent())?.includes('ANGRIFF STARTEN'),'primary action changes to attack when a ticket is ready');
+  assert((await page.locator('#gameTicketCount').textContent())?.includes('bereit'),'HUD shows the available game action');
   assert(await page.evaluate(()=>grantBattleTicket('duplicate-smoke'))===false,'same day cannot earn duplicate battle action');
 
   await activate('#attackBtn','battle entry');
