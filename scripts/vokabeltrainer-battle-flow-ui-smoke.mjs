@@ -1,7 +1,7 @@
 import { createBattleHarness } from './helpers/vokabeltrainer-battle-harness.mjs';
 
 const h=await createBattleHarness();
-const {browser,page,assert,activate,reset,openBattle,errors}=h;
+const {browser,page,assert,activate,reset,openBattle,waitForBattleResult,errors}=h;
 
 try{
   await reset({revealed:true,ticket:true});
@@ -29,8 +29,7 @@ try{
   assert((await page.locator('[data-battle-impact-damage]').textContent())===expectedRamDamage+' Schaden','visual hit callout uses the exact calculated damage');
   assert((await page.locator('[data-battle-impact-tactic]').textContent())?.includes('+10 durch Belagerung'),'visual hit callout explains the tactical contribution');
 
-  await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-finished')===true);
-  await page.waitForFunction(()=>document.querySelector('#battleResultOverlay')?.classList.contains('visible')===true);
+  await waitForBattleResult();
   assert((await page.locator('#battleResultTitle').textContent())?.includes('Festung erobert'),'victory opens a dedicated result view');
   const resultText=await page.locator('#battleResultOverlay').textContent();
   assert(resultText?.includes('+20 XP'),'result view shows the conquest reward');
@@ -57,8 +56,7 @@ try{
   assert(!(await page.locator('[data-battle-attack="special"]').isDisabled()),'high progress unlocks special attack');
   await activate('[data-battle-attack="special"]','special attack choice');
   await activate('#battleAttackBtn','battle primary action');
-  await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-finished')===true);
-  await page.waitForFunction(()=>document.querySelector('#battleResultOverlay')?.classList.contains('visible')===true);
+  await waitForBattleResult();
   assert((await page.locator('#battleResultTitle').textContent())?.includes('Boss besiegt'),'boss conquest opens result view');
   assert(await page.evaluate(()=>subjectProgress().pct)===100,'boss attack does not change academic mastery');
 
@@ -71,8 +69,7 @@ try{
   assert(await page.locator('.battle-tactics.hidden').count()===1,'after conquest tactics disappear and mission becomes securing');
   assert((await page.locator('#battleAttackBtn').textContent())?.includes('sichern'),'captured fortress offers securing action');
   await activate('#battleAttackBtn','battle primary action');
-  await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-finished')===true);
-  await page.waitForFunction(()=>document.querySelector('#battleResultOverlay')?.classList.contains('visible')===true);
+  await waitForBattleResult();
   assert((await page.locator('#battleResultTitle').textContent())?.includes('Festung gesichert'),'securing opens dedicated result');
   assert(await page.evaluate(()=>currentTestFortress().securedDates.length===1),'securing is stored on fortress');
 
