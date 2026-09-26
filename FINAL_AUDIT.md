@@ -1,9 +1,10 @@
 # Finales Audit
 
-Stand: 26.09.2026 · App v0.21.3
+Stand: 26.09.2026 · App v0.21.4
 
 ## Ergebnis
 
+- v0.21.4 korrigiert den im Livetest sichtbaren Army-Command-Screen: mobile Fortschrittsschritte werden kompakt horizontal geführt, Kampagnen-Artwork bleibt sichtbar, die technische Mini-Festung wird durch die detaillierte Festung ersetzt und Missionsinformationen werden als ruhige helle Ebene integriert. Die Änderung ist rein visuell und verändert keine fachliche oder spielmechanische Logik.
 - v0.21.3 schließt die Eingabe-Lücke durch Handy-Autovervollständigung und Schreibvorschläge: alle bewerteten Antwortfelder unterdrücken Browserhilfen; auf älteren Apple-WebKit-Versionen ohne verlässliche Abschaltung übernimmt **im Testcheck** eine eigene sichere Bildschirmtastatur. Normales Lernen behält die native Tastatur. Dadurch bleibt die abgegebene Testcheck-Antwort eine eigenständige Lernleistung, ohne die fachliche Bewertungslogik zu verändern.
 - v0.21.2 schließt den P0-Bewertungsfehler bei Platzhaltersätzen: typografische Platzhaltervarianten, Abstände und englische Kontraktions-Tokenisierung werden normalisiert; feste sprachliche Anker bleiben verbindlich. Intern unterscheidet die Quiz-Engine exakt richtig, richtig nach Normalisierung und wirklich falsch. Normalisierte richtige Antworten erzeugen keinen Lern- oder Orthografiefehler.
 - v0.21.1 führt die freigegebene visuelle Fach-DNA durchgängig ein: Start/Heute, Fortschrittskarte, Test-/Spielszene und Focused Learning unterscheiden Englisch und Latein sichtbar, während der Lernscreen bewusst ruhig und fachlich identisch bleibt. Die bisherige einheitlich dunkle Frontlinienästhetik wird durch fachbezogene Welten ersetzt; Französisch bleibt deaktiviert, seine Reise-/Etappen-Präsentation ist vorbereitet. Die Shell-Version wurde erhöht, damit installierte PWAs die neuen CSS-/JS-Dateien zuverlässig übernehmen.
