@@ -51,6 +51,13 @@ try{
   assert(second.seenAt===first.seenAt,'reopening preserves original reveal timestamp');
   assert(second.hidden===true,'same fortress is not revealed twice');
   assert((await page.locator('#battleReturnBtn').textContent())?.includes('Armee'),'battle return destination remains inside the game area');
+  await page.evaluate(()=>{showView('childProgressView');openBattleView()});
+  await page.waitForSelector('#battleView.active');
+  assert((await page.locator('#battleReturnBtn').textContent())?.includes('Armee'),'battle entered from progress falls back to Army instead of crossing into learning/progress');
+  await activate('#battleReturnBtn','battle progress fallback return');
+  await page.waitForSelector('#armyView.active');
+  await activate('#attackBtn','battle re-entry after progress fallback');
+  await page.waitForSelector('#battleView.active');
 
   await page.evaluate(()=>{window.VTCampaignMap.open()});
   await page.waitForSelector('#campaignMapView.active');
