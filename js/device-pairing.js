@@ -52,7 +52,16 @@
     const link=child?childInviteLink(token,profileName):parentInviteLink(token);
     const label=child?'Kindergerät':'Eltern-Gerät';
     modal(`<div class="eyebrow">iPhone / iPad</div><h2>Für den Home-Bildschirm vorbereiten</h2><p>Dieser ${label}-Link wurde in Safari geöffnet. Auf iOS 15 speichert die Home-Bildschirm-Web-App ihre Geräteverbindung getrennt.</p><div class="notice warn"><strong>Den Link nicht in Safari verbrauchen.</strong><br>1. Verbindungslink kopieren.<br>2. Vokabeltrainer über <strong>Teilen → Zum Home-Bildschirm</strong> hinzufügen.<br>3. Das neue App-Symbol öffnen.<br>4. ${child?'Dort <strong>Kindergerät verbinden</strong> wählen und den Link einfügen.':'Dort <strong>Familiensync einrichten → Weiteres Eltern-Gerät verbinden</strong> wählen und den Link einfügen.'}</div><div class="modal-actions stack-mobile"><button value="cancel" class="ghost">Später</button><button type="button" id="copyIosHomeInviteBtn" class="primary">Verbindungslink kopieren</button></div>`);
-    $('#copyIosHomeInviteBtn').onclick=()=>copyInviteLink(link);
+    $('#copyIosHomeInviteBtn').onclick=async()=>{
+      const btn=$('#copyIosHomeInviteBtn');
+      btn.disabled=true;
+      try{
+        const copied=await copyInviteLink(link);
+        if(!copied){btn.disabled=false;return}
+        clearInviteHash(kind);
+        closeModal();
+      }catch(_e){btn.disabled=false}
+    };
     return true;
   }
 
