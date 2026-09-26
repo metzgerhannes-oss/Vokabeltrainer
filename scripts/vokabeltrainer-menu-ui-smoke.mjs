@@ -54,9 +54,14 @@ try{
   await page.click('#saveProfile');
   await page.waitForFunction(()=>learner().avatarStyle==='male');
 
-  assert(await page.locator('.project-menu-link').count()===4,'menu exposes exactly four secondary routes');
+  assert(await page.locator('#homeView .project-menu-link').count()===0,'Today screen has no secondary game or progress route cards');
+  assert(await page.locator('#homeView #campaignCard').count()===0,'Today screen contains no campaign card');
+  assert(await page.locator('#homeView #cardboxOverviewCard').count()===0,'Today screen contains no cardbox');
+  assert(await page.locator('#homeView #testCheckCard').count()===0,'Today screen contains no test check');
+  const bottomNav=await page.locator('.bottom-nav .nav-btn').allTextContents();
+  assert(JSON.stringify(bottomNav.map(x=>x.trim()))===JSON.stringify(['⌂Heute','▥Lernen','⚔Armee','★Erfolge']),'child navigation is exactly Heute, Lernen, Armee, Erfolge');
   const bottomNavGrid=await page.locator('.bottom-nav').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
-  assert(bottomNavGrid===4,'child bottom navigation uses exactly four equal columns for Heute, Üben, Fortschritt and Armee');
+  assert(bottomNavGrid===4,'child bottom navigation uses exactly four equal columns');
   assert(await page.locator('#quickLearnHeroBtn').isVisible(),'Jetzt lernen stays visible');
   assert((await page.locator('#quickLearnHeroBtn').textContent())?.includes('Jetzt lernen'),'primary CTA is Jetzt lernen');
 
@@ -64,10 +69,6 @@ try{
   assert(stage&&stage.width/stage.height>1.65&&stage.width/stage.height<1.9,'menu stage keeps a landscape 16:9-like frame');
 
   const metrics=await page.evaluate(()=>({
-    learned:document.querySelector('#menuLearnedCount')?.textContent,
-    expected:String(subjectProgress().mastered),
-    castles:document.querySelector('#menuFortressCount')?.textContent,
-    rank:document.querySelector('#menuRankLabel')?.textContent,
     pct:subjectProgress().pct,
     avatarStage:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarStage,
     avatarKey:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarVisualKey,
@@ -79,9 +80,6 @@ try{
     avatarNaturalWidth:document.querySelector('#projectMenuAvatarArt')?.naturalWidth||0,
     avatarNaturalHeight:document.querySelector('#projectMenuAvatarArt')?.naturalHeight||0
   }));
-  assert(metrics.learned===metrics.expected,'learned KPI comes from academic progress');
-  assert(metrics.castles==='1','captured fortress KPI reflects actual captured test fortresses');
-  assert(!!metrics.rank,'rank is rendered');
   assert(metrics.pct===50,'seed creates deterministic 50 percent mastery');
   assert(metrics.avatarStage==='3','50 percent academic progress maps to avatar stage 3');
   assert(metrics.avatarKey==='english-male-stage-3','avatar exposes a stable profile-specific artwork key');
@@ -112,28 +110,28 @@ try{
   const boundaries=await page.evaluate(()=>[0,17,18,35,36,53,54,71,72,89,90,100].map(p=>[p,avatarStageFor(p,'english').level]));
   assert(JSON.stringify(boundaries)===JSON.stringify([[0,1],[17,1],[18,2],[35,2],[36,3],[53,3],[54,4],[71,4],[72,5],[89,5],[90,6],[100,6]]),'avatar stage thresholds stay deterministic');
 
-  await page.click('#menuArmyBtn');
+  await page.click('.nav-btn[data-view="practiceView"]');
+  await page.waitForSelector('#practiceView.active');
+  assert(await page.locator('#practiceView #cardboxOverviewCard').isVisible(),'cardbox lives in Lernen');
+  assert(await page.locator('#practiceView #campaignCard').count()===0,'Lernen contains no campaign UI');
+  assert(await page.locator('#practiceView .practice-path').count()===4,'Lernen exposes the four learning routes');
+
+  await page.click('.nav-btn[data-view="armyView"]');
   await page.waitForSelector('#armyView.active');
-  await page.click('#armyBackBtn');
-  await page.waitForSelector('#homeView.active');
-
-  await page.click('#menuCampaignBtn');
+  assert(await page.locator('#armyView #campaignCard').isVisible(),'campaign lives in Armee');
+  assert(await page.locator('#armyView #cardboxOverviewCard').count()===0,'Armee contains no cardbox');
+  assert((await page.locator('.nav-btn[data-view="armyView"]').getAttribute('aria-current'))==='page','Armee navigation stays active in game hub');
+  await page.click('#campaignMapBtn');
   await page.waitForSelector('#campaignMapView.active');
+  assert((await page.locator('.nav-btn[data-view="armyView"]').getAttribute('aria-current'))==='page','Armee navigation stays active on campaign map');
   await page.click('#campaignMapBackBtn');
-  await page.waitForSelector('#homeView.active');
+  await page.waitForSelector('#armyView.active');
 
-  await page.click('#menuCardboxBtn');
+  await page.click('.nav-btn[data-view="childProgressView"]');
   await page.waitForSelector('#childProgressView.active');
-  await page.waitForFunction(()=>document.activeElement?.id==='cardboxOverviewCard');
-
-  await page.evaluate(()=>window.VTMenuUi.openHome());
-  await page.waitForSelector('#homeView.active');
-  await page.click('#menuAchievementsBtn');
-  await page.waitForSelector('#childProgressView.active');
-  await page.waitForFunction(()=>document.activeElement?.id==='progressOverviewCard');
-  assert(await page.locator('#battlefield [data-progress-army-art]').isVisible(),'English progress view reuses the high-quality army artwork');
-  assert((await page.locator('#battlefield [data-progress-army-art]').getAttribute('src'))?.startsWith('blob:'),'progress army artwork is reconstructed locally for offline use');
-  assert(await page.locator('#progressMenuBtn').isVisible(),'progress, cardbox and achievements keep an explicit route back to the menu');
+  assert(await page.locator('#progressOverviewCard').isVisible(),'Erfolge shows academic progress');
+  assert(await page.locator('#childProgressView #campaignCard').count()===0,'Erfolge contains no campaign UI');
+  assert(await page.locator('#childProgressView #cardboxOverviewCard').count()===0,'Erfolge contains no cardbox');
   await page.click('#progressMenuBtn');
   await page.waitForSelector('#homeView.active .project-menu-stage');
 
@@ -149,8 +147,8 @@ try{
   assert(errors.length===0,'menu navigation must not produce browser errors: '+errors.join(' | '));
   console.log('Vokabeltrainer Project Menu smoke: passed');
   console.log('✓ landscape menu shell and dominant learning CTA');
-  console.log('✓ KPI banner uses existing academic/campaign data');
-  console.log('✓ army, campaign, cardbox and achievements routes');
+  console.log('✓ Today contains only avatar and daily learning action');
+  console.log('✓ Lernen, Armee and Erfolge are structurally separated');
   console.log('✓ six avatar stages are deterministic and learning-derived');
   console.log('✓ male/female avatar style is learner-profile-specific and mastery-neutral');
   console.log('✓ English male uses matching full-body offline artwork for its computed stage');
