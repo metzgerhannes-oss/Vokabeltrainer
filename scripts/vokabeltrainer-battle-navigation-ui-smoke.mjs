@@ -5,7 +5,7 @@ const {browser,page,assert,activate,reset,errors,diagnose}=await createBattleHar
 try{
   await reset({revealed:false,ticket:false});
   assert(!(await page.locator('#attackBtn').isDisabled()),'planned fortress remains viewable before daily reward');
-  assert((await page.locator('#attackBtn').textContent())?.includes('Festung'),'campaign card points to test fortress');
+  assert((await page.locator('#attackBtn').textContent())?.toUpperCase().includes('FESTUNG'),'game command points clearly to the current fortress');
 
   await activate('#attackBtn','battle entry');
   await page.waitForSelector('#battleView.active');
