@@ -8,6 +8,10 @@
   --menu-surface-3:#e8eef5;
   --menu-accent:#274c77;
   --menu-accent-soft:#dce9f5;
+  --menu-accent-border:#c8d8e7;
+  --menu-evolution-bg:rgba(23,32,51,.88);
+  --menu-pip:#d5bd67;
+  --menu-cta-shadow:rgba(39,76,119,.28);
   --menu-ink:#172033;
   position:relative;
   isolation:isolate;
@@ -26,15 +30,18 @@
 }
 .project-menu-stage[data-visual-theme="campaign"]{
   --menu-surface-1:#f7fafc;--menu-surface-2:#edf3f5;--menu-surface-3:#e7efe9;
-  --menu-accent:#274c77;--menu-accent-soft:rgba(119,154,118,.20);
+  --menu-accent:#274c77;--menu-accent-soft:rgba(119,154,118,.20);--menu-accent-border:#bfd0da;
+  --menu-evolution-bg:rgba(23,32,51,.88);--menu-pip:#d5bd67;--menu-cta-shadow:rgba(39,76,119,.28);
 }
 .project-menu-stage[data-visual-theme="roman"]{
   --menu-surface-1:#fbf8f1;--menu-surface-2:#f1e8d8;--menu-surface-3:#e8ddca;
-  --menu-accent:#8b3f31;--menu-accent-soft:rgba(176,116,72,.18);--menu-ink:#3d2c24;
+  --menu-accent:#8b3f31;--menu-accent-soft:rgba(176,116,72,.18);--menu-accent-border:#d9c1a7;
+  --menu-evolution-bg:rgba(61,44,36,.90);--menu-pip:#c99548;--menu-cta-shadow:rgba(139,63,49,.25);--menu-ink:#3d2c24;
 }
 .project-menu-stage[data-visual-theme="voyage"]{
   --menu-surface-1:#faf9f5;--menu-surface-2:#edf2f1;--menu-surface-3:#e8ece8;
-  --menu-accent:#315d73;--menu-accent-soft:rgba(107,145,142,.17);--menu-ink:#24363d;
+  --menu-accent:#315d73;--menu-accent-soft:rgba(107,145,142,.17);--menu-accent-border:#c8d8d5;
+  --menu-evolution-bg:rgba(36,54,61,.88);--menu-pip:#9aa77b;--menu-cta-shadow:rgba(49,93,115,.24);--menu-ink:#24363d;
 }
 .project-menu-scenery{position:absolute;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
 .project-menu-scenery::before{
@@ -262,11 +269,11 @@
 #homeView .project-menu-stage[data-visual-theme="roman"]{border-color:#dfcfb8}
 #homeView .project-menu-stage[data-visual-theme="voyage"]{border-color:#d5e0de}
 #homeView .project-menu-stage .project-menu-head{color:var(--menu-ink)}
-#homeView .project-menu-stage .project-menu-subject-context>.pill{border-color:color-mix(in srgb,var(--menu-accent) 22%,#ffffff);color:var(--menu-accent)}
+#homeView .project-menu-stage .project-menu-subject-context>.pill{border-color:var(--menu-accent-border);color:var(--menu-accent)}
 #homeView .project-menu-stage .project-menu-subjects button.active{background:var(--menu-accent);color:#fff}
-#homeView .project-menu-stage .project-menu-avatar-evolution{background:color-mix(in srgb,var(--menu-ink) 88%,transparent)}
-#homeView .project-menu-stage .project-menu-avatar-stage-pips i.filled{background:color-mix(in srgb,var(--menu-accent) 72%,#f7d66f)}
-#homeView .project-menu-stage .project-menu-learning-card .today-cta{box-shadow:0 9px 22px color-mix(in srgb,var(--menu-accent) 28%,transparent)}
+#homeView .project-menu-stage .project-menu-avatar-evolution{background:var(--menu-evolution-bg)}
+#homeView .project-menu-stage .project-menu-avatar-stage-pips i.filled{background:var(--menu-pip)}
+#homeView .project-menu-stage .project-menu-learning-card .today-cta{box-shadow:0 9px 22px var(--menu-cta-shadow)}
 #homeView .project-menu-stage[data-visual-theme="roman"] .project-menu-avatar-standard::before{background:linear-gradient(145deg,#7d3026,#a84c3c)}
 #homeView .project-menu-stage[data-visual-theme="roman"] .project-menu-avatar-crest{border-color:#8a6224;background:linear-gradient(145deg,#dfc47d,#b78032);color:#4b3517}
 #homeView .project-menu-stage[data-visual-theme="voyage"] .project-menu-avatar-standard,
