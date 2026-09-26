@@ -4,11 +4,21 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.21.5**
+App-Version: **v0.21.6**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.21.6 – Campaign Target Design
+
+- Englisch-Kampagne nutzt in Armeeübersicht und Schlacht dieselbe zusammenhängende Kampagnenszene
+- aufgesetzte CSS-Armee und CSS-Festung werden bei geladener Illustration vollständig ausgeblendet
+- Battle-Screen folgt dem freigegebenen Target-Design: Kapitelkarte, 2×2-KPI-HUD über der Szene, Festungsstatus im Bild, große visuelle Angriffskarten
+- gemalte Battle-Illustration ist wieder voll sichtbar statt nur schwache Hintergrundtextur
+- Angriffsarten nutzen große Bildflächen aus der Kampagnenillustration statt kleiner textlastiger Buttons
+- Visual-DNA verbietet künftig Hintergrundbild + separat aufgesetzte CSS-Festung/Armee
+- keine Änderung an Lernbewertung, Mastery, Testplanung oder Battle-Berechnung
 
 ## v0.21.5 – Battle Result Accessibility
 
