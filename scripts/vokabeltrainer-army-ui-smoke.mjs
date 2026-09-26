@@ -126,6 +126,29 @@ try{
   assert((await page.locator('#campaignMapBoard .campaign-map-unknown').textContent())?.includes('Neue Tests erscheinen automatisch'),'map explains dynamic future growth');
   assert(await page.locator('#campaignMapBoard .status-active').count()===1,'nearest planned test is the active map target');
   assert((await page.locator('#campaignMapDetail').textContent())?.includes('Aktuelles Testziel'),'active target opens its real test detail');
+  assert(!(await page.locator('#campaignMapDetail').isHidden()),'campaign detail is visible for the selected target');
+
+  await page.click('#campaignMapBoard .campaign-map-station.selected');
+  assert(await page.locator('#campaignMapDetail').isHidden(),'second click on the selected target closes the detail completely');
+  await page.evaluate(()=>VTCampaignMap.render());
+  assert(await page.locator('#campaignMapDetail').isHidden(),'a deliberate close survives a campaign rerender');
+
+  await page.click('#campaignMapBoard .status-active .campaign-map-station');
+  assert(!(await page.locator('#campaignMapDetail').isHidden()),'target can be selected again after dismissal');
+  await page.keyboard.press('Escape');
+  assert(await page.locator('#campaignMapDetail').isHidden(),'Escape closes campaign detail');
+
+  await page.click('#campaignMapBoard .status-active .campaign-map-station');
+  await page.evaluate(()=>{
+    const route=document.querySelector('.campaign-map-route');
+    route?.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));
+    route?.dispatchEvent(new MouseEvent('click',{bubbles:true}));
+  });
+  assert(await page.locator('#campaignMapDetail').isHidden(),'clicking the free route or connection path closes campaign detail');
+
+  await page.click('#campaignMapBoard .status-active .campaign-map-station');
+  await page.click('#campaignMapDetail [data-campaign-detail-close]');
+  assert(await page.locator('#campaignMapDetail').isHidden(),'explicit close button hides campaign detail');
   const mapBefore=await page.evaluate(()=>VTCampaignMap.stations().map(x=>x.key));
   await page.evaluate(()=>{
     state.sets.push({id:'army_future_set',learnerId:'learner_demo',subject:'english',title:'Later Unit',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(21),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()});
