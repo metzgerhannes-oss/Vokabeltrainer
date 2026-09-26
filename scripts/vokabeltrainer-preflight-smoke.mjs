@@ -16,6 +16,8 @@ const manifest=JSON.parse(read('manifest.webmanifest'));
 const dna=read('PRODUCT_DNA.md');
 const readme=read('README.md');
 const finalAudit=read('FINAL_AUDIT.md');
+const v1Acceptance=read('V1_ACCEPTANCE_TEST.md');
+const ciWorkflow=read('.github/workflows/ci.yml');
 const allJs=fs.readdirSync('js').filter(x=>x.endsWith('.js')).map(x=>read('js/'+x)).join('\n');
 
 const passed=[];
@@ -29,6 +31,8 @@ assert(app.includes("sw.js?v="+version),'service-worker registration uses curren
 assert(sw.includes("APP_VERSION='"+version+"'"),'service-worker app version matches');
 assert(readme.includes('App-Version: **v'+version+'**'),'README version matches app version');
 assert(finalAudit.includes('App v'+version),'FINAL_AUDIT version matches app version');
+assert(v1Acceptance.includes('Basis: v'+version),'V1 acceptance basis matches app version');
+assert(ciWorkflow.includes('Chromium deep responsive UI audit')&&ciWorkflow.includes('BROWSER_ENGINE=chromium'),'Chromium responsive UI audit is part of the release CI');
 
 const csp=html.match(/Content-Security-Policy" content="([^"]+)"/)?.[1]||'';
 assert(csp&&!csp.includes("'unsafe-inline'")&&!csp.includes("'unsafe-eval'"),'CSP stays free of unsafe-inline and unsafe-eval');

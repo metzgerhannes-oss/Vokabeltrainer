@@ -198,6 +198,9 @@ jobs:
       - name: Chromium service-worker offline smoke
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-sw-browser-smoke.mjs
 
+      - name: Chromium deep responsive UI audit
+        run: APP_BASE=http://127.0.0.1:4173 BROWSER_ENGINE=chromium node scripts/vokabeltrainer-deep-ui-audit.mjs
+
   browser-game:
     name: browser-game
     needs: preflight

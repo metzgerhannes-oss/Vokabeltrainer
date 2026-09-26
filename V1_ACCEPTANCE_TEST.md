@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 26.09.2026 · Basis: v0.19.15
+Stand: 26.09.2026 · Basis: v0.21.3 · Release-Commit: `aeff3801d9da4078fa9cbc33670821d6bb6c1355`
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -259,6 +259,7 @@ Mindestens prüfen:
 
 - [ ] iPhone / Safari oder WebKit-nahe Ansicht
 - [ ] Android / Chromium, falls verfügbar
+  - Automatisiert ergänzt: Chromium-Responsive-Audit über 320 / 375 / 390 / 820 / 1440 px; ersetzt keinen Test auf physischer Android-Hardware.
 - [ ] Desktop Chromium (Windows)
 - [ ] 320 px Breite
 - [ ] 375 / 390 px Breite
@@ -293,19 +294,21 @@ Mindestens prüfen:
 
 # E. Abschlussprüfung vor v1.0
 
-Automatisiert:
+Automatisiert – Snapshot für **v0.21.3 / Release-Commit `aeff3801d9da4078fa9cbc33670821d6bb6c1355`**:
 
-- [ ] vollständige CI grün
-- [ ] Browser-/WebKit-Smokes grün
-- [ ] Evidence-Core-Guard grün
-- [ ] Battle-Smoke grün
-- [ ] Security-/CSP-Smokes grün
-- [ ] Parent-Docs-/PDF-Test grün
-- [ ] Backup-/Restore-Browser-Smoke grün
-- [ ] Offline-/Service-Worker-Smoke grün
-- [ ] Family-Sync-Test grün
-- [ ] GitHub-Pages-Deployment grün
-- [ ] README, FINAL_AUDIT und App-Version stimmen überein
+- [x] vollständige CI grün
+- [x] Browser-/WebKit-Smokes grün
+- [x] Evidence-Core-Guard grün
+- [x] Battle-Smoke grün
+- [x] Security-/CSP-Smokes grün
+- [x] Parent-Docs-/PDF-Test grün
+- [x] Backup-/Restore-Browser-Smoke grün
+- [x] Offline-/Service-Worker-Smoke grün
+- [x] Family-Sync-Test grün
+- [x] GitHub-Pages-Deployment grün
+- [x] README, FINAL_AUDIT und App-Version stimmen überein
+
+Diese Häkchen dokumentieren ausschließlich den genannten Release-Stand. Die folgenden praktischen Abnahmen bleiben bewusst offen und können nicht durch CI ersetzt werden.
 
 Praktisch:
 
