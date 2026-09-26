@@ -12,12 +12,6 @@ try{
   assert(await page.locator('.battle-stage-wrap > .battle-scene-hud').count()===1,'battle KPIs live inside the scene wrapper');
   assert(await page.locator('.battle-stage-wrap > .battle-scene-tactics').count()===1,'battle tactics are attached directly to the scene');
   assert(await page.locator('#battleFullscreenBtn').isVisible(),'battle fullscreen control remains visible');
-  await activate('#battleFullscreenBtn','battle fullscreen entry');
-  assert(await page.evaluate(()=>document.body.classList.contains('battle-immersive')),'battle fullscreen enters immersive scene mode');
-  assert(await page.locator('#battleStage').isVisible(),'battle stage remains visible in immersive mode');
-  assert(await page.locator('.battle-scene-tactics').isVisible(),'battle tactics remain accessible in immersive mode');
-  await activate('#battleFullscreenBtn','battle fullscreen exit');
-  assert(!(await page.evaluate(()=>document.body.classList.contains('battle-immersive'))),'battle fullscreen can be exited');
   const first=await page.evaluate(()=>{
     const f=currentTestFortress(),stage=document.querySelector('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
     return {
@@ -41,6 +35,12 @@ try{
     renderBattleView();
   });
   assert(await page.locator('#battleStage [data-battle-target-reveal]').isHidden(),'reveal reaches stable hidden state');
+  await activate('#battleFullscreenBtn','battle fullscreen entry');
+  assert(await page.evaluate(()=>document.body.classList.contains('battle-immersive')),'battle fullscreen enters immersive scene mode');
+  assert(await page.locator('#battleStage').isVisible(),'battle stage remains visible in immersive mode');
+  assert(await page.locator('.battle-scene-tactics').isVisible(),'battle tactics remain accessible in immersive mode');
+  await activate('#battleFullscreenBtn','battle fullscreen exit');
+  assert(!(await page.evaluate(()=>document.body.classList.contains('battle-immersive'))),'battle fullscreen can be exited');
 
   await activate('#battleReturnBtn','battle return action');
   await page.waitForSelector('#armyView.active');
