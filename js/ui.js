@@ -205,7 +205,6 @@ function renderBattleView(){
 }
 let battleReturnView='armyView';
 const BATTLE_RETURN_META={
-  childProgressView:{back:'← Fortschritt',bottom:'Zurück zum Fortschritt'},
   armyView:{back:'← Meine Armee',bottom:'Zurück zu meiner Armee'},
   armyUnitView:{back:'← Einheit',bottom:'Zurück zur Einheit'},
   campaignMapView:{back:'← Mein Feldzug',bottom:'Zurück zum Feldzug'}
@@ -213,10 +212,10 @@ const BATTLE_RETURN_META={
 function captureBattleReturnView(){
   const source=document.querySelector('.view.active')?.id;
   if(BATTLE_RETURN_META[source])battleReturnView=source;
-  else if(!BATTLE_RETURN_META[battleReturnView])battleReturnView='armyView';
+  else battleReturnView='armyView';
 }
 function renderBattleReturnUi(){
-  const meta=BATTLE_RETURN_META[battleReturnView]||BATTLE_RETURN_META.childProgressView;
+  const meta=BATTLE_RETURN_META[battleReturnView]||BATTLE_RETURN_META.armyView;
   if($('#battleBackBtn'))$('#battleBackBtn').textContent=meta.back;
   if($('#battleReturnBtn'))$('#battleReturnBtn').textContent=meta.bottom;
 }
