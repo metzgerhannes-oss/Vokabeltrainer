@@ -106,7 +106,25 @@ try{
   const latinStandard=await page.locator('#battleStage .battle-standard i').evaluate(el=>getComputedStyle(el,'::after').content);
   assert(String(latinStandard).includes('SPQR'),'Latin standard carries the Roman SPQR identity');
 
-  await page.click('#battleAttackBtn');
+  const actionAccess=await page.evaluate(()=>{
+    const button=document.querySelector('#battleAttackBtn'),nav=document.querySelector('.bottom-nav');
+    button?.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
+    button?.focus({preventScroll:true});
+    const action=button?.getBoundingClientRect(),navRect=nav?.getBoundingClientRect();
+    if(!button||!action||!navRect)return {overlap:true,hit:false,focused:false};
+    const overlap=!(action.right<=navRect.left||action.left>=navRect.right||action.bottom<=navRect.top||action.top>=navRect.bottom);
+    const x=action.left+action.width/2,y=action.top+action.height/2;
+    const hit=document.elementFromPoint(x,y);
+    return {
+      overlap,
+      hit:hit===button||button.contains(hit),
+      focused:document.activeElement===button
+    };
+  });
+  assert(actionAccess.overlap===false,'navigation never geometrically overlaps the battle action');
+  assert(actionAccess.hit,'battle action remains the topmost hit target after scrolling');
+  assert(actionAccess.focused,'battle action remains keyboard-focusable');
+  await page.keyboard.press('Enter');
   await page.waitForSelector('#battleResultOverlay.visible');
   const latinResultTitle=await page.locator('#battleResultTitle').textContent();
   assert(/Kastell|Vorstoß|Wächter/.test(latinResultTitle||''),'Latin result stays in Roman vocabulary');
