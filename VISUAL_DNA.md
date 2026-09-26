@@ -418,15 +418,18 @@ beantwortet wird:
 
 ## 14. Vier Master-Keyframes für Phase 2
 
-Die nächsten visuellen Referenzen werden in dieser Reihenfolge erstellt:
+**Status: visuelle Grundrichtung am 26.09.2026 freigegeben.**
+
+Die freigegebene 2×2-Leitbildtafel definiert gemeinsam die vier Referenzwelten:
 
 1. **English – The Campaign:** Gruppe → Landschaft/Weg → Festung
 2. **Latin – The Legion:** Legion → Römerstraße → Kastell
 3. **Français – Le Voyage:** Reisefigur → Reiseweg → Zielort
 4. **Deutsch – Der Fuchs:** Fuchs → Lernpfad → nächste Lernstation
 
-Diese vier Keyframes werden nach Freigabe zur visuellen Referenz für nachfolgende
-Start-, Karten-, Lern- und Testscreen-Illustrationen.
+Diese vier Keyframes sind damit die visuelle Referenz für die nachfolgende Übertragung auf
+Start-, Karten-, Lern- und Testscreen. Einzelne spätere Illustrationen dürfen Details
+verfeinern, aber nicht die freigegebene Grundrichtung verlassen.
 
 ## 15. Änderungsregel
 
