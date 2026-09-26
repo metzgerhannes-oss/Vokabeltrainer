@@ -297,3 +297,11 @@ body.lrs-mode .army-unit-card,body.lrs-mode .army-command,body.lrs-mode .army-un
   .army-bonus-grid{grid-template-columns:1fr}
   .army-bonus{min-width:0}
 }
+
+
+/* v0.20.0 – Spielbereich bündelt Kampagne, Schlacht und Armee */
+.army-game-hub{display:grid;gap:12px;padding:18px;border:1px solid rgba(130,103,55,.34);border-radius:22px;background:linear-gradient(180deg,rgba(255,248,229,.82),rgba(244,232,203,.72));box-shadow:0 12px 30px rgba(41,31,18,.08)}
+.army-game-hub>.army-section-head{margin:0}
+.army-game-hub .campaign-card{margin:0;background:rgba(255,255,255,.86);border-color:rgba(133,103,48,.28);box-shadow:none}
+.army-game-hub .campaign-card .row.gap.wrap{margin-top:12px}
+@media(max-width:720px){.army-game-hub{padding:12px;border-radius:18px}}
