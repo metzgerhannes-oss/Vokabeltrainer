@@ -1,14 +1,45 @@
 'use strict';
 (() => {
-  const PLACES=['Silberhain','Graufurt','Rotfels','Nebelpass','Eichenwacht','Morgenfels','Falkenfurt','Sternklamm','Westhain','Hochwacht','Mondfurt','Steinbrück'];
-  const REGIONS={autumn:'Herbstmark',winter:'Winterwald',spring:'Frühlingslande',summer:'Sommerhöhe'};
+  const MAP_THEMES=Object.freeze({
+    campaign:Object.freeze({
+      places:['Silberhain','Graufurt','Rotfels','Nebelpass','Eichenwacht','Morgenfels','Falkenfurt','Sternklamm','Westhain','Hochwacht','Mondfurt','Steinbrück'],
+      regions:{autumn:'Herbstmark',winter:'Winterwald',spring:'Frühlingslande',summer:'Sommerhöhe'},
+      viewTitle:'Mein Feldzug',routeLabel:'KAMPAGNENPFAD',won:n=>`${n} Ziele erreicht`,next:'NÄCHSTER SCHRITT',
+      startKicker:'DEIN LAGER',startTitle:'Die Kampagne beginnt',unknownKicker:'UNERKUNDETES GEBIET',unknownTitle:'Nächstes Ziel',
+      unknownText:'Neue Tests erscheinen automatisch, sobald sie geplant werden.',yearKicker:'FERNZIEL',yearTitle:'Jahresfestung',
+      yearDone:'Schuljahr gemeistert',yearOpen:p=>`${p}% Schuljahresfortschritt`,detailProgress:'Festungsfortschritt',
+      captured:'Festung erobert',secured:'Festung gesichert',securedDetail:n=>`${n} Sicherungstage`,hold:'Bis zum Test halten',
+      active:'Aktuelles Testziel',planned:'Ziel entdeckt',awaiting:'Ergebnis offen'
+    }),
+    roman:Object.freeze({
+      places:['Kastell Aurelia','Adlerpass','Via Serena','Olivenhöhe','Porta Nova','Steinbrücke','Forumtal','Kastell Lucerna','Zypressenhain','Sonnenhügel','Via Magna','Tor am Fluss'],
+      regions:{autumn:'Olivenprovinz',winter:'Winterlager',spring:'Frühlingsstraße',summer:'Sonnenprovinz'},
+      viewTitle:'Marschroute der Legion',routeLabel:'RÖMISCHE MARSCHROUTE',won:n=>`${n} Etappen gesichert`,next:'NÄCHSTE ETAPPE',
+      startKicker:'MARSCHLAGER',startTitle:'Die Legion bricht auf',unknownKicker:'UNBEKANNTE PROVINZ',unknownTitle:'Nächste Etappe',
+      unknownText:'Neue Prüfungsziele erscheinen entlang der Straße, sobald sie geplant werden.',yearKicker:'TRIUMPHZIEL',yearTitle:'Triumphort',
+      yearDone:'Schuljahr gemeistert',yearOpen:p=>`${p}% auf dem Weg zum Triumphort`,detailProgress:'Kastellfortschritt',
+      captured:'Kastell eingenommen',secured:'Kastell gesichert',securedDetail:n=>`${n} Sicherungstage`,hold:'Bis zur Prüfung halten',
+      active:'Aktuelles Kastell',planned:'Etappe voraus',awaiting:'Ergebnis offen'
+    }),
+    voyage:Object.freeze({
+      places:['Belle-Rive','Pont-Clair','Mont-Lumière','Val-Fleuri','Rive-Dorée','Belle-Place','Fontaine-Claire','Port-Lumière','Jardin-Neuf','Pont-des-Fleurs','Côte-Claire','Ville-Jolie'],
+      regions:{autumn:'Herbstetappe',winter:'Winterreise',spring:'Frühlingsroute',summer:'Sommerroute'},
+      viewTitle:'Meine Sprachreise',routeLabel:'REISEWEG',won:n=>`${n} Etappen entdeckt`,next:'NÄCHSTER ORT',
+      startKicker:'AUFBRUCH',startTitle:'Die Sprachreise beginnt',unknownKicker:'NOCH OFFEN',unknownTitle:'Nächster Ort',
+      unknownText:'Neue Reiseziele erscheinen automatisch, sobald Tests geplant werden.',yearKicker:'FERNZIEL',yearTitle:'Jahresziel',
+      yearDone:'Sprachreise gemeistert',yearOpen:p=>`${p}% der Jahresreise geschafft`,detailProgress:'Etappenfortschritt',
+      captured:'Ziel erreicht',secured:'Etappe gefestigt',securedDetail:n=>`${n} Wiederholungstage`,hold:'Bis zum Test weiter festigen',
+      active:'Aktuelle Sprachmission',planned:'Neuer Ort entdeckt',awaiting:'Ergebnis offen'
+    })
+  });
+  const themeFor=subject=>MAP_THEMES[typeof subjectVisualTheme==='function'?subjectVisualTheme(subject):'campaign']||MAP_THEMES.campaign;
   let selectedKey='',selectionDismissed=false;
   const safe=v=>typeof esc==='function'?esc(String(v??'')):String(v??'');
   function bounds(year=currentSchoolYear()){const y=Number(String(year).split('/')[0])||new Date().getFullYear();return {start:`${y}-08-01`,end:`${y+1}-07-31`}}
   function inYear(date,year=currentSchoolYear()){if(!/^\d{4}-\d{2}-\d{2}$/.test(String(date||'')))return false;const b=bounds(year);return date>=b.start&&date<=b.end}
   function region(date){const m=Number(String(date||'').slice(5,7))||9;if(m===12||m<=2)return'winter';if(m<=5&&m>=3)return'spring';if(m<=7&&m>=6)return'summer';return'autumn'}
   function hash(v){let h=2166136261;for(const ch of String(v||'')){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
-  const place=(subject,date)=>PLACES[hash(subject+':'+date)%PLACES.length];
+  const place=(subject,date)=>{const places=themeFor(subject).places;return places[hash(subject+':'+date)%places.length]};
   const dateLabel=d=>typeof formatDateShort==='function'?formatDateShort(d):d;
 
   function grouped(subject,year){
@@ -39,47 +70,49 @@
     if(row.date<today())return'awaiting';
     return'planned';
   }
-  function meta(st,row){
-    const d=typeof daysUntil==='function'?daysUntil(row.date):0;
+  function meta(st,row,subject){
+    const t=themeFor(subject),d=typeof daysUntil==='function'?daysUntil(row.date):0;
     if(st==='completed')return['Test abgeschlossen',`Note ${row.grade?.grade||'–'} eingetragen`];
-    if(st==='secured')return['Festung gesichert',`${row.fortress?.securedDates?.length||0} Sicherungstage`];
-    if(st==='captured')return['Festung erobert','Bis zum Test halten'];
-    if(st==='active')return['Aktuelles Testziel',d===0?'Test ist heute':d===1?'Test ist morgen':`Test in ${d} Tagen`];
-    if(st==='awaiting')return['Ergebnis offen','Test vorbei · Note noch nicht eingetragen'];
-    return['Ziel entdeckt',d===0?'heute':d===1?'morgen':d>1?`in ${d} Tagen`:'geplant'];
+    if(st==='secured')return[t.secured,t.securedDetail(row.fortress?.securedDates?.length||0)];
+    if(st==='captured')return[t.captured,t.hold];
+    if(st==='active')return[t.active,d===0?'Test ist heute':d===1?'Test ist morgen':`Test in ${d} Tagen`];
+    if(st==='awaiting')return[t.awaiting,'Test vorbei · Note noch nicht eingetragen'];
+    return[t.planned,d===0?'heute':d===1?'morgen':d>1?`in ${d} Tagen`:'geplant'];
   }
   function stations(subject=state.activeSubject,year=currentSchoolYear()){
     const rows=[...grouped(subject,year).values()].sort((a,b)=>a.date.localeCompare(b.date));
     const current=typeof currentTestFortress==='function'?currentTestFortress(subject):null;
     return rows.map((row,index)=>{
       if(!row.fortress&&current?.testDate===row.date)row.fortress=current;
-      const st=status(row,current),m=meta(st,row),reg=region(row.date),mx=Math.max(1,Number(row.fortress?.maxDefense)||1),def=Math.max(0,Number(row.fortress?.defense)||0);
+      const st=status(row,current),m=meta(st,row,subject),reg=region(row.date),mx=Math.max(1,Number(row.fortress?.maxDefense)||1),def=Math.max(0,Number(row.fortress?.defense)||0);
       return {key:`test:${subject}:${row.date}`,index,date:row.date,subject,region:reg,status:st,title:row.fortress?.name?`${row.fortress.name} von ${place(subject,row.date)}`:`Ziel bei ${place(subject,row.date)}`,statusLabel:m[0],statusDetail:m[1],scopeText:row.scopeText||row.fortress?.scopeText||'Testumfang noch nicht festgelegt',wordCount:row.wordCount||row.fortress?.wordCount||0,reviewOpen:!!row.reviewOpen,fortress:row.fortress,grade:row.grade,series:row.series,siegePct:row.fortress?Math.max(0,Math.min(100,Math.round((1-def/mx)*100))):0};
     });
   }
   function icon(s){if(s.status==='completed')return'✓';if(s.status==='secured'||s.status==='captured')return'⚑';if(s.status==='active')return'♜';if(s.status==='awaiting')return'!';return'◇'}
   function stop(s){
-    const side=s.index%2?'right':'left',order=s.index+1;
-    return `<article class="campaign-map-stop region-${s.region} side-${side} status-${s.status}" data-map-order="${order}"><div class="campaign-map-route-node" aria-hidden="true"><span>${icon(s)}</span><b>${order}</b></div><button type="button" class="campaign-map-station" data-campaign-station="${safe(s.key)}"><small>Ziel ${order} · ${safe(REGIONS[s.region])} · ${safe(dateLabel(s.date))}</small><strong>${safe(s.title)}</strong><span>${safe(s.statusLabel)} · ${safe(s.statusDetail)}</span>${s.fortress?`<progress max="100" value="${s.siegePct}" aria-label="Belagerungsfortschritt"></progress>`:''}${s.grade?`<b class="campaign-map-grade">Note ${safe(s.grade.grade)}</b>`:''}</button></article>`;
+    const side=s.index%2?'right':'left',order=s.index+1,t=themeFor(s.subject);
+    return `<article class="campaign-map-stop region-${s.region} side-${side} status-${s.status}" data-map-order="${order}"><div class="campaign-map-route-node" aria-hidden="true"><span>${icon(s)}</span><b>${order}</b></div><button type="button" class="campaign-map-station" data-campaign-station="${safe(s.key)}"><small>Etappe ${order} · ${safe(t.regions[s.region])} · ${safe(dateLabel(s.date))}</small><strong>${safe(s.title)}</strong><span>${safe(s.statusLabel)} · ${safe(s.statusDetail)}</span>${s.fortress?`<progress max="100" value="${s.siegePct}" aria-label="${safe(t.detailProgress)}"></progress>`:''}${s.grade?`<b class="campaign-map-grade">Note ${safe(s.grade.grade)}</b>`:''}</button></article>`;
   }
-  function markup(list,pct){
-    const won=list.filter(s=>['captured','secured','completed'].includes(s.status)).length;
-    return `<div class="campaign-war-header"><div><small>FRONTLINIE</small><strong>${won} Ziele erobert</strong></div><div><small>NÄCHSTER SCHRITT</small><strong>${list.find(s=>s.status==='active')?.title||list.find(s=>s.date>=today())?.title||'Jahresfestung'}</strong></div></div><div class="campaign-map-start"><span aria-hidden="true">⚑</span><div><small>DEIN LAGER</small><strong>Der Feldzug beginnt</strong></div></div><div class="campaign-map-route">${list.map(stop).join('')}<article class="campaign-map-stop campaign-map-unknown"><div class="campaign-map-route-node" aria-hidden="true"><span>?</span></div><div class="campaign-map-fog-card"><small>NEBEL DES KRIEGES</small><strong>Unbekanntes Ziel</strong><span>Neue Tests erscheinen automatisch, sobald sie geplant werden.</span></div></article><article class="campaign-map-stop campaign-map-year-goal ${pct>=100?'completed':''}"><div class="campaign-map-route-node" aria-hidden="true"><span>${pct>=100?'✓':'♛'}</span></div><button type="button" class="campaign-map-station campaign-map-year-fortress" data-campaign-station="year-goal"><small>FERNZIEL</small><strong>Jahresfestung</strong><span>${pct>=100?'Schuljahr gemeistert':`${pct}% Schuljahresfortschritt`}</span><progress max="100" value="${pct}" aria-label="Fortschritt zur Jahresfestung"></progress></button></article></div>`;
+  function markup(list,pct,subject){
+    const t=themeFor(subject),won=list.filter(s=>['captured','secured','completed'].includes(s.status)).length;
+    const next=list.find(s=>s.status==='active')?.title||list.find(s=>s.date>=today())?.title||t.yearTitle;
+    return `<div class="campaign-war-header"><div><small>${safe(t.routeLabel)}</small><strong>${safe(t.won(won))}</strong></div><div><small>${safe(t.next)}</small><strong>${safe(next)}</strong></div></div><div class="campaign-map-start"><span aria-hidden="true">⚑</span><div><small>${safe(t.startKicker)}</small><strong>${safe(t.startTitle)}</strong></div></div><div class="campaign-map-route">${list.map(stop).join('')}<article class="campaign-map-stop campaign-map-unknown"><div class="campaign-map-route-node" aria-hidden="true"><span>?</span></div><div class="campaign-map-fog-card"><small>${safe(t.unknownKicker)}</small><strong>${safe(t.unknownTitle)}</strong><span>${safe(t.unknownText)}</span></div></article><article class="campaign-map-stop campaign-map-year-goal ${pct>=100?'completed':''}"><div class="campaign-map-route-node" aria-hidden="true"><span>${pct>=100?'✓':'♛'}</span></div><button type="button" class="campaign-map-station campaign-map-year-fortress" data-campaign-station="year-goal"><small>${safe(t.yearKicker)}</small><strong>${safe(t.yearTitle)}</strong><span>${safe(pct>=100?t.yearDone:t.yearOpen(pct))}</span><progress max="100" value="${pct}" aria-label="Schuljahresfortschritt"></progress></button></article></div>`;
   }
   function detail(st){
     const root=document.querySelector('#campaignMapDetail'),battle=document.querySelector('#campaignMapBattleBtn');if(!root)return;
     if(!st){root.hidden=true;root.innerHTML='';battle?.classList.add('hidden');return}
     root.hidden=false;
     const grade=st.grade?`<div><small>Testergebnis</small><strong>Note ${safe(st.grade.grade)}</strong></div>`:'';
-    const defense=st.fortress?`<div><small>Belagerung</small><strong>${st.siegePct}%</strong><span>${Math.max(0,Number(st.fortress.defense)||0)} Verteidigung übrig</span></div>`:'';
-    root.innerHTML=`<button type="button" class="campaign-map-detail-close" data-campaign-detail-close aria-label="Zielinfo schließen">×</button><div class="campaign-map-detail-head"><small>${safe(REGIONS[st.region])}</small><h3>${safe(st.title)}</h3><p>${safe(st.statusLabel)} · ${safe(st.statusDetail)}</p></div><div class="campaign-map-detail-grid"><div><small>Test</small><strong>${safe(dateLabel(st.date))}</strong><span>${safe(st.scopeText)}</span></div><div><small>Umfang</small><strong>${st.wordCount?st.wordCount+' Vokabeln':'noch offen'}</strong><span>${st.series?'wiederkehrender Test':'geplanter Test'}</span></div>${defense}${grade}</div>${st.reviewOpen?'<div class="campaign-map-note">Die Vokabelpaare für dieses Ziel müssen im Elternbereich noch geprüft werden.</div>':''}`;
+    const t=themeFor(st.subject),defense=st.fortress?`<div><small>${safe(t.detailProgress)}</small><strong>${st.siegePct}%</strong><span>${Math.max(0,Number(st.fortress.defense)||0)} Zielstärke übrig</span></div>`:'';
+    root.innerHTML=`<button type="button" class="campaign-map-detail-close" data-campaign-detail-close aria-label="Zielinfo schließen">×</button><div class="campaign-map-detail-head"><small>${safe(t.regions[st.region])}</small><h3>${safe(st.title)}</h3><p>${safe(st.statusLabel)} · ${safe(st.statusDetail)}</p></div><div class="campaign-map-detail-grid"><div><small>Test</small><strong>${safe(dateLabel(st.date))}</strong><span>${safe(st.scopeText)}</span></div><div><small>Umfang</small><strong>${st.wordCount?st.wordCount+' Vokabeln':'noch offen'}</strong><span>${st.series?'wiederkehrender Test':'geplanter Test'}</span></div>${defense}${grade}</div>${st.reviewOpen?'<div class="campaign-map-note">Die Vokabelpaare für dieses Ziel müssen im Elternbereich noch geprüft werden.</div>':''}`;
     const current=typeof currentTestFortress==='function'?currentTestFortress(st.subject):null,can=current?.testDate===st.date;
     if(battle){battle.classList.toggle('hidden',!can);battle.disabled=!can;battle.textContent=st.fortress?.capturedAt?'Festung ansehen / sichern':'Zur Schlacht'}
   }
   function yearDetail(pct){
     const root=document.querySelector('#campaignMapDetail');if(!root)return;
+    const t=themeFor(state.activeSubject);
     root.hidden=false;
-    root.innerHTML=`<button type="button" class="campaign-map-detail-close" data-campaign-detail-close aria-label="Zielinfo schließen">×</button><div class="campaign-map-detail-head"><small>Fernziel</small><h3>Jahresfestung</h3><p>${pct>=100?'Das Schuljahresziel ist erreicht.':'Sie steht für deinen langfristigen Schuljahresfortschritt – nicht für eine feste Zahl von Tests.'}</p></div><div class="campaign-map-detail-grid"><div><small>Schuljahresfortschritt</small><strong>${pct}%</strong><span>nachhaltig gemeisterte Vokabeln</span></div><div><small>Regel</small><strong>Dynamischer Feldzug</strong><span>Neue Testziele werden unterwegs ergänzt.</span></div></div>`;
+    root.innerHTML=`<button type="button" class="campaign-map-detail-close" data-campaign-detail-close aria-label="Zielinfo schließen">×</button><div class="campaign-map-detail-head"><small>${safe(t.yearKicker)}</small><h3>${safe(t.yearTitle)}</h3><p>${pct>=100?'Das Schuljahresziel ist erreicht.':'Dieses Ziel steht für deinen langfristigen Schuljahresfortschritt – nicht für eine feste Zahl von Tests.'}</p></div><div class="campaign-map-detail-grid"><div><small>Schuljahresfortschritt</small><strong>${pct}%</strong><span>nachhaltig gemeisterte Vokabeln</span></div><div><small>Prinzip</small><strong>Dynamischer Weg</strong><span>Neue Testziele werden unterwegs ergänzt.</span></div></div>`;
     document.querySelector('#campaignMapBattleBtn')?.classList.add('hidden');
   }
   function clearSelection(){
@@ -96,9 +129,12 @@
   function render(){
     const board=document.querySelector('#campaignMapBoard');if(!board||!state||typeof learner!=='function'||!learner())return;
     const subject=state.activeSubject,year=currentSchoolYear(),list=stations(subject,year),p=subjectProgress(subject,year);
+    const t=themeFor(subject),view=document.querySelector('#campaignMapView'),title=document.querySelector('#campaignMapViewTitle');
+    if(view)view.dataset.visualTheme=typeof subjectVisualTheme==='function'?subjectVisualTheme(subject):'campaign';
+    if(title)title.textContent=t.viewTitle;
     const label=document.querySelector('#campaignMapSubjectLabel');if(label)label.textContent=`${subjectLabel(subject)} · ${year}`;
     const sum=document.querySelector('#campaignMapSummary');if(sum){const done=list.filter(s=>s.status==='completed').length,won=list.filter(s=>['captured','secured','completed'].includes(s.status)).length;sum.textContent=list.length?`${done} Tests abgeschlossen · ${won} Ziele erobert · weitere Ziele erscheinen automatisch`:'Noch kein Test geplant · die Karte wächst mit deinem Schuljahr'}
-    board.innerHTML=markup(list,p.pct);
+    board.innerHTML=markup(list,p.pct,subject);
     if(selectionDismissed){document.querySelectorAll('[data-campaign-station]').forEach(b=>b.classList.remove('selected'));detail(null);return}
     const active=list.find(s=>s.status==='active')||list.find(s=>s.date>=today())||list[list.length-1],want=selectedKey==='year-goal'||list.some(s=>s.key===selectedKey)?selectedKey:(active?.key||'year-goal');applySelection(want);
   }
