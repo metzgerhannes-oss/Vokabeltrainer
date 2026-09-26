@@ -63,6 +63,7 @@ const passed=vm.runInContext(`
 `,context,{filename:'release-audit-runtime'});
 
 const learning=fs.readFileSync('js/learning.js','utf8');
+const focusUi=fs.readFileSync('js/focus-ui.js','utf8');
 const ui=fs.readFileSync('js/ui.js','utf8');
 const io=fs.readFileSync('js/io.js','utf8');
 const ci=fs.readFileSync('.github/workflows/ci.yml','utf8');
