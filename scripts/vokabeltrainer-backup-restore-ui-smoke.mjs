@@ -146,6 +146,50 @@ try{
   const liveSummary=await page.evaluate(()=>backupSummary(state));
   assert(JSON.stringify(persistedSummary)===JSON.stringify(liveSummary),'restored state is persisted and read back identically');
 
+  const CONFIG_KEY='vokabeltrainer_family_sync_v1';
+  await page.evaluate(async key=>{
+    state.learners.push({...state.learners[0],id:'learner_sync_second',name:'Sync Zweitprofil',dailyPlans:{},streakDays:[],milestones:{},fortressWinsByYear:{},campaignLog:[]});
+    await persistState();
+    localStorage.setItem(key,JSON.stringify({
+      enabled:true,familyId:'family_restore01',deviceId:'device_restore_123456',deviceSecret:'d'.repeat(64),
+      role:'parent',profileId:'',revisions:{shared:1,'profile/learner_demo/setup':1,'profile/learner_demo/progress':1,'profile/learner_sync_second/setup':1,'profile/learner_sync_second/progress':1},
+      dirtyKeys:[],conflicts:{},lastSync:'2026-09-26T04:00:00.000Z',revoked:false,revokedAt:''
+    }));
+  },CONFIG_KEY);
+  await page.evaluate(text=>restore(text),exportedText);
+  await page.waitForSelector('#modal[open]');
+  const blockedRestoreText=(await page.locator('#modalContent').textContent())||'';
+  assert(blockedRestoreText.includes('Restore im Familiensync gestoppt'),'synced restore blocks implicit profile deletion');
+  assert(await page.locator('#confirmRestore').count()===0,'blocked synced restore has no destructive confirm action');
+  assert(await page.evaluate(()=>state.learners.some(l=>l.id==='learner_sync_second')),'blocked synced restore preserves missing family profile');
+  await page.evaluate(()=>closeModal());
+
+  await page.evaluate(async()=>{
+    state.learners=state.learners.filter(l=>l.id!=='learner_sync_second');
+    await persistState();
+    window.__restoreOriginalMarkAll=VTFamilySync.markAllLocalDocumentsDirty;
+    window.__restoreSyncMarked=false;
+    VTFamilySync.markAllLocalDocumentsDirty=()=>{window.__restoreSyncMarked=true;return VTFamilySync.status()};
+  });
+  await page.evaluate(text=>restore(text),exportedText);
+  await page.waitForSelector('#confirmRestore');
+  assert(((await page.locator('#modalContent').textContent())||'').includes('zur Synchronisierung vorgemerkt'),'allowed synced restore explains cloud follow-up');
+  await page.locator('#confirmRestore').click();
+  await page.waitForFunction(()=>window.__restoreSyncMarked===true);
+  assert(await page.evaluate(()=>window.__restoreSyncMarked===true),'successful synced restore marks all local documents for upload');
+
+  const beforeBlockedReset=await page.evaluate(()=>JSON.stringify(backupSummary(state)));
+  await page.evaluate(()=>resetAppData());
+  await page.waitForSelector('#modal[open]');
+  assert(((await page.locator('#modalContent').textContent())||'').includes('Gesamtlöschung im Familiensync gesperrt'),'global reset is blocked while family sync is active');
+  assert(await page.locator('#confirmReset').count()===0,'blocked synced reset cannot be confirmed');
+  assert(await page.evaluate(()=>JSON.stringify(backupSummary(state)))===beforeBlockedReset,'blocked synced reset preserves current state');
+  await page.evaluate(key=>{
+    closeModal();
+    if(window.__restoreOriginalMarkAll)VTFamilySync.markAllLocalDocumentsDirty=window.__restoreOriginalMarkAll;
+    localStorage.removeItem(key);
+  },CONFIG_KEY);
+
   const beforeInvalid=await page.evaluate(()=>JSON.stringify(backupSummary(state)));
   await input.evaluate(el=>{el.dataset.mode='restore'});
   await input.setInputFiles({
