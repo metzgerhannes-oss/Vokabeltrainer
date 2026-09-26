@@ -1122,15 +1122,25 @@ async function runFamilySync(){
 }
 function renderParentOverview(){
   const box=$('#parentAttention');if(!box)return;
-  const tasks=[],review=mySets().find(setNeedsPairReview),pending=seriesScopePending();
+  const sets=mySets(),draft=sets.find(s=>s.pendingTestPlan),review=sets.find(s=>!s.pendingTestPlan&&setNeedsPairReview(s)),pending=seriesScopePending(),ctx=upcomingTestContext(),tasks=[];
+  if(draft){
+    const count=setWords(draft.id).length,when=draft.pendingTestPlan?.testDate?formatDateShort(draft.pendingTestPlan.testDate):'offen';
+    tasks.push(`<div class="parent-task"><div><strong>Testvorbereitung abschließen</strong><small>${esc(draft.title)} · ${count} Vokabel${count===1?'':'n'} · Termin ${esc(when)}. Der Entwurf beeinflusst das Lernen noch nicht.</small></div><button class="primary" data-parent-draft="${draft.id}">Fortsetzen</button></div>`);
+  }
   if(review)tasks.push(`<div class="parent-task"><div><strong>Vokabelpaare prüfen</strong><small>${esc(review.title)} muss vor dem ersten Lernen fachlich bestätigt werden.</small></div><button class="primary" data-parent-audit="${review.id}">Jetzt prüfen</button></div>`);
   if(pending)tasks.push('<div class="parent-task"><div><strong>Testumfang festlegen</strong><small>Für den nächsten wöchentlichen Test fehlen noch die konkreten Vokabeln.</small></div><button class="primary" data-parent-plan>Test planen</button></div>');
-  if(!mySets().length)tasks.push('<div class="parent-task"><div><strong>Noch kein Lernstoff</strong><small>Steht ein Test an, plane ihn direkt. Sonst kannst du Vokabeln ohne Testtermin vorbereiten.</small></div><div class="row gap wrap"><button class="primary" data-parent-plan-first>Test planen</button><button class="secondary" data-parent-newset>Ohne Test vorbereiten</button></div></div>');
+  if(!sets.length)tasks.push('<div class="parent-task"><div><strong>Noch kein Lernstoff</strong><small>Steht ein Test an, plane ihn direkt. Sonst kannst du Vokabeln ohne Testtermin vorbereiten.</small></div><div class="row gap wrap"><button class="primary" data-parent-plan-first>Test planen</button><button class="secondary" data-parent-newset>Ohne Test vorbereiten</button></div></div>');
+  if(!tasks.length){
+    const ready=ctx?`Nächster Test ${formatDateShort(ctx.date)} · ${ctx.words.length} Vokabel${ctx.words.length===1?'':'n'} vorbereitet.`:'Aktuell ist keine Eltern-Aufgabe offen. Das Kind kann mit dem vorhandenen Lernstoff weiterlernen.';
+    tasks.push(`<div class="parent-ready"><span aria-hidden="true">✓</span><div><strong>Alles vorbereitet</strong><small>${esc(ready)}</small></div></div>`);
+  }
   box.innerHTML=tasks.join('');
+  box.querySelector('[data-parent-draft]')?.addEventListener('click',e=>{const set=state.sets.find(s=>s.id===e.currentTarget.dataset.parentDraft);if(!set)return;if(set.captureSource==='manual')openWordEditor(null,set.id);else if(setWords(set.id).length)openSetPairAudit(set.id);else openScanImport(set.id)});
   box.querySelector('[data-parent-audit]')?.addEventListener('click',e=>openSetPairAudit(e.currentTarget.dataset.parentAudit));
   box.querySelector('[data-parent-plan]')?.addEventListener('click',openTestDatePlanner);
   box.querySelector('[data-parent-plan-first]')?.addEventListener('click',openTestDatePlanner);
   box.querySelector('[data-parent-newset]')?.addEventListener('click',()=>openLearningContentPlanner());
+  const summary=$('#parentLearningSummary');if(summary){const active=sets.filter(s=>setWords(s.id).length).length;summary.textContent=active?`${active} aktive${active===1?'r Lernbereich':' Lernbereiche'}${ctx?` · nächster Test ${formatDateShort(ctx.date)}`:''}`:'Noch kein aktiver Lernstoff'}
 }
 function isDesktopLayout(){return !!window.matchMedia?.('(min-width: 1100px)').matches}
 function syncResponsiveHomeLayout(){
