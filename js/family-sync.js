@@ -286,7 +286,7 @@
       const pulled=await rpc('vt_pull_documents',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
       if(!pulled?.ok)remoteFailure(cfg,pulled,'Cloud-Stand nicht erreichbar.');
       cfg.role=pulled.role==='child'?'child':'parent';cfg.profileId=String(pulled.profile_id||cfg.profileId||'');
-      const dirty=new Set(cfg.dirtyKeys||[]),conflicts={...cfg.conflicts};let changed=false;const stateBeforeRemote=clone(state);
+      const dirty=new Set(cfg.dirtyKeys||[]),conflicts={...cfg.conflicts};let changed=false;const stateBeforeRemote=clone(state),snapshotsBeforeRemote=new Map(runtime.snapshots);
       const remoteDocs=(pulled.documents||[]).sort((a,b)=>documentRank(a.key)-documentRank(b.key)||String(a.key).localeCompare(String(b.key)));
       for(const d of remoteDocs){
         const key=String(d.key||''),remoteRev=Number(d.revision)||0,localRev=Number(cfg.revisions[key])||0;
@@ -300,7 +300,7 @@
           if(typeof hardenState==='function')state=hardenState(state);ensureActiveSubject();
           if(!(await persistState()))throw new Error('Cloud-Stand konnte lokal nicht sicher gespeichert werden.');
         }catch(e){
-          state=typeof attachRuntimeWordApi==='function'?attachRuntimeWordApi(stateBeforeRemote):stateBeforeRemote;ensureActiveSubject();
+          state=typeof attachRuntimeWordApi==='function'?attachRuntimeWordApi(stateBeforeRemote):stateBeforeRemote;runtime.snapshots=snapshotsBeforeRemote;ensureActiveSubject();
           throw e;
         }
         renderAll();
