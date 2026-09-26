@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.19.13';
+const VERSION = '0.19.14';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';

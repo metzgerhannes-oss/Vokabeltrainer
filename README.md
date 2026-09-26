@@ -4,11 +4,21 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.19.13**
+App-Version: **v0.19.14**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.19.14 – Family-Sync-Härtung
+
+- Konflikte zwischen lokalem und Cloud-Stand werden nicht mehr still überschrieben: Eltern wählen ausdrücklich „Cloud übernehmen“ oder „Dieses Gerät behalten“
+- beim Wechsel in einen anderen Familienverbund bleibt die bisherige Verbindung erhalten, bis der neue Verbund erfolgreich verbunden wurde
+- vor einer Datenübernahme kann ein lokales Backup erstellt werden
+- serverseitig widerrufene Geräte stoppen die Synchronisation und verwerfen ihre lokalen Geräte-Zugangsdaten
+- WebKit-End-to-End-Tests decken Konfliktauflösung und Revocation-Pfade ab
+- die Supabase-Migration `20260925205453_harden_vt_device_context_boundary` entzieht Browserrollen den direkten Zugriff auf den internen `vt_device_context`; die öffentliche RPC-Grenze bleibt funktionsfähig
+- Lernlogik, Mastery, Spacing und Bewertungsregeln bleiben unverändert
 
 ## v0.19.13 – OCR-/Pair-Review-Härtung
 

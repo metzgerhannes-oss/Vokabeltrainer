@@ -22,9 +22,11 @@
         revisions:x.revisions&&typeof x.revisions==='object'?x.revisions:{},
         dirtyKeys:Array.isArray(x.dirtyKeys)?x.dirtyKeys:[],
         conflicts:x.conflicts&&typeof x.conflicts==='object'?x.conflicts:{},
-        lastSync:String(x.lastSync||'')
+        lastSync:String(x.lastSync||''),
+        revoked:x.revoked===true,
+        revokedAt:String(x.revokedAt||'')
       };
-    }catch(e){console.warn('Family sync config',e);return {enabled:false,familyId:'',deviceId:'',deviceSecret:'',role:'parent',profileId:'',revisions:{},dirtyKeys:[],conflicts:{},lastSync:''}}
+    }catch(e){console.warn('Family sync config',e);return {enabled:false,familyId:'',deviceId:'',deviceSecret:'',role:'parent',profileId:'',revisions:{},dirtyKeys:[],conflicts:{},lastSync:'',revoked:false,revokedAt:''}}
   }
   function saveConfig(cfg){localStorage.setItem(CONFIG_KEY,JSON.stringify(cfg))}
   function bytesHex(size=24){const a=new Uint8Array(size);crypto.getRandomValues(a);return Array.from(a,x=>x.toString(16).padStart(2,'0')).join('')}
@@ -140,6 +142,16 @@
     return key==='profile/'+cfg.profileId+'/progress';
   }
   function persistCfg(cfg){cfg.dirtyKeys=[...new Set(cfg.dirtyKeys||[])];saveConfig(cfg)}
+  function markRevoked(cfg){
+    cfg.enabled=false;cfg.revoked=true;cfg.revokedAt=new Date().toISOString();cfg.deviceId='';cfg.deviceSecret='';cfg.dirtyKeys=[];cfg.conflicts={};
+    persistCfg(cfg);clearTimeout(runtime.timer);clearInterval(runtime.poll);runtime.snapshots.clear();
+    queueMicrotask(()=>{try{renderAll?.()}catch(_e){}});
+  }
+  function remoteFailure(cfg,result,fallback){
+    const code=String(result?.error||'');
+    if(code==='unauthorized'){markRevoked(cfg);throw new Error('Dieses Gerät wurde aus dem Familienverbund entfernt. Lokale Daten bleiben erhalten.')}
+    throw new Error(code||fallback);
+  }
 
   function markLocalChange(){
     const cfg=loadConfig();if(!cfg.enabled||runtime.applying)return;
@@ -191,7 +203,7 @@
   async function createParentInvite(){
     const cfg=loadConfig();if(!cfg.enabled||cfg.role!=='parent')throw new Error('Nur ein verbundenes Eltern-Gerät kann weitere Eltern-Geräte hinzufügen.');
     const result=await rpc('vt_create_parent_invite',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
-    if(!result?.ok)throw new Error(result?.error||'Eltern-Gerät-Code konnte nicht erzeugt werden.');
+    if(!result?.ok)remoteFailure(cfg,result,'Eltern-Gerät-Code konnte nicht erzeugt werden.');
     return result;
   }
 
@@ -214,7 +226,7 @@
   async function createChildInvite(profileId){
     const cfg=loadConfig();if(!cfg.enabled||cfg.role!=='parent')throw new Error('Nur ein verbundenes Eltern-Gerät kann Kindergeräte hinzufügen.');
     const result=await rpc('vt_create_child_invite',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret,p_profile_id:profileId});
-    if(!result?.ok)throw new Error(result?.error||'Kindergerät-Code konnte nicht erzeugt werden.');
+    if(!result?.ok)remoteFailure(cfg,result,'Kindergerät-Code konnte nicht erzeugt werden.');
     return result;
   }
 
@@ -239,7 +251,7 @@
     runtime.busy=true;
     try{
       const pulled=await rpc('vt_pull_documents',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
-      if(!pulled?.ok)throw new Error(pulled?.error||'Cloud-Stand nicht erreichbar.');
+      if(!pulled?.ok)remoteFailure(cfg,pulled,'Cloud-Stand nicht erreichbar.');
       cfg.role=pulled.role==='child'?'child':'parent';cfg.profileId=String(pulled.profile_id||cfg.profileId||'');
       const dirty=new Set(cfg.dirtyKeys||[]),conflicts={...cfg.conflicts};let changed=false;
       const remoteDocs=(pulled.documents||[]).sort((a,b)=>documentRank(a.key)-documentRank(b.key)||String(a.key).localeCompare(String(b.key)));
@@ -268,6 +280,39 @@
     }finally{runtime.busy=false}
   }
 
+  async function resolveConflict(key,strategy='remote'){
+    const cfg=loadConfig(),docKey=String(key||''),mode=strategy==='local'?'local':'remote';
+    if(!cfg.enabled)throw new Error('Familiensync ist auf diesem Gerät nicht verbunden.');
+    if(!cfg.conflicts?.[docKey])return status();
+    if(runtime.busy)throw new Error('Synchronisierung läuft bereits.');
+    runtime.busy=true;
+    try{
+      const pulled=await rpc('vt_pull_documents',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
+      if(!pulled?.ok)remoteFailure(cfg,pulled,'Cloud-Stand nicht erreichbar.');
+      const remote=(pulled.documents||[]).find(d=>String(d.key||'')===docKey);
+      if(!remote)throw new Error('Der Konfliktstand ist in der Cloud nicht mehr vorhanden.');
+      const remoteRev=Number(remote.revision)||0,dirty=new Set(cfg.dirtyKeys||[]),conflicts={...cfg.conflicts};
+      if(mode==='remote'){
+        applyDocument(docKey,remote.payload);
+        ensureActiveSubject();
+        if(!(await persistState()))throw new Error('Cloud-Stand konnte lokal nicht sicher gespeichert werden.');
+        cfg.revisions[docKey]=remoteRev;runtime.snapshots.set(docKey,docString(remote.payload));
+      }else{
+        if(!canWrite(cfg,docKey))throw new Error('Dieses Gerät darf diesen Datenbereich nicht überschreiben.');
+        const payload=serializeDocuments()[docKey];
+        if(payload===undefined)throw new Error('Lokaler Konfliktstand ist nicht mehr vorhanden.');
+        const pushed=await rpc('vt_push_document',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret,p_doc_key:docKey,p_payload:payload,p_base_revision:remoteRev});
+        if(!pushed?.ok){
+          if(pushed?.conflict){conflicts[docKey]=Number(pushed.revision)||remoteRev||1;cfg.conflicts=conflicts;persistCfg(cfg);throw new Error('Der Cloud-Stand wurde erneut geändert. Bitte Konflikt nochmals prüfen.')}
+          throw new Error(pushed?.error||'Konflikt konnte nicht aufgelöst werden.');
+        }
+        cfg.revisions[docKey]=Number(pushed.revision)||remoteRev+1;runtime.snapshots.set(docKey,docString(payload));
+      }
+      dirty.delete(docKey);delete conflicts[docKey];cfg.dirtyKeys=[...dirty];cfg.conflicts=conflicts;cfg.lastSync=new Date().toISOString();persistCfg(cfg);
+      renderAll?.();return status();
+    }finally{runtime.busy=false}
+  }
+
   async function replaceCloudWithCurrent(){
     const cfg=loadConfig();
     if(!cfg.enabled)return {ok:true,localOnly:true};
@@ -276,7 +321,7 @@
     runtime.busy=true;
     try{
       const pulled=await rpc('vt_pull_documents',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
-      if(!pulled?.ok)throw new Error(pulled?.error||'Cloud-Stand nicht erreichbar.');
+      if(!pulled?.ok)remoteFailure(cfg,pulled,'Cloud-Stand nicht erreichbar.');
       const remoteRev=new Map((pulled.documents||[]).map(d=>[String(d.key||''),Number(d.revision)||0]));
       const docs=serializeDocuments();
       const revisions={...cfg.revisions};
@@ -284,7 +329,7 @@
         if(!canWrite(cfg,key))continue;
         const base=remoteRev.has(key)?remoteRev.get(key):(Number(revisions[key])||0);
         const pushed=await rpc('vt_push_document',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret,p_doc_key:key,p_payload:payload,p_base_revision:base});
-        if(!pushed?.ok)throw new Error(pushed?.error||('Bereinigter Stand konnte nicht hochgeladen werden: '+key));
+        if(!pushed?.ok)remoteFailure(cfg,pushed,'Bereinigter Stand konnte nicht hochgeladen werden: '+key);
         revisions[key]=Number(pushed.revision)||base+1;
       }
       cfg.revisions=revisions;cfg.dirtyKeys=[];cfg.conflicts={};cfg.lastSync=new Date().toISOString();persistCfg(cfg);initSnapshots();
@@ -295,20 +340,21 @@
   async function listDevices(){
     const cfg=loadConfig();if(!cfg.enabled||cfg.role!=='parent')return [];
     const r=await rpc('vt_list_devices',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
-    if(!r?.ok)throw new Error(r?.error||'Geräteliste konnte nicht geladen werden.');return r.devices||[];
+    if(!r?.ok)remoteFailure(cfg,r,'Geräteliste konnte nicht geladen werden.');return r.devices||[];
   }
   async function revokeDevice(deviceId){
     const cfg=loadConfig();if(!cfg.enabled||cfg.role!=='parent')throw new Error('Nur Eltern-Geräte können Geräte entfernen.');
     const r=await rpc('vt_revoke_device',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret,p_target_device_id:deviceId});
-    if(!r?.ok)throw new Error(r?.error||'Gerät konnte nicht entfernt werden.');return true;
+    if(!r?.ok)remoteFailure(cfg,r,'Gerät konnte nicht entfernt werden.');return true;
   }
   function disconnectLocal(){
     localStorage.removeItem(CONFIG_KEY);clearTimeout(runtime.timer);clearInterval(runtime.poll);runtime.snapshots.clear();
   }
   function status(){
-    const cfg=loadConfig();return {
+    const cfg=loadConfig(),conflictKeys=Object.keys(cfg.conflicts||{});return {
       enabled:cfg.enabled,familyId:cfg.familyId,role:cfg.role,profileId:cfg.profileId,
-      lastSync:cfg.lastSync,dirty:(cfg.dirtyKeys||[]).length,conflicts:Object.keys(cfg.conflicts||{}).length,busy:runtime.busy
+      lastSync:cfg.lastSync,dirty:(cfg.dirtyKeys||[]).length,conflicts:conflictKeys.length,conflictKeys,busy:runtime.busy,
+      revoked:cfg.revoked===true,revokedAt:cfg.revokedAt||''
     };
   }
   function bootstrap(){
@@ -318,5 +364,5 @@
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncNow(false).catch(e=>console.warn('Family sync resume',e))});
   }
 
-  window.VTFamilySync={serializeDocuments,status,createFamily,joinParent,createParentInvite,claimParentInvite,createChildInvite,claimChildInvite,syncNow,replaceCloudWithCurrent,markLocalChange,listDevices,revokeDevice,disconnectLocal,bootstrap};
+  window.VTFamilySync={serializeDocuments,status,createFamily,joinParent,createParentInvite,claimParentInvite,createChildInvite,claimChildInvite,syncNow,resolveConflict,replaceCloudWithCurrent,markLocalChange,listDevices,revokeDevice,disconnectLocal,bootstrap};
 })();
