@@ -59,6 +59,70 @@ try{
   assert(saved.count===6&&saved.days===7&&saved.mode==='selected'&&saved.selected===6&&saved.links>=6,'test plan keeps exact vocabulary count and exact test-day distance');
   assert(saved.intro===3&&saved.target===8&&saved.acquisitionDays===6,'saved daily plan matches the preview and adapts workload to the available time');
 
+  // Manual source: capture remains a draft until the exact pairs are approved.
+  await page.click('#parentTestPlanBtn');
+  await page.waitForSelector('#modal[open] #planSourceManual');
+  const manualDate=await page.evaluate(()=>datePlusDays(9));
+  await page.locator('#testPlanDate').fill(manualDate);
+  await page.click('#planSourceManual');
+  await page.waitForSelector('#modal[open] #wordSet');
+  assert(await page.locator('#wordSet').isDisabled(),'manual test capture is locked to its draft set');
+  const manualDraftBefore=await page.evaluate(()=>{
+    const set=state.sets.find(s=>s.pendingTestPlan?.mode==='single'&&s.captureSource==='manual');
+    const ctx=upcomingTestContext('english');
+    return {id:set?.id||'',testDate:set?.testDate||'',pendingDate:set?.pendingTestPlan?.testDate||'',activeTestId:ctx?.sets?.[0]?.id||''};
+  });
+  assert(manualDraftBefore.id&&manualDraftBefore.testDate===''&&manualDraftBefore.pendingDate===manualDate,'manual source stores the intended date only as pending metadata');
+  assert(manualDraftBefore.activeTestId!==manualDraftBefore.id,'unfinished manual capture does not replace the active test plan');
+  await page.locator('#wordTerm').fill('harbour');
+  await page.locator('#wordTrans').fill('Hafen');
+  await page.click('#finishTestCaptureBtn');
+  await page.waitForSelector('#modal[open] #confirmSetPairsBtn');
+  assert((await page.locator('#modalContent').textContent())?.includes('Testplan ist noch nicht aktiv'),'manual capture shows a final approval gate');
+  assert((await page.locator('#confirmSetPairsBtn').textContent())?.includes('Test speichern'),'manual capture confirmation activates the test rather than merely closing the audit');
+  const manualPending=await page.evaluate(id=>{
+    const set=state.sets.find(s=>s.id===id),word=setWords(id)[0];
+    return {testDate:set?.testDate||'',pending:!!set?.pendingTestPlan,needsReview:setNeedsPairReview(set),verified:!!(state.vocabulary||[]).find(v=>v.id===word?.vocabId)?.verifiedAt};
+  },manualDraftBefore.id);
+  assert(manualPending.testDate===''&&manualPending.pending&&manualPending.needsReview&&!manualPending.verified,'manual word remains unverified and the test remains inactive before approval');
+  await page.click('#confirmSetPairsBtn');
+  await page.waitForSelector('#parentView.active');
+  const manualFinal=await page.evaluate(id=>{
+    const set=state.sets.find(s=>s.id===id),word=setWords(id)[0],ctx=upcomingTestContext('english');
+    return {testDate:set?.testDate||'',pending:!!set?.pendingTestPlan,selected:set?.testSelectedLinkIds?.length||0,needsReview:setNeedsPairReview(set),verified:!!(state.vocabulary||[]).find(v=>v.id===word?.vocabId)?.verifiedAt,activeTestId:ctx?.sets?.[0]?.id||'',count:ctx?.words?.length||0};
+  },manualDraftBefore.id);
+  assert(manualFinal.testDate===manualDate&&!manualFinal.pending&&manualFinal.selected===1&&!manualFinal.needsReview&&manualFinal.verified,'manual pair approval finalizes date, scope and verification atomically');
+  assert(manualFinal.activeTestId===manualDraftBefore.id&&manualFinal.count===1,'approved manual capture becomes the active exact test scope');
+
+  // OCR source: import feeds the same pending-test approval gate.
+  await page.click('#parentTestPlanBtn');
+  await page.waitForSelector('#modal[open] #planSourceOcr');
+  const ocrDate=await page.evaluate(()=>datePlusDays(11));
+  await page.locator('#testPlanDate').fill(ocrDate);
+  await page.click('#planSourceOcr');
+  await page.waitForSelector('#modal[open] #scanSetSelect');
+  assert(await page.locator('#scanSetSelect').isDisabled(),'OCR test capture is locked to its draft set');
+  await page.evaluate(()=>{
+    scanImportState.rows=[makeImportRow('journey','Reise','','','good')];
+    renderScanReview();
+  });
+  await page.waitForSelector('#scanReview #scanUse_0');
+  await page.click('#scanImportSave');
+  await page.waitForSelector('#modal[open] #confirmSetPairsBtn');
+  const ocrPending=await page.evaluate(()=>{
+    const set=state.sets.find(s=>s.captureSource==='ocr'&&s.pendingTestPlan),word=set&&setWords(set.id)[0];
+    return {id:set?.id||'',testDate:set?.testDate||'',pendingDate:set?.pendingTestPlan?.testDate||'',needsReview:set?setNeedsPairReview(set):false,verified:!!(state.vocabulary||[]).find(v=>v.id===word?.vocabId)?.verifiedAt};
+  });
+  assert(ocrPending.id&&ocrPending.testDate===''&&ocrPending.pendingDate===ocrDate&&ocrPending.needsReview&&!ocrPending.verified,'OCR import stays an inactive unverified test draft until pair approval');
+  await page.click('#confirmSetPairsBtn');
+  await page.waitForSelector('#parentView.active');
+  const ocrFinal=await page.evaluate(id=>{
+    const set=state.sets.find(s=>s.id===id),ctx=upcomingTestContext('english');
+    return {testDate:set?.testDate||'',pending:!!set?.pendingTestPlan,selected:set?.testSelectedLinkIds?.length||0,needsReview:setNeedsPairReview(set),activeTestId:ctx?.sets?.[0]?.id||'',count:ctx?.words?.length||0};
+  },ocrPending.id);
+  assert(ocrFinal.testDate===ocrDate&&!ocrFinal.pending&&ocrFinal.selected===1&&!ocrFinal.needsReview,'OCR pair approval finalizes the pending test plan');
+  assert(ocrFinal.activeTestId===ocrPending.id&&ocrFinal.count===1,'approved OCR capture becomes the active exact test scope');
+
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer unified content planner UI smoke: passed');
 }finally{
