@@ -1,9 +1,10 @@
 # Finales Audit
 
-Stand: 26.09.2026 · App v0.19.16
+Stand: 26.09.2026 · App v0.20.0
 
 ## Ergebnis
 
+- v0.20.0 trennt die Kinderoberfläche strukturell in vier feste Hauptbereiche: **Heute**, **Lernen**, **Armee** und **Erfolge**. Der Start zeigt nur Lernavatar, Fachkontext und die heutige Lernaktion; Karteikasten/Testcheck liegen im Lernbereich, Kampagne/Schlacht/Duell im Spielbereich, Erfolge zeigen ausschließlich fachlichen Fortschritt. Feldzug und Schlacht kehren konsistent in den Spielbereich zurück.
 - v0.19.16 behebt den im realen iPhone-Livetest gefundenen iOS-Übergabefehler: Nach erfolgreichem Kopieren eines Kinder-/Eltern-Verbindungslinks schließt der Safari-Hinweisdialog und das Einmal-Invite wird aus der Safari-URL entfernt; der Link bleibt für die Home-Screen-App in der Zwischenablage erhalten
 - v0.19.15 schließt das abschließende Deep Audit mit Schwerpunkt Datenintegrität und Family-Sync-Fehlerpfade ab: atomarer Familienwechsel, Backup auch bei direkten QR-/Link-Beitritten, Rollback von nicht persistierten Remote-Ständen, vollständigerer Profil-Setup-Sync sowie sichere Grenzen für noch nicht synchronisierbare Profil-Löschungen
 - der produktive Supabase-Stand wurde live geprüft: aktuelle VT-Migrationen sind angewendet, private VT-Tabellen besitzen keine Browser-Tabellenrechte, der interne `vt_device_context` ist für Browserrollen nicht ausführbar, der Pre-Request-Rate-Limit-Hook ist aktiv und die Security-Advisors melden keine Warnung oder Fehler

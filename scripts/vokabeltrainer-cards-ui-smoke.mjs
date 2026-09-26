@@ -25,10 +25,10 @@ try{
     const words=schoolYearWords('english');
     words[0].leitnerBox=1;
     words[1].leitnerBox=4;
-    renderAll();showView('childProgressView');
+    renderAll();showView('practiceView');
   });
 
-  assert(await page.locator('#cardboxOverviewCard:not(.hidden)').count()===1,'progress view shows the current card box overview');
+  assert(await page.locator('#practiceView.active #cardboxOverviewCard:not(.hidden)').count()===1,'Lernen shows the current card box overview');
   assert(await page.locator('#cardboxOverview [data-cardbox-box]').count()===5,'card box overview always shows all five boxes');
   assert((await page.locator('#cardboxTotalPill').textContent())?.includes('2 Karten'),'card box overview shows the current card total');
   assert((await page.locator('#cardboxDuePill').textContent())?.includes('2 heute fällig'),'card box overview shows currently due cards');
@@ -50,7 +50,7 @@ try{
 
   assert(await page.evaluate(()=>schoolYearWords('english').length)===2,'new verified vocabulary is immediately in the normal learning pool');
   assert((await page.evaluate(()=>firstContactStatus('cards_set').pending))===2,'optional copy status remains independent');
-  assert((await page.locator('#modePill').textContent())==='Karteikarten','progress overview starts the existing cards mode');
+  assert((await page.locator('#modePill').textContent())==='Karteikarten','learning area starts the existing cards mode');
   assert((await page.locator('#modePill').textContent())==='Karteikarten','cards mode keeps only the compact mode label');
   assert(await page.locator('.leitner-box').count()===0,'Leitner diagnostics stay out of the retrieval moment');
   assert((await page.locator('#answerBtn').textContent())==='Prüfen','card uses one neutral submit action');

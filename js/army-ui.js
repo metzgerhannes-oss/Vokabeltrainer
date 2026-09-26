@@ -295,7 +295,7 @@
     if(!root||!state||typeof learner!=='function'||!learner())return;
     const c=context();
     const next=nextUpgrade(c);
-    const subjectLabel=state.activeSubject==='latin'?'Latein · Legion':'Englisch · Armee';
+    const subjectLabel=state.activeSubject==='latin'?'Spiel · Latein · Legion':'Spiel · Englisch · Armee';
 
     const hero=document.querySelector('#armyHero');
     if(hero)hero.innerHTML=heroMarkup(c);

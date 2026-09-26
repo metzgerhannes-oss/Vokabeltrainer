@@ -31,7 +31,7 @@ try{
     const lowReward=grantTestGradeReward(gradeRow);
     const repeatedReward=grantTestGradeReward(gradeRow);
     window.__testGradeRewardSmoke={xpBefore,lowReward,repeatedReward,xpAfter:state.learners[0].xp,topReward:testGradeReward('1'),badges:testBadgeCount('english')};
-    rebuildWordIndexes();renderAll();showView('childProgressView');
+    rebuildWordIndexes();renderAll();showView('homeView');
   });
 
   const rewardSmoke=await page.evaluate(()=>window.__testGradeRewardSmoke);
@@ -41,8 +41,10 @@ try{
   assert(rewardSmoke.repeatedReward===null,'saving the same rewarded grade cannot duplicate XP');
   assert(rewardSmoke.badges===1,'every valid entered test grade creates one test badge');
   const before=await page.evaluate(()=>subjectProgress().pct);
-  await page.click('#armyBtn');
+  await page.click('.nav-btn[data-view="armyView"]');
   await page.waitForSelector('#armyView.active');
+  assert(await page.locator('#armyView #campaignCard').isVisible(),'game hub contains the campaign card');
+  assert((await page.locator('.nav-btn[data-view="armyView"]').getAttribute('aria-current'))==='page','Armee is the active primary navigation area');
   await page.waitForFunction(()=>window.VTArmyArt?.ready===true);
   await page.waitForFunction(()=>document.querySelector('[data-army-hero-art]')?.naturalWidth>0);
   await page.waitForFunction(()=>document.querySelectorAll('#armyUnitGrid .army-unit-art.art-loaded').length===6);
@@ -60,14 +62,14 @@ try{
   assert((await page.locator('#armyUnitGrid [data-army-unit="infantry"] .army-unit-level').textContent())?.includes('Veteran'),'stage five has a visible veteran label');
   assert(await page.locator('#armyUnitGrid [data-army-unit="support"]').getAttribute('data-unit-stage')==='1','five learning days render support at stage one');
   assert((await page.locator('#armyUnitGrid [data-army-unit="support"] .army-unit-level').textContent())?.includes('Rekrut'),'stage one has a visible recruit label');
-  assert((await page.locator('#armyViewTitle').textContent())?.includes('Meine Armee'),'army view has a clear title');
+  assert((await page.locator('#armyViewTitle').textContent())?.includes('Armee'),'game area has a clear army title');
   await page.click('#armyBattleBtn');
   await page.waitForSelector('#battleView.active');
   assert((await page.locator('#battleBackBtn').textContent())?.includes('Meine Armee'),'fortress opened from the army returns to the army instead of progress');
   assert((await page.locator('#battleReturnBtn').textContent())?.includes('meiner Armee'),'bottom battle return action matches the army origin');
   await page.click('#battleBackBtn');
   await page.waitForSelector('#armyView.active');
-  assert((await page.locator('#armyRankLabel').textContent())?.length>0,'rank is visible');
+  assert((await page.locator('#armyRank').textContent())?.length>0,'rank is visible in the campaign game hub');
   assert((await page.locator('#armySummary').textContent())?.includes('Prüfungsabzeichen'),'army summary shows completed-test badges');
   assert(await page.locator('#armyRoleGrid .army-role-card').count()===6,'six distinct army roles are shown');
   const roleText=await page.locator('#armyRoleGrid').textContent();
@@ -102,8 +104,11 @@ try{
 
   await page.click('#armyBackBtn');
   await page.waitForSelector('#homeView.active');
-  await page.click('#menuCampaignBtn');
+  await page.click('.nav-btn[data-view="armyView"]');
+  await page.waitForSelector('#armyView.active');
+  await page.click('#campaignMapBtn');
   await page.waitForSelector('#campaignMapView.active');
+  assert((await page.locator('.nav-btn[data-view="armyView"]').getAttribute('aria-current'))==='page','campaign map remains inside the Armee primary area');
   assert(await page.locator('#campaignMapBoard .campaign-map-station').count()===3,'campaign map shows two known test stations plus the year fortress');
   assert(await page.locator('#campaignMapBoard .campaign-map-unknown').count()===1,'unknown future remains visible instead of assuming a fixed test count');
   assert((await page.locator('#campaignMapBoard .campaign-map-unknown').textContent())?.includes('Neue Tests erscheinen automatisch'),'map explains dynamic future growth');

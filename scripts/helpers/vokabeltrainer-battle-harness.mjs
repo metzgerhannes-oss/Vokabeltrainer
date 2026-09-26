@@ -48,7 +48,7 @@ export async function createBattleHarness(){
       if(revealed&&fortress)fortress.revealedAt=new Date().toISOString();
       if(ticket)grantBattleTicket('dailyGoal');
       renderAll();
-      showView('childProgressView');
+      showView('armyView');
     },{revealed,ticket});
   };
 

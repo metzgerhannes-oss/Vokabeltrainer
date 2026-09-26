@@ -218,7 +218,7 @@ try{
   await page.locator('#confirmRestore').click();
   await page.waitForFunction(()=>document.querySelector('#toastRegion')?.textContent?.includes('Aktuelle Daten wurden beibehalten.'));
   assert(await page.evaluate(()=>JSON.stringify(backupSummary(state)))===rollbackResult.before,'failed persistence rolls back to previous in-memory state');
-  await page.evaluate(()=>location.reload());
+  await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__VT_APP_READY__===true&&state!==null);
   assert(await page.evaluate(()=>learner().name)==='Restore Kind','rollback also preserves previously persisted state');
 
