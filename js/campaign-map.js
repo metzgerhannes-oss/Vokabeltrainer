@@ -9,7 +9,9 @@
       unknownText:'Neue Tests erscheinen automatisch, sobald sie geplant werden.',yearKicker:'FERNZIEL',yearTitle:'Jahresfestung',
       yearDone:'Schuljahr gemeistert',yearOpen:p=>`${p}% Schuljahresfortschritt`,detailProgress:'Festungsfortschritt',
       captured:'Festung erobert',secured:'Festung gesichert',securedDetail:n=>`${n} Sicherungstage`,hold:'Bis zum Test halten',
-      active:'Aktuelles Testziel',planned:'Ziel entdeckt',awaiting:'Ergebnis offen'
+      active:'Aktuelles Testziel',planned:'Ziel entdeckt',awaiting:'Ergebnis offen',plannedNoun:'Ziel',
+      targetNames:{outpost:'Vorposten',tower:'Wachturm',wall:'Grenzfestung',citadel:'Zitadelle',capital:'Hauptfestung',final:'Große Festung'},
+      battleAction:'Zur Schlacht',securedAction:'Festung ansehen / sichern'
     }),
     roman:Object.freeze({
       places:['Kastell Aurelia','Adlerpass','Via Serena','Olivenhöhe','Porta Nova','Steinbrücke','Forumtal','Kastell Lucerna','Zypressenhain','Sonnenhügel','Via Magna','Tor am Fluss'],
@@ -19,7 +21,9 @@
       unknownText:'Neue Prüfungsziele erscheinen entlang der Straße, sobald sie geplant werden.',yearKicker:'TRIUMPHZIEL',yearTitle:'Triumphort',
       yearDone:'Schuljahr gemeistert',yearOpen:p=>`${p}% auf dem Weg zum Triumphort`,detailProgress:'Kastellfortschritt',
       captured:'Kastell eingenommen',secured:'Kastell gesichert',securedDetail:n=>`${n} Sicherungstage`,hold:'Bis zur Prüfung halten',
-      active:'Aktuelles Kastell',planned:'Etappe voraus',awaiting:'Ergebnis offen'
+      active:'Aktuelles Kastell',planned:'Etappe voraus',awaiting:'Ergebnis offen',plannedNoun:'Kastell',
+      targetNames:{outpost:'Marschlager',tower:'Wachturm',wall:'Grenzkastell',citadel:'Bergkastell',capital:'Provinzkastell',final:'Großes Kastell'},
+      battleAction:'Zum Kastell',securedAction:'Kastell ansehen / sichern'
     }),
     voyage:Object.freeze({
       places:['Belle-Rive','Pont-Clair','Mont-Lumière','Val-Fleuri','Rive-Dorée','Belle-Place','Fontaine-Claire','Port-Lumière','Jardin-Neuf','Pont-des-Fleurs','Côte-Claire','Ville-Jolie'],
@@ -29,7 +33,9 @@
       unknownText:'Neue Reiseziele erscheinen automatisch, sobald Tests geplant werden.',yearKicker:'FERNZIEL',yearTitle:'Jahresziel',
       yearDone:'Sprachreise gemeistert',yearOpen:p=>`${p}% der Jahresreise geschafft`,detailProgress:'Etappenfortschritt',
       captured:'Ziel erreicht',secured:'Etappe gefestigt',securedDetail:n=>`${n} Wiederholungstage`,hold:'Bis zum Test weiter festigen',
-      active:'Aktuelle Sprachmission',planned:'Neuer Ort entdeckt',awaiting:'Ergebnis offen'
+      active:'Aktuelle Sprachmission',planned:'Neuer Ort entdeckt',awaiting:'Ergebnis offen',plannedNoun:'Reiseziel',
+      targetNames:{outpost:'Erste Station',tower:'Stadtetappe',wall:'Brückenetappe',citadel:'Kulturstation',capital:'Große Etappe',final:'Abschlussetappe'},
+      battleAction:'Zur Sprachmission',securedAction:'Etappe ansehen / festigen'
     })
   });
   const themeFor=subject=>MAP_THEMES[typeof subjectVisualTheme==='function'?subjectVisualTheme(subject):'campaign']||MAP_THEMES.campaign;
@@ -85,7 +91,8 @@
     return rows.map((row,index)=>{
       if(!row.fortress&&current?.testDate===row.date)row.fortress=current;
       const st=status(row,current),m=meta(st,row,subject),reg=region(row.date),mx=Math.max(1,Number(row.fortress?.maxDefense)||1),def=Math.max(0,Number(row.fortress?.defense)||0);
-      return {key:`test:${subject}:${row.date}`,index,date:row.date,subject,region:reg,status:st,title:row.fortress?.name?`${row.fortress.name} von ${place(subject,row.date)}`:`Ziel bei ${place(subject,row.date)}`,statusLabel:m[0],statusDetail:m[1],scopeText:row.scopeText||row.fortress?.scopeText||'Testumfang noch nicht festgelegt',wordCount:row.wordCount||row.fortress?.wordCount||0,reviewOpen:!!row.reviewOpen,fortress:row.fortress,grade:row.grade,series:row.series,siegePct:row.fortress?Math.max(0,Math.min(100,Math.round((1-def/mx)*100))):0};
+      const t=themeFor(subject),where=place(subject,row.date),targetName=row.fortress?(t.targetNames[row.fortress.id]||row.fortress.name):t.plannedNoun;
+      return {key:`test:${subject}:${row.date}`,index,date:row.date,subject,region:reg,status:st,title:`${targetName} · ${where}`,statusLabel:m[0],statusDetail:m[1],scopeText:row.scopeText||row.fortress?.scopeText||'Testumfang noch nicht festgelegt',wordCount:row.wordCount||row.fortress?.wordCount||0,reviewOpen:!!row.reviewOpen,fortress:row.fortress,grade:row.grade,series:row.series,siegePct:row.fortress?Math.max(0,Math.min(100,Math.round((1-def/mx)*100))):0};
     });
   }
   function icon(s){if(s.status==='completed')return'✓';if(s.status==='secured'||s.status==='captured')return'⚑';if(s.status==='active')return'♜';if(s.status==='awaiting')return'!';return'◇'}
@@ -106,7 +113,7 @@
     const t=themeFor(st.subject),defense=st.fortress?`<div><small>${safe(t.detailProgress)}</small><strong>${st.siegePct}%</strong><span>${Math.max(0,Number(st.fortress.defense)||0)} Zielstärke übrig</span></div>`:'';
     root.innerHTML=`<button type="button" class="campaign-map-detail-close" data-campaign-detail-close aria-label="Zielinfo schließen">×</button><div class="campaign-map-detail-head"><small>${safe(t.regions[st.region])}</small><h3>${safe(st.title)}</h3><p>${safe(st.statusLabel)} · ${safe(st.statusDetail)}</p></div><div class="campaign-map-detail-grid"><div><small>Test</small><strong>${safe(dateLabel(st.date))}</strong><span>${safe(st.scopeText)}</span></div><div><small>Umfang</small><strong>${st.wordCount?st.wordCount+' Vokabeln':'noch offen'}</strong><span>${st.series?'wiederkehrender Test':'geplanter Test'}</span></div>${defense}${grade}</div>${st.reviewOpen?'<div class="campaign-map-note">Die Vokabelpaare für dieses Ziel müssen im Elternbereich noch geprüft werden.</div>':''}`;
     const current=typeof currentTestFortress==='function'?currentTestFortress(st.subject):null,can=current?.testDate===st.date;
-    if(battle){battle.classList.toggle('hidden',!can);battle.disabled=!can;battle.textContent=st.fortress?.capturedAt?'Festung ansehen / sichern':'Zur Schlacht'}
+    if(battle){battle.classList.toggle('hidden',!can);battle.disabled=!can;battle.textContent=st.fortress?.capturedAt?t.securedAction:t.battleAction}
   }
   function yearDetail(pct){
     const root=document.querySelector('#campaignMapDetail');if(!root)return;
