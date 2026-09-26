@@ -12,6 +12,12 @@ try{
   assert(await page.locator('.battle-stage-wrap > .battle-scene-hud').count()===1,'battle KPIs live inside the scene wrapper');
   assert(await page.locator('.battle-stage-wrap > .battle-scene-tactics').count()===1,'battle tactics are attached directly to the scene');
   assert(await page.locator('#battleFullscreenBtn').isVisible(),'battle fullscreen control remains visible');
+  assert(await page.locator('#battleStorySpeakBtn').isVisible(),'battle story narration control is visible');
+  assert(await page.locator('#battleStorySpeakBtn').getAttribute('aria-pressed')==='false','battle story narration starts stopped');
+  await page.evaluate(()=>updateBattleStoryNarrationUi(true));
+  assert(await page.locator('#battleStorySpeakBtn').getAttribute('aria-pressed')==='true','battle story narration exposes active state');
+  assert((await page.locator('#battleStorySpeakBtn').textContent()).includes('Stop'),'battle story narration offers an explicit stop control');
+  await page.evaluate(()=>updateBattleStoryNarrationUi(false));
   const first=await page.evaluate(()=>{
     const f=currentTestFortress(),stage=document.querySelector('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
     return {
