@@ -5,6 +5,8 @@ const {browser,page,assert,reset,openBattle,errors,diagnose}=await createBattleH
 try{
   await reset({revealed:true,ticket:true});
   await openBattle();
+  await page.setViewportSize({width:1180,height:720});
+  await page.evaluate(()=>renderBattleView());
 
   assert(await page.locator('#battleStage [data-battle-art-stack]').count()===0,'legacy battle artwork stack is no longer layered under the current scene');
   assert(await page.locator('#battleStage .battle-sky').count()===1,'current fantasy scene keeps its sky layer');
@@ -24,12 +26,16 @@ try{
       const fortress=document.querySelector('#battleStage .battle-fortress');
       const keep=fortress.querySelector('.battle-keep');
       const rect=fortress.getBoundingClientRect();
+      const stageRect=document.querySelector('#battleStage').getBoundingClientRect();
+      const armyRect=document.querySelector('#battleStage .battle-army').getBoundingClientRect();
       result[id]={
         width:Math.round(rect.width),
         height:Math.round(rect.height),
         keepDisplay:getComputedStyle(keep).display,
         keepHeight:Math.round(keep.getBoundingClientRect().height),
-        stageClass:document.querySelector('#battleStage').className
+        stageClass:document.querySelector('#battleStage').className,
+        centerGap:Math.round(rect.left-armyRect.right),
+        stageWidth:Math.round(stageRect.width)
       };
     }
     f.id=original.id;f.name=original.name;renderBattleView();
@@ -41,6 +47,7 @@ try{
   assert(fortressProgression.final.height>fortressProgression.capital.height,'final fortress is largest target');
   assert(new Set(Object.values(fortressProgression).map(v=>v.width+'x'+v.height)).size>=5,'fortress geometry remains materially distinct');
   assert(Object.entries(fortressProgression).every(([id,v])=>v.stageClass.includes('fortress-stage-'+id)),'each fortress keeps matching atmosphere class');
+  assert(fortressProgression.final.centerGap>=fortressProgression.final.stageWidth*.07,'largest fortress preserves a readable center battlefield between army and target');
 
   await page.emulateMedia({reducedMotion:'no-preference'});
   const motion=await page.evaluate(()=>{
