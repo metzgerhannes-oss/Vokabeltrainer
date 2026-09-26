@@ -106,14 +106,24 @@ try{
   const latinStandard=await page.locator('#battleStage .battle-standard i').evaluate(el=>getComputedStyle(el,'::after').content);
   assert(String(latinStandard).includes('SPQR'),'Latin standard carries the Roman SPQR identity');
 
-  await page.locator('#battleAttackBtn').scrollIntoViewIfNeeded();
-  const actionClearance=await page.evaluate(()=>{
-    const action=document.querySelector('#battleAttackBtn')?.getBoundingClientRect();
-    const nav=document.querySelector('.bottom-nav')?.getBoundingClientRect();
-    return action&&nav?Math.round(nav.top-action.bottom):0;
+  const actionAccess=await page.evaluate(()=>{
+    const button=document.querySelector('#battleAttackBtn'),nav=document.querySelector('.bottom-nav');
+    button?.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
+    button?.focus({preventScroll:true});
+    const action=button?.getBoundingClientRect(),navRect=nav?.getBoundingClientRect();
+    if(!button||!action||!navRect)return {clearance:-999,hit:false,focused:false};
+    const x=action.left+action.width/2,y=action.top+action.height/2;
+    const hit=document.elementFromPoint(x,y);
+    return {
+      clearance:Math.round(navRect.top-action.bottom),
+      hit:hit===button||button.contains(hit),
+      focused:document.activeElement===button
+    };
   });
-  assert(actionClearance>=0,'fixed bottom navigation never covers the battle action');
-  await page.click('#battleAttackBtn');
+  assert(actionAccess.clearance>=0,'fixed bottom navigation never covers the battle action');
+  assert(actionAccess.hit,'battle action remains the topmost hit target after scrolling');
+  assert(actionAccess.focused,'battle action remains keyboard-focusable');
+  await page.keyboard.press('Enter');
   await page.waitForSelector('#battleResultOverlay.visible');
   const latinResultTitle=await page.locator('#battleResultTitle').textContent();
   assert(/Kastell|Vorstoß|Wächter/.test(latinResultTitle||''),'Latin result stays in Roman vocabulary');
