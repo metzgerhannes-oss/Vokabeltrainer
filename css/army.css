@@ -305,3 +305,340 @@ body.lrs-mode .army-unit-card,body.lrs-mode .army-command,body.lrs-mode .army-un
 .army-game-hub .campaign-card{margin:0;background:rgba(255,255,255,.86);border-color:rgba(133,103,48,.28);box-shadow:none}
 .army-game-hub .campaign-card .row.gap.wrap{margin-top:12px}
 @media(max-width:720px){.army-game-hub{padding:12px;border-radius:18px}}
+
+
+/* v0.21.0 – spielzentrierte Kommandoszene */
+.army-game-hub{
+  padding:0;
+  overflow:hidden;
+  border:1px solid rgba(228,205,145,.28);
+  background:linear-gradient(180deg,#0a1625,#07111d);
+  box-shadow:0 22px 58px rgba(0,0,0,.34);
+}
+.army-game-hub>.army-section-head{display:none}
+.game-command-card{
+  margin:0;
+  border:0;
+  border-radius:0;
+  background:#091522!important;
+  color:#edf5ff;
+  box-shadow:none!important;
+  overflow:hidden;
+}
+.game-command-hud{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:14px 16px 10px;
+  border-bottom:1px solid rgba(226,202,144,.18);
+  background:linear-gradient(180deg,rgba(20,42,66,.98),rgba(8,24,40,.98));
+}
+.game-command-hud h2{
+  margin:.15rem 0 0;
+  color:#fff;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:clamp(1.55rem,3vw,2.25rem);
+}
+.game-command-hud .eyebrow{color:#d8c28a}
+.game-resource-strip{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(84px,1fr));
+  min-width:min(560px,58%);
+  border:1px solid rgba(228,205,145,.22);
+  border-radius:12px;
+  overflow:hidden;
+  background:rgba(4,15,27,.72);
+}
+.game-resource-strip>span{
+  padding:9px 11px;
+  border-right:1px solid rgba(228,205,145,.15);
+}
+.game-resource-strip>span:last-child{border-right:0}
+.game-resource-strip small{
+  display:block;
+  color:#8fa5b9;
+  font-size:.61rem;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.game-resource-strip strong{
+  display:block;
+  margin-top:2px;
+  color:#fff;
+  font-size:.88rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.game-ticket-resource strong{color:#f3d886}
+
+.game-loop{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);
+  align-items:center;
+  gap:7px;
+  padding:10px 16px;
+  border-bottom:1px solid rgba(228,205,145,.12);
+  background:#07121f;
+}
+.game-loop>i{
+  color:#53697e;
+  font-style:normal;
+  font-size:1.35rem;
+  font-weight:900;
+}
+.game-loop-step{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+  padding:8px 10px;
+  border:1px solid rgba(135,157,180,.17);
+  border-radius:11px;
+  background:rgba(13,31,49,.68);
+  opacity:.62;
+}
+.game-loop-step>b{
+  display:grid;
+  place-items:center;
+  flex:0 0 28px;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  border:1px solid #60788e;
+  color:#9fb1c1;
+  background:#0b1c2e;
+}
+.game-loop-step span{min-width:0}
+.game-loop-step strong{display:block;color:#dbe6ef;font-size:.77rem}
+.game-loop-step small{
+  display:block;
+  color:#8296a8;
+  font-size:.61rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.game-loop-step.current{
+  opacity:1;
+  border-color:#d8b95f;
+  background:linear-gradient(180deg,rgba(87,68,25,.54),rgba(31,32,26,.66));
+  box-shadow:inset 0 0 0 1px rgba(255,219,115,.08),0 0 18px rgba(224,178,70,.08);
+}
+.game-loop-step.current>b{border-color:#e0bd5b;color:#fff3c2;background:#72531d}
+.game-loop-step.done{
+  opacity:1;
+  border-color:#5f9d5d;
+  background:linear-gradient(180deg,rgba(39,86,51,.52),rgba(16,46,34,.64));
+}
+.game-loop-step.done>b{border-color:#70b46c;color:#dff3d8;background:#24562f}
+.game-loop-step.done>b::before{content:"✓";font-size:.8rem}
+.game-loop-step.done>b{font-size:0}
+.game-loop-step.locked{opacity:.38}
+
+.game-frontline-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1.7fr) minmax(230px,.68fr);
+  min-height:360px;
+  background:linear-gradient(180deg,#112842 0 38%,#1b2c2a 39% 100%);
+}
+.game-frontline-stage{position:relative;min-width:0}
+#armyView .battlefield{
+  height:100%;
+  min-height:360px;
+  margin:0;
+  border:0;
+  border-radius:0;
+  background:
+    radial-gradient(circle at 76% 16%,rgba(247,205,118,.14),transparent 16rem),
+    linear-gradient(180deg,#1a3b5b 0 58%,#223d35 58% 74%,#17291f 74% 100%);
+  box-shadow:inset 0 -46px 80px rgba(0,0,0,.24);
+}
+#armyView .battlefield.progress-army-artwork .progress-army-art{opacity:.2;filter:grayscale(.4) contrast(1.05) brightness(.55)}
+#armyView .battlefield .progress-army-art-shade{
+  background:linear-gradient(90deg,rgba(4,12,20,.16),rgba(4,12,20,.05) 48%,rgba(4,12,20,.32));
+}
+#armyView .battlefield .army{
+  left:5%;
+  bottom:17%;
+  gap:2px;
+  transform:scale(1.18);
+  transform-origin:left bottom;
+  filter:drop-shadow(0 8px 8px rgba(0,0,0,.34));
+}
+#armyView .battlefield .soldier{transform:scale(.92);margin-right:-2px}
+#armyView .battlefield .soldier:before{background:#111923;border-color:#080d13}
+#armyView .battlefield .soldier:after{background:#182331;border-color:#0b1119}
+#armyView .battlefield .soldier .shield{background:#303d4d;border-color:#0b1119}
+#armyView .battlefield .soldier .weapon,
+#armyView .battlefield .soldier .spear{filter:brightness(.55)}
+#armyView .battlefield .siege{filter:saturate(.55) brightness(.72)}
+#armyView .battlefield .fortress{
+  right:4%;
+  bottom:15%;
+  transform:scale(1.42);
+  transform-origin:right bottom;
+  filter:drop-shadow(0 12px 14px rgba(0,0,0,.28));
+}
+#armyView .battlefield .sun,
+#armyView .battlefield .preview-cloud{opacity:.4}
+.frontline-label{
+  position:absolute;
+  z-index:8;
+  top:12px;
+  padding:4px 8px;
+  border-radius:7px;
+  font-size:.58rem;
+  font-weight:1000;
+  letter-spacing:.12em;
+  color:#dbe7ef;
+  background:rgba(4,14,24,.62);
+  border:1px solid rgba(255,255,255,.12);
+}
+.frontline-own{left:12px}
+.frontline-target{right:12px;color:#f0c9bd;border-color:rgba(209,108,77,.24)}
+.frontline-center{
+  position:absolute;
+  z-index:7;
+  left:48%;
+  top:50%;
+  width:13%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  color:#d7c383;
+  opacity:.8;
+}
+.frontline-center i{
+  display:block;
+  height:2px;
+  background:linear-gradient(90deg,transparent,#d7c383 28% 72%,transparent);
+}
+.frontline-center i::after{
+  content:"";
+  display:block;
+  float:right;
+  margin-top:-4px;
+  width:8px;
+  height:8px;
+  border-top:2px solid #d7c383;
+  border-right:2px solid #d7c383;
+  transform:rotate(45deg);
+}
+.frontline-center span{
+  display:block;
+  margin-top:5px;
+  font-size:.55rem;
+  font-weight:1000;
+  letter-spacing:.13em;
+}
+
+.game-mission-panel{
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+  padding:20px 18px;
+  border-left:1px solid rgba(228,205,145,.18);
+  background:
+    linear-gradient(180deg,rgba(11,27,44,.98),rgba(6,18,31,.98));
+}
+.game-mission-status{
+  align-self:flex-start;
+  padding:5px 8px;
+  border:1px solid #596d80;
+  border-radius:999px;
+  color:#b1c1d0;
+  font-size:.6rem;
+  font-weight:1000;
+  letter-spacing:.09em;
+}
+.game-mission-status.ready{border-color:#d7b75a;color:#ffe7a6;background:rgba(101,75,18,.24)}
+.game-mission-status.captured{border-color:#6ba566;color:#cef1c8;background:rgba(42,91,49,.24)}
+.game-mission-status.spent{border-color:#8f7653;color:#d7c6a9}
+.game-mission-status.locked{opacity:.65}
+.game-mission-panel h3{
+  margin:0;
+  color:#fff;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:1.35rem;
+  line-height:1.08;
+}
+.game-mission-panel>p{
+  margin:0;
+  color:#aebfcd;
+  font-size:.76rem;
+  line-height:1.45;
+}
+.game-defense{
+  margin-top:4px;
+  padding:10px 11px;
+  border:1px solid rgba(228,205,145,.16);
+  border-radius:10px;
+  background:rgba(3,14,24,.52);
+}
+.game-defense small{display:block;color:#8298aa;font-size:.61rem;text-transform:uppercase;font-weight:900}
+.game-defense strong{display:block;margin-top:3px;color:#f0deaa;font-size:.88rem}
+.game-mission-message{
+  margin-top:auto;
+  padding:10px 11px;
+  border-left:3px solid #556f88;
+  background:rgba(10,28,45,.52);
+  color:#b8c9d8;
+  font-size:.72rem;
+  line-height:1.42;
+}
+.game-mission-message.ready{border-color:#dab950;color:#eedca7}
+.game-mission-message.captured{border-color:#6fa568;color:#cce4c8}
+
+.game-command-actions{
+  display:grid;
+  grid-template-columns:minmax(220px,1.4fr) minmax(120px,.7fr) minmax(120px,.7fr);
+  gap:9px;
+  padding:12px 16px 15px;
+  border-top:1px solid rgba(228,205,145,.15);
+  background:#06111d;
+}
+.game-command-actions button{
+  min-height:48px;
+  border-radius:10px;
+  font-weight:1000;
+  letter-spacing:.035em;
+}
+.game-attack-primary{
+  border:1px solid #e0be5d;
+  background:linear-gradient(180deg,#b17a21,#744810);
+  color:#fff8dc;
+  box-shadow:0 8px 26px rgba(183,126,33,.2);
+}
+.game-attack-primary:disabled{opacity:.42;box-shadow:none}
+.game-command-secondary{
+  border:1px solid rgba(180,198,215,.24);
+  background:linear-gradient(180deg,#17314d,#0c2035);
+  color:#dce9f4;
+}
+.game-command-secondary:hover{border-color:#6d94ba}
+
+@media(max-width:860px){
+  .game-command-hud{align-items:flex-start;flex-direction:column}
+  .game-resource-strip{width:100%;min-width:0}
+  .game-frontline-layout{grid-template-columns:1fr}
+  .game-mission-panel{border-left:0;border-top:1px solid rgba(228,205,145,.18)}
+}
+@media(max-width:620px){
+  .game-command-hud{padding:11px 10px 9px}
+  .game-resource-strip{grid-template-columns:repeat(2,1fr)}
+  .game-resource-strip>span:nth-child(2){border-right:0}
+  .game-resource-strip>span:nth-child(-n+2){border-bottom:1px solid rgba(228,205,145,.15)}
+  .game-loop{grid-template-columns:1fr;gap:5px;padding:8px 10px}
+  .game-loop>i{display:none}
+  .game-loop-step{padding:6px 8px}
+  .game-loop-step small{white-space:normal}
+  #armyView .battlefield{min-height:245px}
+  #armyView .battlefield .army{left:1%;transform:scale(.72)}
+  #armyView .battlefield .fortress{right:1%;transform:scale(.92)}
+  .frontline-center{left:50%;width:16%}
+  .game-mission-panel{padding:13px 12px}
+  .game-command-actions{grid-template-columns:1fr 1fr;padding:10px}
+  .game-command-actions .game-attack-primary{grid-column:1/-1}
+}

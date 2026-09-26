@@ -9,16 +9,16 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Vokabeltrainer">
-  <title>Vokabeltrainer – Beta v0.20.0</title>
+  <title>Vokabeltrainer – Beta v0.21.0</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
-  <link rel="stylesheet" href="css/app.css?v=0.20.0">
-  <link rel="stylesheet" href="css/menu.css?v=0.20.0">
-  <link rel="stylesheet" href="css/army.css?v=0.20.0">
-  <link rel="stylesheet" href="css/campaign-map.css?v=0.20.0">
-  <link rel="stylesheet" href="css/battle-art.css?v=0.20.0">
-  <link rel="stylesheet" href="css/battle-fortress.css?v=0.20.0">
-  <link rel="stylesheet" href="css/battle-result.css?v=0.20.0">
+  <link rel="stylesheet" href="css/app.css?v=0.21.0">
+  <link rel="stylesheet" href="css/menu.css?v=0.21.0">
+  <link rel="stylesheet" href="css/army.css?v=0.21.0">
+  <link rel="stylesheet" href="css/campaign-map.css?v=0.21.0">
+  <link rel="stylesheet" href="css/battle-art.css?v=0.21.0">
+  <link rel="stylesheet" href="css/battle-fortress.css?v=0.21.0">
+  <link rel="stylesheet" href="css/battle-result.css?v=0.21.0">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Zum Inhalt</a>
@@ -26,7 +26,7 @@
     <header class="topbar">
       <div class="app-title-row">
         <h1 id="appTitle">Vokabeltrainer</h1>
-        <span id="versionBadge" class="version-badge" aria-label="App-Version">v0.20.0</span>
+        <span id="versionBadge" class="version-badge" aria-label="App-Version">v0.21.0</span>
       </div>
       <div class="top-actions">
         <button id="installBtn" class="ghost hidden">Installieren</button>
@@ -227,26 +227,49 @@
               <div><small>Spielbereich</small><h3 id="armyGameHubTitle">Kampagne & Schlacht</h3></div>
               <p>Hier ist alles Spielerische gebündelt. Dein Lernen bestimmt nur, was freigeschaltet wird; die Lernbewertung bleibt davon getrennt.</p>
             </div>
-            <article class="card campaign-card" id="campaignCard">
-              <div class="row spread align-center">
+            <article class="campaign-card game-command-card" id="campaignCard">
+              <header class="game-command-hud">
                 <div>
                   <div class="eyebrow" id="campaignEyebrow">Spiel · Kampagne</div>
                   <h2 id="campaignTitle">Deine Armee</h2>
                 </div>
-                <span class="pill" id="armyRank">Rekruten</span>
+                <div class="game-resource-strip" aria-label="Spielstatus">
+                  <span><small>Rang</small><strong id="armyRank">Rekruten</strong></span>
+                  <span><small>Stärke</small><strong id="armyStrength">0</strong></span>
+                  <span><small>Ausrüstung</small><strong id="gearLevel">I</strong></span>
+                  <span class="game-ticket-resource"><small>Aktion</small><strong id="gameTicketCount">0</strong></span>
+                </div>
+              </header>
+
+              <div class="game-loop" aria-label="Spielablauf">
+                <div id="gameLoopLearn" class="game-loop-step" data-step="1"><b>1</b><span><strong>Lernen</strong><small>Tagesziel schaffen</small></span></div>
+                <i aria-hidden="true">›</i>
+                <div id="gameLoopAttack" class="game-loop-step" data-step="2"><b>2</b><span><strong>Angreifen</strong><small>eine Aktion einsetzen</small></span></div>
+                <i aria-hidden="true">›</i>
+                <div id="gameLoopCapture" class="game-loop-step" data-step="3"><b>3</b><span><strong>Erobern</strong><small>Festung bezwingen</small></span></div>
               </div>
-              <div id="battlefield" class="battlefield" role="img" aria-label="Armee und Festung"></div>
-              <div class="campaign-stats">
-                <div><small>Stärke</small><strong id="armyStrength">0</strong></div>
-                <div><small>Testfestung</small><strong id="fortressRequirement">Kein Test geplant</strong></div>
-                <div><small>Ausrüstung</small><strong id="gearLevel">I</strong></div>
+
+              <div class="game-frontline-layout">
+                <div class="game-frontline-stage">
+                  <div id="battlefield" class="battlefield" role="img" aria-label="Armee und Festung"></div>
+                </div>
+                <aside class="game-mission-panel" aria-live="polite">
+                  <span id="gameMissionStatus" class="game-mission-status">Kein Ziel</span>
+                  <h3 id="gameMissionTitle">Noch keine Festung</h3>
+                  <p id="gameMissionMeta">Ein geplanter Test erzeugt automatisch das nächste Ziel.</p>
+                  <div class="game-defense">
+                    <small>Festungsstatus</small>
+                    <strong id="fortressRequirement">Kein Test geplant</strong>
+                  </div>
+                  <div id="campaignMessage" class="game-mission-message"></div>
+                </aside>
               </div>
-              <div class="row gap wrap">
-                <button id="campaignMapBtn" class="primary">Feldzugskarte</button>
-                <button id="attackBtn" class="secondary">Zur Schlacht</button>
-                <button id="duelBtn" class="secondary">Freundschaftsduell</button>
+
+              <div class="game-command-actions">
+                <button id="attackBtn" class="game-attack-primary">Zur Schlacht</button>
+                <button id="campaignMapBtn" class="game-command-secondary">Feldzug</button>
+                <button id="duelBtn" class="game-command-secondary">Duell</button>
               </div>
-              <div id="campaignMessage" class="notice subtle"></div>
             </article>
           </section>
 
@@ -564,31 +587,31 @@
   <input id="fileInput" type="file" class="hidden" accept=".csv,.json,text/csv,application/json">
   <input id="photoInput" type="file" class="hidden" accept="image/*">
   <input id="isbnPhotoInput" type="file" class="hidden" accept="image/*" capture="environment">
-  <script src="js/core.js?v=0.20.0" defer></script>
-  <script src="js/help.js?v=0.20.0" defer></script>
-  <script src="js/library.js?v=0.20.0" defer></script>
-  <script src="js/builtin-library.js?v=0.20.0" defer></script>
-  <script src="js/storage.js?v=0.20.0" defer></script>
-  <script src="js/model.js?v=0.20.0" defer></script>
-  <script src="js/family-sync.js?v=0.20.0" defer></script>
-  <script src="js/quiz-engine.js?v=0.20.0" defer></script>
-  <script src="js/learning.js?v=0.20.0" defer></script>
-  <script src="js/translation.js?v=0.20.0" defer></script>
-  <script src="js/io.js?v=0.20.0" defer></script>
-  <script src="js/vendor/qrcode.js?v=0.20.0" defer></script>
-  <script src="js/qr-ui.js?v=0.20.0" defer></script>
-  <script src="js/ui.js?v=0.20.0" defer></script>
-  <script src="js/army-art.js?v=0.20.0" defer></script>
-  <script src="js/menu-avatar-art.js?v=0.20.0" defer></script>
-  <script src="js/battle-art.js?v=0.20.0" defer></script>
-  <script src="js/battle-art-ui.js?v=0.20.0" defer></script>
-  <script src="js/battle-result-ui.js?v=0.20.0" defer></script>
-  <script src="js/army-ui.js?v=0.20.0" defer></script>
-  <script src="js/campaign-map.js?v=0.20.0" defer></script>
-  <script src="js/menu-ui.js?v=0.20.0" defer></script>
-  <script src="js/library-ui.js?v=0.20.0" defer></script>
-  <script src="js/focus-ui.js?v=0.20.0" defer></script>
-  <script src="js/parent-docs.js?v=0.20.0" defer></script>
-  <script src="js/app.js?v=0.20.0" defer></script>
+  <script src="js/core.js?v=0.21.0" defer></script>
+  <script src="js/help.js?v=0.21.0" defer></script>
+  <script src="js/library.js?v=0.21.0" defer></script>
+  <script src="js/builtin-library.js?v=0.21.0" defer></script>
+  <script src="js/storage.js?v=0.21.0" defer></script>
+  <script src="js/model.js?v=0.21.0" defer></script>
+  <script src="js/family-sync.js?v=0.21.0" defer></script>
+  <script src="js/quiz-engine.js?v=0.21.0" defer></script>
+  <script src="js/learning.js?v=0.21.0" defer></script>
+  <script src="js/translation.js?v=0.21.0" defer></script>
+  <script src="js/io.js?v=0.21.0" defer></script>
+  <script src="js/vendor/qrcode.js?v=0.21.0" defer></script>
+  <script src="js/qr-ui.js?v=0.21.0" defer></script>
+  <script src="js/ui.js?v=0.21.0" defer></script>
+  <script src="js/army-art.js?v=0.21.0" defer></script>
+  <script src="js/menu-avatar-art.js?v=0.21.0" defer></script>
+  <script src="js/battle-art.js?v=0.21.0" defer></script>
+  <script src="js/battle-art-ui.js?v=0.21.0" defer></script>
+  <script src="js/battle-result-ui.js?v=0.21.0" defer></script>
+  <script src="js/army-ui.js?v=0.21.0" defer></script>
+  <script src="js/campaign-map.js?v=0.21.0" defer></script>
+  <script src="js/menu-ui.js?v=0.21.0" defer></script>
+  <script src="js/library-ui.js?v=0.21.0" defer></script>
+  <script src="js/focus-ui.js?v=0.21.0" defer></script>
+  <script src="js/parent-docs.js?v=0.21.0" defer></script>
+  <script src="js/app.js?v=0.21.0" defer></script>
 </body>
 </html>

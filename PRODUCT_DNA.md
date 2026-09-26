@@ -138,6 +138,16 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    verändert aber weder rückwirkend die Eroberung noch den Mastery-Wert. Kampfanimationen,
    Bossdarstellung, Story und Freundschaftsduelle dürfen fachliche Leistung niemals
    vortäuschen, ersetzen oder zufällig verändern.
+   Die Spieloberfläche muss den Zusammenhang für Kinder unmittelbar sichtbar machen:
+   **Lernen → eine Tagesaktion freischalten → angreifen → Festung erobern bzw. sichern.**
+   Armee links, gegnerisches Ziel rechts, aktueller Auftrag und nächster möglicher Schritt
+   müssen ohne Erklärung erkennbar sein. Der Startbildschirm bleibt davon frei; die
+   vollständige Spielinszenierung gehört ausschließlich in den Bereich **Armee**.
+   Die Spieloberfläche muss den Zusammenhang für Kinder unmittelbar sichtbar machen:
+   **Lernen → eine Tagesaktion freischalten → angreifen → Festung erobern bzw. sichern.**
+   Eigene Armee links, gegnerisches Ziel rechts, aktueller Auftrag und nächster möglicher
+   Schritt müssen ohne Erklärung erkennbar sein. Die vollständige Spielinszenierung gehört
+   ausschließlich in den Bereich **Armee**; der Startbildschirm bleibt lernzentriert.
 
 10. **Globale Wissensbasis, getrennte Bedeutungen**
     Ein Lexem wird global gespeichert, Bedeutungen/Senses werden getrennt geführt.
@@ -167,10 +177,10 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
     Buchzuordnung und Import sind technische Ebenen im Hintergrund oder Verwaltungs-/
     Korrekturwege und dürfen kein Verständnis des Datenmodells voraussetzen.
     Auf Desktop wird dieselbe klare Informationsarchitektur als echter Workspace dargestellt:
-    dauerhafte Seitennavigation mit **Heute · Üben · Fortschritt · Armee**, großzügigere
+    dauerhafte Seitennavigation mit **Heute · Lernen · Armee · Erfolge**, großzügigere
     Inhaltsflächen sowie mehrspaltige Eltern-/Verwaltungsansichten. „Heute“ bleibt dabei
     bewusst auf die Tagesaufgabe fokussiert; freiwilliges Training liegt auch auf Desktop
-    im eigenen Bereich „Üben“. Desktop ist keine bloß verbreiterte Mobilansicht.
+    im eigenen Bereich „Lernen“. Desktop ist keine bloß verbreiterte Mobilansicht.
 
 ---
 
