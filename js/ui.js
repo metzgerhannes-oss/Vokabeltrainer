@@ -207,14 +207,15 @@ function applyProgressArmyArt(){
 function renderBattlefield(){
   const p=subjectProgress(),f=currentTestFortress(),sea=seasonInfo(),count=soldiersFor(p.pct),tickets=battleTickets();
   const siege=p.pct>=35?'<div class="siege" title="Belagerungsgerät freigeschaltet"></div>':'';
-  const campaign=subjectCampaign(state.activeSubject),field=$('#battlefield');if(!field)return;
-  const damagePct=f?clamp(Math.round((1-(Number(f.defense)||0)/Math.max(1,Number(f.maxDefense)||1))*100),0,100):0,fortressVisual=battleFortressVisualState(f);
+  const campaign=subjectCampaign(state.activeSubject),present=battlePresentation(),field=$('#battlefield');if(!field)return;
+  const damagePct=f?clamp(Math.round((1-(Number(f.defense)||0)/Math.max(1,Number(f.maxDefense)||1))*100),0,100):0,fortressVisual=battleFortressVisualState(f),targetName=battleTargetName(f);
   field.className=`battlefield ${sea.class} subject-${state.activeSubject} gear-${gearTier(p.pct)} ${tickets?'battle-ready':''} ${f?.capturedAt?'battle-captured':''} fortress-visual-${fortressVisual.id}`;
+  field.dataset.visualTheme=present.theme;
   field.dataset.damage=damagePct>=66?'high':damagePct>=33?'mid':damagePct>0?'low':'none';
   field.dataset.damagePercent=String(damagePct);
   field.dataset.fortressState=fortressVisual.id;
-  field.setAttribute('aria-label',`${campaign.unitLabel}: ${p.pct}% Schuljahresfortschritt, Rang ${rankFor(p.pct,state.activeSubject)}, ${f?`Testfestung ${f.name} am ${formatDateShort(f.testDate)}`:'kein Test geplant'}`);
-  field.innerHTML=`<img class="progress-army-art" data-progress-army-art alt="" aria-hidden="true" hidden><div class="progress-army-art-shade" aria-hidden="true"></div><div class="frontline-label frontline-own" aria-hidden="true">DEINE ARMEE</div><div class="frontline-label frontline-target" aria-hidden="true">ZIEL</div><div class="frontline-center" aria-hidden="true"><i></i><span>VORRÜCKEN</span></div><div class="sun"></div><div class="preview-cloud cloud-a"></div><div class="preview-cloud cloud-b"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army"><div class="preview-standard"></div>${battleUnitsMarkup(count,false,p.pct)}${siege}</div>${fortressMarkup(f,false)}`;
+  field.setAttribute('aria-label',`${campaign.unitLabel}: ${p.pct}% Schuljahresfortschritt, Rang ${rankFor(p.pct,state.activeSubject)}, ${f?`${present.targetNoun} ${targetName} am ${formatDateShort(f.testDate)}`:'kein Test geplant'}`);
+  field.innerHTML=`<img class="progress-army-art" data-progress-army-art alt="" aria-hidden="true" hidden><div class="progress-army-art-shade" aria-hidden="true"></div><div class="frontline-label frontline-own" aria-hidden="true">${esc(present.ownLabel)}</div><div class="frontline-label frontline-target" aria-hidden="true">${esc(present.targetLabel)}</div><div class="frontline-center" aria-hidden="true"><i></i><span>${esc(present.moveLabel)}</span></div><div class="sun"></div><div class="preview-cloud cloud-a"></div><div class="preview-cloud cloud-b"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army"><div class="preview-standard"></div>${battleUnitsMarkup(count,false,p.pct)}${siege}</div>${fortressMarkup(f,false)}`;
   applyProgressArmyArt();
 }
 if(typeof document!=='undefined'&&typeof document.addEventListener==='function')document.addEventListener('vt-army-art-ready',()=>{if(state&&document.querySelector?.('#battlefield'))applyProgressArmyArt()});
@@ -242,8 +243,8 @@ function battleFortressRevealActive(f=currentTestFortress()){
 }
 function battleFortressRevealMarkup(f,active=false){
   if(!f)return '';
-  const days=Math.max(1,Number(f.plannedAttackDays)||1),words=Math.max(0,Number(f.wordCount)||0);
-  return `<div class="battle-target-reveal" data-battle-target-reveal aria-hidden="true" ${active?'':'hidden'}><div class="battle-target-reveal-light"></div><div class="battle-target-reveal-copy"><small>NEUES TESTZIEL ENTDECKT</small><strong>${esc(f.name)}</strong><span>${esc(f.subtitle||'Testfestung')} · Test ${formatDateShort(f.testDate)}</span><b>${words} ${words===1?'Vokabel':'Vokabeln'} · ${days} ${days===1?'Lerntag':'Lerntage'} eingeplant</b></div></div>`;
+  const days=Math.max(1,Number(f.plannedAttackDays)||1),words=Math.max(0,Number(f.wordCount)||0),p=battlePresentation(),name=battleTargetName(f);
+  return `<div class="battle-target-reveal" data-battle-target-reveal aria-hidden="true" ${active?'':'hidden'}><div class="battle-target-reveal-light"></div><div class="battle-target-reveal-copy"><small>${esc(p.revealKicker)}</small><strong>${esc(name)}</strong><span>${esc(p.targetNoun)} · Test ${formatDateShort(f.testDate)}</span><b>${words} ${words===1?'Vokabel':'Vokabeln'} · ${days} ${days===1?'Lerntag':'Lerntage'} eingeplant</b></div></div>`;
 }
 function startBattleFortressReveal(f=currentTestFortress()){
   const stage=$('#battleStage');if(!stage||!f||f.revealedAt)return false;
@@ -300,7 +301,7 @@ let battleReturnView='armyView';
 const BATTLE_RETURN_META={
   armyView:{back:'← Meine Armee',bottom:'Zurück zu meiner Armee'},
   armyUnitView:{back:'← Einheit',bottom:'Zurück zur Einheit'},
-  campaignMapView:{back:'← Mein Feldzug',bottom:'Zurück zum Feldzug'}
+  campaignMapView:{back:'',bottom:''}
 };
 function captureBattleReturnView(){
   const source=document.querySelector('.view.active')?.id;
@@ -308,15 +309,19 @@ function captureBattleReturnView(){
   else battleReturnView='armyView';
 }
 function renderBattleReturnUi(){
-  const meta=BATTLE_RETURN_META[battleReturnView]||BATTLE_RETURN_META.armyView;
+  let meta=BATTLE_RETURN_META[battleReturnView]||BATTLE_RETURN_META.armyView;
+  if(battleReturnView==='campaignMapView'){
+    const p=battlePresentation();
+    meta={back:p.mapBack,bottom:p.mapBottom};
+  }
   if($('#battleBackBtn'))$('#battleBackBtn').textContent=meta.back;
   if($('#battleReturnBtn'))$('#battleReturnBtn').textContent=meta.bottom;
 }
 function returnFromBattle(){if(battleStoryNarrating)stopBattleStoryNarration();showView(BATTLE_RETURN_META[battleReturnView]?battleReturnView:'armyView')}
 function openBattleView(){
   if(isParentMode())return;
-  const f=currentTestFortress();
-  if(!f){toast('Für die nächste Schlacht muss zuerst ein Test geplant sein.','subtle');return}
+  const f=currentTestFortress(),present=battlePresentation();
+  if(!f){toast(present.noTarget,'subtle');return}
   captureBattleReturnView();
   const reveal=!f.revealedAt;
   renderBattleView();renderBattleReturnUi();showView('battleView');
