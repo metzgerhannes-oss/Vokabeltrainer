@@ -102,7 +102,7 @@ try{
     const stored=JSON.parse(localStorage.getItem(key)||'{}');
     return {error,familyId:stored.familyId||'',learnerName:learner()?.name||'',calls};
   },{key:CONFIG_KEY,cfg:familyConfig()});
-  assert(rollback.error.includes('nicht sicher gespeichert'),'failed takeover reports local persistence failure');
+  assert(rollback.error.includes('nicht sicher gespeichert'),'failed takeover reports local persistence failure: '+JSON.stringify(rollback));
   assert(rollback.familyId==='family_test01','failed family switch restores previous sync configuration');
   assert(rollback.learnerName==='Rollback Kind','failed family switch restores previous learning state');
   assert(rollback.calls>=2,'failed family switch persists rollback state');
