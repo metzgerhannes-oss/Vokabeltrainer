@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 26.09.2026 · Basis: v0.21.3 · Release-Commit: `aeff3801d9da4078fa9cbc33670821d6bb6c1355`
+Stand: 26.09.2026 · Basis: v0.21.4 · Release-Kandidat: Army Command Visual Reset
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
