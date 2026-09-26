@@ -34,6 +34,47 @@ const BATTLE_STORY={
   capital:{title:'Vor der Hauptfestung',text:'Der Hauptmann hat seine besten Truppen versammelt. Dein bisheriger Lernweg entscheidet, wie stark deine Armee ist.'},
   final:{title:'Die große Testfestung',text:'Ein großer Testumfang liegt vor dir. Jeder abgeschlossene Lerntag schwächt die Verteidigung; gefestigtes Wissen macht die Angriffe stärker.'}
 };
+const BATTLE_STORY_LATIN={
+  outpost:{title:'Das erste Marschlager',text:'Die Legion erreicht ihre erste Etappe. Ordnung, Wiederholung und sichere Formen bringen sie weiter.'},
+  tower:{title:'Der römische Wachturm',text:'Vom Turm aus ist die Straße gut zu überblicken. Die Legion rückt mit jedem gefestigten Lerntag näher.'},
+  wall:{title:'Am Grenzkastell',text:'Das Kastell markiert die nächste große Etappe. Die Formation wächst mit deinem Lernfortschritt.'},
+  citadel:{title:'Vor dem Bergkastell',text:'Das Tor zum Kastell ist gut bewacht. Nur gefestigtes Wissen bringt die Legion sicher durch die Etappe.'},
+  capital:{title:'Das Provinzkastell',text:'Die nächste Prüfungsetappe verlangt eine geordnete Vorbereitung. Dein bisheriger Lernweg bestimmt die Stärke der Legion.'},
+  final:{title:'Der große Triumphort',text:'Ein großer Testumfang liegt vor dir. Jeder abgeschlossene Lerntag bringt die Legion auf der Marschroute weiter.'}
+};
+const BATTLE_STORY_FRENCH={
+  outpost:{title:'Die erste Station',text:'Die Sprachreise beginnt mit einer kleinen Etappe. Jedes gefestigte Wort öffnet den Weg zum nächsten Ort.'},
+  tower:{title:'Ein neuer Blick über die Stadt',text:'Von hier aus wird das nächste Reiseziel sichtbar. Weiterlernen bringt dich Schritt für Schritt näher.'},
+  wall:{title:'Über die Brücke',text:'Eine neue Etappe verbindet Bekanntes mit Neuem. Dein Wortschatz macht den Weg frei.'},
+  citadel:{title:'Eine besondere Kulturstation',text:'Die nächste Sprachmission wartet. Sicheres Wissen hilft dir, die Etappe abzuschließen.'},
+  capital:{title:'Die große Reiseetappe',text:'Viele gelernte Wörter führen jetzt zu einem wichtigen Ziel deiner Sprachreise.'},
+  final:{title:'Das Jahresziel',text:'Die große Abschlussstation steht für deinen langfristigen Lernfortschritt über das Schuljahr.'}
+};
+function battlePresentation(subject=state.activeSubject){
+  if(subject==='latin')return {
+    theme:'roman',kicker:'Römische Prüfungsetappe',unitLabel:'Legion',ownLabel:'DEINE LEGION',targetLabel:'KASTELL',moveLabel:'MARSCH',
+    targetNoun:'Kastell',capturedLabel:'Eingenommen',securedLabel:'Gesichert',mapBack:'← Marschroute',mapBottom:'Zurück zur Marschroute',
+    revealKicker:'NEUES KASTELL ENTDECKT',noTarget:'Für die nächste Prüfungsetappe muss zuerst ein Test geplant sein.',
+    targetNames:{outpost:'Marschlager',tower:'Wachturm',wall:'Grenzkastell',citadel:'Bergkastell',capital:'Provinzkastell',final:'Großes Kastell'}
+  };
+  if(subject==='french')return {
+    theme:'voyage',kicker:'Sprachmission',unitLabel:'Reise',ownLabel:'DEINE REISE',targetLabel:'ZIELORT',moveLabel:'WEITER',
+    targetNoun:'Etappe',capturedLabel:'Erreicht',securedLabel:'Gefestigt',mapBack:'← Sprachreise',mapBottom:'Zurück zur Sprachreise',
+    revealKicker:'NEUES REISEZIEL ENTDECKT',noTarget:'Für die nächste Sprachmission muss zuerst ein Test geplant sein.',
+    targetNames:{outpost:'Erste Station',tower:'Stadtetappe',wall:'Brückenetappe',citadel:'Kulturstation',capital:'Große Etappe',final:'Abschlussetappe'}
+  };
+  return {
+    theme:'campaign',kicker:'Schlacht',unitLabel:'Armee',ownLabel:'DEINE ARMEE',targetLabel:'ZIEL',moveLabel:'VORRÜCKEN',
+    targetNoun:'Festung',capturedLabel:'Erobert',securedLabel:'Gesichert',mapBack:'← Mein Feldzug',mapBottom:'Zurück zum Feldzug',
+    revealKicker:'NEUES TESTZIEL ENTDECKT',noTarget:'Für die nächste Schlacht muss zuerst ein Test geplant sein.',
+    targetNames:{outpost:'Vorposten',tower:'Wachturm',wall:'Grenzfestung',citadel:'Zitadelle',capital:'Hauptfestung',final:'Große Festung'}
+  };
+}
+function battleTargetName(f,subject=state.activeSubject){
+  if(!f)return '';
+  const p=battlePresentation(subject);
+  return p.targetNames[f.id]||f.name||p.targetNoun;
+}
 function specialAttackMeta(subject=state.activeSubject){
   return subject==='latin'
     ?{label:'Adlerstandarte',short:'Adler',icon:'★',message:'Die Adlerstandarte wird gehoben. Die Elite rückt geschlossen vor!'}
@@ -48,9 +89,12 @@ function battleAttackTacticalMeta(mode,subject=state.activeSubject){
 function attackUnlocked(mode,pct=subjectProgress().pct){const a=BATTLE_ATTACKS[mode];return !!a&&pct>=a.unlock}
 function battleBossFor(f){return f?BATTLE_BOSSES[f.id]||null:null}
 function battleStoryFor(f){
-  if(!f)return {title:'Noch keine Testfestung',text:'Sobald ein Test geplant ist, entsteht hier automatisch die passende Festung.'};
-  const base=BATTLE_STORY[f.id]||{title:f.name,text:'Deine Armee bereitet den nächsten Schritt vor.'};
-  return {title:base.title,text:`${base.text} Diese Festung steht für ${f.scopeText||'deinen nächsten Test'} am ${formatDateShort(f.testDate)}.`};
+  const p=battlePresentation();
+  if(!f)return {title:`Noch kein ${p.targetNoun}-Ziel`,text:`Sobald ein Test geplant ist, erscheint hier automatisch die passende ${p.targetNoun.toLowerCase()}-Etappe.`};
+  const stories=state.activeSubject==='latin'?BATTLE_STORY_LATIN:state.activeSubject==='french'?BATTLE_STORY_FRENCH:BATTLE_STORY;
+  const base=stories[f.id]||{title:battleTargetName(f),text:`${p.unitLabel} bereitet den nächsten Schritt vor.`};
+  const targetWord=state.activeSubject==='latin'?'Dieses Kastell':state.activeSubject==='french'?'Diese Etappe':'Diese Festung';
+  return {title:base.title,text:`${base.text} ${targetWord} steht für ${f.scopeText||'deinen nächsten Test'} am ${formatDateShort(f.testDate)}.`};
 }
 let battleStoryNarrationToken=0;
 let battleStoryNarrating=false;
@@ -116,7 +160,7 @@ function battleUnitsMarkup(count,large=false,pct=subjectProgress().pct){
 }
 function fortressMarkup(f,large=false){
   if(!f)return '';
-  const id=f.id||'outpost',name=f.name||'Festung',captured=!!f.capturedAt;
+  const id=f.id||'outpost',name=battleTargetName(f),captured=!!f.capturedAt;
   if(!large)return `<div class="fortress fortress-${esc(id)} ${captured?'captured':''}" aria-label="${esc(name)}"><div class="gate"></div><div class="flag enemy-flag"></div><div class="own-flag" aria-hidden="true"></div><div class="mini-keep"></div></div>`;
   return `<div class="battle-fortress fortress-${esc(id)} ${captured?'captured':''}"><div class="tower tower-left"></div><div class="tower tower-right"></div><div class="wall"><div class="battle-gate"></div><div class="crack c1"></div><div class="crack c2"></div><div class="crack c3"></div><div class="crack c4"></div><div class="crack c5"></div><div class="battle-rubble" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></div><div class="battle-keep"></div><div class="battle-enemy-flag"></div><div class="battle-own-flag" aria-hidden="true"></div></div>`;
 }
@@ -124,8 +168,9 @@ function seasonEffectsMarkup(){
   return `<div class="battle-season-fx" aria-hidden="true">${Array.from({length:12},(_,i)=>`<i class="season-particle season-d${i%6}"></i>`).join('')}</div>`;
 }
 function battleFortressVisualState(f){
-  if(!f)return {id:'none',label:'Keine Festung',remainingPct:0};
-  if(f.capturedAt)return {id:'captured',label:'Erobert',remainingPct:0};
+  const p=battlePresentation();
+  if(!f)return {id:'none',label:`Kein ${p.targetNoun}-Ziel`,remainingPct:0};
+  if(f.capturedAt)return {id:'captured',label:p.capturedLabel,remainingPct:0};
   const max=Math.max(1,Number(f.maxDefense)||1),remaining=Math.max(0,Number(f.defense)||0),remainingPct=clamp(Math.round(remaining/max*100),0,100);
   if(remainingPct<=25)return {id:'critical',label:'Kurz vor dem Fall',remainingPct};
   if(remainingPct<=50)return {id:'damaged',label:'Stark beschädigt',remainingPct};
