@@ -111,16 +111,17 @@ try{
     button?.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
     button?.focus({preventScroll:true});
     const action=button?.getBoundingClientRect(),navRect=nav?.getBoundingClientRect();
-    if(!button||!action||!navRect)return {clearance:-999,hit:false,focused:false};
+    if(!button||!action||!navRect)return {overlap:true,hit:false,focused:false};
+    const overlap=!(action.right<=navRect.left||action.left>=navRect.right||action.bottom<=navRect.top||action.top>=navRect.bottom);
     const x=action.left+action.width/2,y=action.top+action.height/2;
     const hit=document.elementFromPoint(x,y);
     return {
-      clearance:Math.round(navRect.top-action.bottom),
+      overlap,
       hit:hit===button||button.contains(hit),
       focused:document.activeElement===button
     };
   });
-  assert(actionAccess.clearance>=0,'fixed bottom navigation never covers the battle action');
+  assert(actionAccess.overlap===false,'navigation never geometrically overlaps the battle action');
   assert(actionAccess.hit,'battle action remains the topmost hit target after scrolling');
   assert(actionAccess.focused,'battle action remains keyboard-focusable');
   await page.keyboard.press('Enter');
