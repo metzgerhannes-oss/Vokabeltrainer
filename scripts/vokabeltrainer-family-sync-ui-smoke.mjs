@@ -76,8 +76,8 @@ try{
   await page.locator('#familySyncBackBtn').click();
   await page.evaluate(()=>closeModal());
 
-  const joinUrl='https://ilfblkqxbldkzmqczbgo.supabase.co/rest/v1/rpc/vt_join_parent';
-  const pullUrl='https://ilfblkqxbldkzmqczbgo.supabase.co/rest/v1/rpc/vt_pull_documents';
+  const joinUrl='**/rest/v1/rpc/vt_join_parent';
+  const pullUrl='**/rest/v1/rpc/vt_pull_documents';
   await page.route(joinUrl,async route=>{
     await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ok:true,family_id:'family_new01',role:'parent'})});
   });
