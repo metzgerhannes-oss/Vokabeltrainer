@@ -23,6 +23,7 @@ try{
   await page.setViewportSize({width:375,height:667});
   await page.locator('#parentAreaBtn').click();
   await page.locator('#confirmParentMode').click();
+  await page.locator('#parentManageDisclosure > summary').click();
   await page.locator('#parentSettingsBtn').click();
   await page.locator('#familySyncSetupBtn').click();
   await page.locator('#familySyncChildJoinChoiceBtn').waitFor({state:'visible'});
