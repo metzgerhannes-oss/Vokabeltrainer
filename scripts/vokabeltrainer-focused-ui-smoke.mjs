@@ -59,6 +59,13 @@ try{
     top:getComputedStyle(document.querySelector('.topbar')).display,
     nav:getComputedStyle(document.querySelector('.bottom-nav')).display,
     inputLabel:document.querySelector('#answerField')?.getAttribute('aria-label')||'',
+    autocomplete:document.querySelector('#answerField')?.getAttribute('autocomplete')||'',
+    autocorrect:document.querySelector('#answerField')?.getAttribute('autocorrect')||'',
+    autocapitalize:document.querySelector('#answerField')?.getAttribute('autocapitalize')||'',
+    spellcheck:document.querySelector('#answerField')?.getAttribute('spellcheck')||'',
+    writingSuggestions:document.querySelector('#answerField')?.getAttribute('writingsuggestions')||'',
+    ariaAutocomplete:document.querySelector('#answerField')?.getAttribute('aria-autocomplete')||'',
+    answerName:document.querySelector('#answerField')?.getAttribute('name')||'',
     extras:document.querySelectorAll('#studyArea .skill-strip,#studyArea .confusion-box').length,
     progress:!!document.querySelector('#sessionProgress'),
     sessionLabel:document.querySelector('#sessionPill')?.textContent||'',
@@ -67,6 +74,9 @@ try{
   assert(initial.focus,'learning-focus body mode must be active');
   assert(initial.top==='none'&&initial.nav==='none','global chrome must be hidden during retrieval');
   assert(initial.inputLabel.length>0,'answer input must keep an accessible name');
+  assert(initial.autocomplete==='off'&&initial.autocorrect==='off'&&initial.autocapitalize==='none','answer input disables autofill, autocorrect and autocapitalization');
+  assert(initial.spellcheck==='false'&&initial.writingSuggestions==='false','answer input disables spellcheck and browser writing suggestions');
+  assert(initial.ariaAutocomplete==='none'&&initial.answerName.startsWith('vt-answer-'),'answer input exposes no autocomplete semantics and gets a question-specific field name');
   assert(initial.extras===0,'diagnostics must not distract before the answer');
   assert(!initial.progress,'dynamic progress bar must stay out of retrieval');
   assert(initial.sessionLabel==='Aufgabe 1','quiet task orientation must remain visible');
@@ -104,6 +114,25 @@ try{
   }));
   assert(!afterExit.focus,'focus mode must end when leaving the session');
   assert(afterExit.top!=='none'&&afterExit.nav!=='none','normal navigation must return after learning');
+
+  await page.evaluate(()=>{window.__VT_FORCE_SECURE_KEYBOARD__=true});
+  await seed('cat','Katze','recall');
+  await page.waitForSelector('[data-secure-keyboard]');
+  const secureState=await page.evaluate(()=>({
+    readonly:!!document.querySelector('#answerField')?.readOnly,
+    inputmode:document.querySelector('#answerField')?.getAttribute('inputmode')||'',
+    integrity:document.querySelector('#answerField')?.dataset.integrityMode||'',
+    keyCount:document.querySelectorAll('[data-secure-keyboard] [data-secure-key]').length
+  }));
+  assert(secureState.readonly&&secureState.inputmode==='none'&&secureState.integrity==='secure-keyboard','fallback keyboard prevents the native suggestion keyboard');
+  assert(secureState.keyCount>=30,'fallback keyboard provides a complete alphabet plus special characters');
+  for(const key of ['c','a','t'])await page.click(`[data-secure-key="${key}"]`);
+  assert((await page.inputValue('#answerField'))==='cat','fallback keyboard writes the learner answer without native input');
+  await page.click('#answerBtn');
+  await waitForContinue();
+  assert((await page.locator('.feedback').textContent())?.includes('Richtig.'),'fallback keyboard answer is graded normally');
+  await page.click('#backHomeBtn');
+  await page.evaluate(()=>{window.__VT_FORCE_SECURE_KEYBOARD__=false});
 
   await seed("can't",'nicht können','spelling');
   await page.fill('#answerField','cant');
