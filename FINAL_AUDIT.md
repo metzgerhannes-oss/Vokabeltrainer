@@ -1,11 +1,13 @@
 # Finales Audit
 
-Stand: 26.09.2026 · App v0.19.14
+Stand: 26.09.2026 · App v0.19.15
 
 ## Ergebnis
 
-- v0.18.60 härtet primär den Release-Prozess: deterministischer App-Ready-Zustand, parallele CI-Gates, reduzierte Draft-PR-CI, produktiver Post-Deployment-Smoke sowie reproduzierbare Supabase-Migrationen und Parent-Invite-Rate-Limits
-- fachliche Lernlogik, Mastery, Leitner, Spacing und Kampfrechnung werden durch diesen Hardening-Release nicht verändert
+- v0.19.15 schließt das abschließende Deep Audit mit Schwerpunkt Datenintegrität und Family-Sync-Fehlerpfade ab: atomarer Familienwechsel, Backup auch bei direkten QR-/Link-Beitritten, Rollback von nicht persistierten Remote-Ständen, vollständigerer Profil-Setup-Sync sowie sichere Grenzen für noch nicht synchronisierbare Profil-Löschungen
+- der produktive Supabase-Stand wurde live geprüft: aktuelle VT-Migrationen sind angewendet, private VT-Tabellen besitzen keine Browser-Tabellenrechte, der interne `vt_device_context` ist für Browserrollen nicht ausführbar, der Pre-Request-Rate-Limit-Hook ist aktiv und die Security-Advisors melden keine Warnung oder Fehler
+- der aktuelle Cloud-Datenbestand besitzt keine unvollständigen Setup/Progress-Profilpaare und keine aktiven Kindergeräte ohne Profil-Setup
+- fachliche Lernlogik, Sollantworten, Mastery, Leitner, Spacing, XP- und Kampfrechnung werden durch diesen Hardening-Release nicht verändert
 
 Der aktuelle Stand ist technisch und fachlich für den realen Kind-End-to-End-Test freigegeben.
 Die automatisierte CI muss für den Release-Commit vollständig grün sein. Ein grüner CI-Stand
