@@ -118,11 +118,12 @@ try{
   await page.click('#campaignMapBtn');
   await page.waitForSelector('#campaignMapView.active');
   assert((await page.locator('.nav-btn[data-view="armyView"]').getAttribute('aria-current'))==='page','campaign map remains inside the Armee primary area');
-  assert(await page.locator('#campaignMapBoard .campaign-war-header').count()===1,'campaign map exposes a frontline status header');
-  assert((await page.locator('#campaignMapBoard .campaign-war-header').textContent())?.includes('FRONTLINIE'),'campaign map reads as a frontline');
+  assert(await page.locator('#campaignMapBoard .campaign-war-header').count()===1,'campaign map exposes a route status header');
+  assert((await page.locator('#campaignMapBoard .campaign-war-header').textContent())?.includes('KAMPAGNENPFAD'),'English map uses the campaign route language');
+  assert((await page.locator('#campaignMapView').getAttribute('data-visual-theme'))==='campaign','English map uses the campaign visual theme');
   assert(await page.locator('#campaignMapBoard .campaign-map-station').count()===3,'campaign map shows two known test stations plus the year fortress');
   assert(await page.locator('#campaignMapBoard .campaign-map-unknown').count()===1,'unknown future remains visible instead of assuming a fixed test count');
-  assert((await page.locator('#campaignMapBoard .campaign-map-unknown').textContent())?.includes('NEBEL DES KRIEGES'),'unknown future is presented as fog of war');
+  assert((await page.locator('#campaignMapBoard .campaign-map-unknown').textContent())?.includes('UNERKUNDETES GEBIET'),'unknown future stays exploratory instead of using aggressive war language');
   assert((await page.locator('#campaignMapBoard .campaign-map-unknown').textContent())?.includes('Neue Tests erscheinen automatisch'),'map explains dynamic future growth');
   assert(await page.locator('#campaignMapBoard .status-active').count()===1,'nearest planned test is the active map target');
   assert((await page.locator('#campaignMapDetail').textContent())?.includes('Aktuelles Testziel'),'active target opens its real test detail');
@@ -160,6 +161,19 @@ try{
   assert(await page.locator('#campaignMapBoard .campaign-map-station').count()===4,'newly planned test appears before the year fortress without a hard-coded total');
   const mapRect=await page.locator('#campaignMapView').boundingBox();
   assert(mapRect&&mapRect.width<=page.viewportSize().width+1,'campaign map view does not overflow iPhone viewport');
+
+  await page.evaluate(()=>{
+    state.activeSubject='latin';
+    VTCampaignMap.render();
+  });
+  assert((await page.locator('#campaignMapView').getAttribute('data-visual-theme'))==='roman','Latin map switches to the Roman visual theme');
+  assert((await page.locator('#campaignMapViewTitle').textContent())?.includes('Marschroute'),'Latin map uses a Roman route title');
+  assert((await page.locator('#campaignMapBoard .campaign-war-header').textContent())?.includes('RÖMISCHE MARSCHROUTE'),'Latin map uses Roman route language');
+  assert((await page.locator('#campaignMapBoard .campaign-map-unknown').textContent())?.includes('UNBEKANNTE PROVINZ'),'Latin unknown future is a province rather than generic fog of war');
+  await page.evaluate(()=>{
+    state.activeSubject='english';
+    VTCampaignMap.render();
+  });
   assert(await page.evaluate(()=>subjectProgress().pct)===before,'campaign map never changes academic mastery');
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer army UI smoke: passed');
