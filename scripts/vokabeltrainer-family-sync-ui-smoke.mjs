@@ -126,6 +126,35 @@ try{
   assert(await page.evaluate(()=>state.learners.some(l=>l.id==='learner_second')),'blocked profile deletion preserves learner');
   await page.evaluate(()=>closeModal());
 
+  await page.evaluate(async({key,cfg})=>{
+    VTFamilySync.disconnectLocal();
+    state=defaultState();state.learners[0].name='Persist Alt';
+    await persistState();
+    localStorage.setItem(key,JSON.stringify({...cfg,revisions:{shared:1,'profile/learner_demo/setup':1,'profile/learner_demo/progress':1}}));
+    VTFamilySync.markLocalChange();
+  },{key:CONFIG_KEY,cfg:familyConfig()});
+  await page.route('https://ilfblkqxbldkzmqczbgo.supabase.co/rest/v1/rpc/vt_pull_documents',async route=>{
+    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({
+      ok:true,family_id:'family_test01',role:'parent',profile_id:null,
+      documents:[
+        {key:'shared',revision:1,payload:{schema:1,vocabulary:[],books:[],bookVocabulary:[]}},
+        {key:'profile/learner_demo/setup',revision:2,payload:{schema:1,learner:{id:'learner_demo',name:'Cloud Neu',activeSubjects:['english']},sets:[],setVocabulary:[],learnerBooks:[],grades:[]}},
+        {key:'profile/learner_demo/progress',revision:1,payload:{schema:1,learner:{id:'learner_demo'},learnerVocabulary:[],practiceTests:[],activity:[]}}
+      ]
+    })});
+  });
+  const failedRemotePersist=await page.evaluate(async()=>{
+    const original=persistState;persistState=async()=>false;let error='';
+    try{await VTFamilySync.syncNow(true)}catch(e){error=String(e?.message||e)}
+    finally{persistState=original}
+    VTFamilySync.markLocalChange();
+    return {error,name:learner()?.name||'',dirty:VTFamilySync.status().dirty};
+  });
+  assert(failedRemotePersist.error.includes('nicht sicher gespeichert'),'failed remote persistence is surfaced');
+  assert(failedRemotePersist.name==='Persist Alt','failed remote persistence restores in-memory learner state');
+  assert(failedRemotePersist.dirty===0,'failed remote persistence restores sync snapshots without false local conflict');
+  await page.unroute('https://ilfblkqxbldkzmqczbgo.supabase.co/rest/v1/rpc/vt_pull_documents');
+
   await page.evaluate(({key,cfg})=>{
     localStorage.setItem(key,JSON.stringify(cfg));
     renderFamilySync();
