@@ -2,7 +2,7 @@
 (() => {
   const PLACES=['Silberhain','Graufurt','Rotfels','Nebelpass','Eichenwacht','Morgenfels','Falkenfurt','Sternklamm','Westhain','Hochwacht','Mondfurt','Steinbrück'];
   const REGIONS={autumn:'Herbstmark',winter:'Winterwald',spring:'Frühlingslande',summer:'Sommerhöhe'};
-  let selectedKey='';
+  let selectedKey='',selectionDismissed=false;
   const safe=v=>typeof esc==='function'?esc(String(v??'')):String(v??'');
   function bounds(year=currentSchoolYear()){const y=Number(String(year).split('/')[0])||new Date().getFullYear();return {start:`${y}-08-01`,end:`${y+1}-07-31`}}
   function inYear(date,year=currentSchoolYear()){if(!/^\d{4}-\d{2}-\d{2}$/.test(String(date||'')))return false;const b=bounds(year);return date>=b.start&&date<=b.end}
@@ -68,7 +68,8 @@
   }
   function detail(st){
     const root=document.querySelector('#campaignMapDetail'),battle=document.querySelector('#campaignMapBattleBtn');if(!root)return;
-    if(!st){root.innerHTML='<strong>Wähle ein Ziel auf der Karte.</strong>';battle?.classList.add('hidden');return}
+    if(!st){root.hidden=true;root.innerHTML='';battle?.classList.add('hidden');return}
+    root.hidden=false;
     const grade=st.grade?`<div><small>Testergebnis</small><strong>Note ${safe(st.grade.grade)}</strong></div>`:'';
     const defense=st.fortress?`<div><small>Belagerung</small><strong>${st.siegePct}%</strong><span>${Math.max(0,Number(st.fortress.defense)||0)} Verteidigung übrig</span></div>`:'';
     root.innerHTML=`<button type="button" class="campaign-map-detail-close" data-campaign-detail-close aria-label="Zielinfo schließen">×</button><div class="campaign-map-detail-head"><small>${safe(REGIONS[st.region])}</small><h3>${safe(st.title)}</h3><p>${safe(st.statusLabel)} · ${safe(st.statusDetail)}</p></div><div class="campaign-map-detail-grid"><div><small>Test</small><strong>${safe(dateLabel(st.date))}</strong><span>${safe(st.scopeText)}</span></div><div><small>Umfang</small><strong>${st.wordCount?st.wordCount+' Vokabeln':'noch offen'}</strong><span>${st.series?'wiederkehrender Test':'geplanter Test'}</span></div>${defense}${grade}</div>${st.reviewOpen?'<div class="campaign-map-note">Die Vokabelpaare für dieses Ziel müssen im Elternbereich noch geprüft werden.</div>':''}`;
@@ -77,16 +78,20 @@
   }
   function yearDetail(pct){
     const root=document.querySelector('#campaignMapDetail');if(!root)return;
+    root.hidden=false;
     root.innerHTML=`<button type="button" class="campaign-map-detail-close" data-campaign-detail-close aria-label="Zielinfo schließen">×</button><div class="campaign-map-detail-head"><small>Fernziel</small><h3>Jahresfestung</h3><p>${pct>=100?'Das Schuljahresziel ist erreicht.':'Sie steht für deinen langfristigen Schuljahresfortschritt – nicht für eine feste Zahl von Tests.'}</p></div><div class="campaign-map-detail-grid"><div><small>Schuljahresfortschritt</small><strong>${pct}%</strong><span>nachhaltig gemeisterte Vokabeln</span></div><div><small>Regel</small><strong>Dynamischer Feldzug</strong><span>Neue Testziele werden unterwegs ergänzt.</span></div></div>`;
     document.querySelector('#campaignMapBattleBtn')?.classList.add('hidden');
   }
   function clearSelection(){
-    selectedKey='';document.querySelectorAll('[data-campaign-station]').forEach(b=>b.classList.remove('selected'));detail(null);
+    selectedKey='';selectionDismissed=true;document.querySelectorAll('[data-campaign-station]').forEach(b=>b.classList.remove('selected'));detail(null);
+  }
+  function applySelection(key){
+    selectedKey=key;selectionDismissed=false;document.querySelectorAll('[data-campaign-station]').forEach(b=>b.classList.toggle('selected',b.dataset.campaignStation===key));
+    const pct=subjectProgress().pct;if(key==='year-goal'){yearDetail(pct);return}detail(stations().find(s=>s.key===key)||null);
   }
   function select(key){
-    if(selectedKey===key){clearSelection();return}
-    selectedKey=key;document.querySelectorAll('[data-campaign-station]').forEach(b=>b.classList.toggle('selected',b.dataset.campaignStation===key));
-    const pct=subjectProgress().pct;if(key==='year-goal'){yearDetail(pct);return}detail(stations().find(s=>s.key===key)||null);
+    if(selectedKey===key&&!selectionDismissed){clearSelection();return}
+    applySelection(key);
   }
   function render(){
     const board=document.querySelector('#campaignMapBoard');if(!board||!state||typeof learner!=='function'||!learner())return;
@@ -94,9 +99,10 @@
     const label=document.querySelector('#campaignMapSubjectLabel');if(label)label.textContent=`${subjectLabel(subject)} · ${year}`;
     const sum=document.querySelector('#campaignMapSummary');if(sum){const done=list.filter(s=>s.status==='completed').length,won=list.filter(s=>['captured','secured','completed'].includes(s.status)).length;sum.textContent=list.length?`${done} Tests abgeschlossen · ${won} Ziele erobert · weitere Ziele erscheinen automatisch`:'Noch kein Test geplant · die Karte wächst mit deinem Schuljahr'}
     board.innerHTML=markup(list,p.pct);
-    const active=list.find(s=>s.status==='active')||list.find(s=>s.date>=today())||list[list.length-1],want=selectedKey==='year-goal'||list.some(s=>s.key===selectedKey)?selectedKey:(active?.key||'year-goal');select(want);
+    if(selectionDismissed){document.querySelectorAll('[data-campaign-station]').forEach(b=>b.classList.remove('selected'));detail(null);return}
+    const active=list.find(s=>s.status==='active')||list.find(s=>s.date>=today())||list[list.length-1],want=selectedKey==='year-goal'||list.some(s=>s.key===selectedKey)?selectedKey:(active?.key||'year-goal');applySelection(want);
   }
-  function open(){if(typeof isParentMode==='function'&&isParentMode())return;render();if(typeof showView==='function')showView('campaignMapView')}
+  function open(){if(typeof isParentMode==='function'&&isParentMode())return;selectedKey='';selectionDismissed=false;render();if(typeof showView==='function')showView('campaignMapView')}
   function bind(){
     document.querySelector('#campaignMapBtn')?.addEventListener('click',open);
     document.querySelector('#campaignMapBackBtn')?.addEventListener('click',()=>{window.VTArmyUi?.open?.()||showView('armyView')});
