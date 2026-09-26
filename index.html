@@ -436,43 +436,57 @@
 
       <section id="parentView" class="view">
         <div class="parent-shell">
-          <div class="parent-head">
+          <div class="parent-head parent-head-compact">
             <div class="eyebrow">Elternbereich</div>
-            <h2>Was möchtest du tun?</h2>
-            <p class="muted-line">Test vorbereiten, Vokabeln ergänzen oder den Lernstand ansehen.</p>
+            <h2>Was ist jetzt wichtig?</h2>
+            <p class="muted-line">Offene Aufgaben zuerst. Verwaltung bleibt im Hintergrund.</p>
           </div>
 
-          <div id="parentAttention" class="parent-attention"></div>
-
-          <section class="parent-action-section" aria-labelledby="parentPrepareTitle">
+          <section class="parent-now-panel" aria-labelledby="parentNowTitle">
             <div class="parent-section-head">
-              <div><div class="eyebrow">Lernen vorbereiten</div><h3 id="parentPrepareTitle">Jetzt erledigen</h3></div>
+              <div><div class="eyebrow">Aktuell</div><h3 id="parentNowTitle">Als Nächstes</h3></div>
+            </div>
+            <div id="parentAttention" class="parent-attention"></div>
+          </section>
+
+          <section class="parent-action-section parent-prepare-section" aria-labelledby="parentPrepareTitle">
+            <div class="parent-section-head">
+              <div><div class="eyebrow">Vorbereiten</div><h3 id="parentPrepareTitle">Lernstoff festlegen</h3></div>
             </div>
             <div class="parent-primary-actions">
-              <button id="parentTestPlanBtn" class="parent-primary-action" type="button"><span class="parent-action-icon" aria-hidden="true">◷</span><span><strong>Test vorbereiten</strong><small>Termin und Lernstoff festlegen</small></span><b aria-hidden="true">›</b></button>
-              <button id="parentLibraryBtn" class="parent-primary-action" type="button"><span class="parent-action-icon" aria-hidden="true">＋</span><span><strong>Vokabeln vorbereiten</strong><small>Ohne festen Testtermin</small></span><b aria-hidden="true">›</b></button>
+              <button id="parentTestPlanBtn" class="parent-primary-action parent-primary-main" type="button"><span class="parent-action-icon" aria-hidden="true">◷</span><span><strong>Test vorbereiten</strong><small>Datum wählen, Vokabeln festlegen und prüfen</small></span><b aria-hidden="true">›</b></button>
+              <button id="parentLibraryBtn" class="parent-primary-action parent-primary-secondary" type="button"><span class="parent-action-icon" aria-hidden="true">＋</span><span><strong>Vokabeln vorbereiten</strong><small>Ohne festen Testtermin</small></span><b aria-hidden="true">›</b></button>
             </div>
           </section>
 
-          <section class="parent-action-section parent-management-section" aria-labelledby="parentManageTitle">
-            <div class="parent-section-head compact">
-              <div><div class="eyebrow">Überblick & Verwaltung</div><h3 id="parentManageTitle">Weitere Bereiche</h3></div>
+          <details id="parentManageDisclosure" class="card parent-disclosure">
+            <summary>
+              <span><strong>Verwalten & auswerten</strong><small>Fortschritt, Noten, Profile, Geräte und Einstellungen</small></span>
+              <span class="disclosure-chevron" aria-hidden="true">›</span>
+            </summary>
+            <div class="parent-disclosure-body">
+              <div class="parent-compact-actions">
+                <button id="parentDashboardBtn" class="parent-compact-action" type="button"><span aria-hidden="true">▥</span><span><strong>Fortschritt & Noten</strong><small>Lernstand, Testchecks, Schulnoten</small></span><b aria-hidden="true">›</b></button>
+                <button id="parentSettingsBtn" class="parent-compact-action" type="button"><span aria-hidden="true">⚙</span><span><strong>Einstellungen & Geräte</strong><small>Profile, Lehrwerke, LRS, Sync und Daten</small></span><b aria-hidden="true">›</b></button>
+              </div>
             </div>
-            <div class="parent-compact-actions">
-              <button id="parentDashboardBtn" class="parent-compact-action" type="button"><span aria-hidden="true">▥</span><span><strong>Fortschritt & Noten</strong><small>Lernstand, Testchecks, Schulnoten</small></span><b aria-hidden="true">›</b></button>
-              <button id="parentSettingsBtn" class="parent-compact-action" type="button"><span aria-hidden="true">⚙</span><span><strong>Einstellungen & Geräte</strong><small>Profile, Lehrwerke, LRS, Sync und Daten</small></span><b aria-hidden="true">›</b></button>
-            </div>
-          </section>
+          </details>
 
-          <section class="card parent-sets-card">
-            <div class="row spread align-center wrap">
-              <div><div class="eyebrow">Lernstoff</div><h2>Aktiver Lernstoff</h2></div>
-              <button id="newSetBtn" class="secondary">+ Ohne Test</button>
+          <details id="parentLearningDisclosure" class="card parent-disclosure">
+            <summary>
+              <span><strong>Lernstoff verwalten</strong><small id="parentLearningSummary">Aktive Lernbereiche anzeigen</small></span>
+              <span class="disclosure-chevron" aria-hidden="true">›</span>
+            </summary>
+            <div class="parent-disclosure-body">
+              <div class="row spread align-center wrap parent-learning-head">
+                <div><div class="eyebrow">Lernstoff</div><h2>Aktive Lernbereiche</h2></div>
+                <button id="newSetBtn" class="secondary">+ Ohne Test</button>
+              </div>
+              <div id="setList" class="set-list"></div>
             </div>
-            <div id="setList" class="set-list"></div>
-          </section>
+          </details>
 
-          <details id="parentHelpDisclosure" class="card parent-help-disclosure">
+          <details id="parentHelpDisclosure" class="card parent-help-disclosure parent-disclosure">
             <summary>
               <span><strong>Hilfe & Hintergrund</strong><small>Anleitung, pädagogische Dokumentation und PDF-Export</small></span>
               <span class="disclosure-chevron" aria-hidden="true">›</span>
