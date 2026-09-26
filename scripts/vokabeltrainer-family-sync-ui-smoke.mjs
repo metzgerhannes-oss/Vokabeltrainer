@@ -130,37 +130,43 @@ try{
     localStorage.setItem(key,JSON.stringify({...cfg,revisions:{shared:1,'profile/learner_demo/setup':1,'profile/learner_demo/progress':1}}));
     VTFamilySync.markLocalChange();
   },{key:CONFIG_KEY,cfg:familyConfig()});
-  await page.route('https://ilfblkqxbldkzmqczbgo.supabase.co/rest/v1/rpc/vt_pull_documents',async route=>{
-    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({
-      ok:true,family_id:'family_test01',role:'parent',profile_id:null,
-      documents:[
-        {key:'shared',revision:1,payload:{schema:1,vocabulary:[],books:[],bookVocabulary:[]}},
-        {key:'profile/learner_demo/setup',revision:2,payload:{schema:1,learner:{id:'learner_demo',name:'Cloud Neu',activeSubjects:['english']},sets:[],setVocabulary:[],learnerBooks:[],grades:[]}},
-        {key:'profile/learner_demo/progress',revision:1,payload:{schema:1,learner:{id:'learner_demo'},learnerVocabulary:[],practiceTests:[],activity:[]}}
-      ]
-    })});
-  });
   const failedRemotePersist=await page.evaluate(async()=>{
-    const original=persistState;persistState=async()=>false;let error='';
+    const originalPersist=persistState,originalFetch=window.fetch;let error='';
+    window.fetch=async url=>{
+      const name=String(url||'').split('/').pop();
+      if(name!=='vt_pull_documents')throw new Error('Unexpected mocked RPC: '+name);
+      return new Response(JSON.stringify({
+        ok:true,family_id:'family_test01',role:'parent',profile_id:null,
+        documents:[
+          {key:'shared',revision:1,payload:{schema:1,vocabulary:[],books:[],bookVocabulary:[]}},
+          {key:'profile/learner_demo/setup',revision:2,payload:{schema:1,learner:{id:'learner_demo',name:'Cloud Neu',activeSubjects:['english']},sets:[],setVocabulary:[],learnerBooks:[],grades:[]}},
+          {key:'profile/learner_demo/progress',revision:1,payload:{schema:1,learner:{id:'learner_demo'},learnerVocabulary:[],practiceTests:[],activity:[]}}
+        ]
+      }),{status:200,headers:{'Content-Type':'application/json'}});
+    };
+    persistState=async()=>false;
     try{await VTFamilySync.syncNow(true)}catch(e){error=String(e?.message||e)}
-    finally{persistState=original}
+    finally{persistState=originalPersist;window.fetch=originalFetch}
     VTFamilySync.markLocalChange();
     return {error,name:learner()?.name||'',dirty:VTFamilySync.status().dirty};
   });
-  assert(failedRemotePersist.error.includes('nicht sicher gespeichert'),'failed remote persistence is surfaced');
+  assert(failedRemotePersist.error.includes('nicht sicher gespeichert'),'failed remote persistence is surfaced: '+JSON.stringify(failedRemotePersist));
   assert(failedRemotePersist.name==='Persist Alt','failed remote persistence restores in-memory learner state');
   assert(failedRemotePersist.dirty===0,'failed remote persistence restores sync snapshots without false local conflict');
-  await page.unroute('https://ilfblkqxbldkzmqczbgo.supabase.co/rest/v1/rpc/vt_pull_documents');
 
   await page.evaluate(({key,cfg})=>{
     localStorage.setItem(key,JSON.stringify(cfg));
     renderFamilySync();
   },{key:CONFIG_KEY,cfg:familyConfig()});
-  await page.route('https://ilfblkqxbldkzmqczbgo.supabase.co/rest/v1/rpc/vt_pull_documents',async route=>{
-    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ok:false,error:'unauthorized'})});
-  });
   const revokeMessage=await page.evaluate(async()=>{
+    const originalFetch=window.fetch;
+    window.fetch=async url=>{
+      const name=String(url||'').split('/').pop();
+      if(name!=='vt_pull_documents')throw new Error('Unexpected mocked RPC: '+name);
+      return new Response(JSON.stringify({ok:false,error:'unauthorized'}),{status:200,headers:{'Content-Type':'application/json'}});
+    };
     try{await VTFamilySync.syncNow(true);return ''}catch(e){return String(e?.message||e)}
+    finally{window.fetch=originalFetch}
   });
   assert(revokeMessage.includes('aus dem Familienverbund entfernt'),'revoked device receives clear message');
   const revoked=await page.evaluate(()=>VTFamilySync.status());
