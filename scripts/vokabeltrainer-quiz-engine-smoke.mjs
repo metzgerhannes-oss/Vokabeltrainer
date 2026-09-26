@@ -66,6 +66,21 @@ const passed=vm.runInContext(`
   assert(gradeQuizQuestion(ellipsisStrict,'Where is?').correct===true,'ellipsis placeholder itself is optional in sentence spelling');
   assert(quizSemanticMatches('How many …?',['How many ...?'])===true,'semantic grading ignores unicode ellipsis variants');
 
+  const placeholderSentence=makeQuizQuestion(wordA,'spelling',{targets:["What's ... in English?"]});
+  const tokenized=gradeQuizQuestion(placeholderSentence,"What 's… in English ?");
+  assert(tokenized.correct===true&&tokenized.matchKind==='normalized'&&tokenized.evaluationClass==='richtig-nach-normalisierung','tokenized contraction plus unicode placeholder is accepted only through normalization');
+  assert(gradeQuizQuestion(placeholderSentence,"What's ___ in English?").correct===true,'underscore placeholder is accepted');
+  assert(gradeQuizQuestion(placeholderSentence,"What's [ ] in English?").correct===true,'bracket placeholder is accepted');
+  assert(gradeQuizQuestion(placeholderSentence,"What's this in English?").correct===true,'placeholder may stand for variable sentence content while fixed anchors remain intact');
+  assert(gradeQuizQuestion(placeholderSentence,"What ... English?").correct===false,'missing fixed sentence anchor remains a real error');
+  assert(gradeQuizQuestion(placeholderSentence,"What's ... in German?").correct===false,'changed fixed vocabulary remains a real error');
+
+  const contractionStrict=makeQuizQuestion(wordA,'spelling',{targets:["don't"]});
+  const contractionTokenized=gradeQuizQuestion(contractionStrict,"do n't");
+  assert(contractionTokenized.correct===true&&contractionTokenized.matchKind==='normalized','English contraction tokenization is normalized without dropping the apostrophe');
+  assert(gradeQuizQuestion(contractionStrict,'dont').correct===false,'missing apostrophe remains wrong in strict spelling');
+  assert(gradeQuizQuestion(strict,"can't").matchKind==='exact','unchanged strict answer remains exact');
+
   const issues=validateQuizQuestion(qRecall);
   assert(issues.length===0,'valid question passes integrity gate');
   const corrupt=Object.freeze({...qRecall,setId:'missing_set'});

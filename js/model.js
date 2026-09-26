@@ -103,29 +103,74 @@ function battleTickets(subject=state.activeSubject){return battleActionAvailable
 function grantBattleTicket(reason='lesson',subject=state.activeSubject){return reason==='dailyGoal'?unlockBattleToday(reason,subject):false}
 function spendBattleTicket(subject=state.activeSubject){const day=battleDayState(subject,false);if(!day?.unlocked||day.actionUsed)return false;day.actionUsed=true;day.actionUsedAt=new Date().toISOString();return true}
 
-function semanticNormalize(s){return String(s||'').trim().toLowerCase().normalize('NFKC').replace(/[’‘`´]/g,"'").replace(/[….,;:!?()[\]{}"']/g,'').replace(/\s+/g,' ')}
+const SENTENCE_PLACEHOLDER_TOKEN='vtplaceholdertoken';
+const SENTENCE_PLACEHOLDER_RE=/(?:…|\.{2,}|_{2,}|\[\s*(?:_+\s*)?\])/g;
+function normalizeEnglishContractionSpacing(value){
+  return String(value||'')
+    .replace(/\b([a-z]+)\s+n\s*'\s*t\b/gi,"$1n't")
+    .replace(/\b([a-z]+)\s*'\s*(s|re|ve|ll|d|m|t)\b/gi,"$1'$2");
+}
+function semanticNormalize(s){
+  return normalizeEnglishContractionSpacing(String(s||'').trim().toLowerCase().normalize('NFKC').replace(/[’‘`´]/g,"'"))
+    .replace(SENTENCE_PLACEHOLDER_RE,' ')
+    .replace(/[….,;:!?()[\]{}"']/g,'')
+    .replace(/\s+/g,' ')
+    .trim();
+}
 function normalize(s){return semanticNormalize(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
 function orthographyNormalize(value){
   return String(value||'').normalize('NFKC').toLowerCase().replace(/[’‘`´]/g,"'").trim().replace(/\s+/g,' ');
 }
-function hasEllipsisPlaceholder(value){return /…|\.{2,}/.test(String(value||''))}
-function orthographyNormalizeForTarget(value,target){
+function hasSentencePlaceholder(value){
+  SENTENCE_PLACEHOLDER_RE.lastIndex=0;
+  return SENTENCE_PLACEHOLDER_RE.test(String(value||''));
+}
+function hasEllipsisPlaceholder(value){return hasSentencePlaceholder(value)}
+function sentencePlaceholderNormalize(value,{semantic=false}={}){
   let out=orthographyNormalize(value);
-  if(hasEllipsisPlaceholder(target)){
-    out=out.replace(/\s*(?:…|\.{2,})\s*/g,' ').replace(/\s+([?!])/g,'$1').replace(/\s+/g,' ').trim();
-  }
-  return out;
+  out=normalizeEnglishContractionSpacing(out);
+  SENTENCE_PLACEHOLDER_RE.lastIndex=0;
+  out=out.replace(SENTENCE_PLACEHOLDER_RE,' '+SENTENCE_PLACEHOLDER_TOKEN+' ');
+  if(semantic)out=out.replace(/[….,;:!?()[\]{}"']/g,'');
+  else out=out.replace(/\s+([?!.,;:])/g,'$1');
+  return out.replace(/\s+/g,' ').trim();
+}
+function sentenceMatchRegexEscape(value){return String(value||'').replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
+function sentencePlaceholderAnchorsMatch(answer,target,{semantic=false}={}){
+  if(!hasSentencePlaceholder(target)||!String(answer||'').trim())return false;
+  const normalizedTarget=sentencePlaceholderNormalize(target,{semantic});
+  const normalizedAnswer=sentencePlaceholderNormalize(answer,{semantic});
+  const anchors=normalizedTarget.split(SENTENCE_PLACEHOLDER_TOKEN).map(x=>x.trim());
+  if(!anchors.some(Boolean))return false;
+  const pattern=anchors.map(sentenceMatchRegexEscape).join('(?:\\s*.*?\\s*)');
+  return new RegExp('^'+pattern+'$','i').test(normalizedAnswer);
+}
+function orthographyMatchKindForTarget(answer,target){
+  const directAnswer=orthographyNormalize(answer),directTarget=orthographyNormalize(target);
+  if(!directAnswer||!directTarget)return 'wrong';
+  if(directAnswer===directTarget)return 'exact';
+  const normalizedAnswer=sentencePlaceholderNormalize(answer);
+  const normalizedTarget=sentencePlaceholderNormalize(target);
+  if(normalizedAnswer===normalizedTarget)return 'normalized';
+  if(sentencePlaceholderAnchorsMatch(answer,target))return 'normalized';
+  return 'wrong';
+}
+function orthographyNormalizeForTarget(value,target){
+  const normalized=sentencePlaceholderNormalize(value);
+  if(!hasSentencePlaceholder(target))return normalized;
+  return normalized.replace(new RegExp('\\s*'+SENTENCE_PLACEHOLDER_TOKEN+'\\s*','g'),' ').replace(/\s+([?!.,;:])/g,'$1').replace(/\s+/g,' ').trim();
 }
 function spellingMatches(answer,target){
   if(typeof quizOrthographyMatches==='function')return quizOrthographyMatches(answer,target);
   const targets=[...(Array.isArray(target)?target:[target])].map(x=>String(x||'').trim()).filter(Boolean);
   if(!String(answer||'').trim())return false;
-  return targets.some(t=>orthographyNormalizeForTarget(answer,t)===orthographyNormalizeForTarget(t,t));
+  return targets.some(t=>orthographyMatchKindForTarget(answer,t)!=='wrong');
 }
 function answerMatches(answer,target){
   if(typeof quizSemanticMatches==='function')return quizSemanticMatches(answer,target);
-  const a=semanticNormalize(answer),targets=[...(Array.isArray(target)?target:[target])].map(x=>String(x||'').trim()).filter(Boolean);if(!a)return false;
-  return targets.some(t=>a===semanticNormalize(t));
+  const targets=[...(Array.isArray(target)?target:[target])].map(x=>String(x||'').trim()).filter(Boolean);
+  if(!String(answer||'').trim())return false;
+  return targets.some(t=>semanticNormalize(answer)===semanticNormalize(t)||sentencePlaceholderAnchorsMatch(answer,t,{semantic:true}));
 }
 function termTargets(w){return [...new Set((w?.acceptedTerms?.length?w.acceptedTerms:[w?.term]).filter(Boolean))]}
 function translationTargets(w){return [...new Set((w?.acceptedTranslations?.length?w.acceptedTranslations:[w?.translation]).filter(Boolean))]}

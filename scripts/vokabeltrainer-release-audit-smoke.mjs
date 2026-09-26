@@ -29,6 +29,11 @@ const passed=vm.runInContext(`
   d=practiceDirection({term:'café',translation:'Café',acceptedTerms:['café'],acceptedTranslations:['Café']});
   assert(d.strictOrthography===true&&practiceAnswerMatches('cafe',d)===false,'dictation preserves diacritics');
 
+  const placeholderGrade=gradeQuizQuestion({targets:["What's ... in English?"],strictOrthography:true,trackOrthography:true},"What 's [ ] in English ?");
+  assert(placeholderGrade.correct===true&&placeholderGrade.orthographyOk===true,'placeholder and contraction tokenization variants never create a spelling error');
+  assert(placeholderGrade.evaluationClass==='richtig-nach-normalisierung','normalized technical variants are internally distinguished from exact answers');
+  assert(gradeQuizQuestion({targets:["What's ... in English?"],strictOrthography:true,trackOrthography:true},"What ... English?").evaluationClass==='wirklich-falsch','missing fixed sentence anchors remain real errors');
+
   const within={
     learners:[{}],sets:[],vocabulary:[],
     setVocabulary:new Array(250000),learnerVocabulary:new Array(150000),

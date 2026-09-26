@@ -16,14 +16,28 @@ function quizUnique(values){
   }
   return out;
 }
-function quizSemanticMatches(answer,targets){
-  const a=semanticNormalize(answer);if(!a)return false;
-  return quizUnique(targets).some(t=>a===semanticNormalize(t));
+function quizSemanticMatchDetail(answer,targets){
+  if(!String(answer??'').trim())return Object.freeze({correct:false,kind:'wrong',matchedTarget:''});
+  for(const target of quizUnique(targets)){
+    if(orthographyNormalize(answer)===orthographyNormalize(target)){
+      return Object.freeze({correct:true,kind:'exact',matchedTarget:target});
+    }
+    if(semanticNormalize(answer)===semanticNormalize(target)||sentencePlaceholderAnchorsMatch(answer,target,{semantic:true})){
+      return Object.freeze({correct:true,kind:'normalized',matchedTarget:target});
+    }
+  }
+  return Object.freeze({correct:false,kind:'wrong',matchedTarget:''});
 }
-function quizOrthographyMatches(answer,targets){
-  if(!String(answer??'').trim())return false;
-  return quizUnique(targets).some(t=>orthographyNormalizeForTarget(answer,t)===orthographyNormalizeForTarget(t,t));
+function quizSemanticMatches(answer,targets){return quizSemanticMatchDetail(answer,targets).correct}
+function quizOrthographyMatchDetail(answer,targets){
+  if(!String(answer??'').trim())return Object.freeze({correct:false,kind:'wrong',matchedTarget:''});
+  for(const target of quizUnique(targets)){
+    const kind=orthographyMatchKindForTarget(answer,target);
+    if(kind!=='wrong')return Object.freeze({correct:true,kind,matchedTarget:target});
+  }
+  return Object.freeze({correct:false,kind:'wrong',matchedTarget:''});
 }
+function quizOrthographyMatches(answer,targets){return quizOrthographyMatchDetail(answer,targets).correct}
 function quizQueueRef(w){
   return Object.freeze({
     setLinkId:String(w?.setLinkId||''),
@@ -123,16 +137,21 @@ function validateQuizQuestion(q){
   return issues;
 }
 function gradeQuizQuestion(q,answer){
-  const semanticCorrect=quizSemanticMatches(answer,q?.targets||[]);
-  const orthographyCorrect=quizOrthographyMatches(answer,q?.targets||[]);
-  const correct=q?.strictOrthography?orthographyCorrect:semanticCorrect;
-  const matchedTarget=quizUnique(q?.targets||[]).find(t=>(q?.strictOrthography?quizOrthographyMatches(answer,[t]):quizSemanticMatches(answer,[t])))||'';
+  const semantic=quizSemanticMatchDetail(answer,q?.targets||[]);
+  const orthography=quizOrthographyMatchDetail(answer,q?.targets||[]);
+  const active=q?.strictOrthography?orthography:semantic;
+  const correct=active.correct;
+  const matchKind=correct?active.kind:'wrong';
+  const evaluationClass=matchKind==='exact'?'fachlich-richtig':matchKind==='normalized'?'richtig-nach-normalisierung':'wirklich-falsch';
   return Object.freeze({
     correct,
-    semanticCorrect,
-    orthographyCorrect,
-    orthographyOk:q?.trackOrthography?orthographyCorrect:true,
-    matchedTarget,
+    semanticCorrect:semantic.correct,
+    orthographyCorrect:orthography.correct,
+    orthographyOk:q?.trackOrthography?orthography.correct:true,
+    matchKind,
+    evaluationClass,
+    normalizedCorrect:matchKind==='normalized',
+    matchedTarget:active.matchedTarget||'',
     answer:String(answer??'').trim(),
     targets:Object.freeze([...quizUnique(q?.targets||[])])
   });
