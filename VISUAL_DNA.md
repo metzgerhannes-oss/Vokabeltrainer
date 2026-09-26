@@ -139,6 +139,15 @@ Eine freundliche Abenteuer- und Kampagnenwelt mit sichtbarem Vorankommen.
 
 **eigene Gruppe links → Weg/Landschaft in der Mitte → Festung/Ziel rechts**
 
+Verbindlich für Kampagnen- und Battle-Szenen:
+
+- Armee, Landschaft/Weg und Festung bilden **eine einzige zusammenhängende Illustration**.
+- Keine separate CSS-Burg, kein graues Ziel-Icon und keine zweite Armee dürfen über ein anderes Hintergrundmotiv gelegt werden.
+- Die Szene muss räumlich plausibel lesbar sein: eigene Truppe im Vordergrund/links, sichtbare Distanz bzw. Weg, Ziel/Festung rechts oder im Hintergrund.
+- Die Illustration ist der visuelle Schwerpunkt; Statuswerte liegen als kompakte HUD-Karten darüber und dürfen die Szene nicht ersetzen.
+- Der Battle-Aufbau folgt dem freigegebenen Target-Design: ruhige Kapitelkarte → große Kampagnenszene mit 2×2-KPI-HUD → große visuelle Angriffskarten.
+- Technische CSS-Geometrie bleibt ausschließlich Fallback, falls die Illustration nicht geladen werden kann.
+
 ### Farb- und Lichtwelt
 
 - Naturgrün
