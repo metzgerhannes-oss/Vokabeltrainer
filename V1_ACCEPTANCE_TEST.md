@@ -259,6 +259,7 @@ Mindestens prüfen:
 
 - [ ] iPhone / Safari oder WebKit-nahe Ansicht
 - [ ] Android / Chromium, falls verfügbar
+  - Automatisiert ergänzt: Chromium-Responsive-Audit über 320 / 375 / 390 / 820 / 1440 px; ersetzt keinen Test auf physischer Android-Hardware.
 - [ ] Desktop Chromium (Windows)
 - [ ] 320 px Breite
 - [ ] 375 / 390 px Breite
