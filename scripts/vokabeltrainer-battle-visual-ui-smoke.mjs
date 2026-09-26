@@ -6,14 +6,10 @@ try{
   await reset({revealed:true,ticket:true});
   await openBattle();
 
-  assert(await page.locator('#battleStage [data-battle-art-stack]').count()===1,'battle stage receives one layered artwork stack');
-  assert(await page.locator('#battleStage [data-battle-layer]').count()===4,'battle artwork has four layers');
-  for(const layer of ['background','army','fortress','atmosphere']){
-    assert(await page.locator(`#battleStage [data-battle-layer="${layer}"]`).count()===1,`${layer} layer exists`);
-  }
-  assert(await page.locator('#battleStage [data-battle-layer="background"]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'battle background loads');
-  assert(await page.locator('#battleStage [data-battle-layer="army"]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'army artwork loads');
-  assert(await page.locator('#battleStage [data-battle-layer="fortress"]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'fortress artwork loads');
+  assert(await page.locator('#battleStage [data-battle-art-stack]').count()===0,'legacy battle artwork stack is no longer layered under the current scene');
+  assert(await page.locator('#battleStage .battle-sky').count()===1,'current fantasy scene keeps its sky layer');
+  assert(await page.locator('#battleStage .battle-hills').count()===1,'current fantasy scene keeps its landscape layer');
+  assert(await page.locator('#battleStage .battle-ground').count()===1,'current fantasy scene keeps its ground layer');
   assert(await page.locator('#battleStage .battle-unit').count()>=6,'army formation contains multiple units');
   assert(await page.locator('#battleStage .unit-archer').count()>=1,'progress unlocks archers');
   assert(await page.locator('#battleStage .unit-cavalry').count()>=1,'high progress unlocks cavalry');
