@@ -1,5 +1,109 @@
 'use strict';
 
+function focusedInputMode(){
+  if(session?.mode==='practiceTest')return 'practiceTest';
+  return session?.currentSubmode||session?.mode||'';
+}
+function focusedAppleTouchDevice(){
+  const ua=String(navigator.userAgent||'');
+  return /iphone|ipad|ipod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+}
+function focusedSupportsWritingSuggestionsControl(){
+  const probe=document.createElement('input');
+  return 'writingSuggestions' in probe;
+}
+function focusedNeedsFallbackKeyboard(){
+  if(window.__VT_FORCE_SECURE_KEYBOARD__===true)return true;
+  if(focusedInputMode()!=='practiceTest')return false;
+  return focusedAppleTouchDevice()&&!focusedSupportsWritingSuggestionsControl();
+}
+function focusedAnswerName(){
+  const q=session?.currentQuestion?.id||session?.currentSubmode||session?.mode||'answer';
+  return 'vt-answer-'+String(q).replace(/[^a-z0-9_-]/gi,'-')+'-'+String(session?.index??0);
+}
+function focusedSetInputValue(input,value,caret=value.length){
+  input.value=value;
+  input.dispatchEvent(new Event('input',{bubbles:true}));
+  input.focus({preventScroll:true});
+  try{input.setSelectionRange(caret,caret)}catch(_e){}
+}
+function focusedInsertAtSelection(input,text){
+  const start=Number.isInteger(input.selectionStart)?input.selectionStart:input.value.length;
+  const end=Number.isInteger(input.selectionEnd)?input.selectionEnd:start;
+  const next=input.value.slice(0,start)+text+input.value.slice(end);
+  focusedSetInputValue(input,next,start+text.length);
+}
+function focusedBackspaceAtSelection(input){
+  const start=Number.isInteger(input.selectionStart)?input.selectionStart:input.value.length;
+  const end=Number.isInteger(input.selectionEnd)?input.selectionEnd:start;
+  if(start!==end){
+    const next=input.value.slice(0,start)+input.value.slice(end);
+    focusedSetInputValue(input,next,start);
+    return;
+  }
+  if(start<=0)return;
+  const next=input.value.slice(0,start-1)+input.value.slice(start);
+  focusedSetInputValue(input,next,start-1);
+}
+function focusedSecureKeyboardRows(subject=state?.activeSubject||'english'){
+  const rows=[
+    ['a','b','c','d','e','f'],
+    ['g','h','i','j','k','l'],
+    ['m','n','o','p','q','r'],
+    ['s','t','u','v','w','x'],
+    ['y','z','ä','ö','ü','ß'],
+    ["'",'-','.',',','?','!']
+  ];
+  if(subject==='french')rows.push(['à','â','ç','é','è','ê'],['ë','î','ï','ô','ù','û'],['ÿ','œ','æ','/','(',')']);
+  else rows.push(['/','(',')',':',';','…']);
+  return rows;
+}
+function focusedSecureKeyboardMarkup(){
+  const rows=focusedSecureKeyboardRows();
+  const keys=rows.flat().map(key=>'<button type="button" class="secure-key" data-secure-key="'+esc(key)+'" aria-label="Zeichen '+esc(key)+'">'+esc(key)+'</button>').join('');
+  return '<div class="secure-input-panel" data-secure-keyboard><div class="secure-input-note"><strong>Prüfungsfeste Eingabe</strong><span>Systemvorschläge sind auf diesem Gerät ausgeschaltet.</span></div><div class="secure-key-grid" aria-label="Bildschirmtastatur">'+keys+'</div><div class="secure-key-actions"><button type="button" class="secure-key secure-key-wide" data-secure-action="space">Leerzeichen</button><button type="button" class="secure-key" data-secure-action="backspace" aria-label="Zeichen löschen">⌫</button><button type="button" class="secure-key" data-secure-action="clear">Leeren</button></div></div>';
+}
+function focusedMountSecureKeyboard(input){
+  if(!input||document.querySelector('[data-secure-keyboard]'))return;
+  input.readOnly=true;
+  input.setAttribute('inputmode','none');
+  input.dataset.integrityMode='secure-keyboard';
+  input.insertAdjacentHTML('afterend',focusedSecureKeyboardMarkup());
+  const panel=document.querySelector('[data-secure-keyboard]');
+  panel?.addEventListener('pointerdown',e=>{if(e.target.closest('button'))e.preventDefault()});
+  panel?.addEventListener('click',e=>{
+    const key=e.target.closest('[data-secure-key]')?.dataset.secureKey;
+    const action=e.target.closest('[data-secure-action]')?.dataset.secureAction;
+    if(key!=null){focusedInsertAtSelection(input,key);return}
+    if(action==='space'){focusedInsertAtSelection(input,' ');return}
+    if(action==='backspace'){focusedBackspaceAtSelection(input);return}
+    if(action==='clear'){focusedSetInputValue(input,'',0)}
+  });
+  input.addEventListener('keydown',e=>{
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    if(e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();document.querySelector('#answerBtn')?.click();return}
+    if(e.key==='Backspace'){e.preventDefault();e.stopImmediatePropagation();focusedBackspaceAtSelection(input);return}
+    if(e.key==='Delete'){e.preventDefault();e.stopImmediatePropagation();return}
+    if(e.key.length===1){e.preventDefault();e.stopImmediatePropagation();focusedInsertAtSelection(input,e.key)}
+  },true);
+  input.addEventListener('paste',e=>e.preventDefault());
+  input.addEventListener('drop',e=>e.preventDefault());
+}
+function focusedApplyInputIntegrity(){
+  const input=document.querySelector('#answerField');
+  if(!input)return;
+  input.setAttribute('autocomplete','off');
+  input.setAttribute('autocorrect','off');
+  input.setAttribute('autocapitalize','none');
+  input.setAttribute('spellcheck','false');
+  input.setAttribute('writingsuggestions','false');
+  input.setAttribute('aria-autocomplete','none');
+  input.setAttribute('name',focusedAnswerName());
+  input.dataset.integrityMode='browser-suppressed';
+  if('writingSuggestions' in input)input.writingSuggestions='false';
+  if(focusedNeedsFallbackKeyboard())focusedMountSecureKeyboard(input);
+}
+
 const _focusedBaseRenderStudy=renderStudy;
 renderStudy=function(){
   const result=_focusedBaseRenderStudy();
@@ -7,6 +111,7 @@ renderStudy=function(){
     const pill=$('#sessionPill');
     if(pill)pill.textContent='Aufgabe '+(session.index+1);
   }
+  focusedApplyInputIntegrity();
   return result;
 };
 

@@ -63,11 +63,14 @@ const passed=vm.runInContext(`
 `,context,{filename:'release-audit-runtime'});
 
 const learning=fs.readFileSync('js/learning.js','utf8');
+const focusUi=fs.readFileSync('js/focus-ui.js','utf8');
 const ui=fs.readFileSync('js/ui.js','utf8');
 const io=fs.readFileSync('js/io.js','utf8');
 const ci=fs.readFileSync('.github/workflows/ci.yml','utf8');
 const pages=fs.readFileSync('.github/workflows/pages.yml','utf8');
 const staticChecks=[
+  [focusUi.includes("setAttribute('writingsuggestions','false')")&&focusUi.includes("setAttribute('autocorrect','off')")&&focusUi.includes("setAttribute('spellcheck','false')"),'answer inputs suppress browser writing suggestions, autocorrect and spellcheck'],
+  [focusUi.includes("if(focusedInputMode()!=='practiceTest')return false")&&focusUi.includes('secure-keyboard')&&focusUi.includes("input.setAttribute('inputmode','none')"),'legacy Apple fallback replaces suggestion-prone native input only in testcheck'],
   [learning.includes("recordActivity('practiceTest'"),'testcheck completion records activity'],
   [learning.includes("recordActivity('firstContact'")&&learning.includes('renderFirstContactBlockReview'),'first contact records preparation and includes block review'],
   [(()=>{const s=ui.slice(ui.indexOf('function duelPayload'),ui.indexOf('function openDuel'));return s.includes('subjectCampaign(state.activeSubject).unitLabel')&&!s.includes('learner().name')&&!s.includes('mastered:p.mastered')&&!s.includes('strength:armyStrength')})(),'friendship duel code excludes profile name and unnecessary detailed learning fields'],
