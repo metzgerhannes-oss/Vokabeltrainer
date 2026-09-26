@@ -35,8 +35,8 @@ try{
   await page.waitForSelector('#parentView.active');
   assert(await page.locator('body.parent-mode').count()===1,'explicit parent mode is active');
 
-  const audit=page.locator('[data-set-audit="ocr_set"]');
-  assert(await audit.isVisible(),'pair review is visible in parent area');
+  const audit=page.locator('[data-parent-audit="ocr_set"]');
+  assert(await audit.isVisible(),'pair review is surfaced as the primary parent task');
   await audit.click();
   await page.waitForSelector('#modal[open] #confirmSetPairsBtn');
   const modal=await page.locator('#modalContent').textContent();
