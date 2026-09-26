@@ -3549,12 +3549,14 @@ body.learning-focus #learnView .study-shell{
 
 
 /* v0.21.4 hotfix – fixed bottom navigation must never cover battle actions */
-body:not(.battle-immersive) #battleView.active .battle-shell{
-  padding-bottom:calc(126px + env(safe-area-inset-bottom));
-}
-body:not(.battle-immersive) #battleView.active{
-  scroll-padding-bottom:calc(132px + env(safe-area-inset-bottom));
-}
-body:not(.battle-immersive) #battleView .battle-actions{
-  margin-bottom:8px;
+@media(max-width:1099px){
+  body:not(.battle-immersive) #battleView.active .battle-shell{
+    padding-bottom:calc(126px + env(safe-area-inset-bottom));
+  }
+  body:not(.battle-immersive) #battleView.active{
+    scroll-padding-bottom:calc(132px + env(safe-area-inset-bottom));
+  }
+  body:not(.battle-immersive) #battleView .battle-actions{
+    margin-bottom:8px;
+  }
 }
