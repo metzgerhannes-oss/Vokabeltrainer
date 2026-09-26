@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 26.09.2026 · Basis: v0.21.5 · Release-Kandidat: Battle Result Accessibility
+Stand: 26.09.2026 · Basis: v0.21.5 · Release-Commit: `df7b9c5ee7553ebb2ae91573fd0c7933c9ace410` · Pages #499 live verifiziert
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -294,7 +294,7 @@ Mindestens prüfen:
 
 # E. Abschlussprüfung vor v1.0
 
-Automatisiert – Snapshot für **v0.21.3 / Release-Commit `aeff3801d9da4078fa9cbc33670821d6bb6c1355`**:
+Automatisiert – Snapshot für **v0.21.5 / Release-Commit `df7b9c5ee7553ebb2ae91573fd0c7933c9ace410`**:
 
 - [x] vollständige CI grün
 - [x] Browser-/WebKit-Smokes grün
