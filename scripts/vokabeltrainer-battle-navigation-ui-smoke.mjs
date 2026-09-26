@@ -13,7 +13,11 @@ try{
   assert(await page.locator('.battle-stage-wrap > .battle-scene-tactics').count()===1,'battle tactics are attached directly to the scene');
   assert(await page.locator('#battleFullscreenBtn').isVisible(),'battle fullscreen control remains visible');
   assert(await page.locator('#battleStorySpeakBtn').isVisible(),'battle story narration control is visible');
+  assert((await page.locator('#battleStorySpeakBtn').textContent()).includes('Geschichte hören'),'battle story control describes listening instead of overpromising a dramatic narrator');
   assert(await page.locator('#battleStorySpeakBtn').getAttribute('aria-pressed')==='false','battle story narration starts stopped');
+  const storyCopy=await page.locator('#battleStoryText').textContent();
+  assert(storyCopy?.includes('Dein nächster Test ist am'),'battle story speaks in natural sentences about the next test');
+  assert(!storyCopy?.includes('steht für')&&!storyCopy?.includes('ausgewählt am'),'battle story avoids technical planner wording in narration');
   await page.evaluate(()=>updateBattleStoryNarrationUi(true));
   assert(await page.locator('#battleStorySpeakBtn').getAttribute('aria-pressed')==='true','battle story narration exposes active state');
   assert((await page.locator('#battleStorySpeakBtn').textContent()).includes('Stop'),'battle story narration offers an explicit stop control');
