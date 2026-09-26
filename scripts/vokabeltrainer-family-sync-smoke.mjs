@@ -55,7 +55,13 @@ assert(sync.includes('async function resolveConflict')&&sync.includes("strategy=
 assert(sync.includes('conflictKeys')&&ui.includes('openFamilySyncConflictResolver')&&ui.includes('Cloud übernehmen')&&ui.includes('Dieses Gerät behalten'), 'conflicts are surfaced as specific data areas with explicit resolution choices');
 assert(sync.includes("code==='unauthorized'")&&sync.includes('markRevoked(cfg)')&&ui.includes('Dieses Gerät wurde aus dem Familienverbund entfernt.'), 'revoked devices stop syncing and surface a clear local warning');
 assert((sync.match(/remoteFailure\(cfg,/g)||[]).length>=7, 'revoked-device handling covers sync, conflict, recovery and device-admin RPC paths');
-assert(ui.includes('familyChildBackupBtn')&&ui.includes('familyParentJoinBackupBtn')&&ui.includes('familyConflictBackupBtn'), 'destructive family-data transitions offer an explicit backup action');
+assert(ui.includes('familyChildBackupBtn')&&ui.includes('familyParentJoinBackupBtn')&&ui.includes('familyConflictBackupBtn'), 'manual destructive family-data transitions offer an explicit backup action');
+assert(pairing.includes('claimChildBackupBtn')&&pairing.includes('claimParentBackupBtn')&&pairing.includes("onclick=()=>backup()"), 'direct QR/link takeover offers backup before replacing local data');
+assert(sync.includes("'avatarStyle'")&&sync.includes("'autoSpeakCorrection'"), 'profile appearance and speech-correction settings are part of synchronized setup');
+assert(sync.includes('installConnectionDocuments')&&sync.includes('previousConfigRaw')&&sync.includes('restoreRawConfig(previousConfigRaw)'), 'family takeover has an explicit local state/config rollback path');
+assert(sync.includes("const pulled=await rpc('vt_pull_documents'")&&!sync.includes("saveConfig(cfg);initSnapshots();await syncNow(true)"), 'manual family switch validates the new remote state before committing the new connection');
+assert(sync.includes('markAllLocalDocumentsDirty'), 'full local restore can explicitly mark all writable sync documents dirty');
+assert(ui.includes('Die aktuelle Sync-Version kann Profil-Löschungen noch nicht als Löschvorgang an alle Geräte übertragen.'), 'profile deletion is blocked instead of silently diverging while family sync is active');
 assert(sqlV2.includes('private.vt_parent_invites')&&sqlV2.includes("interval '15 minutes'"),'parent invite tokens are server-side, one-time and short-lived');
 assert(sqlV2.includes("role','parent'")&&sqlV2.includes('vt_claim_parent_invite_impl'),'parent invite claim creates a parent device without exposing the family PIN');
 assert(pairing.includes('familyParentQr')&&pairing.includes('openParentDeviceInvite'),'connected parents can create a QR code for another parent device');
