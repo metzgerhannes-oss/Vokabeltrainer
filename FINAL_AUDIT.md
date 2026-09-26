@@ -1,9 +1,10 @@
 # Finales Audit
 
-Stand: 26.09.2026 · App v0.21.2
+Stand: 26.09.2026 · App v0.21.3
 
 ## Ergebnis
 
+- v0.21.3 schließt die Eingabe-Lücke durch Handy-Autovervollständigung und Schreibvorschläge: alle bewerteten Antwortfelder unterdrücken Browserhilfen; auf älteren Apple-WebKit-Versionen ohne verlässliche Abschaltung übernimmt eine eigene sichere Bildschirmtastatur. Dadurch bleibt die abgegebene Antwort eine eigenständige Lernleistung, ohne die fachliche Bewertungslogik zu verändern.
 - v0.21.2 schließt den P0-Bewertungsfehler bei Platzhaltersätzen: typografische Platzhaltervarianten, Abstände und englische Kontraktions-Tokenisierung werden normalisiert; feste sprachliche Anker bleiben verbindlich. Intern unterscheidet die Quiz-Engine exakt richtig, richtig nach Normalisierung und wirklich falsch. Normalisierte richtige Antworten erzeugen keinen Lern- oder Orthografiefehler.
 - v0.21.1 führt die freigegebene visuelle Fach-DNA durchgängig ein: Start/Heute, Fortschrittskarte, Test-/Spielszene und Focused Learning unterscheiden Englisch und Latein sichtbar, während der Lernscreen bewusst ruhig und fachlich identisch bleibt. Die bisherige einheitlich dunkle Frontlinienästhetik wird durch fachbezogene Welten ersetzt; Französisch bleibt deaktiviert, seine Reise-/Etappen-Präsentation ist vorbereitet. Die Shell-Version wurde erhöht, damit installierte PWAs die neuen CSS-/JS-Dateien zuverlässig übernehmen.
 - v0.21.1 setzt die freigegebene **Visual DNA** produktweit um: Start/Heute erhält ruhige Fachakzente, die Fortschrittskarte trennt englischen Kampagnenpfad und römische Marschroute, Latein erhält Legion/Kastell/SPQR sowie eine eigene römische Test- und Ergebnisinszenierung, und der fokussierte Lernmodus bleibt bewusst neutral mit nur dezenten Fachakzenten. Französisch ist als Reise-/Etappenwelt vorbereitet, bleibt aber bis zum vollständigen Fach-Aktivierungscheck deaktiviert. Die fachliche Lern-, Mastery-, Leitner-, Spacing- und Bewertungslogik bleibt unverändert.
