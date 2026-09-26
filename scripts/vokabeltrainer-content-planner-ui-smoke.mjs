@@ -74,8 +74,8 @@ try{
   });
   assert(manualDraftBefore.id&&manualDraftBefore.testDate===''&&manualDraftBefore.pendingDate===manualDate,'manual source stores the intended date only as pending metadata');
   assert(manualDraftBefore.activeTestId!==manualDraftBefore.id,'unfinished manual capture does not replace the active test plan');
-  await page.locator('#wordTerm').fill('harbour');
-  await page.locator('#wordTrans').fill('Hafen');
+  await page.locator('#wordTerm').fill('manualtesttoken');
+  await page.locator('#wordTrans').fill('manuelles Prüfwort');
   await page.click('#finishTestCaptureBtn');
   await page.waitForSelector('#modal[open] #confirmSetPairsBtn');
   assert((await page.locator('#modalContent').textContent())?.includes('Testplan ist noch nicht aktiv'),'manual capture shows a final approval gate');
@@ -103,7 +103,7 @@ try{
   await page.waitForSelector('#modal[open] #scanSetSelect');
   assert(await page.locator('#scanSetSelect').isDisabled(),'OCR test capture is locked to its draft set');
   await page.evaluate(()=>{
-    scanImportState.rows=[makeImportRow('journey','Reise','','','good')];
+    scanImportState.rows=[makeImportRow('ocrtesttoken','OCR-Prüfwort','','','good')];
     renderScanReview();
   });
   await page.waitForSelector('#scanReview #scanUse_0');
