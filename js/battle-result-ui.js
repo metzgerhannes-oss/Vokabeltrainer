@@ -20,6 +20,7 @@
     overlay.className='battle-result-overlay hidden';
     overlay.setAttribute('aria-live','polite');
     overlay.setAttribute('aria-labelledby','battleResultTitle');
+    overlay.setAttribute('aria-hidden','true');
     overlay.innerHTML=`
       <div class="battle-result-card">
         <img id="battleResultArt" class="battle-result-art" alt="" aria-hidden="true">
@@ -148,6 +149,7 @@
     if(pendingHideTimer){clearTimeout(pendingHideTimer);pendingHideTimer=null}
     if(pendingVisibleFrame){cancelAnimationFrame(pendingVisibleFrame);pendingVisibleFrame=null}
     root.classList.remove('hidden');
+    root.setAttribute('aria-hidden','false');
     pendingVisibleFrame=requestAnimationFrame(()=>{
       pendingVisibleFrame=null;
       root.classList.add('visible');
@@ -161,6 +163,7 @@
     if(pendingVisibleFrame){cancelAnimationFrame(pendingVisibleFrame);pendingVisibleFrame=null}
     if(pendingHideTimer){clearTimeout(pendingHideTimer);pendingHideTimer=null}
     root.classList.remove('visible');
+    root.setAttribute('aria-hidden','true');
     document.body.classList.remove('battle-result-open');
     pendingHideTimer=setTimeout(()=>{
       pendingHideTimer=null;
