@@ -63,6 +63,26 @@ export async function createBattleHarness(){
     });
   };
 
+  const waitForBattleResult=async({timeout=20000}={})=>{
+    await page.waitForFunction(()=>{
+      const stage=document.querySelector('#battleStage');
+      const overlay=document.querySelector('#battleResultOverlay');
+      return !!stage
+        &&stage.classList.contains('battle-finished')
+        &&stage.dataset.phase==='result'
+        &&!!overlay
+        &&overlay.classList.contains('visible');
+    },null,{timeout});
+    const resultState=await page.evaluate(()=>({
+      phase:document.querySelector('#battleStage')?.dataset.phase||'',
+      finished:document.querySelector('#battleStage')?.classList.contains('battle-finished')===true,
+      visible:document.querySelector('#battleResultOverlay')?.classList.contains('visible')===true,
+      title:document.querySelector('#battleResultTitle')?.textContent||''
+    }));
+    assert(resultState.phase==='result'&&resultState.finished&&resultState.visible,'battle reaches stable result state');
+    return resultState;
+  };
+
   const diagnose=async(label,error)=>{
     let snapshot=null;
     try{
@@ -81,5 +101,5 @@ export async function createBattleHarness(){
     console.error('BATTLE_DIAGNOSTIC',JSON.stringify({label,error:String(error?.stack||error),snapshot}));
   };
 
-  return {browser,context,page,errors,assert,activate,reset,openBattle,diagnose};
+  return {browser,context,page,errors,assert,activate,reset,openBattle,waitForBattleResult,diagnose};
 }
