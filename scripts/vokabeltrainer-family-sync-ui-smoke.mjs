@@ -154,7 +154,9 @@ try{
   assert(failedRemotePersist.name==='Persist Alt','failed remote persistence restores in-memory learner state');
   assert(failedRemotePersist.dirty===0,'failed remote persistence restores sync snapshots without false local conflict');
 
-  await page.evaluate(({key,cfg})=>{
+  await page.evaluate(async({key,cfg})=>{
+    state=defaultState();state.learners[0].name='Lokales Kind';
+    await persistState();
     localStorage.setItem(key,JSON.stringify(cfg));
     renderFamilySync();
   },{key:CONFIG_KEY,cfg:familyConfig()});
