@@ -1,6 +1,6 @@
 # Vokabeltrainer – Cache-Strategie
 
-Stand: 20.09.2026 · App v0.9.18
+Stand: 26.09.2026 · App v0.19.15
 
 Punkt 3 des Pre-v1-Fahrplans trennt kurzlebige App-Dateien von großen, langlebigen Lernressourcen.
 
@@ -14,7 +14,7 @@ Zusätzlich war die bisherige Löschlogik zu breit: Sie konnte CacheStorage-Eint
 
 ### Shell-Cache
 
-`vokabeltrainer-shell-v0.9.18`
+`vokabeltrainer-shell-v0.19.15`
 
 Enthält HTML, CSS, JavaScript, Manifest und Icons. Dieser Cache ist an die App-Version gekoppelt und darf bei einem Release ersetzt werden.
 

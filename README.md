@@ -4,11 +4,23 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.19.14**
+App-Version: **v0.19.15**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.19.15 – Abschließendes Deep-Audit-Hardening
+
+- Familienwechsel und Invite-Übernahmen committen den neuen lokalen Familienstand erst nach vollständigem Laden, Härtung und erfolgreicher Persistierung; Fehler stellen alten Datenstand und alte Verbindung wieder her
+- auch direkte QR-/Link-Beitritte bieten vor möglicher lokaler Datenübernahme ausdrücklich ein Backup an
+- fehlgeschlagene Remote-Persistierung rollt nicht nur Daten, sondern auch die zugehörigen Sync-Snapshots im Arbeitsspeicher zurück
+- Profil-Setup synchronisiert nun auch Avatarstil und automatische Aussprachekorrektur
+- Profil-Löschung und vollständiger App-Reset sind bei aktivem Family-Sync gesperrt, solange das Sync-Protokoll noch keine eindeutigen Profil-Tombstones übertragen kann
+- Backup-Restore im Family-Sync darf keine bestehenden Familienprofile implizit entfernen; ein zulässiger Restore wird vollständig zur Synchronisierung vorgemerkt
+- Remote-Dokumente werden vor dauerhafter Übernahme erneut durch die zentrale State-Härtung geführt
+- ein altes HTML-Markup-Artefakt zwischen den Battle-Stylesheets wurde bereinigt
+- Lernlogik, Sollantworten, Mastery, Leitner, Spacing, XP- und Kampflogik bleiben unverändert
 
 ## v0.19.14 – Family-Sync-Härtung
 

@@ -71,7 +71,8 @@
       return true;
     }
 
-    modal(`<div class="eyebrow">Kindergerät</div><h2>${esc(profileName)} verbinden</h2><p>Dieses Gerät wird dem Profil <strong>${esc(profileName)}</strong> zugeordnet. Danach öffnet sich direkt die Kinderansicht.</p><div id="claimChildInviteResult" class="notice subtle">Der Verbindungslink ist einmalig und nur 15 Minuten gültig.</div><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="claimChildInviteBtn" class="primary">Dieses Gerät verbinden</button></div>`);
+    modal(`<div class="eyebrow">Kindergerät</div><h2>${esc(profileName)} verbinden</h2><p>Dieses Gerät wird dem Profil <strong>${esc(profileName)}</strong> zugeordnet. Danach öffnet sich direkt die Kinderansicht.</p><div id="claimChildInviteResult" class="notice warn"><strong>Vorhandene lokale Lerndaten werden ersetzt.</strong><br>Der Verbindungslink ist einmalig und nur 15 Minuten gültig. Falls auf diesem Gerät bereits Daten liegen, vorher ein Backup erstellen.</div><div class="modal-actions wrap"><button type="button" id="claimChildBackupBtn" class="ghost">Backup erstellen</button><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="claimChildInviteBtn" class="primary">Dieses Gerät verbinden</button></div>`);
+    $('#claimChildBackupBtn').onclick=()=>backup();
     $('#claimChildInviteBtn').onclick=async()=>{
       const btn=$('#claimChildInviteBtn'),out=$('#claimChildInviteResult');
       btn.disabled=true;btn.textContent='Wird verbunden …';
@@ -102,7 +103,8 @@
       return true;
     }
 
-    modal('<div class="eyebrow">Eltern-Gerät</div><h2>Mit Familie verbinden</h2><p>Dieser einmalige QR-/Verbindungslink fügt dieses Gerät als Eltern-Gerät hinzu. Die Familien-PIN muss nicht übertragen werden.</p><div id="claimParentInviteResult" class="notice subtle">Der Link ist einmalig und nur 15 Minuten gültig.</div><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="claimParentInviteBtn" class="primary">Eltern-Gerät verbinden</button></div>');
+    modal('<div class="eyebrow">Eltern-Gerät</div><h2>Mit Familie verbinden</h2><p>Dieser einmalige QR-/Verbindungslink fügt dieses Gerät als Eltern-Gerät hinzu. Die Familien-PIN muss nicht übertragen werden.</p><div id="claimParentInviteResult" class="notice warn"><strong>Der Familienstand wird auf dieses Gerät übernommen.</strong><br>Vorhandene lokale Daten können ersetzt werden. Falls auf diesem Gerät bereits Daten liegen, vorher ein Backup erstellen.</div><div class="modal-actions wrap"><button type="button" id="claimParentBackupBtn" class="ghost">Backup erstellen</button><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="claimParentInviteBtn" class="primary">Eltern-Gerät verbinden</button></div>');
+    $('#claimParentBackupBtn').onclick=()=>backup();
     $('#claimParentInviteBtn').onclick=async()=>{
       const btn=$('#claimParentInviteBtn'),out=$('#claimParentInviteResult');
       btn.disabled=true;btn.textContent='Wird verbunden …';

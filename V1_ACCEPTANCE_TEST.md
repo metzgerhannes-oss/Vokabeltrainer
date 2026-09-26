@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 25.09.2026 · Basis: v0.19.11
+Stand: 26.09.2026 · Basis: v0.19.15
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -227,6 +227,9 @@ Mit einem realistischen Lehrbuchfoto testen.
 - [ ] Lernfortschritt vorhanden
 - [ ] ungültige / manipulierte Datei wird abgewiesen
 - [ ] Größenlimits greifen verständlich
+- [ ] bei aktivem Family-Sync kann ein Restore kein bestehendes Familienprofil stillschweigend entfernen
+- [ ] ein zulässiger Restore wird anschließend vollständig zur Synchronisierung vorgemerkt
+- [ ] vollständiger App-Reset wird bei aktivem Family-Sync nicht fälschlich als familienweite Löschung angeboten
 
 ## B7 – Family Sync (Beta)
 
@@ -242,6 +245,11 @@ Mit zwei getrennten Geräten / Browserprofilen testen.
 - [ ] Einmal-Einladung ist nach Verwendung ungültig
 - [ ] Konflikt wird sichtbar gemeldet und nicht still überschrieben
 - [ ] lokales Backup bleibt unabhängig vom Sync möglich
+- [ ] manueller Beitritt und direkter QR-/Link-Beitritt bieten vor lokaler Datenübernahme ein Backup an
+- [ ] scheitert der Wechsel nach erfolgreicher Serveranmeldung beim Laden oder lokalen Speichern, bleiben alter lokaler Stand und alte Verbindung erhalten
+- [ ] widerrufenes Gerät stoppt den Sync und verwirft seine Geräte-Zugangsdaten, ohne lokale Lerndaten zu löschen
+- [ ] Profil-Löschung ist bei aktivem Sync gesperrt, solange das Protokoll keine eindeutigen Profil-Tombstones unterstützt
+- [ ] Avatarstil und automatische Aussprachekorrektur bleiben zwischen Eltern-Geräten konsistent
 
 ---
 

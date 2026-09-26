@@ -5,7 +5,7 @@
   const SUPABASE_URL='https://ilfblkqxbldkzmqczbgo.supabase.co';
   const SUPABASE_KEY='sb_publishable_zkzIhxq7Xby65AbNnAkiyQ_0ZfAAU4V';
   const PROFILE_PROGRESS_FIELDS=['xp','streakDays','milestones','fortressWins','fortressWinsByYear','battleTickets','battleDays','testFortresses','campaignLog','dailyPlans'];
-  const PROFILE_SETUP_FIELDS=['id','name','gradeLevel','activeSubjects','lrsMode','fontSize','letterSpacing','flashSpeed','testSeries','gradeScales','createdAt'];
+  const PROFILE_SETUP_FIELDS=['id','name','gradeLevel','avatarStyle','activeSubjects','lrsMode','fontSize','letterSpacing','flashSpeed','autoSpeakCorrection','testSeries','gradeScales','createdAt'];
   const runtime={applying:false,busy:false,timer:null,poll:null,snapshots:new Map()};
 
   function clone(value){return value==null?value:JSON.parse(JSON.stringify(value))}
@@ -105,14 +105,51 @@
     state.activity=(state.activity||[]).filter(x=>x.learnerId!==id).concat(clone(payload?.activity||[]));
   }
   function applyDocument(key,payload){
-    runtime.applying=true;
+    const wasApplying=runtime.applying;runtime.applying=true;
     try{
       if(key==='shared')applyShared(payload);
       else if(key.endsWith('/setup'))applySetup(key,payload);
       else if(key.endsWith('/progress'))applyProgress(key,payload);
       rebuildWordIndexes();
       if(typeof backfillPairReviewSignatures==='function')backfillPairReviewSignatures(state);
-    }finally{runtime.applying=false}
+    }finally{runtime.applying=wasApplying}
+  }
+
+  function resetSyncedStateForImport(){
+    state.learners=[];state.sets=[];state.vocabulary=[];state.setVocabulary=[];state.books=[];state.learnerBooks=[];state.bookVocabulary=[];state.learnerVocabulary=[];state.grades=[];state.practiceTests=[];state.activity=[];
+  }
+  function restoreRawConfig(raw){
+    if(raw==null)localStorage.removeItem(CONFIG_KEY);
+    else localStorage.setItem(CONFIG_KEY,raw);
+  }
+  async function installConnectionDocuments(cfg,documents,preferredProfileId=''){
+    const previousState=clone(state),previousConfigRaw=localStorage.getItem(CONFIG_KEY),wasApplying=runtime.applying;
+    runtime.applying=true;
+    try{
+      const docs=Array.isArray(documents)?documents:[];
+      if(!docs.some(d=>String(d?.key||'')==='shared'))throw new Error('Der Familienstand ist unvollständig: gemeinsame Daten fehlen.');
+      resetSyncedStateForImport();
+      for(const d of docs.sort((a,b)=>documentRank(a.key)-documentRank(b.key)||String(a.key).localeCompare(String(b.key))))applyDocument(d.key,d.payload);
+      if(preferredProfileId){
+        if(!state.learners.some(l=>l.id===preferredProfileId))throw new Error('Das zugewiesene Lernprofil fehlt im Familienstand.');
+        state.activeLearnerId=preferredProfileId;
+      }else if(!state.learners.some(l=>l.id===state.activeLearnerId))state.activeLearnerId=state.learners[0]?.id||'';
+      if(!state.learners.length)throw new Error('Der Familienstand enthält kein Lernprofil.');
+      if(typeof hardenState==='function')state=hardenState(state);
+      else if(typeof attachRuntimeWordApi==='function')state=attachRuntimeWordApi(state);
+      ensureActiveSubject();
+      if(!(await persistState()))throw new Error('Der Familienstand konnte lokal nicht sicher gespeichert werden.');
+      saveConfig(cfg);initSnapshots();renderAll?.();return status();
+    }catch(e){
+      state=typeof attachRuntimeWordApi==='function'?attachRuntimeWordApi(previousState):previousState;
+      ensureActiveSubject();
+      const rollbackOk=await persistState();
+      try{restoreRawConfig(previousConfigRaw)}catch(_e){}
+      runtime.snapshots.clear();
+      if(loadConfig().enabled)initSnapshots();
+      if(!rollbackOk)throw new Error((e?.message||'Verbindung fehlgeschlagen.')+' Der vorherige lokale Stand konnte nach dem Fehler nicht sicher zurückgeschrieben werden. Bitte das letzte Backup verwenden.');
+      throw e;
+    }finally{runtime.applying=wasApplying}
   }
 
   async function rpc(name,args){
@@ -165,6 +202,12 @@
     }
     cfg.dirtyKeys=[...dirty];persistCfg(cfg);scheduleSync();
   }
+  function markAllLocalDocumentsDirty(){
+    const cfg=loadConfig();if(!cfg.enabled||runtime.applying)return status();
+    const dirty=new Set(cfg.dirtyKeys||[]);
+    for(const key of Object.keys(serializeDocuments()))if(canWrite(cfg,key))dirty.add(key);
+    cfg.dirtyKeys=[...dirty];persistCfg(cfg);scheduleSync();return status();
+  }
   function scheduleSync(){
     clearTimeout(runtime.timer);runtime.timer=setTimeout(()=>syncNow(false).catch(e=>console.warn('Family sync',e)),1400);
   }
@@ -196,8 +239,11 @@
     const deviceId=randomId('device'),deviceSecret=bytesHex(32),familySecretHash=await sha256Hex(id+'|'+String(pin));
     const result=await rpc('vt_join_parent',{p_family_id:id,p_family_secret_hash:familySecretHash,p_device_id:deviceId,p_device_secret:deviceSecret,p_label:String(label||'Eltern-Gerät').slice(0,120)});
     if(!result?.ok)throw new Error(result?.error||'Eltern-Gerät konnte nicht verbunden werden.');
-    const cfg={enabled:true,familyId:id,deviceId,deviceSecret,role:'parent',profileId:'',revisions:{},dirtyKeys:[],conflicts:{},lastSync:''};
-    saveConfig(cfg);initSnapshots();await syncNow(true);return status();
+    const pulled=await rpc('vt_pull_documents',{p_family_id:id,p_device_id:deviceId,p_device_secret:deviceSecret});
+    if(!pulled?.ok)throw new Error(pulled?.error||'Der neue Familienstand konnte nicht sicher geladen werden.');
+    const revisions={};for(const d of (pulled.documents||[]))revisions[String(d.key||'')]=Number(d.revision)||0;
+    const cfg={enabled:true,familyId:id,deviceId,deviceSecret,role:'parent',profileId:'',revisions,dirtyKeys:[],conflicts:{},lastSync:new Date().toISOString(),revoked:false,revokedAt:''};
+    return installConnectionDocuments(cfg,pulled.documents||[]);
   }
 
   async function createParentInvite(){
@@ -211,16 +257,9 @@
     const deviceId=randomId('device'),deviceSecret=bytesHex(32);
     const result=await rpc('vt_claim_parent_invite',{p_invite_token:String(token||'').trim(),p_device_id:deviceId,p_device_secret:deviceSecret,p_label:String(label||'Eltern-Gerät').slice(0,120)});
     if(!result?.ok)throw new Error(result?.error||'Gerätecode ist ungültig oder abgelaufen.');
-    const revisions={};
-    runtime.applying=true;
-    try{
-      state.learners=[];state.sets=[];state.setVocabulary=[];state.learnerBooks=[];state.learnerVocabulary=[];state.grades=[];state.practiceTests=[];state.activity=[];
-      for(const d of (result.documents||[]).sort((a,b)=>documentRank(a.key)-documentRank(b.key)||String(a.key).localeCompare(String(b.key)))){applyDocument(d.key,d.payload);revisions[d.key]=Number(d.revision)||0}
-      if(!state.learners.some(l=>l.id===state.activeLearnerId))state.activeLearnerId=state.learners[0]?.id||'';
-      ensureActiveSubject();await persistState();
-    }finally{runtime.applying=false}
-    const cfg={enabled:true,familyId:result.family_id,deviceId,deviceSecret,role:'parent',profileId:'',revisions,dirtyKeys:[],conflicts:{},lastSync:new Date().toISOString()};
-    saveConfig(cfg);initSnapshots();renderAll();return status();
+    const revisions={};for(const d of (result.documents||[]))revisions[String(d.key||'')]=Number(d.revision)||0;
+    const cfg={enabled:true,familyId:result.family_id,deviceId,deviceSecret,role:'parent',profileId:'',revisions,dirtyKeys:[],conflicts:{},lastSync:new Date().toISOString(),revoked:false,revokedAt:''};
+    return installConnectionDocuments(cfg,result.documents||[]);
   }
 
   async function createChildInvite(profileId){
@@ -234,15 +273,9 @@
     const deviceId=randomId('device'),deviceSecret=bytesHex(32);
     const result=await rpc('vt_claim_child_invite',{p_invite_token:String(token||'').trim(),p_device_id:deviceId,p_device_secret:deviceSecret,p_label:String(label||'Kindergerät').slice(0,120)});
     if(!result?.ok)throw new Error(result?.error||'Gerätecode ist ungültig oder abgelaufen.');
-    const revisions={};
-    runtime.applying=true;
-    try{
-      state.learners=[];state.sets=[];state.setVocabulary=[];state.learnerBooks=[];state.learnerVocabulary=[];state.grades=[];state.practiceTests=[];state.activity=[];
-      for(const d of (result.documents||[]).sort((a,b)=>documentRank(a.key)-documentRank(b.key)||String(a.key).localeCompare(String(b.key)))){applyDocument(d.key,d.payload);revisions[d.key]=Number(d.revision)||0}
-      state.activeLearnerId=result.profile_id;ensureActiveSubject();await persistState();
-    }finally{runtime.applying=false}
-    const cfg={enabled:true,familyId:result.family_id,deviceId,deviceSecret,role:'child',profileId:result.profile_id,revisions,dirtyKeys:[],conflicts:{},lastSync:new Date().toISOString()};
-    saveConfig(cfg);initSnapshots();renderAll();return status();
+    const revisions={};for(const d of (result.documents||[]))revisions[String(d.key||'')]=Number(d.revision)||0;
+    const cfg={enabled:true,familyId:result.family_id,deviceId,deviceSecret,role:'child',profileId:result.profile_id,revisions,dirtyKeys:[],conflicts:{},lastSync:new Date().toISOString(),revoked:false,revokedAt:''};
+    return installConnectionDocuments(cfg,result.documents||[],String(result.profile_id||''));
   }
 
   async function syncNow(force=false){
@@ -253,7 +286,7 @@
       const pulled=await rpc('vt_pull_documents',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
       if(!pulled?.ok)remoteFailure(cfg,pulled,'Cloud-Stand nicht erreichbar.');
       cfg.role=pulled.role==='child'?'child':'parent';cfg.profileId=String(pulled.profile_id||cfg.profileId||'');
-      const dirty=new Set(cfg.dirtyKeys||[]),conflicts={...cfg.conflicts};let changed=false;
+      const dirty=new Set(cfg.dirtyKeys||[]),conflicts={...cfg.conflicts};let changed=false;const stateBeforeRemote=clone(state),snapshotsBeforeRemote=new Map(runtime.snapshots);
       const remoteDocs=(pulled.documents||[]).sort((a,b)=>documentRank(a.key)-documentRank(b.key)||String(a.key).localeCompare(String(b.key)));
       for(const d of remoteDocs){
         const key=String(d.key||''),remoteRev=Number(d.revision)||0,localRev=Number(cfg.revisions[key])||0;
@@ -262,7 +295,16 @@
           applyDocument(key,d.payload);cfg.revisions[key]=remoteRev;runtime.snapshots.set(key,docString(d.payload));delete conflicts[key];changed=true;
         }else if(!runtime.snapshots.has(key))runtime.snapshots.set(key,docString(serializeDocuments()[key]||d.payload));
       }
-      if(changed){ensureActiveSubject();await persistState();renderAll()}
+      if(changed){
+        try{
+          if(typeof hardenState==='function')state=hardenState(state);ensureActiveSubject();
+          if(!(await persistState()))throw new Error('Cloud-Stand konnte lokal nicht sicher gespeichert werden.');
+        }catch(e){
+          state=typeof attachRuntimeWordApi==='function'?attachRuntimeWordApi(stateBeforeRemote):stateBeforeRemote;runtime.snapshots=snapshotsBeforeRemote;ensureActiveSubject();
+          throw e;
+        }
+        renderAll();
+      }
 
       const current=serializeDocuments();
       for(const key of [...dirty]){
@@ -293,10 +335,17 @@
       if(!remote)throw new Error('Der Konfliktstand ist in der Cloud nicht mehr vorhanden.');
       const remoteRev=Number(remote.revision)||0,dirty=new Set(cfg.dirtyKeys||[]),conflicts={...cfg.conflicts};
       if(mode==='remote'){
-        applyDocument(docKey,remote.payload);
-        ensureActiveSubject();
-        if(!(await persistState()))throw new Error('Cloud-Stand konnte lokal nicht sicher gespeichert werden.');
-        cfg.revisions[docKey]=remoteRev;runtime.snapshots.set(docKey,docString(remote.payload));
+        const stateBeforeRemote=clone(state);
+        try{
+          applyDocument(docKey,remote.payload);
+          if(typeof hardenState==='function')state=hardenState(state);
+          ensureActiveSubject();
+          if(!(await persistState()))throw new Error('Cloud-Stand konnte lokal nicht sicher gespeichert werden.');
+          cfg.revisions[docKey]=remoteRev;runtime.snapshots.set(docKey,docString(remote.payload));
+        }catch(e){
+          state=typeof attachRuntimeWordApi==='function'?attachRuntimeWordApi(stateBeforeRemote):stateBeforeRemote;ensureActiveSubject();
+          throw e;
+        }
       }else{
         if(!canWrite(cfg,docKey))throw new Error('Dieses Gerät darf diesen Datenbereich nicht überschreiben.');
         const payload=serializeDocuments()[docKey];
@@ -364,5 +413,5 @@
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncNow(false).catch(e=>console.warn('Family sync resume',e))});
   }
 
-  window.VTFamilySync={serializeDocuments,status,createFamily,joinParent,createParentInvite,claimParentInvite,createChildInvite,claimChildInvite,syncNow,resolveConflict,replaceCloudWithCurrent,markLocalChange,listDevices,revokeDevice,disconnectLocal,bootstrap};
+  window.VTFamilySync={serializeDocuments,status,createFamily,joinParent,createParentInvite,claimParentInvite,createChildInvite,claimChildInvite,syncNow,resolveConflict,replaceCloudWithCurrent,markLocalChange,markAllLocalDocumentsDirty,listDevices,revokeDevice,disconnectLocal,bootstrap};
 })();

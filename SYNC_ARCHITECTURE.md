@@ -31,6 +31,15 @@ IndexedDB bleibt die primäre Laufzeit-Datenbank der App. Lernen funktioniert oh
 
 Jedes Cloud-Dokument besitzt eine eigene Revisionsnummer. Uploads verwenden die zuletzt bekannte Basisrevision. Wenn Cloud und Gerät dasselbe Dokument unabhängig geändert haben, wird nicht blind überschrieben, sondern ein Konflikt gemeldet.
 
+## Deep-Audit-Invarianten ab v0.19.15
+
+- Ein Gerätebeitritt oder Familienwechsel gilt lokal erst als abgeschlossen, wenn die neuen Dokumente vollständig geladen, durch die zentrale State-Härtung gelaufen und dauerhaft gespeichert wurden. Scheitert einer dieser Schritte, werden vorheriger Datenstand und vorherige lokale Verbindung wiederhergestellt.
+- Direkte QR-/Link-Beitritte und manuelle Beitritte bieten vor einer möglichen Datenübernahme dieselbe Backup-Möglichkeit.
+- Nicht dauerhaft gespeicherte Remote-Änderungen dürfen weder im sichtbaren Arbeitsspeicher noch in den internen Sync-Snapshots als übernommen gelten.
+- Ein vollständiger Backup-Restore im aktiven Familienverbund darf vorhandene Profile nicht implizit verschwinden lassen. Zulässige Restores werden anschließend vollständig als lokale Änderungen zur Synchronisierung vorgemerkt.
+- Die derzeitige Dokumentrevision kennt noch keine Profil-Tombstones. Deshalb werden vollständige Profil-Löschung und globaler App-Reset im aktiven Family-Sync bewusst gesperrt, statt auf einzelnen Geräten einen scheinbar erfolgreichen, aber cloudseitig unvollständigen Löschvorgang zu erzeugen.
+- Profil-Setup umfasst neben Name, Klassenstufe und LRS-Darstellung auch `avatarStyle` und `autoSpeakCorrection`.
+
 ## Backend
 
 Die Tabellen liegen im privaten Supabase-Schema und haben RLS aktiviert. Direkter Tabellenzugriff für `anon` und `authenticated` ist entzogen. Die Browser-App verwendet nur eng begrenzte RPC-Endpunkte mit dem öffentlichen Publishable Key und zusätzlichen Familien-/Geräte-Credentials.
