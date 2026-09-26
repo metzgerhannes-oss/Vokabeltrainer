@@ -12,7 +12,7 @@ const assert=(v,m)=>{if(!v)throw new Error('Family sync learning-progress smoke 
 const clone=x=>JSON.parse(JSON.stringify(x));
 
 const installCloudMock=async context=>{
-  await context.route('https://ilfblkqxbldkzmqczbgo.supabase.co/rest/v1/rpc/**',async route=>{
+  await context.route(/https:\/\/ilfblkqxbldkzmqczbgo\.supabase\.co\/rest\/v1\/rpc\/vt_[^/?]+(?:\?.*)?$/,async route=>{
     const req=route.request(),name=new URL(req.url()).pathname.split('/').pop(),body=JSON.parse(req.postData()||'{}');
     if(name==='vt_pull_documents'){
       const documents=[...cloud.entries()].map(([key,row])=>({key,revision:row.revision,payload:clone(row.payload),updated_at:new Date().toISOString()}));
