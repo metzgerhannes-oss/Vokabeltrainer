@@ -52,6 +52,54 @@ function battleStoryFor(f){
   const base=BATTLE_STORY[f.id]||{title:f.name,text:'Deine Armee bereitet den nächsten Schritt vor.'};
   return {title:base.title,text:`${base.text} Diese Festung steht für ${f.scopeText||'deinen nächsten Test'} am ${formatDateShort(f.testDate)}.`};
 }
+let battleStoryNarrationToken=0;
+let battleStoryNarrating=false;
+function preferredBattleStoryVoice(){
+  if(!('speechSynthesis'in window))return null;
+  const voices=speechSynthesis.getVoices?.()||[],german=voices.filter(v=>/^de(?:-|_)/i.test(String(v.lang||'')));
+  const preferred=['premium','enhanced','natural','anna','petra','helena','katja','martin','markus'];
+  return [...german].sort((a,b)=>{
+    const score=v=>preferred.reduce((sum,key,index)=>sum+(String(v.name||'').toLowerCase().includes(key)?preferred.length-index:0),0)+(v.localService?2:0)+(v.default?1:0);
+    return score(b)-score(a);
+  })[0]||null;
+}
+function updateBattleStoryNarrationUi(on=false){
+  battleStoryNarrating=!!on;
+  const btn=$('#battleStorySpeakBtn');if(!btn)return;
+  btn.setAttribute('aria-pressed',String(battleStoryNarrating));
+  btn.textContent=battleStoryNarrating?'■ Stop':'▶ Erzählmodus';
+  btn.setAttribute('aria-label',battleStoryNarrating?'Vorlesen stoppen':'Geschichte vorlesen');
+}
+function stopBattleStoryNarration(){
+  battleStoryNarrationToken+=1;
+  if('speechSynthesis'in window)speechSynthesis.cancel();
+  updateBattleStoryNarrationUi(false);
+}
+function battleNarrationUtterance(text,{title=false}={}){
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='de-DE';
+  u.rate=learner()?.lrsMode?(title?.74:.78):(title?.78:.86);
+  u.pitch=title?.86:.93;
+  u.volume=1;
+  const voice=preferredBattleStoryVoice();if(voice)u.voice=voice;
+  return u;
+}
+function toggleBattleStoryNarration(){
+  if(!('speechSynthesis'in window)){toast('Vorlesen wird auf diesem Gerät nicht unterstützt.','subtle');return}
+  if(battleStoryNarrating){stopBattleStoryNarration();return}
+  const title=$('#battleStoryTitle')?.textContent?.trim()||'',text=$('#battleStoryText')?.textContent?.trim()||'';
+  if(!title&&!text)return;
+  const token=++battleStoryNarrationToken;
+  speechSynthesis.cancel();
+  updateBattleStoryNarrationUi(true);
+  const body=battleNarrationUtterance(text);
+  body.onend=()=>{if(token===battleStoryNarrationToken)updateBattleStoryNarrationUi(false)};
+  body.onerror=()=>{if(token===battleStoryNarrationToken)updateBattleStoryNarrationUi(false)};
+  const heading=battleNarrationUtterance(title,{title:true});
+  heading.onend=()=>{if(token!==battleStoryNarrationToken)return;setTimeout(()=>{if(token===battleStoryNarrationToken)speechSynthesis.speak(body)},260)};
+  heading.onerror=()=>{if(token===battleStoryNarrationToken)speechSynthesis.speak(body)};
+  speechSynthesis.speak(heading);
+}
 function battleUnitType(i,pct){
   if(pct>=55&&i>2&&i%6===0)return 'cavalry';
   if(pct>=20&&i%4===2)return 'archer';
@@ -219,7 +267,7 @@ function renderBattleReturnUi(){
   if($('#battleBackBtn'))$('#battleBackBtn').textContent=meta.back;
   if($('#battleReturnBtn'))$('#battleReturnBtn').textContent=meta.bottom;
 }
-function returnFromBattle(){showView(BATTLE_RETURN_META[battleReturnView]?battleReturnView:'armyView')}
+function returnFromBattle(){if(battleStoryNarrating)stopBattleStoryNarration();showView(BATTLE_RETURN_META[battleReturnView]?battleReturnView:'armyView')}
 function openBattleView(){
   if(isParentMode())return;
   const f=currentTestFortress();
@@ -1084,7 +1132,7 @@ function bind(){
   document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='armyView'&&window.VTArmyUi?.open){window.VTArmyUi.open();return}showView(b.dataset.view)}); $('#quickLearnHeroBtn').onclick=startDailyTodo; $('#quickCardsBtn')?.addEventListener('click',()=>startSession('cards')); $('#cardboxPracticeBtn').onclick=()=>startSession('cards'); $('#todayTestBtn').onclick=openTestDatePlanner; $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
   $('#practiceCardsBtn')?.addEventListener('click',()=>startSession('cards')); $('#practiceWeakBtn')?.addEventListener('click',startWeakWordsPractice); $('#practiceAllBtn')?.addEventListener('click',openAllWordsPracticeChooser); $('#practiceSpecialBtn')?.addEventListener('click',()=>{const panel=$('#optionalLearningCard'),btn=$('#practiceSpecialBtn');if(!panel)return;const open=panel.classList.contains('hidden');panel.classList.toggle('hidden',!open);btn.setAttribute('aria-expanded',String(open));if(open)panel.scrollIntoView({block:'nearest',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})});
   $('#newSetBtn').onclick=()=>openLearningContentPlanner(); $('#addGradeBtn').onclick=()=>addGrade(); $('#practiceTestBtn').onclick=openPracticeTestChooser; $('#addProfileBtn').onclick=addProfile; $('#profileBtn').onclick=openProfileSwitcher; $('#attackBtn').onclick=openBattleView; $('#duelBtn').onclick=openDuel;
-  $('#battleBackBtn').onclick=returnFromBattle; $('#battleReturnBtn').onclick=returnFromBattle; $('#battleAttackBtn').onclick=runBattleAnimation; $('#battleFullscreenBtn').onclick=toggleBattleFullscreen;
+  $('#battleBackBtn').onclick=returnFromBattle; $('#battleReturnBtn').onclick=returnFromBattle; $('#battleAttackBtn').onclick=runBattleAnimation; $('#battleFullscreenBtn').onclick=toggleBattleFullscreen; $('#battleStorySpeakBtn').onclick=toggleBattleStoryNarration;
   $('#battleAttackChoices').addEventListener('click',e=>{const b=e.target.closest('[data-battle-attack]');if(b&&!b.disabled)selectBattleAttack(b.dataset.battleAttack)});
   document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('battle-immersive')){document.body.classList.remove('battle-immersive');$('#battleFullscreenBtn')?.setAttribute('aria-pressed','false');if($('#battleFullscreenBtn'))$('#battleFullscreenBtn').textContent='⛶ Vollbild';}});
   $('#parentAreaBtn').onclick=()=>openParentGate(); $('#childModeBtn').onclick=exitParentMode;
