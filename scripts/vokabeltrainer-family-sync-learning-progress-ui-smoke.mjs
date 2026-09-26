@@ -11,28 +11,34 @@ const cloud=new Map();
 const assert=(v,m)=>{if(!v)throw new Error('Family sync learning-progress smoke failed: '+m)};
 const clone=x=>JSON.parse(JSON.stringify(x));
 
+const handleRpc=async({url,body})=>{
+  const name=new URL(url).pathname.split('/').pop(),args=body||{};
+  if(name==='vt_pull_documents'){
+    const documents=[...cloud.entries()].map(([key,row])=>({key,revision:row.revision,payload:clone(row.payload),updated_at:new Date().toISOString()}));
+    return {ok:true,family_id:FAMILY_ID,role:'child',profile_id:PROFILE_ID,documents};
+  }
+  if(name==='vt_push_document'){
+    const key=String(args.p_doc_key||''),current=cloud.get(key);
+    if(!current)return {ok:false,error:'missing_document'};
+    const baseRevision=Number(args.p_base_revision)||0;
+    if(baseRevision!==current.revision)return {ok:false,conflict:true,revision:current.revision};
+    const revision=current.revision+1;
+    cloud.set(key,{revision,payload:clone(args.p_payload)});
+    return {ok:true,revision};
+  }
+  return {ok:false,error:'unexpected_rpc_'+name};
+};
 const installCloudMock=async context=>{
-  await context.route(/https:\/\/ilfblkqxbldkzmqczbgo\.supabase\.co\/rest\/v1\/rpc\/vt_[^/?]+(?:\?.*)?$/,async route=>{
-    const req=route.request(),name=new URL(req.url()).pathname.split('/').pop(),body=JSON.parse(req.postData()||'{}');
-    if(name==='vt_pull_documents'){
-      const documents=[...cloud.entries()].map(([key,row])=>({key,revision:row.revision,payload:clone(row.payload),updated_at:new Date().toISOString()}));
-      await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ok:true,family_id:FAMILY_ID,role:'child',profile_id:PROFILE_ID,documents})});
-      return;
-    }
-    if(name==='vt_push_document'){
-      const key=String(body.p_doc_key||''),current=cloud.get(key);
-      if(!current){await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ok:false,error:'missing_document'})});return}
-      const baseRevision=Number(body.p_base_revision)||0;
-      if(baseRevision!==current.revision){
-        await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ok:false,conflict:true,revision:current.revision})});
-        return;
-      }
-      const revision=current.revision+1;
-      cloud.set(key,{revision,payload:clone(body.p_payload)});
-      await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ok:true,revision})});
-      return;
-    }
-    await route.fulfill({status:400,contentType:'application/json',body:JSON.stringify({ok:false,error:'unexpected_rpc_'+name})});
+  await context.exposeFunction('vtMockRpc',handleRpc);
+  await context.addInitScript(()=>{
+    const originalFetch=window.fetch.bind(window);
+    window.fetch=async(input,init={})=>{
+      const url=String(typeof input==='string'?input:input?.url||'');
+      if(!url.includes('ilfblkqxbldkzmqczbgo.supabase.co/rest/v1/rpc/'))return originalFetch(input,init);
+      let body={};try{body=init?.body?JSON.parse(String(init.body)):{};}catch(_e){}
+      const result=await window.vtMockRpc({url,body});
+      return new Response(JSON.stringify(result),{status:200,headers:{'Content-Type':'application/json'}});
+    };
   });
 };
 
