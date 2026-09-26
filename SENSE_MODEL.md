@@ -1,6 +1,6 @@
 # Vokabeltrainer – Sense-/Bedeutungsmodell
 
-Stand: 20.09.2026 · Modellversion 1 · App v0.9.14
+Stand: 26.09.2026 · Modellversion 1 · App v0.19.15
 
 Dieses Dokument konkretisiert Prinzip 10 der `PRODUCT_DNA.md`. Es ist die verbindliche fachliche und technische Definition für Lexem, Bedeutung, Schulbuchform und Lernstand.
 
