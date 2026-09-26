@@ -126,6 +126,7 @@ try{
   assert(actionAccess.focused,'battle action remains keyboard-focusable');
   await page.keyboard.press('Enter');
   await waitForBattleResult();
+  assert((await page.locator('#battleResultOverlay').getAttribute('aria-hidden'))==='false','visible battle result is exposed to assistive technology');
   const latinResultTitle=await page.locator('#battleResultTitle').textContent();
   assert(/Kastell|Vorstoß|Wächter/.test(latinResultTitle||''),'Latin result stays in Roman vocabulary');
   assert(!(latinResultTitle||'').includes('Festung'),'Latin result does not fall back to the English fortress label');
