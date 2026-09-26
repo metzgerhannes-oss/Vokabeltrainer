@@ -96,31 +96,52 @@ function battleBossFor(f,subject=state.activeSubject){
   if(!f)return null;
   return subject==='latin'?(BATTLE_BOSSES_LATIN[f.id]||null):(BATTLE_BOSSES[f.id]||null);
 }
+function battleStoryScopeLabel(f){
+  const raw=String(f?.scopeText||'').trim();
+  if(!raw)return '';
+  return raw.split('·')[0].trim().replace(/[.!?]+$/,'');
+}
+function battleStoryDateLabel(value){
+  if(!value)return '';
+  const date=new Date(String(value)+'T12:00:00');
+  if(Number.isNaN(date.getTime()))return formatDateShort(value);
+  return new Intl.DateTimeFormat('de-DE',{day:'numeric',month:'long'}).format(date);
+}
 function battleStoryFor(f){
   const p=battlePresentation();
   if(!f)return {title:`Noch kein ${p.targetNoun}-Ziel`,text:`Sobald ein Test geplant ist, erscheint hier automatisch die passende ${p.targetNoun.toLowerCase()}-Etappe.`};
   const stories=state.activeSubject==='latin'?BATTLE_STORY_LATIN:state.activeSubject==='french'?BATTLE_STORY_FRENCH:BATTLE_STORY;
   const base=stories[f.id]||{title:battleTargetName(f),text:`${p.unitLabel} bereitet den nächsten Schritt vor.`};
-  const targetWord=state.activeSubject==='latin'?'Dieses Kastell':state.activeSubject==='french'?'Diese Etappe':'Diese Festung';
-  return {title:base.title,text:`${base.text} ${targetWord} steht für ${f.scopeText||'deinen nächsten Test'} am ${formatDateShort(f.testDate)}.`};
+  const wordCount=Math.max(0,Number(f.wordCount)||0),scope=battleStoryScopeLabel(f),date=battleStoryDateLabel(f.testDate);
+  let objective=date?`Dein nächster Test ist am ${date}.`:'';
+  if(wordCount&&scope)objective+=` Dafür bereitest du ${wordCount} ${wordCount===1?'Vokabel':'Vokabeln'} aus „${scope}“ vor.`;
+  else if(wordCount)objective+=` Dafür bereitest du ${wordCount} ${wordCount===1?'Vokabel':'Vokabeln'} vor.`;
+  else if(scope)objective+=` Dafür bereitest du den Lernstoff „${scope}“ vor.`;
+  return {title:base.title,text:[base.text,objective].filter(Boolean).join(' ')};
 }
 let battleStoryNarrationToken=0;
 let battleStoryNarrating=false;
+function battleStoryVoiceScore(voice){
+  const name=String(voice?.name||'').toLowerCase(),uri=String(voice?.voiceURI||'').toLowerCase(),all=name+' '+uri;
+  let score=0;
+  const quality=[['premium',120],['enhanced',110],['neural',100],['natural',95],['siri',90],['google',72],['microsoft',68],['anna',54],['petra',52],['helena',50],['katja',48],['markus',46],['martin',44]];
+  for(const [key,value] of quality)if(all.includes(key))score=Math.max(score,value);
+  if(voice?.localService)score+=8;
+  if(voice?.default)score+=2;
+  for(const bad of ['compact','novelty','whisper','zarvox','trinoids','bad news','good news'])if(all.includes(bad))score-=140;
+  return score;
+}
 function preferredBattleStoryVoice(){
   if(!('speechSynthesis'in window))return null;
   const voices=speechSynthesis.getVoices?.()||[],german=voices.filter(v=>/^de(?:-|_)/i.test(String(v.lang||'')));
-  const preferred=['premium','enhanced','natural','anna','petra','helena','katja','martin','markus'];
-  return [...german].sort((a,b)=>{
-    const score=v=>preferred.reduce((sum,key,index)=>sum+(String(v.name||'').toLowerCase().includes(key)?preferred.length-index:0),0)+(v.localService?2:0)+(v.default?1:0);
-    return score(b)-score(a);
-  })[0]||null;
+  return [...german].sort((a,b)=>battleStoryVoiceScore(b)-battleStoryVoiceScore(a))[0]||null;
 }
 function updateBattleStoryNarrationUi(on=false){
   battleStoryNarrating=!!on;
   const btn=$('#battleStorySpeakBtn');if(!btn)return;
   btn.setAttribute('aria-pressed',String(battleStoryNarrating));
-  btn.textContent=battleStoryNarrating?'■ Stop':'▶ Erzählmodus';
-  btn.setAttribute('aria-label',battleStoryNarrating?'Vorlesen stoppen':'Geschichte vorlesen');
+  btn.textContent=battleStoryNarrating?'■ Stop':'▶ Geschichte hören';
+  btn.setAttribute('aria-label',battleStoryNarrating?'Vorlesen stoppen':'Geschichte anhören');
 }
 function stopBattleStoryNarration(){
   battleStoryNarrationToken+=1;
@@ -130,11 +151,32 @@ function stopBattleStoryNarration(){
 function battleNarrationUtterance(text,{title=false}={}){
   const u=new SpeechSynthesisUtterance(text);
   u.lang='de-DE';
-  u.rate=learner()?.lrsMode?(title ? .74 : .78):(title ? .78 : .86);
-  u.pitch=title?.86:.93;
+  const lrs=!!learner()?.lrsMode;
+  u.rate=lrs?(title?.84:.86):(title?.9:.93);
+  u.pitch=title?1.02:1;
   u.volume=1;
   const voice=preferredBattleStoryVoice();if(voice)u.voice=voice;
   return u;
+}
+function battleNarrationSegments(title,text){
+  const body=String(text||'').match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[];
+  return [
+    ...(title?[{text:title.trim(),title:true,pause:300}]:[]),
+    ...body.map((part,index)=>({text:part.trim(),title:false,pause:index===body.length-1?0:220}))
+  ].filter(part=>part.text);
+}
+function speakBattleNarrationSegments(segments,index,token){
+  if(token!==battleStoryNarrationToken)return;
+  if(index>=segments.length){updateBattleStoryNarrationUi(false);return}
+  const part=segments[index],utterance=battleNarrationUtterance(part.text,{title:part.title});
+  const next=()=>{
+    if(token!==battleStoryNarrationToken)return;
+    if(part.pause)setTimeout(()=>speakBattleNarrationSegments(segments,index+1,token),part.pause);
+    else speakBattleNarrationSegments(segments,index+1,token);
+  };
+  utterance.onend=next;
+  utterance.onerror=next;
+  speechSynthesis.speak(utterance);
 }
 function toggleBattleStoryNarration(){
   if(!('speechSynthesis'in window)){toast('Vorlesen wird auf diesem Gerät nicht unterstützt.','subtle');return}
@@ -144,13 +186,7 @@ function toggleBattleStoryNarration(){
   const token=++battleStoryNarrationToken;
   speechSynthesis.cancel();
   updateBattleStoryNarrationUi(true);
-  const body=battleNarrationUtterance(text);
-  body.onend=()=>{if(token===battleStoryNarrationToken)updateBattleStoryNarrationUi(false)};
-  body.onerror=()=>{if(token===battleStoryNarrationToken)updateBattleStoryNarrationUi(false)};
-  const heading=battleNarrationUtterance(title,{title:true});
-  heading.onend=()=>{if(token!==battleStoryNarrationToken)return;setTimeout(()=>{if(token===battleStoryNarrationToken)speechSynthesis.speak(body)},260)};
-  heading.onerror=()=>{if(token===battleStoryNarrationToken)speechSynthesis.speak(body)};
-  speechSynthesis.speak(heading);
+  speakBattleNarrationSegments(battleNarrationSegments(title,text),0,token);
 }
 function battleUnitType(i,pct){
   if(pct>=55&&i>2&&i%6===0)return 'cavalry';
@@ -223,7 +259,7 @@ function renderBattlefield(){
   field.dataset.damagePercent=String(damagePct);
   field.dataset.fortressState=fortressVisual.id;
   field.setAttribute('aria-label',`${campaign.unitLabel}: ${p.pct}% Schuljahresfortschritt, Rang ${rankFor(p.pct,state.activeSubject)}, ${f?`${present.targetNoun} ${targetName} am ${formatDateShort(f.testDate)}`:'kein Test geplant'}`);
-  field.innerHTML=`<img class="progress-army-art" data-progress-army-art alt="" aria-hidden="true" hidden><div class="progress-army-art-shade" aria-hidden="true"></div><div class="frontline-label frontline-own" aria-hidden="true">${esc(present.ownLabel)}</div><div class="frontline-label frontline-target" aria-hidden="true">${esc(present.targetLabel)}</div><div class="frontline-center" aria-hidden="true"><i></i><span>${esc(present.moveLabel)}</span></div><div class="sun"></div><div class="preview-cloud cloud-a"></div><div class="preview-cloud cloud-b"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army"><div class="preview-standard"></div>${battleUnitsMarkup(count,false,p.pct)}${siege}</div>${fortressMarkup(f,false)}`;
+  field.innerHTML=`<img class="progress-army-art" data-progress-army-art alt="" aria-hidden="true" hidden><div class="progress-army-art-shade" aria-hidden="true"></div><div class="frontline-label frontline-own" aria-hidden="true">${esc(present.ownLabel)}</div><div class="frontline-label frontline-target" aria-hidden="true">${esc(present.targetLabel)}</div><div class="frontline-center" aria-hidden="true"><i></i><span>${esc(present.moveLabel)}</span></div><div class="sun"></div><div class="preview-cloud cloud-a"></div><div class="preview-cloud cloud-b"></div>${sea.class==='winter'?'<div class="snow"></div>':''}${sea.festive?`<div class="festive">${esc(campaign.festive)}</div>`:''}<div class="army"><div class="preview-standard"></div>${battleUnitsMarkup(count,false,p.pct)}${siege}</div>${fortressMarkup(f,true)}`;
   applyProgressArmyArt();
 }
 if(typeof document!=='undefined'&&typeof document.addEventListener==='function')document.addEventListener('vt-army-art-ready',()=>{if(state&&document.querySelector?.('#battlefield'))applyProgressArmyArt()});
