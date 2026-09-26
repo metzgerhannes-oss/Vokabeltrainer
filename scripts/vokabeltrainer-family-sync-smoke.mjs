@@ -3,6 +3,7 @@ import fs from 'node:fs';
 const read=p=>fs.readFileSync(p,'utf8');
 const core=read('js/core.js');
 const sync=read('js/family-sync.js');
+const storage=read('js/storage.js');
 const pairing=read('js/device-pairing.js');
 const ui=read('js/ui.js');
 const css=read('css/app.css');
@@ -23,6 +24,7 @@ assert(sw.includes("'./js/family-sync.js?v="+version+"'"),'family sync module is
 assert(sw.includes("'./js/device-pairing.js?v="+version+"'"),'device pairing module is cached in the offline shell');
 assert(html.includes("connect-src 'self' https://ilfblkqxbldkzmqczbgo.supabase.co"),'CSP allows only the configured Supabase endpoint in addition to self');
 assert(sync.includes("sb_publishable_")&&!sync.includes('sb_secret_')&&!sync.includes('service_role'),'browser code contains only a publishable Supabase key');
+assert(storage.includes("if(ok)window.VTFamilySync?.markLocalChange?.()"),'every successful local persistence marks changed learning progress for family sync');
 
 assert(sync.includes("shared:{")&&sync.includes("'/setup'")&&sync.includes("'/progress'"),'state is split into shared, setup and progress documents');
 assert(sync.includes("return key==='profile/'+cfg.profileId+'/progress'"),'child devices can write only their own progress document');
