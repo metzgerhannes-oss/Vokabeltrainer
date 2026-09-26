@@ -70,10 +70,17 @@
   function applyArt(){
     const img=ensureOverlay().querySelector('#battleResultArt');
     if(!img)return;
+    const subject=typeof state==='object'&&state?state.activeSubject:'english';
+    if(subject!=='english'){
+      img.removeAttribute('src');
+      img.hidden=true;
+      return;
+    }
     const art=window.VTBattleResultArt?.ready?window.VTBattleResultArt:window.VTBattleArt;
     if(!art?.ready)return;
     const src=art.sceneUrl||art.resultUrl;
     if(!src)return;
+    img.hidden=false;
     img.src=src;
   }
 
@@ -82,6 +89,11 @@
     if(!data)return;
     const {entry,fortress,attack,boss,strength,rank}=data;
     const win=entry.result==='win',secure=entry.result==='secure',damage=entry.result==='damage';
+    const subject=entry.subject||state?.activeSubject||'english';
+    const present=typeof battlePresentation==='function'?battlePresentation(subject):{theme:'campaign',targetNoun:'Festung',capturedLabel:'Erobert',securedLabel:'Gesichert'};
+    const targetName=typeof battleTargetName==='function'?battleTargetName(fortress,subject):(fortress?.name||entry.fortressName||present.targetNoun);
+    const isRoman=subject==='latin',isVoyage=subject==='french';
+    root.dataset.visualTheme=present.theme||'campaign';
     root.classList.toggle('is-victory',win||secure);
     root.classList.toggle('is-hold',damage);
 
@@ -92,35 +104,35 @@
     const testDate=entry.testDate||(fortress?.testDate||'');
 
     if(secure){
-      title.textContent='Festung gesichert!';
-      lead.textContent=`${fortress?.name||entry.fortressName||'Die Festung'} bleibt für den Test am ${typeof formatDateShort==='function'?formatDateShort(testDate):testDate} unter Kontrolle.`;
+      title.textContent=isVoyage?'Etappe gefestigt!':isRoman?'Kastell gesichert!':'Festung gesichert!';
+      lead.textContent=isVoyage?`${targetName} bleibt für den Test am ${typeof formatDateShort==='function'?formatDateShort(testDate):testDate} sicher verankert.`:isRoman?`${targetName} bleibt für den Test am ${typeof formatDateShort==='function'?formatDateShort(testDate):testDate} unter Kontrolle.`:`${fortress?.name||entry.fortressName||'Die Festung'} bleibt für den Test am ${typeof formatDateShort==='function'?formatDateShort(testDate):testDate} unter Kontrolle.`;
       rewards.innerHTML=[
-        rewardTile('✓','Sicherung abgeschlossen','heutiger Lernauftrag genutzt'),
-        rewardTile('♜',String(fortress?.securedDates?.length||1),'Sicherungstage'),
+        rewardTile('✓',isVoyage?'Festigung abgeschlossen':'Sicherung abgeschlossen','heutiger Lernauftrag genutzt'),
+        rewardTile(isVoyage?'◇':'♜',String(fortress?.securedDates?.length||1),isVoyage?'Festigungstage':'Sicherungstage'),
         rewardTile('◷',typeof formatDateShort==='function'?formatDateShort(testDate):testDate,'Testtermin'),
-        rewardTile('⚔',String(strength),rank?`Armeestärke · ${rank}`:'Armeestärke')
+        rewardTile(isVoyage?'◎':'⚔',String(strength),rank?`${isVoyage?'Reisefortschritt':isRoman?'Legionsstärke':'Armeestärke'} · ${rank}`:isVoyage?'Reisefortschritt':isRoman?'Legionsstärke':'Armeestärke')
       ].join('');
-      cont.textContent='Festung ansehen';
+      cont.textContent=isVoyage?'Etappe ansehen':isRoman?'Kastell ansehen':'Festung ansehen';
     }else if(win){
-      title.textContent=boss?'Boss besiegt!':'Festung erobert!';
-      lead.textContent=`${fortress?.name||entry.fortressName||'Die Testfestung'} ist gefallen. Jetzt wird sie bis zum Test am ${typeof formatDateShort==='function'?formatDateShort(testDate):testDate} gesichert.`;
+      title.textContent=isVoyage?'Etappe erreicht!':isRoman?(boss?'Wächter überwunden!':'Kastell eingenommen!'):(boss?'Boss besiegt!':'Festung erobert!');
+      lead.textContent=isVoyage?`${targetName} ist erreicht. Jetzt wird die Etappe bis zum Test am ${typeof formatDateShort==='function'?formatDateShort(testDate):testDate} gefestigt.`:isRoman?`${targetName} ist eingenommen. Jetzt wird das Kastell bis zum Test am ${typeof formatDateShort==='function'?formatDateShort(testDate):testDate} gesichert.`:`${fortress?.name||entry.fortressName||'Die Testfestung'} ist gefallen. Jetzt wird sie bis zum Test am ${typeof formatDateShort==='function'?formatDateShort(testDate):testDate} gesichert.`;
       rewards.innerHTML=[
-        rewardTile('★','+20 XP','Belohnung für die Eroberung'),
-        rewardTile('⚔',String(entry.damage||0),entry.tacticalBonus?`Schaden · davon +${entry.tacticalBonus} Taktik`:'Schaden des letzten Angriffs'),
+        rewardTile('★','+20 XP',isVoyage?'Belohnung für die erreichte Etappe':isRoman?'Belohnung für die Einnahme':'Belohnung für die Eroberung'),
+        rewardTile(isVoyage?'◎':'⚔',String(entry.damage||0),isVoyage?'Fortschritt der heutigen Mission':entry.tacticalBonus?`${isRoman?'Wirkung':'Schaden'} · davon +${entry.tacticalBonus} Taktik`:`${isRoman?'Wirkung des letzten Vorstoßes':'Schaden des letzten Angriffs'}`),
         rewardTile('◷',typeof formatDateShort==='function'?formatDateShort(testDate):testDate,'Testtermin'),
-        rewardTile('♜',fortress?.scopeText||'Teststoff','Diese Festung steht für den Test')
+        rewardTile(isVoyage?'◇':'♜',fortress?.scopeText||'Teststoff',isVoyage?'Diese Etappe steht für den Test':isRoman?'Dieses Kastell steht für den Test':'Diese Festung steht für den Test')
       ].join('');
-      cont.textContent='Eroberte Festung ansehen';
+      cont.textContent=isVoyage?'Erreichte Etappe ansehen':isRoman?'Eingenommenes Kastell ansehen':'Eroberte Festung ansehen';
     }else{
-      title.textContent='Angriff gelungen!';
-      lead.textContent=`${entry.damage||0} Schaden. Noch ${entry.defenseAfter||0} Verteidigung bis zur Eroberung.`;
+      title.textContent=isVoyage?'Mission gelungen!':isRoman?'Vorstoß gelungen!':'Angriff gelungen!';
+      lead.textContent=isVoyage?`+${entry.damage||0} Fortschritt. Noch ${entry.defenseAfter||0} Etappenstärke bis zum Ziel.`:isRoman?`${entry.damage||0} Wirkung. Noch ${entry.defenseAfter||0} Kastellstärke bis zur Einnahme.`:`${entry.damage||0} Schaden. Noch ${entry.defenseAfter||0} Verteidigung bis zur Eroberung.`;
       rewards.innerHTML=[
-        rewardTile('⚔',String(entry.damage||0),entry.tacticalBonus?`heutiger Schaden · +${entry.tacticalBonus} Taktik`:'heutiger Schaden'),
-        rewardTile('♜',String(entry.defenseAfter||0),'Verteidigung übrig'),
+        rewardTile(isVoyage?'◎':'⚔',String(entry.damage||0),isVoyage?'heutiger Fortschritt':entry.tacticalBonus?`${isRoman?'heutige Wirkung':'heutiger Schaden'} · +${entry.tacticalBonus} Taktik`:(isRoman?'heutige Wirkung':'heutiger Schaden')),
+        rewardTile(isVoyage?'◇':'♜',String(entry.defenseAfter||0),isVoyage?'Etappenstärke übrig':isRoman?'Kastellstärke übrig':'Verteidigung übrig'),
         rewardTile('▰',`${entry.readiness||0}%`,'aktuelle Testbereitschaft'),
         rewardTile('◷',typeof formatDateShort==='function'?formatDateShort(testDate):testDate,'Testtermin')
       ].join('');
-      cont.textContent='Zurück zur Belagerung';
+      cont.textContent=isVoyage?'Zurück zur Sprachmission':isRoman?'Zurück zum Kastell':'Zurück zur Belagerung';
     }
     applyArt();
   }
