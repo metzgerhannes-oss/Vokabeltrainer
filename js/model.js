@@ -130,7 +130,7 @@ function sentencePlaceholderNormalize(value,{semantic=false}={}){
   let out=orthographyNormalize(value);
   out=normalizeEnglishContractionSpacing(out);
   SENTENCE_PLACEHOLDER_RE.lastIndex=0;
-  out=out.replace(SENTENCE_PLACEHOLDER_RE,` ${SENTENCE_PLACEHOLDER_TOKEN} `);
+  out=out.replace(SENTENCE_PLACEHOLDER_RE,' '+SENTENCE_PLACEHOLDER_TOKEN+' ');
   if(semantic)out=out.replace(/[….,;:!?()[\]{}"']/g,'');
   else out=out.replace(/\s+([?!.,;:])/g,'$1');
   return out.replace(/\s+/g,' ').trim();
@@ -143,149 +143,7 @@ function sentencePlaceholderAnchorsMatch(answer,target,{semantic=false}={}){
   const anchors=normalizedTarget.split(SENTENCE_PLACEHOLDER_TOKEN).map(x=>x.trim());
   if(!anchors.some(Boolean))return false;
   const pattern=anchors.map(sentenceMatchRegexEscape).join('(?:\\s*.*?\\s*)');
-  return new RegExp(`^${pattern}'use strict';
-
-function learner(){ return state.learners.find(x=>x.id===state.activeLearnerId)||state.learners[0]; }
-function gradeScaleFor(subject=state.activeSubject){const l=learner();l.gradeScales=l.gradeScales||defaultGradeScales();l.gradeScales[subject]={...defaultGradeScale(),...(l.gradeScales[subject]||{})};return l.gradeScales[subject];}
-function suggestGradeFromScale(percent,scale){const s={...defaultGradeScale(),...(scale||{})};const p=Number(percent)||0;if(p>=s.n1)return '1';if(p>=s.n2)return '2';if(p>=s.n3)return '3';if(p>=s.n4)return '4';if(p>=s.n5)return '5';return '6';}
-function gradeScaleText(scale=gradeScaleFor()){return `1 ab ${scale.n1}% · 2 ab ${scale.n2}% · 3 ab ${scale.n3}% · 4 ab ${scale.n4}% · 5 ab ${scale.n5}% · darunter 6`;}
-function actualGradeForPractice(practiceId){return state.grades.find(g=>g.learnerId===state.activeLearnerId&&g.practiceTestId===practiceId)||null;}
-function parseSchoolGrade(value){
-  const raw=String(value??'').trim().replace(',', '.');
-  if(!raw)return null;
-  const signed=raw.match(/^([1-6])\s*([+-])$/);
-  if(signed){
-    const base=Number(signed[1]),adjust=signed[2]==='+'?-0.3:0.3;
-    return clamp(base+adjust,1,6);
-  }
-  if(!/^\d(?:\.\d+)?$/.test(raw))return null;
-  const n=Number(raw);
-  return Number.isFinite(n)&&n>=1&&n<=6?n:null;
-}
-function testGradeReward(value){
-  const grade=parseSchoolGrade(value);if(grade===null)return null;
-  const baseXp=50,bonusXp=Math.round(clamp(6-grade,0,5)*2);
-  return {grade,baseXp,bonusXp,totalXp:baseXp+bonusXp};
-}
-function testBadgeCount(subject=state.activeSubject,learnerId=state.activeLearnerId){
-  return (state.grades||[]).filter(g=>g.learnerId===learnerId&&g.subject===subject&&parseSchoolGrade(g.grade)!==null).length;
-}
-function grantTestGradeReward(gradeRow){
-  if(!gradeRow||gradeRow.rewardGrantedAt)return null;
-  const reward=testGradeReward(gradeRow.grade);if(!reward)return null;
-  const l=(state.learners||[]).find(x=>x.id===gradeRow.learnerId);if(!l)return null;
-  l.xp=(Number(l.xp)||0)+reward.totalXp;
-  gradeRow.rewardKind='completedTest';
-  gradeRow.rewardGrantedAt=new Date().toISOString();
-  gradeRow.rewardBaseXp=reward.baseXp;
-  gradeRow.rewardBonusXp=reward.bonusXp;
-  gradeRow.rewardXp=reward.totalXp;
-  recordActivity('testGradeReward',{gradeId:gradeRow.id,subject:gradeRow.subject,testDate:gradeRow.date,rewardXp:reward.totalXp,bonusXp:reward.bonusXp});
-  return reward;
-}
-function mySets(subject=state.activeSubject){ return state.sets.filter(s=>s.learnerId===state.activeLearnerId && s.subject===subject); }
-function setHasPhotoImport(set,s=state){
-  if(!set)return false;
-  return (s?.setVocabulary||[]).some(link=>String(link?.setId||'')===String(set.id||'')&&link?.source==='photo-text-import');
-}
-function setNeedsPairReview(set){
-  if(!set)return false;
-  if(set.pairReviewRequired===true||pairReviewSignatureMismatch(set,state))return true;
-  if(!setHasPhotoImport(set,state))return false;
-  return !set.pairVerifiedAt||!set.pairVerifiedSignature;
-}
-function firstContactStatus(setId){
-  const links=(state?.setVocabulary||[]).filter(x=>x.setId===setId),total=links.length;
-  const copied=links.filter(x=>x.firstContactCopiedAt).length,recalled=links.filter(x=>x.firstContactRecalledAt).length,proved=links.filter(x=>x.firstContactProvedAt).length,completed=links.filter(x=>x.firstContactCompletedAt).length;
-  return {total,copied,recalled,proved,completed,pending:Math.max(0,total-completed),pct:total?Math.round(completed/total*100):0};
-}
-function vocabularyPairSignature(v){
-  if(!v)return '';
-  return JSON.stringify({term:String(v.term||''),termVariants:[...(v.termVariants||[])],senses:(v.senses||[]).map(s=>({id:String(s.id||''),translation:String(s.translation||''),translations:[...(s.translations||[])]}))});
-}
-function requirePairReviewForVocabulary(vocabId){
-  const links=(state.setVocabulary||[]).filter(x=>x.vocabId===vocabId),setIds=new Set(links.map(x=>x.setId));let changed=0;
-  for(const link of links){link.firstContactCopiedAt='';link.firstContactRecalledAt='';link.firstContactCompletedAt='';link.firstContactProvedAt='';}
-  for(const set of (state.sets||[])){if(!setIds.has(set.id))continue;if(!set.pairReviewRequired||set.pairVerifiedAt||set.pairVerifiedSignature)changed++;set.pairReviewRequired=true;set.pairVerifiedAt='';set.pairVerifiedSignature='';}
-  for(const row of (state.bookVocabulary||[])){if(row.vocabId!==vocabId)continue;row.verifiedAt='';}
-  return changed;
-}
-function learningReadySets(subject=state.activeSubject){return mySets(subject).filter(s=>!setNeedsPairReview(s)&&setWords(s.id).length)}
-function schoolYearSets(subject=state.activeSubject,schoolYear=currentSchoolYear()){ return mySets(subject).filter(s=>s.schoolYear===schoolYear); }
-function myWords(subject=state.activeSubject){const ids=new Set(mySets(subject).filter(s=>!setNeedsPairReview(s)).map(s=>s.id));return uniqueWords(state.words.filter(w=>ids.has(w.setId)));}
-function schoolYearVerifiedWords(subject=state.activeSubject,schoolYear=currentSchoolYear()){const ids=new Set(schoolYearSets(subject,schoolYear).filter(s=>!setNeedsPairReview(s)).map(s=>s.id));return uniqueWords(state.words.filter(w=>ids.has(w.setId)));}
-function schoolYearWords(subject=state.activeSubject,schoolYear=currentSchoolYear()){return schoolYearVerifiedWords(subject,schoolYear);}
-function setWords(setId){return (state.setVocabulary||[]).filter(x=>x.setId===setId).sort((a,b)=>(a.position||0)-(b.position||0)).map(x=>wordViewForLink(x)).filter(Boolean);}
-function fortressWins(subject=state.activeSubject,schoolYear=currentSchoolYear()){const l=learner(),key=`${subject}:${schoolYear}`;l.fortressWinsByYear=l.fortressWinsByYear||{};return l.fortressWinsByYear[key]||(l.fortressWinsByYear[key]=[]);}
-
-function battleDayKey(subject=state.activeSubject){return `${today()}:${subject}`}
-function battleDayState(subject=state.activeSubject,create=true){
-  const l=learner();if(!l)return null;
-  if(!l.battleDays||typeof l.battleDays!=='object'||Array.isArray(l.battleDays))l.battleDays={};
-  const key=battleDayKey(subject);
-  if(!l.battleDays[key]&&create)l.battleDays[key]={date:today(),subject,unlocked:false,rewardClaimed:false,attempts:0,wins:0};
-  return l.battleDays[key]||null;
-}
-function battleUnlockedToday(subject=state.activeSubject){return !!battleDayState(subject,false)?.unlocked}
-function unlockBattleToday(reason='dailyGoal',subject=state.activeSubject){
-  const l=learner(),fortress=currentTestFortress(subject),day=battleDayState(subject,true);if(!l||!fortress||!day||day.unlocked)return false;
-  day.unlocked=true;day.unlockedAt=new Date().toISOString();day.reason=reason;day.fortressKey=fortress.key;day.actionUsed=!!day.actionUsed;
-  const cutoff=datePlusDays(-21);Object.keys(l.battleDays||{}).filter(k=>k.slice(0,10)<cutoff).forEach(k=>delete l.battleDays[k]);
-  recordActivity('battleUnlock',{subject,reason,date:today()});return true;
-}
-function battleRewardAvailableToday(subject=state.activeSubject){return battleActionAvailableToday(subject)}
-function claimBattleRewardToday(subject=state.activeSubject){
-  const day=battleDayState(subject,false);if(!day?.unlocked||day.rewardClaimed)return false;
-  day.rewardClaimed=true;day.rewardClaimedAt=new Date().toISOString();return true;
-}
-function registerBattleAttempt(result,subject=state.activeSubject,rewarded=false){
-  const day=battleDayState(subject,false);if(!day?.unlocked)return false;
-  day.attempts=(Number(day.attempts)||0)+1;if(result==='win')day.wins=(Number(day.wins)||0)+1;
-  day.lastAttemptAt=new Date().toISOString();day.lastResult=result;day.lastRewarded=!!rewarded;return true;
-}
-function battleActionAvailableToday(subject=state.activeSubject){const day=battleDayState(subject,false);return !!(day?.unlocked&&!day.actionUsed)}
-function battleTickets(subject=state.activeSubject){return battleActionAvailableToday(subject)?1:0}
-function grantBattleTicket(reason='lesson',subject=state.activeSubject){return reason==='dailyGoal'?unlockBattleToday(reason,subject):false}
-function spendBattleTicket(subject=state.activeSubject){const day=battleDayState(subject,false);if(!day?.unlocked||day.actionUsed)return false;day.actionUsed=true;day.actionUsedAt=new Date().toISOString();return true}
-
-const SENTENCE_PLACEHOLDER_TOKEN='vtplaceholdertoken';
-const SENTENCE_PLACEHOLDER_RE=/(?:…|\.{2,}|_{2,}|\[\s*(?:_+\s*)?\])/g;
-function normalizeEnglishContractionSpacing(value){
-  return String(value||'')
-    .replace(/\b([a-z]+)\s+n\s*'\s*t\b/gi,"$1n't")
-    .replace(/\b([a-z]+)\s*'\s*(s|re|ve|ll|d|m|t)\b/gi,"$1'$2");
-}
-function semanticNormalize(s){
-  return normalizeEnglishContractionSpacing(String(s||'').trim().toLowerCase().normalize('NFKC').replace(/[’‘`´]/g,"'"))
-    .replace(SENTENCE_PLACEHOLDER_RE,' ')
-    .replace(/[….,;:!?()[\]{}"']/g,'')
-    .replace(/\s+/g,' ')
-    .trim();
-}
-function normalize(s){return semanticNormalize(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
-function orthographyNormalize(value){
-  return String(value||'').normalize('NFKC').toLowerCase().replace(/[’‘`´]/g,"'").trim().replace(/\s+/g,' ');
-}
-function hasSentencePlaceholder(value){
-  SENTENCE_PLACEHOLDER_RE.lastIndex=0;
-  return SENTENCE_PLACEHOLDER_RE.test(String(value||''));
-}
-function hasEllipsisPlaceholder(value){return hasSentencePlaceholder(value)}
-function sentencePlaceholderNormalize(value,{semantic=false}={}){
-  let out=orthographyNormalize(value);
-  out=normalizeEnglishContractionSpacing(out);
-  SENTENCE_PLACEHOLDER_RE.lastIndex=0;
-  out=out.replace(SENTENCE_PLACEHOLDER_RE,` ${SENTENCE_PLACEHOLDER_TOKEN} `);
-  if(semantic)out=out.replace(/[….,;:!?()[\]{}"']/g,'');
-  else out=out.replace(/\s+([?!.,;:])/g,'$1');
-  return out.replace(/\s+/g,' ').trim();
-}
-function sentenceMatchRegexEscape(value){return String(value||'').replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
-function sentencePlaceholderAnchorsMatch(answer,target,{semantic=false}={}){
-  if(!hasSentencePlaceholder(target)||!String(answer||'').trim())return false;
-  const normalizedTarget=sentencePlaceholderNormalize(target,{semantic});
-  const normalizedAnswer=sentencePlaceholderNormalize(answer,{semantic});
-,'i').test(normalizedAnswer);
+  return new RegExp('^'+pattern+'$','i').test(normalizedAnswer);
 }
 function orthographyMatchKindForTarget(answer,target){
   const directAnswer=orthographyNormalize(answer),directTarget=orthographyNormalize(target);
@@ -300,7 +158,7 @@ function orthographyMatchKindForTarget(answer,target){
 function orthographyNormalizeForTarget(value,target){
   const normalized=sentencePlaceholderNormalize(value);
   if(!hasSentencePlaceholder(target))return normalized;
-  return normalized.replace(new RegExp(`\\s*${SENTENCE_PLACEHOLDER_TOKEN}\\s*`,'g'),' ').replace(/\s+([?!.,;:])/g,'$1').replace(/\s+/g,' ').trim();
+  return normalized.replace(new RegExp('\\s*'+SENTENCE_PLACEHOLDER_TOKEN+'\\s*','g'),' ').replace(/\s+([?!.,;:])/g,'$1').replace(/\s+/g,' ').trim();
 }
 function spellingMatches(answer,target){
   if(typeof quizOrthographyMatches==='function')return quizOrthographyMatches(answer,target);
