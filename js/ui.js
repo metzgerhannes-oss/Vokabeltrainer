@@ -203,7 +203,7 @@ function renderBattleView(){
   stage.setAttribute('aria-label',f?`${campaign.unitLabel} im Rang ${rank} vor ${f.name}. Festungsschaden ${damagePct} Prozent. Test am ${formatDateShort(f.testDate)}.`:`${campaign.unitLabel}: aktuell keine Testfestung.`);
   stage.innerHTML=`<div class="battle-sky"><i class="battle-sun"></i><i class="battle-cloud cloud-1"></i><i class="battle-cloud cloud-2"></i></div>${seasonEffectsMarkup()}<div class="battle-hills"></div><div class="battle-ground"></div><div class="battle-ground-path" aria-hidden="true"></div><div class="battle-scene-vignette" aria-hidden="true"></div><div class="battle-fortress-state-badge" aria-hidden="true"><small>Festung</small><strong>${esc(fortressVisual.label)}</strong></div><div class="battle-phase-strip" aria-hidden="true"><span data-battle-phase="rally"><i>1</i>${secure?'Sammeln':'Sammeln'}</span><span data-battle-phase="advance"><i>2</i>${secure?'Beziehen':'Vorrücken'}</span><span data-battle-phase="barrage"><i>3</i>${secure?'Patrouille':'Angriff'}</span><span data-battle-phase="impact"><i>4</i>${secure?'Sichern':'Einschlag'}</span><span data-battle-phase="result"><i>5</i>Ergebnis</span></div><div class="battle-rank-badge"><span>${esc(rank)}</span><small>${esc(gear)}</small></div><div class="battle-army"><div class="battle-standard"><i></i></div><div class="battle-formation">${battleUnitsMarkup(count,true,p.pct)}</div>${p.pct>=35?'<div class="battle-ram"><i></i><b></b></div>':''}</div><div class="battle-projectiles">${Array.from({length:9},(_,i)=>`<i class="arrow arrow-${i+1}"></i>`).join('')}</div><div class="battle-impact"><i></i><i></i><i></i></div><div class="battle-special-flare"><i></i><i></i><i></i></div><div class="battle-shockwave"></div>${battleAttackFxMarkup()}${boss?`<div class="battle-boss-character boss-${esc(f.id)}" aria-label="${esc(boss.name)}"><i class="boss-helmet"></i><i class="boss-body"></i><i class="boss-shield"></i></div>`:''}${fortressMarkup(f,true)}<div class="battle-dust"></div>${battleFortressRevealMarkup(f,revealActive)}`;
 }
-let battleReturnView='childProgressView';
+let battleReturnView='armyView';
 const BATTLE_RETURN_META={
   childProgressView:{back:'← Fortschritt',bottom:'Zurück zum Fortschritt'},
   armyView:{back:'← Meine Armee',bottom:'Zurück zu meiner Armee'},
@@ -213,14 +213,14 @@ const BATTLE_RETURN_META={
 function captureBattleReturnView(){
   const source=document.querySelector('.view.active')?.id;
   if(BATTLE_RETURN_META[source])battleReturnView=source;
-  else if(!BATTLE_RETURN_META[battleReturnView])battleReturnView='childProgressView';
+  else if(!BATTLE_RETURN_META[battleReturnView])battleReturnView='armyView';
 }
 function renderBattleReturnUi(){
   const meta=BATTLE_RETURN_META[battleReturnView]||BATTLE_RETURN_META.childProgressView;
   if($('#battleBackBtn'))$('#battleBackBtn').textContent=meta.back;
   if($('#battleReturnBtn'))$('#battleReturnBtn').textContent=meta.bottom;
 }
-function returnFromBattle(){showView(BATTLE_RETURN_META[battleReturnView]?battleReturnView:'childProgressView')}
+function returnFromBattle(){showView(BATTLE_RETURN_META[battleReturnView]?battleReturnView:'armyView')}
 function openBattleView(){
   if(isParentMode())return;
   const f=currentTestFortress();
@@ -1037,6 +1037,12 @@ function isDesktopLayout(){return !!window.matchMedia?.('(min-width: 1100px)').m
 function syncResponsiveHomeLayout(){
   const practice=$('#practiceDisclosure');if(practice)practice.open=isDesktopLayout();
 }
+function childNavRootView(id){
+  if(['armyView','armyUnitView','campaignMapView','battleView','battleResultView'].includes(id))return 'armyView';
+  if(id==='practiceView')return 'practiceView';
+  if(id==='childProgressView')return 'childProgressView';
+  return id==='homeView'?'homeView':'';
+}
 function showView(id){
   if(id!=='battleView'){
     cancelBattleSequence();
@@ -1045,7 +1051,8 @@ function showView(id){
   }
   if(PARENT_VIEW_IDS.has(id)&&!isParentMode()){toast(isPairedChildDevice()?'Der Elternbereich ist auf diesem Kindergerät gesperrt.':'Diese Funktion liegt im Elternbereich.','subtle');id='homeView'}
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
-  document.querySelectorAll('.nav-btn[data-view]').forEach(b=>{const active=!isParentMode()&&b.dataset.view===id;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+  const navRoot=childNavRootView(id);
+  document.querySelectorAll('.nav-btn[data-view]').forEach(b=>{const active=!isParentMode()&&b.dataset.view===navRoot;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
   if(id==='homeView'){document.querySelectorAll('.home-disclosure').forEach(d=>{d.open=isDesktopLayout()&&d.id==='practiceDisclosure'});window.VTMenuUi?.render?.();}
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   window.scrollTo({top:0,behavior:reduced?'auto':'smooth'});
