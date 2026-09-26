@@ -22,6 +22,9 @@ try{
 
   assert((await page.locator('#parentTestPlanBtn').textContent())?.includes('Test vorbereiten'),'test planning is the primary path when a test exists');
   assert((await page.locator('#parentLibraryBtn').textContent())?.includes('Vokabeln vorbereiten')&&(await page.locator('#parentLibraryBtn').textContent())?.includes('Ohne festen Testtermin'),'separate no-test path is explicitly labeled');
+  assert(!(await page.locator('#parentManageDisclosure').getAttribute('open')),'parent administration stays collapsed on entry');
+  assert(!(await page.locator('#parentLearningDisclosure').getAttribute('open')),'full learning-set management stays collapsed on entry');
+  assert(await page.locator('#parentTestPlanBtn').isVisible()&&await page.locator('#parentLibraryBtn').isVisible(),'only the two preparation actions remain immediately visible');
   const order=await page.evaluate(()=>Array.from(document.querySelectorAll('.parent-primary-actions .parent-primary-action')).map(x=>x.id));
   assert(order.indexOf('parentTestPlanBtn')<order.indexOf('parentLibraryBtn'),'test planning is shown before no-test learning');
   await page.click('#parentLibraryBtn');
@@ -74,6 +77,13 @@ try{
   });
   assert(manualDraftBefore.id&&manualDraftBefore.testDate===''&&manualDraftBefore.pendingDate===manualDate,'manual source stores the intended date only as pending metadata');
   assert(manualDraftBefore.activeTestId!==manualDraftBefore.id,'unfinished manual capture does not replace the active test plan');
+  await page.locator('#modal').evaluate(el=>el.close());
+  await page.waitForFunction(()=>!document.querySelector('#modal')?.open);
+  await page.evaluate(()=>{showView('parentView');renderAll()});
+  await page.waitForSelector('#parentView.active [data-parent-draft]');
+  assert((await page.locator('[data-parent-draft]').textContent())?.includes('Fortsetzen'),'unfinished test capture is surfaced as the first parent task');
+  await page.click('[data-parent-draft]');
+  await page.waitForSelector('#modal[open] #finishTestCaptureBtn');
   await page.locator('#wordTerm').fill('manualtesttoken');
   await page.locator('#wordTrans').fill('manuelles Prüfwort');
   await page.click('#finishTestCaptureBtn');
