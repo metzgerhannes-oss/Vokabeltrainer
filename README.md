@@ -4,11 +4,24 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.20.0**
+App-Version: **v0.21.0**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.21.0 – Spielbereich: Kommandoszene & sichtbarer Game Loop
+
+- **Lernen → Angreifen → Erobern** ist als klarer 3-Schritt-Spielablauf direkt im Armeebereich sichtbar
+- der Armeebereich verwendet eine dunkle 2D-Kommandoszene mit eigener Armee links und gegnerischem Ziel rechts
+- der aktuelle Auftrag zeigt konkrete Testfestung, Termin, Festungsstatus und verfügbare Tagesaktion
+- die Hauptaktion ist bewusst dominant: Festung ansehen bzw. Angriff starten
+- Rang, Stärke, Ausrüstung und verfügbare Aktion werden als kompaktes HUD angezeigt
+- die Feldzugskarte ist jetzt eine Frontlinienkarte mit eroberten Zielen, aktivem Ziel und **Nebel des Krieges** für noch unbekannte zukünftige Tests
+- die Zahl der Tests bleibt vollständig dynamisch; neue Testtermine verlängern den Feldzug weiterhin automatisch
+- automatisierte WebKit-Tests prüfen den Zustandswechsel vom abgeschlossenen Tagesziel zur verfügbaren Angriffsaktion sowie die neue Frontlinienkarte
+- Product DNA schreibt die Trennung **Heute · Lernen · Armee · Erfolge** und den sichtbaren Game Loop verbindlich fest
+- Lernlogik, Sollantworten, Mastery, Leitner, Spacing, Testbereitschaft und bestehende Battle-Ticket-Regeln bleiben unverändert
 
 ## v0.20.0 – Kinderoberfläche: Lernen und Spiel getrennt
 
