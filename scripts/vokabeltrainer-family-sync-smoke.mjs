@@ -61,6 +61,7 @@ assert(sync.includes("'avatarStyle'")&&sync.includes("'autoSpeakCorrection'"), '
 assert(sync.includes('installConnectionDocuments')&&sync.includes('previousConfigRaw')&&sync.includes('restoreRawConfig(previousConfigRaw)'), 'family takeover has an explicit local state/config rollback path');
 assert(sync.includes("const pulled=await rpc('vt_pull_documents'")&&!sync.includes("saveConfig(cfg);initSnapshots();await syncNow(true)"), 'manual family switch validates the new remote state before committing the new connection');
 assert(sync.includes('markAllLocalDocumentsDirty'), 'full local restore can explicitly mark all writable sync documents dirty');
+assert(sync.includes('snapshotsBeforeRemote=new Map(runtime.snapshots)')&&sync.includes('runtime.snapshots=snapshotsBeforeRemote'), 'failed remote persistence restores sync snapshots together with local state');
 assert(ui.includes('Die aktuelle Sync-Version kann Profil-Löschungen noch nicht als Löschvorgang an alle Geräte übertragen.'), 'profile deletion is blocked instead of silently diverging while family sync is active');
 assert(sqlV2.includes('private.vt_parent_invites')&&sqlV2.includes("interval '15 minutes'"),'parent invite tokens are server-side, one-time and short-lived');
 assert(sqlV2.includes("role','parent'")&&sqlV2.includes('vt_claim_parent_invite_impl'),'parent invite claim creates a parent device without exposing the family PIN');
