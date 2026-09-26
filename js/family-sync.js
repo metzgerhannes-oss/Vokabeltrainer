@@ -286,7 +286,7 @@
       const pulled=await rpc('vt_pull_documents',{p_family_id:cfg.familyId,p_device_id:cfg.deviceId,p_device_secret:cfg.deviceSecret});
       if(!pulled?.ok)remoteFailure(cfg,pulled,'Cloud-Stand nicht erreichbar.');
       cfg.role=pulled.role==='child'?'child':'parent';cfg.profileId=String(pulled.profile_id||cfg.profileId||'');
-      const dirty=new Set(cfg.dirtyKeys||[]),conflicts={...cfg.conflicts};let changed=false;
+      const dirty=new Set(cfg.dirtyKeys||[]),conflicts={...cfg.conflicts};let changed=false;const stateBeforeRemote=clone(state);
       const remoteDocs=(pulled.documents||[]).sort((a,b)=>documentRank(a.key)-documentRank(b.key)||String(a.key).localeCompare(String(b.key)));
       for(const d of remoteDocs){
         const key=String(d.key||''),remoteRev=Number(d.revision)||0,localRev=Number(cfg.revisions[key])||0;
@@ -295,7 +295,16 @@
           applyDocument(key,d.payload);cfg.revisions[key]=remoteRev;runtime.snapshots.set(key,docString(d.payload));delete conflicts[key];changed=true;
         }else if(!runtime.snapshots.has(key))runtime.snapshots.set(key,docString(serializeDocuments()[key]||d.payload));
       }
-      if(changed){if(typeof hardenState==='function')state=hardenState(state);ensureActiveSubject();if(!(await persistState()))throw new Error('Cloud-Stand konnte lokal nicht sicher gespeichert werden.');renderAll()}
+      if(changed){
+        try{
+          if(typeof hardenState==='function')state=hardenState(state);ensureActiveSubject();
+          if(!(await persistState()))throw new Error('Cloud-Stand konnte lokal nicht sicher gespeichert werden.');
+        }catch(e){
+          state=typeof attachRuntimeWordApi==='function'?attachRuntimeWordApi(stateBeforeRemote):stateBeforeRemote;ensureActiveSubject();
+          throw e;
+        }
+        renderAll();
+      }
 
       const current=serializeDocuments();
       for(const key of [...dirty]){
@@ -326,11 +335,17 @@
       if(!remote)throw new Error('Der Konfliktstand ist in der Cloud nicht mehr vorhanden.');
       const remoteRev=Number(remote.revision)||0,dirty=new Set(cfg.dirtyKeys||[]),conflicts={...cfg.conflicts};
       if(mode==='remote'){
-        applyDocument(docKey,remote.payload);
-        if(typeof hardenState==='function')state=hardenState(state);
-        ensureActiveSubject();
-        if(!(await persistState()))throw new Error('Cloud-Stand konnte lokal nicht sicher gespeichert werden.');
-        cfg.revisions[docKey]=remoteRev;runtime.snapshots.set(docKey,docString(remote.payload));
+        const stateBeforeRemote=clone(state);
+        try{
+          applyDocument(docKey,remote.payload);
+          if(typeof hardenState==='function')state=hardenState(state);
+          ensureActiveSubject();
+          if(!(await persistState()))throw new Error('Cloud-Stand konnte lokal nicht sicher gespeichert werden.');
+          cfg.revisions[docKey]=remoteRev;runtime.snapshots.set(docKey,docString(remote.payload));
+        }catch(e){
+          state=typeof attachRuntimeWordApi==='function'?attachRuntimeWordApi(stateBeforeRemote):stateBeforeRemote;ensureActiveSubject();
+          throw e;
+        }
       }else{
         if(!canWrite(cfg,docKey))throw new Error('Dieses Gerät darf diesen Datenbereich nicht überschreiben.');
         const payload=serializeDocuments()[docKey];
