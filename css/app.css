@@ -3312,3 +3312,237 @@ body.learning-focus #learnView .study-shell{
   .secure-key-grid,.secure-key-actions{gap:5px}
   .secure-key{min-height:44px;padding:7px 3px;font-size:.9rem}
 }
+
+
+/* v0.21.4 – Battle screen visual hierarchy reset */
+#battleView .battle-head{
+  max-width:900px;
+  margin:0 auto 10px;
+}
+#battleView .battle-head h2{
+  color:#24383c;
+  letter-spacing:-.025em;
+}
+#battleView .battle-head p{color:#6b7977}
+
+#battleView .battle-story{
+  max-width:900px;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  gap:8px 12px;
+  padding:14px 15px;
+  border:1px solid #d8d4c8;
+  border-radius:18px;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(229,235,222,.72),transparent 13rem),
+    linear-gradient(180deg,#fffdf7,#f5f1e6);
+  box-shadow:0 8px 22px rgba(50,61,57,.08);
+}
+#battleView .battle-story-chapter{
+  grid-row:auto;
+  align-self:start;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#e7dfc8;
+  color:#695b35;
+  letter-spacing:.08em;
+}
+#battleView .battle-story strong{
+  align-self:center;
+  color:#273a3d;
+  font-size:1.08rem;
+  font-weight:950;
+}
+#battleView .battle-story p{
+  grid-column:2;
+  margin:0;
+  color:#697674;
+  font-size:.88rem;
+  line-height:1.48;
+}
+#battleView .battle-story-speak{
+  grid-column:3;
+  grid-row:1 / 3;
+  min-height:42px;
+  align-self:center;
+  border-color:#bdc9c2;
+  background:#f6faf7;
+  color:#3e5f57;
+  box-shadow:none;
+}
+#battleView .battle-story-speak[aria-pressed="true"]{
+  border-color:#aa9251;
+  background:#fff7d9;
+  color:#6f591d;
+}
+
+#battleView .battle-stage-wrap{
+  max-width:980px;
+  margin:0 auto;
+  gap:10px;
+}
+#battleView .battle-scene-hud.battle-readout{
+  position:static;
+  z-index:auto;
+  left:auto;
+  right:auto;
+  top:auto;
+  order:0;
+  margin:0;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:7px;
+  pointer-events:auto;
+}
+#battleView .battle-scene-hud.battle-readout>div{
+  min-height:54px;
+  padding:8px 10px;
+  border:1px solid #d8d5cb;
+  border-radius:13px;
+  background:rgba(255,253,247,.92);
+  color:#293d3d;
+  box-shadow:0 4px 12px rgba(50,61,57,.06);
+  backdrop-filter:none;
+}
+#battleView .battle-scene-hud.battle-readout small{
+  color:#7a827f;
+  font-size:.6rem;
+  letter-spacing:.03em;
+}
+#battleView .battle-scene-hud.battle-readout strong{
+  color:#314441;
+  font-size:.78rem;
+}
+#battleView .battle-stage{
+  order:1;
+  border:1px solid #cfd6cd;
+  border-radius:20px;
+  box-shadow:0 14px 32px rgba(45,58,54,.12);
+  background:#d9e5dc;
+}
+#battleView .battle-rank-badge,
+#battleView .battle-fortress-state-badge{
+  border-color:rgba(255,255,255,.42);
+  background:rgba(29,47,46,.68);
+  box-shadow:0 5px 15px rgba(22,35,34,.13);
+}
+#battleView .battle-phase-strip{
+  background:rgba(37,55,53,.70);
+  border-color:rgba(255,255,255,.32);
+  box-shadow:0 5px 18px rgba(32,43,42,.10);
+}
+#battleView .battle-phase-strip span.active{
+  background:#d8bc65;
+  color:#3d3420;
+}
+#battleView .battle-phase-strip span.done{
+  background:#66865e;
+  color:#f4fff0;
+}
+
+#battleView .battle-scene-tactics.battle-tactics{
+  order:2;
+  margin:0;
+  padding:13px;
+  border:1px solid #d8d5cb;
+  border-radius:18px;
+  background:#fffdf8;
+  box-shadow:0 6px 18px rgba(48,58,55,.06);
+}
+#battleView .battle-tactics-head small{color:#7a6b42}
+#battleView .battle-tactics-head strong{
+  color:#273a3d;
+  font-size:1.02rem;
+}
+#battleView .battle-tactics-head>span{color:#72807d}
+#battleView .battle-attack-choices{gap:8px}
+#battleView .battle-attack-choice{
+  min-height:62px;
+  border:1px solid #d7dbd4;
+  border-radius:14px;
+  background:#fbfcf9;
+  color:#334643;
+  box-shadow:none;
+}
+#battleView .battle-attack-choice:hover{border-color:#97aaa2}
+#battleView .battle-attack-choice.active{
+  border-color:#b4963e;
+  background:#fff8dc;
+  box-shadow:inset 0 0 0 1px rgba(180,150,62,.32);
+}
+#battleView .battle-attack-choice.special{
+  border-color:#c8d4cc;
+  background:#f4f8f4;
+}
+#battleView .battle-attack-choice.special.active{
+  border-color:#8ea58f;
+  background:#edf5eb;
+  box-shadow:inset 0 0 0 1px rgba(102,134,94,.28);
+}
+#battleView .battle-action-dock{
+  order:3;
+  border-color:#d8d5cb;
+  background:linear-gradient(180deg,#fffdf8,#f3f0e7);
+  color:#2d403e;
+  box-shadow:0 6px 18px rgba(48,58,55,.06);
+}
+#battleView .battle-action-dock-copy span{color:#70807b}
+#battleView .battle-primary{
+  border-color:#496f65;
+  background:linear-gradient(180deg,#587d72,#3f6259);
+  color:#fff;
+  box-shadow:0 7px 18px rgba(54,91,80,.18);
+}
+#battleView .battle-primary:disabled{
+  border-color:#d2d8d3;
+  background:#e8ece9;
+  color:#7b8581;
+}
+
+@media(max-width:720px){
+  #battleView.active .battle-shell{
+    padding-bottom:calc(118px + env(safe-area-inset-bottom));
+  }
+  #battleView .battle-head{margin-bottom:8px}
+  #battleView .battle-story{
+    grid-template-columns:auto minmax(0,1fr);
+    padding:12px;
+    gap:6px 9px;
+  }
+  #battleView .battle-story-chapter{grid-column:1;grid-row:1}
+  #battleView .battle-story strong{grid-column:2;grid-row:1}
+  #battleView .battle-story p{grid-column:1 / -1;grid-row:2}
+  #battleView .battle-story-speak{
+    grid-column:1 / -1;
+    grid-row:3;
+    width:100%;
+    margin-top:2px;
+  }
+  #battleView .battle-scene-hud.battle-readout{
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+  }
+  #battleView .battle-scene-hud.battle-readout>div{
+    min-height:48px;
+    padding:7px 8px;
+  }
+  #battleView .battle-scene-hud.battle-readout small{font-size:.56rem}
+  #battleView .battle-scene-hud.battle-readout strong{font-size:.7rem}
+  #battleView .battle-stage{
+    aspect-ratio:16 / 9;
+    min-height:235px;
+    border-radius:17px;
+  }
+  #battleView .battle-phase-strip{
+    top:7px;
+    width:calc(100% - 16px);
+  }
+  #battleView .battle-rank-badge{top:42px}
+  #battleView .battle-scene-tactics.battle-tactics{padding:11px 10px}
+  #battleView .battle-tactics-head{
+    display:grid;
+    gap:2px;
+    margin-bottom:8px;
+  }
+  #battleView .battle-tactics-head>span{text-align:left}
+  #battleView .battle-attack-choices{grid-template-columns:1fr 1fr}
+  #battleView .battle-attack-choice{min-height:58px;padding:9px}
+}
