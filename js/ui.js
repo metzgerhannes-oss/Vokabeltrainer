@@ -78,7 +78,7 @@ function stopBattleStoryNarration(){
 function battleNarrationUtterance(text,{title=false}={}){
   const u=new SpeechSynthesisUtterance(text);
   u.lang='de-DE';
-  u.rate=learner()?.lrsMode?(title?.74:.78):(title?.78:.86);
+  u.rate=learner()?.lrsMode?(title ? .74 : .78):(title ? .78 : .86);
   u.pitch=title?.86:.93;
   u.volume=1;
   const voice=preferredBattleStoryVoice();if(voice)u.voice=voice;
