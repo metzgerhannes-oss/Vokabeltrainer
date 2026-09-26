@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 26.09.2026 · Basis: v0.21.4 · Release-Kandidat: Army Command Visual Reset
+Stand: 26.09.2026 · Basis: v0.21.5 · Release-Kandidat: Battle Result Accessibility
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.

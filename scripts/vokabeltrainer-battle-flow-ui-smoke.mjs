@@ -44,6 +44,7 @@ try{
 
   await activate('#battleResultContinue','battle result continue');
   await page.waitForFunction(()=>document.querySelector('#battleResultOverlay')?.classList.contains('visible')!==true);
+  assert((await page.locator('#battleResultOverlay').getAttribute('aria-hidden'))==='true','hidden battle result is removed from assistive technology');
 
   await page.evaluate(()=>{
     const f=currentTestFortress();
