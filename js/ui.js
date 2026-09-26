@@ -26,6 +26,11 @@ const BATTLE_BOSSES={
   capital:{name:'Der Hauptmann',text:'Die stärksten Verteidiger stehen vor der Hauptfestung.'},
   final:{name:'Der Adlerwächter',text:'Der letzte Wächter schützt die Jahresfestung.'}
 };
+const BATTLE_BOSSES_LATIN={
+  citadel:{name:'Custos Portae',text:'Der Torwächter sichert den Zugang zum Bergkastell.'},
+  capital:{name:'Praefectus',text:'Die stärkste Wache steht vor dem Provinzkastell.'},
+  final:{name:'Aquilifer',text:'Der Standartenträger bewacht die letzte große Prüfungsetappe.'}
+};
 const BATTLE_STORY={
   outpost:{title:'Der erste Vorposten',text:'Am Rand des Feldzugs versperrt ein kleiner Vorposten den Weg. Deine Truppe sammelt sich zum ersten Angriff.'},
   tower:{title:'Der Wachturm',text:'Vom hohen Turm aus wird jeder Schritt beobachtet. Deine Armee muss weiterlernen, um näher heranzukommen.'},
@@ -87,7 +92,10 @@ function battleAttackTacticalMeta(mode,subject=state.activeSubject){
   return {role:a.role||'',power:tactical.power||0,bonus:tactical.bonus||0};
 }
 function attackUnlocked(mode,pct=subjectProgress().pct){const a=BATTLE_ATTACKS[mode];return !!a&&pct>=a.unlock}
-function battleBossFor(f){return f?BATTLE_BOSSES[f.id]||null:null}
+function battleBossFor(f,subject=state.activeSubject){
+  if(!f)return null;
+  return subject==='latin'?(BATTLE_BOSSES_LATIN[f.id]||null):(BATTLE_BOSSES[f.id]||null);
+}
 function battleStoryFor(f){
   const p=battlePresentation();
   if(!f)return {title:`Noch kein ${p.targetNoun}-Ziel`,text:`Sobald ein Test geplant ist, erscheint hier automatisch die passende ${p.targetNoun.toLowerCase()}-Etappe.`};
