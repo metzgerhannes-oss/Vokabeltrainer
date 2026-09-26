@@ -1,7 +1,9 @@
-import { webkit } from 'playwright';
+import { webkit, chromium } from 'playwright';
 
 const base=process.env.APP_BASE||'http://127.0.0.1:4173';
-const browser=await webkit.launch({headless:true});
+const browserEngine=String(process.env.BROWSER_ENGINE||'webkit').toLowerCase();
+const launcher=browserEngine==='chromium'?chromium:webkit;
+const browser=await launcher.launch({headless:true});
 const assert=(v,m)=>{if(!v)throw new Error('Deep UI audit failed: '+m)};
 
 async function seed(page){
