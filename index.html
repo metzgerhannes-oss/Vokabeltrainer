@@ -388,7 +388,23 @@
             </div>
           </section>
           <div class="battle-stage-wrap">
+            <div class="battle-scene-hud battle-readout" aria-label="Schlachtwerte">
+              <div><small>Armeestärke</small><strong id="battleStrength">0</strong></div>
+              <div><small>Testfestung</small><strong id="battleFortressName">–</strong></div>
+              <div><small>Verteidigung</small><strong id="battleFortressProgress">–</strong></div>
+              <div><small>Rang & Ausrüstung</small><strong id="battleRankGear">–</strong></div>
+            </div>
             <div id="battleStage" class="battle-stage" role="img" aria-label="Animierte Armee vor einer Festung"></div>
+            <section class="battle-tactics battle-scene-tactics" aria-labelledby="battleTacticsTitle">
+              <div class="battle-tactics-head">
+                <div>
+                  <small>Angriffsart</small>
+                  <strong id="battleTacticsTitle">Wie soll die Armee angreifen?</strong>
+                </div>
+                <span>Deine Lernqualität bestimmt die Stärke.</span>
+              </div>
+              <div id="battleAttackChoices" class="battle-attack-choices"></div>
+            </section>
             <div class="battle-action-dock" aria-label="Schlachtaktion">
               <div class="battle-action-dock-copy">
                 <strong id="battleActionTitle">Angriff bereit</strong>
@@ -397,22 +413,6 @@
               <button id="battleAttackBtn" class="battle-primary" type="button">Angriff starten</button>
             </div>
           </div>
-          <div class="battle-readout">
-            <div><small>Armeestärke</small><strong id="battleStrength">0</strong></div>
-            <div><small>Testfestung</small><strong id="battleFortressName">–</strong></div>
-            <div><small>Verteidigung</small><strong id="battleFortressProgress">–</strong></div>
-            <div><small>Rang & Ausrüstung</small><strong id="battleRankGear">–</strong></div>
-          </div>
-          <section class="battle-tactics" aria-labelledby="battleTacticsTitle">
-            <div class="battle-tactics-head">
-              <div>
-                <small>Angriffsart</small>
-                <strong id="battleTacticsTitle">Wie soll die Armee angreifen?</strong>
-              </div>
-              <span>Die Taktik ändert die Darstellung. Deine Lernqualität bestimmt die Stärke.</span>
-            </div>
-            <div id="battleAttackChoices" class="battle-attack-choices"></div>
-          </section>
           <div id="battleMessage" class="battle-message" aria-live="polite"></div>
           <div class="battle-actions">
             <button id="battleReturnBtn" class="battle-secondary" type="button">Zurück zu meiner Armee</button>
