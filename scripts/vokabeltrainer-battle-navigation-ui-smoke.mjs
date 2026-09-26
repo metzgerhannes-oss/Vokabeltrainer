@@ -34,7 +34,7 @@ try{
   assert(await page.locator('#battleStage [data-battle-target-reveal]').isHidden(),'reveal reaches stable hidden state');
 
   await activate('#battleReturnBtn','battle return action');
-  await page.waitForSelector('#childProgressView.active');
+  await page.waitForSelector('#armyView.active');
   await page.evaluate(()=>{grantBattleTicket('dailyGoal');renderAll()});
   assert(await page.evaluate(()=>grantBattleTicket('duplicate-smoke'))===false,'same day cannot earn duplicate battle action');
 
@@ -46,7 +46,7 @@ try{
   }));
   assert(second.seenAt===first.seenAt,'reopening preserves original reveal timestamp');
   assert(second.hidden===true,'same fortress is not revealed twice');
-  assert((await page.locator('#battleReturnBtn').textContent())?.includes('Fortschritt'),'battle return destination remains contextual');
+  assert((await page.locator('#battleReturnBtn').textContent())?.includes('Armee'),'battle return destination remains inside the game area');
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer battle navigation smoke: passed');
