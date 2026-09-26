@@ -1,6 +1,5 @@
 'use strict';
 
-const FOCUSED_SECURE_TEXT_MODES=new Set(['practiceTest','recall','reverseRecall','spelling','context','latinGrammar','cards']);
 function focusedInputMode(){
   if(session?.mode==='practiceTest')return 'practiceTest';
   return session?.currentSubmode||session?.mode||'';
@@ -14,9 +13,8 @@ function focusedSupportsWritingSuggestionsControl(){
   return 'writingSuggestions' in probe;
 }
 function focusedNeedsFallbackKeyboard(){
-  const mode=focusedInputMode();
-  if(!FOCUSED_SECURE_TEXT_MODES.has(mode))return false;
   if(window.__VT_FORCE_SECURE_KEYBOARD__===true)return true;
+  if(focusedInputMode()!=='practiceTest')return false;
   return focusedAppleTouchDevice()&&!focusedSupportsWritingSuggestionsControl();
 }
 function focusedAnswerName(){
