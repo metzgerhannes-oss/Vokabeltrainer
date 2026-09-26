@@ -3034,3 +3034,42 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
   .battle-immersive .battle-scene-tactics{bottom:68px}
   .battle-immersive .battle-action-dock{bottom:7px}
 }
+
+
+/* v0.21.x – Battle composition lock: army left, readable field, fortress right */
+@media(min-width:721px){
+  .battle-stage{
+    --battle-army-edge:44%;
+    --battle-fortress-edge:54%;
+  }
+  .battle-army{
+    left:2.5%;
+    bottom:8%;
+    width:41.5%;
+    max-width:520px;
+  }
+  .battle-formation{
+    left:5%;
+    right:0;
+  }
+  .battle-fortress{
+    right:1.5%;
+    bottom:6.5%;
+  }
+  .battle-ground-path{
+    left:31%;
+    right:15%;
+    bottom:-12%;
+    height:64%;
+    opacity:.78;
+  }
+  .battle-special-flare{
+    left:18%;
+  }
+  .battle-stage::before{
+    background:
+      linear-gradient(90deg,rgba(18,27,31,.07) 0%,transparent 25% 70%,rgba(18,25,29,.09) 100%),
+      radial-gradient(ellipse at 50% 66%,rgba(235,218,176,.06),transparent 24%),
+      radial-gradient(ellipse at 76% 50%,rgba(232,212,166,.05),transparent 24%);
+  }
+}
