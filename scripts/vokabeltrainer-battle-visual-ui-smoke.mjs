@@ -1,6 +1,6 @@
 import { createBattleHarness } from './helpers/vokabeltrainer-battle-harness.mjs';
 
-const {browser,page,assert,reset,openBattle,errors,diagnose}=await createBattleHarness();
+const {browser,page,assert,reset,openBattle,waitForBattleResult,errors,diagnose}=await createBattleHarness();
 
 try{
   await reset({revealed:true,ticket:true});
@@ -125,7 +125,7 @@ try{
   assert(actionAccess.hit,'battle action remains the topmost hit target after scrolling');
   assert(actionAccess.focused,'battle action remains keyboard-focusable');
   await page.keyboard.press('Enter');
-  await page.waitForSelector('#battleResultOverlay.visible');
+  await waitForBattleResult();
   const latinResultTitle=await page.locator('#battleResultTitle').textContent();
   assert(/Kastell|Vorstoß|Wächter/.test(latinResultTitle||''),'Latin result stays in Roman vocabulary');
   assert(!(latinResultTitle||'').includes('Festung'),'Latin result does not fall back to the English fortress label');
