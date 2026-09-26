@@ -55,6 +55,7 @@ try{
   await page.evaluate(()=>{window.VTCampaignMap.open()});
   await page.waitForSelector('#campaignMapView.active');
   const station=page.locator('[data-campaign-station]').first();
+  if(await station.evaluate(el=>el.classList.contains('selected')))await station.click();
   await station.click();
   assert(await page.locator('#campaignMapDetail [data-campaign-detail-close]').count()===1,'campaign target detail has an explicit close control');
   await page.locator('#campaignMapDetail [data-campaign-detail-close]').click();
