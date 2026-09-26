@@ -57,7 +57,7 @@
     const fortress=(entry.fortressKey&&l?.testFortresses?.[entry.fortressKey])||(typeof currentTestFortress==='function'?currentTestFortress(entry.subject):null);
     const attack=entry.attack==='secure'?null:(typeof battleAttackMeta==='function'?battleAttackMeta(entry.attack):null);
     const campaign=typeof subjectCampaign==='function'?subjectCampaign(entry.subject):{unitLabel:'Armee'};
-    const boss=entry.result==='win'&&typeof battleBossFor==='function'?battleBossFor(fortress):null;
+    const boss=entry.result==='win'&&typeof battleBossFor==='function'?battleBossFor(fortress,entry.subject):null;
     const strength=typeof armyStrength==='function'?armyStrength():0;
     const rank=typeof rankFor==='function'?rankFor(entry.progress,entry.subject):'';
     return {entry,fortress,attack,campaign,boss,strength,rank};
