@@ -45,7 +45,8 @@
     frame.dataset.avatarVisualKey=`${state.activeSubject}-${style}-stage-${stage.level}`;
     frame.dataset.avatarSubject=state.activeSubject;
     frame.dataset.avatarStyle=style;
-    if(label)label.textContent=`Avatar · Stufe ${stage.level}/${stage.maxLevel}`;
+    const avatarNoun=state.activeSubject==='latin'?'Legionär':state.activeSubject==='french'?'Reisefigur':'Avatar';
+    if(label)label.textContent=`${avatarNoun} · Stufe ${stage.level}/${stage.maxLevel}`;
     if(pips)pips.innerHTML=Array.from({length:stage.maxLevel},(_,i)=>`<i class="${i<stage.level?'filled':''}"></i>`).join('');
     if(next)next.textContent=stage.nextAt===null?`${stage.label} · maximal entwickelt`:`${stage.label} · nächste Stufe bei ${stage.nextAt}%`;
     return stage;
@@ -75,6 +76,12 @@
     const learned=document.querySelector('#menuLearnedCount');
     const castles=document.querySelector('#menuFortressCount');
     const avatarStage=renderAvatarStage(p.pct);
+    const stageRoot=document.querySelector('.project-menu-stage');
+    const visualTheme=typeof subjectVisualTheme==='function'?subjectVisualTheme(state.activeSubject):'campaign';
+    if(stageRoot){
+      stageRoot.dataset.visualTheme=visualTheme;
+      stageRoot.dataset.subject=state.activeSubject;
+    }
     if(subject)subject.textContent=subjectLabel(state.activeSubject);
     if(rank)rank.textContent=avatarStage?.rank||rankFor(p.pct,state.activeSubject);
     if(learned)learned.textContent=String(p.mastered||0);
