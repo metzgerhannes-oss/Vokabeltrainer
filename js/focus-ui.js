@@ -13,6 +13,14 @@ renderStudy=function(){
 const _focusedBaseShowView=showView;
 showView=function(id){
   document.body.classList.toggle('learning-focus',id==='learnView');
+  if(id==='learnView'){
+    const view=document.querySelector('#learnView');
+    const theme=typeof subjectVisualTheme==='function'?subjectVisualTheme(state?.activeSubject):'campaign';
+    if(view){
+      view.dataset.visualTheme=theme;
+      view.dataset.subject=state?.activeSubject||'english';
+    }
+  }
   _focusedBaseShowView(id);
 };
 

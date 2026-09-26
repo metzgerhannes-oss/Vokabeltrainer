@@ -23,12 +23,14 @@ export async function createBattleHarness(){
   assert(response?.ok(),'app loads');
   await page.waitForFunction(()=>window.__VT_APP_READY__===true&&state!==null&&typeof grantBattleTicket==='function'&&typeof openBattleView==='function');
 
-  const reset=async({revealed=true,ticket=true}={})=>{
-    await page.evaluate(({revealed,ticket})=>{
+  const reset=async({revealed=true,ticket=true,subject='english'}={})=>{
+    await page.evaluate(({revealed,ticket,subject})=>{
       state=defaultState();
-      const set={id:'battle_set',learnerId:'learner_demo',subject:'english',title:'Battle Unit',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(1),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+      state.activeSubject=subject;
+      state.learners[0].activeSubjects=[...new Set([...(state.learners[0].activeSubjects||[]),subject])];
+      const set={id:'battle_set',learnerId:'learner_demo',subject,title:subject==='latin'?'Römische Etappe':'Battle Unit',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(1),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
       state.sets.push(set);
-      attachVocabularyToSet(set.id,{term:'shield',translation:'Schild',source:'battle-smoke',verified:true});
+      attachVocabularyToSet(set.id,{term:subject==='latin'?'salve':'shield',translation:subject==='latin'?'sei gegrüßt':'Schild',source:'battle-smoke',verified:true,subject});
       for(const link of state.setVocabulary){link.firstContactCopiedAt=link.firstContactRecalledAt=link.firstContactCompletedAt=new Date().toISOString()}
       const p=state.learnerVocabulary[0];
       p.skills={recognition:4,listening:4,retrieval:4,spelling:4,context:4};
@@ -41,7 +43,7 @@ export async function createBattleHarness(){
       p.intervalDays=14;
       p.errorProfile={meaning:0,retrieval:0,spelling:0,listening:0,context:0,grammar:0};
       refreshMastery(p);
-      state.learners[0].milestones[`hundred_english_${currentSchoolYear()}`]=new Date().toISOString();
+      state.learners[0].milestones[`hundred_${subject}_${currentSchoolYear()}`]=new Date().toISOString();
       rebuildWordIndexes();
       renderAll();
       const fortress=currentTestFortress();
@@ -49,7 +51,7 @@ export async function createBattleHarness(){
       if(ticket)grantBattleTicket('dailyGoal');
       renderAll();
       showView('armyView');
-    },{revealed,ticket});
+    },{revealed,ticket,subject});
   };
 
   const openBattle=async()=>{

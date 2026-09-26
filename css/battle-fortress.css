@@ -438,3 +438,41 @@
   .battle-stage.fortress-reveal .battle-target-reveal-light{opacity:1!important;transform:none!important}
   .battle-stage.fortress-reveal .battle-target-reveal-copy{opacity:1!important;transform:none!important}
 }
+
+
+/* Visual DNA – Roman target architecture */
+.battle-stage.subject-latin{
+  background:
+    radial-gradient(ellipse at 70% 45%,rgba(238,211,157,.20),transparent 29%),
+    linear-gradient(180deg,#82a9bd 0%,#c6d0c4 42%,#a08e61 43%,#786b49 100%)!important;
+}
+.battle-stage.subject-latin .battle-fortress{
+  filter:drop-shadow(0 15px 11px rgba(66,45,31,.30));
+}
+.battle-stage.subject-latin .battle-fortress .wall,
+.battle-stage.subject-latin .battle-fortress .tower,
+.battle-stage.subject-latin .battle-fortress .battle-keep{
+  border-color:#7d684c!important;
+  background:
+    linear-gradient(115deg,rgba(255,255,255,.21),transparent 18% 72%,rgba(98,69,45,.10)),
+    repeating-linear-gradient(0deg,#c6b18c 0 19px,#b79e78 19px 21px,#d0bb96 21px 38px,#a88e69 38px 40px)!important;
+  box-shadow:
+    inset 4px 0 0 rgba(255,244,215,.16),
+    inset -8px 0 0 rgba(92,67,45,.10),
+    inset 0 -9px 0 rgba(99,72,48,.08);
+}
+.battle-stage.subject-latin .battle-fortress .tower::before,
+.battle-stage.subject-latin .battle-fortress .battle-keep::before{
+  background:repeating-linear-gradient(90deg,#7d684c 0 12px,transparent 13px 21px)!important;
+}
+.battle-stage.subject-latin .battle-gate{
+  background:linear-gradient(90deg,#624431,#3f2d22);
+  border-color:#6f543c;
+}
+.battle-stage.subject-latin .battle-enemy-flag::after{
+  background:#6f342b;
+}
+.battle-stage.subject-latin .battle-fortress-state-badge{
+  border-color:rgba(192,154,83,.62);
+  background:rgba(72,47,31,.78);
+}
