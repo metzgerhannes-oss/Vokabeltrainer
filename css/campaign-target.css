@@ -193,6 +193,7 @@
   pointer-events:none;
 }
 #battleView .battle-scene-hud.battle-readout>div{
+  position:relative;
   min-height:64px;
   display:flex;
   flex-direction:column;
