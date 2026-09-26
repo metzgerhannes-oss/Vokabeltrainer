@@ -201,6 +201,28 @@ try{
   assert((await directPage.locator('#claimParentInviteResult').textContent())?.includes('lokale Daten können ersetzt werden'),'direct parent takeover warns about replacement');
   await directContext.close();
 
+  const iosHandoffContext=await browser.newContext(devices['iPhone 13']);
+  const iosHandoffPage=await iosHandoffContext.newPage();
+  iosHandoffPage.setDefaultTimeout(10000);
+  iosHandoffPage.on('pageerror',e=>errors.push(String(e?.message||e)));
+  const handoffResponse=await iosHandoffPage.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
+  assert(handoffResponse?.ok(),'iOS handoff app loads');
+  await iosHandoffPage.waitForFunction(()=>window.__VT_APP_READY__===true&&window.VTFamilySync&&window.VTQr&&window.handleChildInviteFromUrl);
+  await iosHandoffPage.evaluate(()=>{
+    localStorage.removeItem('vokabeltrainer_family_sync_v1');
+    VTQr.copyText=async()=>true;
+    history.replaceState(null,'',location.pathname+location.search+'#childInvite='+('d'.repeat(48))+'&childName=Testkind');
+    handleChildInviteFromUrl();
+  });
+  await iosHandoffPage.waitForSelector('#modal[open] #copyIosHomeInviteBtn');
+  assert((await iosHandoffPage.locator('#modalContent').textContent())?.includes('Zum Home-Bildschirm'),'iOS Safari shows the Home Screen handoff');
+  await iosHandoffPage.locator('#copyIosHomeInviteBtn').click();
+  await iosHandoffPage.waitForFunction(()=>!document.querySelector('#modal')?.open);
+  const handoffState=await iosHandoffPage.evaluate(()=>({hash:location.hash,open:!!document.querySelector('#modal')?.open}));
+  assert(!handoffState.open,'iOS handoff closes after successful invite copy');
+  assert(!handoffState.hash.includes('childInvite')&&!handoffState.hash.includes('childName'),'iOS handoff clears the invite fragment before Home Screen installation');
+  await iosHandoffContext.close();
+
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer family sync UI smoke: passed');
 }finally{
