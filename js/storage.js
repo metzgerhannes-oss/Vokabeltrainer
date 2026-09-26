@@ -129,7 +129,7 @@ async function persistState(){
 }
 function persistOnly(){
   persistRequested=true;if(persistRunning)return persistChain;persistRunning=true;
-  persistChain=(async()=>{let ok=true;try{while(persistRequested){persistRequested=false;ok=(await persistState())&&ok;}return ok}catch(e){console.error(e);return false}finally{persistRunning=false;if(persistRequested)persistOnly();}})();return persistChain;
+  persistChain=(async()=>{let ok=true;try{while(persistRequested){persistRequested=false;ok=(await persistState())&&ok;}if(ok)window.VTFamilySync?.markLocalChange?.();return ok}catch(e){console.error(e);return false}finally{persistRunning=false;if(persistRequested)persistOnly();}})();return persistChain;
 }
 function showPersistenceWarning(text){const el=document.querySelector('#storageStatus');if(el){el.className='notice bad';el.textContent=text}}
 const safeText=(value,max=1000)=>String(value??'').replace(/\u0000/g,'').slice(0,max);
