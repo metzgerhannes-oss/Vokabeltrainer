@@ -3,6 +3,8 @@
 Stand: 23.09.2026
 
 Diese Prinzipien sind die verbindliche Leitlinie für Produktentscheidungen vor und nach v1.
+
+Die verbindliche visuelle Umsetzung ist ergänzend in [`VISUAL_DNA.md`](VISUAL_DNA.md) definiert. Bei Zielkonflikten hat die fachliche und didaktische Product DNA Vorrang.
 Neue Features werden gegen diese DNA geprüft. Wenn ein Wunsch davon abweicht, soll der
 Konflikt transparent benannt und – soweit sinnvoll – mit aktueller Lern-, UX- oder
 Barrierefreiheitsforschung gegengeprüft werden.
