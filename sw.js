@@ -10,7 +10,7 @@ const LEGACY_CACHE_PREFIX='vokabeltrainer-v';
 const LEGACY_APP_BASES=['/JohannasGartenwelt/vokabeltrainer/'];
 
 const ASSETS=[
-  './','./index.html','./css/app.css?v=0.21.0','./css/menu.css?v=0.21.0','./css/army.css?v=0.21.0','./css/campaign-map.css?v=0.21.0','./css/battle-fortress.css?v=0.21.0','./css/battle-result.css?v=0.21.0','./js/core.js?v=0.21.0','./js/help.js?v=0.21.0','./js/library.js?v=0.21.0','./js/storage.js?v=0.21.0',
+  './','./index.html','./css/app.css?v=0.21.0','./css/menu.css?v=0.21.0','./css/army.css?v=0.21.0','./css/campaign-map.css?v=0.21.0','./css/battle-art.css?v=0.21.0','./css/battle-fortress.css?v=0.21.0','./css/battle-result.css?v=0.21.0','./js/core.js?v=0.21.0','./js/help.js?v=0.21.0','./js/library.js?v=0.21.0','./js/storage.js?v=0.21.0',
   './js/builtin-library.js?v=0.21.0','./js/model.js?v=0.21.0','./js/quiz-engine.js?v=0.21.0','./js/learning.js?v=0.21.0','./js/translation.js?v=0.21.0',
   './js/io.js?v=0.21.0','./js/family-sync.js?v=0.21.0','./js/vendor/qrcode.js?v=0.21.0','./js/qr-ui.js?v=0.21.0',
   './js/device-pairing.js?v=0.21.0','./js/ui.js?v=0.21.0','./js/menu-ui.js?v=0.21.0','./js/menu-avatar-art.js?v=0.21.0','./js/army-art.js?v=0.21.0','./js/battle-result-ui.js?v=0.21.0','./js/army-ui.js?v=0.21.0','./js/campaign-map.js?v=0.21.0','./js/library-ui.js?v=0.21.0','./js/focus-ui.js?v=0.21.0','./js/parent-docs.js?v=0.21.0','./js/app.js?v=0.21.0','./manifest.webmanifest','./docs/ELTERN_ANLEITUNG.md','./docs/PAEDAGOGISCHE_DOKUMENTATION.md',
