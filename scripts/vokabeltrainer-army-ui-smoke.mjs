@@ -44,6 +44,15 @@ try{
   await page.click('.nav-btn[data-view="armyView"]');
   await page.waitForSelector('#armyView.active');
   assert(await page.locator('#armyView #campaignCard').isVisible(),'game hub contains the campaign card');
+  assert(await page.locator('#campaignCard .game-loop-step').count()===3,'game hub exposes the three-step learn attack capture loop');
+  assert(await page.locator('#gameLoopLearn.current').count()===1,'learning is the current step before the daily attack reward');
+  assert(await page.locator('#gameLoopAttack.locked').count()===1,'attack stays locked until the learning reward exists');
+  assert(await page.locator('#gameLoopCapture.locked').count()===1,'capture stays locked before an attack');
+  assert((await page.locator('#gameMissionTitle').textContent())?.length>0,'game hub names the current fortress mission');
+  assert((await page.locator('#gameMissionStatus').textContent())?.includes('ANGRIFF'),'game hub exposes the current attack state');
+  assert((await page.locator('#attackBtn').textContent())?.includes('FESTUNG'),'primary game action clearly points to the fortress');
+  assert((await page.locator('.frontline-own').textContent())?.includes('DEINE ARMEE'),'frontline labels the player side');
+  assert((await page.locator('.frontline-target').textContent())?.includes('ZIEL'),'frontline labels the target side');
   assert((await page.locator('.nav-btn[data-view="armyView"]').getAttribute('aria-current'))==='page','Armee is the active primary navigation area');
   await page.waitForFunction(()=>window.VTArmyArt?.ready===true);
   await page.waitForFunction(()=>document.querySelector('[data-army-hero-art]')?.naturalWidth>0);
@@ -109,8 +118,11 @@ try{
   await page.click('#campaignMapBtn');
   await page.waitForSelector('#campaignMapView.active');
   assert((await page.locator('.nav-btn[data-view="armyView"]').getAttribute('aria-current'))==='page','campaign map remains inside the Armee primary area');
+  assert(await page.locator('#campaignMapBoard .campaign-war-header').count()===1,'campaign map exposes a frontline status header');
+  assert((await page.locator('#campaignMapBoard .campaign-war-header').textContent())?.includes('FRONTLINIE'),'campaign map reads as a frontline');
   assert(await page.locator('#campaignMapBoard .campaign-map-station').count()===3,'campaign map shows two known test stations plus the year fortress');
   assert(await page.locator('#campaignMapBoard .campaign-map-unknown').count()===1,'unknown future remains visible instead of assuming a fixed test count');
+  assert((await page.locator('#campaignMapBoard .campaign-map-unknown').textContent())?.includes('NEBEL DES KRIEGES'),'unknown future is presented as fog of war');
   assert((await page.locator('#campaignMapBoard .campaign-map-unknown').textContent())?.includes('Neue Tests erscheinen automatisch'),'map explains dynamic future growth');
   assert(await page.locator('#campaignMapBoard .status-active').count()===1,'nearest planned test is the active map target');
   assert((await page.locator('#campaignMapDetail').textContent())?.includes('Aktuelles Testziel'),'active target opens its real test detail');
