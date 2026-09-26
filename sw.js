@@ -10,16 +10,15 @@ const LEGACY_CACHE_PREFIX='vokabeltrainer-v';
 const LEGACY_APP_BASES=['/JohannasGartenwelt/vokabeltrainer/'];
 
 const ASSETS=[
-  './','./index.html','./css/app.css?v=0.21.0','./css/menu.css?v=0.21.0','./css/army.css?v=0.21.0','./css/campaign-map.css?v=0.21.0','./css/battle-art.css?v=0.21.0','./css/battle-fortress.css?v=0.21.0','./css/battle-result.css?v=0.21.0','./js/core.js?v=0.21.0','./js/help.js?v=0.21.0','./js/library.js?v=0.21.0','./js/storage.js?v=0.21.0',
+  './','./index.html','./css/app.css?v=0.21.0','./css/menu.css?v=0.21.0','./css/army.css?v=0.21.0','./css/campaign-map.css?v=0.21.0','./css/battle-fortress.css?v=0.21.0','./css/battle-result.css?v=0.21.0','./js/core.js?v=0.21.0','./js/help.js?v=0.21.0','./js/library.js?v=0.21.0','./js/storage.js?v=0.21.0',
   './js/builtin-library.js?v=0.21.0','./js/model.js?v=0.21.0','./js/quiz-engine.js?v=0.21.0','./js/learning.js?v=0.21.0','./js/translation.js?v=0.21.0',
   './js/io.js?v=0.21.0','./js/family-sync.js?v=0.21.0','./js/vendor/qrcode.js?v=0.21.0','./js/qr-ui.js?v=0.21.0',
-  './js/device-pairing.js?v=0.21.0','./js/ui.js?v=0.21.0','./js/menu-ui.js?v=0.21.0','./js/menu-avatar-art.js?v=0.21.0','./js/army-art.js?v=0.21.0','./js/battle-art.js?v=0.21.0','./js/battle-art-ui.js?v=0.21.0','./js/battle-result-ui.js?v=0.21.0','./js/army-ui.js?v=0.21.0','./js/campaign-map.js?v=0.21.0','./js/library-ui.js?v=0.21.0','./js/focus-ui.js?v=0.21.0','./js/parent-docs.js?v=0.21.0','./js/app.js?v=0.21.0','./manifest.webmanifest','./docs/ELTERN_ANLEITUNG.md','./docs/PAEDAGOGISCHE_DOKUMENTATION.md',
+  './js/device-pairing.js?v=0.21.0','./js/ui.js?v=0.21.0','./js/menu-ui.js?v=0.21.0','./js/menu-avatar-art.js?v=0.21.0','./js/army-art.js?v=0.21.0','./js/battle-result-ui.js?v=0.21.0','./js/army-ui.js?v=0.21.0','./js/campaign-map.js?v=0.21.0','./js/library-ui.js?v=0.21.0','./js/focus-ui.js?v=0.21.0','./js/parent-docs.js?v=0.21.0','./js/app.js?v=0.21.0','./manifest.webmanifest','./docs/ELTERN_ANLEITUNG.md','./docs/PAEDAGOGISCHE_DOKUMENTATION.md',
   './data/camden-town-1-welcome.tsv','./data/camden-town-1-theme1.tsv',
   './assets/icons/icon-180.png','./assets/icons/icon-192.png','./assets/icons/icon-512.png',
   './assets/army/hero/part-01.b64','./assets/army/hero/part-02.b64','./assets/army/hero/part-03.b64','./assets/army/hero/part-04.b64','./assets/army/hero/part-05.b64','./assets/army/hero/part-06.b64',
   './assets/menu-avatar/english/stage-1.webp.b64','./assets/menu-avatar/english/stage-2.webp.b64','./assets/menu-avatar/english/stage-3.webp.b64','./assets/menu-avatar/english/stage-4.webp.b64','./assets/menu-avatar/english/stage-5.webp.b64','./assets/menu-avatar/english/stage-6.webp.b64',
-  './assets/army/units/part-01.b64','./assets/army/units/part-02.b64','./assets/army/units/part-03.b64','./assets/army/units/part-04.b64','./assets/army/units/part-05.b64',
-  './assets/battle/scene-v2/part-01.b64','./assets/battle/scene-v2/part-02.b64','./assets/battle/scene-v2/part-03.b64','./assets/battle/scene-v2/part-04.b64','./assets/battle/scene-v2/part-05a.b64','./assets/battle/scene-v2/part-05b.b64','./assets/battle/scene-v2/part-06.b64','./assets/battle/scene-v2/part-07.b64','./assets/battle/scene-v2/part-08.b64','./assets/battle/scene-v2/part-09.b64','./assets/battle/scene-v2/part-10.b64','./assets/battle/scene-v2/part-11.b64'
+  './assets/army/units/part-01.b64','./assets/army/units/part-02.b64','./assets/army/units/part-03.b64','./assets/army/units/part-04.b64','./assets/army/units/part-05.b64'
 ];
 
 function appBasePath(){
