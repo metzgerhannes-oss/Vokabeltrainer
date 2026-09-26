@@ -35,6 +35,12 @@ try{
     renderBattleView();
   });
   assert(await page.locator('#battleStage [data-battle-target-reveal]').isHidden(),'reveal reaches stable hidden state');
+  await activate('#battleFullscreenBtn','battle fullscreen entry');
+  assert(await page.evaluate(()=>document.body.classList.contains('battle-immersive')),'battle fullscreen enters immersive scene mode');
+  assert(await page.locator('#battleStage').isVisible(),'battle stage remains visible in immersive mode');
+  assert(await page.locator('.battle-scene-tactics').isVisible(),'battle tactics remain accessible in immersive mode');
+  await activate('#battleFullscreenBtn','battle fullscreen exit');
+  assert(!(await page.evaluate(()=>document.body.classList.contains('battle-immersive'))),'battle fullscreen can be exited');
 
   await activate('#battleReturnBtn','battle return action');
   await page.waitForSelector('#armyView.active');
