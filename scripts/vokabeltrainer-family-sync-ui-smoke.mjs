@@ -76,29 +76,27 @@ try{
   await page.locator('#familySyncBackBtn').click();
   await page.evaluate(()=>closeModal());
 
-  const joinUrl='**/rest/v1/rpc/vt_join_parent';
-  const pullUrl='**/rest/v1/rpc/vt_pull_documents';
-  await page.route(joinUrl,async route=>{
-    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ok:true,family_id:'family_new01',role:'parent'})});
-  });
-  await page.route(pullUrl,async route=>{
-    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({
-      ok:true,family_id:'family_new01',role:'parent',profile_id:null,
-      documents:[
-        {key:'shared',revision:1,payload:{schema:1,vocabulary:[],books:[],bookVocabulary:[]}},
-        {key:'profile/learner_new/setup',revision:1,payload:{schema:1,learner:{id:'learner_new',name:'Neue Familie',activeSubjects:['english']},sets:[],setVocabulary:[],learnerBooks:[],grades:[]}},
-        {key:'profile/learner_new/progress',revision:1,payload:{schema:1,learner:{id:'learner_new'},learnerVocabulary:[],practiceTests:[],activity:[]}}
-      ]
-    })});
-  });
   const rollback=await page.evaluate(async({key,cfg})=>{
     state=defaultState();state.learners[0].name='Rollback Kind';
     localStorage.setItem(key,JSON.stringify(cfg));
     await persistState();
-    const original=persistState;let calls=0,error='';
-    persistState=async()=>{calls++;return calls===1?false:original()};
+    const originalPersist=persistState,originalFetch=window.fetch;let calls=0,error='';
+    window.fetch=async(url)=>{
+      const name=String(url||'').split('/').pop();
+      if(name==='vt_join_parent')return new Response(JSON.stringify({ok:true,family_id:'family_new01',role:'parent'}),{status:200,headers:{'Content-Type':'application/json'}});
+      if(name==='vt_pull_documents')return new Response(JSON.stringify({
+        ok:true,family_id:'family_new01',role:'parent',profile_id:null,
+        documents:[
+          {key:'shared',revision:1,payload:{schema:1,vocabulary:[],books:[],bookVocabulary:[]}},
+          {key:'profile/learner_new/setup',revision:1,payload:{schema:1,learner:{id:'learner_new',name:'Neue Familie',activeSubjects:['english']},sets:[],setVocabulary:[],learnerBooks:[],grades:[]}},
+          {key:'profile/learner_new/progress',revision:1,payload:{schema:1,learner:{id:'learner_new'},learnerVocabulary:[],practiceTests:[],activity:[]}}
+        ]
+      }),{status:200,headers:{'Content-Type':'application/json'}});
+      throw new Error('Unexpected mocked RPC: '+name);
+    };
+    persistState=async()=>{calls++;return calls===1?false:originalPersist()};
     try{await VTFamilySync.joinParent('family_new01','123456','Rollback-Test')}catch(e){error=String(e?.message||e)}
-    finally{persistState=original}
+    finally{persistState=originalPersist;window.fetch=originalFetch}
     const stored=JSON.parse(localStorage.getItem(key)||'{}');
     return {error,familyId:stored.familyId||'',learnerName:learner()?.name||'',calls};
   },{key:CONFIG_KEY,cfg:familyConfig()});
@@ -106,7 +104,6 @@ try{
   assert(rollback.familyId==='family_test01','failed family switch restores previous sync configuration');
   assert(rollback.learnerName==='Rollback Kind','failed family switch restores previous learning state');
   assert(rollback.calls>=2,'failed family switch persists rollback state');
-  await page.unroute(joinUrl);await page.unroute(pullUrl);
 
   const setupFields=await page.evaluate(()=>{
     state=defaultState();state.learners[0].avatarStyle='female';state.learners[0].autoSpeakCorrection=false;
