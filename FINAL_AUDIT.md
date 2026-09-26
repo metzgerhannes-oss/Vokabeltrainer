@@ -1,9 +1,10 @@
 # Finales Audit
 
-Stand: 26.09.2026 · App v0.21.4
+Stand: 26.09.2026 · App v0.21.5
 
 ## Ergebnis
 
+- v0.21.5 ergänzt den Battle-Ergebnisdialog um einen expliziten `aria-hidden`-Zustand. Sichtbares Ergebnis und Accessibility-Zustand bleiben damit synchron; geschlossenes Ergebnis wird sofort aus dem assistiven Baum genommen. Battle-Berechnung und Lernlogik bleiben unverändert.
 - v0.21.4 korrigiert die beiden im Livetest sichtbaren Spielwelt-Probleme. Der Army-Command-Screen wird mobil kompakter, heller und mit detaillierter Festung dargestellt. Im eigentlichen Battle-Screen wird die bereits vorhandene dedizierte gemalte Battle-Art wieder wirklich geladen; CSS-Soldaten und CSS-Festung sind bei geladener Illustration nur noch Fallback. Kennzahlen und Angriffsauswahl verdecken die Szene nicht mehr unnötig. Storytexte wurden von technischen Planerformulierungen bereinigt; die Vorlesefunktion priorisiert hochwertige deutsche Systemstimmen und nutzt natürlichere Satzpausen. Fachliche Lern-, Test- und Battle-Berechnungslogik bleibt unverändert.
 - v0.21.3 schließt die Eingabe-Lücke durch Handy-Autovervollständigung und Schreibvorschläge: alle bewerteten Antwortfelder unterdrücken Browserhilfen; auf älteren Apple-WebKit-Versionen ohne verlässliche Abschaltung übernimmt **im Testcheck** eine eigene sichere Bildschirmtastatur. Normales Lernen behält die native Tastatur. Dadurch bleibt die abgegebene Testcheck-Antwort eine eigenständige Lernleistung, ohne die fachliche Bewertungslogik zu verändern.
 - v0.21.2 schließt den P0-Bewertungsfehler bei Platzhaltersätzen: typografische Platzhaltervarianten, Abstände und englische Kontraktions-Tokenisierung werden normalisiert; feste sprachliche Anker bleiben verbindlich. Intern unterscheidet die Quiz-Engine exakt richtig, richtig nach Normalisierung und wirklich falsch. Normalisierte richtige Antworten erzeugen keinen Lern- oder Orthografiefehler.
