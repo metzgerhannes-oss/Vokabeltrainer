@@ -1,0 +1,515 @@
+/* v0.21.6 – target battle design
+   Reference: approved bright campaign mockup supplied in live test.
+   One painted scene is primary; technical CSS geometry is fallback only. */
+
+#battleView{
+  --campaign-navy:#0c3c5b;
+  --campaign-navy-2:#123f62;
+  --campaign-gold:#c89b34;
+  --campaign-ink:#16323c;
+  --campaign-paper:#fbf6e9;
+  --campaign-line:#ddd5c3;
+}
+#battleView .battle-shell{
+  max-width:920px;
+  margin:0 auto;
+  padding-bottom:130px;
+}
+#battleView .battle-head{display:none}
+#battleView .battle-toolbar{
+  max-width:900px;
+  margin:0 auto 10px;
+  border:0;
+  background:transparent;
+}
+#battleView .battle-ticket-pill{
+  border-color:#d7cfbd;
+  background:#fffaf0;
+  color:#6d5a2b;
+}
+#battleView .battle-ghost{
+  border-color:#d8d2c4;
+  background:rgba(255,253,247,.92);
+  color:#39535a;
+}
+
+/* Story card – parchment chapter block from the approved target. */
+#battleView .battle-story{
+  max-width:900px;
+  display:grid;
+  grid-template-columns:150px minmax(0,1fr);
+  grid-template-rows:auto 1fr auto;
+  gap:8px 18px;
+  margin:0 auto 16px;
+  padding:18px;
+  border:1px solid #dfd3bc;
+  border-radius:24px;
+  background:
+    radial-gradient(circle at 90% 12%,rgba(188,161,102,.12),transparent 12rem),
+    linear-gradient(180deg,#fffaf0,#f5eddd);
+  box-shadow:0 12px 30px rgba(43,55,54,.10);
+}
+#battleView .battle-story-chapter{
+  grid-column:1;
+  grid-row:1 / 3;
+  min-height:150px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:14px 10px;
+  border:2px solid #c8a55c;
+  border-radius:18px;
+  background:linear-gradient(180deg,#17354f,#0d2339);
+  color:#fff6de;
+  font-size:.74rem;
+  font-weight:1000;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.05);
+}
+#battleView .battle-story-chapter::before{
+  content:"▤";
+  display:grid;
+  place-items:center;
+  width:48px;
+  height:48px;
+  border:1px solid rgba(230,194,111,.55);
+  border-radius:50%;
+  color:#e1b95c;
+  font-size:1.75rem;
+  line-height:1;
+}
+#battleView .battle-story strong{
+  grid-column:2;
+  grid-row:1;
+  align-self:end;
+  color:#162f39;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:1.55rem;
+  line-height:1.05;
+  font-weight:800;
+  letter-spacing:-.02em;
+}
+#battleView .battle-story p{
+  grid-column:2;
+  grid-row:2;
+  align-self:start;
+  margin:0;
+  color:#607078;
+  font-size:1rem;
+  line-height:1.48;
+}
+#battleView .battle-story-speak{
+  grid-column:1 / -1;
+  grid-row:3;
+  width:100%;
+  min-height:58px;
+  margin-top:5px;
+  border:2px solid #c79a39;
+  border-radius:17px;
+  background:linear-gradient(180deg,#0f5279,#0a3d60);
+  color:#fff;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:1.05rem;
+  font-weight:800;
+  box-shadow:inset 0 1px rgba(255,255,255,.15),0 7px 18px rgba(12,60,91,.17);
+}
+#battleView .battle-story-speak::before{
+  content:"▶";
+  display:inline-grid;
+  place-items:center;
+  width:32px;
+  height:32px;
+  margin-right:10px;
+  border:2px solid #f0c866;
+  border-radius:50%;
+  color:#fff8dc;
+  font-family:system-ui,sans-serif;
+  font-size:.8rem;
+  vertical-align:middle;
+}
+#battleView .battle-story-speak[aria-pressed="true"]::before{content:"■"}
+
+/* Main painted battle scene. */
+#battleView .battle-stage-wrap{
+  position:relative;
+  max-width:900px;
+  margin:0 auto;
+  gap:14px;
+}
+#battleView .battle-stage{
+  order:0;
+  width:100%;
+  min-height:0;
+  aspect-ratio:1.48 / 1;
+  overflow:hidden;
+  border:1px solid #cbd4cf;
+  border-radius:24px;
+  background:#bcd7e7;
+  box-shadow:0 15px 34px rgba(40,61,65,.14);
+}
+#battleView .battle-stage.battle-art-ready .battle-art-background{
+  opacity:1!important;
+  filter:saturate(1.04) contrast(1.02) brightness(1.02)!important;
+  object-fit:cover;
+  object-position:center center;
+}
+#battleView .battle-stage.battle-art-ready .battle-art-army,
+#battleView .battle-stage.battle-art-ready .battle-art-fortress{
+  opacity:0!important;
+}
+#battleView .battle-stage.battle-art-ready .battle-sky,
+#battleView .battle-stage.battle-art-ready .battle-hills,
+#battleView .battle-stage.battle-art-ready .battle-ground,
+#battleView .battle-stage.battle-art-ready .battle-ground-path,
+#battleView .battle-stage.battle-art-ready .battle-scene-vignette,
+#battleView .battle-stage.battle-art-ready .battle-army,
+#battleView .battle-stage.battle-art-ready .battle-fortress,
+#battleView .battle-stage.battle-art-ready .battle-boss-character{
+  opacity:0!important;
+}
+#battleView .battle-stage.battle-art-ready::before{
+  background:
+    linear-gradient(180deg,rgba(16,48,67,.18),transparent 36%,transparent 72%,rgba(19,38,38,.08)),
+    linear-gradient(90deg,rgba(15,35,45,.05),transparent 32% 72%,rgba(30,40,35,.04));
+}
+#battleView .battle-phase-strip,
+#battleView .battle-rank-badge{display:none}
+
+/* Four compact KPI cards float over the illustration, matching the target mockup. */
+#battleView .battle-scene-hud.battle-readout{
+  position:absolute;
+  z-index:22;
+  top:14px;
+  left:14px;
+  right:14px;
+  width:auto;
+  margin:0;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px 10px;
+  pointer-events:none;
+}
+#battleView .battle-scene-hud.battle-readout>div{
+  min-height:64px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:2px;
+  padding:9px 13px 9px 52px;
+  border:1px solid rgba(255,255,255,.26);
+  border-radius:16px;
+  background:linear-gradient(135deg,rgba(10,49,78,.91),rgba(15,58,84,.84));
+  color:#fff;
+  box-shadow:0 5px 16px rgba(15,43,59,.19);
+  backdrop-filter:blur(4px);
+}
+#battleView .battle-scene-hud.battle-readout>div::before{
+  position:absolute;
+  margin-left:-39px;
+  color:#e3b956;
+  font-size:1.35rem;
+}
+#battleView .battle-scene-hud.battle-readout>div:nth-child(1)::before{content:"♟"}
+#battleView .battle-scene-hud.battle-readout>div:nth-child(2)::before{content:"♜"}
+#battleView .battle-scene-hud.battle-readout>div:nth-child(3)::before{content:"⬟"}
+#battleView .battle-scene-hud.battle-readout>div:nth-child(4)::before{content:"⚔"}
+#battleView .battle-scene-hud.battle-readout small{
+  color:#d7e2e8;
+  font-size:.65rem;
+  font-weight:700;
+  letter-spacing:.01em;
+}
+#battleView .battle-scene-hud.battle-readout strong{
+  color:#fff;
+  font-size:.86rem;
+  line-height:1.2;
+  font-weight:850;
+}
+
+/* Target state badge belongs inside the scene – never another pasted-on fortress. */
+#battleView .battle-fortress-state-badge{
+  right:16px;
+  bottom:16px;
+  z-index:24;
+  min-width:170px;
+  padding:11px 15px 11px 52px;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:18px;
+  background:linear-gradient(135deg,rgba(17,42,57,.94),rgba(22,49,64,.88));
+  color:#fff;
+  box-shadow:0 7px 20px rgba(17,40,52,.19);
+  backdrop-filter:blur(4px);
+}
+#battleView .battle-fortress-state-badge::before{
+  content:"▥";
+  position:absolute;
+  left:16px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#d7dce0;
+  font-size:1.6rem;
+}
+#battleView .battle-fortress-state-badge small{
+  color:#d4dde1;
+  letter-spacing:.08em;
+}
+#battleView .battle-fortress-state-badge strong{color:#f2c75e}
+
+/* Attack choice area – large illustrated cards, not little technical buttons. */
+#battleView .battle-scene-tactics.battle-tactics{
+  order:2;
+  padding:18px;
+  border:1px solid #ded5c2;
+  border-radius:24px;
+  background:linear-gradient(180deg,#fffaf0,#f6edde);
+  box-shadow:0 10px 26px rgba(53,58,52,.08);
+}
+#battleView .battle-tactics-head{
+  margin-bottom:14px;
+}
+#battleView .battle-tactics-head small{
+  color:#6f716d;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:.86rem;
+  font-weight:700;
+}
+#battleView .battle-tactics-head strong{
+  display:block;
+  color:#172f3a;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:1.45rem;
+  line-height:1.12;
+}
+#battleView .battle-tactics-head>span{
+  color:#74807f;
+  font-size:.88rem;
+}
+#battleView .battle-attack-choices{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+#battleView .battle-attack-choice{
+  position:relative;
+  min-height:210px;
+  display:grid;
+  grid-template-rows:118px auto;
+  grid-template-columns:1fr auto;
+  padding:0;
+  overflow:hidden;
+  border:1px solid #d8d2c6;
+  border-radius:19px;
+  background:#fffdf8;
+  color:#243b42;
+  text-align:left;
+  box-shadow:0 6px 16px rgba(60,61,52,.06);
+}
+#battleView .battle-attack-choice.active{
+  border:2px solid #d39d26;
+  background:#fff9e5;
+  box-shadow:0 8px 19px rgba(197,145,31,.15);
+}
+#battleView .battle-attack-choice:disabled{
+  opacity:.58;
+  filter:saturate(.55);
+}
+#battleView .battle-attack-visual{
+  grid-column:1 / -1;
+  grid-row:1;
+  position:relative;
+  display:block;
+  width:100%;
+  height:118px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 70% 30%,rgba(255,232,168,.65),transparent 36%),
+    linear-gradient(135deg,#8eb2c1,#d4c28d);
+}
+#battleView .battle-attack-visual img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  filter:saturate(1.04) contrast(1.02) brightness(1.03);
+}
+#battleView .attack-charge .battle-attack-visual img,
+#battleView .attack-cavalry .battle-attack-visual img{object-position:20% 68%}
+#battleView .attack-ram .battle-attack-visual img{object-position:78% 58%}
+#battleView .attack-volley .battle-attack-visual img{object-position:45% 28%}
+#battleView .attack-special .battle-attack-visual img{object-position:60% 52%}
+#battleView .battle-attack-visual::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,transparent 52%,rgba(14,36,47,.17));
+}
+#battleView .battle-attack-visual>b{
+  position:absolute;
+  z-index:2;
+  left:10px;
+  top:10px;
+  display:grid;
+  place-items:center;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:rgba(12,49,72,.86);
+  color:#f3c967;
+  font-size:1.15rem;
+  box-shadow:0 4px 12px rgba(18,42,53,.18);
+}
+#battleView .battle-attack-copy{
+  grid-column:1;
+  grid-row:2;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  padding:12px 8px 13px 14px;
+}
+#battleView .battle-attack-copy strong{
+  color:#193542;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:1.12rem;
+  line-height:1.05;
+}
+#battleView .battle-attack-copy small{
+  color:#6f7b7b;
+  font-size:.78rem;
+  line-height:1.25;
+}
+#battleView .battle-attack-arrow{
+  grid-column:2;
+  grid-row:2;
+  align-self:center;
+  justify-self:end;
+  display:grid;
+  place-items:center;
+  width:38px;
+  height:38px;
+  margin-right:12px;
+  border-radius:50%;
+  background:#ede9df;
+  color:#50646a;
+  font-size:1.65rem;
+  font-style:normal;
+  line-height:1;
+}
+#battleView .battle-attack-choice.active .battle-attack-arrow{
+  background:#a87717;
+  color:#fff8dc;
+}
+
+#battleView .battle-action-dock{
+  order:3;
+  border:1px solid #d9d2c3;
+  border-radius:18px;
+  background:#fffaf0;
+  box-shadow:0 7px 18px rgba(51,59,55,.06);
+}
+#battleView .battle-primary{
+  min-height:50px;
+  border-color:#0e4a6d;
+  background:linear-gradient(180deg,#155779,#0b3f61);
+  color:#fff;
+}
+#battleView .battle-actions{max-width:900px;margin-left:auto;margin-right:auto}
+
+@media(max-width:720px){
+  #battleView.active .battle-shell{
+    padding:8px 8px calc(122px + env(safe-area-inset-bottom));
+  }
+  #battleView .battle-toolbar{padding:0 3px 2px}
+  #battleView .battle-ticket-pill{display:none}
+  #battleView .battle-story{
+    grid-template-columns:112px minmax(0,1fr);
+    gap:7px 12px;
+    padding:12px;
+    border-radius:20px;
+  }
+  #battleView .battle-story-chapter{
+    min-height:126px;
+    border-radius:15px;
+    font-size:.62rem;
+  }
+  #battleView .battle-story-chapter::before{
+    width:40px;height:40px;font-size:1.35rem;
+  }
+  #battleView .battle-story strong{font-size:1.25rem}
+  #battleView .battle-story p{font-size:.84rem;line-height:1.4}
+  #battleView .battle-story-speak{
+    min-height:52px;
+    border-radius:15px;
+    font-size:.95rem;
+  }
+
+  #battleView .battle-stage{
+    aspect-ratio:1.36 / 1;
+    border-radius:20px;
+  }
+  #battleView .battle-scene-hud.battle-readout{
+    top:10px;left:10px;right:10px;gap:6px;
+  }
+  #battleView .battle-scene-hud.battle-readout>div{
+    min-height:55px;
+    padding:7px 8px 7px 42px;
+    border-radius:13px;
+  }
+  #battleView .battle-scene-hud.battle-readout>div::before{
+    margin-left:-31px;
+    font-size:1.05rem;
+  }
+  #battleView .battle-scene-hud.battle-readout small{font-size:.55rem}
+  #battleView .battle-scene-hud.battle-readout strong{font-size:.69rem}
+  #battleView .battle-fortress-state-badge{
+    right:10px;
+    bottom:10px;
+    min-width:142px;
+    padding:8px 10px 8px 43px;
+    border-radius:14px;
+  }
+  #battleView .battle-fortress-state-badge::before{left:13px;font-size:1.25rem}
+  #battleView .battle-fortress-state-badge small{font-size:.52rem}
+  #battleView .battle-fortress-state-badge strong{font-size:.72rem}
+
+  #battleView .battle-scene-tactics.battle-tactics{
+    padding:14px 12px;
+    border-radius:20px;
+  }
+  #battleView .battle-tactics-head strong{font-size:1.18rem}
+  #battleView .battle-tactics-head>span{font-size:.78rem}
+  #battleView .battle-attack-choices{gap:9px}
+  #battleView .battle-attack-choice{
+    min-height:182px;
+    grid-template-rows:96px auto;
+    border-radius:16px;
+  }
+  #battleView .battle-attack-visual{height:96px}
+  #battleView .battle-attack-copy{padding:10px 5px 11px 10px}
+  #battleView .battle-attack-copy strong{font-size:.94rem}
+  #battleView .battle-attack-copy small{font-size:.66rem}
+  #battleView .battle-attack-arrow{
+    width:32px;height:32px;margin-right:8px;font-size:1.35rem;
+  }
+}
+@media(max-width:420px){
+  #battleView .battle-story{grid-template-columns:94px minmax(0,1fr)}
+  #battleView .battle-story-chapter{min-height:118px}
+  #battleView .battle-story strong{font-size:1.1rem}
+  #battleView .battle-story p{font-size:.76rem}
+  #battleView .battle-stage{aspect-ratio:1.28 / 1}
+  #battleView .battle-scene-hud.battle-readout>div{
+    min-height:51px;
+    padding-left:37px;
+  }
+  #battleView .battle-scene-hud.battle-readout>div::before{
+    margin-left:-27px;
+    font-size:.96rem;
+  }
+  #battleView .battle-attack-choice{
+    min-height:170px;
+    grid-template-rows:88px auto;
+  }
+  #battleView .battle-attack-visual{height:88px}
+}
