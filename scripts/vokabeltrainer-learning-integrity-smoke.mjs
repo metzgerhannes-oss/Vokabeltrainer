@@ -105,8 +105,9 @@ const passed=vm.runInContext(`
   for(let i=1;i<=12;i++)attachVocabularyToSet(compactSet.id,{term:'compact'+i,translation:'kompakt'+i,source:'compact-migration-smoke',verified:true});
   rebuildWordIndexes();
   const compactWords=setWords(compactSet.id),oldRefs=compactWords.map(w=>({wordId:w.id,setLinkId:w.setLinkId||''}));
-  const oldPlan={date:today(),subject:'english',signature:`daily1:test:single:${compactSet.testDate}:${compactSet.id}:10:${compactWords.map(w=>w.id).sort().join(',')}`,source:'single',testDate:compactSet.testDate,testFormat:'target',setIds:[compactSet.id],setTitle:compactSet.title,wordIds:compactWords.map(w=>w.id),wordRefs:oldRefs,introRefs:[],introCount:0,reviewCount:12,dailyTarget:12,sessionSize:10,completedKeys:[dailyPlanRefKey(oldRefs[0])],todaySecureKeys:[],securityEvidence:{},extraRefs:[],extraSources:{},extraLimit:3,createdAt:new Date().toISOString()};
-  learner().dailyPlans={[`${today()}:english`]:oldPlan};
+  const oldSignature='daily1:test:single:'+compactSet.testDate+':'+compactSet.id+':10:'+compactWords.map(w=>w.id).sort().join(',');
+  const oldPlan={date:today(),subject:'english',signature:oldSignature,source:'single',testDate:compactSet.testDate,testFormat:'target',setIds:[compactSet.id],setTitle:compactSet.title,wordIds:compactWords.map(w=>w.id),wordRefs:oldRefs,introRefs:[],introCount:0,reviewCount:12,dailyTarget:12,sessionSize:10,completedKeys:[dailyPlanRefKey(oldRefs[0])],todaySecureKeys:[],securityEvidence:{},extraRefs:[],extraSources:{},extraLimit:3,createdAt:new Date().toISOString()};
+  learner().dailyPlans={[today()+':english']:oldPlan};
   state.activity.push({id:'compact_done',learnerId:learner().id,date:new Date().toISOString(),type:'recall',wordId:oldRefs[0].wordId,correct:true,active:true,assisted:false,orthographyOk:true});
   compactWords[0].repetitions=1;compactWords[0].activePracticeDays=[today()];
   const compactPlan=buildDailyPlan('english'),compactStatus=dailyPlanStatus(compactPlan);
