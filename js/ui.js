@@ -723,7 +723,6 @@ function activatePendingTestPlan(set){
     owner.testSeries[set.subject]={enabled:true,weekday:Number(pending.weekday)||0,scopeMode:'selected',setId:set.id,from:1,to:selectedLinkIds.length,selectedLinkIds,scopeDate:pending.testDate||nextWeeklyDate(Number(pending.weekday)||0),testFormat:format,updatedAt:new Date().toISOString()};
     set.testDate='';
   }else{
-    for(const other of (state.sets||[]).filter(x=>x.learnerId===set.learnerId&&x.subject===set.subject&&x.id!==set.id&&x.testDate&&daysUntil(x.testDate)>=0))other.testDate='';
     set.testDate=pending.testDate||'';
   }
   set.testScopeMode='selected';set.testSelectedLinkIds=selectedLinkIds;set.testFrom=1;set.testTo=selectedLinkIds.length;set.testFormat=format;
@@ -942,7 +941,7 @@ function openTestDatePlanner(){
   const targetFuture=()=>{const l=targetLearner();return (state.sets||[]).filter(s=>s.learnerId===l.id&&s.subject===subject&&s.testDate&&daysUntil(s.testDate)>=0).sort((a,b)=>a.testDate.localeCompare(b.testDate))[0]||null};
   const selectedRows=()=>rows.filter(r=>picker.querySelector(`[data-plan-row="${CSS.escape(r.id)}"]`)?.checked);
   const plannedDate=()=>mode.value==='weekly'?nextWeeklyDate(Number(weekday.value)):date.value;
-  const matchingSet=()=>{const l=targetLearner();return (state.sets||[]).find(s=>s.learnerId===l.id&&s.subject===subject&&s.bookId===bookEl.value&&s.bookSection===sectionEl.value&&((mode.value==='single'&&s.testDate&&daysUntil(s.testDate)>=0)||(mode.value==='weekly'&&l.testSeries?.[subject]?.setId===s.id)))||null};
+  const matchingSet=()=>{const l=targetLearner();return (state.sets||[]).find(s=>s.learnerId===l.id&&s.subject===subject&&s.bookId===bookEl.value&&s.bookSection===sectionEl.value&&((mode.value==='single'&&s.testDate===date.value)||(mode.value==='weekly'&&l.testSeries?.[subject]?.setId===s.id)))||null};
   const selectedRowIdsFromSet=set=>{
     if(!set)return [];
     const l=targetLearner(),cfg=l.testSeries?.[subject],selected=new Set(mode.value==='weekly'&&cfg?.setId===set.id&&cfg.scopeMode==='selected'?(cfg.selectedLinkIds||[]):set.testScopeMode==='selected'?(set.testSelectedLinkIds||[]):[]);
@@ -979,21 +978,20 @@ function openTestDatePlanner(){
   $('#planSelectAll').onclick=()=>{picker.querySelectorAll('[data-plan-row]').forEach(x=>x.checked=true);updatePreview()};
   $('#planSelectNone').onclick=()=>{picker.querySelectorAll('[data-plan-row]').forEach(x=>x.checked=false);updatePreview()};
   $('#planSelectRange').onclick=()=>applyVocabularyPickerRange(picker,'[data-plan-row]',rangeFrom,rangeTo,updatePreview);
-  learnerEl.onchange=loadLearnerDefaults;mode.onchange=()=>{syncMode();renderRows()};date.onchange=updatePreview;weekday.onchange=updatePreview;bookEl.onchange=updateSections;sectionEl.onchange=renderRows;format.onchange=updatePreview;
+  learnerEl.onchange=loadLearnerDefaults;mode.onchange=()=>{syncMode();renderRows()};date.onchange=()=>{renderRows();updatePreview()};weekday.onchange=updatePreview;bookEl.onchange=updateSections;sectionEl.onchange=renderRows;format.onchange=updatePreview;
   $('#planOpenContent').onclick=()=>{const l=learnerEl.value,b=bookEl.value,sec=sectionEl.value;closeModal();openLearningContentPlanner({learnerId:l,bookId:b,section:sec})};
   $('#saveTestPlan').onclick=()=>{
     const selected=selectedRows();if(!selected.length){preview.className='notice warn';preview.textContent='Bitte mindestens eine Vokabel für den Test auswählen.';return}
     const l=targetLearner(),when=plannedDate();if(mode.value==='single'&&!date.value){preview.className='notice warn';preview.textContent='Bitte ein Testdatum wählen.';return}
-    const result=assignBookRowsToLearner(bookEl.value,sectionEl.value,l.id,selected.map(r=>r.id));if(!result.set)return;
+    const result=assignBookRowsToLearner(bookEl.value,sectionEl.value,l.id,selected.map(r=>r.id),mode.value==='single'?{testDate:date.value,forceNewSet:true}:{});if(!result.set)return;
     if(mode.value==='weekly'){
       l.testSeries={...defaultTestSeries(),...(l.testSeries||{})};l.testSeries[subject]={enabled:true,weekday:Number(weekday.value),scopeMode:'selected',setId:result.set.id,from:1,to:result.linkIds.length,selectedLinkIds:result.linkIds,scopeDate:when,testFormat:format.value,updatedAt:new Date().toISOString()};
     }else{
-      for(const other of (state.sets||[]).filter(x=>x.learnerId===l.id&&x.subject===subject&&x.id!==result.set.id&&x.testDate&&daysUntil(x.testDate)>=0))other.testDate='';
       result.set.testDate=date.value;result.set.testScopeMode='selected';result.set.testSelectedLinkIds=result.linkIds;result.set.testFrom=1;result.set.testTo=result.linkIds.length;result.set.testFormat=format.value;
     }
     l.dailyPlans={};closeModal();save();toast(`Testplan gespeichert · ${selected.length} Vokabeln für ${l.name}.`,'good');
   };
-  $('#clearTestPlan').onclick=()=>{const l=targetLearner();if(mode.value==='weekly'){l.testSeries={...defaultTestSeries(),...(l.testSeries||{})};l.testSeries[subject]=null}else for(const set of (state.sets||[]).filter(s=>s.learnerId===l.id&&s.subject===subject&&s.testDate&&daysUntil(s.testDate)>=0)){set.testDate='';set.testScopeMode='set';set.testSelectedLinkIds=[]}l.dailyPlans={};closeModal();save();toast('Testplan entfernt.','subtle')};
+  $('#clearTestPlan').onclick=()=>{const l=targetLearner();if(mode.value==='weekly'){l.testSeries={...defaultTestSeries(),...(l.testSeries||{})};l.testSeries[subject]=null}else for(const set of (state.sets||[]).filter(s=>s.learnerId===l.id&&s.subject===subject&&s.testDate===date.value)){set.testDate='';set.testScopeMode='set';set.testSelectedLinkIds=[]}l.dailyPlans={};closeModal();save();toast('Testplan für diesen Termin entfernt.','subtle')};
   weekday.value=String(Number(seriesCfg?.weekday??new Date().getDay()));format.value=activeFuture?.testFormat||seriesCfg?.testFormat||'target';syncMode();updateSections();
 }
 
