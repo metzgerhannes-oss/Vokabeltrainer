@@ -7,6 +7,8 @@ try{
   await openBattle();
   await page.setViewportSize({width:1180,height:720});
   await page.evaluate(()=>renderBattleView());
+  assert(await page.evaluate(()=>document.body.classList.contains('battle-immersive')),'battle opens directly in full-screen immersive mode');
+  assert(await page.locator('.bottom-nav').evaluate(el=>getComputedStyle(el).display)==='none','primary navigation is hidden for the entire battle view');
 
   await page.waitForFunction(()=>window.VTBattleArt?.ready===true);
   await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
@@ -51,13 +53,31 @@ try{
     artBrightness:getComputedStyle(document.querySelector('#battleStage .battle-art-background')).filter,
     readoutPosition:getComputedStyle(document.querySelector('#battleView .battle-readout')).position,
     readoutColumns:getComputedStyle(document.querySelector('#battleView .battle-readout')).gridTemplateColumns,
+    fortressBadgeDisplay:getComputedStyle(document.querySelector('#battleStage .battle-fortress-state-badge')).display,
+    rankBadgeDisplay:getComputedStyle(document.querySelector('#battleStage .battle-rank-badge')).display,
     phaseDisplay:getComputedStyle(document.querySelector('#battleStage .battle-phase-strip')).display
   }));
   assert(paintedScene.cssArmyOpacity===0&&paintedScene.cssFortressOpacity===0,'cartoon CSS army and fortress are hidden when painted artwork is ready');
   assert(paintedScene.artOpacity>=0.95,'approved painted scene is the primary battle visual instead of a faint texture');
   assert(!paintedScene.artBrightness.includes('brightness(0.76)'),'painted battle artwork is no longer heavily darkened');
-  assert(paintedScene.readoutPosition==='absolute'&&paintedScene.readoutColumns.split(' ').length===2,'battle KPIs float as a compact 2x2 HUD over the illustration');
+  assert(paintedScene.readoutPosition==='static'&&paintedScene.readoutColumns.split(' ').length===4,'battle KPIs sit outside the illustration instead of covering it');
+  assert(paintedScene.fortressBadgeDisplay==='none'&&paintedScene.rankBadgeDisplay==='none','duplicate fortress and rank plaques never cover the painted scene');
   assert(paintedScene.phaseDisplay==='none','technical phase strip does not clutter the approved target scene');
+  const cleanComposition=await page.evaluate(()=>{
+    const readout=document.querySelector('#battleView .battle-readout')?.getBoundingClientRect();
+    const stage=document.querySelector('#battleStage')?.getBoundingClientRect();
+    const tactics=document.querySelector('#battleView .battle-scene-tactics')?.getBoundingClientRect();
+    const dock=document.querySelector('#battleView .battle-action-dock')?.getBoundingClientRect();
+    const view=document.querySelector('#battleView')?.getBoundingClientRect();
+    return {
+      readoutAboveStage:!!readout&&!!stage&&readout.bottom<=stage.top+1,
+      tacticsBelowStage:!!tactics&&!!stage&&tactics.top>=stage.bottom-1,
+      dockBelowTactics:!!dock&&!!tactics&&dock.top>=tactics.bottom-1,
+      fillsViewport:!!view&&Math.abs(view.top)<2&&Math.abs(view.left)<2&&Math.abs(view.width-innerWidth)<4&&Math.abs(view.height-innerHeight)<4
+    };
+  });
+  assert(cleanComposition.readoutAboveStage&&cleanComposition.tacticsBelowStage&&cleanComposition.dockBelowTactics,'persistent battle controls are laid out around the artwork with no geometric overlap');
+  assert(cleanComposition.fillsViewport,'battle view occupies the full viewport');
   assert(await page.locator('#battleStage .battle-unit').count()>=6,'fallback army formation remains structurally available');
   assert(await page.locator('#battleStage .unit-archer').count()>=1,'progress unlocks archers');
   assert(await page.locator('#battleStage .unit-cavalry').count()>=1,'high progress unlocks cavalry');
@@ -146,21 +166,19 @@ try{
 
   const actionAccess=await page.evaluate(()=>{
     const button=document.querySelector('#battleAttackBtn'),nav=document.querySelector('.bottom-nav');
-    button?.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
     button?.focus({preventScroll:true});
-    const action=button?.getBoundingClientRect(),navRect=nav?.getBoundingClientRect();
-    if(!button||!action||!navRect)return {overlap:true,hit:false,focused:false};
-    const overlap=!(action.right<=navRect.left||action.left>=navRect.right||action.bottom<=navRect.top||action.top>=navRect.bottom);
+    const action=button?.getBoundingClientRect();
+    if(!button||!action)return {navHidden:false,hit:false,focused:false};
     const x=action.left+action.width/2,y=action.top+action.height/2;
     const hit=document.elementFromPoint(x,y);
     return {
-      overlap,
+      navHidden:!!nav&&getComputedStyle(nav).display==='none',
       hit:hit===button||button.contains(hit),
       focused:document.activeElement===button
     };
   });
-  assert(actionAccess.overlap===false,'navigation never geometrically overlaps the battle action');
-  assert(actionAccess.hit,'battle action remains the topmost hit target after scrolling');
+  assert(actionAccess.navHidden,'navigation remains hidden while battle actions are used');
+  assert(actionAccess.hit,'battle action remains the topmost hit target');
   assert(actionAccess.focused,'battle action remains keyboard-focusable');
   await page.keyboard.press('Enter');
   await waitForBattleResult();
