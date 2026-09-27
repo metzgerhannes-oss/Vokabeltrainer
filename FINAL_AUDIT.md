@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 27.09.2026 · App v0.21.20
+Stand: 27.09.2026 · App v0.21.21
 
 ## Ergebnis
+
+- v0.21.21 behebt den im realen Tageslern-Test sichtbaren Fortschrittsverlust nach einem App-Release: Die Tagesplan-Signatur verwendet jetzt ein eigenes Planschema statt der App-Version. Dadurch setzt ein normales Update `0 / N erledigt` nicht mehr auf null. Beim einmaligen Übergang aus der alten Versionssignatur werden nur heutige fachlich gültige, unabhängige aktive Abrufe wieder als erledigt erkannt; Hilfs-/Recognition-Schritte, assistierte Antworten und Fehler bleiben offen. Ein Regressionstest simuliert genau diesen Release-Wechsel.
 
 - v0.21.20 macht die Schlachtansicht verbindlich bildfokussiert: sie öffnet direkt als app-eigene Vollbildansicht, die Hauptnavigation bleibt ausgeblendet, persistente Kennzahlen/Taktik/Hauptaktion liegen außerhalb der Illustration und das doppelte Festungs-/Rang-Badge verschwindet aus der gemalten Szene. Browserregressionen prüfen Vollbild, versteckte Navigation und geometrische Überlagerungsfreiheit.
 
