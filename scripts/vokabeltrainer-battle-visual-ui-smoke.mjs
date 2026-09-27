@@ -11,6 +11,9 @@ try{
   await page.waitForFunction(()=>window.VTBattleArt?.ready===true);
   await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
   assert(await page.locator('#battleStage [data-battle-art-stack]').count()===1,'dedicated painted battle artwork is mounted in the current scene');
+  assert((await page.locator('#battleStage .battle-scene-banner-own').textContent())?.trim()==='Mein Profil','attack scene identifies the player side with the profile name instead of a generic army label');
+  assert((await page.locator('#battleStage .battle-scene-banner-target').textContent())?.trim()==='Test 1','attack scene identifies the target as Test plus its school-year sequence number');
+  assert(!(await page.locator('#battleStage').textContent())?.includes('DEINE ARMEE'),'attack scene no longer needs the generic DEINE ARMEE image label');
   assert(await page.locator('#battleStage [data-battle-scene-art]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'dedicated battlefield artwork loads successfully');
   assert(await page.locator('#battleStage .battle-sky').count()===1,'CSS sky remains available only as artwork fallback');
   assert(await page.locator('#battleStage .battle-hills').count()===1,'CSS landscape remains available only as artwork fallback');
