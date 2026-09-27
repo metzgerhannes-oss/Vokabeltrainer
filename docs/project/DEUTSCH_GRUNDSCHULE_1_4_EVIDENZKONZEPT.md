@@ -462,6 +462,8 @@ Die Unterstützungsoption „LRS Rechtschreiben“ ist **kein niedrigerer Rechts
 6. Sprachvergleich/Mehrsprachigkeit Klassen 1/2 und 3/4  
    https://bildungsplaene-bw.de/%2CLde/BP2016BW_ALLG_GS_D.V2_IK_1-2_02_01  
    https://bildungsplaene-bw.de/%2CLde/BP2016BW_ALLG_GS_D.V2_IK_3-4_02_01
+7. **Rechtschreibrahmen für die Klassen 1 bis 10**, verbindliche Grundlage des Rechtschreibunterrichts in Baden-Württemberg  
+   https://bildungsplaene-bw.de/%2CLde/rechtschreibrahmen
 
 ### LRS / Lesen
 7. Hall et al. (2023): **Forty Years of Reading Intervention Research for Elementary Students with or At Risk for Dyslexia: A Systematic Review and Meta-Analysis.** Reading Research Quarterly. DOI: 10.1002/rrq.477.
@@ -477,8 +479,7 @@ Die Unterstützungsoption „LRS Rechtschreiben“ ist **kein niedrigerer Rechts
 14. Chandler et al. (2025): **A Meta-Analytic Review of Spelling Interventions for Students With or At-Risk for Learning Disabilities.** Journal of Learning Disabilities. DOI: 10.1177/00222194251364836.
 15. Galuschka et al. (2020): **Effectiveness of spelling interventions for learners with dyslexia: A meta-analysis and systematic review.** Educational Psychologist 55(1), 1–20. DOI: 10.1080/00461520.2019.1659794.
 16. Witzel et al. (2024): **Digital game-based spelling intervention for children with spelling deficits: A randomized controlled trial.** Learning and Instruction 89, 101842. DOI: 10.1016/j.learninstruc.2023.101842.
-17. Holz et al. (2024): **A digital game-based training improves spelling in German primary school children – A randomized controlled field trial.** Learning and Instruction.  
-    https://doi.org/10.1016/j.learninstruc.2023.101794
+17. Holz et al. (2023): **A digital game-based training improves spelling in German primary school children – A randomized controlled field trial.** Learning and Instruction 87, 101771. DOI: 10.1016/j.learninstruc.2023.101771
 18. Klimovich & Richter (2025): **Spelling acquisition in children through interleaved practice: the role of instructional guidance.** Cognitive Research: Principles and Implications 10, 68. DOI: 10.1186/s41235-025-00680-z.
 
 ### Morphologie
