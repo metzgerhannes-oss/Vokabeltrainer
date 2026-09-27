@@ -6,12 +6,12 @@ Stand: 27.09.2026, Baseline direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.11**
-- Main-Commit des fachlich und dokumentarisch verifizierten Snapshots: `6995e9e72057eefbfc080db0cc32a36a2a21f947`
-- letzter fachlicher Lernrelease: **PR #144 – v0.21.11 – Richtungsspezifische Testbereitschaft**
-- PR-CI Lernrelease: **Vokabeltrainer CI #954 – success**
-- main-CI Lernrelease: **Vokabeltrainer CI #960 – success**
-- Produktionsdeploy Lernrelease: **GitHub Pages #509 – success**
+- App-Version: **v0.21.12**
+- Main-Commit des produktiven Lernrelease: `8c5b59408116ac07d0fca2cd8efed9b931e3f9fa`
+- letzter fachlicher Lernrelease: **PR #148 – v0.21.12 – Differenzierte LRS-Unterstützung**
+- PR-CI Lernrelease: **Vokabeltrainer CI #965 – success**
+- main-CI Lernrelease: **Vokabeltrainer CI #966 – success**
+- Produktionsdeploy Lernrelease: **GitHub Pages #512 – success**, inklusive Live-Verifikation
 - Bibliotheksharmonisierung: **PR #146 – B-010**
 - PR-CI Bibliothek: **Vokabeltrainer CI #961 – success**
 - main-CI Bibliothek: **Vokabeltrainer CI #962 – success**
@@ -33,6 +33,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Sense-/Bedeutungsmodell | PRODUCTION | `SENSE_MODEL.md` |
 | Lern-/Mastery-Grundsätze | PRODUCTION | `PRODUCT_DNA.md` |
 | Same-Day-Spacing-Härtung | PRODUCTION | `PRODUCT_DNA.md` P3, D-20260927-006, PR #143 |
+| Differenzierte LRS-/Lernunterstützung | PRODUCTION | `PRODUCT_DNA.md` P6/P8, D-20260927-008, PR #148 |
 | Richtungsspezifische Testbereitschaft | PRODUCTION | `PRODUCT_DNA.md` P2, D-20260927-007, PR #144 |
 | Lernbibliothek / Dokumentationskohärenz | PRODUCTION | `docs/project/LEARNING_COHERENCE_REVIEW.md`, PR #146 |
 | Tagesplanung mit testbezogener Last | PRODUCTION | `PRODUCT_DNA.md` P6 + Code/Tests |
@@ -52,6 +53,18 @@ Die praktische v1-Abnahme ist noch nicht als abgeschlossen dokumentiert. Die zah
 Aus [../../FINAL_AUDIT.md](../../FINAL_AUDIT.md) bleibt außerdem als administrative Infrastrukturgrenze dokumentiert, dass die GitHub-Regel „Branch muss vor Merge auf aktuellem main sein“ noch separat administrativ zu aktivieren ist.
 
 ## Aktueller produktiver Release
+
+### Differenzierte LRS-Unterstützung
+Status: **PRODUCTION**  
+Release: **v0.21.12 / PR #148**
+
+Lesen und Rechtschreiben sind getrennte Unterstützungsdimensionen; „Kurze Einheiten“ ist
+eine unabhängige Belastungseinstellung. Reading-Evidenz steuert Hilfen und Lernroute, aber
+nicht Mastery oder Testbereitschaft. Bei aktiver Rechtschreibunterstützung verlangt
+„heute sicher“ zusätzlich einen erfolgreichen unassistierten Rechtschreibabruf. Alte
+`lrsMode=true`-Profile migrieren konservativ zu Lesen + Rechtschreiben + kurze Einheiten.
+Die richtungsspezifische Testbereitschaft aus v0.21.11 bleibt erhalten. PR-CI #965,
+main-CI #966 und Pages #512 sind erfolgreich; der Live-Deploy wurde verifiziert.
 
 ### Richtungsspezifische Testbereitschaft
 Status: **PRODUCTION**  
@@ -81,6 +94,6 @@ Pflichtwörter werden nur nach einem fachlich richtigen, unassistierten aktiven 
 Status: **PRODUCTION**  
 Release: **v0.21.8 / PR #138**
 
-Die Regel ist in [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P6 und Decision D-20260927-004 verbindlich spezifiziert. „Heute sicher“ ist getrennt von `completedKeys` und nachhaltiger Mastery. Pflicht-Tagesziel und Battle-Freischaltung bleiben unverändert; freiwilliges Nachrücken ist auf drei Zusatzwörter bzw. zwei im LRS-Modus und insgesamt sieben neu eingeführte Wörter pro Tag begrenzt.
+Die Regel ist in [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P6 und Decision D-20260927-004 verbindlich spezifiziert. „Heute sicher“ ist getrennt von `completedKeys` und nachhaltiger Mastery. Pflicht-Tagesziel und Battle-Freischaltung bleiben unverändert; freiwilliges Nachrücken ist auf drei Zusatzwörter bzw. zwei bei aktivierter Einstellung „Kurze Einheiten“ und insgesamt sieben neu eingeführte Wörter pro Tag begrenzt.
 
 Automatisierte Nachweise liegen im Learning-Integrity-Smoke und im Family-Sync-Lernfortschritts-Browsertest. PR-CI #945, main-CI #946 und Pages-Deploy #504 sind erfolgreich; der Pages-Workflow hat v0.21.8 live verifiziert.
