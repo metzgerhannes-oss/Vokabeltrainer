@@ -6,10 +6,10 @@ Stand: 27.09.2026, Baseline direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.18**
-- Main-Commit des aktuellen produktiven Releases: `a989eafa248b246a79e552f9f5df37919d283ef4`
+- App-Version: **v0.21.21**
+- Produktcode-Baseline des aktuellen Releases: `ee63dda29bf2faa7e8d103249d60e589121f1982`
 - letzter fachlicher Lernrelease: **PR #148 – v0.21.12 – Differenzierte LRS-Unterstützung**
-- letzter UI-/Planungsfixrelease: **PR #160 – v0.21.18 – Frühesten Test bei mehreren Terminen erhalten**
+- letzter produktiver Fixrelease: **PR #164 – v0.21.21 – Tagesfortschritt bleibt über Updates erhalten**
 - PR-CI UI-/Planungsfixrelease: **Vokabeltrainer CI #994 – success**
 - main-CI UI-/Planungsfixrelease: **Vokabeltrainer CI #995 – success**
 - Produktionsdeploy UI-/Planungsfixrelease: **GitHub Pages #523 – success**, inklusive Live-Verifikation
@@ -141,3 +141,10 @@ Release: **v0.21.8 / PR #138**
 Die Regel ist in [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P6 und Decision D-20260927-004 verbindlich spezifiziert. „Heute sicher“ ist getrennt von `completedKeys` und nachhaltiger Mastery. Pflicht-Tagesziel und Battle-Freischaltung bleiben unverändert; freiwilliges Nachrücken ist auf drei Zusatzwörter bzw. zwei bei aktivierter Einstellung „Kurze Einheiten“ und insgesamt sieben neu eingeführte Wörter pro Tag begrenzt.
 
 Automatisierte Nachweise liegen im Learning-Integrity-Smoke und im Family-Sync-Lernfortschritts-Browsertest. PR-CI #945, main-CI #946 und Pages-Deploy #504 sind erfolgreich; der Pages-Workflow hat v0.21.8 live verifiziert.
+
+
+## Operative Steuerung
+
+Die verbindliche Arbeitsweise steht in [../../PROJECT_CONTROL.md](../../PROJECT_CONTROL.md) §§ 8–12 und Decision D-20260927-009. Vor nichttrivialen Änderungen werden Abnahmekriterien festgelegt; Statusaussagen unterscheiden strikt zwischen `IMPLEMENTED`, `VERIFIED`, `PRODUCTION` und `LIVE VERIFIED`.
+
+Versions- und Governance-Konsistenz wird durch `scripts/vokabeltrainer-project-control-smoke.mjs` im CI-Preflight geschützt.
