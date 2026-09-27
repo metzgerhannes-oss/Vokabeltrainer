@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.21.11';
+const VERSION = '0.21.12';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';
@@ -28,7 +28,7 @@ const currentSchoolYear = () => {
   return `${start}/${String(start+1).slice(-2)}`;
 };
 
-const defaultSkills = () => ({recognition:0,listening:0,retrieval:0,spelling:0,context:0});
+const defaultSkills = () => ({recognition:0,listening:0,retrieval:0,spelling:0,reading:0,context:0});
 const defaultDirectionalRecall = () => ({
   target:{successDays:[],lastCorrect:null,lastAt:null},
   source:{successDays:[],lastCorrect:null,lastAt:null}
@@ -84,11 +84,23 @@ function normalizeLearnerSubjects(l,hints=[]){
 function learnerActiveSubjects(l=state?.learners?.find(x=>x.id===state?.activeLearnerId)){return normalizeLearnerSubjects(l)}
 function isSubjectActive(subject,l=state?.learners?.find(x=>x.id===state?.activeLearnerId)){return learnerActiveSubjects(l).includes(subject)}
 function ensureActiveSubject(){const l=state?.learners?.find(x=>x.id===state?.activeLearnerId)||state?.learners?.[0];const active=learnerActiveSubjects(l);if(!active.includes(state?.activeSubject))state.activeSubject=active[0]||availableSubjectIds()[0]||'english';return state?.activeSubject;}
+function normalizeLiteracySupport(l){
+  if(!l||typeof l!=='object')return {reading:false,spelling:false,reducedLoad:false};
+  const legacy=!!l.lrsMode,raw=l.literacySupport&&typeof l.literacySupport==='object'&&!Array.isArray(l.literacySupport)?l.literacySupport:{};
+  const reading=raw.reading===undefined?legacy:!!raw.reading,spelling=raw.spelling===undefined?legacy:!!raw.spelling,reducedLoad=l.reducedLoad===undefined?legacy:!!l.reducedLoad;
+  l.literacySupport={reading,spelling};l.reducedLoad=reducedLoad;l.lrsMode=reading||spelling;
+  return {reading,spelling,reducedLoad};
+}
+function literacySupportFor(l=state?.learners?.find(x=>x.id===state?.activeLearnerId)||state?.learners?.[0]){return normalizeLiteracySupport(l)}
+function readingSupportEnabled(l){return literacySupportFor(l).reading}
+function spellingSupportEnabled(l){return literacySupportFor(l).spelling}
+function reducedLoadEnabled(l){return literacySupportFor(l).reducedLoad}
+function literacySupportActive(l){const x=literacySupportFor(l);return x.reading||x.spelling}
 
 const PROGRESS_FIELDS = new Set([
   'skills','level','repetitions','successes','independentSuccesses','assistedSuccesses','failures','intervalDays','dueDate',
   'lastReviewedAt','lastSuccessAt','lastActiveSuccessAt','activeSuccessDays','activePracticeDays','maxActiveGapDays','coldRecallDays',
-  'coldRecallSuccesses','recentActiveResults','practiceDays','modesSeen','directionalRecall','grammarSkills','grammarSuccessDays','errorProfile',
+  'coldRecallSuccesses','spellingSuccessDays','recentActiveResults','practiceDays','modesSeen','directionalRecall','grammarSkills','grammarSuccessDays','errorProfile',
   'masteredAt','lastMasteredAt','confusionWith','leitnerBox','leitnerUpdatedAt'
 ]);
 
@@ -102,7 +114,7 @@ function makeLearnerVocabulary(learnerId,vocabId,senseIdOrOpts='',opts={}){
     successes:Number(opts.successes)||0,independentSuccesses:Number(opts.independentSuccesses)||0,assistedSuccesses:Number(opts.assistedSuccesses)||0,failures:Number(opts.failures)||0,
     intervalDays:Number(opts.intervalDays)||0,dueDate:opts.dueDate||today(),lastReviewedAt:opts.lastReviewedAt||null,lastSuccessAt:opts.lastSuccessAt||null,lastActiveSuccessAt:opts.lastActiveSuccessAt||null,
     activeSuccessDays:Array.isArray(opts.activeSuccessDays)?opts.activeSuccessDays:[],activePracticeDays:Array.isArray(opts.activePracticeDays)?opts.activePracticeDays:[],maxActiveGapDays:Number(opts.maxActiveGapDays)||0,
-    coldRecallDays:Array.isArray(opts.coldRecallDays)?opts.coldRecallDays:[],coldRecallSuccesses:Number(opts.coldRecallSuccesses)||0,recentActiveResults:Array.isArray(opts.recentActiveResults)?opts.recentActiveResults.slice(-8):[],
+    coldRecallDays:Array.isArray(opts.coldRecallDays)?opts.coldRecallDays:[],coldRecallSuccesses:Number(opts.coldRecallSuccesses)||0,spellingSuccessDays:Array.isArray(opts.spellingSuccessDays)?opts.spellingSuccessDays:[],recentActiveResults:Array.isArray(opts.recentActiveResults)?opts.recentActiveResults.slice(-8):[],
     practiceDays:Array.isArray(opts.practiceDays)?opts.practiceDays:[],modesSeen:Array.isArray(opts.modesSeen)?opts.modesSeen:[],directionalRecall:normalizeDirectionalRecall(opts.directionalRecall),
     grammarSkills:{genitive:0,gender:0,principalParts:0,form:0,...(opts.grammarSkills||{})},grammarSuccessDays:Array.isArray(opts.grammarSuccessDays)?opts.grammarSuccessDays:[],
     errorProfile:{meaning:0,retrieval:0,spelling:0,listening:0,context:0,grammar:0,...(opts.errorProfile||{})},
@@ -265,7 +277,7 @@ function defaultState(){
   const s={
     version: VERSION,senseModelVersion:1,spellingLeakRepairVersion:1,pairAuditVersion:1,firstContactVersion:1,
     activeLearnerId: 'learner_demo',activeSubject: 'english',
-    learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',avatarStyle:'male',activeSubjects:['english'],xp:0,lrsMode:false,fontSize:17,letterSpacing:0,flashSpeed:1600,autoSpeakCorrection:true,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),battleDays:{},testFortresses:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
+    learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',avatarStyle:'male',activeSubjects:['english'],xp:0,literacySupport:{reading:false,spelling:false},reducedLoad:false,lrsMode:false,fontSize:17,letterSpacing:0,flashSpeed:1600,autoSpeakCorrection:true,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),battleDays:{},testFortresses:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
     books:[],learnerBooks:[],bookVocabulary:[],sets:[],vocabulary:[],setVocabulary:[],learnerVocabulary:[],grades:[],practiceTests:[],activity:[]
   };
   attachRuntimeWordApi(s);return s;
