@@ -1,6 +1,6 @@
 # Focused Learning UI
 
-Stand: 26.09.2026 · App v0.19.15
+Fachlich zuletzt geprüft: 27.09.2026 · Gültig für aktuellen Stand: ja
 
 ## Ziel
 

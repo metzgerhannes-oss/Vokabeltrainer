@@ -1,6 +1,6 @@
 # Vokabeltrainer – Visual DNA & Art Direction
 
-Stand: 26.09.2026
+Fachlich zuletzt geprüft: 27.09.2026 · Gültig für aktuellen Stand: ja
 
 Dieses Dokument ist die verbindliche visuelle Leitlinie für alle neuen Screens, Illustrationen,
 Animationen und Fachwelten. Es ergänzt `PRODUCT_DNA.md`. Bei Konflikten gilt weiterhin:

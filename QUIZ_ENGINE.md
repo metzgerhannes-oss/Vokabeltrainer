@@ -1,6 +1,6 @@
 # Quiz Engine – Vokabelabfrage als Kernprodukt
 
-Stand: 20.09.2026
+Fachlich zuletzt geprüft: 27.09.2026 · Gültig für aktuellen Stand: ja
 
 ## Ziel
 

@@ -1,6 +1,6 @@
 # Vokabeltrainer – globale Bibliothek und Laufzeitindex
 
-Stand: 20.09.2026 · App v0.9.19
+Fachlich zuletzt geprüft: 27.09.2026 · Gültig für aktuellen Stand: ja
 
 ## Ziel
 

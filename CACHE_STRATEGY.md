@@ -1,6 +1,6 @@
 # Vokabeltrainer – Cache-Strategie
 
-Stand: 26.09.2026 · App v0.19.15
+Fachlich zuletzt geprüft: 27.09.2026 · Gültig für aktuellen Stand: ja
 
 Punkt 3 des Pre-v1-Fahrplans trennt kurzlebige App-Dateien von großen, langlebigen Lernressourcen.
 

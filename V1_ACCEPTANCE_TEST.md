@@ -133,7 +133,7 @@ Voraussetzung: Tagesziel vollständig abgeschlossen.
 - [ ] Treffer und Festungsschaden sind sichtbar
 - [ ] bei Eroberung wird der Sieg eindeutig dargestellt
 - [ ] Ergebnisansicht zeigt nur reale Werte
-- [ ] Kind findet danach selbständig zurück zu „Heute“ oder „Üben“
+- [ ] Kind findet danach selbständig zurück zu „Heute“ oder „Lernen“
 - [ ] am selben Tag ist keine zweite Kampfbelohnung durch freiwilliges Üben möglich
 
 **Beobachtungen:**
@@ -143,16 +143,17 @@ Voraussetzung: Tagesziel vollständig abgeschlossen.
 - Nachfrage:
 - Sonstiges:
 
-## A6 – Üben und Fortschritt
+## A6 – Lernen und Erfolge
 
-- [ ] „Üben“ zeigt die vorgesehenen vier Hauptwege klar
+- [ ] „Lernen“ zeigt die vorgesehenen vier Hauptwege klar
 - [ ] Karteikarten sind jederzeit für geprüfte Wörter erreichbar
 - [ ] „Alle Vokabeln“ ist auffindbar
 - [ ] „Unsichere Wörter“ ist verständlich
 - [ ] Spezialtraining ist auffindbar, aber nicht dominant
-- [ ] „Fortschritt“ zeigt den Karteikasten mit fünf Stufen
+- [ ] der Karteikasten ist im Bereich „Lernen“ erreichbar und zeigt fünf Stufen
 - [ ] Kind versteht grob, dass Wörter nach hinten wandern, wenn sie sicherer werden
-- [ ] Fortschrittsansicht verändert keine Lernwerte
+- [ ] „Erfolge“ zeigt fachlichen Fortschritt ohne Kampagnen-/Karteikastenoberfläche
+- [ ] das Öffnen von „Erfolge“ verändert keine Lernwerte
 
 ---
 
@@ -289,7 +290,7 @@ Mindestens prüfen:
 - [ ] App erneut öffnen
 - [ ] „Heute“ funktioniert
 - [ ] Lernen funktioniert
-- [ ] Fortschritt funktioniert
+- [ ] Erfolge funktioniert
 - [ ] Armee / Schlacht-Grundansicht funktioniert
 - [ ] lokale Audio-/Wörterbuch-/OCR-Ressourcen funktionieren soweit vorgesehen
 - [ ] Elternanleitung und Pädagogik sind offline lesbar
