@@ -21,6 +21,7 @@ Die detaillierte praktische v1-Abnahme bleibt in [../../V1_ACCEPTANCE_TEST.md](.
 | Accessibility | D-0007 + Grunddesign | Fokus, Dialoge, Touchflächen, Landscape, Screenreader-Semantik | nach Schweregrad; kritischer Pfad ja |
 | Battle/Game | D-0003, D-0005 | keine Rückwirkung auf Mastery; Tagesaktion nicht duplizierbar; Fokusmodus rückkehrbar | ja bei fachlicher Rückwirkung |
 | Praktische v1-Abnahme | gesamter Kernpfad | reales Gerät/Browser, Kind-/Elternwege ohne Entwicklerhilfe | vor v1 verpflichtend |
+| Dokumentationskohärenz | PROJECT_CONTROL / B-010 | aktuelle Fachquellen verwenden die aktuelle Navigation; kanonische Dokumente tragen einen fachlichen Prüfstatus; historische Release-Texte bleiben als Historie erkennbar | nein |
 
 ## Änderungsregel
 
