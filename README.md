@@ -10,11 +10,21 @@ Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änd
 
 ## Aktueller Stand
 
-App-Version: **v0.21.17**
+App-Version: **v0.21.18**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.21.18 – Mehrere kommende Tests bleiben chronologisch aktiv
+
+- ein später eingetragener Test ersetzt **nicht mehr** einen früheren noch bevorstehenden Test
+- mehrere einmalige Tests desselben Fachs können parallel geplant bleiben; Lernen, Heute-Ansicht und Kampagnenziel richten sich immer nach dem **frühesten anstehenden Termin**
+- auch mehrere Tests aus demselben Lehrwerksabschnitt erhalten getrennte datierte Testpläne und eigene Vokabelauswahlen
+- manuell und per OCR vorbereitete spätere Tests werden nach der Paarprüfung eingereiht, ohne den früheren Test zu löschen
+- „Plan löschen“ entfernt bei einmaligen Tests nur noch den aktuell gewählten Termin statt alle zukünftigen Tests
+- eine einmalige v0.21.17-Reparatur stellt einen früheren Test wieder her, wenn die alte Ersetzungslogik sein Datum gelöscht hat, aber die bereits erzeugte zukünftige Testfestung den Termin eindeutig belegt
+- Regressionstests sichern Bibliothek, manuelle Erfassung, OCR, Terminreihenfolge und Datenreparatur
 
 ## v0.21.17 – Heraldik-Banner wie freigegebene Referenz
 
