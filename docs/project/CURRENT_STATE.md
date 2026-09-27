@@ -6,13 +6,13 @@ Stand: 27.09.2026, Baseline direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.13**
-- Main-Commit des aktuellen produktiven Releases: `5287a1cfc9407542d680114eaa1917db68862312`
+- App-Version: **v0.21.15**
+- Main-Commit des aktuellen produktiven Releases: `279ef353e85b3b19ec766b725aaff21665d47f35`
 - letzter fachlicher Lernrelease: **PR #148 – v0.21.12 – Differenzierte LRS-Unterstützung**
-- letzter UI-Fixrelease: **PR #150 – v0.21.13 – Mobiles Avatar-Statuslayout**
-- PR-CI UI-Fixrelease: **Vokabeltrainer CI #969 – success**
-- main-CI UI-Fixrelease: **Vokabeltrainer CI #970 – success**
-- Produktionsdeploy UI-Fixrelease: **GitHub Pages #514 – success**, inklusive Live-Verifikation
+- letzter UI-Fixrelease: **PR #153 – v0.21.15 – Armee-Banner und klare Bildtrennung**
+- PR-CI UI-Fixrelease: **Vokabeltrainer CI #975 – success**
+- main-CI UI-Fixrelease: **Vokabeltrainer CI #976 – success**
+- Produktionsdeploy UI-Fixrelease: **GitHub Pages #517 – success**, inklusive Live-Verifikation
 - PR-CI Lernrelease: **Vokabeltrainer CI #965 – success**
 - main-CI Lernrelease: **Vokabeltrainer CI #966 – success**
 - Produktionsdeploy Lernrelease: **GitHub Pages #512 – success**, inklusive Live-Verifikation
@@ -57,6 +57,18 @@ Die praktische v1-Abnahme ist noch nicht als abgeschlossen dokumentiert. Die zah
 Aus [../../FINAL_AUDIT.md](../../FINAL_AUDIT.md) bleibt außerdem als administrative Infrastrukturgrenze dokumentiert, dass die GitHub-Regel „Branch muss vor Merge auf aktuellem main sein“ noch separat administrativ zu aktivieren ist.
 
 ## Aktueller produktiver Release
+
+### Armee-Banner und klare Bildtrennung
+Status: **PRODUCTION**  
+Release: **v0.21.15 / PR #153**
+
+Der im praktischen iPhone-Test sichtbare Überzug der hellen Missionskarte auf das
+Kampagnenbild ist entfernt. Zwischen Bild und Karte besteht mobil ein echter geometrischer
+Abstand. Profilname und „Test N“ erscheinen in der Armeeübersicht als parchmentartige
+Kampagnenbanner statt als weiße Pillen. Ein WebKit-iPhone-Regressionscheck prüft den
+Mindestabstand sowie die Bannerform. Die Testnummerierung bleibt datengetrieben und wird
+nicht auf „Test 1“ fest verdrahtet. PR-CI #975, main-CI #976 und Pages #517 sind
+erfolgreich; der Live-Deploy wurde im Pages-Workflow verifiziert.
 
 ### Mobiles Avatar-Statuslayout
 Status: **PRODUCTION**  
