@@ -466,36 +466,36 @@ Die Unterstützungsoption „LRS Rechtschreiben“ ist **kein niedrigerer Rechts
    https://bildungsplaene-bw.de/%2CLde/rechtschreibrahmen
 
 ### LRS / Lesen
-7. Hall et al. (2023): **Forty Years of Reading Intervention Research for Elementary Students with or At Risk for Dyslexia: A Systematic Review and Meta-Analysis.** Reading Research Quarterly. DOI: 10.1002/rrq.477.
-8. Rehfeld et al. (2022): **A Meta-Analysis of Phonemic Awareness Instruction Provided to Children Suspected of Having a Reading Disability.** DOI: 10.1044/2022_LSHSS-21-00160.
-9. Alqahtani (2026): **A meta-analysis of randomized controlled trials on technology-based interventions for elementary students with reading difficulties.** Research in Developmental Disabilities 174, 105318. DOI: 10.1016/j.ridd.2026.105318.
-10. Pasqualotto et al. (2025): **Digital Tools for Reading Success: Meta-analyses of Digital Interventions.** Journal of Cognitive Enhancement. DOI: 10.1007/s41465-025-00336-2.
-11. Azzarello et al. (2026): **Does font improve reading in dyslexic children? Meta-analysis of dyslexia-friendly fonts.** Annals of Dyslexia. DOI: 10.1007/s11881-026-00389-8.
-12. AWMF: Neuanmeldung **Diagnostik und Behandlung bei der Lese- und/oder Rechtschreibstörung**, Registernummer 028-044, veröffentlicht 01.07.2025. Die frühere S3-Leitlinie ist abgelaufen; die Neufassung war am Prüftag noch als Anmeldung geführt.  
+8. Hall et al. (2023): **Forty Years of Reading Intervention Research for Elementary Students with or At Risk for Dyslexia: A Systematic Review and Meta-Analysis.** Reading Research Quarterly. DOI: 10.1002/rrq.477.
+9. Rehfeld et al. (2022): **A Meta-Analysis of Phonemic Awareness Instruction Provided to Children Suspected of Having a Reading Disability.** DOI: 10.1044/2022_LSHSS-21-00160.
+10. Alqahtani (2026): **A meta-analysis of randomized controlled trials on technology-based interventions for elementary students with reading difficulties.** Research in Developmental Disabilities 174, 105318. DOI: 10.1016/j.ridd.2026.105318.
+11. Pasqualotto et al. (2025): **Digital Tools for Reading Success: Meta-analyses of Digital Interventions.** Journal of Cognitive Enhancement. DOI: 10.1007/s41465-025-00336-2.
+12. Azzarello et al. (2026): **Does font improve reading in dyslexic children? Meta-analysis of dyslexia-friendly fonts.** Annals of Dyslexia. DOI: 10.1007/s11881-026-00389-8.
+13. AWMF: Neuanmeldung **Diagnostik und Behandlung bei der Lese- und/oder Rechtschreibstörung**, Registernummer 028-044, veröffentlicht 01.07.2025. Die frühere S3-Leitlinie ist abgelaufen; die Neufassung war am Prüftag noch als Anmeldung geführt.  
     https://www.awmf.org/aktuelles/awmf-aktuell/diagnostik-und-behandlung-bei-der-lese-und/oder-rechtschreibstoerung
 
 ### Rechtschreibung
-13. Petersen-Brown & Kromminga (2024): **Systematic review and meta-analysis of the implementation and effectiveness of spelling instruction and intervention.** Psychology in the Schools 61, 3315–3338. DOI: 10.1002/pits.23223.
-14. Chandler et al. (2025): **A Meta-Analytic Review of Spelling Interventions for Students With or At-Risk for Learning Disabilities.** Journal of Learning Disabilities. DOI: 10.1177/00222194251364836.
-15. Galuschka et al. (2020): **Effectiveness of spelling interventions for learners with dyslexia: A meta-analysis and systematic review.** Educational Psychologist 55(1), 1–20. DOI: 10.1080/00461520.2019.1659794.
-16. Witzel et al. (2024): **Digital game-based spelling intervention for children with spelling deficits: A randomized controlled trial.** Learning and Instruction 89, 101842. DOI: 10.1016/j.learninstruc.2023.101842.
-17. Holz et al. (2023): **A digital game-based training improves spelling in German primary school children – A randomized controlled field trial.** Learning and Instruction 87, 101771. DOI: 10.1016/j.learninstruc.2023.101771
-18. Klimovich & Richter (2025): **Spelling acquisition in children through interleaved practice: the role of instructional guidance.** Cognitive Research: Principles and Implications 10, 68. DOI: 10.1186/s41235-025-00680-z.
+14. Petersen-Brown & Kromminga (2024): **Systematic review and meta-analysis of the implementation and effectiveness of spelling instruction and intervention.** Psychology in the Schools 61, 3315–3338. DOI: 10.1002/pits.23223.
+15. Chandler et al. (2025): **A Meta-Analytic Review of Spelling Interventions for Students With or At-Risk for Learning Disabilities.** Journal of Learning Disabilities. DOI: 10.1177/00222194251364836.
+16. Galuschka et al. (2020): **Effectiveness of spelling interventions for learners with dyslexia: A meta-analysis and systematic review.** Educational Psychologist 55(1), 1–20. DOI: 10.1080/00461520.2019.1659794.
+17. Witzel et al. (2024): **Digital game-based spelling intervention for children with spelling deficits: A randomized controlled trial.** Learning and Instruction 89, 101842. DOI: 10.1016/j.learninstruc.2023.101842.
+18. Holz et al. (2023): **A digital game-based training improves spelling in German primary school children – A randomized controlled field trial.** Learning and Instruction 87, 101771. DOI: 10.1016/j.learninstruc.2023.101771
+19. Klimovich & Richter (2025): **Spelling acquisition in children through interleaved practice: the role of instructional guidance.** Cognitive Research: Principles and Implications 10, 68. DOI: 10.1186/s41235-025-00680-z.
 
 ### Morphologie
-19. Colenbrander et al. (2024): **The Effects of Morphological Instruction on Literacy Outcomes for Children in English-Speaking Countries: A Systematic Review and Meta-Analysis.** Educational Psychology Review 36, 119. DOI: 10.1007/s10648-024-09953-3.
-20. Kaldes et al. (2024): **Morphological assessment features and their relations to reading: A meta-analytic structural equation modeling study.** Educational Research Review 43, 100602. DOI: 10.1016/j.edurev.2024.100602.
-21. Liu, Groen & Cain (2024): **The association between morphological awareness and reading comprehension in children: A systematic review and meta-analysis.** Educational Research Review 42, 100571. DOI: 10.1016/j.edurev.2023.100571.
+20. Colenbrander et al. (2024): **The Effects of Morphological Instruction on Literacy Outcomes for Children in English-Speaking Countries: A Systematic Review and Meta-Analysis.** Educational Psychology Review 36, 119. DOI: 10.1007/s10648-024-09953-3.
+21. Kaldes et al. (2024): **Morphological assessment features and their relations to reading: A meta-analytic structural equation modeling study.** Educational Research Review 43, 100602. DOI: 10.1016/j.edurev.2024.100602.
+22. Liu, Groen & Cain (2024): **The association between morphological awareness and reading comprehension in children: A systematic review and meta-analysis.** Educational Research Review 42, 100571. DOI: 10.1016/j.edurev.2023.100571.
 
 ### Handschrift / Graphomotorik
-22. Ibaibarriaga, Acha & Perea (2025): **The impact of handwriting and typing practice in children’s letter and word learning.** Journal of Experimental Child Psychology 253, 106195. DOI: 10.1016/j.jecp.2025.106195.
-23. Suggate et al. (2025): **Keep the hands in mind: A meta-analysis of correlations between fine motor skills and reading, writing, mathematics, and cognitive development in children and adolescents.** Educational Research Review, 100748. DOI: 10.1016/j.edurev.2025.100748.
-24. Suggate et al. (2023): **The effect of fine motor skills, handwriting, and typing on reading development.** Journal of Experimental Child Psychology 232, 105674. DOI: 10.1016/j.jecp.2023.105674.
-25. Frühere Handschriftentwicklung bei deutschsprachigen Erstklässlern (2024/2025): **Early handwriting development: a longitudinal perspective on handwriting time, legibility, and spelling.** Frontiers in Psychology. DOI: 10.3389/fpsyg.2024.1466061.
+23. Ibaibarriaga, Acha & Perea (2025): **The impact of handwriting and typing practice in children’s letter and word learning.** Journal of Experimental Child Psychology 253, 106195. DOI: 10.1016/j.jecp.2025.106195.
+24. Suggate et al. (2025): **Keep the hands in mind: A meta-analysis of correlations between fine motor skills and reading, writing, mathematics, and cognitive development in children and adolescents.** Educational Research Review, 100748. DOI: 10.1016/j.edurev.2025.100748.
+25. Suggate et al. (2023): **The effect of fine motor skills, handwriting, and typing on reading development.** Journal of Experimental Child Psychology 232, 105674. DOI: 10.1016/j.jecp.2023.105674.
+26. Frühere Handschriftentwicklung bei deutschsprachigen Erstklässlern (2024/2025): **Early handwriting development: a longitudinal perspective on handwriting time, legibility, and spelling.** Frontiers in Psychology. DOI: 10.3389/fpsyg.2024.1466061.
 
 ### Mehrsprachigkeit / DaZ
-26. Kittle, Amendum & Budde (2024): **What Does Research Say About the Science of Reading for K-5 Multilingual Learners? A Systematic Review of Systematic Reviews.** Educational Psychology Review 36, 108. DOI: 10.1007/s10648-024-09942-6.
-27. Veerman et al. (2025/2026): **A systematic review of empirical studies into multilingual pedagogies and their outcomes in primary education.** Journal of Multilingual and Multicultural Development. DOI: 10.1080/01434632.2025.2472862.
+27. Kittle, Amendum & Budde (2024): **What Does Research Say About the Science of Reading for K-5 Multilingual Learners? A Systematic Review of Systematic Reviews.** Educational Psychology Review 36, 108. DOI: 10.1007/s10648-024-09942-6.
+28. Veerman et al. (2025/2026): **A systematic review of empirical studies into multilingual pedagogies and their outcomes in primary education.** Journal of Multilingual and Multicultural Development. DOI: 10.1080/01434632.2025.2472862.
 
 ## 20. Review-Trigger
 
