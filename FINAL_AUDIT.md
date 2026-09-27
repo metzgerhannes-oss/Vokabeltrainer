@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 27.09.2026 · App v0.21.11
+Stand: 27.09.2026 · App v0.21.12
 
 ## Ergebnis
+
+- v0.21.12 trennt LRS-/Lernunterstützung in Lesen und Rechtschreiben und entkoppelt davon die Belastungseinstellung „Kurze Einheiten“. Leseunterstützung steuert Hilfen/Tempo und eine nicht-masterywirksame Reading-Metrik; Rechtschreibunterstützung priorisiert produktiven Schreibabruf und verlangt für „heute sicher“ einen echten unassistierten Rechtschreibnachweis. Altprofile migrieren konservativ, Family Sync transportiert die neuen Profileinstellungen, und die richtungsspezifische Testbereitschaft aus v0.21.11 bleibt unverändert erhalten.
 
 - v0.21.11 macht Testbereitschaft abfragerichtungsspezifisch: `target`, `source` und `mixed` benötigen passende unabhängige Abrufnachweise; Diktat bleibt an die produktive Abruf-/Rechtschreibbasis gebunden. Ein späterer Fehler öffnet nur die betroffene Richtung wieder. Recognition und Listening bleiben Lernhilfen, fließen aber nicht in den numerischen Readiness-Score ein. Bestehende Lernstände werden konservativ aus vorhandener Aktivität migriert.
 - v0.21.10 härtet Spacing gegen massierte Same-Day-Erfolge: mehrere richtige unabhängige Abrufe am selben Kalendertag bleiben diagnostisch erhalten, können das Wiederholungsintervall aber nicht mehrfach verlängern. Die Intervallstufe folgt unterschiedlichen aktiven Erfolgstagen; Cold-Recall wirkt erst bei bereits verteilter Evidenz. Mastery und fachliche Bewertung bleiben konservativ und unverändert.

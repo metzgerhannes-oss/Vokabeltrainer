@@ -12,7 +12,8 @@ Die detaillierte praktische v1-Abnahme bleibt in [../../V1_ACCEPTANCE_TEST.md](.
 | Quiz-Bewertung | D-0001 | richtige/falsche/normalisierte Antwort korrekt bewertet und erklärbar | ja |
 | Mastery/Spacing | D-0003, D-20260927-006 | Hinweise/Audio/Erkennen erzeugen keine Mastery; mehrere Treffer am selben Tag verlängern das Intervall nicht mehrfach; höhere Intervalle brauchen unterschiedliche Erfolgstage | ja |
 | Testbereitschaft | D-20260927-007 | `target` und `source` besitzen getrennte unabhängige Abrufnachweise; `mixed` verlangt beide; Diktat nutzt die produktive Basis; Recognition/Listening erhöhen den Readiness-Score nicht | ja |
-| Tagesplan | D-0004, D-20260927-004, D-20260927-005 | gleiche Formel in Vorschau und Tagesplan; Pflichtwort erst nach richtigem unassistiertem aktivem Abruf erledigt; „heute sicher“ getrennt von Kontakt/Mastery; Nachrückpriorität, Nah-Test-Schutz, 7-Neuwort-Grenze und 3/2-Zusatzlimit korrekt | ja |
+| Tagesplan | D-0004, D-20260927-004, D-20260927-005, D-20260927-008 | gleiche Formel in Vorschau und Tagesplan; Pflichtwort erst nach richtigem unassistiertem aktivem Abruf erledigt; „heute sicher“ getrennt von Kontakt/Mastery; Nachrückpriorität, Nah-Test-Schutz, 7-Neuwort-Grenze und 3/2-Zusatzlimit über die unabhängige Einstellung „Kurze Einheiten“ korrekt | ja |
+| LRS-/Lernunterstützung | D-20260927-008 | Lesen/Schreiben getrennt; Altprofil-Migration; Reading ohne Mastery-/Readiness-Effekt; echter Rechtschreibabruf für „heute sicher“ bei Schreibunterstützung; „Kurze Einheiten“ unabhängig; Eltern→Kind-Sync | ja bei falscher Bewertung, falscher Lernroute oder Datenverlust |
 | Input-Integrity | D-0001 | Systemvorschläge/Autokorrektur umgehen die eigentliche Leistung nicht | ja |
 | Lernfokus | D-0005 | keine störende Spielinszenierung im aktiven Abruf | ja, wenn kritischer Lernweg beeinträchtigt |
 | Kindnavigation | D-0007 | nächster Schritt ohne Erklärung auffindbar; kein Sackgassenpfad | ja |

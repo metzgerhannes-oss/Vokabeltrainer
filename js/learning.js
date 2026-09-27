@@ -47,25 +47,33 @@ function adaptiveProductiveMode(w,testCtx=null){
   return 'recall';
 }
 function chooseAdaptiveMode(w){
-  const s={...defaultSkills(),...(w.skills||{})},lrs=!!learner().lrsMode,modes=new Set(w.modesSeen||[]),acc=recentActiveAccuracy(w),chunksOk=chunkEligibleWord(w);
+  const s={...defaultSkills(),...(w.skills||{})},support=literacySupportFor(),readingSupport=support.reading,spellingSupport=support.spelling,modes=new Set(w.modesSeen||[]),acc=recentActiveAccuracy(w),chunksOk=chunkEligibleWord(w);
   const testCtx=session?.isDaily?upcomingTestContext():null,scaffoldedNow=!!session?.scaffoldedWords?.[w.id];
   const independent=Number(w.independentSuccesses)||0,spellingErrors=Number(w.errorProfile?.spelling)||0,contextErrors=Number(w.errorProfile?.context)||0;
   const newWord=independent===0&&!(w.recentActiveResults||[]).length,lastGap=adaptiveDaysSince(w.lastActiveSuccessAt),dueGap=w.dueDate?Math.max(0,dayNumber(today())-dayNumber(w.dueDate)):0;
   const productive=adaptiveProductiveMode(w,testCtx),basicKnown=s.retrieval>=1||independent>=1;
+  const plan=session?.isDaily?buildDailyPlan():null,refKey=plan?dailyPlanRefKey({wordId:w.id,setLinkId:w.setLinkId||''}):'';
+  const needsDailySpelling=!!(spellingSupport&&plan&&refKey&&!plan.securityEvidence?.[refKey]?.spellingConfirmed);
 
+  if(needsDailySpelling&&!newWord)return 'spelling';
   if(testCtx&&testCtx.days<=1&&(w.repetitions||0)>0)return productive;
-  if(scaffoldedNow)return productive;
+  if(scaffoldedNow){
+    if(spellingSupport&&!modes.has('spelling')&&s.spelling<2)return 'spelling';
+    return productive;
+  }
   if((w.repetitions||0)>0&&((lastGap!==null&&lastGap>=3)||dueGap>=1))return productive;
 
   if(acc!==null&&acc<.7){
     if(spellingErrors>0&&chunksOk&&!modes.has('chunks'))return 'chunks';
-    if(lrs&&!modes.has('listening'))return 'listening';
+    if(spellingSupport&&s.spelling<2&&!modes.has('spelling'))return 'spelling';
+    if(readingSupport&&!modes.has('listening'))return 'listening';
     return 'recognition';
   }
 
   if(newWord){
-    if(lrs&&!modes.has('listening'))return 'listening';
+    if(readingSupport&&!modes.has('listening'))return 'listening';
     if(!modes.has('recognition'))return 'recognition';
+    if(spellingSupport&&!modes.has('spelling'))return 'spelling';
     return 'recall';
   }
 
@@ -73,6 +81,7 @@ function chooseAdaptiveMode(w){
     if(chunksOk&&!modes.has('chunks'))return 'chunks';
     if(s.spelling<3)return 'spelling';
   }
+  if(spellingSupport&&s.spelling<2&&!modes.has('spelling'))return 'spelling';
   if(s.retrieval<2)return 'recall';
 
   if((!testCtx||['source','mixed'].includes(testCtx.testFormat||''))&&meaningRecallHasCue(w)&&!modes.has('reverseRecall')&&independent>=2)return 'reverseRecall';
@@ -92,11 +101,11 @@ function buildQueue(mode,setId=null,wordIds=null){
   if(mode==='allWords')return shuffle(pool.filter(Boolean));
   if(mode==='weakWords')return shuffle(pool.filter(w=>!isMastered(w)));
   if(mode==='shower'||mode==='flash')return pool.filter(Boolean);
-  if(mode==='latinGrammar'){const all=pool.filter(latinGrammarEligible),need=all.filter(w=>!grammarReady(w)),src=need.length?need:all;return src.sort((a,b)=>(a.grammarSuccessDays||[]).length-(b.grammarSuccessDays||[]).length||Math.min(...grammarKeys(a).map(k=>(a.grammarSkills||{})[k]||0))-Math.min(...grammarKeys(b).map(k=>(b.grammarSkills||{})[k]||0))).slice(0,learner().lrsMode?6:10);}
-  if(mode==='handwriting'){const src=[...pool].filter(Boolean).sort((a,b)=>((b.errorProfile?.spelling||0)-(a.errorProfile?.spelling||0))||((a.skills?.spelling||0)-(b.skills?.spelling||0))||masteryScore(a)-masteryScore(b));return src.slice(0,learner().lrsMode?4:6);}
-  if(mode==='cards'){let src=pool.filter(w=>!isMastered(w));if(!src.length)src=pool;const due=src.filter(w=>!w.dueDate||w.dueDate<=today());if(due.length)src=due;return [...src].sort((a,b)=>leitnerBox(a)-leitnerBox(b)||(a.dueDate||'').localeCompare(b.dueDate||'')||masteryScore(a)-masteryScore(b)).slice(0,learner().lrsMode?6:10);}
+  if(mode==='latinGrammar'){const all=pool.filter(latinGrammarEligible),need=all.filter(w=>!grammarReady(w)),src=need.length?need:all;return src.sort((a,b)=>(a.grammarSuccessDays||[]).length-(b.grammarSuccessDays||[]).length||Math.min(...grammarKeys(a).map(k=>(a.grammarSkills||{})[k]||0))-Math.min(...grammarKeys(b).map(k=>(b.grammarSkills||{})[k]||0))).slice(0,reducedLoadEnabled()?6:10);}
+  if(mode==='handwriting'){const src=[...pool].filter(Boolean).sort((a,b)=>((b.errorProfile?.spelling||0)-(a.errorProfile?.spelling||0))||((a.skills?.spelling||0)-(b.skills?.spelling||0))||masteryScore(a)-masteryScore(b));return src.slice(0,reducedLoadEnabled()?4:6);}
+  if(mode==='cards'){let src=pool.filter(w=>!isMastered(w));if(!src.length)src=pool;const due=src.filter(w=>!w.dueDate||w.dueDate<=today());if(due.length)src=due;return [...src].sort((a,b)=>leitnerBox(a)-leitnerBox(b)||(a.dueDate||'').localeCompare(b.dueDate||'')||masteryScore(a)-masteryScore(b)).slice(0,reducedLoadEnabled()?6:10);}
   let q=pool.filter(w=>!isMastered(w));if(!q.length)q=pool;const due=q.filter(w=>!w.dueDate||w.dueDate<=today()),src=due.length?due:q;
-  return src.sort((a,b)=>masteryScore(a)-masteryScore(b)).slice(0,learner().lrsMode?6:10);
+  return src.sort((a,b)=>masteryScore(a)-masteryScore(b)).slice(0,reducedLoadEnabled()?6:10);
 }
 function openAllWordsPracticeChooser(){
   const sets=learningReadySets().filter(s=>setWords(s.id).length),all=schoolYearVerifiedWords(),ctx=upcomingTestContext();
@@ -143,7 +152,7 @@ function finishPracticeTest(){
   $('#sessionPill').textContent='Fertig'; $('#practiceWrongBtn')?.addEventListener('click',()=>{const ids=wrong.map(a=>({wordId:a.wordId,setLinkId:a.setLinkId||''}));session=null;startSession('adaptive',null,ids,false)}); $('#practiceScaleBtn')?.addEventListener('click',()=>openGradeScaleSettings(state.activeSubject)); $('#doneBtn').onclick=()=>{session=null;showView(typeof isParentMode==='function'&&isParentMode()?'dashboardView':'childProgressView');renderAll()};
 }
 
-function firstContactBlockSize(){return learner()?.lrsMode?4:5}
+function firstContactBlockSize(){return reducedLoadEnabled()?4:5}
 function firstContactLink(linkId){return (state.setVocabulary||[]).find(x=>x.id===linkId)||null}
 function firstContactPendingWords(setId){return setWords(setId).filter(w=>!w.firstContactCompletedAt)}
 function startCopyPractice(){
@@ -191,7 +200,7 @@ function renderFirstContact(){
   renderFirstContactCopy(w);
 }
 function renderFirstContactCopy(w){
-  const lrs=!!learner()?.lrsMode;
+  const lrs=literacySupportActive();
   $('#studyArea').innerHTML=`<div class="study-card first-contact-card">${firstContactHeader('1 · Anschauen & abschreiben')}<div class="first-contact-pair"><strong>${esc(w.term)}</strong><span>${esc(w.translation)}</span>${w.extra?`<small>${esc(w.extra)}</small>`:''}</div><p class="first-contact-instruction">Schreibe die Vokabel einmal <strong>von Hand auf</strong>. Papier oder Heft reichen – diese Einheit ist freiwillig.</p>${lrs?'<div class="notice subtle">Nimm dir Zeit. Wichtig ist die genaue Wortform, nicht die Geschwindigkeit.</div>':''}<div class="row gap center-actions wrap top-space"><button id="firstContactSpeakBtn" class="ghost" type="button">🔊 Anhören</button><button id="firstContactCopiedBtn" class="primary" type="button">Von Hand abgeschrieben</button></div></div>`;
   $('#firstContactSpeakBtn').onclick=()=>speak(w.term);
   $('#firstContactCopiedBtn').onclick=()=>{const link=firstContactLink(w.setLinkId);if(link&&!link.firstContactCopiedAt)link.firstContactCopiedAt=new Date().toISOString();session.phase='recall';persistOnly();renderFirstContact()};
@@ -201,7 +210,7 @@ function renderFirstContactRecall(w){
   $('#firstContactRevealBtn').onclick=()=>{session.phase='compare';renderFirstContact()};
 }
 function renderFirstContactCompare(w){
-  const lrs=!!learner()?.lrsMode;
+  const lrs=literacySupportActive();
   $('#studyArea').innerHTML=`<div class="study-card first-contact-card">${firstContactHeader('3 · Vergleichen')}<div class="first-contact-compare"><span>Geprüfte Wortform</span><strong>${esc(w.term)}</strong><small>${esc(w.translation)}</small>${audioButtonHtml(w.term,'Anhören')}</div><p class="first-contact-instruction">Vergleiche Buchstabe für Buchstabe mit deiner zweiten Abschrift.</p><div class="row gap center-actions wrap top-space"><button id="firstContactRetryBtn" class="ghost" type="button">${lrs?'Noch einmal anschauen':'Noch einmal'}</button><button id="firstContactCorrectBtn" class="primary" type="button">Stimmt</button></div></div>`;
   $('#firstContactRetryBtn').onclick=()=>{session.phase='copy';renderFirstContact()};
   $('#firstContactCorrectBtn').onclick=()=>{
@@ -386,7 +395,7 @@ function renderChunks(w){
 }
 
 function renderFlash(w){
-  const speed=learner().lrsMode?Math.max(learner().flashSpeed,2000):learner().flashSpeed,reverse=ambiguousSenseWord(w)&&!meaningRecallHasCue(w);
+  const speed=readingSupportEnabled()?Math.max(learner().flashSpeed,2000):learner().flashSpeed,reverse=ambiguousSenseWord(w)&&!meaningRecallHasCue(w);
   const prepared=setCurrentQuizQuestion(w,'recognition',{prompt:reverse?w.translation:w.term,targets:reverse?termTargets(w):translationTargets(w)}),q=prepared.question;
   if(prepared.issues.length){renderQuizIntegrityStop(w,prepared.issues);return}
   if(reverse){$('#studyArea').innerHTML=`<div class="study-card"><div class="eyebrow">Wortblitz · eindeutig</div><div id="flashWord" class="flash-word">…</div><div id="flashAnswer" class="hidden"><div class="study-sub">Welche Vokabel passt zu dieser Bedeutung?</div><div class="answer-grid" id="flashOptions"></div></div></div>`;setTimeout(()=>{$('#flashWord').textContent=q.prompt;setTimeout(()=>{$('#flashWord').textContent='';const pool=schoolYearWords().filter(x=>x.id!==w.id),opts=uniqueOptions(q.targets[0]||q.term,shuffle(pool).map(x=>x.term));$('#flashOptions').innerHTML=opts.map(o=>`<button class="answer-option" data-answer="${esc(o)}">${esc(o)}</button>`).join('');$('#flashAnswer').classList.remove('hidden');$$('#flashOptions [data-answer]').forEach(b=>b.onclick=()=>gradeChoice(b,w,b.dataset.answer,q.targets,'reading',true,q));},speed)},500);return}
@@ -398,12 +407,12 @@ function renderShower(w){
   $$('[data-shower]').forEach(b=>b.onclick=()=>speak(all[+b.dataset.shower].term)); $('#playAllBtn').onclick=()=>speakSequence(all.map(x=>x.term)); $('#playActiveBtn').onclick=()=>speakActiveShower(all); $('#finishShowerBtn').onclick=()=>{recordActivity('shower',{count:all.length});session.index=session.queue.length;renderStudy()};
 }
 function speechLang(foreign=true){return foreign?(subjectSpeechLang(state.activeSubject)||'en-GB'):'de-DE'}
-function makeUtterance(text,foreign=true,rate=null){const u=new SpeechSynthesisUtterance(text);u.lang=speechLang(foreign);u.rate=rate??(learner().lrsMode?.75:.9);return u}
+function makeUtterance(text,foreign=true,rate=null){const u=new SpeechSynthesisUtterance(text);u.lang=speechLang(foreign);u.rate=rate??(readingSupportEnabled()?0.75:0.9);return u}
 function speak(text){if(!('speechSynthesis'in window))return; speechSynthesis.cancel();speechSynthesis.speak(makeUtterance(text,true))}
 function audioButtonHtml(text,label='Anhören'){const value=String(text||'').trim();if(!value)return '';return `<button type="button" class="ghost" data-speak="${esc(value)}" aria-label="${esc(label)}">🔊</button>`}
 function maybeSpeakCorrection(w){if(learner()?.autoSpeakCorrection===false||!w?.term)return;setTimeout(()=>speak(w.term),80)}
-function speakSequence(items){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();let i=0;const next=()=>{if(i>=items.length)return;const u=makeUtterance(items[i++],true,learner().lrsMode?.72:.88);u.onend=()=>setTimeout(next,350);speechSynthesis.speak(u)};next()}
-function speakActiveShower(words){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();let i=0;const next=()=>{if(i>=words.length)return;const w=words[i++],prompt=makeUtterance(w.translation,false,.85);prompt.onend=()=>setTimeout(()=>{const answer=makeUtterance(w.term,true,learner().lrsMode?.72:.86);answer.onend=()=>setTimeout(next,550);speechSynthesis.speak(answer)},learner().lrsMode?2800:2200);speechSynthesis.speak(prompt)};next()}
+function speakSequence(items){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();let i=0;const next=()=>{if(i>=items.length)return;const u=makeUtterance(items[i++],true,readingSupportEnabled()?0.72:0.88);u.onend=()=>setTimeout(next,350);speechSynthesis.speak(u)};next()}
+function speakActiveShower(words){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();let i=0;const next=()=>{if(i>=words.length)return;const w=words[i++],prompt=makeUtterance(w.translation,false,.85);prompt.onend=()=>setTimeout(()=>{const answer=makeUtterance(w.term,true,readingSupportEnabled()?0.72:0.86);answer.onend=()=>setTimeout(next,550);speechSynthesis.speak(answer)},readingSupportEnabled()?2800:2200);speechSynthesis.speak(prompt)};next()}
 function shuffle(a){const x=[...a];for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]]}return x}
 function uniqueOptions(correct,candidates,max=4){const seen=new Set([semanticNormalize(correct)]),out=[correct];for(const c of candidates){const k=semanticNormalize(c);if(!k||seen.has(k))continue;seen.add(k);out.push(c);if(out.length>=max)break}return shuffle(out)}
 
@@ -412,7 +421,7 @@ function diffMarkup(value,other){const a=String(value||''),b=String(other||'');l
 function errorFeedbackHtml(answer,target){const t=closestTargetForm(answer,target),d=levenshtein(answer,t),near=d>0&&d<=2&&d<=Math.max(1,Math.ceil(normalize(t).length*.25));return `<div class="spelling-feedback"><strong>${near?'Fast richtig – bleibt als Fehler markiert.':'Noch nicht richtig.'}</strong><div><small>Deine Eingabe</small>${diffMarkup(answer,t)}</div><div><small>Richtig</small>${diffMarkup(t,answer)}</div></div>`}
 function gradeChoice(btn,w,answer,target,skill,nonEvaluative=false,questionSnapshot=null){if(session.locked)return;const targetSession=session;session.locked=true;const q=questionSnapshot||currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w);btn.classList.add(ok?'correct':'wrong');if(!ok){Array.from(document.querySelectorAll('[data-answer]')).find(b=>gradeQuizQuestion(q,b.dataset.answer).correct)?.classList.add('correct')}if(['recognition','listening'].includes(skill))session.scaffoldedWords[w.id]=true;if(nonEvaluative){recordNonEvaluative(w,'flash',ok,skill)}else{recordResult(w,ok,skill,ok?null:skill);logSessionResult(w,{answer,target:q.targets,correct:ok,skill,orthographyOk:grade.orthographyOk,prompt:q.prompt,boxBefore:before,boxAfter:leitnerBox(w),reason:sessionResultReason({correct:ok,orthographyOk:grade.orthographyOk,answer,targets:q.targets,mode:skill,assisted:!!session.hintUsed})});if(!ok){$('#studyArea .study-card')?.insertAdjacentHTML('beforeend',`<div class="feedback notice bad">${wordLearningCard(w,true)}</div>`);maybeSpeakCorrection(w)}}scheduleSessionAdvance(targetSession,ok,w,650)}
 function gradeText(w,answer,target,errorType,skill){if(session.locked)return;const targetSession=session;session.locked=true;const q=currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w);const detail=ok?(session.hintUsed?'Richtig mit Hinweis.':'Richtig.'):' ';$('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}">${ok?`<strong>${detail}</strong>`:errorFeedbackHtml(answer,q.targets)}<div><strong>${esc(w.term)}</strong> ${audioButtonHtml(w.term,'Anhören')}</div>${!ok?wordLearningCard(w):''}</div>`);recordResult(w,ok,skill,ok?null:errorType,{orthographyOk:grade.orthographyOk});logSessionResult(w,{answer,target:q.targets,correct:ok,skill,orthographyOk:grade.orthographyOk,assisted:!!session.hintUsed,prompt:q.prompt,boxBefore:before,boxAfter:leitnerBox(w),reason:sessionResultReason({correct:ok,orthographyOk:grade.orthographyOk,answer,targets:q.targets,mode:skill,assisted:!!session.hintUsed})});if(!ok)maybeSpeakCorrection(w);scheduleSessionAdvance(targetSession,ok,w,ok?700:2400)}
-function recordNonEvaluative(w,mode,ok,skill){w.modesSeen=[...new Set([...(w.modesSeen||[]),mode])];recordActivity(mode,{wordId:w.id,correct:ok});session.answered++;if(ok)session.correct++}
+function recordNonEvaluative(w,mode,ok,skill){w.modesSeen=[...new Set([...(w.modesSeen||[]),mode])];if(skill==='reading'){w.skills={...defaultSkills(),...(w.skills||{})};w.skills.reading=clamp((w.skills.reading||0)+(ok?0.5:-0.2),0,4)}recordActivity(mode,{wordId:w.id,correct:ok,readingSupport:skill==='reading'});session.answered++;if(ok)session.correct++}
 function isActiveSkill(skill){return ['retrieval','spelling','context'].includes(skill)}
 function skillCredits(skill,opts={}){if(skill==='retrieval'&&session?.currentSubmode==='reverseRecall')return ['retrieval'];if(skill==='retrieval')return opts.orthographyOk===false?['retrieval']:['retrieval','spelling'];if(skill==='spelling')return ['spelling','listening'];if(skill==='context')return opts.orthographyOk===false?['context','retrieval']:['context','retrieval','spelling'];return [skill]}
 function recordResult(w,ok,skill,errorType,opts={}){
@@ -433,7 +442,7 @@ function recordResult(w,ok,skill,errorType,opts={}){
     if(active&&assisted){w.assistedSuccesses=(w.assistedSuccesses||0)+1;w.intervalDays=Math.min(Math.max(w.intervalDays||0,1),1);w.dueDate=datePlusDays(1);learner().xp+=1;}
     else if(active){
       const previousDay=w.lastActiveSuccessAt?dateKey(new Date(w.lastActiveSuccessAt)):null,gap=previousDay?Math.max(0,dayNumber(today())-dayNumber(previousDay)):0;
-      w.independentSuccesses=(w.independentSuccesses||0)+1;w.activeSuccessDays=[...new Set([...(w.activeSuccessDays||[]),today()])];w.maxActiveGapDays=Math.max(Number(w.maxActiveGapDays)||0,gap);w.lastActiveSuccessAt=now;
+      w.independentSuccesses=(w.independentSuccesses||0)+1;w.activeSuccessDays=[...new Set([...(w.activeSuccessDays||[]),today()])];if(skill==='spelling'&&opts.orthographyOk!==false)w.spellingSuccessDays=[...new Set([...(w.spellingSuccessDays||[]),today()])];w.maxActiveGapDays=Math.max(Number(w.maxActiveGapDays)||0,gap);w.lastActiveSuccessAt=now;
       if(cold){w.coldRecallDays=[...new Set([...(w.coldRecallDays||[]),today()])];w.coldRecallSuccesses=(w.coldRecallSuccesses||0)+1;}
       const seq=[0,1,3,7,14,30,60],acc=recentActiveAccuracy(w),spacingDays=(w.activeSuccessDays||[]).length;let idx=Math.max(1,spacingDays);if(cold&&spacingDays>=2&&acc!==null&&acc>=.85)idx+=1;if(acc!==null&&acc<.65)idx=Math.min(idx,1);w.intervalDays=seq[Math.min(seq.length-1,idx)];w.dueDate=datePlusDays(w.intervalDays);learner().xp+=3;
     }else{learner().xp+=1;session.scaffoldedWords[w.id]=true;}
@@ -450,8 +459,8 @@ function recordResult(w,ok,skill,errorType,opts={}){
   }
   session.answered++;refreshMastery(w);session.lastLeitnerMove=updateLeitnerBox(w,ok,{assisted,active,orthographyOk:opts.orthographyOk!==false,beforeBox:leitnerBefore});
   const recallDirection=active?recordDirectionalRecallResult(w,{mode:session.currentSubmode||session.mode,correct:ok,assisted}):'';
-  const dailySecurity=session?.isDaily&&active?recordDailySecurityResult(w,{correct:ok,active,assisted,orthographyOk:opts.orthographyOk!==false,wasTestReady}):null;
-  if(dailySecurity&&!dailySecurity.becameSecure&&dailySecurity.required>1&&dailySecurity.successStreak>0)scheduleDailySecurityFollowup(session,w);
+  const dailySecurity=session?.isDaily&&active?recordDailySecurityResult(w,{correct:ok,active,assisted,orthographyOk:opts.orthographyOk!==false,wasTestReady,skill}):null;
+  if(dailySecurity&&!dailySecurity.becameSecure&&(dailySecurity.required>1||dailySecurity.needsSpelling)&&dailySecurity.successStreak>0)scheduleDailySecurityFollowup(session,w);
   recordActivity(session.currentSubmode||session.mode,{wordId:w.id,correct:ok,errorType,assisted,active,cold,recallDirection,orthographyOk:opts.orthographyOk!==false,todaySecure:!!dailySecurity?.becameSecure,refillSource:dailySecurity?.replacementSource||'',leitnerBefore:session.lastLeitnerMove.before,leitnerAfter:session.lastLeitnerMove.after});persistOnly();
 }
 function scheduleDailySecurityFollowup(targetSession,word){

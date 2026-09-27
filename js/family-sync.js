@@ -5,7 +5,7 @@
   const SUPABASE_URL='https://ilfblkqxbldkzmqczbgo.supabase.co';
   const SUPABASE_KEY='sb_publishable_zkzIhxq7Xby65AbNnAkiyQ_0ZfAAU4V';
   const PROFILE_PROGRESS_FIELDS=['xp','streakDays','milestones','fortressWins','fortressWinsByYear','battleTickets','battleDays','testFortresses','campaignLog','dailyPlans'];
-  const PROFILE_SETUP_FIELDS=['id','name','gradeLevel','avatarStyle','activeSubjects','lrsMode','fontSize','letterSpacing','flashSpeed','autoSpeakCorrection','testSeries','gradeScales','createdAt'];
+  const PROFILE_SETUP_FIELDS=['id','name','gradeLevel','avatarStyle','activeSubjects','literacySupport','reducedLoad','lrsMode','fontSize','letterSpacing','flashSpeed','autoSpeakCorrection','testSeries','gradeScales','createdAt'];
   const runtime={applying:false,busy:false,timer:null,poll:null,snapshots:new Map()};
 
   function clone(value){return value==null?value:JSON.parse(JSON.stringify(value))}
@@ -89,7 +89,7 @@
   }
   function applySetup(key,payload){
     const id=docProfileId(key),incoming=payload?.learner||{};if(!id)return;
-    const l=ensureLearner(id,incoming);PROFILE_SETUP_FIELDS.forEach(k=>{if(incoming[k]!==undefined)l[k]=clone(incoming[k])});l.id=id;
+    const l=ensureLearner(id,incoming);PROFILE_SETUP_FIELDS.forEach(k=>{if(incoming[k]!==undefined)l[k]=clone(incoming[k])});normalizeLiteracySupport(l);l.id=id;
     const oldSetIds=new Set((state.sets||[]).filter(x=>x.learnerId===id).map(x=>x.id));
     state.setVocabulary=(state.setVocabulary||[]).filter(x=>!oldSetIds.has(x.setId));
     state.sets=(state.sets||[]).filter(x=>x.learnerId!==id).concat(clone(payload?.sets||[]));

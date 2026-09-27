@@ -10,11 +10,23 @@ Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änd
 
 ## Aktueller Stand
 
-App-Version: **v0.21.11**
+App-Version: **v0.21.12**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.21.12 – Differenzierte LRS-Unterstützung
+
+- LRS-/Lernunterstützung ist im Profil getrennt nach **Lesen** und **Rechtschreiben** wählbar; beide Dimensionen können unabhängig oder gemeinsam aktiv sein
+- **Kurze Einheiten** sind davon getrennt und steuern kleinere Sessions sowie das reduzierte freiwillige Nachrücklimit von zwei statt drei Zusatzwörtern
+- alte Profile mit `lrsMode=true` werden konservativ auf Lesen + Rechtschreiben + kurze Einheiten migriert; `lrsMode` bleibt nur als Kompatibilitätsalias für ältere Sync-Clients
+- Leseunterstützung priorisiert Audio/Laut-Schrift-Scaffolds und ruhigen Wortblitz; die `reading`-Supportmetrik verändert Mastery und Testbereitschaft nicht
+- Rechtschreibunterstützung priorisiert Schreiben/Diktat stärker; erfolgreiche unassistierte Rechtschreibabrufe werden zusätzlich über `spellingSuccessDays` dokumentiert
+- für „heute sicher“ reicht bei aktiver Rechtschreibunterstützung reine Retrieval-Evidenz nicht: mindestens ein erfolgreicher unassistierter Rechtschreibabruf ist erforderlich
+- die richtungsspezifische Testbereitschaft aus v0.21.11 bleibt vollständig erhalten
+- Family Sync transportiert `literacySupport` und `reducedLoad` als Profileinstellungen vom Eltern- zum Kindergerät
+- automatisierte Lernintegritäts-, Reset/Purge- und Family-Sync-Smokes schützen Migration, getrennte Dimensionen und fachliche Grenzen
 
 ## v0.21.11 – Richtungsspezifische Testbereitschaft
 
