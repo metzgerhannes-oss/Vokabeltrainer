@@ -7,7 +7,7 @@ const context=vm.createContext({
   document:{querySelector:()=>null,querySelectorAll:()=>[]},
   window:{},navigator:{},localStorage:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}
 });
-for(const file of ['js/core.js','js/library.js','js/storage.js','js/model.js','js/learning.js']){
+for(const file of ['js/core.js','js/library.js','js/storage.js','js/model.js','js/quiz-engine.js','js/learning.js']){
   vm.runInContext(fs.readFileSync(file,'utf8'),context,{filename:file});
 }
 const passed=vm.runInContext(`
