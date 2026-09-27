@@ -19,6 +19,23 @@ try{
   if(!/Vokabeltrainer|Lernen|Lern/i.test(html))throw new Error('app content missing');
   await page.waitForFunction(()=>window.__VT_APP_READY__===true);
 
+  // Regression: on mobile, avatar artwork and status card are separate vertical layout blocks.
+  await page.setViewportSize({width:375,height:667});
+  await page.waitForSelector('#homeView.active #projectMenuAvatarFrame');
+  const avatarLayout=await page.evaluate(()=>{
+    const frame=document.querySelector('#projectMenuAvatarFrame'),status=document.querySelector('.project-menu-avatar-evolution');
+    const fr=frame?.getBoundingClientRect(),sr=status?.getBoundingClientRect();
+    return {
+      statusInsideFrame:!!(frame&&status&&frame.contains(status)),
+      frameBottom:fr?.bottom||0,
+      statusTop:sr?.top||0,
+      statusPosition:status?getComputedStyle(status).position:''
+    };
+  });
+  if(avatarLayout.statusInsideFrame)throw new Error('mobile avatar status card must not be inside the artwork frame');
+  if(avatarLayout.statusPosition==='absolute')throw new Error('mobile avatar status card must participate in document flow');
+  if(avatarLayout.statusTop+0.5<avatarLayout.frameBottom)throw new Error('mobile avatar status card overlaps the avatar artwork frame');
+
   // Regression: a compact iPhone must expose the child-device path directly.
   await page.setViewportSize({width:375,height:667});
   await page.locator('#parentAreaBtn').click();
