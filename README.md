@@ -23,7 +23,7 @@ Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Joh
 - bereits testbereite Wiederholungswörter können nach einem produktiven, unassistierten und orthografisch korrekten Abruf ihren aktiven Platz freigeben
 - neue oder noch schwache Wörter benötigen zwei getrennte erfolgreiche aktive Abrufe ohne Fehler dazwischen; ein Fehler setzt die Sicherheitsserie zurück
 - unterstützte Modi wie Erkennen, Hören oder Wortbausteine können ein Wort nicht „heute sicher“ machen
-- nach einem sicheren Wort rückt priorisiert ein noch unbekanntes Wort aus dem anstehenden Test, danach ein schwaches Testwort und anschließend eine fällige Wiederholung nach
+- nach einem sicheren Wort wird priorisiert ein noch unbekanntes Wort aus dem anstehenden Test, danach ein schwaches Testwort und anschließend eine fällige Wiederholung als freiwilliger Vorsprung vorgemerkt; die laufende Pflicht-Einheit wird dadurch nicht automatisch verlängert
 - in den letzten drei Tagen vor einem Test werden keine zusätzlichen unbekannten Wörter mehr nachgezogen; der Schwerpunkt bleibt auf Konsolidierung
 - Zusatzlernen ist auf maximal drei Wörter pro Tag begrenzt, im LRS-Modus auf zwei; die bestehende Obergrenze von sieben neu eingeführten Wörtern pro Tag bleibt bestehen
 - Zusatzwörter verändern weder das offizielle Tagesziel noch dessen Fortschrittsanzeige und erzeugen keine weitere Kampfaktion
