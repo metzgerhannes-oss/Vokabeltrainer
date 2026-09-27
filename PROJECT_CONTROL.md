@@ -100,3 +100,82 @@ Eine Änderung ist erst vollständig dokumentiert, wenn die betroffenen Ebenen a
 Das Control Center ist kein zweiter Produktentwurf. Inhalte werden nicht mehrfach in verschiedenen Dateien ausgeschrieben, wenn bereits eine kanonische Fachquelle existiert. Stattdessen werden Quelle, Status und Abhängigkeiten verlinkt.
 
 Ziel: Bei jeder späteren Frage muss klar sein, ob eine Aussage **Prinzip, Entscheidung, Implementierung, Testbefund, Backlog oder bloße Idee** ist.
+
+
+## 8. Verbindliches Arbeitsprotokoll
+
+Für jede Umsetzung gilt ab jetzt dieselbe Reihenfolge:
+
+1. **Baseline live aus dem Repository bestimmen** – `main`, aktuelle App-Version, offene PRs und `CURRENT_STATE.md` prüfen. Chatgedächtnis allein ist keine Baseline.
+2. **Betroffene kanonische Regel bestimmen** – Product DNA, Visual DNA, Fachspezifikation oder Decision-ID nennen. Ist nichts geregelt, zuerst eine neue Decision anlegen.
+3. **Abnahmekriterien vor der Änderung festlegen** – beobachtbar und testbar, einschließlich Gerät/Viewport, Datenzustand und ausdrücklich unveränderter Logik.
+4. **Änderung in genau einem aktiven Änderungsstrang umsetzen** – für denselben Fehler bzw. dieselbe Funktionsgruppe nicht parallel konkurrierende Implementierungen erzeugen. Andere Ideen werden in den Backlog überführt.
+5. **Automatisiert verifizieren** – passende Fach-, Browser- und Regressionstests ausführen. Eine visuelle Änderung benötigt zusätzlich einen geometrischen/visuellen Browsernachweis.
+6. **Produktiv verifizieren** – nach Merge auf `main` CI und Pages-Deploy prüfen. Bei sichtbaren UI-Änderungen muss zusätzlich die produktive Darstellung auf dem Zielgerät bzw. Zielviewport geprüft werden.
+7. **Projektstatus aktualisieren** – produktrelevante Änderungen in `CURRENT_STATE.md`, Testanforderungen in `TEST_MATRIX.md`/`V1_ACCEPTANCE_TEST.md`, Grundsatzänderungen in `DECISIONS.md`.
+
+Ein neuer Chat darf Anforderungen formulieren oder Entscheidungen vorbereiten. Sobald Code geändert wird, muss der Änderungsstrang jedoch wieder gegen die aktuelle Repository-Baseline aufgelöst werden. Damit können parallele Chats keinen veralteten Codezustand zur vermeintlichen Wahrheit machen.
+
+## 9. Abnahmekriterien sind Pflicht
+
+Vor jeder nichttrivialen Umsetzung müssen konkrete Abnahmekriterien vorliegen. Sie beschreiben **sichtbares bzw. fachlich prüfbares Verhalten**, nicht nur die beabsichtigte Codeänderung.
+
+Für UI-Änderungen enthalten sie mindestens:
+
+- Zielgerät oder Zielviewport, z. B. iPhone 390×844 oder Desktop ≥1100 px
+- welche Elemente sichtbar sein müssen
+- welche Elemente nicht sichtbar sein dürfen
+- welche Elemente sich nicht überlagern dürfen
+- welcher Rückweg bzw. nächste Schritt verfügbar sein muss
+- welche fachliche Logik unverändert bleiben muss
+
+Für Lern-/Datenlogik enthalten sie mindestens:
+
+- Ausgangszustand
+- auslösende Aktion
+- erwarteten Zustand danach
+- Negativfall bzw. Fehlerfall
+- Persistenz-/Sync-Verhalten, falls betroffen
+- zu schützende Decision-ID bzw. Product-DNA-Regel
+
+Als Arbeitsvorlage dient [docs/project/CHANGE_TEMPLATE.md](docs/project/CHANGE_TEMPLATE.md).
+
+## 10. Visuelle Änderungen: Referenz → Render → Vergleich
+
+Für visuelle Änderungen gilt eine zusätzliche Pflichtschleife:
+
+**Referenz/Anforderung → Umsetzung → Browser-Render im Zielviewport → geometrischer/visueller Vergleich → Regressionstest → Produktivprüfung**
+
+Ein DOM-/CSS-Test allein reicht nicht, wenn der Fehler visuell oder geometrisch ist. Insbesondere Überlagerungen, Vollbildzustände, Bannerpositionen, Abstände und mobile Navigation müssen im Browserlayout gemessen oder praktisch angesehen werden.
+
+Wenn ein Nutzer-Screenshot die Abweichung zeigt, wird dieser Befund als Abnahmereferenz behandelt. Eine Änderung darf nicht als erledigt bezeichnet werden, solange derselbe sichtbare Fehler im Zielviewport fortbesteht.
+
+## 11. Definition von „fertig“ und „live“
+
+Statuswörter werden strikt verwendet:
+
+- **IMPLEMENTED** – Code/Dokumentation liegt im Änderungsbranch vor.
+- **VERIFIED** – die definierten automatisierten und ggf. praktischen Abnahmekriterien sind erfüllt.
+- **PRODUCTION** – Änderung ist auf `main` gemergt und der dafür relevante Deploy ist erfolgreich.
+- **LIVE VERIFIED** – bei produktrelevanten UI-/Ablaufänderungen wurde zusätzlich die produktive Anwendung geprüft.
+
+Die Aussage **„fertig und live“** ist nur zulässig, wenn mindestens gilt:
+
+`Merge auf main → erforderliche CI grün → Pages-Deploy grün → bei sichtbarer Änderung Live-Prüfung erfolgreich`.
+
+Fehlt ein Schritt, wird genau der erreichte Status genannt. Ein Commit, grüner PR-Test oder Merge allein ist nicht gleichbedeutend mit „live“.
+
+## 12. Konsistenzschutz
+
+`scripts/vokabeltrainer-project-control-smoke.mjs` schützt die Projektsteuerung automatisiert. Der Check vergleicht insbesondere:
+
+- App-Version in `js/core.js`
+- Service-Worker-Version in `sw.js`
+- sichtbare Version in `index.html`
+- aktuelle Version in `README.md`
+- Produktionsbaseline in `docs/project/CURRENT_STATE.md`
+- Basisversion in `V1_ACCEPTANCE_TEST.md`
+- Existenz der kanonischen Projektsteuerungsdateien
+- eindeutige Decision- und Backlog-IDs
+
+Der Check läuft im Preflight der CI. Damit wird Dokumentationsdrift zu einem sichtbaren Buildfehler statt zu einem späteren Rekonstruktionsproblem.

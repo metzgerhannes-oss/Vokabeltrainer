@@ -22,7 +22,7 @@ Die detaillierte praktische v1-Abnahme bleibt in [../../V1_ACCEPTANCE_TEST.md](.
 | Accessibility | D-0007 + Grunddesign | Fokus, Dialoge, Touchflächen, Landscape, Screenreader-Semantik | nach Schweregrad; kritischer Pfad ja |
 | Battle/Game | D-0003, D-0005 | keine Rückwirkung auf Mastery; Tagesaktion nicht duplizierbar; Fokusmodus rückkehrbar | ja bei fachlicher Rückwirkung |
 | Praktische v1-Abnahme | gesamter Kernpfad | reales Gerät/Browser, Kind-/Elternwege ohne Entwicklerhilfe | vor v1 verpflichtend |
-| Dokumentationskohärenz | PROJECT_CONTROL / B-010 | aktuelle Fachquellen verwenden die aktuelle Navigation; kanonische Dokumente tragen einen fachlichen Prüfstatus; historische Release-Texte bleiben als Historie erkennbar | nein |
+| Dokumentationskohärenz | PROJECT_CONTROL / B-010 | aktuelle Fachquellen verwenden die aktuelle Navigation; kanonische Dokumente tragen einen fachlichen Prüfstatus; historische Release-Texte bleiben als Historie erkennbar | nein |\n| Project-Control-Konsistenz | D-20260927-001, D-20260927-003, D-20260927-009 | App-/SW-/UI-/README-/Current-State-/Acceptance-Version konsistent; kanonische Steuerdateien vorhanden; Decision-/Backlog-IDs eindeutig | ja für Release-/Statusdrift |
 
 ## Änderungsregel
 
@@ -38,3 +38,10 @@ Bei Änderungen an D-0001 bis D-0004 ist mindestens ein automatisierter Regressi
 - **produktiv** = Änderung ist auf `main` gemergt und ausgerollt
 
 Diese Zustände dürfen nicht synonym verwendet werden.
+
+
+## Visuelle Abnahme
+
+Bei Änderungen, deren Fehlerbild visuell oder geometrisch ist, genügt ein statischer Codecheck nicht. Die Mindestabnahme umfasst den Browser-Render im festgelegten Zielviewport und einen Vergleich mit der Anforderung bzw. Referenz. Überlagerung, Navigation, Vollbildzustand, Abstände und Positionen müssen dabei im realen Layout geprüft werden.
+
+Erst nach erfolgreicher lokaler/CI-Verifikation und – nach dem Merge – produktiver Prüfung darf ein solcher Befund als `LIVE VERIFIED` gelten.
