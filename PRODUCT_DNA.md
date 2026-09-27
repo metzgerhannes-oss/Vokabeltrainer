@@ -99,7 +99,10 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    dem Test werden als Spacing-Risiko gekennzeichnet; am Testtag selbst werden keine neuen
    Wörter eingeplant. Vorschau und Tagesplan müssen dieselbe Formel verwenden.
    Der morgens berechnete Pflichtteil bleibt innerhalb des Kalendertags als festes Tagesziel
-   bestehen. Schnellere Lerner dürfen darüber hinaus in einem begrenzten rollenden Lernfenster
+   bestehen. Ein Pflichtwort gilt erst nach einem **fachlich richtigen, unassistierten aktiven Abruf**
+   als für das Tagesziel erledigt. Ein bloßer Kontakt, ein falscher Versuch oder eine richtige Antwort
+   mit verwendeter Hilfe schließt das Pflichtwort nicht ab und kann die Tagesaktion nicht vorzeitig
+   freigeben. Schnellere Lerner dürfen darüber hinaus in einem begrenzten rollenden Lernfenster
    freiwillig vorarbeiten. Dafür wird **„heute sicher“** strikt von nachhaltiger Mastery und vom
    bloßen Tageskontakt getrennt: bereits testbereite Wiederholungswörter benötigen einen
    produktiven, unassistierten und orthografisch korrekten Abruf; neue oder noch schwache Wörter
