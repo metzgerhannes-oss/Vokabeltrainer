@@ -1,10 +1,12 @@
 # V1 Acceptance Test
 
-Stand: 27.09.2026 · Basis: v0.21.11 · Release-Kandidat: Richtungsspezifische Testbereitschaft
+Stand: 27.09.2026 · Basis: v0.21.12 · Release-Kandidat: Differenzierte LRS-Unterstützung
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
 Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
+
+Zusatz für v0.21.12: Im Elternprofil praktisch prüfen, dass **Lesen**, **Rechtschreiben** und **Kurze Einheiten** unabhängig speicherbar sind. Ein Profil nur mit Leseunterstützung darf nicht automatisch die Tageslast verkleinern; ein Profil nur mit Rechtschreibunterstützung muss im Tageslernweg einen echten Schreibabruf erhalten. Nach Family Sync muss dieselbe Einstellung auf dem zugeordneten Kindergerät ankommen.
 
 ## Grundregel
 
