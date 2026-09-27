@@ -1,6 +1,6 @@
 # Vokabeltrainer – Pädagogische Dokumentation für Eltern und Schulpädagogen
 
-**Stand:** v0.18.40 · 24.09.2026
+**Fachlich zuletzt geprüft:** 27.09.2026 · **Gültig für aktuellen Stand:** ja
 
 ## 1. Worum es bei der App geht
 
@@ -22,10 +22,10 @@ Motivationselemente wie Armee, Legion, Festungen und XP liegen bewusst außerhal
 
 Kinder sollen möglichst ohne Verwaltungsaufgaben lernen können. Der Kindbereich besteht aus vier klaren Bereichen:
 
-- **Heute** – das für heute berechnete Lernpensum
-- **Üben** – freiwillige zusätzliche Übungen
-- **Fortschritt** – Karteikasten, Mastery und Testbereitschaft
+- **Heute** – das für heute berechnete Lernpensum und der dominante Einstieg „Jetzt lernen“
+- **Lernen** – freiwillige Übungen, Karteikarten, unsichere Wörter, kompletter Lernstoff, Spezialtraining und Testcheck
 - **Armee** – Motivation und Belohnung außerhalb der Lernabfrage
+- **Erfolge** – fachlicher Fortschritt und erreichte Lernziele ohne Spielinszenierung
 
 Während einer konkreten Abrufaufgabe werden Navigation und zusätzliche Informationen reduziert. Die Aufmerksamkeit soll beim Wort, bei der eigenen Antwort und beim Feedback bleiben.
 
