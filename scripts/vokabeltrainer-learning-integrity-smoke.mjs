@@ -175,9 +175,9 @@ const passed=vm.runInContext(`
     recordDailySecurityResult(word,{correct:true,active:true,assisted:false,orthographyOk:true,wasTestReady:true},pacedPlan);
   }
   assert(pacedPlan.extraRefs.length===3&&pacedPlan.extraLimit===3,'same-day adaptive refill is capped at three extra words outside LRS mode');
-  learner().lrsMode=true;pacedPlan.extraLimit=3;normalizeDailyAdaptivePlan(pacedPlan);
-  assert(pacedPlan.extraLimit===2&&pacedPlan.extraRefs.length===2,'LRS mode caps same-day refill at two extra words even for an existing plan');
-  learner().lrsMode=false;
+  learner().literacySupport={reading:true,spelling:false};learner().reducedLoad=true;normalizeLiteracySupport(learner());pacedPlan.extraLimit=3;normalizeDailyAdaptivePlan(pacedPlan);
+  assert(pacedPlan.extraLimit===2&&pacedPlan.extraRefs.length===2,'reduced-load mode caps same-day refill at two extra words even for an existing plan');
+  learner().reducedLoad=false;normalizeLiteracySupport(learner());
   const sevenNewPlan={...pacedPlan,introCount:7,extraRefs:[],extraSources:{},extraLimit:3,todaySecureKeys:[],securityEvidence:{}};
   const sevenNewCandidate=dailyPlanReplacementCandidate(sevenNewPlan);
   assert(sevenNewCandidate?.source!=='new','adaptive refill never exceeds the existing ceiling of seven newly introduced words per day');
