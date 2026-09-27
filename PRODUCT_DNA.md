@@ -1,6 +1,6 @@
 # Vokabeltrainer – Product DNA
 
-Stand: 23.09.2026
+Fachlich zuletzt geprüft: 27.09.2026 · Gültig für aktuellen Stand: ja
 
 Diese Prinzipien sind die verbindliche Leitlinie für Produktentscheidungen vor und nach v1.
 
@@ -166,11 +166,6 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    verändert aber weder rückwirkend die Eroberung noch den Mastery-Wert. Kampfanimationen,
    Bossdarstellung, Story und Freundschaftsduelle dürfen fachliche Leistung niemals
    vortäuschen, ersetzen oder zufällig verändern.
-   Die Spieloberfläche muss den Zusammenhang für Kinder unmittelbar sichtbar machen:
-   **Lernen → eine Tagesaktion freischalten → angreifen → Festung erobern bzw. sichern.**
-   Armee links, gegnerisches Ziel rechts, aktueller Auftrag und nächster möglicher Schritt
-   müssen ohne Erklärung erkennbar sein. Der Startbildschirm bleibt davon frei; die
-   vollständige Spielinszenierung gehört ausschließlich in den Bereich **Armee**.
    Die Spieloberfläche muss den Zusammenhang für Kinder unmittelbar sichtbar machen:
    **Lernen → eine Tagesaktion freischalten → angreifen → Festung erobern bzw. sichern.**
    Eigene Armee links, gegnerisches Ziel rechts, aktueller Auftrag und nächster möglicher
