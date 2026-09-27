@@ -72,12 +72,12 @@ try{
   await page.click('#planSelectRange');
   await page.click('#saveTestPlan');
   await page.waitForSelector('#parentView.active');
-  const queuedLibrary=await page.evaluate(firstId=>{
+  const queuedLibrary=await page.evaluate(()=>{
     const ctx=upcomingTestContext('english');
     const future=(state.sets||[]).filter(s=>s.learnerId===state.activeLearnerId&&s.subject==='english'&&s.testDate&&daysUntil(s.testDate)>=0).sort((a,b)=>a.testDate.localeCompare(b.testDate));
     const second=future.find(s=>s.testDate===datePlusDays(8));
     return {activeId:ctx?.sets?.[0]?.id||'',days:ctx?.days,futureDates:future.map(s=>s.testDate),secondId:second?.id||'',secondCount:second?.testSelectedLinkIds?.length||0};
-  },saved.id);
+  });
   assert(queuedLibrary.activeId===saved.id&&queuedLibrary.days===7,'adding a later library test keeps the earlier test as the active learning target');
   assert(queuedLibrary.futureDates.includes(saved.date)&&queuedLibrary.futureDates.includes(secondLibraryDate)&&queuedLibrary.secondId&&queuedLibrary.secondId!==saved.id,'earlier and later library tests coexist as separate dated plans');
   assert(queuedLibrary.secondCount===4,'later library test keeps its own selected vocabulary scope');
@@ -117,11 +117,11 @@ try{
   assert(manualPending.testDate===''&&manualPending.pending&&manualPending.needsReview&&!manualPending.verified,'manual word remains unverified and the test remains inactive before approval');
   await page.click('#confirmSetPairsBtn');
   await page.waitForSelector('#parentView.active');
-  const manualFinal=await page.evaluate(({id,firstId})=>{
-    const set=state.sets.find(s=>s.id===id),word=setWords(id)[0],ctx=upcomingTestContext('english');
+  const manualFinal=await page.evaluate(()=>{
+    const set=state.sets.find(s=>s.captureSource==='manual'&&s.testDate===datePlusDays(9)),word=set&&setWords(set.id)[0],ctx=upcomingTestContext('english');
     const future=(state.sets||[]).filter(s=>s.learnerId===state.activeLearnerId&&s.subject==='english'&&s.testDate&&daysUntil(s.testDate)>=0).sort((a,b)=>a.testDate.localeCompare(b.testDate));
-    return {testDate:set?.testDate||'',pending:!!set?.pendingTestPlan,selected:set?.testSelectedLinkIds?.length||0,needsReview:setNeedsPairReview(set),verified:!!(state.vocabulary||[]).find(v=>v.id===word?.vocabId)?.verifiedAt,activeTestId:ctx?.sets?.[0]?.id||'',activeDays:ctx?.days,futureDates:future.map(s=>s.testDate),firstId};
-  },{id:manualDraftBefore.id,firstId:saved.id});
+    return {testDate:set?.testDate||'',pending:!!set?.pendingTestPlan,selected:set?.testSelectedLinkIds?.length||0,needsReview:set?setNeedsPairReview(set):false,verified:!!(state.vocabulary||[]).find(v=>v.id===word?.vocabId)?.verifiedAt,activeTestId:ctx?.sets?.[0]?.id||'',activeDays:ctx?.days,futureDates:future.map(s=>s.testDate)};
+  });
   assert(manualFinal.testDate===manualDate&&!manualFinal.pending&&manualFinal.selected===1&&!manualFinal.needsReview&&manualFinal.verified,'manual pair approval finalizes date, scope and verification atomically');
   assert(manualFinal.activeTestId===saved.id&&manualFinal.activeDays===7,'approved later manual test is queued and does not replace the earlier test');
   assert(manualFinal.futureDates.includes(manualDate),'approved manual test remains stored for its later date');
@@ -148,11 +148,11 @@ try{
   assert(ocrPending.id&&ocrPending.testDate===''&&ocrPending.pendingDate===ocrDate&&ocrPending.needsReview&&!ocrPending.verified,'OCR import stays an inactive unverified test draft until pair approval');
   await page.click('#confirmSetPairsBtn');
   await page.waitForSelector('#parentView.active');
-  const ocrFinal=await page.evaluate(({id,firstId})=>{
-    const set=state.sets.find(s=>s.id===id),ctx=upcomingTestContext('english');
+  const ocrFinal=await page.evaluate(()=>{
+    const set=state.sets.find(s=>s.captureSource==='ocr'&&s.testDate===datePlusDays(11)),ctx=upcomingTestContext('english');
     const future=(state.sets||[]).filter(s=>s.learnerId===state.activeLearnerId&&s.subject==='english'&&s.testDate&&daysUntil(s.testDate)>=0).sort((a,b)=>a.testDate.localeCompare(b.testDate));
-    return {testDate:set?.testDate||'',pending:!!set?.pendingTestPlan,selected:set?.testSelectedLinkIds?.length||0,needsReview:setNeedsPairReview(set),activeTestId:ctx?.sets?.[0]?.id||'',activeDays:ctx?.days,futureDates:future.map(s=>s.testDate),firstId};
-  },{id:ocrPending.id,firstId:saved.id});
+    return {testDate:set?.testDate||'',pending:!!set?.pendingTestPlan,selected:set?.testSelectedLinkIds?.length||0,needsReview:set?setNeedsPairReview(set):false,activeTestId:ctx?.sets?.[0]?.id||'',activeDays:ctx?.days,futureDates:future.map(s=>s.testDate)};
+  });
   assert(ocrFinal.testDate===ocrDate&&!ocrFinal.pending&&ocrFinal.selected===1&&!ocrFinal.needsReview,'OCR pair approval finalizes the pending test plan');
   assert(ocrFinal.activeTestId===saved.id&&ocrFinal.activeDays===7,'approved later OCR test is queued and does not replace the earlier test');
   assert(ocrFinal.futureDates.includes(ocrDate),'approved OCR test remains stored for its later date');
