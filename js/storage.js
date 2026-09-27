@@ -432,12 +432,42 @@ function inspectBackup(x){
   if(normalized&&(x.vocabulary.length>100000||x.setVocabulary.length>250000||x.learnerVocabulary.length>150000||(Array.isArray(x.books)&&x.books.length>5000)||(Array.isArray(x.learnerBooks)&&x.learnerBooks.length>10000)||(Array.isArray(x.bookVocabulary)&&x.bookVocabulary.length>250000)))return 'Das Backup ist für diese App ungewöhnlich groß.';
   return '';
 }
+function repairReplacedFutureTests(s,sourceVersion){
+  if(!s||!['0.21.16','0.21.17'].includes(String(sourceVersion||'')))return 0;
+  const now=today();let restored=0;
+  for(const l of (s.learners||[])){
+    if(Number(l.futureTestRecoveryVersion)||0)continue;
+    let learnerRestored=0;
+    const learnerSets=(s.sets||[]).filter(set=>set.learnerId===l.id);
+    for(const subject of knownSubjectIds()){
+      const subjectSets=learnerSets.filter(set=>normalizeSubjectId(set.subject)===subject);
+      const activeDates=subjectSets.map(set=>String(set.testDate||'')).filter(date=>date&&date>=now).sort();
+      if(!activeDates.length)continue;
+      const firstActive=activeDates[0],fortresses=Object.values(l.testFortresses||{})
+        .filter(f=>f&&f.subject===subject&&!f.capturedAt&&String(f.testDate||'')>=now&&String(f.testDate||'')<firstActive)
+        .sort((a,b)=>String(a.testDate||'').localeCompare(String(b.testDate||'')));
+      for(const fortress of fortresses){
+        const ids=new Set((fortress.setIds||[]).map(String));
+        const candidates=subjectSets.filter(set=>ids.has(String(set.id))&&!set.testDate&&!set.pendingTestPlan&&!(set.pairReviewRequired===true&&!set.pairVerifiedAt));
+        const usable=candidates.filter(set=>(s.setVocabulary||[]).some(link=>link.setId===set.id));
+        if(!usable.length)continue;
+        for(const set of usable)set.testDate=String(fortress.testDate||'');
+        learnerRestored+=usable.length;restored+=usable.length;
+      }
+    }
+    if(learnerRestored)l.dailyPlans={};
+    l.futureTestRecoveryVersion=1;
+  }
+  return restored;
+}
+
 function migrate(s){
   if(!s||!Array.isArray(s.learners))return defaultState();const sourceVersion=String(s.version||'');s.version=VERSION;s.activeSubject=s.activeSubject||'english';s.grades=s.grades||[];s.practiceTests=s.practiceTests||[];s.activity=s.activity||[];s.books=s.books||[];s.learnerBooks=s.learnerBooks||[];s.bookVocabulary=s.bookVocabulary||[];
   s.learners.forEach(l=>{const hints=(s.sets||[]).filter(x=>x.learnerId===l.id).map(x=>normalizeSubjectId(x.subject));if(l.id===s.activeLearnerId)hints.push(normalizeSubjectId(s.activeSubject));l.gradeLevel=/^(?:[1-9]|1[0-3])$/.test(String(l.gradeLevel||''))?String(l.gradeLevel):'';l.activeSubjects=normalizeLearnerSubjects(l,hints);normalizeLiteracySupport(l);l.streakDays=l.streakDays||[];l.milestones=l.milestones||{};l.fortressWins={...defaultSubjectArrays(),...(l.fortressWins||{})};l.fortressWinsByYear=l.fortressWinsByYear||{};l.battleDays=l.battleDays&&typeof l.battleDays==='object'&&!Array.isArray(l.battleDays)?l.battleDays:{};l.testFortresses=l.testFortresses&&typeof l.testFortresses==='object'&&!Array.isArray(l.testFortresses)?l.testFortresses:{};l.campaignLog=l.campaignLog||[];l.dailyPlans=l.dailyPlans||{};l.testSeries={...defaultTestSeries(),...(l.testSeries||{})};l.fontSize=l.fontSize||17;l.letterSpacing=l.letterSpacing||0;l.flashSpeed=l.flashSpeed||1600;l.gradeScales=l.gradeScales||defaultGradeScales();knownSubjectIds().forEach(subject=>{l.gradeScales[subject]={...defaultGradeScale(),...(l.gradeScales[subject]||{})};const key=`${subject}:${currentSchoolYear()}`;if(!l.fortressWinsByYear[key]&&Array.isArray(l.fortressWins?.[subject])&&l.fortressWins[subject].length)l.fortressWinsByYear[key]=[...l.fortressWins[subject]]})});
   s.sets=(s.sets||[]).map(x=>({...x,schoolYear:x.schoolYear||currentSchoolYear(),bookId:x.bookId||'',bookSection:x.bookSection||x.title||'',testScopeMode:x.testScopeMode||'set',testFrom:Number(x.testFrom)||1,testTo:Number(x.testTo)||0,testFormat:x.testFormat||'target'}));
   migrateLegacyLibrary(s);
   migrateSenseModel(s);
+  repairReplacedFutureTests(s,sourceVersion);
   repairV0912AliasSplit(s,sourceVersion);s.senseModelVersion=1;repairPreFocusSpellingLeak(s);backfillDirectionalRecall(s);requireLegacyPhotoPairReview(s);backfillBookVocabularyVerification(s);backfillFirstContact(s);
   s.practiceTests=(s.practiceTests||[]).map(t=>{const subject=normalizeSubjectId(t.subject),owner=s.learners.find(l=>l.id===t.learnerId),scale={...defaultGradeScale(),...((owner?.gradeScales||defaultGradeScales())[subject]||{})};return {...t,gradeScaleSnapshot:t.gradeScaleSnapshot||scale,suggestedGrade:t.suggestedGrade||suggestGradeFromScale(t.percent,scale)}});
   const hardened=hardenState(s);backfillPairReviewSignatures(hardened);return hardened;
