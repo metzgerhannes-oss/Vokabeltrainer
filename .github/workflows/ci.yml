@@ -35,6 +35,9 @@ jobs:
       - name: Preflight audit smoke
         run: node scripts/vokabeltrainer-preflight-smoke.mjs
 
+      - name: Project control consistency
+        run: node scripts/vokabeltrainer-project-control-smoke.mjs
+
       - name: Sense model smoke
         run: node scripts/vokabeltrainer-sense-smoke.mjs
 
