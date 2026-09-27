@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 27.09.2026 · App v0.21.14
+Stand: 27.09.2026 · App v0.21.15
 
 ## Ergebnis
+
+- v0.21.15 beseitigt die im praktischen iPhone-Test sichtbare Überlagerung zwischen Kampagnenbild und heller Missionskarte in der Armeeübersicht. Profilname und „Test N“ werden dort als parchmentartige Banner statt als Pillen dargestellt. Ein WebKit-Regressionscheck schützt den geometrischen Abstand und die Bannerform. Die Testnummerierung bleibt datengetrieben; sie wird nicht künstlich auf „Test 1“ gesetzt.
 
 - v0.21.14 setzt die freigegebene Beschriftungslogik der Angriffsszene um: Das eigene Banner trägt den Profilnamen, das Zielbanner „Test N“ mit schuljahresbezogener Testnummer. Die generischen Bildlabels „DEINE ARMEE“/„ZIEL“ entfallen. Browserregressionen sichern sowohl Battle-Szene als auch Armeeübersicht. Fachliche Lern- und Kampflogik bleibt unverändert.
 
