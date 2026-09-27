@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 27.09.2026 · App v0.21.19
+Stand: 27.09.2026 · App v0.21.20
 
 ## Ergebnis
+
+- v0.21.20 macht die Schlachtansicht verbindlich bildfokussiert: sie öffnet direkt als app-eigene Vollbildansicht, die Hauptnavigation bleibt ausgeblendet, persistente Kennzahlen/Taktik/Hauptaktion liegen außerhalb der Illustration und das doppelte Festungs-/Rang-Badge verschwindet aus der gemalten Szene. Browserregressionen prüfen Vollbild, versteckte Navigation und geometrische Überlagerungsfreiheit.
 
 - v0.21.19 erhöht die Referenz-Fidelity der Kampagnenbanner: Proportionen, Innenposition, gerollte Pergamentenden, seitlich hängende Wappen und der lange goldene Stab orientieren sich direkt am freigegebenen Screenshot. Die Testlogik bleibt unverändert.
 
