@@ -41,15 +41,12 @@ Die praktische v1-Abnahme ist noch nicht als abgeschlossen dokumentiert. Die zah
 
 Aus [../../FINAL_AUDIT.md](../../FINAL_AUDIT.md) bleibt außerdem als administrative Infrastrukturgrenze dokumentiert, dass die GitHub-Regel „Branch muss vor Merge auf aktuellem main sein“ noch separat administrativ zu aktivieren ist.
 
-## Aktuell diskutierte, noch nicht als Produktionsregel übernommene Idee
+## Aktueller Release-Kandidat
 
 ### Adaptives Nachrücken innerhalb desselben Lerntags
-Status: **REVIEWED**
+Status: **IMPLEMENTED**, Produktionsfreigabe noch ausstehend  
+Release-Kandidat: **v0.21.8 / PR #138**
 
-Fragestellung: Wenn ein Kind die vorgesehenen Wörter eines Tages schneller/sicherer bearbeitet, sollen innerhalb desselben Tages geeignete neue Wörter nachrücken, ohne die konservative mehrtägige Mastery-Logik aufzuweichen.
+Die Regel ist in [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P6 und Decision D-20260927-004 verbindlich spezifiziert. „Heute sicher“ ist getrennt von `completedKeys` und nachhaltiger Mastery. Pflicht-Tagesziel und Battle-Freischaltung bleiben unverändert; freiwilliges Nachrücken ist auf drei Zusatzwörter bzw. zwei im LRS-Modus und insgesamt sieben neu eingeführte Wörter pro Tag begrenzt.
 
-Wichtig: „heute sicher“ darf dabei nicht mit „nachhaltig gemeistert“ gleichgesetzt werden. Vor einer Umsetzung müssen Tageskontakt, Antwortqualität und nachhaltige Mastery technisch sauber getrennt werden.
-
-Quelle für die bestehende Leitplanke: [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md), insbesondere P3 „Verteiltes Lernen“ und P6 „Tagesziel“.
-
-Die konkrete Nachrückregel ist **noch keine verbindliche Product-DNA-Regel** und steht daher im Backlog als geprüfter Vorschlag.
+Automatisierte Nachweise liegen im Learning-Integrity-Smoke und im Family-Sync-Lernfortschritts-Browsertest. Erst nach grünem PR-CI, Merge auf `main` und erfolgreichem Pages-Deploy wird dieser Punkt als `PRODUCTION` geführt.
