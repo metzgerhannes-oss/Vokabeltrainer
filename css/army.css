@@ -488,17 +488,22 @@ body.lrs-mode .army-unit-card,body.lrs-mode .army-command,body.lrs-mode .army-un
   position:absolute;
   z-index:8;
   top:12px;
-  padding:4px 8px;
-  border-radius:7px;
-  font-size:.58rem;
+  min-width:82px;
+  max-width:150px;
+  padding:5px 10px 5px 13px;
+  border-radius:3px 8px 8px 3px;
+  font-size:.62rem;
   font-weight:1000;
-  letter-spacing:.12em;
-  color:#dbe7ef;
-  background:rgba(4,14,24,.62);
-  border:1px solid rgba(255,255,255,.12);
+  letter-spacing:.035em;
+  color:#fff3cf;
+  background:linear-gradient(180deg,rgba(117,70,25,.92),rgba(68,40,18,.94));
+  border:1px solid rgba(226,193,111,.55);
+  box-shadow:0 5px 12px rgba(0,0,0,.22);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
+.frontline-label::before{content:"";position:absolute;left:4px;top:-7px;width:3px;height:32px;border-radius:3px;background:#5d4227}
 .frontline-own{left:12px}
-.frontline-target{right:12px;color:#f0c9bd;border-color:rgba(209,108,77,.24)}
+.frontline-target{right:12px;color:#ffe2d4;background:linear-gradient(180deg,rgba(103,43,34,.92),rgba(63,29,26,.94));border-color:rgba(209,133,92,.5)}
 .frontline-center{
   position:absolute;
   z-index:7;

@@ -351,6 +351,17 @@ function testFortressHistory(subject=state.activeSubject){
   const l=learner();l.testFortresses=l.testFortresses&&typeof l.testFortresses==='object'?l.testFortresses:{};
   return Object.values(l.testFortresses).filter(f=>f?.subject===subject).sort((a,b)=>String(a.testDate||'').localeCompare(String(b.testDate||'')));
 }
+function testSequenceNumber(testDate,subject=state.activeSubject,schoolYear=currentSchoolYear()){
+  if(!testDate)return 1;
+  const startYear=Number(String(schoolYear||'').split('/')[0]),start=Number.isFinite(startYear)?`${startYear}-08-01`:'0000-01-01',end=Number.isFinite(startYear)?`${startYear+1}-07-31`:'9999-12-31';
+  const inYear=date=>!!date&&String(date)>=start&&String(date)<=end,dates=new Set();
+  for(const set of schoolYearSets(subject,schoolYear))if(inYear(set.testDate))dates.add(set.testDate);
+  for(const fortress of testFortressHistory(subject))if(inYear(fortress.testDate))dates.add(fortress.testDate);
+  if(inYear(testDate))dates.add(testDate);
+  const ordered=[...dates].sort(),index=ordered.indexOf(testDate);
+  return index>=0?index+1:1;
+}
+function testFortressLabel(f,subject=state.activeSubject){return f?.testDate?`Test ${testSequenceNumber(f.testDate,subject)}`:'Test'}
 function currentTestFortress(subject=state.activeSubject){
   const ctx=upcomingTestContext(subject);if(!ctx?.words?.length)return null;
   const l=learner();l.testFortresses=l.testFortresses&&typeof l.testFortresses==='object'?l.testFortresses:{};

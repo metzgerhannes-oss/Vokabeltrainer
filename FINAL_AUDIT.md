@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 27.09.2026 · App v0.21.13
+Stand: 27.09.2026 · App v0.21.14
 
 ## Ergebnis
+
+- v0.21.14 setzt die freigegebene Beschriftungslogik der Angriffsszene um: Das eigene Banner trägt den Profilnamen, das Zielbanner „Test N“ mit schuljahresbezogener Testnummer. Die generischen Bildlabels „DEINE ARMEE“/„ZIEL“ entfallen. Browserregressionen sichern sowohl Battle-Szene als auch Armeeübersicht. Fachliche Lern- und Kampflogik bleibt unverändert.
 
 - v0.21.13 korrigiert den im praktischen iPhone-Test sichtbaren Layoutfehler auf „Heute“: Der Avatar-Statusblock ist mobil kein Overlay mehr, sondern folgt dem Avatarbild als eigener vertikaler Layoutblock. Ein WebKit-Regressionscheck schützt gegen erneute geometrische Überlagerung. Fachliche Lern-, Mastery-, Testbereitschafts- und Battle-Logik bleiben unverändert.
 

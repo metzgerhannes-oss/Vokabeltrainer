@@ -51,8 +51,8 @@ try{
   assert((await page.locator('#gameMissionTitle').textContent())?.length>0,'game hub names the current fortress mission');
   assert((await page.locator('#gameMissionStatus').textContent())?.includes('ANGRIFF'),'game hub exposes the current attack state');
   assert((await page.locator('#attackBtn').textContent())?.includes('FESTUNG'),'primary game action clearly points to the fortress');
-  assert((await page.locator('.frontline-own').textContent())?.includes('DEINE ARMEE'),'frontline labels the player side');
-  assert((await page.locator('.frontline-target').textContent())?.includes('ZIEL'),'frontline labels the target side');
+  assert((await page.locator('.frontline-own').textContent())?.trim()==='Mein Profil','frontline banner identifies the player side with the active profile name');
+  assert((await page.locator('.frontline-target').textContent())?.trim()==='Test 1','frontline target banner uses Test plus the school-year sequence number');
   assert(await page.locator('#battlefield .battle-fortress').count()===1,'CSS fortress remains available only as a technical fallback');
   assert(await page.locator('#battlefield .fortress:not(.battle-fortress)').count()===0,'legacy mini fortress is absent from the army command scene');
   const commandVisual=await page.evaluate(()=>({

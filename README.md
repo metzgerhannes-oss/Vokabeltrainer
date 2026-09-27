@@ -10,11 +10,20 @@ Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änd
 
 ## Aktueller Stand
 
-App-Version: **v0.21.13**
+App-Version: **v0.21.14**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.21.14 – Angriffsszene mit Profil-/Testbanner
+
+- generische Szenenbeschriftungen „DEINE ARMEE“ und „ZIEL“ werden durch in die Kampagnenszene integrierte Banner ersetzt
+- das eigene Banner zeigt den aktiven **Profilnamen**
+- das Zielbanner zeigt **„Test N“**, wobei N aus der chronologischen Testfolge des aktuellen Fachs und Schuljahres gebildet wird
+- die Nummerierung beginnt in jedem neuen Schuljahr wieder bei Test 1
+- Banner bleiben auch im app-eigenen Fokusmodus sichtbar und ersetzen zusätzliche erklärende Bildlabels
+- Lern-, Mastery-, Testbereitschafts- und Kampfschadenslogik bleiben unverändert
 
 ## v0.21.13 – Mobiles Avatar-Statuslayout
 
