@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 27.09.2026 · App v0.21.21
+Stand: 27.09.2026 · App v0.21.22
 
 ## Ergebnis
+
+- v0.21.22 korrigiert die Mengeninterpretation des Tagesplans: 10–12 Lernkontakte werden nicht mehr als 10–12 unterschiedliche Pflichtwörter umgesetzt. Der Pflichtkern enthält regulär 5–6 Fokuswörter, bei „Kurze Einheiten“ 3–4; maximal drei bzw. zwei davon sind neu. Rückstand führt zu einer optional empfohlenen zweiten Kurzrunde statt zu 12–14 Pflichtwörtern. Strengere „heute sicher“-Wiederholungen werden nicht mehr automatisch in den laufenden Pflichtkern eingeschoben. Eine Migration verkleinert bestehende Tagespläne auf das neue Schema und übernimmt passende heutige Erledigungen.
 
 - v0.21.21 behebt den im realen Tageslern-Test sichtbaren Fortschrittsverlust nach einem App-Release: Die Tagesplan-Signatur verwendet jetzt ein eigenes Planschema statt der App-Version. Dadurch setzt ein normales Update `0 / N erledigt` nicht mehr auf null. Beim einmaligen Übergang aus der alten Versionssignatur werden nur heutige fachlich gültige, unabhängige aktive Abrufe wieder als erledigt erkannt; Hilfs-/Recognition-Schritte, assistierte Antworten und Fehler bleiben offen. Ein Regressionstest simuliert genau diesen Release-Wechsel.
 
@@ -66,7 +68,7 @@ ersetzt nicht den praktischen Test mit einem Kind ohne verbale Hilfestellung.
 - fachlich bestätigte Vokabeln sind sofort im adaptiven Lernpfad und in den freiwilligen Übungsarten verfügbar; Abschreiben ist keine Freigabesperre mehr
 - Abschreiben ist eine eigene freiwillige Lerneinheit mit Anschauen → handschriftlich schreiben → Abdecken → Erinnern → Vergleichen; bereits ins Vokabelheft übertragene Wörter können ohne Nachteil direkt gelernt werden
 - der separate Abschreibstatus wird gespeichert, beeinflusst aber weder Lernbereitschaft noch Mastery
-- Tagespensum: normalerweise 5–7 neue Vokabeln und etwa 10–12 Kontakte; täglich dynamisch aus Restlernstand, Testabstand und Unsicherheiten neu berechnet (Vorsprung bis ca. 8 Kontakte, Rückstand bis ca. 14, max. 7 neue Wörter). Letzter Tag vor dem Test wird bei ausreichendem Vorlauf für Wiederholung reserviert; Testtag führt keine neuen Wörter ein.
+- Tagespensum: verpflichtender Kern mit 5–6 Fokuswörtern, bei „Kurze Einheiten“ 3–4; darin maximal 3 bzw. 2 neue Wörter. Mehrere Lernschritte pro Fokuswort ergeben typischerweise mehrere Kontakte. Rückstand verlängert nicht die Pflichtsession, sondern kann eine getrennte zweite Kurzrunde empfehlen. Insgesamt höchstens 6 neue Wörter pro Tag bzw. 4 mit „Kurze Einheiten“; Testtag führt keine neuen Wörter ein.
 - Karteikartenmodus: jederzeit für alle fachlich geprüften Wörter verfügbar; fünf Leitner-Boxen, ausschließlich schriftliche automatische Bewertung; richtig maximal +1 Box, falsch −1 Box, höhere Stufen durch Spacing begrenzt, Box 5 nur bei nachhaltiger Mastery
 - Eltern-UX: Steht ein Test an, ist „Test planen“ der Standardweg und übernimmt die ausgewählten Vokabeln automatisch als Lernstoff. „Ohne Test lernen“ dient ausschließlich zusätzlichem Lernstoff ohne Termin.
 - Vokabelauswahl unterstützt Einzelauswahl, Alle/Keine und eine inklusive Von–Bis-Spanne; gespeicherte Einzel-/Bereichsauswahl bleibt reload-stabil.
