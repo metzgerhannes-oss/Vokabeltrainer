@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 27.09.2026 · App v0.21.15
+Stand: 27.09.2026 · App v0.21.16
 
 ## Ergebnis
+
+- v0.21.16 korrigiert zwei Befunde aus dem praktischen iPhone-Test: Profilname und Testziel stehen als echte Feldstandarten innerhalb der Kampagnenszene statt als schwebende Tafeln; außerdem zählt die sichtbare Testfolge keine verwaiste Festung eines ersetzten zukünftigen Testplans mehr mit. Die aktive Testplanung bleibt maßgeblich, Testserien behalten ihre chronologische Historie. WebKit-Regressionen decken beide Fälle ab.
 
 - v0.21.15 beseitigt die im praktischen iPhone-Test sichtbare Überlagerung zwischen Kampagnenbild und heller Missionskarte in der Armeeübersicht. Profilname und „Test N“ werden dort als parchmentartige Banner statt als Pillen dargestellt. Ein WebKit-Regressionscheck schützt den geometrischen Abstand und die Bannerform. Die Testnummerierung bleibt datengetrieben; sie wird nicht künstlich auf „Test 1“ gesetzt.
 
