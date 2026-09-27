@@ -3632,8 +3632,9 @@ body.learning-focus #learnView .study-shell{
   position:absolute;
   z-index:2;
   left:-24px;
-  right:-24px;
+  right:auto;
   top:-6px;
+  width:calc(100% + 48px);
   height:5px;
   border-radius:4px;
   background:linear-gradient(180deg,#c99d47,#6d461f 72%,#3f2817);
@@ -3701,8 +3702,9 @@ body.learning-focus #learnView .study-shell{
   #battleView .battle-scene-banner span{max-width:116px}
   #battleView .battle-scene-banner::after{
     left:-19px;
-    right:-19px;
+    right:auto;
     top:-5px;
+    width:calc(100% + 38px);
     height:4px;
   }
   #battleView .battle-scene-banner::before{
