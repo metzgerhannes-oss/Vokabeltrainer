@@ -76,6 +76,22 @@ try{
   assert(commandVisualScene.opacity>=0.95,'integrated campaign artwork is fully visible');
   assert(commandVisualScene.fortressDisplay==='none'&&commandVisualScene.armyDisplay==='none','painted army and fortress replace pasted-on CSS geometry');
   assert(commandVisualScene.artSrc===commandVisualScene.targetSrc,'army overview reuses the cohesive battle campaign scene instead of a separate camp background');
+  const commandComposition=await page.evaluate(()=>{
+    const stage=document.querySelector('#armyView .game-frontline-stage')?.getBoundingClientRect();
+    const panel=document.querySelector('#armyView .game-mission-panel')?.getBoundingClientRect();
+    const own=document.querySelector('#armyView .frontline-own');
+    const target=document.querySelector('#armyView .frontline-target');
+    return {
+      gap:stage&&panel?Math.round(panel.top-stage.bottom):null,
+      ownRadius:own?parseFloat(getComputedStyle(own).borderTopLeftRadius||'0'):null,
+      targetRadius:target?parseFloat(getComputedStyle(target).borderTopLeftRadius||'0'):null,
+      ownFont:own?getComputedStyle(own).fontFamily:'',
+      ownBackground:own?getComputedStyle(own).backgroundImage:''
+    };
+  });
+  assert(commandComposition.gap!==null&&commandComposition.gap>=8,'mobile mission card stays clearly below the campaign image without overlap');
+  assert(commandComposition.ownRadius!==null&&commandComposition.ownRadius<=8&&commandComposition.targetRadius<=8,'campaign identity labels render as banners instead of pill badges');
+  assert(commandComposition.ownFont.includes('Georgia')&&commandComposition.ownBackground.includes('linear-gradient'),'campaign identity labels use the dignified parchment-banner treatment');
   await page.waitForFunction(()=>document.querySelector('[data-army-hero-art]')?.naturalWidth>0);
   await page.waitForFunction(()=>document.querySelectorAll('#armyUnitGrid .army-unit-art.art-loaded').length===6);
   await page.waitForFunction(()=>document.querySelectorAll('#armyFormationField .army-formation-art.art-loaded').length===6);
