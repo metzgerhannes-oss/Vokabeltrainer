@@ -6,13 +6,13 @@ Stand: 27.09.2026, Baseline direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.15**
-- Main-Commit des aktuellen produktiven Releases: `279ef353e85b3b19ec766b725aaff21665d47f35`
+- App-Version: **v0.21.18**
+- Main-Commit des aktuellen produktiven Releases: `a989eafa248b246a79e552f9f5df37919d283ef4`
 - letzter fachlicher Lernrelease: **PR #148 – v0.21.12 – Differenzierte LRS-Unterstützung**
-- letzter UI-Fixrelease: **PR #153 – v0.21.15 – Armee-Banner und klare Bildtrennung**
-- PR-CI UI-Fixrelease: **Vokabeltrainer CI #975 – success**
-- main-CI UI-Fixrelease: **Vokabeltrainer CI #976 – success**
-- Produktionsdeploy UI-Fixrelease: **GitHub Pages #517 – success**, inklusive Live-Verifikation
+- letzter UI-/Planungsfixrelease: **PR #160 – v0.21.18 – Frühesten Test bei mehreren Terminen erhalten**
+- PR-CI UI-/Planungsfixrelease: **Vokabeltrainer CI #994 – success**
+- main-CI UI-/Planungsfixrelease: **Vokabeltrainer CI #995 – success**
+- Produktionsdeploy UI-/Planungsfixrelease: **GitHub Pages #523 – success**, inklusive Live-Verifikation
 - PR-CI Lernrelease: **Vokabeltrainer CI #965 – success**
 - main-CI Lernrelease: **Vokabeltrainer CI #966 – success**
 - Produktionsdeploy Lernrelease: **GitHub Pages #512 – success**, inklusive Live-Verifikation
@@ -41,6 +41,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Richtungsspezifische Testbereitschaft | PRODUCTION | `PRODUCT_DNA.md` P2, D-20260927-007, PR #144 |
 | Lernbibliothek / Dokumentationskohärenz | PRODUCTION | `docs/project/LEARNING_COHERENCE_REVIEW.md`, PR #146 |
 | Tagesplanung mit testbezogener Last | PRODUCTION | `PRODUCT_DNA.md` P6 + Code/Tests |
+| Mehrere kommende Einzeltests / frühester Termin | PRODUCTION | PR #160, `V1_ACCEPTANCE_TEST.md` |
 | Pflicht-Tagesziel nur nach erfolgreichem Abruf | PRODUCTION | `PRODUCT_DNA.md` P4/P6, D-20260927-005, PR #142 |
 | Adaptives Nachrücken / „heute sicher“ | PRODUCTION | `PRODUCT_DNA.md` P3/P6, D-20260927-004, PR #138 |
 | Tolerante Satzbewertung | PRODUCTION | README v0.21.2 + Code/Tests |
@@ -57,6 +58,21 @@ Die praktische v1-Abnahme ist noch nicht als abgeschlossen dokumentiert. Die zah
 Aus [../../FINAL_AUDIT.md](../../FINAL_AUDIT.md) bleibt außerdem als administrative Infrastrukturgrenze dokumentiert, dass die GitHub-Regel „Branch muss vor Merge auf aktuellem main sein“ noch separat administrativ zu aktivieren ist.
 
 ## Aktueller produktiver Release
+
+### Mehrere kommende Tests bleiben chronologisch aktiv
+Status: **PRODUCTION**  
+Release: **v0.21.18 / PR #160**
+
+Ein später eingetragener Test ersetzt keinen früheren noch bevorstehenden Test mehr.
+Mehrere einmalige Tests desselben Fachs können parallel gespeichert bleiben; Lernen,
+Heute-Ansicht, Testbereitschaft und Kampagnenziel richten sich immer nach dem frühesten
+anstehenden Termin. Auch Bibliothekstests desselben Abschnitts werden als getrennte,
+datierte Testpläne gespeichert. Manuelle und OCR-Testvorbereitungen werden nach der
+Paarprüfung eingereiht, ohne frühere Termine zu löschen. Eine einmalige Migration stellt
+v0.21.17-Daten wieder her, wenn die alte Ersetzungslogik ein früheres Testdatum gelöscht
+hat, die zugehörige zukünftige Testfestung den Termin aber noch eindeutig belegt.
+PR-CI #994, main-CI #995 und Pages #523 sind erfolgreich; der Live-Deploy wurde
+verifiziert.
 
 ### Armee-Banner und klare Bildtrennung
 Status: **PRODUCTION**  
