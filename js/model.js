@@ -516,6 +516,7 @@ function normalizeDailyAdaptivePlan(plan,l=learner()){
   plan.extraRefs=Array.isArray(plan.extraRefs)?plan.extraRefs:[];
   const modeLimit=l?.lrsMode?2:3,storedLimit=Number.isFinite(Number(plan.extraLimit))?Number(plan.extraLimit):modeLimit;
   plan.extraLimit=Math.max(0,Math.min(modeLimit,storedLimit));
+  if(plan.extraRefs.length>plan.extraLimit)plan.extraRefs=plan.extraRefs.slice(0,plan.extraLimit);
   return plan;
 }
 function buildDailyPlan(subject=state.activeSubject){
@@ -636,7 +637,7 @@ function dailyPlanStatus(plan=buildDailyPlan()){
   const secure=new Set(Array.isArray(plan.todaySecureKeys)?plan.todaySecureKeys:[]);
   const reviewDone=reviewPairs.filter(x=>completed.has(dailyPlanRefKey(x.ref))),reviewRemaining=reviewPairs.filter(x=>!completed.has(dailyPlanRefKey(x.ref)));
   const introDone=introPairs.filter(x=>completed.has(dailyPlanRefKey(x.ref))),introRemaining=introPairs.filter(x=>!completed.has(dailyPlanRefKey(x.ref)));
-  const extraDone=extraPairs.filter(x=>completed.has(dailyPlanRefKey(x.ref))),extraRemaining=extraPairs.filter(x=>!completed.has(dailyPlanRefKey(x.ref)));
+  const extraDone=extraPairs.filter(x=>secure.has(dailyPlanRefKey(x.ref))),extraRemaining=extraPairs.filter(x=>!secure.has(dailyPlanRefKey(x.ref)));
   const total=reviewPairs.length+introPairs.length,done=reviewDone.length+introDone.length,remaining=reviewRemaining.length+introRemaining.length;
   return {
     total,done,remaining,
