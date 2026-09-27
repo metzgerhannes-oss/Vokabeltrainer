@@ -4,11 +4,23 @@ Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konser
 
 ## Aktueller Stand
 
-App-Version: **v0.21.6**
+App-Version: **v0.21.7**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.21.7 – Testfortschritt & Battle-Fokus
+
+- Startscreen zeigt im Profil-/Avatarbereich den aktiven Profilnamen statt der generischen Bezeichnung „Avatar“
+- geplanter nächster Test zeigt testbezogen **Prozentwert plus absoluten Stand**, z. B. „68 % · 21 von 31 Vokabeln sicher“
+- die Kennzahl verwendet die bestehende fachliche Testbereitschaft des konkreten Testumfangs, nicht den allgemeinen Jahresfortschritt
+- iPhone-Battle zeigt in der Normalansicht nur noch Armeestärke sowie Rang/Ausrüstung als Bild-Overlays; Testziel und Verteidigung werden nicht doppelt oben eingeblendet
+- Verteidigungswert steht direkt im Festungs-Badge unter dem Schadensstatus
+- bisheriger Browser-„Vollbild“-Schalter wird zum zuverlässigen **Fokusmodus** ohne Fullscreen-API
+- Fokusmodus zeigt nur die Querformat-Kampagnenszene, Festungsstatus/Verteidigung, „Fokus schließen“ und „Angriff wählen“
+- Story, KPI-HUD, Bottom-Navigation, Angriffskarten und sonstige Bedienflächen verschwinden im Fokusmodus
+- keine Änderung an Lernbewertung, Mastery, Testbereitschaftslogik oder Battle-Berechnung
 
 ## v0.21.6 – Campaign Target Design
 
