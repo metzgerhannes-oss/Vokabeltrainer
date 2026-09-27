@@ -18,6 +18,8 @@ try{
     state=defaultState();
     const l=state.learners[0];
     l.name='Charly';
+    l.literacySupport={reading:false,spelling:true};
+    l.reducedLoad=true;
     l.lrsMode=true;
     l.gradeLevel='5';
     l.xp=123;
@@ -42,7 +44,7 @@ try{
 
   const cleaned=await page.evaluate(()=>({
     marker:!!localStorage.getItem(BUILTIN_ONLY_RESET_MARKER),
-    profile:{name:state.learners[0]?.name,lrs:state.learners[0]?.lrsMode,gradeLevel:state.learners[0]?.gradeLevel,xp:state.learners[0]?.xp},
+    profile:{name:state.learners[0]?.name,support:literacySupportFor(state.learners[0]),lrs:state.learners[0]?.lrsMode,gradeLevel:state.learners[0]?.gradeLevel,xp:state.learners[0]?.xp},
     sets:state.sets.length,setVocabulary:state.setVocabulary.length,learnerVocabulary:state.learnerVocabulary.length,
     practiceTests:state.practiceTests.length,activity:state.activity.length,grades:state.grades.length,learnerBooks:state.learnerBooks.length,
     books:state.books.map(b=>b.id),builtinRows:state.bookVocabulary.filter(r=>r.bookId==='book_builtin_camden_town_1').length,
@@ -52,7 +54,7 @@ try{
   }));
 
   assert(cleaned.marker,'reset marker is written');
-  assert(cleaned.profile.name==='Charly'&&cleaned.profile.lrs===true&&cleaned.profile.gradeLevel==='5','profile identity and learning settings are preserved');
+  assert(cleaned.profile.name==='Charly'&&!cleaned.profile.support.reading&&cleaned.profile.support.spelling&&cleaned.profile.support.reducedLoad&&cleaned.profile.lrs===true&&cleaned.profile.gradeLevel==='5','profile identity and differentiated learning settings are preserved');
   assert(cleaned.profile.xp===0&&cleaned.sets===0&&cleaned.setVocabulary===0&&cleaned.learnerVocabulary===0,'personal learning content and progress are cleared');
   assert(cleaned.practiceTests===0&&cleaned.activity===0&&cleaned.grades===0&&cleaned.learnerBooks===0,'old test, grade, activity and book-assignment data are cleared');
   assert(cleaned.books.length===1&&cleaned.books[0]==='book_builtin_camden_town_1','only the built-in book remains');
