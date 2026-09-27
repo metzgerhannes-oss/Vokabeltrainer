@@ -802,15 +802,15 @@ function contentPlanPreviewData(rows,learnerId,testDate=''){
   return {l,count,newCount,weakCount,days,pace};
 }
 function contentPlanPreviewText(rows,learnerId,testDate=''){
-  const {count,newCount,days,pace}=contentPlanPreviewData(rows,learnerId,testDate);
+  const {count,newCount,days,pace}=contentPlanPreviewData(rows,learnerId,testDate),newLabel=`${pace.quota} neue${pace.quota===1?'s':''} Wort${pace.quota===1?'':'e'}`;
   if(!count)return 'Noch keine Vokabel ausgewählt.';
-  if(!testDate)return `${count} Vokabeln ausgewählt. Ohne Testtermin startet die App normalerweise mit bis zu ${pace.quota||5} neuen Wörtern und ungefähr ${pace.dailyTarget} Kontakten pro Tag.`;
+  if(!testDate)return `${count} Vokabeln ausgewählt. Der Pflichtkern bleibt kurz: ${newLabel} in höchstens ${pace.dailyTarget} Fokuswörtern.`;
   if(days<1)return `${count} Vokabeln ausgewählt · Test ist heute. Für neue Wörter bleibt kein sinnvoller Lernabstand mehr; heute nur gezielt wiederholen.`;
   const windowText=pace.reviewOnlyDays?`${pace.acquisitionDays} Tag${pace.acquisitionDays===1?'':'e'} für neue Wörter + 1 Wiederholungstag`:`${pace.acquisitionDays} Lerntag${pace.acquisitionDays===1?'':'e'} vor dem Test`;
-  if(pace.overload)return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · ${newCount} noch neu · rechnerisch ${pace.requiredPerDay} neue Wörter pro Lerntag nötig. Maximal 7 werden angesetzt; das Tagesziel steigt auf bis zu etwa ${pace.dailyTarget} Kontakte. Zeit bis zum Test ist zu knapp für den vorgesehenen Abstand.`;
-  if(pace.spacingRisk)return `${count} ausgewählt · Test ${days===1?'morgen':'heute'} · ${newCount} noch neu. Neue Wörter können noch begonnen werden, aber für verteilte Wiederholungen bleibt zu wenig Zeit. Der Plan priorisiert deshalb die wichtigsten Abrufe und markiert die Situation als knapp.`;
-  if(!newCount)return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · alle Wörter kennengelernt. Das Tagesziel wird anhand der noch unsicheren Wörter dynamisch auf etwa ${pace.dailyTarget} Kontakte angepasst.`;
-  return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · ${newCount} noch neu · ${windowText}. Aktuell etwa ${pace.quota} neue Wörter und insgesamt ${pace.dailyTarget} Kontakte pro Tag. Der Plan wird jeden Tag aus dem tatsächlichen Lernstand neu berechnet.`;
+  if(pace.overload)return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · ${newCount} noch neu · rechnerisch ${pace.requiredPerDay} neue Wörter pro Lerntag nötig. Der Pflichtkern bleibt trotzdem bei höchstens ${pace.dailyTarget} Fokuswörtern mit maximal ${pace.maxNew} neuen Wörtern. Danach wird eine zweite kurze Runde empfohlen. Zeit bis zum Test ist zu knapp für den vorgesehenen Abstand.`;
+  if(pace.spacingRisk)return `${count} ausgewählt · Test ${days===1?'morgen':'heute'} · ${newCount} noch neu. Der Pflichtkern bleibt bei höchstens ${pace.dailyTarget} Fokuswörtern; danach kann eine zweite kurze Runde sinnvoll sein. Für verteilte Wiederholungen bleibt zu wenig Zeit.`;
+  if(!newCount)return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · alle Wörter kennengelernt. Der Pflichtkern umfasst höchstens ${pace.dailyTarget} Fokuswörter und priorisiert die noch unsicheren Wörter.`;
+  return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · ${newCount} noch neu · ${windowText}. Aktuell ${newLabel} in einem Pflichtkern von höchstens ${pace.dailyTarget} Fokuswörtern. Der Plan wird jeden Tag aus dem tatsächlichen Lernstand neu berechnet.`;
 }
 function applyVocabularyPickerRange(picker,selector,fromInput,toInput,onChange){
   const boxes=[...picker.querySelectorAll(selector)],count=boxes.length;if(!count)return;
