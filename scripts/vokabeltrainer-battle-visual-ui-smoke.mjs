@@ -13,6 +13,26 @@ try{
   assert(await page.locator('#battleStage [data-battle-art-stack]').count()===1,'dedicated painted battle artwork is mounted in the current scene');
   assert((await page.locator('#battleStage .battle-scene-banner-own').textContent())?.trim()==='Mein Profil','attack scene identifies the player side with the profile name instead of a generic army label');
   assert((await page.locator('#battleStage .battle-scene-banner-target').textContent())?.trim()==='Test 1','attack scene identifies the target as Test plus its school-year sequence number');
+  const attackBannerVisual=await page.evaluate(()=>{
+    const stage=document.querySelector('#battleStage')?.getBoundingClientRect();
+    const own=document.querySelector('#battleStage .battle-scene-banner-own');
+    const target=document.querySelector('#battleStage .battle-scene-banner-target');
+    const ownRect=own?.getBoundingClientRect(),targetRect=target?.getBoundingClientRect();
+    return {
+      ownWidth:ownRect?.width||0,ownHeight:ownRect?.height||0,
+      targetWidth:targetRect?.width||0,targetHeight:targetRect?.height||0,
+      ownRelativeTop:stage&&ownRect?(ownRect.top-stage.top)/stage.height:null,
+      targetRelativeTop:stage&&targetRect?(targetRect.top-stage.top)/stage.height:null,
+      ownShieldWidth:own?parseFloat(getComputedStyle(own,'::before').width||'0'):0,
+      targetShieldWidth:target?parseFloat(getComputedStyle(target,'::before').width||'0'):0,
+      ownRodWidth:own?parseFloat(getComputedStyle(own,'::after').width||'0'):0,
+      targetRodWidth:target?parseFloat(getComputedStyle(target,'::after').width||'0'):0
+    };
+  });
+  assert(attackBannerVisual.ownWidth>attackBannerVisual.ownHeight*2.5&&attackBannerVisual.targetWidth>attackBannerVisual.targetHeight*2.5,'attack identity uses horizontal scroll banners');
+  assert(attackBannerVisual.ownRelativeTop<0.15&&attackBannerVisual.targetRelativeTop<0.15,'attack scroll banners stay at the top edge of the artwork');
+  assert(attackBannerVisual.ownShieldWidth>=28&&attackBannerVisual.targetShieldWidth>=28,'attack scroll banners include heraldic shields');
+  assert(attackBannerVisual.ownRodWidth>attackBannerVisual.ownWidth&&attackBannerVisual.targetRodWidth>attackBannerVisual.targetWidth,'attack scroll banners include ceremonial rods wider than the parchment');
   assert(!(await page.locator('#battleStage').textContent())?.includes('DEINE ARMEE'),'attack scene no longer needs the generic DEINE ARMEE image label');
   assert(await page.locator('#battleStage [data-battle-scene-art]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'dedicated battlefield artwork loads successfully');
   assert(await page.locator('#battleStage .battle-sky').count()===1,'CSS sky remains available only as artwork fallback');
