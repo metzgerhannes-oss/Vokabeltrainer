@@ -45,8 +45,8 @@
     frame.dataset.avatarVisualKey=`${state.activeSubject}-${style}-stage-${stage.level}`;
     frame.dataset.avatarSubject=state.activeSubject;
     frame.dataset.avatarStyle=style;
-    const avatarNoun=state.activeSubject==='latin'?'Legionär':state.activeSubject==='french'?'Reisefigur':'Avatar';
-    if(label)label.textContent=`${avatarNoun} · Stufe ${stage.level}/${stage.maxLevel}`;
+    const profileName=String(learner()?.name||'Profil').trim()||'Profil';
+    if(label)label.textContent=`${profileName} · Stufe ${stage.level}/${stage.maxLevel}`;
     if(pips)pips.innerHTML=Array.from({length:stage.maxLevel},(_,i)=>`<i class="${i<stage.level?'filled':''}"></i>`).join('');
     if(next)next.textContent=stage.nextAt===null?`${stage.label} · maximal entwickelt`:`${stage.label} · nächste Stufe bei ${stage.nextAt}%`;
     return stage;
@@ -86,6 +86,24 @@
     if(rank)rank.textContent=avatarStage?.rank||rankFor(p.pct,state.activeSubject);
     if(learned)learned.textContent=String(p.mastered||0);
     if(castles)castles.textContent=String(currentCapturedFortresses());
+    const testRoot=document.querySelector('#menuNextTestProgress');
+    const testPct=document.querySelector('#menuNextTestPct');
+    const testDetail=document.querySelector('#menuNextTestDetail');
+    const ctx=typeof upcomingTestContext==='function'?upcomingTestContext(state.activeSubject):null;
+    const readiness=ctx&&typeof testReadinessForContext==='function'?testReadinessForContext(ctx):null;
+    const hasTest=!!(ctx&&readiness&&readiness.total>0);
+    if(testRoot){
+      testRoot.classList.toggle('hidden',!hasTest);
+      if(hasTest){
+        if(testPct)testPct.textContent=`${readiness.pct}%`;
+        if(testDetail)testDetail.textContent=`${readiness.ready} von ${readiness.total} Vokabeln sicher`;
+        testRoot.setAttribute('aria-label',`Nächster Test: ${readiness.pct} Prozent. ${readiness.ready} von ${readiness.total} Vokabeln sicher.`);
+      }else{
+        if(testPct)testPct.textContent='0%';
+        if(testDetail)testDetail.textContent='Kein Test geplant';
+        testRoot.removeAttribute('aria-label');
+      }
+    }
     renderSubjectSwitcher();
     applyAvatarArt();
   }
