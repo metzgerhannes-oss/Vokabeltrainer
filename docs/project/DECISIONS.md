@@ -191,3 +191,24 @@ eine überlange Pflichtsession kompensiert.
 ## Neue Entscheidungen
 
 Neue Grundsatzentscheidungen erhalten fortlaufend eine ID im Format `D-YYYYMMDD-NNN`. Wird eine bestehende Regel ersetzt, bleibt die alte Entscheidung erhalten und wird als `SUPERSEDED` markiert; sie wird nicht gelöscht.
+### D-20260927-011 – T−1-Rettungsmodus priorisiert Abruf statt Vollstoff-Drill
+**Status:** LOCKED  
+**Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P3, P6 und P12
+
+Liegt ein geplanter Test am nächsten Tag und sind noch Testwörter unsicher oder unbekannt,
+bleibt der verpflichtende Tageskern aus D-20260927-010 kurz. Danach darf die App gezielte
+freiwillige Rettungsrunden anbieten. Eine Rettungsrunde enthält höchstens sechs unterschiedliche
+Fokuswörter, bei aktivierten „Kurzen Einheiten“ höchstens vier.
+
+Testbereite Wörter werden ausgelassen. Priorität: Fehler aus der vorherigen Rettungsrunde →
+noch nicht geprüfte unbekannte Testwörter → noch nicht geprüfte schwache Testwörter. Nach
+einer fachlich richtigen, unassistierten Korrektur gibt das Wort den Platz für weitere offene
+Wörter frei. Das reale Testformat wird gespiegelt; Diktat verlangt produktive Rechtschreibung.
+
+Der Rettungsmodus darf unbekannte Testwörter am Vortag noch bearbeiten, kennzeichnet den
+fehlenden Spacing-Vorlauf aber weiterhin als Risiko. Er erzeugt weder zusätzliche Pflichtwörter
+noch weitere Battle-Aktionen und senkt Mastery-, Leitner-, Spacing- oder Testbereitschafts-
+kriterien nicht ab. Er dokumentiert ausschließlich tatsächlich erbrachte Lernleistung.
+Mehrere Rettungsrunden bleiben getrennte kurze Einheiten; eine lange Vollstoff-Massensession
+wird nicht automatisch gestartet.
+
