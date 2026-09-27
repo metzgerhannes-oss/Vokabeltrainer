@@ -25,6 +25,7 @@ const passed=vm.runInContext(`
     dueDate:'2026-10-04',masteredAt:'2026-09-18T12:00:00.000Z'
   });
   s.learnerVocabulary.push(p);
+  s.activity.push({id:'a_direction_legacy',learnerId:'learner_demo',wordId:p.id,date:'2026-09-18T12:00:00.000Z',type:'recall',correct:true,assisted:false,active:true});
   const repaired=migrate(s);
   const rp=repaired.learnerVocabulary[0];
   assert(repaired.spellingLeakRepairVersion===1,'migration marker is written');
@@ -33,6 +34,9 @@ const passed=vm.runInContext(`
   assert(rp.lastMasteredAt==='2026-09-18T12:00:00.000Z','previous mastery timestamp is retained for history');
   assert(rp.dueDate===today(),'revalidation becomes due immediately');
   assert(!meetsMasteryCriteria(rp),'repaired progress cannot remain mastered');
+  assert(repaired.directionalRecallVersion===1,'directional recall migration marker is written');
+  assert(rp.directionalRecall.target.lastCorrect===true&&rp.directionalRecall.target.successDays.includes('2026-09-18'),'historical active recall activity backfills exact target-direction evidence');
+  assert(rp.directionalRecall.source.successDays.length===0,'migration does not invent a source-direction recall that never occurred');
   assert(answerMatches('cant',"can't")===true,'general recall stays punctuation tolerant');
   assert(answerMatches('schon','schön')===false,'general recall preserves meaning-changing umlauts');
   assert(closestTargetForm('schauen',['schauen; ansehen'])==='schauen; ansehen','feedback keeps semicolon target atomic');
@@ -69,6 +73,38 @@ const passed=vm.runInContext(`
   session={mode:'adaptive',currentSubmode:'recall',hintUsed:false,isDaily:false,activeAttemptedWords:{},scaffoldedWords:{[nextDayWord.id]:true},correct:0,answered:0};
   recordResult(nextDayWord,true,'retrieval',null,{orthographyOk:true});
   assert(nextDayWord.intervalDays===3&&(nextDayWord.activeSuccessDays||[]).length===2,'a success on a distinct later day can advance the spacing interval');
+  session=null;
+
+  const passiveOnly=makeLearnerVocabulary('learner_demo','v_passive','sense_passive',{skills:{recognition:4,listening:4,retrieval:0,spelling:0,context:0}});
+  assert(testReadinessScore(passiveOnly)===0,'recognition and listening support do not raise the readiness percentage on their own');
+
+  const directionWord=makeLearnerVocabulary('learner_demo','v_direction','sense_direction',{
+    skills:{recognition:4,listening:4,retrieval:3,spelling:3,context:1},
+    independentSuccesses:4,activeSuccessDays:[datePlusDays(-2),today()],coldRecallDays:[today()],maxActiveGapDays:2,intervalDays:3
+  });
+  assert(!isTestReady(directionWord,'target')&&!isTestReady(directionWord,'source')&&!isTestReady(directionWord,'mixed'),'strong generic skills alone do not prove the configured translation direction');
+  recordDirectionalRecallResult(directionWord,{mode:'recall',correct:true,assisted:false});
+  assert(isTestReady(directionWord,'target')&&!isTestReady(directionWord,'source')&&!isTestReady(directionWord,'mixed'),'a productive target-direction recall proves target readiness but not source or mixed readiness');
+  recordDirectionalRecallResult(directionWord,{mode:'reverseRecall',correct:true,assisted:false});
+  assert(isTestReady(directionWord,'source')&&isTestReady(directionWord,'mixed'),'mixed readiness requires successful evidence in both translation directions');
+  recordDirectionalRecallResult(directionWord,{mode:'recall',correct:false,assisted:false});
+  assert(!isTestReady(directionWord,'target')&&!isTestReady(directionWord,'mixed'),'a later wrong target-direction attempt invalidates current target readiness');
+  recordDirectionalRecallResult(directionWord,{mode:'recall',correct:true,assisted:true});
+  assert(!isTestReady(directionWord,'target'),'an assisted correct answer cannot restore independent directional readiness');
+  recordDirectionalRecallResult(directionWord,{mode:'recall',correct:true,assisted:false});
+  assert(isTestReady(directionWord,'target')&&isTestReady(directionWord,'mixed'),'a later independent correct target recall restores direction-specific readiness');
+  assert(isTestReady(directionWord,'dictation'),'dictation uses the productive spelling/retrieval base gate without a translation-direction gate');
+
+  state=defaultState();
+  const directionSet={id:'direction_record_set',learnerId:'learner_demo',subject:'english',title:'Direction Record',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+  state.sets.push(directionSet);
+  const directionRecorded=attachVocabularyToSet(directionSet.id,{term:'answer',translation:'Antwort',source:'direction-smoke',verified:true}).word;
+  session={mode:'adaptive',currentSubmode:'recall',hintUsed:false,isDaily:false,activeAttemptedWords:{},scaffoldedWords:{},correct:0,answered:0};
+  recordResult(directionRecorded,true,'retrieval',null,{orthographyOk:true});
+  assert(directionRecorded.directionalRecall.target.lastCorrect===true&&directionRecorded.directionalRecall.source.lastCorrect===null,'normal recordResult stores target-direction evidence for recall');
+  session.currentSubmode='reverseRecall';
+  recordResult(directionRecorded,true,'retrieval',null,{orthographyOk:true});
+  assert(directionRecorded.directionalRecall.source.lastCorrect===true,'normal recordResult stores source-direction evidence for reverse recall');
   session=null;
 
   state=defaultState();

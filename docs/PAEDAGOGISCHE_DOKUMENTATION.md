@@ -210,7 +210,9 @@ Die Testbereitschaft ist eine **Lernstandskennzahl**, keine Notenprognose.
 
 Ein Wort kann als testbereit gelten, bevor es die strengere Stufe „nachhaltig gemeistert“ erreicht. Voraussetzung sind dennoch aktive Abruf- und Rechtschreibleistungen sowie zeitlich verteilte Erfolge.
 
-Das ist sinnvoll, weil schulische Tests häufig in einem kürzeren Zeitraum stattfinden als langfristige Gedächtnisfestigung.
+Zusätzlich berücksichtigt die App die **angekündigte Abfragerichtung**. Bedeutung → Fremdsprachenwort und Fremdsprachenwort → Bedeutung werden nicht als vollständig austauschbarer Nachweis behandelt. Bei einem gemischten Test muss mindestens ein unabhängiger erfolgreicher Abruf in beiden Richtungen vorliegen. Ein späterer unabhängiger Fehler in einer Richtung macht genau diesen Richtungsnachweis wieder offen, bis erneut richtig abgerufen wurde. Diktat benötigt keine Übersetzungsrichtungs-Sperre, bleibt aber an die produktive Abruf- und Rechtschreibbasis gebunden.
+
+Wiedererkennen und Anhören unterstützen das Lernen, erhöhen den numerischen Testbereitschafts-Score aber nicht. Das ist sinnvoll, weil schulische Tests häufig in einem kürzeren Zeitraum stattfinden als langfristige Gedächtnisfestigung.
 
 Pädagogisch sollten deshalb zwei Aussagen getrennt gelesen werden:
 

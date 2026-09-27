@@ -10,11 +10,21 @@ Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änd
 
 ## Aktueller Stand
 
-App-Version: **v0.21.10**
+App-Version: **v0.21.11**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.21.11 – Richtungsspezifische Testbereitschaft
+
+- Testbereitschaft verlangt jetzt zusätzlich einen unabhängigen Abruf in der tatsächlich geplanten Test-Richtung
+- `target`: Bedeutung → Fremdsprachenwort; `source`: Fremdsprachenwort → Bedeutung; `mixed`: beide Richtungen
+- ein späterer unabhängiger Fehler setzt nur den betroffenen Richtungsnachweis wieder offen; ein unterstützter Treffer stellt ihn nicht wieder her
+- Diktat verwendet weiterhin die produktive Retrieval-/Spelling-Basis ohne Übersetzungsrichtungs-Sperre
+- Recognition und Listening bleiben Lernhilfen, fließen aber nicht mehr in den numerischen Testbereitschafts-Score ein
+- bestehende Lernstände werden konservativ aus vorhandenen Aktivitätsdaten bzw. dokumentierten Abrufmodi migriert; nie geübte Richtungen werden nicht erfunden
+- Learning-Integrity-Smoke prüft Richtungstrennung, Fehler-Reset, Hilfsversuche, Diktat und die passive Score-Isolation; der Menü-Smoke schützt die testbezogene Fortschrittsanzeige
 
 ## v0.21.10 – Same-Day-Spacing-Härtung
 

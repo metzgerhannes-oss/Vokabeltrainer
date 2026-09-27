@@ -425,7 +425,7 @@ function recordResult(w,ok,skill,errorType,opts={}){
     session.lastLeitnerMove={before:leitnerBefore,after:leitnerBefore,moved:false,blockedBySpacing:false};
     recordActivity(key,{wordId:w.id,correct:ok,errorType,support:true,active:false});persistOnly();return;
   }
-  const assisted=!!(ok&&session.hintUsed),active=isActiveSkill(skill),wasTestReady=active&&session?.isDaily?isTestReady(w):null,now=new Date().toISOString(),firstActiveToday=active&&!(w.activePracticeDays||[]).includes(today()),cold=active&&!assisted&&skill!=='spelling'&&firstActiveToday&&!session.scaffoldedWords?.[w.id];
+  const assisted=!!(ok&&session.hintUsed),active=isActiveSkill(skill),dailyTestFormat=session?.isDaily?(upcomingTestContext()?.testFormat||'target'):'target',wasTestReady=active&&session?.isDaily?isTestReady(w,dailyTestFormat):null,now=new Date().toISOString(),firstActiveToday=active&&!(w.activePracticeDays||[]).includes(today()),cold=active&&!assisted&&skill!=='spelling'&&firstActiveToday&&!session.scaffoldedWords?.[w.id];
   if(active){session.activeAttemptedWords[w.id]=true;if(!assisted)w.activePracticeDays=[...new Set([...(w.activePracticeDays||[]),today()])];w.recentActiveResults=[...(w.recentActiveResults||[]),!!ok].slice(-8)}
   if(ok){
     if(active&&!assisted&&session?.isDaily)markDailyPlanWordDone(w);
@@ -449,9 +449,10 @@ function recordResult(w,ok,skill,errorType,opts={}){
     if(active){w.intervalDays=0;w.dueDate=today();}
   }
   session.answered++;refreshMastery(w);session.lastLeitnerMove=updateLeitnerBox(w,ok,{assisted,active,orthographyOk:opts.orthographyOk!==false,beforeBox:leitnerBefore});
+  const recallDirection=active?recordDirectionalRecallResult(w,{mode:session.currentSubmode||session.mode,correct:ok,assisted}):'';
   const dailySecurity=session?.isDaily&&active?recordDailySecurityResult(w,{correct:ok,active,assisted,orthographyOk:opts.orthographyOk!==false,wasTestReady}):null;
   if(dailySecurity&&!dailySecurity.becameSecure&&dailySecurity.required>1&&dailySecurity.successStreak>0)scheduleDailySecurityFollowup(session,w);
-  recordActivity(session.currentSubmode||session.mode,{wordId:w.id,correct:ok,errorType,assisted,active,cold,orthographyOk:opts.orthographyOk!==false,todaySecure:!!dailySecurity?.becameSecure,refillSource:dailySecurity?.replacementSource||'',leitnerBefore:session.lastLeitnerMove.before,leitnerAfter:session.lastLeitnerMove.after});persistOnly();
+  recordActivity(session.currentSubmode||session.mode,{wordId:w.id,correct:ok,errorType,assisted,active,cold,recallDirection,orthographyOk:opts.orthographyOk!==false,todaySecure:!!dailySecurity?.becameSecure,refillSource:dailySecurity?.replacementSource||'',leitnerBefore:session.lastLeitnerMove.before,leitnerAfter:session.lastLeitnerMove.after});persistOnly();
 }
 function scheduleDailySecurityFollowup(targetSession,word){
   if(!targetSession?.isDaily||!word)return false;

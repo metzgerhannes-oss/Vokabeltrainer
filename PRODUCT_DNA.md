@@ -59,6 +59,11 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
 2. **Aktiver Abruf ist der Kern**
    Retrieval Practice ist der wichtigste Lernmechanismus. Wiedererkennen, Zuhören,
    Vokabeldusche und Wortblitz sind Unterstützung, aber kein Beweis für Beherrschung.
+   Testbereitschaft wird zusätzlich in der tatsächlich angekündigten **Abfragerichtung**
+   nachgewiesen: Bedeutung → Fremdsprachenwort (`target`) und Fremdsprachenwort → Bedeutung
+   (`source`) sind getrennte Evidenzen; ein gemischter Test verlangt beide. Diktat bleibt an
+   produktive Abruf- und Rechtschreibleistung gebunden. Recognition und Listening unterstützen
+   das Lernen, erhöhen aber den numerischen Testbereitschafts-Score nicht.
 
 3. **Verteiltes Lernen statt kurzfristigem Pauken**
    Spacing und Successive Relearning bestimmen Wiederholungen. Ein Wort gilt erst nach

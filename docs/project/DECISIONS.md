@@ -112,6 +112,21 @@ Die Intervallstufe wird deshalb aus der Zahl unterschiedlicher aktiver Erfolgsta
 
 Cold-Recall kann weiterhin als zusätzliche Qualitätsinformation berücksichtigt werden, jedoch erst bei bereits verteilter Evidenz über mindestens zwei Erfolgstage.
 
+### D-20260927-007 – Testbereitschaft ist abfragerichtungsspezifisch
+**Status:** LOCKED  
+**Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P2
+
+Die generische Retrieval-/Spelling-Kompetenz bleibt ein gemeinsamer Lernkern, reicht für die Aussage „testbereit“ aber nicht allein aus. Die App verlangt zusätzlich einen aktuellen unabhängigen Abruf in der für den konkreten Test geplanten Richtung.
+
+- `target`: Bedeutung → Fremdsprachenwort
+- `source`: Fremdsprachenwort → Bedeutung
+- `mixed`: beide Richtungen
+- `dictation`: produktive Rechtschreib-/Abrufbasis; keine Übersetzungsrichtungs-Sperre
+
+Ein späterer falscher unabhängiger Versuch in einer Richtung setzt deren aktuellen Richtungsnachweis auf „nicht bereit“, bis wieder ein unabhängiger richtiger Abruf erfolgt. Unterstützte Treffer erzeugen keinen Richtungsnachweis.
+
+Recognition und Listening bleiben unterstützende Lernformen und tragen nicht zum numerischen Testbereitschafts-Score bei.
+
 ## Neue Entscheidungen
 
 Neue Grundsatzentscheidungen erhalten fortlaufend eine ID im Format `D-YYYYMMDD-NNN`. Wird eine bestehende Regel ersetzt, bleibt die alte Entscheidung erhalten und wird als `SUPERSEDED` markiert; sie wird nicht gelöscht.

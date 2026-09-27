@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.21.10';
+const VERSION = '0.21.11';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';
@@ -29,6 +29,22 @@ const currentSchoolYear = () => {
 };
 
 const defaultSkills = () => ({recognition:0,listening:0,retrieval:0,spelling:0,context:0});
+const defaultDirectionalRecall = () => ({
+  target:{successDays:[],lastCorrect:null,lastAt:null},
+  source:{successDays:[],lastCorrect:null,lastAt:null}
+});
+function normalizeDirectionalRecall(raw){
+  const out=defaultDirectionalRecall(),src=raw&&typeof raw==='object'?raw:{};
+  for(const key of ['target','source']){
+    const node=src[key]&&typeof src[key]==='object'?src[key]:{};
+    out[key]={
+      successDays:[...new Set((Array.isArray(node.successDays)?node.successDays:[]).map(x=>String(x||'')).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)))].slice(-1000),
+      lastCorrect:node.lastCorrect===true?true:node.lastCorrect===false?false:null,
+      lastAt:node.lastAt?String(node.lastAt):null
+    };
+  }
+  return out;
+}
 const defaultGradeScale = () => ({n1:90,n2:80,n3:65,n4:50,n5:25});
 const SUBJECT_META = Object.freeze({
   english:{id:'english',label:'Englisch',short:'EN',available:true,aliases:['en','englisch','english'],speechLang:'en-GB',ocrLang:'eng',lexicalProfile:'english',importProfile:'modern',ocrRepairProfile:'english',functionWords:['the','to','a','an','is','are','was','were','have','has','with','from','for','of','in','on','at','my','your','we','they','he','she'],capabilities:{hybridDictionary:true,latinGrammar:false,extraIdentity:false},campaign:{unitLabel:'Armee',title:'Deine Armee',eyebrow:'Kampagne',visualTheme:'campaign',festive:'WINTERLAGER · DEZEMBER-SPEZIAL',ranks:['Rekruten','Trupp','Kompanie','Bataillon','Regiment','Armee']}},
@@ -72,7 +88,7 @@ function ensureActiveSubject(){const l=state?.learners?.find(x=>x.id===state?.ac
 const PROGRESS_FIELDS = new Set([
   'skills','level','repetitions','successes','independentSuccesses','assistedSuccesses','failures','intervalDays','dueDate',
   'lastReviewedAt','lastSuccessAt','lastActiveSuccessAt','activeSuccessDays','activePracticeDays','maxActiveGapDays','coldRecallDays',
-  'coldRecallSuccesses','recentActiveResults','practiceDays','modesSeen','grammarSkills','grammarSuccessDays','errorProfile',
+  'coldRecallSuccesses','recentActiveResults','practiceDays','modesSeen','directionalRecall','grammarSkills','grammarSuccessDays','errorProfile',
   'masteredAt','lastMasteredAt','confusionWith','leitnerBox','leitnerUpdatedAt'
 ]);
 
@@ -87,7 +103,7 @@ function makeLearnerVocabulary(learnerId,vocabId,senseIdOrOpts='',opts={}){
     intervalDays:Number(opts.intervalDays)||0,dueDate:opts.dueDate||today(),lastReviewedAt:opts.lastReviewedAt||null,lastSuccessAt:opts.lastSuccessAt||null,lastActiveSuccessAt:opts.lastActiveSuccessAt||null,
     activeSuccessDays:Array.isArray(opts.activeSuccessDays)?opts.activeSuccessDays:[],activePracticeDays:Array.isArray(opts.activePracticeDays)?opts.activePracticeDays:[],maxActiveGapDays:Number(opts.maxActiveGapDays)||0,
     coldRecallDays:Array.isArray(opts.coldRecallDays)?opts.coldRecallDays:[],coldRecallSuccesses:Number(opts.coldRecallSuccesses)||0,recentActiveResults:Array.isArray(opts.recentActiveResults)?opts.recentActiveResults.slice(-8):[],
-    practiceDays:Array.isArray(opts.practiceDays)?opts.practiceDays:[],modesSeen:Array.isArray(opts.modesSeen)?opts.modesSeen:[],
+    practiceDays:Array.isArray(opts.practiceDays)?opts.practiceDays:[],modesSeen:Array.isArray(opts.modesSeen)?opts.modesSeen:[],directionalRecall:normalizeDirectionalRecall(opts.directionalRecall),
     grammarSkills:{genitive:0,gender:0,principalParts:0,form:0,...(opts.grammarSkills||{})},grammarSuccessDays:Array.isArray(opts.grammarSuccessDays)?opts.grammarSuccessDays:[],
     errorProfile:{meaning:0,retrieval:0,spelling:0,listening:0,context:0,grammar:0,...(opts.errorProfile||{})},
     masteredAt:opts.masteredAt||null,lastMasteredAt:opts.lastMasteredAt||null,confusionWith:Array.isArray(opts.confusionWith)?opts.confusionWith:[],leitnerBox:clamp(Math.round(Number(opts.leitnerBox)||0),0,5),leitnerUpdatedAt:opts.leitnerUpdatedAt||null
