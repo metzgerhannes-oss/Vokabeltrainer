@@ -513,9 +513,30 @@ function upcomingTestContext(subject=state.activeSubject){
 }
 function uniqueById(list){const seen=new Set();return list.filter(x=>x&&!seen.has(x.id)&&seen.add(x.id))}
 function testContextLabel(ctx,subject=state.activeSubject){if(!ctx)return '';const subjectName=subjectLabel(subject);const when=ctx.days===0?'heute':ctx.days===1?'morgen':`in ${ctx.days} Tagen`;const recurrence=ctx.source==='series'||ctx.source==='mixed'?` · wöchentlich ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]}`:'';return `${subjectName}-Test ${when}${recurrence} · ${ctx.scopeText||ctx.sets.map(s=>s.title).join(' + ')}`}
+const DAILY_PLAN_SCHEMA='daily1';
 function dailyPlanSignature(ctx,subject,sessionSize){
   const words=(ctx?ctx.words:schoolYearVerifiedWords(subject)).map(w=>w.id).sort().join(',');
-  return `${VERSION}:${ctx?`test:${ctx.source||'single'}:${ctx.date}:${ctx.sets.map(s=>s.id).sort().join(',')}`:`general:${currentSchoolYear()}`}:${sessionSize}:${words}`;
+  return `${DAILY_PLAN_SCHEMA}:${ctx?`test:${ctx.source||'single'}:${ctx.date}:${ctx.sets.map(s=>s.id).sort().join(',')}`:`general:${currentSchoolYear()}`}:${sessionSize}:${words}`;
+}
+function dailyPlanSignatureCompatible(stored,current){
+  const legacy=String(stored||'').replace(/^v?\d+\.\d+\.\d+:/,`${DAILY_PLAN_SCHEMA}:`);
+  return legacy===String(current||'');
+}
+function recoverLegacyDailyPlanCompletion(plan,l=learner()){
+  if(!plan||plan.date!==today()||!l)return plan;
+  normalizeDailyAdaptivePlan(plan,l);
+  const eligible=new Set((state.activity||[]).filter(a=>{
+    if(a?.learnerId!==l.id||a?.correct!==true||a?.active!==true||a?.assisted===true||a?.orthographyOk===false||!a?.wordId)return false;
+    const d=new Date(a.date||'');return !Number.isNaN(d.getTime())&&dateKey(d)===today();
+  }).map(a=>String(a.wordId)));
+  if(!eligible.size)return plan;
+  const done=new Set(plan.completedKeys||[]);
+  for(const ref of dailyPlanRefs(plan,false)){
+    if(!eligible.has(String(ref.wordId||'')))continue;
+    const key=dailyPlanRefKey(ref);if(key)done.add(key);
+  }
+  plan.completedKeys=[...done];
+  return plan;
 }
 function uniqueWords(list){const seen=new Set();return list.filter(w=>w&&!seen.has(w.id)&&seen.add(w.id))}
 function testLearningWindow(ctx){
@@ -569,10 +590,17 @@ function buildDailyPlan(subject=state.activeSubject){
   const l=learner();l.dailyPlans=l.dailyPlans||{};
   const reducedLoad=reducedLoadEnabled(l),sessionSize=reducedLoad?6:10,ctx=upcomingTestContext(subject),key=`${today()}:${subject}`,signature=dailyPlanSignature(ctx,subject,sessionSize);
   const existing=l.dailyPlans[key];
-  if(existing&&existing.signature===signature){
+  if(existing&&dailyPlanSignatureCompatible(existing.signature,signature)){
     normalizeDailyAdaptivePlan(existing,l);
     const refs=[...(existing.wordRefs||[]),...(existing.introRefs||[])];
-    if(refs.every(r=>r.setLinkId?!!wordByLinkId(r.setLinkId):!!wordById(r.wordId)))return existing;
+    if(refs.every(r=>r.setLinkId?!!wordByLinkId(r.setLinkId):!!wordById(r.wordId))){
+      if(existing.signature!==signature){
+        recoverLegacyDailyPlanCompletion(existing,l);
+        existing.signature=signature;
+        persistOnly();
+      }
+      return existing;
+    }
   }
 
   const pool=ctx?ctx.words:schoolYearVerifiedWords(subject);
