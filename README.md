@@ -10,9 +10,9 @@ Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änd
 
 ## Aktueller Stand
 
-App-Version: **v0.21.19**
+App-Version: **v0.21.20**
 
-- v0.21.19: Banner in Armee- und Angriffsszene näher an der freigegebenen Referenz: schmale Pergamentrolle mit gerollten Enden, großer seitlich hängender Heraldik-Wimpel und langer goldener Stab mit Speerspitzen. Testlogik bleibt unverändert.
+- v0.21.20: Die eigentliche Schlacht öffnet immer als app-eigene Vollbildansicht. Die feste Hauptnavigation ist dort ausgeblendet; Kennzahlen, Angriffsauswahl und Hauptaktion liegen außerhalb der Illustration statt darüber. Das doppelte Festungs-/Rang-Badge wird in der gemalten Szene ausgeblendet. Banner- und Testlogik bleiben unverändert.\n\n- v0.21.19: Banner in Armee- und Angriffsszene näher an der freigegebenen Referenz: schmale Pergamentrolle mit gerollten Enden, großer seitlich hängender Heraldik-Wimpel und langer goldener Stab mit Speerspitzen. Testlogik bleibt unverändert.
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
