@@ -514,6 +514,7 @@ function normalizeDailyAdaptivePlan(plan,l=learner()){
   plan.todaySecureKeys=Array.isArray(plan.todaySecureKeys)?plan.todaySecureKeys:[];
   plan.securityEvidence=plan.securityEvidence&&typeof plan.securityEvidence==='object'&&!Array.isArray(plan.securityEvidence)?plan.securityEvidence:{};
   plan.extraRefs=Array.isArray(plan.extraRefs)?plan.extraRefs:[];
+  plan.extraSources=plan.extraSources&&typeof plan.extraSources==='object'&&!Array.isArray(plan.extraSources)?plan.extraSources:{};
   const modeLimit=l?.lrsMode?2:3,storedLimit=Number.isFinite(Number(plan.extraLimit))?Number(plan.extraLimit):modeLimit;
   plan.extraLimit=Math.max(0,Math.min(modeLimit,storedLimit));
   if(plan.extraRefs.length>plan.extraLimit)plan.extraRefs=plan.extraRefs.slice(0,plan.extraLimit);
@@ -554,7 +555,7 @@ function buildDailyPlan(subject=state.activeSubject){
     introRefs:introWords.map(w=>({wordId:w.id,setLinkId:w.setLinkId||''})),introSetId,
     introCount:introWords.length,reviewCount:selected.length,dailyTarget,requiredNewPerDay:introPlan.requiredPerDay,requiredReviewPerDay:introPlan.requiredReviewPerDay,
     deadlineOverload:introPlan.overload,spacingRisk:introPlan.spacingRisk,pace:introPlan.pace,studyDaysBeforeTest:introPlan.studyDaysBeforeTest,acquisitionDays:introPlan.acquisitionDays,reviewOnlyDays:introPlan.reviewOnlyDays,
-    sessionSize,urgent,phase,maintenanceCount,completedKeys:[],todaySecureKeys:[],securityEvidence:{},extraRefs:[],extraLimit:l.lrsMode?2:3,createdAt:new Date().toISOString()
+    sessionSize,urgent,phase,maintenanceCount,completedKeys:[],todaySecureKeys:[],securityEvidence:{},extraRefs:[],extraSources:{},extraLimit:l.lrsMode?2:3,createdAt:new Date().toISOString()
   };
   normalizeDailyAdaptivePlan(plan,l);
   l.dailyPlans[key]=plan;Object.keys(l.dailyPlans).filter(k=>k<`${datePlusDays(-21)}:`).forEach(k=>delete l.dailyPlans[k]);persistOnly();return plan;
@@ -576,7 +577,9 @@ function dailyPlanReplacementCandidate(plan=buildDailyPlan()){
   const used=new Set(dailyPlanRefs(plan,true).map(dailyPlanRefKey).filter(Boolean));
   const available=w=>{const key=dailyPlanRefKey({wordId:w?.id,setLinkId:w?.setLinkId||''});return !!key&&!used.has(key)};
   const ctx=upcomingTestContext(plan.subject),scope=ctx?.words?.length?ctx.words:schoolYearVerifiedWords(plan.subject);
-  const allowNew=!ctx||Number(ctx.days)>3;
+  const extraNewCount=Object.values(plan.extraSources||{}).filter(source=>source==='new').length;
+  const introducedNewCount=Math.max(0,Number(plan.introCount)||0)+extraNewCount;
+  const allowNew=(!ctx||Number(ctx.days)>3)&&introducedNewCount<7;
   if(allowNew){
     const unknown=scope.find(w=>available(w)&&!dailyPlanHasLearningContact(w));
     if(unknown)return {ref:{wordId:unknown.id,setLinkId:unknown.setLinkId||''},source:'new'};
@@ -617,7 +620,10 @@ function recordDailySecurityResult(w,{correct=false,active=false,assisted=false,
   plan.todaySecureKeys=[...new Set([...plan.todaySecureKeys,key])];
   evidence.secureAt=evidence.secureAt||new Date().toISOString();
   const replacement=dailyPlanReplacementCandidate(plan);
-  if(replacement?.ref)plan.extraRefs=[...plan.extraRefs,replacement.ref];
+  if(replacement?.ref){
+    plan.extraRefs=[...plan.extraRefs,replacement.ref];
+    const replacementKey=dailyPlanRefKey(replacement.ref);if(replacementKey)plan.extraSources[replacementKey]=replacement.source||'';
+  }
   return {becameSecure:true,replacementRef:replacement?.ref||null,replacementSource:replacement?.source||'',required:evidence.required,successStreak:evidence.successStreak};
 }
 function markDailyPlanWordDone(w,plan=buildDailyPlan()){
