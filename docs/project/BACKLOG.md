@@ -43,7 +43,7 @@ Umgesetzt in PR #138 / v0.21.8:
 - Nachrücken folgt der Priorität neues Testwort → schwaches Testwort → fällige bekannte Wiederholung
 - in den letzten drei Tagen vor dem Test werden keine zusätzlichen unbekannten Wörter nachgezogen
 - maximal drei Zusatzwörter, im LRS-Modus zwei; maximal sieben neu eingeführte Wörter pro Tag bleiben die Obergrenze
-- Pflicht-Tagesziel, Mastery und Battle-Aktion bleiben unverändert
+- Pflicht-Tagesziel, Mastery und Battle-Aktion bleiben unverändert; Nachrücker werden erst als freiwilliger nächster Lernschritt angeboten und nicht in die laufende Pflicht-Einheit gezwungen
 - Persistenz und Family Sync transportieren Sicherheitsstatus, Evidenz und Zusatzwörter
 - automatisierte Learning-Integrity- und Family-Sync-Regressionstests sind Bestandteil der Release-CI
 
