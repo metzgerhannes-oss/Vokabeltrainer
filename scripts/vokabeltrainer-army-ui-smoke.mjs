@@ -102,8 +102,12 @@ try{
       targetRelativeTop:stage&&targetRect?(targetRect.top-stage.top)/stage.height:null,
       ownShieldWidth:own?parseFloat(getComputedStyle(own,'::before').width||'0'):0,
       targetShieldWidth:target?parseFloat(getComputedStyle(target,'::before').width||'0'):0,
+      ownShieldHeight:own?parseFloat(getComputedStyle(own,'::before').height||'0'):0,
+      targetShieldHeight:target?parseFloat(getComputedStyle(target,'::before').height||'0'):0,
       ownRodWidth:own?parseFloat(getComputedStyle(own,'::after').width||'0'):0,
       targetRodWidth:target?parseFloat(getComputedStyle(target,'::after').width||'0'):0,
+      ownScrollCapWidth:own?.querySelector('span')?parseFloat(getComputedStyle(own.querySelector('span'),'::before').width||'0'):0,
+      targetScrollCapWidth:target?.querySelector('span')?parseFloat(getComputedStyle(target.querySelector('span'),'::after').width||'0'):0,
       ownOverflow:own?getComputedStyle(own).overflow:'',
       ownHasTextSpan:!!own?.querySelector('span'),
       targetHasTextSpan:!!target?.querySelector('span')
@@ -114,8 +118,10 @@ try{
   assert(commandComposition.ownFont.includes('Georgia')&&commandComposition.ownBackground.includes('linear-gradient'),'campaign identity labels use the approved parchment-scroll treatment');
   assert(commandComposition.ownWidth>commandComposition.ownHeight*2.5&&commandComposition.targetWidth>commandComposition.targetHeight*2.5,'campaign identity banners are horizontal scroll banners');
   assert(commandComposition.ownRelativeTop<0.15&&commandComposition.targetRelativeTop<0.15,'approved heraldic banners stay near the top edge of the campaign artwork');
-  assert(commandComposition.ownShieldWidth>=28&&commandComposition.targetShieldWidth>=28,'each horizontal banner carries a visible heraldic shield');
-  assert(commandComposition.ownRodWidth>commandComposition.ownWidth&&commandComposition.targetRodWidth>commandComposition.targetWidth,'each banner has a horizontal ceremonial rod extending beyond the parchment');
+  assert(commandComposition.ownShieldWidth>=36&&commandComposition.targetShieldWidth>=36,'each banner carries the large hanging heraldic crest from the reference');
+  assert(commandComposition.ownShieldHeight>commandComposition.ownHeight&&commandComposition.targetShieldHeight>commandComposition.targetHeight,'heraldic crests hang below the parchment like the approved reference');
+  assert(commandComposition.ownRodWidth>commandComposition.ownWidth+50&&commandComposition.targetRodWidth>commandComposition.targetWidth+50,'each banner has a spear-ended ceremonial rod extending well beyond the parchment');
+  assert(commandComposition.ownScrollCapWidth>=7&&commandComposition.targetScrollCapWidth>=7,'parchment scroll ends are visibly rolled instead of flat modern cards');
   assert(commandComposition.ownOverflow==='visible'&&commandComposition.ownHasTextSpan&&commandComposition.targetHasTextSpan,'profile and test text remain inside the parchment while heraldic details remain visible');
   await page.waitForFunction(()=>document.querySelector('[data-army-hero-art]')?.naturalWidth>0);
   await page.waitForFunction(()=>document.querySelectorAll('#armyUnitGrid .army-unit-art.art-loaded').length===6);
