@@ -259,8 +259,10 @@ const end=learning.indexOf('\nfunction ',start+20);
 const block=learning.slice(start,end<0?learning.length:end);
 if(block.includes('wordLearningCard('))throw new Error('Learning integrity smoke failed: spelling prompt reveals learning card before answer');
 if(!block.includes('aria-label="Deine Antwort"'))throw new Error('Learning integrity smoke failed: spelling answer input lacks accessible name');
+if(learning.includes('appendDailyReplacementToSession'))throw new Error('Learning integrity smoke failed: optional refill must not be forced into the running required session');
 
-console.log('Vokabeltrainer learning integrity smoke: '+(passed.length+2)+' checks passed');
+console.log('Vokabeltrainer learning integrity smoke: '+(passed.length+3)+' checks passed');
 for(const name of passed)console.log('✓ '+name);
 console.log('✓ spelling prompt does not reveal the answer');
 console.log('✓ spelling answer field remains accessible');
+console.log('✓ optional refill does not extend the running required session automatically');
