@@ -287,6 +287,8 @@ const passed=vm.runInContext(`
   assert(tomorrow.quota===3&&tomorrow.dailyTarget===6&&tomorrow.spacingRisk===true&&tomorrow.recommendSecondRound===true,'new vocabulary one day before the test stays capped and triggers a distributed-practice warning plus optional second round');
   const testToday=dailyPacePlan(5,0,{days:0},false);
   assert(testToday.quota===0&&testToday.overload===true&&testToday.spacingRisk===true,'test day never introduces new vocabulary and remains a spacing warning');
+  const reducedPace=dailyPacePlan(31,0,{days:7},true);
+  assert(reducedPace.quota===2&&reducedPace.dailyTarget===4&&reducedPace.coreMax===4&&reducedPace.recommendSecondRound===true,'short-unit mode caps the required core at four focus words with at most two new words');
 
   const card=makeLearnerVocabulary('learner_demo','v_card','sense_card');
   assert(leitnerBox(card)===1,'new vocabulary starts in Leitner box 1');
