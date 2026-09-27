@@ -462,7 +462,16 @@ function recordResult(w,ok,skill,errorType,opts={}){
   session.answered++;refreshMastery(w);session.lastLeitnerMove=updateLeitnerBox(w,ok,{assisted,active,orthographyOk:opts.orthographyOk!==false,beforeBox:leitnerBefore});
   const dailySecurity=session?.isDaily&&active?recordDailySecurityResult(w,{correct:ok,active,assisted,orthographyOk:opts.orthographyOk!==false,wasTestReady}):null;
   if(dailySecurity?.replacementRef)appendDailyReplacementToSession(dailySecurity.replacementRef);
+  else if(dailySecurity&&!dailySecurity.becameSecure&&dailySecurity.required>1&&dailySecurity.successStreak>0)scheduleDailySecurityFollowup(session,w);
   recordActivity(session.currentSubmode||session.mode,{wordId:w.id,correct:ok,errorType,assisted,active,cold,orthographyOk:opts.orthographyOk!==false,todaySecure:!!dailySecurity?.becameSecure,refillSource:dailySecurity?.replacementSource||'',leitnerBefore:session.lastLeitnerMove.before,leitnerAfter:session.lastLeitnerMove.after});persistOnly();
+}
+function scheduleDailySecurityFollowup(targetSession,word){
+  if(!targetSession?.isDaily||!word)return false;
+  targetSession.dailySecurityFollowups=targetSession.dailySecurityFollowups||{};
+  const ref=quizQueueRef(word),key=dailyPlanRefKey({wordId:word.id,setLinkId:word.setLinkId||''});if(!key)return false;
+  const n=Number(targetSession.dailySecurityFollowups[key])||0;if(n>=2)return false;
+  targetSession.dailySecurityFollowups[key]=n+1;
+  const pos=Math.min(targetSession.index+3,targetSession.queue.length);targetSession.queue.splice(pos,0,ref);return true;
 }
 function scheduleRetry(targetSession,word){const ref=word&&typeof word==='object'&&('setLinkId' in word)?quizQueueRef(word):word,key=typeof ref==='string'?ref:(ref?.setLinkId||ref?.progressId||'');if(!key)return false;const n=targetSession.retryCounts[key]||0;if(n>=1)return false;targetSession.retryCounts[key]=n+1;const pos=Math.min(targetSession.index+3,targetSession.queue.length);targetSession.queue.splice(pos,0,ref);return true;}
 function scheduleScaffoldFollowup(targetSession,word){targetSession.followupCounts=targetSession.followupCounts||{};const ref=word&&typeof word==='object'&&('setLinkId' in word)?quizQueueRef(word):word,key=typeof ref==='string'?ref:(ref?.setLinkId||ref?.progressId||'');if(!key)return false;const n=targetSession.followupCounts[key]||0;if(n>=2)return false;targetSession.followupCounts[key]=n+1;const pos=Math.min(targetSession.index+3,targetSession.queue.length);targetSession.queue.splice(pos,0,ref);return true;}
