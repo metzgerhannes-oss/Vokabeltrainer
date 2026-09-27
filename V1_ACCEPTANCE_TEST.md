@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 27.09.2026 · Basis: v0.21.10 · Release-Kandidat: Same-Day-Spacing-Härtung
+Stand: 27.09.2026 · Basis: v0.21.11 · Release-Kandidat: Richtungsspezifische Testbereitschaft
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -205,6 +205,10 @@ Mit einem realistischen Lehrbuchfoto testen.
 - [ ] fällige / unsichere Wörter werden priorisiert
 - [ ] falsche oder mit Hinweis gelöste aktive Versuche markieren das Pflichtwort nicht als erledigt
 - [ ] erst ein richtiger unassistierter aktiver Abruf lässt den Pflichtfortschritt steigen
+- [ ] bei Testformat `target` zählt ein Wort erst mit unabhängigem Bedeutung→Fremdsprachenwort-Abruf als testbereit
+- [ ] bei Testformat `source` zählt ein Wort erst mit unabhängigem Fremdsprachenwort→Bedeutung-Abruf als testbereit
+- [ ] bei `mixed` sind beide Richtungen nachgewiesen
+- [ ] Recognition/Listening allein erhöhen den Testbereitschafts-Score nicht
 
 ## B5 – Anleitung & Pädagogik
 
