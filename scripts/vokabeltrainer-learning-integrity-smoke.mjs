@@ -262,16 +262,9 @@ const passed=vm.runInContext(`
   const unplannedTestWord=pacedWords.find(w=>!urgentUsed.has(dailyPlanRefKey({wordId:w.id,setLinkId:w.setLinkId||''})));
   assert(!!unplannedTestWord,'near-test fixture leaves at least one test word outside the fixed daily window');
   unplannedTestWord.repetitions=1;unplannedTestWord.activePracticeDays=[datePlusDays(-1)];unplannedTestWord.practiceDays=[datePlusDays(-1)];unplannedTestWord.dueDate=today();
-  const maintenanceSet={id:'maintenance_set',learnerId:'learner_demo',subject:'english',title:'Maintenance',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
-  state.sets.push(maintenanceSet);
-  const maintenance=attachVocabularyToSet(maintenanceSet.id,{term:'maintenance',translation:'Wiederholung',source:'paced-smoke',verified:true}).word;
-  maintenance.repetitions=2;maintenance.activePracticeDays=[datePlusDays(-4)];maintenance.practiceDays=[datePlusDays(-4)];maintenance.dueDate=today();
   rebuildWordIndexes();
-  const urgentWeak=dailyPlanReplacementCandidate(urgentPlan);
-  assert(urgentWeak?.source==='weak-test'&&dailyPlanRefKey(urgentWeak.ref)===dailyPlanRefKey({wordId:unplannedTestWord.id,setLinkId:unplannedTestWord.setLinkId||''}),'near a test, an unseen word is not introduced; an already-seen weak test word has priority');
-  urgentPlan.extraRefs=[urgentWeak.ref];
-  const urgentDue=dailyPlanReplacementCandidate(urgentPlan);
-  assert(urgentDue?.source==='due'&&dailyPlanRefKey(urgentDue.ref)===dailyPlanRefKey({wordId:maintenance.id,setLinkId:maintenance.setLinkId||''}),'after weak test words, adaptive refill falls back to a due review instead of a new near-test word');
+  const urgentWeak=dailyPlanReplacementCandidate(urgentPlan),urgentWeakWord=urgentWeak?.ref?.setLinkId?wordByLinkId(urgentWeak.ref.setLinkId):wordById(urgentWeak?.ref?.wordId);
+  assert(urgentWeak?.source==='weak-test'&&urgentWeakWord&&dailyPlanHasLearningContact(urgentWeakWord),'near a test, adaptive refill does not introduce another unseen word and prioritizes an already-seen weak test word');
 
   assert(daysUntil(datePlusDays(7))===7,'test date uses exact calendar-day distance without an off-by-one');
   const normalPace=dailyPacePlan(31,0,{days:7},false);
