@@ -464,6 +464,8 @@ Die Unterstützungsoption „LRS Rechtschreiben“ ist **kein niedrigerer Rechts
    https://bildungsplaene-bw.de/%2CLde/BP2016BW_ALLG_GS_D.V2_IK_3-4_02_01
 7. **Rechtschreibrahmen für die Klassen 1 bis 10**, verbindliche Grundlage des Rechtschreibunterrichts in Baden-Württemberg  
    https://bildungsplaene-bw.de/%2CLde/rechtschreibrahmen
+- Ergänzende verbindliche curriculare Grundlage: **Grammatikrahmen für die Klassen 1 bis 10**, in Baden-Württemberg verbindlich seit dem Schuljahr 2022/2023.  
+  https://www.bildungsplaene-bw.de/25863125
 
 ### LRS / Lesen
 8. Hall et al. (2023): **Forty Years of Reading Intervention Research for Elementary Students with or At Risk for Dyslexia: A Systematic Review and Meta-Analysis.** Reading Research Quarterly. DOI: 10.1002/rrq.477.
