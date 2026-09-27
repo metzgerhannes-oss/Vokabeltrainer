@@ -4,15 +4,27 @@ Stand: 27.09.2026
 
 Dieses Backlog enthält nur Punkte, die als Projektarbeit erhalten bleiben sollen. Reine Ideen ohne Bewertung gehören zunächst in den Status `IDEA`; als sinnvoll bestätigte, aber noch nicht umgesetzte Punkte in `APPROVED_BACKLOG`.
 
-## B-001 – Deutsch Grundschule / 1. Klasse
+## B-001 – Deutsch Grundschule 1–4
 **Status:** APPROVED_BACKLOG  
 **Priorität:** noch nicht terminiert  
-**Betroffene Quellen:** `SUBJECT_SYSTEM.md`, `VISUAL_DNA.md`, künftig eigene Fach-Spezifikation
+**Decision:** D-20260927-009  
+**Kanonische Fachquelle:** `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`  
+**Weitere Quellen:** `PRODUCT_DNA.md` P8, `VISUAL_DNA.md` § 9, `SUBJECT_SYSTEM.md`, D-20260927-008
 
-Geplanter eigener Lernbereich mit altersgerechter Progression:
-Buchstaben kennenlernen, mit dem Finger nachmalen, Aussprache/Laut-Buchstaben-Zuordnung, erste Wörter lesen und schreiben; anschließend Lernwörter der Grundschule sowie Schreiben einfacher Wörter und Sätze.
+Der ursprünglich nur für die 1. Klasse vorgemerkte Deutschbereich ist nach Gegenprüfung gegen den aktuellen Bildungsplan Baden-Württemberg und aktuelle Fachliteratur auf **Klasse 1–4** erweitert.
 
-Vorgabe: seriöse, kindgerechte eigene visuelle Welt; Deutsch 1 darf nicht einfach die militärische Englisch-/Lateinlogik kopieren.
+Verbindliche Leitlinien der späteren Umsetzung:
+- eigener Fuchs-Lernbereich statt Battle-Welt
+- Kompetenzmodell von phonologischer Bewusstheit/Buchstaben über Lesen und Handschrift bis Rechtschreibung, Grammatik und Textproduktion
+- LRS-Unterstützung dediziert als **Lesen**, **Rechtschreiben** oder **beides**
+- DaZ/Mehrsprachigkeit als unabhängige Unterstützungsdimension, nicht als LRS
+- früher Schriftspracherwerb mit expliziter Laut–Schrift-Verknüpfung und echter Handschrift; Nachspuren geht in freie Produktion über
+- Lernwörter als Teil eines Mehrkomponenten-Rechtschreibsystems
+- Papier-Diktat mit Foto/OCR als geplanter Modus; unsichere OCR darf nie als Fehler des Kindes gewertet werden
+- LLM darf erklären/klassifizieren, aber nicht die deterministische Richtig/Falsch-Entscheidung oder rohe Handschrift ersetzen
+- eigene Deutsch-Mastery-Dimensionen für Lesen, Schreiben/Rechtschreibung, Verstehen usw.
+
+Die vollständige Evidenzbasis, Anpassungen und Literatur sind in der kanonischen Fachquelle dokumentiert.
 
 ## B-002 – Eigene finale Latein-Grafikserie
 **Status:** APPROVED_BACKLOG  

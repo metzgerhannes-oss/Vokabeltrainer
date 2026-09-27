@@ -151,6 +151,18 @@ D-20260927-004 bleibt für das adaptive Nachrücken gültig; nur die dortige fr�
 „LRS-Modus = Zwei-Wort-Limit“ wird durch die unabhängige Einstellung „Kurze Einheiten“
 präzisiert.
 
+### D-20260927-009 – Deutsch Grundschule 1–4 erhält ein eigenes evidenzbasiertes Kompetenzmodell
+**Status:** ACTIVE  
+**Quelle:** [DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md](DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md); D-20260927-008; [../../VISUAL_DNA.md](../../VISUAL_DNA.md) § 9
+
+Der geplante Deutsch-Grundschulbereich wird von Klasse 1 auf **Klasse 1–4** erweitert und fachlich nicht als bloße Variante des Fremdsprachen-Vokabelmodells behandelt.
+
+Fachliche Kompetenzstände (u. a. Dekodieren, Leseflüssigkeit, Leseverständnis, Handschrift, Rechtschreibung, Wortschatz, Morphologie, Grammatik und Textproduktion) werden getrennt von Unterstützungsmerkmalen geführt. **LRS Lesen**, **LRS Rechtschreiben** und deren Kombination bleiben dediziert; **DaZ/Mehrsprachigkeit** ist eine davon unabhängige Dimension. Die App diagnostiziert keine LRS.
+
+Früher Schriftspracherwerb enthält echte Handschrift und Papier als Lernkanal. Für das geplante Papier-Diktat gilt: OCR-Konfidenz und Rohtext müssen erhalten bleiben; unsichere OCR erzeugt keinen Kinderfehler. Ein Sprachmodell darf pädagogisch erklären und klassifizieren, aber nicht die deterministische fachliche Richtig/Falsch-Entscheidung ersetzen.
+
+Die Fachquelle dokumentiert den Evidenzstand vom 27.09.2026 und muss vor Implementierung bei definierten Review-Triggern erneut geprüft werden.
+
 ## Neue Entscheidungen
 
 Neue Grundsatzentscheidungen erhalten fortlaufend eine ID im Format `D-YYYYMMDD-NNN`. Wird eine bestehende Regel ersetzt, bleibt die alte Entscheidung erhalten und wird als `SUPERSEDED` markiert; sie wird nicht gelöscht.
