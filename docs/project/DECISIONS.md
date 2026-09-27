@@ -112,6 +112,24 @@ Die Intervallstufe wird deshalb aus der Zahl unterschiedlicher aktiver Erfolgsta
 
 Cold-Recall kann weiterhin als zusätzliche Qualitätsinformation berücksichtigt werden, jedoch erst bei bereits verteilter Evidenz über mindestens zwei Erfolgstage.
 
+### D-20260927-007 – LRS-Unterstützung trennt Lesen, Rechtschreiben und Belastungsreduktion
+**Status:** LOCKED  
+**Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P8
+
+Die App behandelt LRS nicht mehr als einheitlichen Scheduler-Schalter. Ein Lernprofil kann
+Leseunterstützung, Rechtschreibunterstützung oder beide Dimensionen aktivieren. Kürzere
+Einheiten und das reduzierte freiwillige Nachrücklimit werden separat über die Einstellung
+„Kurze Einheiten“ gesteuert.
+
+Leseunterstützung beeinflusst Hilfen, Tempo und adaptive Scaffold-Priorität, aber nicht
+Mastery oder Testbereitschaft. Rechtschreibunterstützung priorisiert produktive
+Rechtschreibmodi und verlangt für „heute sicher“ mindestens einen erfolgreichen,
+unassistierten Rechtschreibabruf; die fachliche Sollantwort bleibt unverändert.
+
+Die App diagnostiziert keine LRS-Form. Bestehende Profile mit dem alten `lrsMode=true`
+werden konservativ zu Lesen + Rechtschreiben + kurze Einheiten migriert. Der alte
+`lrsMode` bleibt nur als Kompatibilitätsalias für ältere synchronisierte Clients erhalten.
+
 ## Neue Entscheidungen
 
 Neue Grundsatzentscheidungen erhalten fortlaufend eine ID im Format `D-YYYYMMDD-NNN`. Wird eine bestehende Regel ersetzt, bleibt die alte Entscheidung erhalten und wird als `SUPERSEDED` markiert; sie wird nicht gelöscht.

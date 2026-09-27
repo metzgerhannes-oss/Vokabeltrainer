@@ -126,8 +126,18 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
 
 8. **LRS und Barrierefreiheit sind Teil des Grunddesigns**
    Ruhige Oberfläche, gut lesbare Sans-Serif-Schrift, ausreichende Größe/Abstände,
-   reduzierte Ablenkung, kurze Einheiten, Audio und multisensorische Optionen.
-   Keine unbewiesenen 'Wunderschriften' oder Zeitdruck als Lernprinzip.
+   reduzierte Ablenkung, Audio und gezielte zusätzliche Lernhilfen.
+   **Lesen und Rechtschreiben werden als getrennte Unterstützungsdimensionen modelliert**:
+   Leseunterstützung priorisiert Laut-Schrift-Verknüpfung, ruhige wiederholte Wortbegegnung
+   und Audioführung; Rechtschreibunterstützung priorisiert exakten produktiven Schreibabruf,
+   Diktat, orthografische Wortbausteine und korrektives Feedback. Ein Profil kann Lesen,
+   Rechtschreiben oder beides aktivieren. Die App diagnostiziert keine LRS-Form.
+   Die Unterstützungsmetrik `reading` darf fachliche Vokabel-Mastery oder Testbereitschaft
+   nicht absenken oder künstlich erhöhen. Rechtschreibunterstützung ändert ebenfalls nicht
+   die Sollantwort, sondern verlangt vor freiwilligem Nachrücken mindestens einen echten
+   unassistierten Rechtschreibabruf. **Kurze Einheiten sind davon unabhängig** und werden
+   als eigene Belastungseinstellung geführt. Keine unbewiesenen 'Wunderschriften' oder
+   Zeitdruck als Lernprinzip.
 
 9. **Lernen fokussiert, Motivation außen herum**
    Während des Abrufs: möglichst wenig Ablenkung.

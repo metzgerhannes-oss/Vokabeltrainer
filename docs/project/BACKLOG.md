@@ -58,12 +58,24 @@ Produktionsnachweis: PR-CI #945 erfolgreich, Merge PR #138 auf `main` (`1aa7983c
 Produktiv seit **v0.21.9 / PR #142**. Ein falscher oder unterstützter aktiver Versuch markiert ein Pflichtwort nicht als erledigt. Erst ein fachlich richtiger, unassistierter aktiver Abruf setzt `completedKeys`. PR-CI #950, main-CI #951 und Pages #507 sind grün.
 
 ## B-008 – Spacing-Erfolg gegen Same-Day-Inflation härten
-**Status:** IN_IMPLEMENTATION  
+**Status:** PRODUCTION  
 **Priorität:** P1  
 **Decision:** D-20260927-006  
 **Betroffene Quellen:** `PRODUCT_DNA.md` P3, `js/learning.js`, Learning-Integrity-Smoke
 
-Mehrere richtige aktive Abrufe desselben Wortes am selben Tag dürfen weiterhin Accuracy und Übungsevidenz verbessern, aber das nächste Wiederholungsintervall nicht mehrfach verlängern. Spacing-Fortschritt wird aus unterschiedlichen aktiven Erfolgstagen abgeleitet.
+Produktiv seit **v0.21.10 / PR #143**. Mehrere richtige aktive Abrufe desselben Wortes am selben Tag dürfen weiterhin Accuracy und Übungsevidenz verbessern, aber das nächste Wiederholungsintervall nicht mehrfach verlängern. Spacing-Fortschritt wird aus unterschiedlichen aktiven Erfolgstagen abgeleitet. Main-CI #953 und Pages #508 sind grün.
+
+## B-009 – Differenzierte LRS-Unterstützung Lesen / Rechtschreiben
+**Status:** IN_IMPLEMENTATION  
+**Priorität:** P1 vor praktischer v1-Abnahme  
+**Decision:** D-20260927-007  
+**Betroffene Quellen:** `PRODUCT_DNA.md` P8, Lern-/Scheduler-Code, Profilmodell, Family Sync, Tests
+
+Der bisherige globale LRS-Schalter wird in getrennte Unterstützung für Lesen und
+Rechtschreiben aufgeteilt. „Kurze Einheiten“ wird als unabhängige Einstellung geführt.
+Altprofile werden verlustfrei migriert; Reading-Evidenz beeinflusst Mastery nicht,
+Rechtschreibunterstützung priorisiert produktiven Schreibabruf und verlangt für
+„heute sicher“ mindestens einen echten Rechtschreibabruf.
 
 ## B-005 – Praktische v1-Abnahme
 **Status:** APPROVED_BACKLOG / RELEASE TASK  

@@ -10,11 +10,22 @@ Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änd
 
 ## Aktueller Stand
 
-App-Version: **v0.21.10**
+App-Version: **v0.21.11**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.21.11 – Differenzierte LRS-Unterstützung
+
+- LRS-/Lernunterstützung ist im Profil getrennt nach **Lesen** und **Rechtschreiben** wählbar; beide Dimensionen können unabhängig oder gemeinsam aktiv sein
+- **Kurze Einheiten** sind davon getrennt und steuern weiterhin kleinere Sessions sowie das reduzierte freiwillige Nachrücklimit
+- alte Profile mit `lrsMode=true` werden verlustfrei auf Lesen + Rechtschreiben + kurze Einheiten migriert; `lrsMode` bleibt nur als Kompatibilitätsalias erhalten
+- Leseunterstützung priorisiert Audio/Laut-Schrift-Scaffolds und ruhigen Wortblitz; die neue `reading`-Supportmetrik verändert Mastery und Testbereitschaft nicht
+- Rechtschreibunterstützung priorisiert Schreiben/Diktat stärker; erfolgreiche unassistierte Rechtschreibabrufe werden zusätzlich über `spellingSuccessDays` dokumentiert
+- für „heute sicher“ reicht bei aktiver Rechtschreibunterstützung reine Retrieval-Evidenz nicht: mindestens ein erfolgreicher unassistierter Rechtschreibabruf ist erforderlich
+- Family Sync synchronisiert `literacySupport` und `reducedLoad` als Profileinstellungen
+- automatisierte Lernintegritäts- und Family-Sync-Smokes schützen Migration, getrennte Dimensionen, Mastery-Neutralität und Rechtschreib-Evidenz
 
 ## v0.21.10 – Same-Day-Spacing-Härtung
 

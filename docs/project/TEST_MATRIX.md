@@ -17,6 +17,7 @@ Die detaillierte praktische v1-Abnahme bleibt in [../../V1_ACCEPTANCE_TEST.md](.
 | Kindnavigation | D-0007 | nächster Schritt ohne Erklärung auffindbar; kein Sackgassenpfad | ja |
 | Fachtrennung | D-0006 | Fachwechsel verändert keine fachfremden Daten/Regeln | ja bei Daten-/Bewertungsfehler |
 | Family Sync | Datenintegrität | Rechte, Konflikte, Revoke, Backup/Restore, Gerätewechsel | ja bei Datenverlust/Rechtebruch |
+| LRS-/Lernunterstützung | D-20260927-007 | Lesen/Schreiben getrennt; Altprofil-Migration; Reading ohne Mastery-Effekt; Rechtschreibabruf für „heute sicher“; Family Sync | ja bei falscher Bewertung/Datenverlust |
 | Accessibility | D-0007 + Grunddesign | Fokus, Dialoge, Touchflächen, Landscape, Screenreader-Semantik | nach Schweregrad; kritischer Pfad ja |
 | Battle/Game | D-0003, D-0005 | keine Rückwirkung auf Mastery; Tagesaktion nicht duplizierbar; Fokusmodus rückkehrbar | ja bei fachlicher Rückwirkung |
 | Praktische v1-Abnahme | gesamter Kernpfad | reales Gerät/Browser, Kind-/Elternwege ohne Entwicklerhilfe | vor v1 verpflichtend |
