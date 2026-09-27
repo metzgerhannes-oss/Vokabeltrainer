@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 27.09.2026 · Basis: v0.21.19 · Release-Kandidat: Mehrere kommende Tests chronologisch
+Stand: 27.09.2026 · Basis: v0.21.20 · Release-Kandidat: Vollbild-Schlacht ohne UI-Überlagerung
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -18,7 +18,7 @@ Zusatz für v0.21.16: Wird ein zukünftiger Test vor seinem Termin durch einen n
 
 Zusatz für v0.21.17: In Armeeübersicht und Angriffsszene prüfen, dass Profilname und Testziel **oben im Bild auf horizontalen Pergamentbannern** stehen, jeweils mit kleinem farbigem Heraldik-Schild und waagerechter Zierstange wie in der freigegebenen Referenz. Es dürfen keine stehenden Feldstandarten mehr erscheinen. Der Abstand zur hellen Missionskarte und die korrekte Testnummerierung bleiben unverändert.
 
-Zusatz für v0.21.19: Zwei einmalige Tests für dasselbe Fach an unterschiedlichen zukünftigen Daten anlegen, wobei der zweite Test **vor Erreichen des ersten Termins** erfasst wird. Auf „Heute“, in der Testbereitschaft und in der Armee muss weiterhin der **frühere Test** erscheinen. Der spätere Test muss gespeichert bleiben und darf den ersten weder löschen noch ersetzen. Dies auch einmal mit demselben Lehrwerksabschnitt sowie mit manueller/OCR-Erfassung prüfen.
+Zusatz für v0.21.19: Zwei einmalige Tests für dasselbe Fach an unterschiedlichen zukünftigen Daten anlegen, wobei der zweite Test **vor Erreichen des ersten Termins** erfasst wird. Auf „Heute“, in der Testbereitschaft und in der Armee muss weiterhin der **frühere Test** erscheinen. Der spätere Test muss gespeichert bleiben und darf den ersten weder löschen noch ersetzen. Dies auch einmal mit demselben Lehrwerksabschnitt sowie mit manueller/OCR-Erfassung prüfen.\n\nZusatz für v0.21.20: Die Schlacht auf iPhone/iPad öffnen. Sie muss **sofort die gesamte App-Fläche belegen**, die untere Hauptnavigation darf nicht sichtbar sein. Armeestärke, Testfestung, Verteidigung und Rang/Ausrüstung müssen **außerhalb des Bildes** liegen; auch Taktik und Hauptaktion dürfen das Kampagnenbild nicht verdecken. Das zusätzliche Festungs-/Rang-Badge im Bild darf in der gemalten englischen Szene nicht erscheinen.
 
 ## Grundregel
 

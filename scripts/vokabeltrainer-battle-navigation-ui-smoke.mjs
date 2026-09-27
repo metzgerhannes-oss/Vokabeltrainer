@@ -11,13 +11,16 @@ try{
   await page.waitForSelector('#battleView.active');
   await page.waitForFunction(()=>window.VTBattleArt?.ready===true&&document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
   assert(await page.locator('#battleStage [data-battle-scene-art]').evaluate(img=>img.naturalWidth>0),'painted battle artwork loads on the iPhone path');
-  assert(await page.locator('.battle-stage-wrap > .battle-scene-hud').count()===1,'battle KPIs live inside the scene wrapper');
+  assert(await page.evaluate(()=>document.body.classList.contains('battle-immersive')),'battle opens directly in app-owned full-screen mode');
+  assert(await page.locator('.bottom-nav').isHidden(),'primary navigation is hidden throughout the battle');
+  assert(await page.locator('.battle-stage-wrap > .battle-scene-hud').count()===1,'battle KPIs stay structurally attached to the battle composition');
   const visibleBattleKpis=await page.locator('.battle-scene-hud>div:visible').count();
-  assert(visibleBattleKpis===2,'iPhone battle scene keeps only army strength and rank/gear overlays');
-  assert(await page.locator('.battle-stage-wrap > .battle-scene-tactics').count()===1,'battle tactics are attached directly to the scene');
-  assert(await page.locator('#battleFullscreenBtn').isVisible(),'battle focus control remains visible');
-  assert((await page.locator('#battleFullscreenBtn').textContent()).includes('Fokus'),'battle scene control is named Fokus instead of browser fullscreen');
-  assert(await page.locator('#battleStorySpeakBtn').isVisible(),'battle story narration control is visible');
+  assert(visibleBattleKpis===4,'all four battle KPIs remain readable outside the artwork');
+  assert(await page.locator('.battle-stage-wrap > .battle-scene-tactics').count()===1,'battle tactics are attached directly to the battle composition');
+  assert(await page.locator('.battle-scene-tactics').isVisible(),'battle tactics remain usable below the artwork');
+  assert(await page.locator('#battleFullscreenBtn').isHidden(),'battle no longer needs a second focus/full-screen toggle');
+  assert(await page.locator('.battle-story').isHidden(),'story card is removed from the full-screen battle composition');
+  assert(await page.locator('#battleStorySpeakBtn').count()===1,'battle story narration control remains available in the DOM');
   assert((await page.locator('#battleStorySpeakBtn').textContent()).includes('Geschichte hören'),'battle story control describes listening instead of overpromising a dramatic narrator');
   assert(await page.locator('#battleStorySpeakBtn').getAttribute('aria-pressed')==='false','battle story narration starts stopped');
   const storyCopy=await page.locator('#battleStoryText').textContent();
@@ -50,25 +53,24 @@ try{
     renderBattleView();
   });
   assert(await page.locator('#battleStage [data-battle-target-reveal]').isHidden(),'reveal reaches stable hidden state');
-  await activate('#battleFullscreenBtn','battle focus entry');
-  assert(await page.evaluate(()=>document.body.classList.contains('battle-immersive')),'battle focus enters scene-only mode');
-  assert(await page.locator('#battleStage').isVisible(),'battle stage remains visible in focus mode');
-  assert(await page.locator('.battle-scene-tactics').isHidden(),'battle tactics are removed from the focus scene');
-  assert(await page.locator('.battle-scene-hud').isHidden(),'four KPI cards are removed from the focus scene');
-  assert(await page.locator('.bottom-nav').isHidden(),'bottom navigation is removed from the focus scene');
-  assert(await page.locator('.battle-story').isHidden(),'story card is removed from the focus scene');
-  assert(await page.locator('#battleFocusAttackBtn').isVisible(),'focus scene offers a minimal route back to attack selection');
-  const fortressBadge=await page.locator('#battleStage .battle-fortress-state-badge').textContent();
-  assert(fortressBadge?.includes('Verteidigung'),'focus fortress badge includes the defense value on its own line');
-  assert(await page.evaluate(()=>document.fullscreenElement===null),'focus mode does not depend on browser Fullscreen API');
-  await activate('#battleFocusAttackBtn','focus attack picker');
-  assert(!(await page.evaluate(()=>document.body.classList.contains('battle-immersive'))),'attack picker exits focus mode');
-  assert(await page.locator('.battle-scene-tactics').isVisible(),'attack choices return after leaving focus mode');
-  await activate('#battleFullscreenBtn','battle focus re-entry');
-  await activate('#battleFullscreenBtn','battle focus exit');
-  assert(!(await page.evaluate(()=>document.body.classList.contains('battle-immersive'))),'battle focus can be exited directly');
+  assert(await page.locator('#battleStage').isVisible(),'battle artwork remains visible in full-screen mode');
+  assert(await page.locator('#battleFocusAttackBtn').isHidden(),'obsolete focus-only attack control stays hidden');
+  assert(await page.locator('#battleStage .battle-fortress-state-badge').isHidden(),'duplicate fortress status plaque never covers the painted fortress');
+  const composition=await page.evaluate(()=>{
+    const readout=document.querySelector('.battle-scene-hud')?.getBoundingClientRect();
+    const stage=document.querySelector('#battleStage')?.getBoundingClientRect();
+    const tactics=document.querySelector('.battle-scene-tactics')?.getBoundingClientRect();
+    const dock=document.querySelector('.battle-action-dock')?.getBoundingClientRect();
+    return {
+      readoutAbove:!!readout&&!!stage&&readout.bottom<=stage.top+1,
+      tacticsBelow:!!tactics&&!!stage&&tactics.top>=stage.bottom-1,
+      dockBelow:!!dock&&!!tactics&&dock.top>=tactics.bottom-1
+    };
+  });
+  assert(composition.readoutAbove&&composition.tacticsBelow&&composition.dockBelow,'persistent battle information never overlaps the campaign artwork');
+  assert(await page.evaluate(()=>document.fullscreenElement===null),'app-owned full-screen mode does not depend on the browser Fullscreen API');
 
-  await activate('#battleReturnBtn','battle return action');
+  await activate('#battleBackBtn','battle return action');
   await page.waitForSelector('#armyView.active');
   await page.evaluate(()=>{grantBattleTicket('dailyGoal');renderAll()});
   assert(await page.locator('#gameLoopLearn.done').count()===1,'learning step becomes complete after the daily reward');
@@ -85,11 +87,11 @@ try{
   }));
   assert(second.seenAt===first.seenAt,'reopening preserves original reveal timestamp');
   assert(second.hidden===true,'same fortress is not revealed twice');
-  assert((await page.locator('#battleReturnBtn').textContent())?.includes('Armee'),'battle return destination remains inside the game area');
+  assert((await page.locator('#battleBackBtn').textContent())?.includes('Armee'),'battle return destination remains inside the game area');
   await page.evaluate(()=>{showView('childProgressView');openBattleView()});
   await page.waitForSelector('#battleView.active');
-  assert((await page.locator('#battleReturnBtn').textContent())?.includes('Armee'),'battle entered from progress falls back to Army instead of crossing into learning/progress');
-  await activate('#battleReturnBtn','battle progress fallback return');
+  assert((await page.locator('#battleBackBtn').textContent())?.includes('Armee'),'battle entered from progress falls back to Army instead of crossing into learning/progress');
+  await activate('#battleBackBtn','battle progress fallback return');
   await page.waitForSelector('#armyView.active');
   await activate('#attackBtn','battle re-entry after progress fallback');
   await page.waitForSelector('#battleView.active');

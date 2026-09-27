@@ -396,28 +396,20 @@ function openBattleView(){
   renderBattleView();renderBattleReturnUi();showView('battleView');
   if(reveal)startBattleFortressReveal(f);
 }
-function closeBattleImmersive(){
-  document.body.classList.remove('battle-immersive');
+function setBattleImmersive(on){
+  document.body.classList.toggle('battle-immersive',!!on);
   const btn=$('#battleFullscreenBtn');
-  btn?.setAttribute('aria-pressed','false');
-  btn?.setAttribute('aria-label','Kampagnenszene im Fokus anzeigen');
-  if(btn)btn.textContent='⛶ Fokus';
+  btn?.setAttribute('aria-pressed',String(!!on));
+  btn?.setAttribute('aria-label',on?'Schlachtansicht verlassen':'Schlachtansicht öffnen');
+  if(btn)btn.textContent=on?'✕ Schlacht verlassen':'⛶ Schlacht';
   $('#battleFocusAttackBtn')?.classList.add('hidden');
 }
+function closeBattleImmersive(){setBattleImmersive(false)}
 function openBattleAttackPickerFromFocus(){
-  closeBattleImmersive();
   const tactics=$('#battleAttackChoices')?.closest('.battle-tactics');
-  if(tactics)requestAnimationFrame(()=>tactics.scrollIntoView({block:'start',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
+  if(tactics)requestAnimationFrame(()=>tactics.scrollIntoView({block:'nearest',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
 }
-function toggleBattleFullscreen(){
-  const on=!document.body.classList.contains('battle-immersive');
-  document.body.classList.toggle('battle-immersive',on);
-  const btn=$('#battleFullscreenBtn');
-  btn?.setAttribute('aria-pressed',String(on));
-  btn?.setAttribute('aria-label',on?'Fokusansicht schließen':'Kampagnenszene im Fokus anzeigen');
-  if(btn)btn.textContent=on?'✕ Fokus schließen':'⛶ Fokus';
-  $('#battleFocusAttackBtn')?.classList.toggle('hidden',!on);
-}
+function toggleBattleFullscreen(){setBattleImmersive(true)}
 let battleSequenceGeneration=0;
 const battleSequenceTimers=new Set();
 function cancelBattleSequence(){
@@ -1328,6 +1320,7 @@ function showView(id){
   }
   if(PARENT_VIEW_IDS.has(id)&&!isParentMode()){toast(isPairedChildDevice()?'Der Elternbereich ist auf diesem Kindergerät gesperrt.':'Diese Funktion liegt im Elternbereich.','subtle');id='homeView'}
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
+  if(id==='battleView')setBattleImmersive(true);
   const navRoot=childNavRootView(id);
   document.querySelectorAll('.nav-btn[data-view]').forEach(b=>{const active=!isParentMode()&&b.dataset.view===navRoot;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
   if(id==='homeView'){document.querySelectorAll('.home-disclosure').forEach(d=>{d.open=isDesktopLayout()&&d.id==='practiceDisclosure'});window.VTMenuUi?.render?.();}
@@ -1341,7 +1334,7 @@ function bind(){
   $('#newSetBtn').onclick=()=>openLearningContentPlanner(); $('#addGradeBtn').onclick=()=>addGrade(); $('#practiceTestBtn').onclick=openPracticeTestChooser; $('#addProfileBtn').onclick=addProfile; $('#profileBtn').onclick=openProfileSwitcher; $('#attackBtn').onclick=openBattleView; $('#duelBtn').onclick=openDuel;
   $('#battleBackBtn').onclick=returnFromBattle; $('#battleReturnBtn').onclick=returnFromBattle; $('#battleAttackBtn').onclick=runBattleAnimation; $('#battleFullscreenBtn').onclick=toggleBattleFullscreen; $('#battleFocusAttackBtn').onclick=openBattleAttackPickerFromFocus; $('#battleStorySpeakBtn').onclick=toggleBattleStoryNarration;
   $('#battleAttackChoices').addEventListener('click',e=>{const b=e.target.closest('[data-battle-attack]');if(b&&!b.disabled)selectBattleAttack(b.dataset.battleAttack)});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('battle-immersive'))closeBattleImmersive()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('battle-immersive'))returnFromBattle()});
   $('#parentAreaBtn').onclick=()=>openParentGate(); $('#childModeBtn').onclick=exitParentMode;
   $('#parentLibraryBtn').onclick=openLearningContentPlanner; $('#parentTestPlanBtn').onclick=openTestDatePlanner; $('#parentDashboardBtn').onclick=()=>showView('dashboardView'); $('#parentSettingsBtn').onclick=()=>showView('settingsView');
   window.VTParentDocs?.bind?.();

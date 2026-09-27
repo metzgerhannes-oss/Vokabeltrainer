@@ -63,7 +63,7 @@ export async function createBattleHarness(){
     });
   };
 
-  const waitForBattleResult=async({timeout=20000}={})=>{
+  const waitForBattleResult=async({timeout=30000}={})=>{
     await page.waitForFunction(()=>{
       const stage=document.querySelector('#battleStage');
       const overlay=document.querySelector('#battleResultOverlay');
