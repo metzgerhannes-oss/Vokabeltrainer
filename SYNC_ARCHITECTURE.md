@@ -1,5 +1,7 @@
 # Familien- und Geräte-Synchronisation
 
+Fachlich zuletzt geprüft: 27.09.2026 · Gültig für aktuellen Stand: ja
+
 ## Zielbild
 
 Der Vokabeltrainer trennt künftig konsequent zwischen Kinderoberfläche und Elternoberfläche. Beide arbeiten auf demselben Familien-Datenbestand, können aber auf unterschiedlichen Geräten installiert sein.
