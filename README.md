@@ -25,7 +25,7 @@ Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Joh
 - unterstützte Modi wie Erkennen, Hören oder Wortbausteine können ein Wort nicht „heute sicher“ machen
 - nach einem sicheren Wort rückt priorisiert ein noch unbekanntes Wort aus dem anstehenden Test, danach ein schwaches Testwort und anschließend eine fällige Wiederholung nach
 - in den letzten drei Tagen vor einem Test werden keine zusätzlichen unbekannten Wörter mehr nachgezogen; der Schwerpunkt bleibt auf Konsolidierung
-- Zusatzlernen ist auf maximal drei Wörter pro Tag begrenzt, im LRS-Modus auf zwei
+- Zusatzlernen ist auf maximal drei Wörter pro Tag begrenzt, im LRS-Modus auf zwei; die bestehende Obergrenze von sieben neu eingeführten Wörtern pro Tag bleibt bestehen
 - Zusatzwörter verändern weder das offizielle Tagesziel noch dessen Fortschrittsanzeige und erzeugen keine weitere Kampfaktion
 - „heute sicher“ verändert die nachhaltige Mastery nicht; deren mehrtägige Abstandsregeln bleiben unverändert
 - Sicherheitsstatus, Nachrückwörter und Evidenz liegen im bestehenden Tagesplan und werden deshalb mit dem Profilfortschritt über Family Sync synchronisiert
