@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 27.09.2026 · Basis: v0.21.14 · Release-Kandidat: Angriffsszene Profil-/Testbanner
+Stand: 27.09.2026 · Basis: v0.21.15 · Release-Kandidat: Armee-Banner und klare Bildtrennung
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -11,6 +11,8 @@ Zusatz aus v0.21.12: Im Elternprofil praktisch prüfen, dass **Lesen**, **Rechts
 Zusatz für v0.21.13: Auf einem iPhone prüfen, dass Avatarbild, Stufen-/Teststatus und „Was steht heute an?“ klar untereinander liegen und der dunkle Statusblock das Avatarbild nicht überdeckt.
 
 Zusatz für v0.21.14: In Armee- und Angriffsszene prüfen, dass die eigene Seite mit dem **Profilnamen** und das Ziel mit **„Test N“** beschriftet ist. Die generischen Bildlabels „Deine Armee“ und „Ziel“ dürfen nicht mehr nötig sein; der Fokusmodus muss die beiden Banner klar lesbar erhalten.
+
+Zusatz für v0.21.15: Auf dem iPhone prüfen, dass das Kampagnenbild vollständig sichtbar endet und die helle Karte mit „Angriff gesperrt“ **mit erkennbarem Abstand darunter** beginnt. Profilname und „Test N“ müssen wie Banner/Schilder wirken und dürfen nicht als weiße Pillen erscheinen.
 
 ## Grundregel
 
