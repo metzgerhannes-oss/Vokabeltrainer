@@ -128,6 +128,9 @@ const passed=vm.runInContext(`
   learner().lrsMode=true;pacedPlan.extraLimit=3;normalizeDailyAdaptivePlan(pacedPlan);
   assert(pacedPlan.extraLimit===2&&pacedPlan.extraRefs.length===2,'LRS mode caps same-day refill at two extra words even for an existing plan');
   learner().lrsMode=false;
+  const sevenNewPlan={...pacedPlan,introCount:7,extraRefs:[],extraSources:{},extraLimit:3,todaySecureKeys:[],securityEvidence:{}};
+  const sevenNewCandidate=dailyPlanReplacementCandidate(sevenNewPlan);
+  assert(sevenNewCandidate?.source!=='new','adaptive refill never exceeds the existing ceiling of seven newly introduced words per day');
 
   session={isDaily:true,queue:[quizQueueRef(dailyWord)],index:0,dailySecurityFollowups:{}};
   assert(scheduleDailySecurityFollowup(session,dailyWord)&&session.queue.length===2,'a first secure recall schedules a separated second productive recall');
