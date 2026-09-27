@@ -356,6 +356,9 @@ Der Start bleibt lernzentriert.
 
 - dominante Hauptaktion: Lernen bzw. heutige Aufgabe
 - Avatar/Leitfigur darf als Motiv und Fortschrittsträger erscheinen
+- im sichtbaren Fortschrittslabel steht der **Profilname** statt der generischen Bezeichnung „Avatar“
+- bei geplantem Test zeigt der Start zusätzlich die **testbezogene Lernbereitschaft in Prozent und absolut**, z. B. „68 % · 21 von 31 Vokabeln sicher“
+- der Testwert wird aus dem tatsächlichen Umfang des nächsten Tests berechnet und darf nicht mit dem Jahresfortschritt verwechselt werden
 - vollständige Spielinszenierung bleibt im eigenen Spielbereich
 - wenige, klar priorisierte KPI
 - keine visuelle Konkurrenz zwischen Lernen und Spielnavigation
@@ -383,6 +386,10 @@ Bedienmuster weitgehend fachübergreifend gleich:
 - Latein: Kastell / römische Prüfungsetappe
 - Französisch: besondere Reise-/Sprachmission
 - Deutsch 1: Lernmeilenstein, keine Schlacht im Vordergrund
+- mobile Kampagnenszenen dürfen einen **app-eigenen Fokusmodus** anbieten: Querformat-Illustration dominant, keine Bottom-Navigation, keine Story, kein KPI-HUD und keine Angriffskarten über dem Bild
+- im Fokusmodus bleiben nur ein eindeutiger Rückweg, optional „Angriff wählen“ und der integrierte Zielstatus sichtbar
+- der Zielstatus bündelt Schadenszustand und verbleibende Verteidigung; derselbe Wert darf nicht zusätzlich als separates Bild-Overlay wiederholt werden
+- der Fokusmodus darf nicht von der Browser-Fullscreen-API abhängen
 
 ## 12. Animation
 
