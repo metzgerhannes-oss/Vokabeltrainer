@@ -426,8 +426,9 @@ function recordResult(w,ok,skill,errorType,opts={}){
     recordActivity(key,{wordId:w.id,correct:ok,errorType,support:true,active:false});persistOnly();return;
   }
   const assisted=!!(ok&&session.hintUsed),active=isActiveSkill(skill),wasTestReady=active&&session?.isDaily?isTestReady(w):null,now=new Date().toISOString(),firstActiveToday=active&&!(w.activePracticeDays||[]).includes(today()),cold=active&&!assisted&&skill!=='spelling'&&firstActiveToday&&!session.scaffoldedWords?.[w.id];
-  if(active){session.activeAttemptedWords[w.id]=true;if(!assisted){w.activePracticeDays=[...new Set([...(w.activePracticeDays||[]),today()])];if(session?.isDaily)markDailyPlanWordDone(w)}w.recentActiveResults=[...(w.recentActiveResults||[]),!!ok].slice(-8)}
+  if(active){session.activeAttemptedWords[w.id]=true;if(!assisted)w.activePracticeDays=[...new Set([...(w.activePracticeDays||[]),today()])];w.recentActiveResults=[...(w.recentActiveResults||[]),!!ok].slice(-8)}
   if(ok){
+    if(active&&!assisted&&session?.isDaily)markDailyPlanWordDone(w);
     w.successes++; w.lastSuccessAt=now; skillCredits(skill,opts).forEach((k,i)=>{const gain=(assisted?.5:1)*(i===0?1:.55);w.skills[k]=clamp((w.skills[k]||0)+gain,0,4)});
     if(active&&assisted){w.assistedSuccesses=(w.assistedSuccesses||0)+1;w.intervalDays=Math.min(Math.max(w.intervalDays||0,1),1);w.dueDate=datePlusDays(1);learner().xp+=1;}
     else if(active){
