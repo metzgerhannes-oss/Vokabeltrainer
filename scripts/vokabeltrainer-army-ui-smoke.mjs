@@ -25,6 +25,9 @@ try{
     p.skills={recognition:4,listening:4,retrieval:4,spelling:4,context:4};p.independentSuccesses=8;p.activeSuccessDays=['2026-09-10','2026-09-14','2026-09-18'];p.activePracticeDays=[...p.activeSuccessDays];p.maxActiveGapDays=7;p.coldRecallDays=['2026-09-14','2026-09-18'];p.coldRecallSuccesses=2;p.intervalDays=14;p.errorProfile={meaning:0,retrieval:0,spelling:0,listening:0,context:0,grammar:0};refreshMastery(p);
     state.learners[0].streakDays=['2026-09-19','2026-09-20','2026-09-21','2026-09-22','2026-09-23'];
     state.learners[0].milestones[`hundred_english_${currentSchoolYear()}`]=new Date().toISOString();
+    state.learners[0].testFortresses={
+      stale_superseded:{key:'stale_superseded',id:'tower',name:'Alter Test',subject:'english',testDate:datePlusDays(1),setIds:['superseded_test'],defense:100,maxDefense:100,attacks:[]}
+    };
     const xpBefore=state.learners[0].xp;
     const gradeRow={id:'grade_six',learnerId:'learner_demo',subject:'english',date:'2026-09-23',grade:'6',note:'',practiceTestId:null};
     state.grades.push(gradeRow);
@@ -53,6 +56,8 @@ try{
   assert((await page.locator('#attackBtn').textContent())?.includes('FESTUNG'),'primary game action clearly points to the fortress');
   assert((await page.locator('.frontline-own').textContent())?.trim()==='Mein Profil','frontline banner identifies the player side with the active profile name');
   assert((await page.locator('.frontline-target').textContent())?.trim()==='Test 1','frontline target banner uses Test plus the school-year sequence number');
+  assert(await page.evaluate(()=>testSequenceNumber(currentTestFortress().testDate,'english'))===1,'superseded fortress history cannot increment the visible test number');
+  await page.evaluate(()=>{delete state.learners[0].testFortresses.stale_superseded;});
   assert(await page.locator('#battlefield .battle-fortress').count()===1,'CSS fortress remains available only as a technical fallback');
   assert(await page.locator('#battlefield .fortress:not(.battle-fortress)').count()===0,'legacy mini fortress is absent from the army command scene');
   const commandVisual=await page.evaluate(()=>({
@@ -77,21 +82,33 @@ try{
   assert(commandVisualScene.fortressDisplay==='none'&&commandVisualScene.armyDisplay==='none','painted army and fortress replace pasted-on CSS geometry');
   assert(commandVisualScene.artSrc===commandVisualScene.targetSrc,'army overview reuses the cohesive battle campaign scene instead of a separate camp background');
   const commandComposition=await page.evaluate(()=>{
-    const stage=document.querySelector('#armyView .game-frontline-stage')?.getBoundingClientRect();
+    const stageEl=document.querySelector('#armyView .game-frontline-stage');
+    const stage=stageEl?.getBoundingClientRect();
     const panel=document.querySelector('#armyView .game-mission-panel')?.getBoundingClientRect();
     const own=document.querySelector('#armyView .frontline-own');
     const target=document.querySelector('#armyView .frontline-target');
+    const ownRect=own?.getBoundingClientRect(),targetRect=target?.getBoundingClientRect();
     return {
       gap:stage&&panel?Math.round(panel.top-stage.bottom):null,
       ownRadius:own?parseFloat(getComputedStyle(own).borderTopLeftRadius||'0'):null,
       targetRadius:target?parseFloat(getComputedStyle(target).borderTopLeftRadius||'0'):null,
       ownFont:own?getComputedStyle(own).fontFamily:'',
-      ownBackground:own?getComputedStyle(own).backgroundImage:''
+      ownBackground:own?getComputedStyle(own).backgroundImage:'',
+      ownPoleHeight:own?parseFloat(getComputedStyle(own,'::before').height||'0'):0,
+      targetPoleHeight:target?parseFloat(getComputedStyle(target,'::before').height||'0'):0,
+      ownRelativeTop:stage&&ownRect?(ownRect.top-stage.top)/stage.height:null,
+      targetRelativeTop:stage&&targetRect?(targetRect.top-stage.top)/stage.height:null,
+      ownOverflow:own?getComputedStyle(own).overflow:'',
+      ownHasTextSpan:!!own?.querySelector('span'),
+      targetHasTextSpan:!!target?.querySelector('span')
     };
   });
   assert(commandComposition.gap!==null&&commandComposition.gap>=8,'mobile mission card stays clearly below the campaign image without overlap');
   assert(commandComposition.ownRadius!==null&&commandComposition.ownRadius<=8&&commandComposition.targetRadius<=8,'campaign identity labels render as banners instead of pill badges');
   assert(commandComposition.ownFont.includes('Georgia')&&commandComposition.ownBackground.includes('linear-gradient'),'campaign identity labels use the dignified parchment-banner treatment');
+  assert(commandComposition.ownPoleHeight>=80&&commandComposition.targetPoleHeight>=80&&commandComposition.ownOverflow==='visible','campaign identity labels are planted standards with visible poles');
+  assert(commandComposition.ownRelativeTop>0.4&&commandComposition.targetRelativeTop>0.2,'standing standards sit inside the battlefield instead of floating at the top edge');
+  assert(commandComposition.ownHasTextSpan&&commandComposition.targetHasTextSpan,'profile and test text sit inside the standard cloth');
   await page.waitForFunction(()=>document.querySelector('[data-army-hero-art]')?.naturalWidth>0);
   await page.waitForFunction(()=>document.querySelectorAll('#armyUnitGrid .army-unit-art.art-loaded').length===6);
   await page.waitForFunction(()=>document.querySelectorAll('#armyFormationField .army-formation-art.art-loaded').length===6);

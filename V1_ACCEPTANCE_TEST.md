@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 27.09.2026 · Basis: v0.21.15 · Release-Kandidat: Armee-Banner und klare Bildtrennung
+Stand: 27.09.2026 · Basis: v0.21.16 · Release-Kandidat: Stehende Feldbanner und korrekte Testfolge
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -13,6 +13,8 @@ Zusatz für v0.21.13: Auf einem iPhone prüfen, dass Avatarbild, Stufen-/Teststa
 Zusatz für v0.21.14: In Armee- und Angriffsszene prüfen, dass die eigene Seite mit dem **Profilnamen** und das Ziel mit **„Test N“** beschriftet ist. Die generischen Bildlabels „Deine Armee“ und „Ziel“ dürfen nicht mehr nötig sein; der Fokusmodus muss die beiden Banner klar lesbar erhalten.
 
 Zusatz für v0.21.15: Auf dem iPhone prüfen, dass das Kampagnenbild vollständig sichtbar endet und die helle Karte mit „Angriff gesperrt“ **mit erkennbarem Abstand darunter** beginnt. Profilname und „Test N“ müssen wie Banner/Schilder wirken und dürfen nicht als weiße Pillen erscheinen.
+
+Zusatz für v0.21.16: In der Armeeübersicht prüfen, dass Profilname und Testziel **auf sichtbaren Feldstandarten mit Mast innerhalb der Szene** stehen und nicht als schwebende Tafeln am oberen Bildrand wirken. Wird ein zukünftiger Test vor seinem Termin durch einen neuen Test ersetzt, darf die alte verwaiste Festung die Nummer nicht erhöhen; der verbleibende erste reale Test muss als **„Test 1“** erscheinen.
 
 ## Grundregel
 

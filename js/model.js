@@ -354,9 +354,14 @@ function testFortressHistory(subject=state.activeSubject){
 function testSequenceNumber(testDate,subject=state.activeSubject,schoolYear=currentSchoolYear()){
   if(!testDate)return 1;
   const startYear=Number(String(schoolYear||'').split('/')[0]),start=Number.isFinite(startYear)?`${startYear}-08-01`:'0000-01-01',end=Number.isFinite(startYear)?`${startYear+1}-07-31`:'9999-12-31';
-  const inYear=date=>!!date&&String(date)>=start&&String(date)<=end,dates=new Set();
-  for(const set of schoolYearSets(subject,schoolYear))if(inYear(set.testDate))dates.add(set.testDate);
-  for(const fortress of testFortressHistory(subject))if(inYear(fortress.testDate))dates.add(fortress.testDate);
+  const inYear=date=>!!date&&String(date)>=start&&String(date)<=end,dates=new Set(),sets=schoolYearSets(subject,schoolYear);
+  for(const set of sets)if(inYear(set.testDate))dates.add(set.testDate);
+  const series=activeSeries(subject),seriesSetId=series?.setId||'';
+  if(seriesSetId){
+    for(const fortress of testFortressHistory(subject)){
+      if(inYear(fortress.testDate)&&String(fortress.testDate)<=String(testDate)&&(fortress.setIds||[]).includes(seriesSetId))dates.add(fortress.testDate);
+    }
+  }
   if(inYear(testDate))dates.add(testDate);
   const ordered=[...dates].sort(),index=ordered.indexOf(testDate);
   return index>=0?index+1:1;
