@@ -58,12 +58,22 @@ Produktionsnachweis: PR-CI #945 erfolgreich, Merge PR #138 auf `main` (`1aa7983c
 Produktiv seit **v0.21.9 / PR #142**. Ein falscher oder unterstützter aktiver Versuch markiert ein Pflichtwort nicht als erledigt. Erst ein fachlich richtiger, unassistierter aktiver Abruf setzt `completedKeys`. PR-CI #950, main-CI #951 und Pages #507 sind grün.
 
 ## B-008 – Spacing-Erfolg gegen Same-Day-Inflation härten
-**Status:** IN_IMPLEMENTATION  
+**Status:** PRODUCTION  
 **Priorität:** P1  
 **Decision:** D-20260927-006  
 **Betroffene Quellen:** `PRODUCT_DNA.md` P3, `js/learning.js`, Learning-Integrity-Smoke
 
-Mehrere richtige aktive Abrufe desselben Wortes am selben Tag dürfen weiterhin Accuracy und Übungsevidenz verbessern, aber das nächste Wiederholungsintervall nicht mehrfach verlängern. Spacing-Fortschritt wird aus unterschiedlichen aktiven Erfolgstagen abgeleitet.
+Produktiv seit **v0.21.10 / PR #143**. Mehrere richtige aktive Abrufe desselben Wortes am selben Tag verbessern weiterhin Accuracy und Übungsevidenz, verlängern das nächste Wiederholungsintervall aber nicht mehrfach. Spacing-Fortschritt wird aus unterschiedlichen aktiven Erfolgstagen abgeleitet. PR-CI #952, main-CI #953 und Pages #508 sind grün.
+
+## B-009 – Testbereitschaft richtungsspezifisch prüfen
+**Status:** IN_IMPLEMENTATION  
+**Priorität:** P1  
+**Decision:** D-20260927-007  
+**Betroffene Quellen:** `PRODUCT_DNA.md` P2, `js/model.js`, `js/learning.js`, Lernintegritäts- und Menü-Smokes
+
+Für die Testbereitschaft werden Bedeutung → Fremdsprachenwort und Fremdsprachenwort → Bedeutung getrennt nachgewiesen. Ein `mixed`-Test verlangt beide Richtungen; Diktat bleibt an die produktive Rechtschreib-/Abrufbasis gebunden. Recognition und Listening erhöhen den numerischen Readiness-Score nicht.
+
+Bestehende Lernstände werden konservativ aus vorhandenen Aktivitätsdaten und – nur wenn nötig – bereits dokumentierten Abrufmodi migriert; es wird keine historisch nie geübte Richtung erfunden.
 
 ## B-005 – Praktische v1-Abnahme
 **Status:** APPROVED_BACKLOG / RELEASE TASK  
