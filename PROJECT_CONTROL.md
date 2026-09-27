@@ -38,7 +38,7 @@ Wenn zu diesem Projekt nach einer Meinung, Bewertung, Priorisierung oder Grundsa
 
 Beispiel:
 
-> Das passt zu Product DNA P6 „Tagesziel“ und D-0004. Die neue Idee verändert aber die bisherige Tagesplan-Fixierung innerhalb desselben Tages. Deshalb wäre sie keine reine UI-Anpassung, sondern eine Scheduler-Entscheidung. Quellen: `PRODUCT_DNA.md` § „Die 13 Prinzipien“, Punkt 6; `docs/project/DECISIONS.md` D-0004.
+> Das passt zu Product DNA P6 „Tagesziel“ und D-20260927-010. Die neue Idee verändert aber die festgelegte Größe oder Struktur des verpflichtenden Tageskerns. Deshalb wäre sie keine reine UI-Anpassung, sondern eine Scheduler-Entscheidung. Quellen: `PRODUCT_DNA.md` § „Die 13 Prinzipien“, Punkt 6; `docs/project/DECISIONS.md` D-20260927-010.
 
 Damit ist jederzeit nachvollziehbar, **warum** eine Empfehlung gegeben wurde und **welche Quelle geändert werden müsste**, wenn eine andere Grundsatzentscheidung getroffen wird.
 
