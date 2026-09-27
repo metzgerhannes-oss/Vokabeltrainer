@@ -126,7 +126,7 @@ const passed=vm.runInContext(`
   }
   assert(pacedPlan.extraRefs.length===3&&pacedPlan.extraLimit===3,'same-day adaptive refill is capped at three extra words outside LRS mode');
   learner().lrsMode=true;pacedPlan.extraLimit=3;normalizeDailyAdaptivePlan(pacedPlan);
-  assert(pacedPlan.extraLimit===2,'LRS mode caps same-day refill at two extra words even for an existing plan');
+  assert(pacedPlan.extraLimit===2&&pacedPlan.extraRefs.length===2,'LRS mode caps same-day refill at two extra words even for an existing plan');
   learner().lrsMode=false;
 
   session={isDaily:true,queue:[quizQueueRef(dailyWord)],index:0,dailySecurityFollowups:{}};
