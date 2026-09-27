@@ -514,7 +514,8 @@ function normalizeDailyAdaptivePlan(plan,l=learner()){
   plan.todaySecureKeys=Array.isArray(plan.todaySecureKeys)?plan.todaySecureKeys:[];
   plan.securityEvidence=plan.securityEvidence&&typeof plan.securityEvidence==='object'&&!Array.isArray(plan.securityEvidence)?plan.securityEvidence:{};
   plan.extraRefs=Array.isArray(plan.extraRefs)?plan.extraRefs:[];
-  plan.extraLimit=Math.max(0,Math.min(3,Number.isFinite(Number(plan.extraLimit))?Number(plan.extraLimit):(l?.lrsMode?2:3)));
+  const modeLimit=l?.lrsMode?2:3,storedLimit=Number.isFinite(Number(plan.extraLimit))?Number(plan.extraLimit):modeLimit;
+  plan.extraLimit=Math.max(0,Math.min(modeLimit,storedLimit));
   return plan;
 }
 function buildDailyPlan(subject=state.activeSubject){
