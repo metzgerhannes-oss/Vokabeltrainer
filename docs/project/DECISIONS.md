@@ -90,7 +90,7 @@ Der morgens berechnete Pflicht-Tagesplan bleibt als festes Tagesziel bestehen. E
 
 „Heute sicher“ erfordert produktiven, unassistierten und orthografisch korrekten Abruf. Bereits testbereite Wiederholungswörter benötigen einen solchen Abruf; neue oder schwache Wörter zwei getrennte erfolgreiche aktive Abrufe ohne Fehler dazwischen. Ein bloßer Kontakt über `completedKeys` reicht ausdrücklich nicht.
 
-Nachrückpriorität: unbekanntes Wort aus dem anstehenden Test → schwaches bereits bekanntes Testwort → fällige bekannte Wiederholung. In den letzten drei Tagen vor dem Test werden keine zusätzlichen unbekannten Wörter nachgezogen. Pro Tag maximal drei Zusatzwörter, im LRS-Modus zwei; die bestehende Obergrenze von sieben neu eingeführten Wörtern pro Tag bleibt erhalten. Nachrücker werden als freiwilliger nächster Lernschritt vorgemerkt und verlängern eine bereits laufende Pflicht-Einheit nicht automatisch.
+Nachrückpriorität: unbekanntes Wort aus dem anstehenden Test → schwaches bereits bekanntes Testwort → fällige bekannte Wiederholung. In den letzten drei Tagen vor dem Test werden keine zusätzlichen unbekannten Wörter nachgezogen. Pro Tag maximal drei Zusatzwörter, bei aktivierter Einstellung „Kurze Einheiten“ zwei; die bestehende Obergrenze von sieben neu eingeführten Wörtern pro Tag bleibt erhalten. Diese Präzisierung folgt D-20260927-008; Lesen-/Rechtschreibunterstützung allein reduziert das Nachrücklimit nicht. Nachrücker werden als freiwilliger nächster Lernschritt vorgemerkt und verlängern eine bereits laufende Pflicht-Einheit nicht automatisch.
 
 ### D-20260927-005 – Pflicht-Tagesziel braucht erfolgreichen unassistierten Abruf
 **Status:** LOCKED  
@@ -126,6 +126,30 @@ Die generische Retrieval-/Spelling-Kompetenz bleibt ein gemeinsamer Lernkern, re
 Ein späterer falscher unabhängiger Versuch in einer Richtung setzt deren aktuellen Richtungsnachweis auf „nicht bereit“, bis wieder ein unabhängiger richtiger Abruf erfolgt. Unterstützte Treffer erzeugen keinen Richtungsnachweis.
 
 Recognition und Listening bleiben unterstützende Lernformen und tragen nicht zum numerischen Testbereitschafts-Score bei.
+
+### D-20260927-008 – LRS-Unterstützung trennt Lesen, Rechtschreiben und Belastungsreduktion
+**Status:** LOCKED  
+**Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P8; P6 für Tageslast/Nachrücken
+
+Die App behandelt LRS nicht als einheitlichen Lern- oder Scheduler-Schalter. Ein Lernprofil
+kann **Leseunterstützung**, **Rechtschreibunterstützung** oder beide Dimensionen aktivieren.
+Die Einstellung **„Kurze Einheiten“** ist davon unabhängig und steuert kleinere Sessions
+sowie das reduzierte freiwillige Nachrücklimit.
+
+Leseunterstützung beeinflusst Hilfen, Audio-/Lesetempo und adaptive Scaffold-Priorität,
+aber nicht Mastery oder Testbereitschaft. Rechtschreibunterstützung priorisiert produktive
+Schreibmodi; für „heute sicher“ ist bei aktivierter Rechtschreibunterstützung zusätzlich
+mindestens ein erfolgreicher unassistierter Rechtschreibabruf erforderlich. Die fachliche
+Sollantwort und die bestehenden Mastery-/Spacing-Kriterien werden nicht abgesenkt.
+
+Die App stellt keine Diagnose und leitet keine LRS-Form automatisch ab. Bestehende Profile
+mit dem alten `lrsMode=true` werden konservativ zu Lesen + Rechtschreiben + „Kurze
+Einheiten“ migriert. `lrsMode` bleibt nur als Kompatibilitätsalias für ältere
+synchronisierte Clients erhalten.
+
+D-20260927-004 bleibt für das adaptive Nachrücken gültig; nur die dortige frühere Kopplung
+„LRS-Modus = Zwei-Wort-Limit“ wird durch die unabhängige Einstellung „Kurze Einheiten“
+präzisiert.
 
 ## Neue Entscheidungen
 
