@@ -464,15 +464,13 @@ function recordResult(w,ok,skill,errorType,opts={}){
   recordActivity(session.currentSubmode||session.mode,{wordId:w.id,correct:ok,errorType,assisted,active,cold,recallDirection,orthographyOk:opts.orthographyOk!==false,todaySecure:!!dailySecurity?.becameSecure,refillSource:dailySecurity?.replacementSource||'',leitnerBefore:session.lastLeitnerMove.before,leitnerAfter:session.lastLeitnerMove.after});persistOnly();
 }
 function scheduleDailySecurityFollowup(targetSession,word){
+  // The required daily core must stay short. Stricter "today safe" evidence belongs
+  // to a later optional round instead of silently extending the running core session.
   if(!targetSession?.isDaily||!word)return false;
-  targetSession.dailySecurityFollowups=targetSession.dailySecurityFollowups||{};
-  const ref=quizQueueRef(word),key=dailyPlanRefKey({wordId:word.id,setLinkId:word.setLinkId||''});if(!key)return false;
-  const n=Number(targetSession.dailySecurityFollowups[key])||0;if(n>=2)return false;
-  targetSession.dailySecurityFollowups[key]=n+1;
-  const pos=Math.min(targetSession.index+3,targetSession.queue.length);targetSession.queue.splice(pos,0,ref);return true;
+  return false;
 }
 function scheduleRetry(targetSession,word){const ref=word&&typeof word==='object'&&('setLinkId' in word)?quizQueueRef(word):word,key=typeof ref==='string'?ref:(ref?.setLinkId||ref?.progressId||'');if(!key)return false;const n=targetSession.retryCounts[key]||0;if(n>=1)return false;targetSession.retryCounts[key]=n+1;const pos=Math.min(targetSession.index+3,targetSession.queue.length);targetSession.queue.splice(pos,0,ref);return true;}
-function scheduleScaffoldFollowup(targetSession,word){targetSession.followupCounts=targetSession.followupCounts||{};const ref=word&&typeof word==='object'&&('setLinkId' in word)?quizQueueRef(word):word,key=typeof ref==='string'?ref:(ref?.setLinkId||ref?.progressId||'');if(!key)return false;const n=targetSession.followupCounts[key]||0;if(n>=2)return false;targetSession.followupCounts[key]=n+1;const pos=Math.min(targetSession.index+3,targetSession.queue.length);targetSession.queue.splice(pos,0,ref);return true;}
+function scheduleScaffoldFollowup(targetSession,word){targetSession.followupCounts=targetSession.followupCounts||{};const ref=word&&typeof word==='object'&&('setLinkId' in word)?quizQueueRef(word):word,key=typeof ref==='string'?ref:(ref?.setLinkId||ref?.progressId||'');if(!key)return false;const n=targetSession.followupCounts[key]||0,limit=targetSession?.isDaily?1:2;if(n>=limit)return false;targetSession.followupCounts[key]=n+1;const pos=Math.min(targetSession.index+3,targetSession.queue.length);targetSession.queue.splice(pos,0,ref);return true;}
 function scheduleSessionAdvance(targetSession,ok,w,delay){
   setTimeout(()=>{if(session===targetSession)nextStudy(ok,w)},delay);
 }
