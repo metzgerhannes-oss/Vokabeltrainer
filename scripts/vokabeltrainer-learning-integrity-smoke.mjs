@@ -13,6 +13,13 @@ for(const file of ['js/core.js','js/library.js','js/storage.js','js/model.js','j
 const passed=vm.runInContext(`
 (()=>{
   const ok=[];const assert=(v,n)=>{if(!v)throw new Error('Learning integrity smoke failed: '+n);ok.push(n)};
+  const legacySupport=defaultState();legacySupport.learners[0].lrsMode=true;delete legacySupport.learners[0].literacySupport;delete legacySupport.learners[0].reducedLoad;
+  const migratedSupport=migrate(legacySupport).learners[0],supportProfile=literacySupportFor(migratedSupport);
+  assert(supportProfile.reading&&supportProfile.spelling&&supportProfile.reducedLoad,'legacy LRS migrates conservatively to reading, spelling and reduced load');
+  const separateSupport=defaultState().learners[0];separateSupport.literacySupport={reading:true,spelling:false};separateSupport.reducedLoad=false;separateSupport.lrsMode=true;normalizeLiteracySupport(separateSupport);
+  assert(readingSupportEnabled(separateSupport)&&!spellingSupportEnabled(separateSupport)&&!reducedLoadEnabled(separateSupport),'reading support is independent from spelling and reduced load');
+  assert('reading' in defaultSkills(),'reading is tracked as a support skill without entering mastery weights');
+
   const s=defaultState();delete s.spellingLeakRepairVersion;s.version='0.9.20';
   const v=makeVocabulary('english','write','schreiben');
   s.vocabulary.push(v);
@@ -53,6 +60,24 @@ const passed=vm.runInContext(`
   assert(w.skills.spelling===1.5,'soft orthography error reduces spelling confidence');
   assert(w.dueDate===datePlusDays(1),'soft orthography error is due again tomorrow');
   assert(session.correct===1,'semantic retrieval success remains credited');
+
+  state=defaultState();
+  learner().literacySupport={reading:false,spelling:true};learner().reducedLoad=false;normalizeLiteracySupport(learner());
+  const spellingSet={id:'spelling_support_set',learnerId:'learner_demo',subject:'english',title:'Spelling Support',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+  state.sets.push(spellingSet);
+  const spellingWord=attachVocabularyToSet(spellingSet.id,{term:'beautiful',translation:'schön',source:'spelling-support-smoke',verified:true}).word;
+  const spellingPlan={date:today(),subject:'english',wordRefs:[{wordId:spellingWord.id,setLinkId:spellingWord.setLinkId||''}],introRefs:[],completedKeys:[],todaySecureKeys:[],securityEvidence:{},extraRefs:[],extraSources:{},extraLimit:3};
+  const firstSecure=recordDailySecurityResult(spellingWord,{correct:true,active:true,assisted:false,orthographyOk:true,wasTestReady:true,skill:'retrieval'},spellingPlan);
+  assert(!firstSecure.becameSecure&&firstSecure.needsSpelling,'spelling support does not declare today-safe without an actual spelling recall');
+  const spellingSecure=recordDailySecurityResult(spellingWord,{correct:true,active:true,assisted:false,orthographyOk:true,wasTestReady:true,skill:'spelling'},spellingPlan);
+  assert(spellingSecure.becameSecure&&!spellingSecure.needsSpelling,'spelling recall completes today-safe evidence for spelling support');
+  session={mode:'adaptive',currentSubmode:'spelling',hintUsed:false,isDaily:false,activeAttemptedWords:{},scaffoldedWords:{},correct:0,answered:0};
+  recordResult(spellingWord,true,'spelling',null,{orthographyOk:true});
+  assert((spellingWord.spellingSuccessDays||[]).includes(today()),'successful independent spelling recall records a spelling success day');
+  const masteryProbe={...spellingWord,skills:{recognition:4,listening:4,retrieval:2,spelling:2,reading:0,context:1},activeSuccessDays:[datePlusDays(-7),datePlusDays(-3),today()],coldRecallDays:[datePlusDays(-3),today()],maxActiveGapDays:4,independentSuccesses:5,intervalDays:7,errorProfile:{}};
+  const beforeReading=meetsMasteryCriteria(masteryProbe);masteryProbe.skills.reading=4;
+  assert(beforeReading===meetsMasteryCriteria(masteryProbe),'reading support skill does not alter vocabulary mastery criteria');
+  session=null;
 
   state=defaultState();
   const sameDaySet={id:'same_day_spacing_set',learnerId:'learner_demo',subject:'english',title:'Same Day Spacing',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};

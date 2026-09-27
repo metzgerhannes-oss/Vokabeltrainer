@@ -97,6 +97,15 @@ try{
     assert((await page.evaluate(()=>VTFamilySync.status().dirty))===0,'initial sync snapshot is clean');
   }
 
+  await pageA.evaluate(async()=>{
+    learner().literacySupport={reading:false,spelling:true};learner().reducedLoad=false;normalizeLiteracySupport(learner());
+    await persistState();VTFamilySync.markLocalChange();
+  });
+  await pageA.evaluate(()=>VTFamilySync.syncNow(true));
+  await pageB.evaluate(()=>VTFamilySync.syncNow(true));
+  const supportOnB=await pageB.evaluate(()=>({support:literacySupportFor(learner()),legacy:learner().lrsMode}));
+  assert(!supportOnB.support.reading&&supportOnB.support.spelling&&!supportOnB.support.reducedLoad&&supportOnB.legacy,'reading/spelling/reduced-load profile settings sync independently while legacy LRS alias stays compatible');
+
   const completed=await pageA.evaluate(async()=>{
     const plan=buildDailyPlan('english'),before=dailyPlanStatus(plan),word=schoolYearVerifiedWords('english')[0];
     const progress=state.learnerVocabulary.find(p=>p.id===word.id)||state.learnerVocabulary.find(p=>p.senseId===word.senseId);
@@ -186,6 +195,7 @@ try{
   assert(nextDay.successes===completed.successes&&nextDay.activePracticeDays.includes(completed.day)&&nextDay.activity,'learned progress remains intact across the day boundary');
 
   console.log('Vokabeltrainer family sync learning-progress UI smoke: passed');
+  console.log('✓ differentiated reading/spelling/reduced-load setup synced across devices');
   console.log('✓ completed daily-plan state synced from device A to device B');
   console.log('✓ today-safe evidence and optional adaptive refill sync across devices');
   console.log('✓ vocabulary progress, activity and XP synced with the completion');
