@@ -585,7 +585,7 @@ function dailyPlanReplacementCandidate(plan=buildDailyPlan()){
       .sort((a,b)=>testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b))[0];
     if(weak)return {ref:{wordId:weak.id,setLinkId:weak.setLinkId||''},source:'weak-test'};
   }
-  const due=dueWords(plan.subject).filter(available)
+  const due=dueWords(plan.subject).filter(w=>available(w)&&dailyPlanHasLearningContact(w))
     .sort((a,b)=>String(a.dueDate||'').localeCompare(String(b.dueDate||''))||testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b))[0];
   return due?{ref:{wordId:due.id,setLinkId:due.setLinkId||''},source:'due'}:null;
 }
