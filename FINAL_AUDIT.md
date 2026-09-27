@@ -1,9 +1,10 @@
 # Finales Audit
 
-Stand: 27.09.2026 · App v0.21.9
+Stand: 27.09.2026 · App v0.21.10
 
 ## Ergebnis
 
+- v0.21.10 härtet Spacing gegen massierte Same-Day-Erfolge: mehrere richtige unabhängige Abrufe am selben Kalendertag bleiben diagnostisch erhalten, können das Wiederholungsintervall aber nicht mehrfach verlängern. Die Intervallstufe folgt unterschiedlichen aktiven Erfolgstagen; Cold-Recall wirkt erst bei bereits verteilter Evidenz. Mastery und fachliche Bewertung bleiben konservativ und unverändert.
 - v0.21.9 schließt die Tagesziel-Lücke: `completedKeys` wird in der Pflichtlektion erst nach einem fachlich richtigen, unassistierten aktiven Abruf gesetzt. Fehlversuche und Antworten mit Hinweis bleiben offen; dadurch kann die Tagesaktion nicht vorzeitig freigeschaltet werden. Der separate strengere Status „heute sicher“ und die Nachrücklogik aus v0.21.8 bleiben unverändert.
 - v0.21.7 ergänzt auf „Heute“ den aktiven Profilnamen sowie die testbezogene Lernbereitschaft in Prozent und absolutem Umfang. Im iPhone-Battle werden doppelte Bildinformationen reduziert, der Verteidigungswert in das Festungs-Badge integriert und der bisherige Browser-Vollbildversuch durch einen app-eigenen, scene-only Fokusmodus ersetzt. Fachliche Lern-, Mastery- und Battle-Berechnung bleibt unverändert.
 - v0.21.6 setzt das freigegebene Campaign-Target-Design verbindlich um: Armee, Weg und Festung stammen aus einer zusammenhängenden Illustration; aufgesetzte CSS-Geometrie ist nur noch Fallback. Der Battle-Screen nutzt Kapitelkarte, kompaktes 2×2-HUD und große visuelle Angriffskarten. Fachliche Lern- und Battle-Berechnungslogik bleibt unverändert.
