@@ -652,7 +652,7 @@ function renderToday(){
     const maintenance=plan.maintenanceCount?` · ${plan.maintenanceCount} ältere Wiederholung${plan.maintenanceCount===1?'':'en'} dabei.`:'',deadline=plan.deadlineOverload?' · Der offene Stoff ist zu groß für eine einzige kurze Pflicht-Einheit; eine zweite kurze Runde wird empfohlen oder der Testumfang sollte geprüft werden.':'';
     const paceText=ctx?(plan.spacingRisk?' · Der Test ist sehr nah; neue Wörter können heute nicht mehr ausreichend verteilt gefestigt werden.':plan.pace==='ahead'?' · Du liegst vor dem Plan; der Pflichtblock bleibt besonders klein.':plan.pace==='overload'?' · Trotz Rückstand bleibt der Pflichtblock bewusst kurz.':' · Der Pflichtblock passt zum aktuellen Lernstand.'):'';
     const secondRound=plan.recommendSecondRound?' · Danach kann eine zweite kurze Runde sinnvoll sein; sie bleibt freiwillig.':'';
-    $('#todayEstimate').textContent=`1 kurze Pflicht-Einheit · noch ca. ${mins} Min. · ${plan.dailyTarget} Fokuswörter.${phaseText}${maintenance}${paceText}${deadline}${secondRound}`;
+    $('#todayEstimate').textContent=`1 kurze Pflicht-Einheit · noch ca. ${mins} Min. · ${status.total} Fokuswörter.${phaseText}${maintenance}${paceText}${deadline}${secondRound}`;
   }
   $('#todayProgress').max=Math.max(1,status.total); $('#todayProgress').value=status.done; $('#todayProgress').setAttribute('aria-valuetext',`${status.done} von ${status.total} Vokabeln heute erledigt`); $('#todayProgressText').textContent=status.total?`${status.done} / ${status.total} erledigt`:'';
   const rescueAvailable=!status.remaining&&rescue.available,bonusAvailable=!status.remaining&&status.extraRemaining>0;
