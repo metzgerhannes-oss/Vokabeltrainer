@@ -269,13 +269,13 @@ Paris darf eine besondere Etappe sein, aber nicht die gesamte visuelle Welt best
 Hinweis: Französisch ist visuell bereits definiert, auch wenn die fachliche Freischaltung
 technisch weiterhin den vollständigen Aktivierungs-Check aus `SUBJECT_SYSTEM.md` erfüllen muss.
 
-## 9. Deutsch Grundschule / 1. Klasse – Fuchswelt
+## 9. Deutsch Grundschule 1–4 – Fuchswelt
 
 ### Leitidee
 
-Ein ruhiger, kluger Fuchs begleitet das Kind beim Lesen- und Schreibenlernen.
+Ein ruhiger, kluger Fuchs begleitet das Kind durch den Deutsch-Lernpfad der Klassen 1–4.
 
-Dieser Bereich ist ein eigener Grundlernbereich und keine vereinfachte Battle-Welt.
+Dieser Bereich ist ein eigener Grundlernbereich und keine vereinfachte Battle-Welt. Die Fuchswelt wächst gestalterisch mit: Klasse 1 arbeitet stärker mit Buchstaben, Bildern und Schreibspuren; bis Klasse 4 wird die Darstellung sachlicher und textorientierter, ohne den vertrauten Fuchs als Lernbegleiter aufzugeben.
 
 ### Zielwirkung
 
@@ -344,7 +344,7 @@ Die Fachwelten müssen nicht dieselbe Figurenlogik verwenden.
 - **Englisch:** Avatar, Heldengruppe oder Armee
 - **Latein:** Legionär, Standartenträger oder geordnete Legion
 - **Französisch:** Reisefigur oder stilvoller Entdecker
-- **Deutsch 1:** Fuchs als zentraler Lernbegleiter
+- **Deutsch 1–4:** Fuchs als zentraler Lernbegleiter
 
 Figuren tragen den Lernprozess, dominieren ihn aber nicht.
 
@@ -378,14 +378,14 @@ Bedienmuster weitgehend fachübergreifend gleich:
 - Englisch: Kampagnenpfad
 - Latein: römische Marschroute / Provinzroute
 - Französisch: Reise- und Etappenkarte
-- Deutsch 1: Fuchs-Lernpfad
+- Deutsch 1–4: Fuchs-Lernpfad
 
 ### Test / Prüfung / Meilenstein
 
 - Englisch: Festung / Kampagnenetappe
 - Latein: Kastell / römische Prüfungsetappe
 - Französisch: besondere Reise-/Sprachmission
-- Deutsch 1: Lernmeilenstein, keine Schlacht im Vordergrund
+- Deutsch 1–4: Lernmeilenstein, keine Schlacht im Vordergrund
 - mobile Kampagnenszenen dürfen einen **app-eigenen Fokusmodus** anbieten: Querformat-Illustration dominant, keine Bottom-Navigation, keine Story, kein KPI-HUD und keine Angriffskarten über dem Bild
 - im Fokusmodus bleiben nur ein eindeutiger Rückweg, optional „Angriff wählen“ und der integrierte Zielstatus sichtbar
 - der Zielstatus bündelt Schadenszustand und verbleibende Verteidigung; derselbe Wert darf nicht zusätzlich als separates Bild-Overlay wiederholt werden

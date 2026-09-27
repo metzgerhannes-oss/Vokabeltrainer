@@ -5,13 +5,13 @@
 **Geltungsbereich:** Deutsch Grundschule Klassen 1–4, Baden-Württemberg  
 **Zugehörige Entscheidungen:** D-0001, D-0006, D-0008, D-20260927-008, D-20260927-009  
 **Backlog:** B-001  
-**Visuelle Quelle:** `VISUAL_DNA.md` § 9 „Deutsch Grundschule / 1. Klasse – Fuchswelt“
+**Visuelle Quelle:** `VISUAL_DNA.md` § 9 „Deutsch Grundschule 1–4 – Fuchswelt“
 
 ## 1. Zweck und Evidenzstatus
 
 Diese Spezifikation hält den fachlich geprüften Zielzustand für den späteren Deutsch-Grundschulbereich fest. Sie ist keine Implementierungsbeschreibung und behauptet keine therapeutische Wirkung.
 
-Die Gegenprüfung wurde am 27.09.2026 gegen den zu diesem Zeitpunkt geltenden Bildungsplan Baden-Württemberg sowie aktuelle systematische Reviews, Meta-Analysen, randomisierte Studien und deutschsprachige Interventionsforschung vorgenommen.
+Die Gegenprüfung wurde am 27.09.2026 gegen den zu diesem Zeitpunkt geltenden Bildungsplan Baden-Württemberg sowie aktuelle systematische Reviews, Meta-Analysen, randomisierte Studien und deutschsprachige Interventionsforschung vorgenommen. Die im Quellenverzeichnis geführten Kernquellen und DOI-/Publikationsangaben wurden am selben Tag nochmals gegen Bildungsplan/AWMF bzw. Original- oder Verlagsseiten bibliografisch verifiziert.
 
 Evidenzklassen in diesem Dokument:
 
@@ -464,6 +464,8 @@ Die Unterstützungsoption „LRS Rechtschreiben“ ist **kein niedrigerer Rechts
    https://bildungsplaene-bw.de/%2CLde/BP2016BW_ALLG_GS_D.V2_IK_3-4_02_01
 7. **Rechtschreibrahmen für die Klassen 1 bis 10**, verbindliche Grundlage des Rechtschreibunterrichts in Baden-Württemberg  
    https://bildungsplaene-bw.de/%2CLde/rechtschreibrahmen
+- Ergänzende verbindliche curriculare Grundlage: **Grammatikrahmen für die Klassen 1 bis 10**, in Baden-Württemberg verbindlich seit dem Schuljahr 2022/2023.  
+  https://www.bildungsplaene-bw.de/25863125
 
 ### LRS / Lesen
 8. Hall et al. (2023): **Forty Years of Reading Intervention Research for Elementary Students with or At Risk for Dyslexia: A Systematic Review and Meta-Analysis.** Reading Research Quarterly. DOI: 10.1002/rrq.477.
@@ -479,7 +481,7 @@ Die Unterstützungsoption „LRS Rechtschreiben“ ist **kein niedrigerer Rechts
 15. Chandler et al. (2025): **A Meta-Analytic Review of Spelling Interventions for Students With or At-Risk for Learning Disabilities.** Journal of Learning Disabilities. DOI: 10.1177/00222194251364836.
 16. Galuschka et al. (2020): **Effectiveness of spelling interventions for learners with dyslexia: A meta-analysis and systematic review.** Educational Psychologist 55(1), 1–20. DOI: 10.1080/00461520.2019.1659794.
 17. Witzel et al. (2024): **Digital game-based spelling intervention for children with spelling deficits: A randomized controlled trial.** Learning and Instruction 89, 101842. DOI: 10.1016/j.learninstruc.2023.101842.
-18. Holz et al. (2023): **A digital game-based training improves spelling in German primary school children – A randomized controlled field trial.** Learning and Instruction 87, 101771. DOI: 10.1016/j.learninstruc.2023.101771
+18. Holz et al. (2023): **A digital game-based training improves spelling in German primary school children – A randomized controlled field trial.** Learning and Instruction 87, 101771. DOI: 10.1016/j.learninstruc.2023.101771.
 19. Klimovich & Richter (2025): **Spelling acquisition in children through interleaved practice: the role of instructional guidance.** Cognitive Research: Principles and Implications 10, 68. DOI: 10.1186/s41235-025-00680-z.
 
 ### Morphologie
@@ -491,7 +493,7 @@ Die Unterstützungsoption „LRS Rechtschreiben“ ist **kein niedrigerer Rechts
 23. Ibaibarriaga, Acha & Perea (2025): **The impact of handwriting and typing practice in children’s letter and word learning.** Journal of Experimental Child Psychology 253, 106195. DOI: 10.1016/j.jecp.2025.106195.
 24. Suggate et al. (2025): **Keep the hands in mind: A meta-analysis of correlations between fine motor skills and reading, writing, mathematics, and cognitive development in children and adolescents.** Educational Research Review, 100748. DOI: 10.1016/j.edurev.2025.100748.
 25. Suggate et al. (2023): **The effect of fine motor skills, handwriting, and typing on reading development.** Journal of Experimental Child Psychology 232, 105674. DOI: 10.1016/j.jecp.2023.105674.
-26. Frühere Handschriftentwicklung bei deutschsprachigen Erstklässlern (2024/2025): **Early handwriting development: a longitudinal perspective on handwriting time, legibility, and spelling.** Frontiers in Psychology. DOI: 10.3389/fpsyg.2024.1466061.
+26. Truxius, Sägesser Wyss & Maurer (2025): **Early handwriting development: a longitudinal perspective on handwriting time, legibility, and spelling.** Frontiers in Psychology 15:1466061. DOI: 10.3389/fpsyg.2024.1466061.
 
 ### Mehrsprachigkeit / DaZ
 27. Kittle, Amendum & Budde (2024): **What Does Research Say About the Science of Reading for K-5 Multilingual Learners? A Systematic Review of Systematic Reviews.** Educational Psychology Review 36, 108. DOI: 10.1007/s10648-024-09942-6.
