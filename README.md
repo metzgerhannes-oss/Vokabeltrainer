@@ -10,13 +10,15 @@ Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änd
 
 ## Aktueller Stand
 
-App-Version: **v0.21.18**
+App-Version: **v0.21.19**
+
+- v0.21.19: Banner in Armee- und Angriffsszene näher an der freigegebenen Referenz: schmale Pergamentrolle mit gerollten Enden, großer seitlich hängender Heraldik-Wimpel und langer goldener Stab mit Speerspitzen. Testlogik bleibt unverändert.
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
 
-## v0.21.18 – Mehrere kommende Tests bleiben chronologisch aktiv
+## v0.21.19 – Mehrere kommende Tests bleiben chronologisch aktiv
 
 - ein später eingetragener Test ersetzt **nicht mehr** einen früheren noch bevorstehenden Test
 - mehrere einmalige Tests desselben Fachs können parallel geplant bleiben; Lernen, Heute-Ansicht und Kampagnenziel richten sich immer nach dem **frühesten anstehenden Termin**
