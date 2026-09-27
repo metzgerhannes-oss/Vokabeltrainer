@@ -363,7 +363,7 @@ function renderBattleView(){
   const activePhases=isRoman?['Formieren','Marsch','Angriff','Durchbruch','Ergebnis']:isVoyage?['Vorbereiten','Weiterreisen','Mission','Ankunft','Ergebnis']:['Sammeln','Vorrücken','Angriff','Einschlag','Ergebnis'];
   const securePhases=isVoyage?['Ankommen','Ordnen','Wiederholen','Festigen','Ergebnis']:['Sammeln','Beziehen','Patrouille','Sichern','Ergebnis'];
   const phases=secure?securePhases:activePhases;
-  stage.innerHTML=`<div class="battle-sky"><i class="battle-sun"></i><i class="battle-cloud cloud-1"></i><i class="battle-cloud cloud-2"></i></div>${seasonEffectsMarkup()}<div class="battle-hills"></div><div class="battle-ground"></div><div class="battle-ground-path" aria-hidden="true"></div><div class="battle-scene-vignette" aria-hidden="true"></div><div class="battle-fortress-state-badge" aria-hidden="true"><small>${esc(present.targetNoun)}</small><strong>${esc(fortressVisual.label)}</strong></div><div class="battle-phase-strip" aria-hidden="true">${phases.map((label,index)=>`<span data-battle-phase="${['rally','advance','barrage','impact','result'][index]}"><i>${index+1}</i>${esc(label)}</span>`).join('')}</div><div class="battle-rank-badge"><span>${esc(rank)}</span><small>${esc(gear)}</small></div><div class="battle-army"><div class="battle-standard"><i></i></div><div class="battle-formation">${battleUnitsMarkup(count,true,p.pct)}</div>${p.pct>=35&&!isVoyage?'<div class="battle-ram"><i></i><b></b></div>':''}</div><div class="battle-projectiles">${Array.from({length:9},(_,i)=>`<i class="arrow arrow-${i+1}"></i>`).join('')}</div><div class="battle-impact"><i></i><i></i><i></i></div><div class="battle-special-flare"><i></i><i></i><i></i></div><div class="battle-shockwave"></div>${battleAttackFxMarkup()}${boss?`<div class="battle-boss-character boss-${esc(f.id)}" aria-label="${esc(boss.name)}"><i class="boss-helmet"></i><i class="boss-body"></i><i class="boss-shield"></i></div>`:''}${fortressMarkup(f,true)}<div class="battle-dust"></div>${battleFortressRevealMarkup(f,revealActive)}`;
+  stage.innerHTML=`<div class="battle-sky"><i class="battle-sun"></i><i class="battle-cloud cloud-1"></i><i class="battle-cloud cloud-2"></i></div>${seasonEffectsMarkup()}<div class="battle-hills"></div><div class="battle-ground"></div><div class="battle-ground-path" aria-hidden="true"></div><div class="battle-scene-vignette" aria-hidden="true"></div><div class="battle-fortress-state-badge" aria-hidden="true"><small>${esc(present.targetNoun)}</small><strong>${esc(fortressVisual.label)}</strong><span>${esc(f?(`${f.defense} / ${f.maxDefense} ${isVoyage?'Etappenstärke':isRoman?'Kastellstärke':'Verteidigung'}`):'')}</span></div><div class="battle-phase-strip" aria-hidden="true">${phases.map((label,index)=>`<span data-battle-phase="${['rally','advance','barrage','impact','result'][index]}"><i>${index+1}</i>${esc(label)}</span>`).join('')}</div><div class="battle-rank-badge"><span>${esc(rank)}</span><small>${esc(gear)}</small></div><div class="battle-army"><div class="battle-standard"><i></i></div><div class="battle-formation">${battleUnitsMarkup(count,true,p.pct)}</div>${p.pct>=35&&!isVoyage?'<div class="battle-ram"><i></i><b></b></div>':''}</div><div class="battle-projectiles">${Array.from({length:9},(_,i)=>`<i class="arrow arrow-${i+1}"></i>`).join('')}</div><div class="battle-impact"><i></i><i></i><i></i></div><div class="battle-special-flare"><i></i><i></i><i></i></div><div class="battle-shockwave"></div>${battleAttackFxMarkup()}${boss?`<div class="battle-boss-character boss-${esc(f.id)}" aria-label="${esc(boss.name)}"><i class="boss-helmet"></i><i class="boss-body"></i><i class="boss-shield"></i></div>`:''}${fortressMarkup(f,true)}<div class="battle-dust"></div>${battleFortressRevealMarkup(f,revealActive)}`;
 }
 
 let battleReturnView='armyView';
@@ -397,13 +397,26 @@ function openBattleView(){
   if(reveal)startBattleFortressReveal(f);
 }
 function closeBattleImmersive(){
-  document.body.classList.remove('battle-immersive');$('#battleFullscreenBtn')?.setAttribute('aria-pressed','false');if($('#battleFullscreenBtn'))$('#battleFullscreenBtn').textContent='⛶ Vollbild';
-  if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
+  document.body.classList.remove('battle-immersive');
+  const btn=$('#battleFullscreenBtn');
+  btn?.setAttribute('aria-pressed','false');
+  btn?.setAttribute('aria-label','Kampagnenszene im Fokus anzeigen');
+  if(btn)btn.textContent='⛶ Fokus';
+  $('#battleFocusAttackBtn')?.classList.add('hidden');
+}
+function openBattleAttackPickerFromFocus(){
+  closeBattleImmersive();
+  const tactics=$('#battleAttackChoices')?.closest('.battle-tactics');
+  if(tactics)requestAnimationFrame(()=>tactics.scrollIntoView({block:'start',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
 }
 function toggleBattleFullscreen(){
-  const on=!document.body.classList.contains('battle-immersive');document.body.classList.toggle('battle-immersive',on);
-  $('#battleFullscreenBtn')?.setAttribute('aria-pressed',String(on));if($('#battleFullscreenBtn'))$('#battleFullscreenBtn').textContent=on?'✕ Vollbild verlassen':'⛶ Vollbild';
-  if(on){const el=$('#battleView');if(el?.requestFullscreen)el.requestFullscreen().catch(()=>{});}else if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
+  const on=!document.body.classList.contains('battle-immersive');
+  document.body.classList.toggle('battle-immersive',on);
+  const btn=$('#battleFullscreenBtn');
+  btn?.setAttribute('aria-pressed',String(on));
+  btn?.setAttribute('aria-label',on?'Fokusansicht schließen':'Kampagnenszene im Fokus anzeigen');
+  if(btn)btn.textContent=on?'✕ Fokus schließen':'⛶ Fokus';
+  $('#battleFocusAttackBtn')?.classList.toggle('hidden',!on);
 }
 let battleSequenceGeneration=0;
 const battleSequenceTimers=new Set();
@@ -1327,9 +1340,9 @@ function bind(){
   document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='armyView'&&window.VTArmyUi?.open){window.VTArmyUi.open();return}showView(b.dataset.view)}); $('#quickLearnHeroBtn').onclick=startDailyTodo; $('#quickCardsBtn')?.addEventListener('click',()=>startSession('cards')); $('#cardboxPracticeBtn').onclick=()=>startSession('cards'); $('#todayTestBtn').onclick=openTestDatePlanner; $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
   $('#practiceCardsBtn')?.addEventListener('click',()=>startSession('cards')); $('#practiceWeakBtn')?.addEventListener('click',startWeakWordsPractice); $('#practiceAllBtn')?.addEventListener('click',openAllWordsPracticeChooser); $('#practiceSpecialBtn')?.addEventListener('click',()=>{const panel=$('#optionalLearningCard'),btn=$('#practiceSpecialBtn');if(!panel)return;const open=panel.classList.contains('hidden');panel.classList.toggle('hidden',!open);btn.setAttribute('aria-expanded',String(open));if(open)panel.scrollIntoView({block:'nearest',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})});
   $('#newSetBtn').onclick=()=>openLearningContentPlanner(); $('#addGradeBtn').onclick=()=>addGrade(); $('#practiceTestBtn').onclick=openPracticeTestChooser; $('#addProfileBtn').onclick=addProfile; $('#profileBtn').onclick=openProfileSwitcher; $('#attackBtn').onclick=openBattleView; $('#duelBtn').onclick=openDuel;
-  $('#battleBackBtn').onclick=returnFromBattle; $('#battleReturnBtn').onclick=returnFromBattle; $('#battleAttackBtn').onclick=runBattleAnimation; $('#battleFullscreenBtn').onclick=toggleBattleFullscreen; $('#battleStorySpeakBtn').onclick=toggleBattleStoryNarration;
+  $('#battleBackBtn').onclick=returnFromBattle; $('#battleReturnBtn').onclick=returnFromBattle; $('#battleAttackBtn').onclick=runBattleAnimation; $('#battleFullscreenBtn').onclick=toggleBattleFullscreen; $('#battleFocusAttackBtn').onclick=openBattleAttackPickerFromFocus; $('#battleStorySpeakBtn').onclick=toggleBattleStoryNarration;
   $('#battleAttackChoices').addEventListener('click',e=>{const b=e.target.closest('[data-battle-attack]');if(b&&!b.disabled)selectBattleAttack(b.dataset.battleAttack)});
-  document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('battle-immersive')){document.body.classList.remove('battle-immersive');$('#battleFullscreenBtn')?.setAttribute('aria-pressed','false');if($('#battleFullscreenBtn'))$('#battleFullscreenBtn').textContent='⛶ Vollbild';}});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('battle-immersive'))closeBattleImmersive()});
   $('#parentAreaBtn').onclick=()=>openParentGate(); $('#childModeBtn').onclick=exitParentMode;
   $('#parentLibraryBtn').onclick=openLearningContentPlanner; $('#parentTestPlanBtn').onclick=openTestDatePlanner; $('#parentDashboardBtn').onclick=()=>showView('dashboardView'); $('#parentSettingsBtn').onclick=()=>showView('settingsView');
   window.VTParentDocs?.bind?.();
