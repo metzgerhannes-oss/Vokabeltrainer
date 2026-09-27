@@ -283,6 +283,22 @@ const passed=vm.runInContext(`
   const reducedPace=dailyPacePlan(31,0,{days:7},true);
   assert(reducedPace.quota===2&&reducedPace.dailyTarget===4&&reducedPace.coreMax===4&&reducedPace.recommendSecondRound===true,'short-unit mode caps the required core at four focus words with at most two new words');
 
+  pacedSet.testDate=datePlusDays(1);pacedSet.testFormat='target';learner().dailyPlans={};
+  const rescueCore=buildDailyPlan('english'),rescueBefore=t1RescuePlan(rescueCore);
+  assert(rescueBefore.available&&rescueBefore.refs.length<=6&&rescueBefore.weakTotal>rescueBefore.refs.length,'day-before rescue uses a short prioritized block instead of drilling the full test scope');
+  const rescueFirstRef=rescueBefore.refs[0],rescueFirst=rescueFirstRef.setLinkId?wordByLinkId(rescueFirstRef.setLinkId):wordById(rescueFirstRef.wordId),rescueKey=dailyPlanRefKey(rescueFirstRef);
+  assert(rescueFirst&&!isTestReady(rescueFirst,'target'),'rescue excludes test-ready vocabulary');
+  const coreDoneBefore=rescueCore.completedKeys.length;
+  recordT1RescueResult(rescueFirst,{correct:false,active:true,assisted:false,orthographyOk:true},rescueCore);
+  const rescueAfterError=t1RescuePlan(rescueCore);
+  assert(dailyPlanRefKey(rescueAfterError.refs[0])===rescueKey,'a failed rescue word is first in the next short round');
+  recordT1RescueResult(rescueFirst,{correct:true,active:true,assisted:false,orthographyOk:true},rescueCore);
+  const rescueAfterCorrection=t1RescuePlan(rescueCore);
+  assert(!rescueAfterCorrection.refs.some(r=>dailyPlanRefKey(r)===rescueKey),'a corrected rescue word yields to remaining unseen weak words');
+  assert(rescueCore.completedKeys.length===coreDoneBefore,'rescue evidence stays separate from required daily-goal completion');
+  assert(adaptiveProductiveMode(rescueFirst,{testFormat:'dictation'})==='spelling','T-1 rescue mirrors dictation with productive spelling');
+  assert(adaptiveProductiveMode(rescueFirst,{testFormat:'target'})==='recall','T-1 rescue mirrors target-direction tests with productive recall');
+
   const card=makeLearnerVocabulary('learner_demo','v_card','sense_card');
   assert(leitnerBox(card)===1,'new vocabulary starts in Leitner box 1');
   card.independentSuccesses=1;card.activeSuccessDays=[today()];card.intervalDays=1;
