@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 27.09.2026 · App v0.21.12
+Stand: 27.09.2026 · App v0.21.13
 
 ## Ergebnis
+
+- v0.21.13 korrigiert den im praktischen iPhone-Test sichtbaren Layoutfehler auf „Heute“: Der Avatar-Statusblock ist mobil kein Overlay mehr, sondern folgt dem Avatarbild als eigener vertikaler Layoutblock. Ein WebKit-Regressionscheck schützt gegen erneute geometrische Überlagerung. Fachliche Lern-, Mastery-, Testbereitschafts- und Battle-Logik bleiben unverändert.
 
 - v0.21.12 trennt LRS-/Lernunterstützung in Lesen und Rechtschreiben und entkoppelt davon die Belastungseinstellung „Kurze Einheiten“. Leseunterstützung steuert Hilfen/Tempo und eine nicht-masterywirksame Reading-Metrik; Rechtschreibunterstützung priorisiert produktiven Schreibabruf und verlangt für „heute sicher“ einen echten unassistierten Rechtschreibnachweis. Altprofile migrieren konservativ, Family Sync transportiert die neuen Profileinstellungen, und die richtungsspezifische Testbereitschaft aus v0.21.11 bleibt unverändert erhalten.
 
