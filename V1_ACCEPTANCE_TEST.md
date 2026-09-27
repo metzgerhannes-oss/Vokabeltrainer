@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 26.09.2026 · Basis: v0.21.6 · Release-Kandidat: Campaign Target Design
+Stand: 26.09.2026 · Basis: v0.21.7 · Release-Kandidat: Testfortschritt & Battle-Fokus
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
