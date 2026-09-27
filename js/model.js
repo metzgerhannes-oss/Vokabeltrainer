@@ -826,8 +826,10 @@ function startDailyTodo(){
     const refs=[...(status.remainingIntroRefs||[]),...(status.remainingReviewRefs||status.remainingRefs||status.remainingIds||[])];
     startSession('adaptive',null,refs.slice(0,plan.sessionSize),true);return;
   }
+  const rescue=t1RescuePlan(plan);
+  if(rescue.available){startT1RescueRound();return}
   if(status.extraRemaining){
     startSession('adaptive',null,(status.remainingExtraRefs||[]).slice(0,plan.sessionSize),true);return;
   }
-  toast('Tagesziel erledigt. Weitere Übungen sind optional.','good');
+  toast(rescue.recommended?'Rettungsrunde für jetzt abgeschlossen. Eine Pause ist sinnvoll.':'Tagesziel erledigt. Weitere Übungen sind optional.',rescue.recommended?'subtle':'good');
 }
