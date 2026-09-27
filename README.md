@@ -10,11 +10,18 @@ Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änd
 
 ## Aktueller Stand
 
-App-Version: **v0.21.14**
+App-Version: **v0.21.15**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.21.15 – Armee-Banner und klare Bildtrennung
+
+- Profilname und „Test N“ erscheinen in der Armeeübersicht als ruhige, parchmentartige Kampagnenbanner statt als weiße Pillen
+- das Kampagnenbild und die helle Missionskarte sind mobil geometrisch getrennt; der bisherige negative Überzug der Karte auf das Bild entfällt
+- ein WebKit-iPhone-Regressionscheck prüft den Mindestabstand und die Bannerform
+- die Testnummernlogik bleibt fachlich unverändert und wird nicht auf „Test 1“ fest verdrahtet
 
 ## v0.21.14 – Angriffsszene mit Profil-/Testbanner
 
