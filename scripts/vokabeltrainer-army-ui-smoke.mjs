@@ -57,6 +57,7 @@ try{
   assert((await page.locator('.frontline-own').textContent())?.trim()==='Mein Profil','frontline banner identifies the player side with the active profile name');
   assert((await page.locator('.frontline-target').textContent())?.trim()==='Test 1','frontline target banner uses Test plus the school-year sequence number');
   assert(await page.evaluate(()=>testSequenceNumber(currentTestFortress().testDate,'english'))===1,'superseded fortress history cannot increment the visible test number');
+  await page.evaluate(()=>{delete state.learners[0].testFortresses.stale_superseded;});
   assert(await page.locator('#battlefield .battle-fortress').count()===1,'CSS fortress remains available only as a technical fallback');
   assert(await page.locator('#battlefield .fortress:not(.battle-fortress)').count()===0,'legacy mini fortress is absent from the army command scene');
   const commandVisual=await page.evaluate(()=>({
