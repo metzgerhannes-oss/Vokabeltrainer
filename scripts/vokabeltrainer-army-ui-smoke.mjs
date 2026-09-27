@@ -94,10 +94,16 @@ try{
       targetRadius:target?parseFloat(getComputedStyle(target).borderTopLeftRadius||'0'):null,
       ownFont:own?getComputedStyle(own).fontFamily:'',
       ownBackground:own?getComputedStyle(own).backgroundImage:'',
-      ownPoleHeight:own?parseFloat(getComputedStyle(own,'::before').height||'0'):0,
-      targetPoleHeight:target?parseFloat(getComputedStyle(target,'::before').height||'0'):0,
+      ownWidth:ownRect?.width||0,
+      ownHeight:ownRect?.height||0,
+      targetWidth:targetRect?.width||0,
+      targetHeight:targetRect?.height||0,
       ownRelativeTop:stage&&ownRect?(ownRect.top-stage.top)/stage.height:null,
       targetRelativeTop:stage&&targetRect?(targetRect.top-stage.top)/stage.height:null,
+      ownShieldWidth:own?parseFloat(getComputedStyle(own,'::before').width||'0'):0,
+      targetShieldWidth:target?parseFloat(getComputedStyle(target,'::before').width||'0'):0,
+      ownRodWidth:own?parseFloat(getComputedStyle(own,'::after').width||'0'):0,
+      targetRodWidth:target?parseFloat(getComputedStyle(target,'::after').width||'0'):0,
       ownOverflow:own?getComputedStyle(own).overflow:'',
       ownHasTextSpan:!!own?.querySelector('span'),
       targetHasTextSpan:!!target?.querySelector('span')
@@ -105,10 +111,12 @@ try{
   });
   assert(commandComposition.gap!==null&&commandComposition.gap>=8,'mobile mission card stays clearly below the campaign image without overlap');
   assert(commandComposition.ownRadius!==null&&commandComposition.ownRadius<=8&&commandComposition.targetRadius<=8,'campaign identity labels render as banners instead of pill badges');
-  assert(commandComposition.ownFont.includes('Georgia')&&commandComposition.ownBackground.includes('linear-gradient'),'campaign identity labels use the dignified parchment-banner treatment');
-  assert(commandComposition.ownPoleHeight>=80&&commandComposition.targetPoleHeight>=80&&commandComposition.ownOverflow==='visible','campaign identity labels are planted standards with visible poles');
-  assert(commandComposition.ownRelativeTop>0.4&&commandComposition.targetRelativeTop>0.2,'standing standards sit inside the battlefield instead of floating at the top edge');
-  assert(commandComposition.ownHasTextSpan&&commandComposition.targetHasTextSpan,'profile and test text sit inside the standard cloth');
+  assert(commandComposition.ownFont.includes('Georgia')&&commandComposition.ownBackground.includes('linear-gradient'),'campaign identity labels use the approved parchment-scroll treatment');
+  assert(commandComposition.ownWidth>commandComposition.ownHeight*2.5&&commandComposition.targetWidth>commandComposition.targetHeight*2.5,'campaign identity banners are horizontal scroll banners');
+  assert(commandComposition.ownRelativeTop<0.15&&commandComposition.targetRelativeTop<0.15,'approved heraldic banners stay near the top edge of the campaign artwork');
+  assert(commandComposition.ownShieldWidth>=28&&commandComposition.targetShieldWidth>=28,'each horizontal banner carries a visible heraldic shield');
+  assert(commandComposition.ownRodWidth>commandComposition.ownWidth&&commandComposition.targetRodWidth>commandComposition.targetWidth,'each banner has a horizontal ceremonial rod extending beyond the parchment');
+  assert(commandComposition.ownOverflow==='visible'&&commandComposition.ownHasTextSpan&&commandComposition.targetHasTextSpan,'profile and test text remain inside the parchment while heraldic details remain visible');
   await page.waitForFunction(()=>document.querySelector('[data-army-hero-art]')?.naturalWidth>0);
   await page.waitForFunction(()=>document.querySelectorAll('#armyUnitGrid .army-unit-art.art-loaded').length===6);
   await page.waitForFunction(()=>document.querySelectorAll('#armyFormationField .army-formation-art.art-loaded').length===6);
