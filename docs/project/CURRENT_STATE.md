@@ -1,0 +1,55 @@
+# Vokabeltrainer – Current State
+
+Stand: 27.09.2026, Baseline direkt aus GitHub geprüft.
+
+## Produktionsbaseline
+
+- Repository: `metzgerhannes-oss/Vokabeltrainer`
+- produktiver Branch: `main`
+- App-Version: **v0.21.7**
+- Main-Commit bei Erstellung dieses Snapshots: `57a06de3fd4c2b25ef9a91b9e69944d4afd7213b`
+- zugehöriger Merge: **PR #136 – Add upcoming-test progress and iPhone battle focus mode**
+- PR-CI für den Head-Commit von PR #136: **Vokabeltrainer CI #924 – success**
+- offene Pull Requests zum Zeitpunkt des Snapshots: **0**
+
+Dieser Abschnitt ist ein Snapshot. Für Statusfragen muss der aktuelle GitHub-Stand erneut live geprüft werden; die hier genannte SHA darf nicht als dauerhaft „neuester Stand“ interpretiert werden.
+
+## Aktuell verbindliche Produktbasis
+
+Die oberste Produktregel steht in [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md): fachlich korrekte Vokabelabfrage vor Komfort, Automatisierung, Gamification oder Featureumfang.
+
+Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fachspezifische Welten und die Trennung zwischen Lernen und Spiel sind dort verbindlich beschrieben.
+
+## Stand der Kernbereiche
+
+| Bereich | Status | Kanonische Quelle |
+|---|---|---|
+| Fachliche Abfrage / Bewertung | PRODUCTION | `PRODUCT_DNA.md`, `QUIZ_ENGINE.md` |
+| Sense-/Bedeutungsmodell | PRODUCTION | `SENSE_MODEL.md` |
+| Lern-/Mastery-Grundsätze | PRODUCTION | `PRODUCT_DNA.md` |
+| Tagesplanung mit testbezogener Last | PRODUCTION | `PRODUCT_DNA.md` P6 + Code/Tests |
+| Tolerante Satzbewertung | PRODUCTION | README v0.21.2 + Code/Tests |
+| Schutz vor System-Schreibvorschlägen | PRODUCTION | README v0.21.3 + Code/Tests |
+| Kindnavigation Lernen vs. Spiel | PRODUCTION | `PRODUCT_DNA.md`, `VISUAL_DNA.md` |
+| iPhone Battle-Fokusmodus | PRODUCTION | PR #136, `VISUAL_DNA.md` |
+| Family Sync | PRODUCTION / Beta-Grenze | `SYNC_ARCHITECTURE.md`, `FINAL_AUDIT.md` |
+| praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
+
+## Offene Verifikationsgrenzen
+
+Die praktische v1-Abnahme ist noch nicht als abgeschlossen dokumentiert. Die zahlreichen `[ ]`-Punkte in [../../V1_ACCEPTANCE_TEST.md](../../V1_ACCEPTANCE_TEST.md) sind daher **nicht** als erledigt zu interpretieren, nur weil zugehörige automatisierte Tests existieren.
+
+Aus [../../FINAL_AUDIT.md](../../FINAL_AUDIT.md) bleibt außerdem als administrative Infrastrukturgrenze dokumentiert, dass die GitHub-Regel „Branch muss vor Merge auf aktuellem main sein“ noch separat administrativ zu aktivieren ist.
+
+## Aktuell diskutierte, noch nicht als Produktionsregel übernommene Idee
+
+### Adaptives Nachrücken innerhalb desselben Lerntags
+Status: **REVIEWED**
+
+Fragestellung: Wenn ein Kind die vorgesehenen Wörter eines Tages schneller/sicherer bearbeitet, sollen innerhalb desselben Tages geeignete neue Wörter nachrücken, ohne die konservative mehrtägige Mastery-Logik aufzuweichen.
+
+Wichtig: „heute sicher“ darf dabei nicht mit „nachhaltig gemeistert“ gleichgesetzt werden. Vor einer Umsetzung müssen Tageskontakt, Antwortqualität und nachhaltige Mastery technisch sauber getrennt werden.
+
+Quelle für die bestehende Leitplanke: [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md), insbesondere P3 „Verteiltes Lernen“ und P6 „Tagesziel“.
+
+Die konkrete Nachrückregel ist **noch keine verbindliche Product-DNA-Regel** und steht daher im Backlog als geprüfter Vorschlag.

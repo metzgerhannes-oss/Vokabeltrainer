@@ -2,6 +2,12 @@
 
 Eigenständige Web-App für adaptives Vokabellernen mit Spaced Retrieval, konservativer Mastery-Logik und LRS-Unterstützung.
 
+## Projektsteuerung
+
+Verbindlicher Einstieg für Quellenhierarchie, Entscheidungen, Backlog, Produktionsstand und Teststatus: **[PROJECT_CONTROL.md](PROJECT_CONTROL.md)**.
+
+Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änderung getrennt und mit der jeweiligen Repository-Quelle belegt.
+
 ## Aktueller Stand
 
 App-Version: **v0.21.7**
