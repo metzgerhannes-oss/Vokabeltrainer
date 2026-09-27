@@ -49,6 +49,14 @@ Umgesetzt in PR #138 / v0.21.8:
 
 Produktionsnachweis: PR-CI #945 erfolgreich, Merge PR #138 auf `main` (`1aa7983c330288a2091c60802ee2c503a716c04d`), main-CI #946 erfolgreich und Pages-Deploy #504 inklusive Live-Verifikation von v0.21.8 erfolgreich.
 
+## B-007 – Tagesziel nur nach fachlich erfolgreichem Abruf erledigen
+**Status:** IN_IMPLEMENTATION  
+**Priorität:** P0  
+**Decision:** D-20260927-005  
+**Betroffene Quellen:** `PRODUCT_DNA.md` P4/P6, `js/learning.js`, Learning-Integrity-Smoke
+
+Ein falscher oder unterstützter aktiver Versuch darf ein Pflichtwort nicht über `completedKeys` erledigen. Erst ein fachlich richtiger, unassistierter aktiver Abruf schließt das Wort im Pflicht-Tagesziel ab. Damit kann die Tagesaktion nicht durch einen Fehlversuch vorzeitig freigeschaltet werden.
+
 ## B-005 – Praktische v1-Abnahme
 **Status:** APPROVED_BACKLOG / RELEASE TASK  
 **Priorität:** vor v1.0  

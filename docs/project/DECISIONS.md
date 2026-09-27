@@ -92,6 +92,16 @@ Der morgens berechnete Pflicht-Tagesplan bleibt als festes Tagesziel bestehen. E
 
 Nachrückpriorität: unbekanntes Wort aus dem anstehenden Test → schwaches bereits bekanntes Testwort → fällige bekannte Wiederholung. In den letzten drei Tagen vor dem Test werden keine zusätzlichen unbekannten Wörter nachgezogen. Pro Tag maximal drei Zusatzwörter, im LRS-Modus zwei; die bestehende Obergrenze von sieben neu eingeführten Wörtern pro Tag bleibt erhalten. Nachrücker werden als freiwilliger nächster Lernschritt vorgemerkt und verlängern eine bereits laufende Pflicht-Einheit nicht automatisch.
 
+### D-20260927-005 – Pflicht-Tagesziel braucht erfolgreichen unassistierten Abruf
+**Status:** LOCKED  
+**Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P4 und P6
+
+Ein Wort im Pflicht-Tagesplan wird nicht durch bloßen Kontakt oder einen beliebigen aktiven Versuch abgeschlossen. Für `completedKeys` zählt nur ein fachlich richtiger, unassistierter aktiver Abruf innerhalb der Tageslektion.
+
+Ein falscher Versuch bleibt offen und führt weiter zu einer Lerngelegenheit. Eine richtige Antwort mit verwendetem Hinweis bleibt ebenfalls offen. Dadurch kann weder der sichtbare Tagesabschluss noch die daraus folgende Kampfaktion durch einen Fehl- oder Hilfsversuch vorzeitig ausgelöst werden.
+
+Diese Regel ist unabhängig vom strengeren Zustand „heute sicher“ aus D-20260927-004: Pflichtziel-Erledigung benötigt einen erfolgreichen unassistierten Abruf; freiwilliges Nachrücken darf weiterhin zusätzliche orthografische bzw. Wiederholungsevidenz verlangen.
+
 ## Neue Entscheidungen
 
 Neue Grundsatzentscheidungen erhalten fortlaufend eine ID im Format `D-YYYYMMDD-NNN`. Wird eine bestehende Regel ersetzt, bleibt die alte Entscheidung erhalten und wird als `SUPERSEDED` markiert; sie wird nicht gelöscht.

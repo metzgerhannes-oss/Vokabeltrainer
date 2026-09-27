@@ -99,8 +99,16 @@ const passed=vm.runInContext(`
   const dailyRef=[...(pacedPlan.wordRefs||[]),...(pacedPlan.introRefs||[])][0],dailyWord=dailyRef?.setLinkId?wordByLinkId(dailyRef.setLinkId):wordById(dailyRef?.wordId);
   dailyWord.activePracticeDays=[...new Set([...(dailyWord.activePracticeDays||[]),today()])];
   assert(dailyPlanStatus(pacedPlan).done===0,'optional practice does not complete the fixed daily goal');
-  markDailyPlanWordDone(dailyWord,pacedPlan);
-  assert(dailyPlanStatus(pacedPlan).done===1,'daily goal advances only through the explicit daily session');
+  session={mode:'adaptive',currentSubmode:'recall',hintUsed:true,isDaily:true,activeAttemptedWords:{},scaffoldedWords:{},correct:0,answered:0,retryCounts:{},followupCounts:{},dailySecurityFollowups:{}};
+  recordResult(dailyWord,true,'retrieval',null,{orthographyOk:true});
+  assert(dailyPlanStatus(pacedPlan).done===0,'an assisted correct daily attempt does not complete the required word');
+  session.hintUsed=false;
+  recordResult(dailyWord,false,'retrieval','retrieval',{orthographyOk:true});
+  assert(dailyPlanStatus(pacedPlan).done===0,'a wrong unassisted active daily attempt does not complete the required word');
+  recordResult(dailyWord,true,'retrieval',null,{orthographyOk:true});
+  assert(dailyPlanStatus(pacedPlan).done===1,'the required word completes only after a correct unassisted active daily recall');
+  session=null;
+  pacedPlan.todaySecureKeys=[];pacedPlan.securityEvidence={};pacedPlan.extraRefs=[];pacedPlan.extraSources={};
   const fixedTarget=pacedPlan.dailyTarget,fixedTotal=dailyPlanStatus(pacedPlan).total;
   let security=recordDailySecurityResult(dailyWord,{correct:true,active:true,assisted:false,orthographyOk:true,wasTestReady:false},pacedPlan);
   assert(!security.becameSecure&&security.required===2&&security.successStreak===1,'new or weak daily vocabulary needs two independent productive recalls before becoming today-safe');

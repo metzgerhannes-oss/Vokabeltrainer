@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 26.09.2026 · Basis: v0.21.8 · Release-Kandidat: Testfortschritt & Battle-Fokus
+Stand: 27.09.2026 · Basis: v0.21.9 · Release-Kandidat: Tagesziel-Lernintegrität
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -203,6 +203,8 @@ Mit einem realistischen Lehrbuchfoto testen.
 - [ ] letzter Tag vor dem Test ist bei ausreichendem Vorlauf Wiederholungstag
 - [ ] am Testtag werden keine neuen Wörter eingeführt
 - [ ] fällige / unsichere Wörter werden priorisiert
+- [ ] falsche oder mit Hinweis gelöste aktive Versuche markieren das Pflichtwort nicht als erledigt
+- [ ] erst ein richtiger unassistierter aktiver Abruf lässt den Pflichtfortschritt steigen
 
 ## B5 – Anleitung & Pädagogik
 

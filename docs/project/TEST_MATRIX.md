@@ -11,7 +11,7 @@ Die detaillierte praktische v1-Abnahme bleibt in [../../V1_ACCEPTANCE_TEST.md](.
 | Fachliche Paarintegrität | D-0001, D-0002 | Sollantwort ↔ Bedeutung korrekt; OCR/Import nicht ungeprüft lernbar | ja |
 | Quiz-Bewertung | D-0001 | richtige/falsche/normalisierte Antwort korrekt bewertet und erklärbar | ja |
 | Mastery/Spacing | D-0003 | Hinweise/Audio/Erkennen erzeugen keine Mastery; mehrtägige Regeln bleiben erhalten | ja |
-| Tagesplan | D-0004, D-20260927-004 | gleiche Formel in Vorschau und Tagesplan; fixes Pflichtziel; „heute sicher“ getrennt von Kontakt/Mastery; Nachrückpriorität, Nah-Test-Schutz, 7-Neuwort-Grenze und 3/2-Zusatzlimit korrekt | ja |
+| Tagesplan | D-0004, D-20260927-004, D-20260927-005 | gleiche Formel in Vorschau und Tagesplan; Pflichtwort erst nach richtigem unassistiertem aktivem Abruf erledigt; „heute sicher“ getrennt von Kontakt/Mastery; Nachrückpriorität, Nah-Test-Schutz, 7-Neuwort-Grenze und 3/2-Zusatzlimit korrekt | ja |
 | Input-Integrity | D-0001 | Systemvorschläge/Autokorrektur umgehen die eigentliche Leistung nicht | ja |
 | Lernfokus | D-0005 | keine störende Spielinszenierung im aktiven Abruf | ja, wenn kritischer Lernweg beeinträchtigt |
 | Kindnavigation | D-0007 | nächster Schritt ohne Erklärung auffindbar; kein Sackgassenpfad | ja |
