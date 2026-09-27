@@ -1,6 +1,6 @@
 # Vokabeltrainer – generisches Fachsystem
 
-Stand: 20.09.2026 · App v0.9.16
+Fachlich zuletzt geprüft: 27.09.2026 · Gültig für aktuellen Stand: ja
 
 Punkt 2 des Pre-v1-Fahrplans macht Fremdsprachen zu Konfiguration statt Sonderlogik.
 
