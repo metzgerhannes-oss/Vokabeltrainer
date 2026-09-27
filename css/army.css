@@ -1244,3 +1244,132 @@ body.lrs-mode .army-unit-card,body.lrs-mode .army-command,body.lrs-mode .army-un
     bottom:51%;
   }
 }
+
+
+/* v0.21.17 – horizontal heraldic scroll banners, matching the approved reference */
+#armyView .battlefield.integrated-campaign-artwork .frontline-label{
+  top:16px;
+  bottom:auto;
+  min-width:132px;
+  max-width:190px;
+  min-height:38px;
+  padding:7px 18px;
+  overflow:visible;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid #9c7737;
+  border-radius:3px;
+  color:#2f251c;
+  background:
+    radial-gradient(circle at 22% 24%,rgba(255,255,255,.38),transparent 30%),
+    linear-gradient(180deg,#fff7dc 0%,#ead8aa 52%,#d7bd7a 100%);
+  box-shadow:
+    0 5px 12px rgba(28,37,38,.22),
+    inset 0 1px 0 rgba(255,255,255,.8),
+    inset 0 -1px 0 rgba(115,76,27,.22);
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:.78rem;
+  font-weight:700;
+  letter-spacing:.005em;
+  line-height:1;
+  text-align:center;
+  text-shadow:0 1px 0 rgba(255,255,255,.6);
+}
+#armyView .battlefield.integrated-campaign-artwork .frontline-label span{
+  position:relative;
+  z-index:4;
+  display:block;
+  max-width:150px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#armyView .battlefield.integrated-campaign-artwork .frontline-label::after{
+  content:"";
+  position:absolute;
+  z-index:2;
+  left:-24px;
+  right:-24px;
+  top:-6px;
+  height:5px;
+  border-radius:4px;
+  background:linear-gradient(180deg,#c99d47,#6d461f 72%,#3f2817);
+  box-shadow:
+    -3px 0 0 -1px #e1bb62,
+    3px 0 0 -1px #e1bb62,
+    0 2px 3px rgba(36,27,15,.26);
+}
+#armyView .battlefield.integrated-campaign-artwork .frontline-label::before{
+  position:absolute;
+  z-index:3;
+  top:-1px;
+  width:36px;
+  height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+  padding-bottom:7px;
+  border:2px solid #b68d3e;
+  clip-path:polygon(0 0,100% 0,100% 76%,50% 100%,0 76%);
+  color:#fff7df;
+  background:linear-gradient(180deg,#315d86,#163856);
+  box-shadow:0 4px 8px rgba(22,34,38,.28);
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:1rem;
+  line-height:1;
+  text-shadow:0 1px 2px rgba(0,0,0,.4);
+}
+#armyView .battlefield.integrated-campaign-artwork .frontline-own{
+  left:6%;
+  right:auto;
+}
+#armyView .battlefield.integrated-campaign-artwork .frontline-own::before{
+  content:"♞";
+  left:-21px;
+}
+#armyView .battlefield.integrated-campaign-artwork .frontline-target{
+  left:auto;
+  right:6%;
+  color:#33251f;
+  border-color:#9a6b42;
+  background:
+    radial-gradient(circle at 78% 24%,rgba(255,255,255,.34),transparent 30%),
+    linear-gradient(180deg,#fff5de 0%,#e7d1a9 52%,#d2ad76 100%);
+}
+#armyView .battlefield.integrated-campaign-artwork .frontline-target::before{
+  content:"⚜";
+  left:auto;
+  right:-21px;
+  border-color:#b27d45;
+  background:linear-gradient(180deg,#9b443c,#642822);
+}
+@media(max-width:620px){
+  #armyView .battlefield.integrated-campaign-artwork .frontline-label{
+    top:13px;
+    min-width:116px;
+    max-width:150px;
+    min-height:34px;
+    padding:6px 15px;
+    font-size:.72rem;
+  }
+  #armyView .battlefield.integrated-campaign-artwork .frontline-label span{max-width:116px}
+  #armyView .battlefield.integrated-campaign-artwork .frontline-label::after{
+    left:-19px;
+    right:-19px;
+    top:-5px;
+    height:4px;
+  }
+  #armyView .battlefield.integrated-campaign-artwork .frontline-label::before{
+    top:-1px;
+    width:31px;
+    height:46px;
+    padding-bottom:6px;
+    font-size:.9rem;
+  }
+  #armyView .battlefield.integrated-campaign-artwork .frontline-own{left:7%}
+  #armyView .battlefield.integrated-campaign-artwork .frontline-own::before{left:-18px}
+  #armyView .battlefield.integrated-campaign-artwork .frontline-target{right:7%}
+  #armyView .battlefield.integrated-campaign-artwork .frontline-target::before{right:-18px}
+}
