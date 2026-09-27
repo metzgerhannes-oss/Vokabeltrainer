@@ -6,11 +6,12 @@ Stand: 27.09.2026, Baseline direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.7**
-- Main-Commit bei Erstellung dieses Snapshots: `57a06de3fd4c2b25ef9a91b9e69944d4afd7213b`
-- zugehöriger Merge: **PR #136 – Add upcoming-test progress and iPhone battle focus mode**
-- PR-CI für den Head-Commit von PR #136: **Vokabeltrainer CI #924 – success**
-- offene Pull Requests zum Zeitpunkt des Snapshots: **0**
+- App-Version: **v0.21.8**
+- Release-Main-Commit: `1aa7983c330288a2091c60802ee2c503a716c04d`
+- zugehöriger Merge: **PR #138 – v0.21.8 – Adaptives Nachrücken im Tagesplan**
+- PR-CI für den finalen Head von PR #138: **Vokabeltrainer CI #945 – success**
+- Main-CI für den Release-Commit: **Vokabeltrainer CI #946 – success**
+- produktiver Pages-Deploy: **Deploy Vokabeltrainer to GitHub Pages #504 – success**
 
 Dieser Abschnitt ist ein Snapshot. Für Statusfragen muss der aktuelle GitHub-Stand erneut live geprüft werden; die hier genannte SHA darf nicht als dauerhaft „neuester Stand“ interpretiert werden.
 
@@ -28,6 +29,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Sense-/Bedeutungsmodell | PRODUCTION | `SENSE_MODEL.md` |
 | Lern-/Mastery-Grundsätze | PRODUCTION | `PRODUCT_DNA.md` |
 | Tagesplanung mit testbezogener Last | PRODUCTION | `PRODUCT_DNA.md` P6 + Code/Tests |
+| Adaptives Nachrücken innerhalb desselben Lerntags | PRODUCTION | `PRODUCT_DNA.md` P3/P6, D-20260927-004, PR #138 |
 | Tolerante Satzbewertung | PRODUCTION | README v0.21.2 + Code/Tests |
 | Schutz vor System-Schreibvorschlägen | PRODUCTION | README v0.21.3 + Code/Tests |
 | Kindnavigation Lernen vs. Spiel | PRODUCTION | `PRODUCT_DNA.md`, `VISUAL_DNA.md` |
@@ -41,12 +43,12 @@ Die praktische v1-Abnahme ist noch nicht als abgeschlossen dokumentiert. Die zah
 
 Aus [../../FINAL_AUDIT.md](../../FINAL_AUDIT.md) bleibt außerdem als administrative Infrastrukturgrenze dokumentiert, dass die GitHub-Regel „Branch muss vor Merge auf aktuellem main sein“ noch separat administrativ zu aktivieren ist.
 
-## Aktueller Release-Kandidat
+## Zuletzt produktiv freigegeben
 
 ### Adaptives Nachrücken innerhalb desselben Lerntags
-Status: **IMPLEMENTED**, Produktionsfreigabe noch ausstehend  
-Release-Kandidat: **v0.21.8 / PR #138**
+Status: **PRODUCTION**  
+Release: **v0.21.8 / PR #138**
 
-Die Regel ist in [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P6 und Decision D-20260927-004 verbindlich spezifiziert. „Heute sicher“ ist getrennt von `completedKeys` und nachhaltiger Mastery. Pflicht-Tagesziel und Battle-Freischaltung bleiben unverändert; freiwilliges Nachrücken ist auf drei Zusatzwörter bzw. zwei im LRS-Modus und insgesamt sieben neu eingeführte Wörter pro Tag begrenzt.
+Die Regel ist in [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P6 und Decision D-20260927-004 verbindlich spezifiziert. „Heute sicher“ ist getrennt von `completedKeys` und nachhaltiger Mastery. Pflicht-Tagesziel und Battle-Freischaltung bleiben unverändert; freiwilliges Nachrücken ist auf drei Zusatzwörter bzw. zwei im LRS-Modus und insgesamt sieben neu eingeführte Wörter pro Tag begrenzt. Nachrücker werden nicht in die laufende Pflicht-Einheit gezwungen, sondern als freiwilliger nächster Lernschritt angeboten.
 
-Automatisierte Nachweise liegen im Learning-Integrity-Smoke und im Family-Sync-Lernfortschritts-Browsertest. Erst nach grünem PR-CI, Merge auf `main` und erfolgreichem Pages-Deploy wird dieser Punkt als `PRODUCTION` geführt.
+Produktionsnachweis: PR-CI #945, Main-CI #946 und Pages-Deploy #504 waren vollständig erfolgreich. Der Family-Sync-Browsertest prüft den „heute sicher“-Status, Evidenz und Nachrückwort geräteübergreifend einschließlich Reload und Tagesgrenze.
