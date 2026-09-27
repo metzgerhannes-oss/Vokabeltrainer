@@ -25,14 +25,20 @@ try{
       targetRelativeTop:stage&&targetRect?(targetRect.top-stage.top)/stage.height:null,
       ownShieldWidth:own?parseFloat(getComputedStyle(own,'::before').width||'0'):0,
       targetShieldWidth:target?parseFloat(getComputedStyle(target,'::before').width||'0'):0,
+      ownShieldHeight:own?parseFloat(getComputedStyle(own,'::before').height||'0'):0,
+      targetShieldHeight:target?parseFloat(getComputedStyle(target,'::before').height||'0'):0,
       ownRodWidth:own?parseFloat(getComputedStyle(own,'::after').width||'0'):0,
-      targetRodWidth:target?parseFloat(getComputedStyle(target,'::after').width||'0'):0
+      targetRodWidth:target?parseFloat(getComputedStyle(target,'::after').width||'0'):0,
+      ownScrollCapWidth:own?.querySelector('span')?parseFloat(getComputedStyle(own.querySelector('span'),'::before').width||'0'):0,
+      targetScrollCapWidth:target?.querySelector('span')?parseFloat(getComputedStyle(target.querySelector('span'),'::after').width||'0'):0
     };
   });
   assert(attackBannerVisual.ownWidth>attackBannerVisual.ownHeight*2.5&&attackBannerVisual.targetWidth>attackBannerVisual.targetHeight*2.5,'attack identity uses horizontal scroll banners');
   assert(attackBannerVisual.ownRelativeTop<0.15&&attackBannerVisual.targetRelativeTop<0.15,'attack scroll banners stay at the top edge of the artwork');
-  assert(attackBannerVisual.ownShieldWidth>=28&&attackBannerVisual.targetShieldWidth>=28,'attack scroll banners include heraldic shields');
-  assert(attackBannerVisual.ownRodWidth>attackBannerVisual.ownWidth&&attackBannerVisual.targetRodWidth>attackBannerVisual.targetWidth,'attack scroll banners include ceremonial rods wider than the parchment');
+  assert(attackBannerVisual.ownShieldWidth>=36&&attackBannerVisual.targetShieldWidth>=36,'attack banners include the large hanging heraldic crests from the reference');
+  assert(attackBannerVisual.ownShieldHeight>attackBannerVisual.ownHeight&&attackBannerVisual.targetShieldHeight>attackBannerVisual.targetHeight,'attack crests hang below the parchment like the approved reference');
+  assert(attackBannerVisual.ownRodWidth>attackBannerVisual.ownWidth+50&&attackBannerVisual.targetRodWidth>attackBannerVisual.targetWidth+50,'attack banners include spear-ended rods extending well beyond the parchment');
+  assert(attackBannerVisual.ownScrollCapWidth>=7&&attackBannerVisual.targetScrollCapWidth>=7,'attack parchment has visible rolled ends instead of flat card edges');
   assert(!(await page.locator('#battleStage').textContent())?.includes('DEINE ARMEE'),'attack scene no longer needs the generic DEINE ARMEE image label');
   assert(await page.locator('#battleStage [data-battle-scene-art]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'dedicated battlefield artwork loads successfully');
   assert(await page.locator('#battleStage .battle-sky').count()===1,'CSS sky remains available only as artwork fallback');
