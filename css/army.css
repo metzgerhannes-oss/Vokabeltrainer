@@ -1290,8 +1290,9 @@ body.lrs-mode .army-unit-card,body.lrs-mode .army-command,body.lrs-mode .army-un
   position:absolute;
   z-index:2;
   left:-24px;
-  right:-24px;
+  right:auto;
   top:-6px;
+  width:calc(100% + 48px);
   height:5px;
   border-radius:4px;
   background:linear-gradient(180deg,#c99d47,#6d461f 72%,#3f2817);
@@ -1357,8 +1358,9 @@ body.lrs-mode .army-unit-card,body.lrs-mode .army-command,body.lrs-mode .army-un
   #armyView .battlefield.integrated-campaign-artwork .frontline-label span{max-width:116px}
   #armyView .battlefield.integrated-campaign-artwork .frontline-label::after{
     left:-19px;
-    right:-19px;
+    right:auto;
     top:-5px;
+    width:calc(100% + 38px);
     height:4px;
   }
   #armyView .battlefield.integrated-campaign-artwork .frontline-label::before{
