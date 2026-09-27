@@ -437,6 +437,7 @@ function repairReplacedFutureTests(s,sourceVersion){
   const now=today();let restored=0;
   for(const l of (s.learners||[])){
     if(Number(l.futureTestRecoveryVersion)||0)continue;
+    let learnerRestored=0;
     const learnerSets=(s.sets||[]).filter(set=>set.learnerId===l.id);
     for(const subject of knownSubjectIds()){
       const subjectSets=learnerSets.filter(set=>normalizeSubjectId(set.subject)===subject);
@@ -451,10 +452,10 @@ function repairReplacedFutureTests(s,sourceVersion){
         const usable=candidates.filter(set=>(s.setVocabulary||[]).some(link=>link.setId===set.id));
         if(!usable.length)continue;
         for(const set of usable)set.testDate=String(fortress.testDate||'');
-        restored+=usable.length;
+        learnerRestored+=usable.length;restored+=usable.length;
       }
     }
-    if(restored)l.dailyPlans={};
+    if(learnerRestored)l.dailyPlans={};
     l.futureTestRecoveryVersion=1;
   }
   return restored;
