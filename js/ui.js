@@ -651,7 +651,7 @@ function renderToday(){
     $('#todayContext').textContent=parent?'Plane einen Test oder bereite Vokabeln ohne Testtermin vor.':'Bitte einen Erwachsenen, neue Vokabeln vorzubereiten.';
     $('#todayEstimate').textContent=parent?'Danach erscheinen die freigegebenen Wörter automatisch im Kindermodus.':'Sobald alles vorbereitet ist, erscheint hier automatisch deine nächste Lernaufgabe.';
   }else if(!status.total){$('#todaySummary').textContent='Tagesziel geschafft';$('#todayContext').textContent=ctx?testContextLabel(ctx):'Heute ist keine Pflicht-Wiederholung offen.';$('#todayEstimate').textContent='Weitere Übungen sind optional.';}
-  else if(!status.remaining){$('#todaySummary').textContent=`${status.total} von ${status.total} erledigt ✓`;$('#todayContext').textContent=ctx?testContextLabel(ctx):'Dein heutiges Lernpensum ist erledigt.';$('#todayEstimate').textContent='Weitere Übungen sind optional.';}
+  else if(!status.remaining){$('#todaySummary').textContent=`${status.total} von ${status.total} erledigt ✓`;$('#todayContext').textContent=ctx?testContextLabel(ctx):'Dein heutiges Lernpensum ist erledigt.';$('#todayEstimate').textContent=status.extraRemaining?`${status.extraRemaining} zusätzliche Vokabel${status.extraRemaining===1?'':'n'} ${status.extraRemaining===1?'steht':'stehen'} als freiwilliger Vorsprung bereit. Das Tagesziel bleibt abgeschlossen.`:status.extraDone?`${status.extraDone} zusätzliche Vokabel${status.extraDone===1?'':'n'} heute sicher. Das Tagesziel bleibt unverändert.`:'Weitere Übungen sind optional.';}
   else{
     const mix=[];if(status.introRemaining)mix.push(`${status.introRemaining} neu`);if(status.reviewRemaining)mix.push(`${status.reviewRemaining} Wiederholung${status.reviewRemaining===1?'':'en'}`);
     $('#todaySummary').textContent=status.done?`Noch ${status.remaining} von ${status.total} Vokabeln`:`${status.total} Vokabel${status.total===1?'':'n'} heute`;
@@ -662,7 +662,8 @@ function renderToday(){
     $('#todayEstimate').textContent=`${status.units} kurze ${status.units===1?'Einheit':'Einheiten'} · ca. ${mins} Min. · Ziel heute: ${plan.dailyTarget} Kontakte.${phaseText}${maintenance}${paceText}${deadline}`;
   }
   $('#todayProgress').max=Math.max(1,status.total); $('#todayProgress').value=status.done; $('#todayProgress').setAttribute('aria-valuetext',`${status.done} von ${status.total} Vokabeln heute erledigt`); $('#todayProgressText').textContent=status.total?`${status.done} / ${status.total} erledigt`:'';
-  $('#quickLearnHeroBtn').disabled=!hasWords||!status.remaining; $('#quickLearnHeroBtn').textContent=!hasWords?'Noch nicht bereit':!status.remaining?'Heute erledigt ✓':status.done?'Weiterlernen':'Jetzt lernen';
+  const bonusAvailable=!status.remaining&&status.extraRemaining>0;
+  $('#quickLearnHeroBtn').disabled=!hasWords||(!status.remaining&&!bonusAvailable); $('#quickLearnHeroBtn').textContent=!hasWords?'Noch nicht bereit':status.remaining?(status.done?'Weiterlernen':'Jetzt lernen'):bonusAvailable?'Vorsprung weiterlernen':'Heute erledigt ✓';
   if(ctx){$('#todayTestPill').textContent=(ctx.source==='series'||ctx.source==='mixed')?`↻ ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]} · ${formatDateShort(ctx.date)}`:`Test ${formatDateShort(ctx.date)}`;$('#todayTestPill').classList.remove('hidden');if(parent){$('#todayTestBtn').textContent='Testplan ändern';$('#todayTestBtn').classList.remove('hidden');$('#todayTestBtn').dataset.setId=ctx.sets[0]?.id||'';}else $('#todayTestBtn').classList.add('hidden');}
   else{$('#todayTestPill').classList.add('hidden');if(parent&&mySets().length){$('#todayTestBtn').textContent='Testplan festlegen';$('#todayTestBtn').classList.remove('hidden');}else $('#todayTestBtn').classList.add('hidden');}
 }function renderRecommendations(){

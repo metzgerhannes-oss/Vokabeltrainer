@@ -10,11 +10,26 @@ Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änd
 
 ## Aktueller Stand
 
-App-Version: **v0.21.7**
+App-Version: **v0.21.8**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.21.8 – Adaptives Nachrücken im Tagesplan
+
+- der morgens erzeugte Pflicht-Tagesplan bleibt für den ganzen Tag als festes Tagesziel bestehen
+- zusätzlich wird ein eigener Zustand **„heute sicher“** geführt; `completedKeys` bleibt ausschließlich der Kontakt-/Pflichtzielstatus und entscheidet nicht über das Nachrücken
+- bereits testbereite Wiederholungswörter können nach einem produktiven, unassistierten und orthografisch korrekten Abruf ihren aktiven Platz freigeben
+- neue oder noch schwache Wörter benötigen zwei getrennte erfolgreiche aktive Abrufe ohne Fehler dazwischen; ein Fehler setzt die Sicherheitsserie zurück
+- unterstützte Modi wie Erkennen, Hören oder Wortbausteine können ein Wort nicht „heute sicher“ machen
+- nach einem sicheren Wort wird priorisiert ein noch unbekanntes Wort aus dem anstehenden Test, danach ein schwaches Testwort und anschließend eine fällige Wiederholung als freiwilliger Vorsprung vorgemerkt; die laufende Pflicht-Einheit wird dadurch nicht automatisch verlängert
+- in den letzten drei Tagen vor einem Test werden keine zusätzlichen unbekannten Wörter mehr nachgezogen; der Schwerpunkt bleibt auf Konsolidierung
+- Zusatzlernen ist auf maximal drei Wörter pro Tag begrenzt, im LRS-Modus auf zwei; die bestehende Obergrenze von sieben neu eingeführten Wörtern pro Tag bleibt bestehen
+- Zusatzwörter verändern weder das offizielle Tagesziel noch dessen Fortschrittsanzeige und erzeugen keine weitere Kampfaktion
+- „heute sicher“ verändert die nachhaltige Mastery nicht; deren mehrtägige Abstandsregeln bleiben unverändert
+- Sicherheitsstatus, Nachrückwörter und Evidenz liegen im bestehenden Tagesplan und werden deshalb mit dem Profilfortschritt über Family Sync synchronisiert
+- Lernlogik-Smokes prüfen Sicherheitskriterien, Fehler-Reset, Priorität, Nah-Test-Schutz, Limits und unverändertes Tagesziel; der Family-Sync-Browsertest prüft den Zustand geräteübergreifend
 
 ## v0.21.7 – Testfortschritt & Battle-Fokus
 

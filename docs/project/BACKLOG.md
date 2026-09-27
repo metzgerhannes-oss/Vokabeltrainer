@@ -29,22 +29,25 @@ Latein ist fachlich eigenständig. Der technische Stand verwendet an einzelnen S
 Französisch soll gemeinsame technische Grundlagen nutzen, aber eigene Fachregeln für Akzente, Formen, Aussprache und eine eigene visuelle Reise-/Sprachwelt erhalten. Die visuelle Vorbereitung ist nicht mit fachlicher Freischaltung gleichzusetzen.
 
 ## B-004 – Adaptives Nachrücken innerhalb desselben Tages
-**Status:** REVIEWED  
-**Priorität:** P0/P1 erst nach sauberer fachlicher Spezifikation  
+**Status:** IMPLEMENTED  
+**Priorität:** P0/P1  
+**Decision:** D-20260927-004  
 **Betroffene Quellen:** `PRODUCT_DNA.md` P3/P6, Lern-/Scheduler-Code, Tests
 
 Ziel: Wenn ein Kind die geplanten Tageswörter schneller und zuverlässig bearbeitet, dürfen geeignete neue Wörter im selben Lerntag nachrücken.
 
-Vor Freigabe zwingend:
-- „heute sicher“ technisch getrennt von nachhaltiger Mastery definieren
-- ein bloßer Kontakt darf kein Nachrücken auslösen
-- nur tatsächlich korrekt abgeschlossene aktive Abrufe dürfen Kapazität freigeben
-- Tagesgrenze von maximal 7 neuen Wörtern respektieren
-- Spacing und mehrtägige Mastery nicht verkürzen
-- Vorschau, Tagesplan, Session-Fortschritt und Persistenz müssen dieselbe Semantik verwenden
-- Tests für Gerätewechsel/Reload und Family Sync vorsehen
+Umgesetzt in PR #138 / v0.21.8:
+- „heute sicher“ ist technisch getrennt von nachhaltiger Mastery und `completedKeys`
+- nur produktive, unassistierte und orthografisch korrekte aktive Abrufe zählen
+- testbereite Wiederholungswörter benötigen einen sicheren Abruf; neue/schwache Wörter zwei getrennte sichere Abrufe ohne Fehler dazwischen
+- Nachrücken folgt der Priorität neues Testwort → schwaches Testwort → fällige bekannte Wiederholung
+- in den letzten drei Tagen vor dem Test werden keine zusätzlichen unbekannten Wörter nachgezogen
+- maximal drei Zusatzwörter, im LRS-Modus zwei; maximal sieben neu eingeführte Wörter pro Tag bleiben die Obergrenze
+- Pflicht-Tagesziel, Mastery und Battle-Aktion bleiben unverändert; Nachrücker werden erst als freiwilliger nächster Lernschritt angeboten und nicht in die laufende Pflicht-Einheit gezwungen
+- Persistenz und Family Sync transportieren Sicherheitsstatus, Evidenz und Zusatzwörter
+- automatisierte Learning-Integrity- und Family-Sync-Regressionstests sind Bestandteil der Release-CI
 
-Erst nach Festlegung dieser Punkte von `REVIEWED` auf `APPROVED_BACKLOG` bzw. `IN_IMPLEMENTATION` setzen.
+Nach grünem CI- und Produktionsdeploy Status auf `PRODUCTION` setzen.
 
 ## B-005 – Praktische v1-Abnahme
 **Status:** APPROVED_BACKLOG / RELEASE TASK  

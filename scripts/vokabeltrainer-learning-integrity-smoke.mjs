@@ -7,7 +7,7 @@ const context=vm.createContext({
   document:{querySelector:()=>null,querySelectorAll:()=>[]},
   window:{},navigator:{},localStorage:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}
 });
-for(const file of ['js/core.js','js/library.js','js/storage.js','js/model.js','js/learning.js']){
+for(const file of ['js/core.js','js/library.js','js/storage.js','js/model.js','js/quiz-engine.js','js/learning.js']){
   vm.runInContext(fs.readFileSync(file,'utf8'),context,{filename:file});
 }
 const passed=vm.runInContext(`
@@ -101,10 +101,60 @@ const passed=vm.runInContext(`
   assert(dailyPlanStatus(pacedPlan).done===0,'optional practice does not complete the fixed daily goal');
   markDailyPlanWordDone(dailyWord,pacedPlan);
   assert(dailyPlanStatus(pacedPlan).done===1,'daily goal advances only through the explicit daily session');
+  const fixedTarget=pacedPlan.dailyTarget,fixedTotal=dailyPlanStatus(pacedPlan).total;
+  let security=recordDailySecurityResult(dailyWord,{correct:true,active:true,assisted:false,orthographyOk:true,wasTestReady:false},pacedPlan);
+  assert(!security.becameSecure&&security.required===2&&security.successStreak===1,'new or weak daily vocabulary needs two independent productive recalls before becoming today-safe');
+  security=recordDailySecurityResult(dailyWord,{correct:false,active:true,assisted:false,orthographyOk:true,wasTestReady:false},pacedPlan);
+  assert(!security.becameSecure&&security.successStreak===0,'an intervening error resets the today-safe success streak');
+  security=recordDailySecurityResult(dailyWord,{correct:true,active:true,assisted:false,orthographyOk:true,wasTestReady:false},pacedPlan);
+  assert(!security.becameSecure&&security.successStreak===1,'one correct recall after an error is still insufficient');
+  security=recordDailySecurityResult(dailyWord,{correct:true,active:true,assisted:false,orthographyOk:true,wasTestReady:false},pacedPlan);
+  assert(security.becameSecure&&security.replacementSource==='new','the second consecutive secure recall refills first with the next unseen test word');
+  const refilledStatus=dailyPlanStatus(pacedPlan);
+  assert(refilledStatus.total===fixedTotal&&pacedPlan.dailyTarget===fixedTarget&&refilledStatus.extraTotal===1,'adaptive refill never increases the official daily target');
+  assert(refilledStatus.secureToday===1&&refilledStatus.extraRemaining===1,'today-safe state and optional refill are tracked separately from completedKeys');
+
+  const knownRef=(pacedPlan.wordRefs||[]).find(r=>dailyPlanRefKey(r)!==dailyPlanRefKey(dailyRef));
+  const knownWord=knownRef?.setLinkId?wordByLinkId(knownRef.setLinkId):wordById(knownRef?.wordId);
+  const knownSecurity=recordDailySecurityResult(knownWord,{correct:true,active:true,assisted:false,orthographyOk:true,wasTestReady:true},pacedPlan);
+  assert(knownSecurity.becameSecure&&knownSecurity.required===1,'already test-ready review vocabulary can become today-safe after one independent active recall');
+  for(const ref of (pacedPlan.wordRefs||[])){
+    if((pacedPlan.extraRefs||[]).length>=pacedPlan.extraLimit)break;
+    const word=ref.setLinkId?wordByLinkId(ref.setLinkId):wordById(ref.wordId);
+    if(!word||pacedPlan.todaySecureKeys.includes(dailyPlanRefKey(ref)))continue;
+    recordDailySecurityResult(word,{correct:true,active:true,assisted:false,orthographyOk:true,wasTestReady:true},pacedPlan);
+  }
+  assert(pacedPlan.extraRefs.length===3&&pacedPlan.extraLimit===3,'same-day adaptive refill is capped at three extra words outside LRS mode');
+  learner().lrsMode=true;pacedPlan.extraLimit=3;normalizeDailyAdaptivePlan(pacedPlan);
+  assert(pacedPlan.extraLimit===2&&pacedPlan.extraRefs.length===2,'LRS mode caps same-day refill at two extra words even for an existing plan');
+  learner().lrsMode=false;
+  const sevenNewPlan={...pacedPlan,introCount:7,extraRefs:[],extraSources:{},extraLimit:3,todaySecureKeys:[],securityEvidence:{}};
+  const sevenNewCandidate=dailyPlanReplacementCandidate(sevenNewPlan);
+  assert(sevenNewCandidate?.source!=='new','adaptive refill never exceeds the existing ceiling of seven newly introduced words per day');
+
+  session={isDaily:true,queue:[quizQueueRef(dailyWord)],index:0,dailySecurityFollowups:{}};
+  assert(scheduleDailySecurityFollowup(session,dailyWord)&&session.queue.length===2,'a first secure recall schedules a separated second productive recall');
+  assert(scheduleDailySecurityFollowup(session,dailyWord)&&session.queue.length===3&&!scheduleDailySecurityFollowup(session,dailyWord),'today-safe followups are bounded and cannot create an endless loop');
+  session=null;
+
   pacedSet.testDate=datePlusDays(2);learner().dailyPlans={};
   const urgentPlan=buildDailyPlan('english');
   assert(urgentPlan.introCount===7&&urgentPlan.deadlineOverload===true&&urgentPlan.requiredNewPerDay===9,'deadline formula caps new words at seven and flags an impossible pace');
   assert(urgentPlan.dailyTarget===14,'clear backlog raises the total daily contact target within the safety cap');
+  const urgentUsed=new Set(dailyPlanRefs(urgentPlan,true).map(dailyPlanRefKey));
+  const unplannedTestWord=pacedWords.find(w=>!urgentUsed.has(dailyPlanRefKey({wordId:w.id,setLinkId:w.setLinkId||''})));
+  assert(!!unplannedTestWord,'near-test fixture leaves at least one test word outside the fixed daily window');
+  unplannedTestWord.repetitions=1;unplannedTestWord.activePracticeDays=[datePlusDays(-1)];unplannedTestWord.practiceDays=[datePlusDays(-1)];unplannedTestWord.dueDate=today();
+  const maintenanceSet={id:'maintenance_set',learnerId:'learner_demo',subject:'english',title:'Maintenance',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+  state.sets.push(maintenanceSet);
+  const maintenance=attachVocabularyToSet(maintenanceSet.id,{term:'maintenance',translation:'Wiederholung',source:'paced-smoke',verified:true}).word;
+  maintenance.repetitions=2;maintenance.activePracticeDays=[datePlusDays(-4)];maintenance.practiceDays=[datePlusDays(-4)];maintenance.dueDate=today();
+  rebuildWordIndexes();
+  const urgentWeak=dailyPlanReplacementCandidate(urgentPlan);
+  assert(urgentWeak?.source==='weak-test'&&dailyPlanRefKey(urgentWeak.ref)===dailyPlanRefKey({wordId:unplannedTestWord.id,setLinkId:unplannedTestWord.setLinkId||''}),'near a test, an unseen word is not introduced; an already-seen weak test word has priority');
+  urgentPlan.extraRefs=[urgentWeak.ref];
+  const urgentDue=dailyPlanReplacementCandidate(urgentPlan);
+  assert(urgentDue?.source==='due'&&dailyPlanRefKey(urgentDue.ref)===dailyPlanRefKey({wordId:maintenance.id,setLinkId:maintenance.setLinkId||''}),'after weak test words, adaptive refill falls back to a due review instead of a new near-test word');
 
   assert(daysUntil(datePlusDays(7))===7,'test date uses exact calendar-day distance without an off-by-one');
   const normalPace=dailyPacePlan(31,0,{days:7},false);
@@ -209,8 +259,10 @@ const end=learning.indexOf('\nfunction ',start+20);
 const block=learning.slice(start,end<0?learning.length:end);
 if(block.includes('wordLearningCard('))throw new Error('Learning integrity smoke failed: spelling prompt reveals learning card before answer');
 if(!block.includes('aria-label="Deine Antwort"'))throw new Error('Learning integrity smoke failed: spelling answer input lacks accessible name');
+if(learning.includes('appendDailyReplacementToSession'))throw new Error('Learning integrity smoke failed: optional refill must not be forced into the running required session');
 
-console.log('Vokabeltrainer learning integrity smoke: '+(passed.length+2)+' checks passed');
+console.log('Vokabeltrainer learning integrity smoke: '+(passed.length+3)+' checks passed');
 for(const name of passed)console.log('✓ '+name);
 console.log('✓ spelling prompt does not reveal the answer');
 console.log('✓ spelling answer field remains accessible');
+console.log('✓ optional refill does not extend the running required session automatically');

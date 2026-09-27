@@ -508,11 +508,24 @@ function dailyPacePlan(pendingCount,weakCount,ctx,lrsMode=false){
   return {quota,requiredPerDay,requiredReviewPerDay,overload,spacingRisk,dailyTarget,pace,...window};
 }
 function dailyIntroQuota(pendingCount,ctx,weakCount=0,lrsMode=false){return dailyPacePlan(pendingCount,weakCount,ctx,lrsMode)}
+function normalizeDailyAdaptivePlan(plan,l=learner()){
+  if(!plan||typeof plan!=='object')return plan;
+  plan.completedKeys=Array.isArray(plan.completedKeys)?plan.completedKeys:[];
+  plan.todaySecureKeys=Array.isArray(plan.todaySecureKeys)?plan.todaySecureKeys:[];
+  plan.securityEvidence=plan.securityEvidence&&typeof plan.securityEvidence==='object'&&!Array.isArray(plan.securityEvidence)?plan.securityEvidence:{};
+  plan.extraRefs=Array.isArray(plan.extraRefs)?plan.extraRefs:[];
+  plan.extraSources=plan.extraSources&&typeof plan.extraSources==='object'&&!Array.isArray(plan.extraSources)?plan.extraSources:{};
+  const modeLimit=l?.lrsMode?2:3,storedLimit=Number.isFinite(Number(plan.extraLimit))?Number(plan.extraLimit):modeLimit;
+  plan.extraLimit=Math.max(0,Math.min(modeLimit,storedLimit));
+  if(plan.extraRefs.length>plan.extraLimit)plan.extraRefs=plan.extraRefs.slice(0,plan.extraLimit);
+  return plan;
+}
 function buildDailyPlan(subject=state.activeSubject){
   const l=learner();l.dailyPlans=l.dailyPlans||{};
   const sessionSize=l.lrsMode?6:10,ctx=upcomingTestContext(subject),key=`${today()}:${subject}`,signature=dailyPlanSignature(ctx,subject,sessionSize);
   const existing=l.dailyPlans[key];
   if(existing&&existing.signature===signature){
+    normalizeDailyAdaptivePlan(existing,l);
     const refs=[...(existing.wordRefs||[]),...(existing.introRefs||[])];
     if(refs.every(r=>r.setLinkId?!!wordByLinkId(r.setLinkId):!!wordById(r.wordId)))return existing;
   }
@@ -542,31 +555,102 @@ function buildDailyPlan(subject=state.activeSubject){
     introRefs:introWords.map(w=>({wordId:w.id,setLinkId:w.setLinkId||''})),introSetId,
     introCount:introWords.length,reviewCount:selected.length,dailyTarget,requiredNewPerDay:introPlan.requiredPerDay,requiredReviewPerDay:introPlan.requiredReviewPerDay,
     deadlineOverload:introPlan.overload,spacingRisk:introPlan.spacingRisk,pace:introPlan.pace,studyDaysBeforeTest:introPlan.studyDaysBeforeTest,acquisitionDays:introPlan.acquisitionDays,reviewOnlyDays:introPlan.reviewOnlyDays,
-    sessionSize,urgent,phase,maintenanceCount,completedKeys:[],createdAt:new Date().toISOString()
+    sessionSize,urgent,phase,maintenanceCount,completedKeys:[],todaySecureKeys:[],securityEvidence:{},extraRefs:[],extraSources:{},extraLimit:l.lrsMode?2:3,createdAt:new Date().toISOString()
   };
+  normalizeDailyAdaptivePlan(plan,l);
   l.dailyPlans[key]=plan;Object.keys(l.dailyPlans).filter(k=>k<`${datePlusDays(-21)}:`).forEach(k=>delete l.dailyPlans[k]);persistOnly();return plan;
 }
 function wordPracticedToday(w){return !!(w?.activePracticeDays||[]).includes(today())}
 function dailyPlanRefKey(ref){return ref?.setLinkId?`link:${ref.setLinkId}`:ref?.wordId?`word:${ref.wordId}`:''}
+function dailyPlanRefs(plan=buildDailyPlan(),includeExtra=true){
+  if(!plan)return [];
+  const review=Array.isArray(plan.wordRefs)&&plan.wordRefs.length?plan.wordRefs:(plan.wordIds||[]).map(id=>({wordId:id,setLinkId:''}));
+  const intro=Array.isArray(plan.introRefs)?plan.introRefs:[];
+  const extra=includeExtra&&Array.isArray(plan.extraRefs)?plan.extraRefs:[];
+  return [...review,...intro,...extra];
+}
+function dailyPlanHasLearningContact(w){return Number(w?.repetitions||0)>0||(w?.activePracticeDays||[]).length>0}
+function dailyPlanReplacementCandidate(plan=buildDailyPlan()){
+  if(!plan||plan.date!==today()||plan.subject!==state.activeSubject)return null;
+  normalizeDailyAdaptivePlan(plan);
+  if(plan.extraRefs.length>=plan.extraLimit)return null;
+  const used=new Set(dailyPlanRefs(plan,true).map(dailyPlanRefKey).filter(Boolean));
+  const available=w=>{const key=dailyPlanRefKey({wordId:w?.id,setLinkId:w?.setLinkId||''});return !!key&&!used.has(key)};
+  const ctx=upcomingTestContext(plan.subject),scope=ctx?.words?.length?ctx.words:schoolYearVerifiedWords(plan.subject);
+  const extraNewCount=Object.values(plan.extraSources||{}).filter(source=>source==='new').length;
+  const introducedNewCount=Math.max(0,Number(plan.introCount)||0)+extraNewCount;
+  const allowNew=(!ctx||Number(ctx.days)>3)&&introducedNewCount<7;
+  if(allowNew){
+    const unknown=scope.find(w=>available(w)&&!dailyPlanHasLearningContact(w));
+    if(unknown)return {ref:{wordId:unknown.id,setLinkId:unknown.setLinkId||''},source:'new'};
+  }
+  if(ctx){
+    const weak=ctx.words.filter(w=>available(w)&&dailyPlanHasLearningContact(w)&&!isTestReady(w))
+      .sort((a,b)=>testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b))[0];
+    if(weak)return {ref:{wordId:weak.id,setLinkId:weak.setLinkId||''},source:'weak-test'};
+  }
+  const due=dueWords(plan.subject).filter(w=>available(w)&&dailyPlanHasLearningContact(w))
+    .sort((a,b)=>String(a.dueDate||'').localeCompare(String(b.dueDate||''))||testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b))[0];
+  return due?{ref:{wordId:due.id,setLinkId:due.setLinkId||''},source:'due'}:null;
+}
+function recordDailySecurityResult(w,{correct=false,active=false,assisted=false,orthographyOk=true,wasTestReady=null}={},plan=buildDailyPlan()){
+  if(!w||!plan||plan.date!==today()||plan.subject!==state.activeSubject||!active)return {becameSecure:false,replacementRef:null,replacementSource:''};
+  normalizeDailyAdaptivePlan(plan);
+  const key=dailyPlanRefKey({wordId:w.id,setLinkId:w.setLinkId||''});if(!key)return {becameSecure:false,replacementRef:null,replacementSource:''};
+  const allowed=new Set(dailyPlanRefs(plan,true).map(dailyPlanRefKey).filter(Boolean));
+  if(!allowed.has(key))return {becameSecure:false,replacementRef:null,replacementSource:''};
+  const secure=new Set(plan.todaySecureKeys);
+  if(secure.has(key))return {becameSecure:false,replacementRef:null,replacementSource:'',required:Number(plan.securityEvidence?.[key]?.required)||1};
+  const evidence=plan.securityEvidence[key]&&typeof plan.securityEvidence[key]==='object'?plan.securityEvidence[key]:{};
+  if(!Number.isFinite(Number(evidence.required))||Number(evidence.required)<1)evidence.required=(wasTestReady===true||(wasTestReady==null&&isTestReady(w)))?1:2;
+  evidence.required=Math.max(1,Math.min(2,Number(evidence.required)||2));
+  evidence.attempts=(Number(evidence.attempts)||0)+1;
+  evidence.lastAt=new Date().toISOString();
+  if(correct&&!assisted&&orthographyOk!==false){
+    evidence.successStreak=(Number(evidence.successStreak)||0)+1;
+    evidence.lastOutcome='independent-correct';
+  }else if(!correct||orthographyOk===false){
+    evidence.successStreak=0;
+    evidence.lastOutcome=orthographyOk===false?'orthography-error':'wrong';
+  }else{
+    evidence.lastOutcome='assisted';
+  }
+  plan.securityEvidence[key]=evidence;
+  if(evidence.successStreak<evidence.required)return {becameSecure:false,replacementRef:null,replacementSource:'',required:evidence.required,successStreak:evidence.successStreak};
+  plan.todaySecureKeys=[...new Set([...plan.todaySecureKeys,key])];
+  evidence.secureAt=evidence.secureAt||new Date().toISOString();
+  const replacement=dailyPlanReplacementCandidate(plan);
+  if(replacement?.ref){
+    plan.extraRefs=[...plan.extraRefs,replacement.ref];
+    const replacementKey=dailyPlanRefKey(replacement.ref);if(replacementKey)plan.extraSources[replacementKey]=replacement.source||'';
+  }
+  return {becameSecure:true,replacementRef:replacement?.ref||null,replacementSource:replacement?.source||'',required:evidence.required,successStreak:evidence.successStreak};
+}
 function markDailyPlanWordDone(w,plan=buildDailyPlan()){
   if(!w||!plan||plan.date!==today()||plan.subject!==state.activeSubject)return false;
   const key=dailyPlanRefKey({wordId:w.id,setLinkId:w.setLinkId||''});if(!key)return false;
   plan.completedKeys=[...new Set([...(Array.isArray(plan.completedKeys)?plan.completedKeys:[]),key])];return true;
 }
 function dailyPlanStatus(plan=buildDailyPlan()){
+  normalizeDailyAdaptivePlan(plan);
   const reviewRefs=Array.isArray(plan.wordRefs)&&plan.wordRefs.length?plan.wordRefs:(plan.wordIds||[]).map(id=>({wordId:id,setLinkId:''}));
   const introRefs=Array.isArray(plan.introRefs)?plan.introRefs:[];
+  const extraRefs=Array.isArray(plan.extraRefs)?plan.extraRefs:[];
   const reviewPairs=reviewRefs.map(r=>({ref:r,word:r.setLinkId?wordByLinkId(r.setLinkId):wordById(r.wordId)})).filter(x=>x.word);
   const introPairs=introRefs.map(r=>({ref:r,word:r.setLinkId?wordByLinkId(r.setLinkId):wordById(r.wordId)})).filter(x=>x.word);
+  const extraPairs=extraRefs.map(r=>({ref:r,word:r.setLinkId?wordByLinkId(r.setLinkId):wordById(r.wordId)})).filter(x=>x.word);
   const completed=new Set(Array.isArray(plan.completedKeys)?plan.completedKeys:[]);
+  const secure=new Set(Array.isArray(plan.todaySecureKeys)?plan.todaySecureKeys:[]);
   const reviewDone=reviewPairs.filter(x=>completed.has(dailyPlanRefKey(x.ref))),reviewRemaining=reviewPairs.filter(x=>!completed.has(dailyPlanRefKey(x.ref)));
   const introDone=introPairs.filter(x=>completed.has(dailyPlanRefKey(x.ref))),introRemaining=introPairs.filter(x=>!completed.has(dailyPlanRefKey(x.ref)));
+  const extraDone=extraPairs.filter(x=>secure.has(dailyPlanRefKey(x.ref))),extraRemaining=extraPairs.filter(x=>!secure.has(dailyPlanRefKey(x.ref)));
   const total=reviewPairs.length+introPairs.length,done=reviewDone.length+introDone.length,remaining=reviewRemaining.length+introRemaining.length;
   return {
     total,done,remaining,
     introTotal:introPairs.length,introDone:introDone.length,introRemaining:introRemaining.length,
     reviewTotal:reviewPairs.length,reviewDone:reviewDone.length,reviewRemaining:reviewRemaining.length,
-    remainingIntroRefs:introRemaining.map(x=>x.ref),remainingReviewRefs:reviewRemaining.map(x=>x.ref),
+    extraTotal:extraPairs.length,extraDone:extraDone.length,extraRemaining:extraRemaining.length,extraLimit:plan.extraLimit,secureToday:secure.size,
+    remainingIntroRefs:introRemaining.map(x=>x.ref),remainingReviewRefs:reviewRemaining.map(x=>x.ref),remainingExtraRefs:extraRemaining.map(x=>x.ref),
     remainingIds:reviewRemaining.map(x=>x.word.id),remainingRefs:reviewRemaining.map(x=>x.ref),
     units:(introRemaining.length?1:0)+(reviewRemaining.length?Math.ceil(reviewRemaining.length/plan.sessionSize):0)
   };
@@ -594,6 +678,11 @@ function startDailyTodo(){
     const refs=status.remainingIntroRefs||[];
     startSession('adaptive',null,refs.slice(0,plan.sessionSize),true);return;
   }
-  if(!status.reviewRemaining){toast('Tagesziel erledigt. Weitere Übungen sind optional.','good');return}
-  startSession('adaptive',null,(status.remainingReviewRefs||status.remainingRefs||status.remainingIds).slice(0,plan.sessionSize),true);
+  if(status.reviewRemaining){
+    startSession('adaptive',null,(status.remainingReviewRefs||status.remainingRefs||status.remainingIds).slice(0,plan.sessionSize),true);return;
+  }
+  if(status.extraRemaining){
+    startSession('adaptive',null,(status.remainingExtraRefs||[]).slice(0,plan.sessionSize),true);return;
+  }
+  toast('Tagesziel erledigt. Weitere Übungen sind optional.','good');
 }
