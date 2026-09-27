@@ -418,6 +418,9 @@
 #battleView .battle-actions{max-width:900px;margin-left:auto;margin-right:auto}
 
 @media(max-width:720px){
+  #battleView .battle-scene-hud.battle-readout>div:nth-child(2),
+  #battleView .battle-scene-hud.battle-readout>div:nth-child(3){display:none}
+  #battleView .battle-scene-hud.battle-readout{grid-template-columns:1fr 1fr}
   #battleView.active .battle-shell{
     padding:8px 8px calc(122px + env(safe-area-inset-bottom));
   }
