@@ -98,6 +98,19 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    bleibt der letzte Tag vor dem Test für Wiederholung reserviert. Neue Wörter am Tag vor
    dem Test werden als Spacing-Risiko gekennzeichnet; am Testtag selbst werden keine neuen
    Wörter eingeplant. Vorschau und Tagesplan müssen dieselbe Formel verwenden.
+   Der morgens berechnete Pflichtteil bleibt innerhalb des Kalendertags als festes Tagesziel
+   bestehen. Schnellere Lerner dürfen darüber hinaus in einem begrenzten rollenden Lernfenster
+   freiwillig vorarbeiten. Dafür wird **„heute sicher“** strikt von nachhaltiger Mastery und vom
+   bloßen Tageskontakt getrennt: bereits testbereite Wiederholungswörter benötigen einen
+   produktiven, unassistierten und orthografisch korrekten Abruf; neue oder noch schwache Wörter
+   zwei getrennte solche Abrufe ohne Fehler dazwischen. Erst dann darf ein aktiver Platz frei
+   werden. Nachrücken priorisiert ein noch unbekanntes Wort aus dem anstehenden Test, danach ein
+   schwaches Testwort und anschließend eine fällige bekannte Wiederholung. In den letzten drei
+   Tagen vor dem Test werden durch dieses freiwillige Nachrücken keine zusätzlichen unbekannten
+   Wörter eingeführt. Pro Tag sind höchstens drei Zusatzwörter erlaubt, im LRS-Modus höchstens
+   zwei; insgesamt werden weiterhin höchstens sieben neue Wörter an einem Tag eingeführt.
+   Zusatzwörter erhöhen weder das Pflicht-Tagesziel noch dessen Fortschrittsanzeige und erzeugen
+   keine weitere Kampfaktion.
 
 7. **Neue Wörter im Kontext, Wiederholung gemischt**
    Erstaneignung respektiert soweit sinnvoll Buch-/Unit-Reihenfolge und Zusammenhang.
