@@ -43,6 +43,7 @@ Vor Freigabe zwingend:
 - Spacing und mehrtägige Mastery nicht verkürzen
 - Vorschau, Tagesplan, Session-Fortschritt und Persistenz müssen dieselbe Semantik verwenden
 - Tests für Gerätewechsel/Reload und Family Sync vorsehen
+- Abhängigkeit: B-007 muss vorher gelöst sein; sonst würde ein Fehlversuch fälschlich Kapazität zum Nachrücken freigeben
 
 Erst nach Festlegung dieser Punkte von `REVIEWED` auf `APPROVED_BACKLOG` bzw. `IN_IMPLEMENTATION` setzen.
 
@@ -59,6 +60,34 @@ Die praktische Checkliste auf realem Gerät/Browser muss tatsächlich durchgefü
 **Quelle:** `FINAL_AUDIT.md`
 
 Die administrative Repository-Regel ist laut Final Audit noch gesondert zu aktivieren bzw. zu verifizieren.
+
+## B-007 – Tagesziel nur nach fachlich erfolgreichem Abruf erledigen
+**Status:** REVIEWED  
+**Priorität:** P0 vor adaptivem Nachrücken  
+**Quelle:** `docs/project/LEARNING_COHERENCE_AUDIT_2026-09-27.md` K-01
+
+Tagesplan-Kontakt und Tagesplan-Erfolg trennen. Ein falscher unassistierter aktiver Versuch darf ein Planwort nicht als erledigt markieren und keine vorzeitige Tagesaktion ermöglichen.
+
+## B-008 – Spacing-Erfolg gegen Same-Day-Inflation härten
+**Status:** REVIEWED  
+**Priorität:** P1  
+**Quelle:** `docs/project/LEARNING_COHERENCE_AUDIT_2026-09-27.md` K-03
+
+Mehrere richtige aktive Abrufe desselben Wortes am selben Tag dürfen Accuracy verbessern, aber den spacing-relevanten Intervallfortschritt nicht mehrfach beschleunigen.
+
+## B-009 – Testbereitschaft richtungsspezifisch prüfen
+**Status:** REVIEWED  
+**Priorität:** P1  
+**Quelle:** `docs/project/LEARNING_COHERENCE_AUDIT_2026-09-27.md` K-02/K-04
+
+Produktive und rezeptive Abrufrichtung für Testbereitschaft fachlich unterscheiden. Prozentanzeige zusätzlich darauf prüfen, ob passive Recognition-/Listening-Anteile als „Vorbereitung“ statt „Sicherheit“ bezeichnet werden müssen.
+
+## B-010 – Lernbibliothek redaktionell auf aktuellen Stand harmonisieren
+**Status:** REVIEWED  
+**Priorität:** P2  
+**Quelle:** `docs/project/LEARNING_COHERENCE_AUDIT_2026-09-27.md` K-05 bis K-07
+
+Aktuelle Navigation in Pädagogik-/Acceptance-Dokumenten angleichen, Versionskopf-System vereinheitlichen und Dopplung in Product DNA P9 entfernen. Historische README-Releaseeinträge bleiben unverändert.
 
 ## Pflege
 
