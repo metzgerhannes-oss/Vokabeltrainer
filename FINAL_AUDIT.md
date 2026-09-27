@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 27.09.2026 · App v0.21.10
+Stand: 27.09.2026 · App v0.21.11
 
 ## Ergebnis
+
+- v0.21.11 trennt LRS-Unterstützung fachlich in Lesen und Rechtschreiben; Belastungsreduktion/kurze Einheiten ist eine dritte unabhängige Einstellung. Reading-Evidenz bleibt außerhalb von Mastery/Testbereitschaft, Rechtschreibunterstützung verstärkt produktiven Schreibabruf und die Heute-sicher-Evidenz. Altprofile migrieren konservativ und Family Sync führt die neuen Profileinstellungen mit.
 
 - v0.21.10 härtet Spacing gegen massierte Same-Day-Erfolge: mehrere richtige unabhängige Abrufe am selben Kalendertag bleiben diagnostisch erhalten, können das Wiederholungsintervall aber nicht mehrfach verlängern. Die Intervallstufe folgt unterschiedlichen aktiven Erfolgstagen; Cold-Recall wirkt erst bei bereits verteilter Evidenz. Mastery und fachliche Bewertung bleiben konservativ und unverändert.
 - v0.21.9 schließt die Tagesziel-Lücke: `completedKeys` wird in der Pflichtlektion erst nach einem fachlich richtigen, unassistierten aktiven Abruf gesetzt. Fehlversuche und Antworten mit Hinweis bleiben offen; dadurch kann die Tagesaktion nicht vorzeitig freigeschaltet werden. Der separate strengere Status „heute sicher“ und die Nachrücklogik aus v0.21.8 bleiben unverändert.

@@ -1,8 +1,10 @@
 # V1 Acceptance Test
 
-Stand: 27.09.2026 · Basis: v0.21.10 · Release-Kandidat: Same-Day-Spacing-Härtung
+Stand: 27.09.2026 · Basis: v0.21.11 · Release-Kandidat: Differenzierte LRS-Unterstützung
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
+
+Zusatz für v0.21.11: Im Elternprofil praktisch prüfen, dass Lesen, Rechtschreiben und „Kurze Einheiten“ unabhängig speicherbar sind, ein altes LRS-Profil nach Migration alle drei Unterstützungen behält und der Kind-Lernweg danach ohne Sackgasse startet.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
 Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
 
