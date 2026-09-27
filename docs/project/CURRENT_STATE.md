@@ -6,9 +6,13 @@ Stand: 27.09.2026, Baseline direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.12**
-- Main-Commit des produktiven Lernrelease: `8c5b59408116ac07d0fca2cd8efed9b931e3f9fa`
+- App-Version: **v0.21.13**
+- Main-Commit des aktuellen produktiven Releases: `5287a1cfc9407542d680114eaa1917db68862312`
 - letzter fachlicher Lernrelease: **PR #148 – v0.21.12 – Differenzierte LRS-Unterstützung**
+- letzter UI-Fixrelease: **PR #150 – v0.21.13 – Mobiles Avatar-Statuslayout**
+- PR-CI UI-Fixrelease: **Vokabeltrainer CI #969 – success**
+- main-CI UI-Fixrelease: **Vokabeltrainer CI #970 – success**
+- Produktionsdeploy UI-Fixrelease: **GitHub Pages #514 – success**, inklusive Live-Verifikation
 - PR-CI Lernrelease: **Vokabeltrainer CI #965 – success**
 - main-CI Lernrelease: **Vokabeltrainer CI #966 – success**
 - Produktionsdeploy Lernrelease: **GitHub Pages #512 – success**, inklusive Live-Verifikation
@@ -53,6 +57,18 @@ Die praktische v1-Abnahme ist noch nicht als abgeschlossen dokumentiert. Die zah
 Aus [../../FINAL_AUDIT.md](../../FINAL_AUDIT.md) bleibt außerdem als administrative Infrastrukturgrenze dokumentiert, dass die GitHub-Regel „Branch muss vor Merge auf aktuellem main sein“ noch separat administrativ zu aktivieren ist.
 
 ## Aktueller produktiver Release
+
+### Mobiles Avatar-Statuslayout
+Status: **PRODUCTION**  
+Release: **v0.21.13 / PR #150**
+
+Der im praktischen iPhone-Test gefundene Überlagerungsfehler auf „Heute“ ist behoben:
+Avatarbild, Stufen-/Teststatus und Tagesaufgabe liegen mobil in einer klaren vertikalen
+Reihenfolge. Der Statusblock ist dort kein absolut positioniertes Overlay mehr. Ein
+WebKit-iPhone-Regressionscheck prüft sowohl die DOM-Trennung als auch die geometrische
+Überlappungsfreiheit. Desktop sowie Lern-, Mastery-, Testbereitschafts- und Battle-Logik
+bleiben unverändert. PR-CI #969, main-CI #970 und Pages #514 sind erfolgreich; der
+Live-Deploy wurde verifiziert.
 
 ### Differenzierte LRS-Unterstützung
 Status: **PRODUCTION**  
