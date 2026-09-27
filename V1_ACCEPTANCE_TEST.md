@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 27.09.2026 · Basis: v0.21.13 · Release-Kandidat: Mobiles Avatar-Statuslayout
+Stand: 27.09.2026 · Basis: v0.21.14 · Release-Kandidat: Angriffsszene Profil-/Testbanner
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -9,6 +9,8 @@ Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
 Zusatz aus v0.21.12: Im Elternprofil praktisch prüfen, dass **Lesen**, **Rechtschreiben** und **Kurze Einheiten** unabhängig speicherbar sind. Ein Profil nur mit Leseunterstützung darf nicht automatisch die Tageslast verkleinern; ein Profil nur mit Rechtschreibunterstützung muss im Tageslernweg einen echten Schreibabruf erhalten. Nach Family Sync muss dieselbe Einstellung auf dem zugeordneten Kindergerät ankommen.
 
 Zusatz für v0.21.13: Auf einem iPhone prüfen, dass Avatarbild, Stufen-/Teststatus und „Was steht heute an?“ klar untereinander liegen und der dunkle Statusblock das Avatarbild nicht überdeckt.
+
+Zusatz für v0.21.14: In Armee- und Angriffsszene prüfen, dass die eigene Seite mit dem **Profilnamen** und das Ziel mit **„Test N“** beschriftet ist. Die generischen Bildlabels „Deine Armee“ und „Ziel“ dürfen nicht mehr nötig sein; der Fokusmodus muss die beiden Banner klar lesbar erhalten.
 
 ## Grundregel
 
