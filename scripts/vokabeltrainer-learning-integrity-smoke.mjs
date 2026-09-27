@@ -90,14 +90,28 @@ const passed=vm.runInContext(`
   rebuildWordIndexes();
   const legacyDailyPlan=buildDailyPlan(),legacyRefs=dailyPlanRefs(legacyDailyPlan,false);
   assert(legacyRefs.length===3,'daily release regression fixture contains three required words');
-  legacyDailyPlan.signature=legacyDailyPlan.signature.replace(/^daily1:/,'0.21.20:');
+  legacyDailyPlan.signature=legacyDailyPlan.signature.replace(/^daily2:/,'0.21.20:');
   legacyDailyPlan.completedKeys=[];
   state.activity.push({id:'daily_release_valid',learnerId:learner().id,date:new Date().toISOString(),type:'recall',wordId:legacyRefs[0].wordId,correct:true,active:true,assisted:false,orthographyOk:true});
   state.activity.push({id:'daily_release_support',learnerId:learner().id,date:new Date().toISOString(),type:'recognition',wordId:legacyRefs[1].wordId,correct:true,active:false,assisted:false,orthographyOk:true});
   state.activity.push({id:'daily_release_wrong',learnerId:learner().id,date:new Date().toISOString(),type:'recall',wordId:legacyRefs[2].wordId,correct:false,active:true,assisted:false,orthographyOk:true});
   const migratedDailyPlan=buildDailyPlan(),migratedDailyStatus=dailyPlanStatus(migratedDailyPlan);
-  assert(migratedDailyPlan===legacyDailyPlan&&migratedDailyPlan.signature.startsWith('daily1:'),'app release migrates the existing same-day plan instead of replacing it');
+  assert(migratedDailyPlan===legacyDailyPlan&&migratedDailyPlan.signature.startsWith('daily2:'),'app release migrates the existing same-day plan instead of replacing it');
   assert(migratedDailyStatus.done===1&&migratedDailyStatus.remaining===2,'same-day independent correct work is recovered after a release while support and wrong answers stay open');
+
+  state=defaultState();
+  const compactSet={id:'daily_compact_migration_set',learnerId:'learner_demo',subject:'english',title:'Compact Migration',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(3),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+  state.sets.push(compactSet);
+  for(let i=1;i<=12;i++)attachVocabularyToSet(compactSet.id,{term:'compact'+i,translation:'kompakt'+i,source:'compact-migration-smoke',verified:true});
+  rebuildWordIndexes();
+  const compactWords=setWords(compactSet.id),oldRefs=compactWords.map(w=>({wordId:w.id,setLinkId:w.setLinkId||''}));
+  const oldPlan={date:today(),subject:'english',signature:`daily1:test:single:${compactSet.testDate}:${compactSet.id}:10:${compactWords.map(w=>w.id).sort().join(',')}`,source:'single',testDate:compactSet.testDate,testFormat:'target',setIds:[compactSet.id],setTitle:compactSet.title,wordIds:compactWords.map(w=>w.id),wordRefs:oldRefs,introRefs:[],introCount:0,reviewCount:12,dailyTarget:12,sessionSize:10,completedKeys:[dailyPlanRefKey(oldRefs[0])],todaySecureKeys:[],securityEvidence:{},extraRefs:[],extraSources:{},extraLimit:3,createdAt:new Date().toISOString()};
+  learner().dailyPlans={[`${today()}:english`]:oldPlan};
+  state.activity.push({id:'compact_done',learnerId:learner().id,date:new Date().toISOString(),type:'recall',wordId:oldRefs[0].wordId,correct:true,active:true,assisted:false,orthographyOk:true});
+  compactWords[0].repetitions=1;compactWords[0].activePracticeDays=[today()];
+  const compactPlan=buildDailyPlan('english'),compactStatus=dailyPlanStatus(compactPlan);
+  assert(compactPlan!==oldPlan&&compactPlan.signature.startsWith('daily2:'),'daily1 policy plan is rebuilt under the short-core schema');
+  assert(compactStatus.total===6&&compactStatus.done===1,'12-word legacy core shrinks to six focus words without losing an already completed word');
 
   state=defaultState();
   const sameDaySet={id:'same_day_spacing_set',learnerId:'learner_demo',subject:'english',title:'Same Day Spacing',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
@@ -189,7 +203,7 @@ const passed=vm.runInContext(`
   pacedWords.slice(0,6).forEach(w=>{w.repetitions=1;w.activePracticeDays=[datePlusDays(-1)];w.practiceDays=[datePlusDays(-1)]});
   const pacedPlan=buildDailyPlan('english'),pacedStatus=dailyPlanStatus(pacedPlan);
   assert(pacedPlan.introCount===3&&pacedPlan.acquisitionDays===3,'daily plan spreads remaining new words across the real pre-test acquisition window');
-  assert(pacedPlan.reviewCount===5&&pacedStatus.total===8,'ahead-of-plan learning reduces the daily contact target instead of forcing ten to twelve');
+  assert(pacedPlan.reviewCount===3&&pacedStatus.total===6,'normal daily core is capped at six distinct focus words');
   const dailyRef=[...(pacedPlan.wordRefs||[]),...(pacedPlan.introRefs||[])][0],dailyWord=dailyRef?.setLinkId?wordByLinkId(dailyRef.setLinkId):wordById(dailyRef?.wordId);
   dailyWord.activePracticeDays=[...new Set([...(dailyWord.activePracticeDays||[]),today()])];
   assert(dailyPlanStatus(pacedPlan).done===0,'optional practice does not complete the fixed daily goal');
@@ -230,19 +244,19 @@ const passed=vm.runInContext(`
   learner().literacySupport={reading:true,spelling:false};learner().reducedLoad=true;normalizeLiteracySupport(learner());pacedPlan.extraLimit=3;normalizeDailyAdaptivePlan(pacedPlan);
   assert(pacedPlan.extraLimit===2&&pacedPlan.extraRefs.length===2,'reduced-load mode caps same-day refill at two extra words even for an existing plan');
   learner().reducedLoad=false;normalizeLiteracySupport(learner());
-  const sevenNewPlan={...pacedPlan,introCount:7,extraRefs:[],extraSources:{},extraLimit:3,todaySecureKeys:[],securityEvidence:{}};
-  const sevenNewCandidate=dailyPlanReplacementCandidate(sevenNewPlan);
-  assert(sevenNewCandidate?.source!=='new','adaptive refill never exceeds the existing ceiling of seven newly introduced words per day');
+  const sixNewPlan={...pacedPlan,introCount:6,extraRefs:[],extraSources:{},extraLimit:3,todaySecureKeys:[],securityEvidence:{}};
+  const sixNewCandidate=dailyPlanReplacementCandidate(sixNewPlan);
+  assert(sixNewCandidate?.source!=='new','adaptive refill never exceeds the six-new-word ceiling outside short-unit mode');
 
-  session={isDaily:true,queue:[quizQueueRef(dailyWord)],index:0,dailySecurityFollowups:{}};
-  assert(scheduleDailySecurityFollowup(session,dailyWord)&&session.queue.length===2,'a first secure recall schedules a separated second productive recall');
-  assert(scheduleDailySecurityFollowup(session,dailyWord)&&session.queue.length===3&&!scheduleDailySecurityFollowup(session,dailyWord),'today-safe followups are bounded and cannot create an endless loop');
+  session={isDaily:true,queue:[quizQueueRef(dailyWord)],index:0,dailySecurityFollowups:{},followupCounts:{}};
+  assert(!scheduleDailySecurityFollowup(session,dailyWord)&&session.queue.length===1,'stricter today-safe evidence never silently lengthens the required daily core');
+  assert(scheduleScaffoldFollowup(session,dailyWord)&&session.queue.length===2&&!scheduleScaffoldFollowup(session,dailyWord),'a daily scaffold gets exactly one productive followup, not an open-ended chain');
   session=null;
 
   pacedSet.testDate=datePlusDays(2);learner().dailyPlans={};
   const urgentPlan=buildDailyPlan('english');
-  assert(urgentPlan.introCount===7&&urgentPlan.deadlineOverload===true&&urgentPlan.requiredNewPerDay===9,'deadline formula caps new words at seven and flags an impossible pace');
-  assert(urgentPlan.dailyTarget===14,'clear backlog raises the total daily contact target within the safety cap');
+  assert(urgentPlan.introCount===3&&urgentPlan.deadlineOverload===true&&urgentPlan.requiredNewPerDay===9,'deadline formula keeps new words inside the short core and flags the impossible pace');
+  assert(urgentPlan.dailyTarget===6&&urgentPlan.recommendSecondRound===true,'clear backlog never inflates the required core beyond six focus words and recommends a second short round');
   const urgentUsed=new Set(dailyPlanRefs(urgentPlan,true).map(dailyPlanRefKey));
   const unplannedTestWord=pacedWords.find(w=>!urgentUsed.has(dailyPlanRefKey({wordId:w.id,setLinkId:w.setLinkId||''})));
   assert(!!unplannedTestWord,'near-test fixture leaves at least one test word outside the fixed daily window');
@@ -261,15 +275,15 @@ const passed=vm.runInContext(`
   assert(daysUntil(datePlusDays(7))===7,'test date uses exact calendar-day distance without an off-by-one');
   const normalPace=dailyPacePlan(31,0,{days:7},false);
   assert(normalPace.acquisitionDays===6&&normalPace.reviewOnlyDays===1,'seven days to test reserves the final day for review and leaves six acquisition days');
-  assert(normalPace.requiredPerDay===6&&normalPace.quota===6&&normalPace.dailyTarget===11,'31 new words with seven days yields six new words and eleven contacts today');
+  assert(normalPace.requiredPerDay===6&&normalPace.quota===3&&normalPace.dailyTarget===6&&normalPace.recommendSecondRound,'31 new words with seven days keeps the required core at six focus words and moves overload to an optional second round');
   const missedPace=dailyPacePlan(31,0,{days:6},false);
-  assert(missedPace.requiredPerDay===7&&missedPace.quota===7&&missedPace.dailyTarget===12,'missed learning automatically raises the next daily target');
+  assert(missedPace.requiredPerDay===7&&missedPace.quota===3&&missedPace.dailyTarget===6&&missedPace.recommendSecondRound,'missed learning cannot inflate the required core; it triggers a second-round recommendation');
   const aheadPace=dailyPacePlan(21,0,{days:6},false);
-  assert(aheadPace.requiredPerDay===5&&aheadPace.quota===5&&aheadPace.dailyTarget===10,'extra learning automatically reduces the next daily target');
+  assert(aheadPace.requiredPerDay===5&&aheadPace.quota===3&&aheadPace.dailyTarget===6,'moderate backlog still stays inside the six-word required core');
   const farAhead=dailyPacePlan(6,0,{days:7},false);
-  assert(farAhead.requiredPerDay===1&&farAhead.quota===3&&farAhead.dailyTarget===8,'large headroom keeps a small three-word block and lowers daily contacts');
+  assert(farAhead.requiredPerDay===1&&farAhead.quota===1&&farAhead.dailyTarget===5,'large headroom lowers the normal required core to five focus words');
   const tomorrow=dailyPacePlan(6,0,{days:1},false);
-  assert(tomorrow.quota===6&&tomorrow.spacingRisk===true,'new vocabulary one day before the test is flagged as too late for distributed practice');
+  assert(tomorrow.quota===3&&tomorrow.dailyTarget===6&&tomorrow.spacingRisk===true&&tomorrow.recommendSecondRound===true,'new vocabulary one day before the test stays capped and triggers a distributed-practice warning plus optional second round');
   const testToday=dailyPacePlan(5,0,{days:0},false);
   assert(testToday.quota===0&&testToday.overload===true&&testToday.spacingRisk===true,'test day never introduces new vocabulary and remains a spacing warning');
 
