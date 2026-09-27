@@ -10,11 +10,20 @@ Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änd
 
 ## Aktueller Stand
 
-App-Version: **v0.21.16**
+App-Version: **v0.21.17**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.21.17 – Heraldik-Banner wie freigegebene Referenz
+
+- Profilname und „Test N“ erscheinen wieder als **horizontale Pergamentbanner am oberen Bildrand**
+- jedes Banner trägt einen kleinen farbigen Heraldik-Schild und eine waagerechte Zierstange; dadurch entspricht die Darstellung wieder der freigegebenen Referenz statt den stehenden Feldstandarten aus v0.21.16
+- links bleibt der Profilname, rechts die datengetriebene Testnummer; die Korrektur der Testfolge aus v0.21.16 bleibt unverändert erhalten
+- die geometrische Trennung zwischen Kampagnenbild und heller Missionskarte bleibt ebenfalls erhalten
+- derselbe Bannerstil wird in Armeeübersicht und eigentlicher Angriffsszene verwendet
+- WebKit-Regressionen prüfen horizontale Proportion, obere Position, Heraldik-Schild und Zierstange
 
 ## v0.21.16 – Stehende Feldbanner und korrekte Testfolge
 
