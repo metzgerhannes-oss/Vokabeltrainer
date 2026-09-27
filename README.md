@@ -10,11 +10,19 @@ Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änd
 
 ## Aktueller Stand
 
-App-Version: **v0.21.8**
+App-Version: **v0.21.9**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.21.9 – Tagesziel-Lernintegrität
+
+- ein Pflichtwort im Tagesplan wird erst nach einem **fachlich richtigen, unassistierten aktiven Abruf** als erledigt markiert
+- falsche aktive Versuche bleiben im Pflichtziel offen und können weder „Tagesziel geschafft“ noch die Kampfaktion vorzeitig auslösen
+- richtige Antworten mit verwendetem Hinweis bleiben ebenfalls offen; Hilfe unterstützt das Lernen, ersetzt aber nicht den Pflichtabruf
+- der strengere separate Zustand „heute sicher“ aus v0.21.8 bleibt unverändert und steuert weiterhin nur freiwilliges Nachrücken
+- Learning-Integrity-Smoke prüft explizit unterstützten Treffer, Fehlversuch und anschließenden unabhängigen Erfolg
 
 ## v0.21.8 – Adaptives Nachrücken im Tagesplan
 
