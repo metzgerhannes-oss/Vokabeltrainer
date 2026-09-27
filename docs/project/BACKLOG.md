@@ -75,6 +75,14 @@ Für die Testbereitschaft werden Bedeutung → Fremdsprachenwort und Fremdsprach
 
 Bestehende Lernstände werden konservativ aus vorhandenen Aktivitätsdaten und – nur wenn nötig – bereits dokumentierten Abrufmodi migriert; es wird keine historisch nie geübte Richtung erfunden.
 
+## B-010 – Lernbibliothek redaktionell harmonisieren
+**Status:** IN_IMPLEMENTATION  
+**Priorität:** P2  
+**Quelle:** `docs/project/LEARNING_COHERENCE_REVIEW.md`
+
+Aktuelle Navigation in Pädagogik- und Acceptance-Dokumenten auf **Heute · Lernen · Armee · Erfolge** vereinheitlichen, kanonische Fachquellen mit einem eindeutigen fachlichen Prüfstatus versehen und die redaktionelle Dopplung in Product DNA P9 entfernen. Historische README-Releaseeinträge bleiben als Historie unverändert.
+
+
 ## B-005 – Praktische v1-Abnahme
 **Status:** APPROVED_BACKLOG / RELEASE TASK  
 **Priorität:** vor v1.0  
