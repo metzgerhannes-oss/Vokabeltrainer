@@ -141,6 +141,12 @@ function mergeProgress(target,source){
   const ts={...defaultSkills(),...(target.skills||{})},ss={...defaultSkills(),...(source.skills||{})};for(const k of Object.keys(ts))ts[k]=Math.max(Number(ts[k])||0,Number(ss[k])||0);target.skills=ts;
   for(const k of ['level','repetitions','successes','independentSuccesses','assistedSuccesses','failures','intervalDays','maxActiveGapDays','coldRecallSuccesses'])target[k]=Math.max(Number(target[k])||0,Number(source[k])||0);
   for(const k of ['activeSuccessDays','activePracticeDays','coldRecallDays','practiceDays','modesSeen','grammarSuccessDays'])target[k]=unionLimited(target[k],source[k],1000);
+  const td=normalizeDirectionalRecall(target.directionalRecall),sd=normalizeDirectionalRecall(source.directionalRecall);
+  for(const key of ['target','source']){
+    td[key].successDays=unionLimited(td[key].successDays,sd[key].successDays,1000);
+    if(String(sd[key].lastAt||'')>String(td[key].lastAt||'')){td[key].lastAt=sd[key].lastAt||null;td[key].lastCorrect=sd[key].lastCorrect;}
+  }
+  target.directionalRecall=td;
   target.recentActiveResults=[...(target.recentActiveResults||[]),...(source.recentActiveResults||[])].sort((a,b)=>String(a?.at||a?.date||'').localeCompare(String(b?.at||b?.date||''))).slice(-8);
   const tg={genitive:0,gender:0,principalParts:0,form:0,...(target.grammarSkills||{})},sg={genitive:0,gender:0,principalParts:0,form:0,...(source.grammarSkills||{})};for(const k of Object.keys(tg))tg[k]=Math.max(Number(tg[k])||0,Number(sg[k])||0);target.grammarSkills=tg;
   const te={meaning:0,retrieval:0,spelling:0,listening:0,context:0,grammar:0,...(target.errorProfile||{})},se={meaning:0,retrieval:0,spelling:0,listening:0,context:0,grammar:0,...(source.errorProfile||{})};for(const k of Object.keys(te))te[k]=Math.max(Number(te[k])||0,Number(se[k])||0);target.errorProfile=te;
@@ -249,6 +255,40 @@ function repairPreFocusSpellingLeak(s){
     p.dueDate=todayKey;
   }
   s.spellingLeakRepairVersion=1;
+  return s;
+}
+
+function backfillDirectionalRecall(s){
+  if(Number(s?.directionalRecallVersion)>=1)return s;
+  const progressById=new Map((s?.learnerVocabulary||[]).map(p=>[String(p?.id||''),p]));
+  for(const p of progressById.values())p.directionalRecall=normalizeDirectionalRecall(p.directionalRecall);
+
+  const events=[...(Array.isArray(s?.activity)?s.activity:[])].sort((a,b)=>String(a?.date||'').localeCompare(String(b?.date||'')));
+  for(const event of events){
+    if(event?.active!==true||event?.assisted===true)continue;
+    const type=String(event?.recallDirection||event?.type||''),direction=type==='target'||type==='recall'||type==='cards'?'target':type==='source'||type==='reverseRecall'?'source':'';
+    if(!direction)continue;
+    const p=progressById.get(String(event.wordId||''));if(!p)continue;
+    const all=normalizeDirectionalRecall(p.directionalRecall),node=all[direction],at=String(event.date||'');
+    node.lastCorrect=event.correct===true;node.lastAt=at||node.lastAt;
+    const d=at?new Date(at):null,day=d&&!Number.isNaN(d.getTime())?dateKey(d):'';
+    if(event.correct===true&&day)node.successDays=unionLimited(node.successDays,[day],1000);
+    p.directionalRecall=all;
+  }
+
+  for(const p of progressById.values()){
+    const all=normalizeDirectionalRecall(p.directionalRecall),fallbackDay=[...(p.activeSuccessDays||[])].sort().slice(-1)[0]||'',fallbackAt=p.lastActiveSuccessAt||(fallbackDay?fallbackDay+'T12:00:00.000Z':'');
+    if((Number(p.independentSuccesses)||0)>0&&fallbackDay){
+      if(!(all.target.successDays||[]).length&&(p.modesSeen||[]).some(x=>x==='recall'||x==='cards')){
+        all.target.successDays=[fallbackDay];all.target.lastCorrect=true;all.target.lastAt=fallbackAt;
+      }
+      if(!(all.source.successDays||[]).length&&(p.modesSeen||[]).includes('reverseRecall')){
+        all.source.successDays=[fallbackDay];all.source.lastCorrect=true;all.source.lastAt=fallbackAt;
+      }
+    }
+    p.directionalRecall=all;
+  }
+  s.directionalRecallVersion=1;
   return s;
 }
 
@@ -398,7 +438,7 @@ function migrate(s){
   s.sets=(s.sets||[]).map(x=>({...x,schoolYear:x.schoolYear||currentSchoolYear(),bookId:x.bookId||'',bookSection:x.bookSection||x.title||'',testScopeMode:x.testScopeMode||'set',testFrom:Number(x.testFrom)||1,testTo:Number(x.testTo)||0,testFormat:x.testFormat||'target'}));
   migrateLegacyLibrary(s);
   migrateSenseModel(s);
-  repairV0912AliasSplit(s,sourceVersion);s.senseModelVersion=1;repairPreFocusSpellingLeak(s);requireLegacyPhotoPairReview(s);backfillBookVocabularyVerification(s);backfillFirstContact(s);
+  repairV0912AliasSplit(s,sourceVersion);s.senseModelVersion=1;repairPreFocusSpellingLeak(s);backfillDirectionalRecall(s);requireLegacyPhotoPairReview(s);backfillBookVocabularyVerification(s);backfillFirstContact(s);
   s.practiceTests=(s.practiceTests||[]).map(t=>{const subject=normalizeSubjectId(t.subject),owner=s.learners.find(l=>l.id===t.learnerId),scale={...defaultGradeScale(),...((owner?.gradeScales||defaultGradeScales())[subject]||{})};return {...t,gradeScaleSnapshot:t.gradeScaleSnapshot||scale,suggestedGrade:t.suggestedGrade||suggestGradeFromScale(t.percent,scale)}});
   const hardened=hardenState(s);backfillPairReviewSignatures(hardened);return hardened;
 }
