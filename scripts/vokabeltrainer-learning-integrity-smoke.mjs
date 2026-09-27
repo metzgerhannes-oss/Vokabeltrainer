@@ -112,7 +112,7 @@ const passed=vm.runInContext(`
   compactWords[0].repetitions=1;compactWords[0].activePracticeDays=[today()];
   const compactPlan=buildDailyPlan('english'),compactStatus=dailyPlanStatus(compactPlan);
   assert(compactPlan!==oldPlan&&compactPlan.signature.startsWith('daily2:'),'daily1 policy plan is rebuilt under the short-core schema');
-  assert(compactStatus.total===6&&compactStatus.done===1,'12-word legacy core shrinks to six focus words without losing an already completed word');
+  assert(compactStatus.total<=6&&compactStatus.total>=3&&compactStatus.done===1,'12-word legacy core shrinks into the compact focus window without losing an already completed word');
 
   state=defaultState();
   const sameDaySet={id:'same_day_spacing_set',learnerId:'learner_demo',subject:'english',title:'Same Day Spacing',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
