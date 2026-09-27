@@ -356,7 +356,6 @@ function testSequenceNumber(testDate,subject=state.activeSubject,schoolYear=curr
   const startYear=Number(String(schoolYear||'').split('/')[0]),start=Number.isFinite(startYear)?`${startYear}-08-01`:'0000-01-01',end=Number.isFinite(startYear)?`${startYear+1}-07-31`:'9999-12-31';
   const inYear=date=>!!date&&String(date)>=start&&String(date)<=end,dates=new Set(),sets=schoolYearSets(subject,schoolYear);
   for(const set of sets)if(inYear(set.testDate))dates.add(set.testDate);
-  for(const grade of (state.grades||[]))if(grade?.learnerId===state.activeLearnerId&&grade.subject===subject&&!grade.practiceTestId&&inYear(grade.date))dates.add(grade.date);
   const series=activeSeries(subject),seriesSetId=series?.setId||'';
   if(seriesSetId){
     for(const fortress of testFortressHistory(subject)){
