@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 27.09.2026 · App v0.21.16
+Stand: 27.09.2026 · App v0.21.17
 
 ## Ergebnis
+
+- v0.21.17 führt den Bannerstil exakt auf die freigegebene visuelle Richtung zurück: horizontale Pergamentbanner oben im Bild mit farbigem Heraldik-Schild und waagerechter Zierstange. Die stehenden Feldstandarten aus v0.21.16 entfallen. Testnummernkorrektur und Bild-/Karten-Abstand bleiben unverändert erhalten; Armeeübersicht und Angriffsszene verwenden denselben Stil. Browserregressionen sichern Form, Position und Heraldikdetails.
 
 - v0.21.16 korrigiert zwei Befunde aus dem praktischen iPhone-Test: Profilname und Testziel stehen als echte Feldstandarten innerhalb der Kampagnenszene statt als schwebende Tafeln; außerdem zählt die sichtbare Testfolge keine verwaiste Festung eines ersetzten zukünftigen Testplans mehr mit. Die aktive Testplanung bleibt maßgeblich, Testserien behalten ihre chronologische Historie. WebKit-Regressionen decken beide Fälle ab.
 
