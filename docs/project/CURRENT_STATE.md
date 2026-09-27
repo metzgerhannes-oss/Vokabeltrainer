@@ -6,12 +6,12 @@ Stand: 27.09.2026, Baseline direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.9**
-- Main-Commit bei Erstellung dieses Snapshots: `d2fd927518ba202e2835d58fcb8d4a6ea211047a`
-- zugehöriger Merge: **PR #142 – v0.21.9 – Tagesziel nur nach erfolgreichem Abruf**
-- PR-CI: **Vokabeltrainer CI #950 – success**
-- main-CI nach Merge: **Vokabeltrainer CI #951 – success**
-- Produktionsdeploy: **GitHub Pages #507 – success**
+- App-Version: **v0.21.10**
+- Main-Commit bei Erstellung dieses Snapshots: `eb6a9316afe66f696c327cbf48d66d31a1a4179a`
+- zugehöriger Merge: **PR #143 – v0.21.10 – Same-Day-Spacing gegen künstliche Beschleunigung**
+- PR-CI: **Vokabeltrainer CI #952 – success**
+- main-CI nach Merge: **Vokabeltrainer CI #953 – success**
+- Produktionsdeploy: **GitHub Pages #508 – success**
 
 Dieser Abschnitt ist ein Snapshot. Für Statusfragen muss der aktuelle GitHub-Stand erneut live geprüft werden; die hier genannte SHA darf nicht als dauerhaft „neuester Stand“ interpretiert werden.
 
@@ -28,6 +28,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Fachliche Abfrage / Bewertung | PRODUCTION | `PRODUCT_DNA.md`, `QUIZ_ENGINE.md` |
 | Sense-/Bedeutungsmodell | PRODUCTION | `SENSE_MODEL.md` |
 | Lern-/Mastery-Grundsätze | PRODUCTION | `PRODUCT_DNA.md` |
+| Same-Day-Spacing-Härtung | PRODUCTION | `PRODUCT_DNA.md` P3, D-20260927-006, PR #143 |
 | Tagesplanung mit testbezogener Last | PRODUCTION | `PRODUCT_DNA.md` P6 + Code/Tests |
 | Pflicht-Tagesziel nur nach erfolgreichem Abruf | PRODUCTION | `PRODUCT_DNA.md` P4/P6, D-20260927-005, PR #142 |
 | Adaptives Nachrücken / „heute sicher“ | PRODUCTION | `PRODUCT_DNA.md` P3/P6, D-20260927-004, PR #138 |
@@ -45,6 +46,12 @@ Die praktische v1-Abnahme ist noch nicht als abgeschlossen dokumentiert. Die zah
 Aus [../../FINAL_AUDIT.md](../../FINAL_AUDIT.md) bleibt außerdem als administrative Infrastrukturgrenze dokumentiert, dass die GitHub-Regel „Branch muss vor Merge auf aktuellem main sein“ noch separat administrativ zu aktivieren ist.
 
 ## Aktueller produktiver Release
+
+### Same-Day-Spacing-Härtung
+Status: **PRODUCTION**  
+Release: **v0.21.10 / PR #143**
+
+Mehrere unabhängige Treffer desselben Wortes am selben Kalendertag bleiben als Übungs- und Accuracy-Evidenz erhalten, können das Spacing-Intervall aber nicht mehrfach verlängern. Die Intervallstufe folgt unterschiedlichen aktiven Erfolgstagen. PR-CI #952, main-CI #953 und Pages #508 sind erfolgreich.
 
 ### Tagesziel-Lernintegrität
 Status: **PRODUCTION**  
