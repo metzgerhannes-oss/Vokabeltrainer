@@ -119,8 +119,10 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    werden. Nachrücken priorisiert ein noch unbekanntes Wort aus dem anstehenden Test, danach ein
    schwaches Testwort und anschließend eine fällige bekannte Wiederholung. In den letzten drei
    Tagen vor dem Test werden durch dieses freiwillige Nachrücken keine zusätzlichen unbekannten
-   Wörter eingeführt. Pro Tag sind höchstens drei Zusatzwörter erlaubt, im LRS-Modus höchstens
-   zwei; insgesamt werden weiterhin höchstens sieben neue Wörter an einem Tag eingeführt.
+   Wörter eingeführt. Pro Tag sind höchstens drei Zusatzwörter erlaubt; bei aktivierter
+   Einstellung **„Kurze Einheiten“** höchstens zwei. Lesen-/Rechtschreibunterstützung allein
+   reduziert dieses Limit nicht. Insgesamt werden weiterhin höchstens sieben neue Wörter an
+   einem Tag eingeführt.
    Zusatzwörter erhöhen weder das Pflicht-Tagesziel noch dessen Fortschrittsanzeige und erzeugen
    keine weitere Kampfaktion. Sie werden als freiwilliger nächster Lernschritt vorgemerkt und
    nicht automatisch an eine bereits laufende Pflicht-Einheit angehängt.
@@ -131,8 +133,19 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
 
 8. **LRS und Barrierefreiheit sind Teil des Grunddesigns**
    Ruhige Oberfläche, gut lesbare Sans-Serif-Schrift, ausreichende Größe/Abstände,
-   reduzierte Ablenkung, kurze Einheiten, Audio und multisensorische Optionen.
-   Keine unbewiesenen 'Wunderschriften' oder Zeitdruck als Lernprinzip.
+   reduzierte Ablenkung, Audio und gezielte zusätzliche Lernhilfen.
+   **Lesen und Rechtschreiben werden als getrennte Unterstützungsdimensionen modelliert**:
+   Leseunterstützung priorisiert Laut-Schrift-Verknüpfung, ruhige wiederholte Wortbegegnung
+   und Audioführung; Rechtschreibunterstützung priorisiert exakten produktiven Schreibabruf,
+   Diktat, orthografische Wortbausteine und korrektives Feedback. Ein Profil kann Lesen,
+   Rechtschreiben oder beides aktivieren. Die App diagnostiziert keine LRS-Form.
+   Die Unterstützungsmetrik `reading` ist eine Scheduler-/Hilfsmetrik und darf fachliche
+   Vokabel-Mastery oder Testbereitschaft weder absenken noch künstlich erhöhen.
+   Rechtschreibunterstützung ändert die Sollantwort nicht; für den Zustand „heute sicher“
+   verlangt sie zusätzlich mindestens einen erfolgreichen unassistierten Rechtschreibabruf.
+   **„Kurze Einheiten“ ist davon unabhängig** und steuert kleinere Sessions sowie das
+   reduzierte freiwillige Nachrücklimit. Keine unbewiesenen 'Wunderschriften', pauschalen
+   „multisensorischen“ Heilversprechen oder Zeitdruck als Lernprinzip.
 
 9. **Lernen fokussiert, Motivation außen herum**
    Während des Abrufs: möglichst wenig Ablenkung.
