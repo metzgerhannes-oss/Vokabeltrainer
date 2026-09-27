@@ -198,9 +198,9 @@ Wenn ein Testtermin bekannt ist, berechnet die App das Tagespensum aus:
 - Testdatum
 - aktuellem Lernstand
 
-Als Grundidee werden eher kleine Blöcke geplant. Neue Wörter werden begrenzt; bei Rückstand kann die Tageslast steigen, aber nicht unbegrenzt.
+Der verpflichtende Tageskern bleibt bewusst klein: normalerweise **5–6 unterschiedliche Fokuswörter**, bei aktivierter Einstellung **„Kurze Einheiten“ 3–4**. Pro Pflichtkern werden höchstens drei neue Wörter eingeführt, bei „Kurze Einheiten“ höchstens zwei. Erkennen, produktiver Abruf und gezielte Fehlerwiederholung erzeugen innerhalb dieses kleinen Wortsets mehrere Lernkontakte; eine Kontaktzahl ist deshalb nicht mit der Zahl verschiedener Pflichtwörter gleichzusetzen.
 
-Wenn das verbleibende Zeitfenster für sauberes verteiltes Lernen zu knapp wird, zeigt die App ein Risiko an, statt rechnerisch so zu tun, als sei der Lernplan weiterhin ideal.
+Rückstand vergrößert den Pflichtkern nicht über diese Grenze. Wenn mehr Stoff offen ist, empfiehlt die App nach dem abgeschlossenen Pflichtteil eine zweite kurze freiwillige Runde. Sie verändert das Pflicht-Tagesziel und die Battle-Freischaltung nicht. Wenn das verbleibende Zeitfenster für sauberes verteiltes Lernen zu knapp wird, zeigt die App zusätzlich ein Risiko an, statt rechnerisch so zu tun, als sei der Lernplan weiterhin ideal.
 
 Am Testtag selbst werden keine neuen Wörter mehr eingeplant.
 
