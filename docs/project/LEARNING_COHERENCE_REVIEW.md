@@ -1,6 +1,6 @@
 # Lernkohärenz-Review
 
-Fachlich zuletzt geprüft: 27.09.2026 · Gültig für aktuellen Stand: ja
+Fachlich zuletzt geprüft: 27.09.2026 · Gültig für aktuellen Stand: ja · Produktionsnachweis: PR #146 / CI #961/#962 / Pages #510
 
 ## Gesamturteil
 

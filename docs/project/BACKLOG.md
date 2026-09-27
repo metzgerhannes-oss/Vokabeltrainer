@@ -66,7 +66,7 @@ Produktiv seit **v0.21.9 / PR #142**. Ein falscher oder unterstützter aktiver V
 Produktiv seit **v0.21.10 / PR #143**. Mehrere richtige aktive Abrufe desselben Wortes am selben Tag verbessern weiterhin Accuracy und Übungsevidenz, verlängern das nächste Wiederholungsintervall aber nicht mehrfach. Spacing-Fortschritt wird aus unterschiedlichen aktiven Erfolgstagen abgeleitet. PR-CI #952, main-CI #953 und Pages #508 sind grün.
 
 ## B-009 – Testbereitschaft richtungsspezifisch prüfen
-**Status:** IN_IMPLEMENTATION  
+**Status:** PRODUCTION  
 **Priorität:** P1  
 **Decision:** D-20260927-007  
 **Betroffene Quellen:** `PRODUCT_DNA.md` P2, `js/model.js`, `js/learning.js`, Lernintegritäts- und Menü-Smokes
@@ -75,12 +75,16 @@ Für die Testbereitschaft werden Bedeutung → Fremdsprachenwort und Fremdsprach
 
 Bestehende Lernstände werden konservativ aus vorhandenen Aktivitätsdaten und – nur wenn nötig – bereits dokumentierten Abrufmodi migriert; es wird keine historisch nie geübte Richtung erfunden.
 
+Produktiv seit **v0.21.11 / PR #144**. PR-CI #954, main-CI #960 und Pages #509 sind grün; der Live-Deploy wurde erfolgreich verifiziert.
+
 ## B-010 – Lernbibliothek redaktionell harmonisieren
-**Status:** IN_IMPLEMENTATION  
+**Status:** PRODUCTION  
 **Priorität:** P2  
 **Quelle:** `docs/project/LEARNING_COHERENCE_REVIEW.md`
 
-Aktuelle Navigation in Pädagogik- und Acceptance-Dokumenten auf **Heute · Lernen · Armee · Erfolge** vereinheitlichen, kanonische Fachquellen mit einem eindeutigen fachlichen Prüfstatus versehen und die redaktionelle Dopplung in Product DNA P9 entfernen. Historische README-Releaseeinträge bleiben als Historie unverändert.
+Produktiv über **PR #146**. Aktuelle Navigation in Pädagogik- und Acceptance-Dokumenten ist auf **Heute · Lernen · Armee · Erfolge** vereinheitlicht, kanonische Fachquellen tragen einen eindeutigen fachlichen Prüfstatus und die redaktionelle Dopplung in Product DNA P9 ist entfernt. Historische README-Releaseeinträge bleiben als Historie unverändert.
+
+Produktionsnachweis: PR-CI #961, main-CI #962 und Pages #510 sind grün; der Live-Deploy wurde erfolgreich verifiziert.
 
 
 ## B-005 – Praktische v1-Abnahme
