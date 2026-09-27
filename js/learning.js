@@ -415,18 +415,6 @@ function gradeText(w,answer,target,errorType,skill){if(session.locked)return;con
 function recordNonEvaluative(w,mode,ok,skill){w.modesSeen=[...new Set([...(w.modesSeen||[]),mode])];recordActivity(mode,{wordId:w.id,correct:ok});session.answered++;if(ok)session.correct++}
 function isActiveSkill(skill){return ['retrieval','spelling','context'].includes(skill)}
 function skillCredits(skill,opts={}){if(skill==='retrieval'&&session?.currentSubmode==='reverseRecall')return ['retrieval'];if(skill==='retrieval')return opts.orthographyOk===false?['retrieval']:['retrieval','spelling'];if(skill==='spelling')return ['spelling','listening'];if(skill==='context')return opts.orthographyOk===false?['context','retrieval']:['context','retrieval','spelling'];return [skill]}
-function appendDailyReplacementToSession(ref){
-  if(!session?.isDaily||!ref)return false;
-  const w=ref.setLinkId?wordByLinkId(ref.setLinkId):wordById(ref.wordId||'');
-  if(!w)return false;
-  const key=dailyPlanRefKey({wordId:w.id,setLinkId:w.setLinkId||''});
-  const queued=(session.queue||[]).some(token=>{
-    const existing=resolveQuizQueueRef(token,session.setId||'');
-    return existing&&dailyPlanRefKey({wordId:existing.id,setLinkId:existing.setLinkId||''})===key;
-  });
-  if(queued)return false;
-  session.queue.push(quizQueueRef(w));return true;
-}
 function recordResult(w,ok,skill,errorType,opts={}){
   const leitnerBefore=leitnerBox(w);
   w.repetitions++; w.lastReviewedAt=new Date().toISOString(); w.practiceDays=[...new Set([...(w.practiceDays||[]),today()])]; w.modesSeen=[...new Set([...(w.modesSeen||[]),session.currentSubmode||session.mode])];
@@ -461,8 +449,7 @@ function recordResult(w,ok,skill,errorType,opts={}){
   }
   session.answered++;refreshMastery(w);session.lastLeitnerMove=updateLeitnerBox(w,ok,{assisted,active,orthographyOk:opts.orthographyOk!==false,beforeBox:leitnerBefore});
   const dailySecurity=session?.isDaily&&active?recordDailySecurityResult(w,{correct:ok,active,assisted,orthographyOk:opts.orthographyOk!==false,wasTestReady}):null;
-  if(dailySecurity?.replacementRef)appendDailyReplacementToSession(dailySecurity.replacementRef);
-  else if(dailySecurity&&!dailySecurity.becameSecure&&dailySecurity.required>1&&dailySecurity.successStreak>0)scheduleDailySecurityFollowup(session,w);
+  if(dailySecurity&&!dailySecurity.becameSecure&&dailySecurity.required>1&&dailySecurity.successStreak>0)scheduleDailySecurityFollowup(session,w);
   recordActivity(session.currentSubmode||session.mode,{wordId:w.id,correct:ok,errorType,assisted,active,cold,orthographyOk:opts.orthographyOk!==false,todaySecure:!!dailySecurity?.becameSecure,refillSource:dailySecurity?.replacementSource||'',leitnerBefore:session.lastLeitnerMove.before,leitnerAfter:session.lastLeitnerMove.after});persistOnly();
 }
 function scheduleDailySecurityFollowup(targetSession,word){
