@@ -891,3 +891,5 @@ body.battle-immersive #battleView .battle-action-dock-copy span{color:#bdc8d2!im
   body.battle-immersive #battleView .battle-action-dock-copy span{display:none!important}
   body.battle-immersive #battleView .battle-action-dock .battle-primary{min-height:36px!important}
 }
+
+body.battle-immersive #battleView .battle-scene-tactics.hidden{display:none!important}
