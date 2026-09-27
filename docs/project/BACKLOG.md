@@ -29,7 +29,7 @@ Latein ist fachlich eigenständig. Der technische Stand verwendet an einzelnen S
 Französisch soll gemeinsame technische Grundlagen nutzen, aber eigene Fachregeln für Akzente, Formen, Aussprache und eine eigene visuelle Reise-/Sprachwelt erhalten. Die visuelle Vorbereitung ist nicht mit fachlicher Freischaltung gleichzusetzen.
 
 ## B-004 – Adaptives Nachrücken innerhalb desselben Tages
-**Status:** IMPLEMENTED  
+**Status:** PRODUCTION  
 **Priorität:** P0/P1  
 **Decision:** D-20260927-004  
 **Betroffene Quellen:** `PRODUCT_DNA.md` P3/P6, Lern-/Scheduler-Code, Tests
@@ -47,7 +47,7 @@ Umgesetzt in PR #138 / v0.21.8:
 - Persistenz und Family Sync transportieren Sicherheitsstatus, Evidenz und Zusatzwörter
 - automatisierte Learning-Integrity- und Family-Sync-Regressionstests sind Bestandteil der Release-CI
 
-Nach grünem CI- und Produktionsdeploy Status auf `PRODUCTION` setzen.
+Produktionsnachweis: PR-CI #945 erfolgreich, Merge PR #138 auf `main` (`1aa7983c330288a2091c60802ee2c503a716c04d`), main-CI #946 erfolgreich und Pages-Deploy #504 inklusive Live-Verifikation von v0.21.8 erfolgreich.
 
 ## B-005 – Praktische v1-Abnahme
 **Status:** APPROVED_BACKLOG / RELEASE TASK  
