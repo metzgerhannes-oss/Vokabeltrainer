@@ -110,7 +110,8 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    Wörter eingeführt. Pro Tag sind höchstens drei Zusatzwörter erlaubt, im LRS-Modus höchstens
    zwei; insgesamt werden weiterhin höchstens sieben neue Wörter an einem Tag eingeführt.
    Zusatzwörter erhöhen weder das Pflicht-Tagesziel noch dessen Fortschrittsanzeige und erzeugen
-   keine weitere Kampfaktion.
+   keine weitere Kampfaktion. Sie werden als freiwilliger nächster Lernschritt vorgemerkt und
+   nicht automatisch an eine bereits laufende Pflicht-Einheit angehängt.
 
 7. **Neue Wörter im Kontext, Wiederholung gemischt**
    Erstaneignung respektiert soweit sinnvoll Buch-/Unit-Reihenfolge und Zusammenhang.
