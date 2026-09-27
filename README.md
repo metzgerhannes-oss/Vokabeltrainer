@@ -10,11 +10,20 @@ Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änd
 
 ## Aktueller Stand
 
-App-Version: **v0.21.9**
+App-Version: **v0.21.10**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.21.10 – Same-Day-Spacing-Härtung
+
+- das Wiederholungsintervall wird nicht mehr aus der bloßen Zahl aller unabhängigen Treffer abgeleitet, sondern aus **unterschiedlichen aktiven Erfolgstagen**
+- mehrere richtige Abrufe desselben Wortes am selben Kalendertag bleiben als Übungs- und Accuracy-Evidenz erhalten, verlängern das nächste Intervall aber nicht mehrfach
+- ein Erfolg an einem späteren Tag kann die nächste Intervallstufe freigeben
+- Cold-Recall kann weiterhin einen begrenzten Zusatzimpuls geben, aber erst bei bereits verteilter Evidenz über mindestens zwei Erfolgstage
+- Mastery-Kriterien, Tagesziel, adaptives Nachrücken und Battle-Logik bleiben ansonsten unverändert
+- Learning-Integrity-Smoke prüft explizit: zwei Same-Day-Treffer bleiben beim Ein-Tages-Intervall; ein späterer Erfolg darf das Intervall erhöhen
 
 ## v0.21.9 – Tagesziel-Lernintegrität
 
