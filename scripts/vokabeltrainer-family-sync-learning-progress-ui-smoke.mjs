@@ -15,7 +15,8 @@ const handleRpc=async({url,body})=>{
   const name=new URL(url).pathname.split('/').pop(),args=body||{};
   if(name==='vt_pull_documents'){
     const documents=[...cloud.entries()].map(([key,row])=>({key,revision:row.revision,payload:clone(row.payload),updated_at:new Date().toISOString()}));
-    return {ok:true,family_id:FAMILY_ID,role:'child',profile_id:PROFILE_ID,documents};
+    const parent=String(args.p_device_id||'')==='device_learning_a';
+    return {ok:true,family_id:FAMILY_ID,role:parent?'parent':'child',profile_id:parent?'':PROFILE_ID,documents};
   }
   if(name==='vt_push_document'){
     const key=String(args.p_doc_key||''),current=cloud.get(key);
@@ -84,16 +85,16 @@ try{
   const docs=await pageA.evaluate(()=>VTFamilySync.serializeDocuments());
   for(const [key,payload] of Object.entries(docs))cloud.set(key,{revision:1,payload:clone(payload)});
   const revisions=Object.fromEntries([...cloud.keys()].map(k=>[k,1]));
-  const config=deviceId=>({
-    enabled:true,familyId:FAMILY_ID,deviceId,deviceSecret:'a'.repeat(64),role:'child',profileId:PROFILE_ID,
+  const config=(deviceId,role='child')=>({
+    enabled:true,familyId:FAMILY_ID,deviceId,deviceSecret:'a'.repeat(64),role,profileId:role==='child'?PROFILE_ID:'',
     revisions:{...revisions},dirtyKeys:[],conflicts:{},lastSync:'2026-09-26T10:00:00.000Z',revoked:false,revokedAt:''
   });
 
-  for(const [page,id] of [[pageA,'device_learning_a'],[pageB,'device_learning_b']]){
+  for(const [page,id,role] of [[pageA,'device_learning_a','parent'],[pageB,'device_learning_b','child']]){
     await page.evaluate(({key,cfg})=>{
       localStorage.setItem(key,JSON.stringify(cfg));
       VTFamilySync.markLocalChange();
-    },{key:CONFIG_KEY,cfg:config(id)});
+    },{key:CONFIG_KEY,cfg:config(id,role)});
     assert((await page.evaluate(()=>VTFamilySync.status().dirty))===0,'initial sync snapshot is clean');
   }
 
