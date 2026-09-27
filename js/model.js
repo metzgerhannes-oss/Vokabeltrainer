@@ -444,16 +444,45 @@ function scopedWordsForSet(set,scopeMode='set',from=1,to=null,selectedLinkIds=nu
 function scopeTextForSet(set,scopeMode='set',from=1,to=null,selectedLinkIds=null){if(!set)return '';if(scopeMode==='selected'){const count=scopedWordsForSet(set,'selected',from,to,selectedLinkIds).length;return `${set.title} · ${count} ausgewählt`}if(scopeMode!=='range')return set.title;const count=setWords(set.id).length;if(!count)return set.title;const r=normalizedRange(count,from,to);return `${set.title} · Vokabeln ${r.from}–${r.to}`}
 function scopedWordsForSeries(cfg,subject=state.activeSubject){if(!cfg||!cfg.setId)return [];const set=state.sets.find(s=>s.id===cfg.setId&&s.learnerId===state.activeLearnerId&&s.subject===subject);return scopedWordsForSet(set,cfg.scopeMode,cfg.from,cfg.to,cfg.selectedLinkIds)}
 function seriesScopeText(cfg){if(!cfg)return '';const set=state.sets.find(s=>s.id===cfg.setId);return scopeTextForSet(set,cfg.scopeMode,cfg.from,cfg.to,cfg.selectedLinkIds)}
+function recallDirectionForMode(mode=''){
+  const key=String(mode||'');
+  if(key==='recall'||key==='cards')return 'target';
+  if(key==='reverseRecall')return 'source';
+  return '';
+}
+function recordDirectionalRecallResult(w,{mode='',correct=false,assisted=false}={}){
+  const direction=recallDirectionForMode(mode);if(!w||!direction||assisted)return '';
+  const all=normalizeDirectionalRecall(w.directionalRecall),node=all[direction],now=new Date().toISOString();
+  node.lastCorrect=!!correct;node.lastAt=now;
+  if(correct)node.successDays=[...new Set([...(node.successDays||[]),today()])].slice(-1000);
+  w.directionalRecall=all;return direction;
+}
+function directionalRecallReady(w,direction){
+  const node=normalizeDirectionalRecall(w?.directionalRecall)[direction];
+  return !!(node&&node.lastCorrect===true&&(node.successDays||[]).length>0);
+}
+function testFormatDirectionReady(w,testFormat='target'){
+  const format=['target','source','mixed','dictation'].includes(testFormat)?testFormat:'target';
+  if(format==='dictation')return true;
+  if(format==='source')return directionalRecallReady(w,'source');
+  if(format==='mixed')return directionalRecallReady(w,'target')&&directionalRecallReady(w,'source');
+  return directionalRecallReady(w,'target');
+}
 function testReadinessScore(w){
   const s={...defaultSkills(),...(w.skills||{})};
-  const activeCore=((s.retrieval||0)*.48+(s.spelling||0)*.38+(s.context||0)*.08+(s.recognition||0)*.03+(s.listening||0)*.03)/4;
+  const activeCore=((s.retrieval||0)*.52+(s.spelling||0)*.40+(s.context||0)*.08)/4;
   const activeDays=Math.min(1,(w.activeSuccessDays||[]).length/2); const delayed=Math.min(1,(w.maxActiveGapDays||0)/3);
   return Math.round((activeCore*.72+activeDays*.18+delayed*.10)*100);
 }
-function isTestReady(w){const s={...defaultSkills(),...(w.skills||{})};return isMastered(w)||(testReadinessScore(w)>=65&&(s.retrieval||0)>=2&&(s.spelling||0)>=2&&(w.activeSuccessDays||[]).length>=2&&(w.coldRecallDays||[]).length>=1&&(w.maxActiveGapDays||0)>=1)}
+function isTestReady(w,testFormat='target'){
+  const s={...defaultSkills(),...(w.skills||{})};
+  const base=isMastered(w)||(testReadinessScore(w)>=65&&(s.retrieval||0)>=2&&(s.spelling||0)>=2&&(w.activeSuccessDays||[]).length>=2&&(w.coldRecallDays||[]).length>=1&&(w.maxActiveGapDays||0)>=1);
+  return !!(base&&testFormatDirectionReady(w,testFormat));
+}
 function testReadinessForContext(ctx){
   const words=ctx?.words||[]; if(!words.length)return {total:0,ready:0,pct:0,avg:0,weak:[]};
-  const ready=words.filter(isTestReady).length; const avg=Math.round(words.reduce((sum,w)=>sum+testReadinessScore(w),0)/words.length);
+  const testFormat=ctx?.testFormat||'target';
+  const ready=words.filter(w=>isTestReady(w,testFormat)).length; const avg=Math.round(words.reduce((sum,w)=>sum+testReadinessScore(w),0)/words.length);
   const weak=[...words].sort((a,b)=>testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b));
   return {total:words.length,ready,pct:Math.round(ready/words.length*100),avg,weak};
 }
@@ -533,12 +562,12 @@ function buildDailyPlan(subject=state.activeSubject){
   const pool=ctx?ctx.words:schoolYearVerifiedWords(subject);
   const hasLearningContact=w=>Number(w?.repetitions||0)>0||(w?.activePracticeDays||[]).length>0;
   const pending=pool.filter(w=>!hasLearningContact(w)),ready=pool.filter(hasLearningContact);
-  const weakReady=ready.filter(w=>!isTestReady(w)),introPlan=dailyIntroQuota(pending.length,ctx,weakReady.length,!!l.lrsMode),dailyTarget=introPlan.dailyTarget;
+  const testFormat=ctx?.testFormat||'target',weakReady=ready.filter(w=>!isTestReady(w,testFormat)),introPlan=dailyIntroQuota(pending.length,ctx,weakReady.length,!!l.lrsMode),dailyTarget=introPlan.dailyTarget;
   const firstPending=pending[0],introSetId=firstPending?.setId||'';
   const introWords=introSetId?pending.filter(w=>w.setId===introSetId).slice(0,introPlan.quota):[];
   const reviewTarget=Math.max(0,dailyTarget-introWords.length);
   const due=ready.filter(w=>!w.dueDate||w.dueDate<=today()).sort((a,b)=>testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b));
-  const seenWeak=ready.filter(w=>!isTestReady(w)).sort((a,b)=>testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b));
+  const seenWeak=ready.filter(w=>!isTestReady(w,testFormat)).sort((a,b)=>testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b));
   let selected=uniqueWords([...due,...seenWeak,...ready]).slice(0,reviewTarget),maintenanceCount=0;
 
   if(selected.length<reviewTarget){
@@ -549,7 +578,7 @@ function buildDailyPlan(subject=state.activeSubject){
   const phase=ctx?(ctx.days<=1?'rehearse':ctx.days<=3?'consolidate':'acquire'):'general';
   const urgent=!!(introPlan.overload||(ctx&&ctx.days<=1&&pending.length));
   const plan={
-    date:today(),subject,signature,source:ctx?(ctx.source||'test'):'general',testDate:ctx?.date||'',
+    date:today(),subject,signature,source:ctx?(ctx.source||'test'):'general',testDate:ctx?.date||'',testFormat,
     setIds:ctx?.sets.map(s=>s.id)||[],setTitle:ctx?.scopeText||ctx?.sets.map(s=>s.title).join(' + ')||'',
     wordIds:selected.map(w=>w.id),wordRefs:selected.map(w=>({wordId:w.id,setLinkId:w.setLinkId||''})),
     introRefs:introWords.map(w=>({wordId:w.id,setLinkId:w.setLinkId||''})),introSetId,
@@ -576,7 +605,7 @@ function dailyPlanReplacementCandidate(plan=buildDailyPlan()){
   if(plan.extraRefs.length>=plan.extraLimit)return null;
   const used=new Set(dailyPlanRefs(plan,true).map(dailyPlanRefKey).filter(Boolean));
   const available=w=>{const key=dailyPlanRefKey({wordId:w?.id,setLinkId:w?.setLinkId||''});return !!key&&!used.has(key)};
-  const ctx=upcomingTestContext(plan.subject),scope=ctx?.words?.length?ctx.words:schoolYearVerifiedWords(plan.subject);
+  const ctx=upcomingTestContext(plan.subject),testFormat=ctx?.testFormat||plan.testFormat||'target',scope=ctx?.words?.length?ctx.words:schoolYearVerifiedWords(plan.subject);
   const extraNewCount=Object.values(plan.extraSources||{}).filter(source=>source==='new').length;
   const introducedNewCount=Math.max(0,Number(plan.introCount)||0)+extraNewCount;
   const allowNew=(!ctx||Number(ctx.days)>3)&&introducedNewCount<7;
@@ -585,7 +614,7 @@ function dailyPlanReplacementCandidate(plan=buildDailyPlan()){
     if(unknown)return {ref:{wordId:unknown.id,setLinkId:unknown.setLinkId||''},source:'new'};
   }
   if(ctx){
-    const weak=ctx.words.filter(w=>available(w)&&dailyPlanHasLearningContact(w)&&!isTestReady(w))
+    const weak=ctx.words.filter(w=>available(w)&&dailyPlanHasLearningContact(w)&&!isTestReady(w,testFormat))
       .sort((a,b)=>testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b))[0];
     if(weak)return {ref:{wordId:weak.id,setLinkId:weak.setLinkId||''},source:'weak-test'};
   }
@@ -602,7 +631,7 @@ function recordDailySecurityResult(w,{correct=false,active=false,assisted=false,
   const secure=new Set(plan.todaySecureKeys);
   if(secure.has(key))return {becameSecure:false,replacementRef:null,replacementSource:'',required:Number(plan.securityEvidence?.[key]?.required)||1};
   const evidence=plan.securityEvidence[key]&&typeof plan.securityEvidence[key]==='object'?plan.securityEvidence[key]:{};
-  if(!Number.isFinite(Number(evidence.required))||Number(evidence.required)<1)evidence.required=(wasTestReady===true||(wasTestReady==null&&isTestReady(w)))?1:2;
+  if(!Number.isFinite(Number(evidence.required))||Number(evidence.required)<1)evidence.required=(wasTestReady===true||(wasTestReady==null&&isTestReady(w,plan.testFormat||'target')))?1:2;
   evidence.required=Math.max(1,Math.min(2,Number(evidence.required)||2));
   evidence.attempts=(Number(evidence.attempts)||0)+1;
   evidence.lastAt=new Date().toISOString();
