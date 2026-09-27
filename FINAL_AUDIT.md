@@ -1,10 +1,12 @@
 # Finales Audit
 
-Stand: 27.09.2026 · App v0.21.18
+Stand: 27.09.2026 · App v0.21.19
 
 ## Ergebnis
 
-- v0.21.18 korrigiert die Testreihenfolge: Ein neu geplanter späterer Test darf einen früheren noch bevorstehenden Test nicht mehr überschreiben. Mehrere einmalige Termine bleiben parallel gespeichert, der früheste Termin steuert Lernen, Heute und Kampagnenziel. Spätere Bibliotheks-, manuelle und OCR-Testpläne werden nur eingereiht. Für durch v0.21.17 bereits verlorene frühere Termine gibt es eine einmalige konservative Wiederherstellung aus vorhandener zukünftiger Festungsevidenz. Regressionstests sichern Terminreihenfolge, getrennte Testumfänge und Reparatur.
+- v0.21.19 erhöht die Referenz-Fidelity der Kampagnenbanner: Proportionen, Innenposition, gerollte Pergamentenden, seitlich hängende Wappen und der lange goldene Stab orientieren sich direkt am freigegebenen Screenshot. Die Testlogik bleibt unverändert.
+
+- v0.21.19 korrigiert die Testreihenfolge: Ein neu geplanter späterer Test darf einen früheren noch bevorstehenden Test nicht mehr überschreiben. Mehrere einmalige Termine bleiben parallel gespeichert, der früheste Termin steuert Lernen, Heute und Kampagnenziel. Spätere Bibliotheks-, manuelle und OCR-Testpläne werden nur eingereiht. Für durch v0.21.17 bereits verlorene frühere Termine gibt es eine einmalige konservative Wiederherstellung aus vorhandener zukünftiger Festungsevidenz. Regressionstests sichern Terminreihenfolge, getrennte Testumfänge und Reparatur.
 
 - v0.21.17 führt den Bannerstil exakt auf die freigegebene visuelle Richtung zurück: horizontale Pergamentbanner oben im Bild mit farbigem Heraldik-Schild und waagerechter Zierstange. Die stehenden Feldstandarten aus v0.21.16 entfallen. Testnummernkorrektur und Bild-/Karten-Abstand bleiben unverändert erhalten; Armeeübersicht und Angriffsszene verwenden denselben Stil. Browserregressionen sichern Form, Position und Heraldikdetails.
 
