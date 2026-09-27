@@ -978,7 +978,7 @@ function openTestDatePlanner(){
   $('#planSelectAll').onclick=()=>{picker.querySelectorAll('[data-plan-row]').forEach(x=>x.checked=true);updatePreview()};
   $('#planSelectNone').onclick=()=>{picker.querySelectorAll('[data-plan-row]').forEach(x=>x.checked=false);updatePreview()};
   $('#planSelectRange').onclick=()=>applyVocabularyPickerRange(picker,'[data-plan-row]',rangeFrom,rangeTo,updatePreview);
-  learnerEl.onchange=loadLearnerDefaults;mode.onchange=()=>{syncMode();renderRows()};date.onchange=()=>{renderRows();updatePreview()};weekday.onchange=updatePreview;bookEl.onchange=updateSections;sectionEl.onchange=renderRows;format.onchange=updatePreview;
+  learnerEl.onchange=loadLearnerDefaults;mode.onchange=()=>{syncMode();renderRows()};date.onchange=()=>{if(matchingSet())renderRows();else updatePreview()};weekday.onchange=updatePreview;bookEl.onchange=updateSections;sectionEl.onchange=renderRows;format.onchange=updatePreview;
   $('#planOpenContent').onclick=()=>{const l=learnerEl.value,b=bookEl.value,sec=sectionEl.value;closeModal();openLearningContentPlanner({learnerId:l,bookId:b,section:sec})};
   $('#saveTestPlan').onclick=()=>{
     const selected=selectedRows();if(!selected.length){preview.className='notice warn';preview.textContent='Bitte mindestens eine Vokabel für den Test auswählen.';return}
