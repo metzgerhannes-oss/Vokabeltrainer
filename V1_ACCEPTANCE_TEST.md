@@ -26,6 +26,8 @@ Zusatz für v0.21.21: Im Tageslernweg mindestens zwei Vokabeln fachlich richtig 
 
 Zusatz für v0.21.22: Einen normalen Tagesplan mit deutlich mehr als sechs offenen Testvokabeln prüfen. Der Pflichtkern darf höchstens **6 Fokuswörter** enthalten; mit „Kurze Einheiten“ höchstens **4**. Maximal 3 bzw. 2 neue Wörter dürfen im Pflichtkern liegen. Auch bei massivem Rückstand darf der Pflichtzähler nicht auf 12–14 Wörter steigen. Nach Abschluss darf eine **zweite kurze Runde** empfohlen werden, sie muss freiwillig bleiben und darf keine zweite Battle-Aktion erzeugen. Ein bestehender 12er-Tagesplan aus v0.21.21 muss beim Update verkleinert werden, ohne bereits heute erledigte passende Wörter zu verlieren.
 
+T−1-Zusatz für v0.21.22: Einen Test für **morgen** mit deutlichem Rückstand prüfen. Nach dem kurzen Pflichtkern muss die App eine **Rettungsrunde** anbieten, aber nicht den kompletten Testumfang am Stück. Die Runde enthält höchstens 6 Fokuswörter bzw. 4 bei „Kurze Einheiten“. Bereits testbereite Wörter dürfen nicht erscheinen. Nach einem Fehler muss das Wort in der nächsten Priorität vorne stehen; nach einer korrekten unassistierten Korrektur müssen noch ungeprüfte offene Wörter nachrücken. Bei `target`, `source`, `mixed` und `dictation` muss die Rettungsrunde die reale Testrichtung spiegeln. Diktat muss produktiv geschrieben werden. Rettungsrunden dürfen weder `completedKeys` des Pflichtziels noch eine weitere Battle-Aktion erzeugen.
+
 ## Grundregel
 
 Die fachlich korrekte Vokabelabfrage ist die Daseinsberechtigung der App.
