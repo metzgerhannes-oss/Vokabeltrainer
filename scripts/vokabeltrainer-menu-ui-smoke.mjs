@@ -21,7 +21,7 @@ try{
     state=defaultState();
     learner().activeSubjects=['english','latin'];
     state.activeSubject='english';
-    const set={id:'menu_set',learnerId:'learner_demo',subject:'english',title:'Menu Unit',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+    const set={id:'menu_set',learnerId:'learner_demo',subject:'english',title:'Menu Unit',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(5),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
     state.sets.push(set);
     const mastered=attachVocabularyToSet(set.id,{term:'castle',translation:'Burg',source:'menu-smoke',verified:true,firstContactCopiedAt:'test',firstContactRecalledAt:'test',firstContactCompletedAt:'test'}).word;
     attachVocabularyToSet(set.id,{term:'learn',translation:'lernen',source:'menu-smoke',verified:true,firstContactCopiedAt:'test',firstContactRecalledAt:'test',firstContactCompletedAt:'test'});
@@ -73,6 +73,9 @@ try{
     avatarStage:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarStage,
     avatarKey:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarVisualKey,
     avatarLabel:document.querySelector('#menuAvatarStageLabel')?.textContent,
+    nextTestPct:document.querySelector('#menuNextTestPct')?.textContent,
+    nextTestDetail:document.querySelector('#menuNextTestDetail')?.textContent,
+    nextTestHidden:document.querySelector('#menuNextTestProgress')?.classList.contains('hidden'),
     avatarPips:document.querySelectorAll('#menuAvatarStagePips i.filled').length,
     avatarArtKey:document.querySelector('#projectMenuAvatarArt')?.dataset.avatarArtKey,
     avatarFinal:document.querySelector('#projectMenuAvatarArt')?.dataset.avatarFinal,
@@ -83,7 +86,10 @@ try{
   assert(metrics.pct===50,'seed creates deterministic 50 percent mastery');
   assert(metrics.avatarStage==='3','50 percent academic progress maps to avatar stage 3');
   assert(metrics.avatarKey==='english-male-stage-3','avatar exposes a stable profile-specific artwork key');
-  assert(metrics.avatarLabel==='Avatar · Stufe 3/6','avatar stage label is visible');
+  assert(metrics.avatarLabel==='Mein Profil · Stufe 3/6','profile name replaces the generic Avatar label');
+  assert(metrics.nextTestHidden===false,'upcoming test progress is visible when a test is planned');
+  assert(metrics.nextTestPct==='50%','upcoming test progress shows the test-specific readiness percentage');
+  assert(metrics.nextTestDetail==='1 von 2 Vokabeln sicher','upcoming test progress shows ready and total vocabulary counts');
   assert(metrics.avatarPips===3,'avatar stage pips match current stage');
   assert(metrics.avatarFinal==='true','English menu uses final stage-specific avatar artwork');
   assert(metrics.avatarArtKey==='english-male-stage-3','English male avatar artwork matches the computed stage');
@@ -142,6 +148,7 @@ try{
   assert((await page.locator('#menuSubjectLabel').textContent())==='Latein','subject switch updates menu context');
   assert((await page.locator('#projectMenuAvatarFrame').getAttribute('data-avatar-visual-key'))==='latin-male-stage-1','avatar artwork key follows subject, profile style and its own academic progress');
   assert((await page.locator('#projectMenuAvatarArt').getAttribute('data-avatar-final'))==='false','Latin intentionally keeps the shared fallback until its own six final artworks are added');
+  assert(await page.locator('#menuNextTestProgress').isHidden(),'test progress hides when the active subject has no upcoming test');
   assert(await page.evaluate(()=>subjectProgress('english').pct)===beforeSwitch,'rendering and switching avatar context never changes academic mastery');
 
   assert(errors.length===0,'menu navigation must not produce browser errors: '+errors.join(' | '));

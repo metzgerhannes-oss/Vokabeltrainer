@@ -418,6 +418,9 @@
 #battleView .battle-actions{max-width:900px;margin-left:auto;margin-right:auto}
 
 @media(max-width:720px){
+  #battleView .battle-scene-hud.battle-readout>div:nth-child(2),
+  #battleView .battle-scene-hud.battle-readout>div:nth-child(3){display:none}
+  #battleView .battle-scene-hud.battle-readout{grid-template-columns:1fr 1fr}
   #battleView.active .battle-shell{
     padding:8px 8px calc(122px + env(safe-area-inset-bottom));
   }
@@ -513,4 +516,146 @@
     grid-template-rows:88px auto;
   }
   #battleView .battle-attack-visual{height:88px}
+}
+
+
+/* v0.21.7 – Battle focus mode
+   Reliable app-level focus view for iPhone/PWA; no browser Fullscreen API. */
+#battleView .battle-fortress-state-badge span{
+  display:block;
+  margin-top:3px;
+  color:#f3f4f6;
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:0;
+  text-transform:none;
+}
+#battleView .battle-focus-attack{display:none}
+
+body.battle-immersive{
+  overflow:hidden!important;
+  background:#07131a!important;
+}
+body.battle-immersive .topbar,
+body.battle-immersive .bottom-nav{
+  display:none!important;
+}
+body.battle-immersive #battleView{
+  display:block!important;
+  position:fixed!important;
+  inset:0!important;
+  z-index:1000!important;
+  overflow:hidden!important;
+  padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))!important;
+  background:#07131a!important;
+}
+body.battle-immersive #battleView .battle-shell{
+  width:100%!important;
+  max-width:none!important;
+  height:100%!important;
+  padding:0!important;
+  display:block!important;
+}
+body.battle-immersive #battleView .battle-story,
+body.battle-immersive #battleView .battle-head,
+body.battle-immersive #battleView .battle-boss-panel,
+body.battle-immersive #battleView .battle-scene-hud,
+body.battle-immersive #battleView .battle-scene-tactics,
+body.battle-immersive #battleView .battle-action-dock,
+body.battle-immersive #battleView .battle-message,
+body.battle-immersive #battleView .battle-actions,
+body.battle-immersive #battleView .battle-ticket-pill,
+body.battle-immersive #battleView #battleBackBtn{
+  display:none!important;
+}
+body.battle-immersive #battleView .battle-toolbar{
+  position:absolute!important;
+  z-index:1300!important;
+  top:max(10px,env(safe-area-inset-top))!important;
+  right:max(10px,env(safe-area-inset-right))!important;
+  left:auto!important;
+  width:auto!important;
+  margin:0!important;
+  display:block!important;
+  pointer-events:none!important;
+}
+body.battle-immersive #battleView #battleFullscreenBtn{
+  display:inline-flex!important;
+  min-height:42px!important;
+  padding:9px 12px!important;
+  border:1px solid rgba(255,255,255,.38)!important;
+  border-radius:999px!important;
+  background:rgba(10,42,58,.78)!important;
+  color:#fff!important;
+  box-shadow:0 5px 16px rgba(0,0,0,.18)!important;
+  backdrop-filter:blur(8px);
+  pointer-events:auto!important;
+}
+body.battle-immersive #battleView .battle-stage-wrap{
+  position:relative!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  margin:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+body.battle-immersive #battleView .battle-stage{
+  width:min(100%,calc((100vh - 16px) * 1.7778))!important;
+  height:auto!important;
+  min-height:0!important;
+  aspect-ratio:16 / 9!important;
+  border:0!important;
+  border-radius:18px!important;
+  box-shadow:none!important;
+}
+body.battle-immersive #battleView .battle-stage.battle-art-ready .battle-art-background{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+}
+body.battle-immersive #battleView .battle-fortress-state-badge{
+  display:block!important;
+  right:14px!important;
+  bottom:14px!important;
+  min-width:175px!important;
+  max-width:min(52vw,240px)!important;
+}
+body.battle-immersive #battleView .battle-focus-attack{
+  display:inline-flex!important;
+  position:absolute!important;
+  z-index:1250!important;
+  left:max(14px,env(safe-area-inset-left))!important;
+  bottom:max(14px,env(safe-area-inset-bottom))!important;
+  min-height:44px!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:10px 14px!important;
+  border:1px solid rgba(255,255,255,.38)!important;
+  border-radius:999px!important;
+  background:rgba(10,60,89,.86)!important;
+  color:#fff!important;
+  font-weight:900!important;
+  box-shadow:0 5px 16px rgba(0,0,0,.18)!important;
+  backdrop-filter:blur(8px);
+}
+body.battle-immersive #battleView .battle-focus-attack.hidden{display:none!important}
+
+@media(max-width:720px){
+  body.battle-immersive #battleView .battle-stage{
+    width:100%!important;
+    border-radius:14px!important;
+  }
+  body.battle-immersive #battleView .battle-fortress-state-badge{
+    right:10px!important;
+    bottom:10px!important;
+    min-width:150px!important;
+    max-width:58vw!important;
+  }
+  body.battle-immersive #battleView .battle-focus-attack{
+    left:max(10px,env(safe-area-inset-left))!important;
+    bottom:max(10px,env(safe-area-inset-bottom))!important;
+  }
 }

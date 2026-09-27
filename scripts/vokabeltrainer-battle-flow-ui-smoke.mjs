@@ -1,7 +1,7 @@
 import { createBattleHarness } from './helpers/vokabeltrainer-battle-harness.mjs';
 
 const h=await createBattleHarness();
-const {browser,page,assert,activate,reset,openBattle,waitForBattleResult,errors}=h;
+const {browser,page,assert,activate,reset,openBattle,waitForBattleResult,errors,diagnose}=h;
 
 try{
   await reset({revealed:true,ticket:true});
@@ -22,8 +22,11 @@ try{
 
   const expectedRamDamage=await page.evaluate(()=>testFortressDamage(currentTestFortress(),'english','ram').damage);
   assert((await page.locator('#battleTicketPill').textContent())?.includes('1'),'battle screen shows earned attack');
-  await activate('#battleFullscreenBtn','battle fullscreen action');
-  assert(await page.locator('body.battle-immersive').count()===1,'immersive fullscreen fallback activates');
+  await activate('#battleFullscreenBtn','battle focus action');
+  assert(await page.locator('body.battle-immersive').count()===1,'scene-only battle focus activates');
+  assert(await page.locator('#battleAttackBtn').isHidden(),'primary attack action stays outside the scene-only focus view');
+  await activate('#battleFocusAttackBtn','focus attack picker');
+  assert(await page.locator('body.battle-immersive').count()===0,'attack picker leaves focus mode before battle controls are used');
   await activate('#battleAttackBtn','battle primary action');
   assert((await page.locator('[data-battle-impact-title]').textContent())==='TOR-TREFFER!','ram attack prepares a clear gate-hit callout immediately');
   assert((await page.locator('[data-battle-impact-damage]').textContent())===expectedRamDamage+' Schaden','visual hit callout uses the exact calculated damage');

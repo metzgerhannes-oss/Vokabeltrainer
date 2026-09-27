@@ -126,6 +126,22 @@
 .project-menu-avatar-stage-pips{display:flex;justify-content:center;gap:4px;margin-top:5px}
 .project-menu-avatar-stage-pips i{display:block;width:16px;height:4px;border-radius:999px;background:rgba(255,255,255,.26)}
 .project-menu-avatar-stage-pips i.filled{background:#f7d66f}
+.project-menu-test-progress{
+  margin-top:7px;padding-top:6px;border-top:1px solid rgba(255,255,255,.22);
+}
+.project-menu-test-progress>span{
+  display:flex;align-items:baseline;justify-content:center;gap:7px;
+  font-size:.61rem;line-height:1.1;color:#e5e7eb;
+}
+.project-menu-test-progress>span>b{
+  font-weight:800;color:#e5e7eb;
+}
+.project-menu-test-progress>span>strong{
+  display:inline;color:#f7d66f;font-size:.76rem;line-height:1;
+}
+.project-menu-test-progress>small{
+  margin-top:4px!important;color:#fff!important;font-size:.61rem!important;font-weight:750;
+}
 
 .project-menu-avatar-frame[data-avatar-stage="1"] .project-menu-avatar-art{transform:scale(.90)}
 .project-menu-avatar-frame[data-avatar-stage="2"] .project-menu-avatar-art{transform:scale(.93);filter:drop-shadow(0 16px 18px rgba(15,23,42,.23)) saturate(1.03)}
