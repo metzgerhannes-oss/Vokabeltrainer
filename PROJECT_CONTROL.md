@@ -18,7 +18,7 @@ Bei Widersprüchen gilt grundsätzlich folgende Rangfolge:
 
 1. **[PRODUCT_DNA.md](PRODUCT_DNA.md)** – fachliche und didaktische Grundprinzipien
 2. **[VISUAL_DNA.md](VISUAL_DNA.md)** – verbindliche visuelle und UX-bezogene Leitplanken, soweit sie der Product DNA nicht widersprechen
-3. **Fachspezifikationen** – z. B. [QUIZ_ENGINE.md](QUIZ_ENGINE.md), [SENSE_MODEL.md](SENSE_MODEL.md), [SUBJECT_SYSTEM.md](SUBJECT_SYSTEM.md), [SYNC_ARCHITECTURE.md](SYNC_ARCHITECTURE.md), [LIBRARY_INDEX.md](LIBRARY_INDEX.md)
+3. **Fachspezifikationen** – z. B. [QUIZ_ENGINE.md](QUIZ_ENGINE.md), [SENSE_MODEL.md](SENSE_MODEL.md), [SUBJECT_SYSTEM.md](SUBJECT_SYSTEM.md), [SYNC_ARCHITECTURE.md](SYNC_ARCHITECTURE.md), [LIBRARY_INDEX.md](LIBRARY_INDEX.md), [docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md](docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md)
 4. **[docs/project/DECISIONS.md](docs/project/DECISIONS.md)** – explizite Grundsatz- und Änderungsentscheidungen mit ID, Datum, Status und Quelle
 5. **[docs/project/CURRENT_STATE.md](docs/project/CURRENT_STATE.md)** – aktueller Produktions- und Verifikationsstand
 6. **Code + automatisierte Tests auf `main`** – tatsächliche Implementierungswahrheit
@@ -87,6 +87,7 @@ Eine Änderung ist erst vollständig dokumentiert, wenn die betroffenen Ebenen a
 - [SYNC_ARCHITECTURE.md](SYNC_ARCHITECTURE.md)
 - [FOCUSED_LEARNING_UI.md](FOCUSED_LEARNING_UI.md)
 - [CACHE_STRATEGY.md](CACHE_STRATEGY.md)
+- [docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md](docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md) – kanonische evidenzgeprüfte Fachbasis für Deutsch Grundschule 1–4
 
 ### Verifikation und Historie
 - [V1_ACCEPTANCE_TEST.md](V1_ACCEPTANCE_TEST.md)
