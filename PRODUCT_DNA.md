@@ -133,6 +133,21 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    keine weitere Kampfaktion. Sie werden als freiwilliger nächster Lernschritt vorgemerkt und
    nicht automatisch an eine bereits laufende Pflicht-Einheit angehängt.
 
+   **T−1-Rettungsmodus:** Liegt der Test am nächsten Tag und ist noch deutlicher Rückstand
+   vorhanden, wird nicht der komplette Testumfang stumpf als Karteikasten abgefragt. Nach dem
+   kurzen Pflichtkern bietet die App getrennte freiwillige Rettungsrunden mit höchstens sechs
+   Fokuswörtern, bei „Kurze Einheiten“ höchstens vier. Testbereite Wörter werden ausgelassen.
+   Priorität haben Fehler aus der vorherigen Rettungsrunde und danach noch nicht geprüfte
+   unsichere bzw. unbekannte Testwörter. Neue Wörter dürfen hier trotz des knappen Abstands
+   bearbeitet werden, werden aber ausdrücklich nicht als verteilt gemeistert behandelt.
+   Jede Runde spiegelt das reale Testformat bzw. die Abfragerichtung; bei Diktat ist produktive
+   Rechtschreibung erforderlich. Ein falscher Abruf erhält eine begrenzte erneute Lernchance.
+   Rettungsrunden verändern das Pflicht-Tagesziel und die Zahl der Battle-Aktionen nicht.
+   Richtige Abrufe fließen nur als tatsächlich erbrachte Evidenz in den Lernstand ein; die
+   bestehenden Mastery- und Spacing-Kriterien werden nicht abgesenkt. Nach einer Runde soll
+   eine Pause möglich und bei weiterem Rückstand eine weitere kurze Runde gezielt angeboten
+   werden, statt eine lange Massensession zu erzwingen.
+
 7. **Neue Wörter im Kontext, Wiederholung gemischt**
    Erstaneignung respektiert soweit sinnvoll Buch-/Unit-Reihenfolge und Zusammenhang.
    Wiederholung mischt bewusst, damit kein reines Reihenfolgenlernen entsteht.
