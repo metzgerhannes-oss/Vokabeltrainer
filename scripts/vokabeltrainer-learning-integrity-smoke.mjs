@@ -55,6 +55,23 @@ const passed=vm.runInContext(`
   assert(session.correct===1,'semantic retrieval success remains credited');
 
   state=defaultState();
+  const sameDaySet={id:'same_day_spacing_set',learnerId:'learner_demo',subject:'english',title:'Same Day Spacing',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+  state.sets.push(sameDaySet);
+  const sameDayWord=attachVocabularyToSet(sameDaySet.id,{term:'spacing',translation:'Abstand',source:'spacing-smoke',verified:true}).word;
+  session={mode:'adaptive',currentSubmode:'recall',hintUsed:false,isDaily:false,activeAttemptedWords:{},scaffoldedWords:{},correct:0,answered:0};
+  recordResult(sameDayWord,true,'retrieval',null,{orthographyOk:true});
+  assert(sameDayWord.intervalDays===1&&(sameDayWord.activeSuccessDays||[]).length===1,'first independent success creates one spacing day and a one-day interval');
+  recordResult(sameDayWord,true,'retrieval',null,{orthographyOk:true});
+  assert(sameDayWord.intervalDays===1&&(sameDayWord.activeSuccessDays||[]).length===1&&sameDayWord.independentSuccesses===2,'a second same-day success improves practice evidence but cannot lengthen the spacing interval');
+
+  const nextDayWord=attachVocabularyToSet(sameDaySet.id,{term:'distributed',translation:'verteilt',source:'spacing-smoke',verified:true}).word;
+  nextDayWord.independentSuccesses=1;nextDayWord.activeSuccessDays=[datePlusDays(-1)];nextDayWord.activePracticeDays=[datePlusDays(-1)];nextDayWord.lastActiveSuccessAt=datePlusDays(-1)+'T12:00:00.000Z';nextDayWord.intervalDays=1;nextDayWord.recentActiveResults=[true];
+  session={mode:'adaptive',currentSubmode:'recall',hintUsed:false,isDaily:false,activeAttemptedWords:{},scaffoldedWords:{[nextDayWord.id]:true},correct:0,answered:0};
+  recordResult(nextDayWord,true,'retrieval',null,{orthographyOk:true});
+  assert(nextDayWord.intervalDays===3&&(nextDayWord.activeSuccessDays||[]).length===2,'a success on a distinct later day can advance the spacing interval');
+  session=null;
+
+  state=defaultState();
   const isbnBase='978000000000',approvalBook=makeBook(isbnBase+isbn13Checksum(isbnBase),'english',{id:'approval_book',title:'Approval Book'});
   state.books.push(approvalBook);
   const approvalSet={id:'approval_set',learnerId:'learner_demo',subject:'english',title:'Approval Unit',schoolYear:currentSchoolYear(),bookId:approvalBook.id,bookSection:'Approval Unit',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:'2026-09-22T05:00:00.000Z',pairVerifiedSignature:''};

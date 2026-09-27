@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 27.09.2026 · Basis: v0.21.9 · Release-Kandidat: Tagesziel-Lernintegrität
+Stand: 27.09.2026 · Basis: v0.21.10 · Release-Kandidat: Same-Day-Spacing-Härtung
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.

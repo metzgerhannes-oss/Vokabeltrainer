@@ -435,7 +435,7 @@ function recordResult(w,ok,skill,errorType,opts={}){
       const previousDay=w.lastActiveSuccessAt?dateKey(new Date(w.lastActiveSuccessAt)):null,gap=previousDay?Math.max(0,dayNumber(today())-dayNumber(previousDay)):0;
       w.independentSuccesses=(w.independentSuccesses||0)+1;w.activeSuccessDays=[...new Set([...(w.activeSuccessDays||[]),today()])];w.maxActiveGapDays=Math.max(Number(w.maxActiveGapDays)||0,gap);w.lastActiveSuccessAt=now;
       if(cold){w.coldRecallDays=[...new Set([...(w.coldRecallDays||[]),today()])];w.coldRecallSuccesses=(w.coldRecallSuccesses||0)+1;}
-      const seq=[0,1,3,7,14,30,60],acc=recentActiveAccuracy(w);let idx=Math.max(1,(w.independentSuccesses||0)-w.failures);if(cold&&acc!==null&&acc>=.85)idx+=1;if(acc!==null&&acc<.65)idx=Math.min(idx,1);w.intervalDays=seq[Math.min(seq.length-1,idx)];w.dueDate=datePlusDays(w.intervalDays);learner().xp+=3;
+      const seq=[0,1,3,7,14,30,60],acc=recentActiveAccuracy(w),spacingDays=(w.activeSuccessDays||[]).length;let idx=Math.max(1,spacingDays);if(cold&&spacingDays>=2&&acc!==null&&acc>=.85)idx+=1;if(acc!==null&&acc<.65)idx=Math.min(idx,1);w.intervalDays=seq[Math.min(seq.length-1,idx)];w.dueDate=datePlusDays(w.intervalDays);learner().xp+=3;
     }else{learner().xp+=1;session.scaffoldedWords[w.id]=true;}
     if(opts.orthographyOk===false){
       w.errorProfile.spelling=(w.errorProfile.spelling||0)+1;

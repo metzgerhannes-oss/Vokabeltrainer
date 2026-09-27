@@ -63,6 +63,10 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
 3. **Verteiltes Lernen statt kurzfristigem Pauken**
    Spacing und Successive Relearning bestimmen Wiederholungen. Ein Wort gilt erst nach
    erfolgreichen Abrufen über mehrere Tage als nachhaltig gemeistert.
+   Mehrere richtige Abrufe desselben Wortes am selben Kalendertag dürfen Übungssicherheit,
+   Accuracy und Diagnose verbessern, liefern für die Verlängerung des Wiederholungsintervalls
+   aber nur **einen verteilungsrelevanten Erfolgstag**. Größere Intervalle müssen aus Erfolgen
+   an unterschiedlichen Tagen entstehen.
    Der Karteikartenmodus visualisiert denselben Lernstand in fünf Leitner-Boxen
    (Neu → Im Lernen → Bekannt → Sicher → Nachhaltig gemeistert). Die Antwort wird
    geschrieben und automatisch bewertet; Selbstbewertung über „gewusst/nicht gewusst“

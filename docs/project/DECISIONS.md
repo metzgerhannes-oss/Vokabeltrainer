@@ -102,6 +102,16 @@ Ein falscher Versuch bleibt offen und führt weiter zu einer Lerngelegenheit. Ei
 
 Diese Regel ist unabhängig vom strengeren Zustand „heute sicher“ aus D-20260927-004: Pflichtziel-Erledigung benötigt einen erfolgreichen unassistierten Abruf; freiwilliges Nachrücken darf weiterhin zusätzliche orthografische bzw. Wiederholungsevidenz verlangen.
 
+### D-20260927-006 – Spacing-Fortschritt zählt unterschiedliche Erfolgstage
+**Status:** LOCKED  
+**Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P3
+
+Mehrere richtige unabhängige Abrufe desselben Wortes am selben Kalendertag bleiben als Übungs- und Accuracy-Evidenz erhalten, dürfen das nächste Spacing-Intervall aber nicht mehrfach verlängern.
+
+Die Intervallstufe wird deshalb aus der Zahl unterschiedlicher aktiver Erfolgstage abgeleitet. Ein weiterer Erfolg am selben Tag erhöht weiterhin `independentSuccesses`, erzeugt aber keinen zusätzlichen Spacing-Tag. Erst ein Erfolg an einem späteren Kalendertag kann die nächste Intervallstufe freigeben.
+
+Cold-Recall kann weiterhin als zusätzliche Qualitätsinformation berücksichtigt werden, jedoch erst bei bereits verteilter Evidenz über mindestens zwei Erfolgstage.
+
 ## Neue Entscheidungen
 
 Neue Grundsatzentscheidungen erhalten fortlaufend eine ID im Format `D-YYYYMMDD-NNN`. Wird eine bestehende Regel ersetzt, bleibt die alte Entscheidung erhalten und wird als `SUPERSEDED` markiert; sie wird nicht gelöscht.

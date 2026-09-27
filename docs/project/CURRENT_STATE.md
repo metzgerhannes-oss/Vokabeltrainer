@@ -6,12 +6,12 @@ Stand: 27.09.2026, Baseline direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.8**
-- Main-Commit bei Erstellung dieses Snapshots: `1aa7983c330288a2091c60802ee2c503a716c04d`
-- zugehöriger Merge: **PR #138 – v0.21.8 – Adaptives Nachrücken im Tagesplan**
-- PR-CI: **Vokabeltrainer CI #945 – success**
-- main-CI nach Merge: **Vokabeltrainer CI #946 – success**
-- Produktionsdeploy: **GitHub Pages #504 – success**, inklusive Live-Verifikation von v0.21.8
+- App-Version: **v0.21.9**
+- Main-Commit bei Erstellung dieses Snapshots: `d2fd927518ba202e2835d58fcb8d4a6ea211047a`
+- zugehöriger Merge: **PR #142 – v0.21.9 – Tagesziel nur nach erfolgreichem Abruf**
+- PR-CI: **Vokabeltrainer CI #950 – success**
+- main-CI nach Merge: **Vokabeltrainer CI #951 – success**
+- Produktionsdeploy: **GitHub Pages #507 – success**
 
 Dieser Abschnitt ist ein Snapshot. Für Statusfragen muss der aktuelle GitHub-Stand erneut live geprüft werden; die hier genannte SHA darf nicht als dauerhaft „neuester Stand“ interpretiert werden.
 
@@ -29,6 +29,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Sense-/Bedeutungsmodell | PRODUCTION | `SENSE_MODEL.md` |
 | Lern-/Mastery-Grundsätze | PRODUCTION | `PRODUCT_DNA.md` |
 | Tagesplanung mit testbezogener Last | PRODUCTION | `PRODUCT_DNA.md` P6 + Code/Tests |
+| Pflicht-Tagesziel nur nach erfolgreichem Abruf | PRODUCTION | `PRODUCT_DNA.md` P4/P6, D-20260927-005, PR #142 |
 | Adaptives Nachrücken / „heute sicher“ | PRODUCTION | `PRODUCT_DNA.md` P3/P6, D-20260927-004, PR #138 |
 | Tolerante Satzbewertung | PRODUCTION | README v0.21.2 + Code/Tests |
 | Schutz vor System-Schreibvorschlägen | PRODUCTION | README v0.21.3 + Code/Tests |
@@ -44,6 +45,12 @@ Die praktische v1-Abnahme ist noch nicht als abgeschlossen dokumentiert. Die zah
 Aus [../../FINAL_AUDIT.md](../../FINAL_AUDIT.md) bleibt außerdem als administrative Infrastrukturgrenze dokumentiert, dass die GitHub-Regel „Branch muss vor Merge auf aktuellem main sein“ noch separat administrativ zu aktivieren ist.
 
 ## Aktueller produktiver Release
+
+### Tagesziel-Lernintegrität
+Status: **PRODUCTION**  
+Release: **v0.21.9 / PR #142**
+
+Pflichtwörter werden nur nach einem fachlich richtigen, unassistierten aktiven Abruf als erledigt markiert. Fehlversuche und Antworten mit Hinweis bleiben offen. Dadurch kann weder der Tagesabschluss noch die Battle-Aktion vorzeitig ausgelöst werden. PR-CI #950, main-CI #951 und Pages #507 sind erfolgreich.
 
 ### Adaptives Nachrücken innerhalb desselben Lerntags
 Status: **PRODUCTION**  
