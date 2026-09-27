@@ -1132,3 +1132,115 @@ body.lrs-mode .army-unit-card,body.lrs-mode .army-command,body.lrs-mode .army-un
   }
   #armyView .game-mission-panel{margin:10px 12px 0}
 }
+
+
+/* v0.21.16 – identity labels are planted standards inside the campaign scene */
+#armyView .battlefield.integrated-campaign-artwork .frontline-label{
+  top:auto;
+  min-width:104px;
+  max-width:158px;
+  min-height:34px;
+  padding:7px 13px 7px 26px;
+  overflow:visible;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid #a88443;
+  border-radius:3px 7px 7px 3px;
+  background:
+    linear-gradient(180deg,rgba(255,252,239,.98),rgba(227,208,163,.98));
+  box-shadow:
+    0 6px 14px rgba(31,45,46,.16),
+    inset 0 1px 0 rgba(255,255,255,.72);
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.01em;
+  line-height:1;
+  text-align:center;
+  text-shadow:0 1px 0 rgba(255,255,255,.5);
+}
+#armyView .battlefield.integrated-campaign-artwork .frontline-label span{
+  position:relative;
+  z-index:3;
+  display:block;
+  max-width:118px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#armyView .battlefield.integrated-campaign-artwork .frontline-label::before{
+  content:"";
+  position:absolute;
+  z-index:1;
+  left:9px;
+  top:-12px;
+  width:4px;
+  height:112px;
+  border-radius:4px;
+  background:linear-gradient(90deg,#513516,#a97f35 48%,#4b3014);
+  box-shadow:
+    0 1px 3px rgba(48,32,14,.34),
+    0 -4px 0 -1px #d0a750;
+}
+#armyView .battlefield.integrated-campaign-artwork .frontline-label::after{
+  content:"";
+  position:absolute;
+  z-index:2;
+  left:-3px;
+  top:5px;
+  width:23px;
+  height:31px;
+  clip-path:polygon(0 0,100% 0,100% 76%,50% 100%,0 76%);
+  border:1px solid rgba(222,190,111,.7);
+  background:linear-gradient(180deg,#315f84,#183d5e);
+  box-shadow:0 3px 7px rgba(30,43,47,.2);
+}
+#armyView .battlefield.integrated-campaign-artwork .frontline-own{
+  left:7%;
+  right:auto;
+  bottom:25%;
+}
+#armyView .battlefield.integrated-campaign-artwork .frontline-target{
+  left:auto;
+  right:5%;
+  bottom:49%;
+  color:#49372f;
+  border-color:#9e7047;
+  background:linear-gradient(180deg,rgba(255,248,235,.98),rgba(225,199,162,.98));
+}
+#armyView .battlefield.integrated-campaign-artwork .frontline-target::after{
+  background:linear-gradient(180deg,#9b493d,#682f2a);
+  border-color:rgba(226,174,130,.8);
+}
+@media(max-width:620px){
+  #armyView .battlefield.integrated-campaign-artwork .frontline-label{
+    top:auto;
+    min-width:94px;
+    max-width:136px;
+    min-height:31px;
+    padding:6px 10px 6px 23px;
+    font-size:.66rem;
+  }
+  #armyView .battlefield.integrated-campaign-artwork .frontline-label span{max-width:98px}
+  #armyView .battlefield.integrated-campaign-artwork .frontline-label::before{
+    left:8px;
+    top:-10px;
+    width:4px;
+    height:94px;
+  }
+  #armyView .battlefield.integrated-campaign-artwork .frontline-label::after{
+    left:-3px;
+    top:4px;
+    width:21px;
+    height:29px;
+  }
+  #armyView .battlefield.integrated-campaign-artwork .frontline-own{
+    left:6%;
+    bottom:23%;
+  }
+  #armyView .battlefield.integrated-campaign-artwork .frontline-target{
+    right:4%;
+    bottom:51%;
+  }
+}
