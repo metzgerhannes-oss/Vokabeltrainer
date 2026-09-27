@@ -31,6 +31,7 @@ try{
     mastered.maxActiveGapDays=4;
     mastered.coldRecallDays=[datePlusDays(-4),today()];
     mastered.intervalDays=7;
+    mastered.directionalRecall=normalizeDirectionalRecall({target:{successDays:[today()],lastCorrect:true,lastAt:new Date().toISOString()}});
     refreshMastery(mastered);
     learner().testFortresses={menu_fortress:{subject:'english',capturedAt:new Date().toISOString()}};
     rebuildWordIndexes();
