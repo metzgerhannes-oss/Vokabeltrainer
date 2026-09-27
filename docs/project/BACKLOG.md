@@ -88,7 +88,7 @@ Produktionsnachweis: PR-CI #961, main-CI #962 und Pages #510 sind grün; der Liv
 
 
 ## B-011 – Differenzierte LRS-Unterstützung Lesen / Rechtschreiben
-**Status:** IMPLEMENTED  
+**Status:** PRODUCTION  
 **Priorität:** P1 vor praktischer v1-Abnahme  
 **Decision:** D-20260927-008  
 **Betroffene Quellen:** `PRODUCT_DNA.md` P6/P8, `js/core.js`, `js/model.js`, `js/learning.js`, `js/ui.js`, Family Sync, Release-CI
@@ -101,8 +101,11 @@ für „heute sicher“ zusätzlich einen echten unassistierten Rechtschreibabru
 
 Automatisierte Regressionen decken Altprofil-Migration, getrennte Einstellungen,
 Mastery-Neutralität der Reading-Metrik, Rechtschreib-Evidenz, Reset/Purge und
-Eltern→Kind-Family-Sync ab. Status bleibt bis zur vollständigen PR-CI bewusst
-`IMPLEMENTED` und wird erst nach Verifikation weitergestuft.
+Eltern→Kind-Family-Sync ab.
+
+Produktiv seit **v0.21.12 / PR #148**. PR-CI **#965**, main-CI **#966** und
+GitHub Pages **#512** sind grün; der Pages-Workflow hat den Live-Deploy erfolgreich
+verifiziert.
 
 ## B-005 – Praktische v1-Abnahme
 **Status:** APPROVED_BACKLOG / RELEASE TASK  
