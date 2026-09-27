@@ -10,11 +10,19 @@ Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änd
 
 ## Aktueller Stand
 
-App-Version: **v0.21.12**
+App-Version: **v0.21.13**
 
 Das Projekt wurde am 20.09.2026 aus `JohannasGartenwelt/vokabeltrainer` in dieses eigenständige Repository migriert. Produktentscheidungen richten sich verbindlich nach [PRODUCT_DNA.md](PRODUCT_DNA.md).
 
 Die produktive Family-Sync-Infrastruktur nutzt dasselbe Supabase-Projekt wie Johanna's Gartenwelt. Die kanonische Backend-/Recovery-Quelle liegt im Repository `JohannasGartenwelt` unter `supabase/`; dieses Repository enthält nur die Vokabeltrainer-spezifischen Anwendungssourcen und lokale Referenzmigrationen.
+
+## v0.21.13 – Mobiles Avatar-Statuslayout
+
+- auf Mobilgeräten liegt der Stufen-/Teststatus jetzt als eigener Layoutblock **unter** dem Avatarbild statt als Overlay darüber
+- Avatarbild, Status und Tagesaufgabe bilden damit eine klare vertikale Reihenfolge
+- Desktop behält die kompakte bestehende Darstellung
+- ein WebKit-iPhone-Regressionscheck stellt sicher, dass der Statusblock weder im Avatarrahmen liegt noch diesen geometrisch überlappt
+- Lernlogik, Mastery, Tagesplan, Testbereitschaft und Gamification bleiben unverändert
 
 ## v0.21.12 – Differenzierte LRS-Unterstützung
 
