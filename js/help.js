@@ -17,7 +17,7 @@ const HELP_TOPICS=Object.freeze({
   usage:{title:'Verwendung',text:'Zeigt, in welchen Lernbereichen ein global gespeichertes Wort verwendet wird. Das Wort selbst muss dafür nicht mehrfach angelegt werden.'},
   backup:{title:'Backup',text:'Die Lerndaten liegen lokal auf diesem Gerät. Ein JSON-Backup sichert Profile, Lehrwerke, Lernbereiche, Lernstände, Noten und Testchecks und ist deshalb vor größeren Änderungen sinnvoll.'},
   profile:{title:'Lernprofil',text:'Jedes Profil hat eigene Fächer, Lernstände, Einstellungen, Noten und Testpläne. Die gemeinsame Vokabelbibliothek kann trotzdem von mehreren Profilen genutzt werden.'},
-  lrs:{title:'LRS-Modus',text:'Der LRS-Modus verkürzt Einheiten, nutzt häufiger Audio und multisensorische Hilfen und hält die Darstellung ruhiger. Die fachlichen Mastery-Kriterien werden dadurch nicht abgesenkt.'},
+  lrs:{title:'LRS-/Lernunterstützung',text:'Lesen und Rechtschreiben werden getrennt eingestellt. Leseunterstützung verstärkt Laut-Schrift-Verknüpfung und ruhige Audioführung; Rechtschreibunterstützung priorisiert exakten Schreibabruf, Diktat und Wortbausteine. Kurze Einheiten sind eine unabhängige Einstellung. Die App stellt keine Diagnose und senkt fachliche Mastery-Kriterien nicht ab.'},
   isbn:{title:'ISBN',text:'Die ISBN ist die eindeutige Kennung des Lehrwerks. Du kannst sie eingeben oder den Barcode bzw. die Nummer fotografieren.'},
   sense:{title:'Bedeutungen',text:'Echte unterschiedliche Bedeutungen eines Wortes werden getrennt gelernt und haben getrennte Lernstände. Synonyme derselben Bedeutung gehören dagegen zusammen.'},
   synonyms:{title:'Akzeptierte Synonyme',text:'Hier gehören nur gleichbedeutende Formulierungen hinein. Eine wirklich andere Wortbedeutung wird als eigene Bedeutung angelegt.'}
