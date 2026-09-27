@@ -82,6 +82,16 @@ Bei Meinungs-, Bewertungs- und Grundsatzfragen zum Projekt werden künftig die e
 
 `APPROVED_BACKLOG`, `IMPLEMENTED`, `VERIFIED` und `PRODUCTION` sind unterschiedliche Zustände. Besprochen oder implementiert bedeutet nicht automatisch getestet oder produktiv.
 
+### D-20260927-004 – Begrenztes adaptives Nachrücken innerhalb desselben Lerntags
+**Status:** LOCKED  
+**Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P3 und P6
+
+Der morgens berechnete Pflicht-Tagesplan bleibt als festes Tagesziel bestehen. Ein separater Zustand „heute sicher“ darf innerhalb desselben Tages freiwillige Zusatzkapazität freigeben, ohne nachhaltige Mastery, Tagesziel oder Battle-Freischaltung zu verändern.
+
+„Heute sicher“ erfordert produktiven, unassistierten und orthografisch korrekten Abruf. Bereits testbereite Wiederholungswörter benötigen einen solchen Abruf; neue oder schwache Wörter zwei getrennte erfolgreiche aktive Abrufe ohne Fehler dazwischen. Ein bloßer Kontakt über `completedKeys` reicht ausdrücklich nicht.
+
+Nachrückpriorität: unbekanntes Wort aus dem anstehenden Test → schwaches bereits bekanntes Testwort → fällige bekannte Wiederholung. In den letzten drei Tagen vor dem Test werden keine zusätzlichen unbekannten Wörter nachgezogen. Pro Tag maximal drei Zusatzwörter, im LRS-Modus zwei; die bestehende Obergrenze von sieben neu eingeführten Wörtern pro Tag bleibt erhalten.
+
 ## Neue Entscheidungen
 
 Neue Grundsatzentscheidungen erhalten fortlaufend eine ID im Format `D-YYYYMMDD-NNN`. Wird eine bestehende Regel ersetzt, bleibt die alte Entscheidung erhalten und wird als `SUPERSEDED` markiert; sie wird nicht gelöscht.
