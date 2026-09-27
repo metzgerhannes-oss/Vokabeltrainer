@@ -65,11 +65,14 @@ try{
       pairReviewRequired:false,pairVerifiedAt:'',pairVerifiedSignature:''
     };
     state.sets.push(set);
-    attachVocabularyToSet(set.id,{term:'remember',translation:'sich erinnern',source:'manual',verified:true});
+    [
+      ['remember','sich erinnern'],['window','Fenster'],['school','Schule'],
+      ['friend','Freund'],['garden','Garten'],['morning','Morgen']
+    ].forEach(([term,translation])=>attachVocabularyToSet(set.id,{term,translation,source:'manual',verified:true}));
     rebuildWordIndexes();
     await persistState();
     renderAll();
-    if(schoolYearVerifiedWords('english').length!==1)throw new Error('fixture word is not learning-ready');
+    if(schoolYearVerifiedWords('english').length!==6)throw new Error('fixture words are not learning-ready');
     return structuredClone(state);
   });
 
@@ -99,6 +102,8 @@ try{
     const progress=state.learnerVocabulary.find(p=>p.id===word.id)||state.learnerVocabulary.find(p=>p.senseId===word.senseId);
     if(!progress)throw new Error('progress record missing');
     const marked=markDailyPlanWordDone(word,plan),stamp=new Date().toISOString(),day=today();
+    const safetyOne=recordDailySecurityResult(word,{correct:true,active:true,assisted:false,orthographyOk:true,wasTestReady:false},plan);
+    const safetyTwo=recordDailySecurityResult(word,{correct:true,active:true,assisted:false,orthographyOk:true,wasTestReady:false},plan);
     progress.successes=(Number(progress.successes)||0)+1;
     progress.independentSuccesses=(Number(progress.independentSuccesses)||0)+1;
     progress.activePracticeDays=[...new Set([...(progress.activePracticeDays||[]),day])];
@@ -109,49 +114,66 @@ try{
     recordActivity('adaptive',{wordId:word.id,correct:true,active:true,syncAcceptance:true});
     await persistState();VTFamilySync.markLocalChange();
     const after=dailyPlanStatus(plan);
+    const secureKey=plan.todaySecureKeys?.[0]||'',extraRef=plan.extraRefs?.[0]||null;
     return {
-      marked,day,planKey:day+':english',completedKey:plan.completedKeys?.[0]||'',
-      beforeTotal:before.total,afterDone:after.done,successes:progress.successes,dueDate:progress.dueDate,xp:learner().xp
+      marked,day,planKey:day+':english',completedKey:plan.completedKeys?.[0]||'',secureKey,
+      extraKey:extraRef?dailyPlanRefKey(extraRef):'',safetyOne,safetyTwo,
+      beforeTotal:before.total,afterTotal:after.total,afterDone:after.done,extraTotal:after.extraTotal,extraRemaining:after.extraRemaining,
+      successes:progress.successes,dueDate:progress.dueDate,xp:learner().xp
     };
   });
   assert(completed.marked&&completed.beforeTotal>=1&&completed.afterDone>=1&&completed.completedKey,'device A records a completed daily-learning item');
+  assert(!completed.safetyOne.becameSecure&&completed.safetyTwo.becameSecure&&completed.secureKey&&completed.extraKey,'device A records today-safe only after the second independent productive recall');
+  assert(completed.afterTotal===completed.beforeTotal&&completed.extraTotal===1&&completed.extraRemaining===1,'device A keeps the official daily target fixed while adding one optional refill');
   assert((await pageA.evaluate(()=>VTFamilySync.status().dirty))===1,'completed lesson marks only the child progress document dirty');
 
   await pageA.evaluate(()=>VTFamilySync.syncNow(true));
   assert(cloud.get('profile/'+PROFILE_ID+'/progress')?.revision===2,'device A uploads the progress document');
 
   await pageB.evaluate(()=>VTFamilySync.syncNow(true));
-  const received=await pageB.evaluate(({planKey,completedKey})=>{
+  const received=await pageB.evaluate(({planKey,completedKey,secureKey,extraKey})=>{
     const plan=learner().dailyPlans?.[planKey],status=plan?dailyPlanStatus(plan):null;
     const progress=state.learnerVocabulary[0];
     return {
       hasPlan:!!plan,hasCompletion:!!plan?.completedKeys?.includes(completedKey),done:status?.done||0,
+      hasSecure:!!plan?.todaySecureKeys?.includes(secureKey),
+      hasExtra:!!plan?.extraRefs?.some(ref=>dailyPlanRefKey(ref)===extraKey),
+      evidenceStreak:Number(plan?.securityEvidence?.[secureKey]?.successStreak)||0,
+      extraRemaining:Number(status?.extraRemaining)||0,total:Number(status?.total)||0,
       successes:Number(progress?.successes)||0,dueDate:progress?.dueDate||'',xp:Number(learner().xp)||0,
       activePracticeDays:[...(progress?.activePracticeDays||[])],
       activity:(state.activity||[]).filter(a=>a.syncAcceptance).map(a=>({type:a.type,date:a.date}))
     };
   },completed);
   assert(received.hasPlan&&received.hasCompletion&&received.done>=1,'device B receives the exact completed daily-plan item');
+  assert(received.hasSecure&&received.hasExtra&&received.evidenceStreak===2&&received.extraRemaining===1&&received.total===completed.beforeTotal,'device B receives today-safe evidence and optional refill without changing the required target');
   assert(received.successes===completed.successes&&received.dueDate===completed.dueDate,'device B receives the vocabulary learning progress');
   assert(received.xp===completed.xp&&received.activePracticeDays.includes(completed.day),'device B receives XP and active practice day');
   assert(received.activity.some(a=>a.type==='adaptive'),'device B receives the matching learning activity');
 
   await pageB.reload({waitUntil:'domcontentloaded'});
   await pageB.waitForFunction(()=>window.__VT_APP_READY__===true);
-  const afterReload=await pageB.evaluate(({planKey,completedKey})=>{
+  const afterReload=await pageB.evaluate(({planKey,completedKey,secureKey,extraKey})=>{
     const plan=learner().dailyPlans?.[planKey],progress=state.learnerVocabulary[0];
-    return {completion:!!plan?.completedKeys?.includes(completedKey),successes:Number(progress?.successes)||0,activity:(state.activity||[]).some(a=>a.syncAcceptance)};
+    return {
+      completion:!!plan?.completedKeys?.includes(completedKey),
+      secure:!!plan?.todaySecureKeys?.includes(secureKey),
+      extra:!!plan?.extraRefs?.some(ref=>dailyPlanRefKey(ref)===extraKey),
+      successes:Number(progress?.successes)||0,activity:(state.activity||[]).some(a=>a.syncAcceptance)
+    };
   },completed);
-  assert(afterReload.completion&&afterReload.successes===completed.successes&&afterReload.activity,'synced completion survives an app reload on device B');
+  assert(afterReload.completion&&afterReload.secure&&afterReload.extra&&afterReload.successes===completed.successes&&afterReload.activity,'synced completion, today-safe state and refill survive an app reload on device B');
 
   await pageB.close();
   await contextB.addInitScript("(()=>{const RealDate=Date,offset=24*60*60*1000;globalThis.Date=class extends RealDate{constructor(...args){super(...(args.length?args:[RealDate.now()+offset]))}static now(){return RealDate.now()+offset}static parse(v){return RealDate.parse(v)}static UTC(...args){return RealDate.UTC(...args)}}})()");
   const tomorrowPage=await openApp(contextB);
-  const nextDay=await tomorrowPage.evaluate(({planKey,completedKey,day,successes})=>{
+  const nextDay=await tomorrowPage.evaluate(({planKey,completedKey,secureKey,extraKey,day,successes})=>{
     const oldPlan=learner().dailyPlans?.[planKey],progress=state.learnerVocabulary[0];
     const tomorrowPlan=buildDailyPlan('english');
     return {
       today:today(),oldCompletion:!!oldPlan?.completedKeys?.includes(completedKey),
+      oldSecure:!!oldPlan?.todaySecureKeys?.includes(secureKey),
+      oldExtra:!!oldPlan?.extraRefs?.some(ref=>dailyPlanRefKey(ref)===extraKey),
       oldDone:oldPlan?dailyPlanStatus(oldPlan).done:0,
       successes:Number(progress?.successes)||0,
       activePracticeDays:[...(progress?.activePracticeDays||[])],
@@ -160,13 +182,14 @@ try{
     };
   },completed);
   assert(nextDay.today!==completed.day&&nextDay.tomorrowPlanDate===nextDay.today,'test is running on the simulated following day');
-  assert(nextDay.oldCompletion&&nextDay.oldDone>=1,'yesterday completed lesson remains stored on the following day');
+  assert(nextDay.oldCompletion&&nextDay.oldSecure&&nextDay.oldExtra&&nextDay.oldDone>=1,'yesterday completed lesson, today-safe evidence and refill remain stored on the following day');
   assert(nextDay.successes===completed.successes&&nextDay.activePracticeDays.includes(completed.day)&&nextDay.activity,'learned progress remains intact across the day boundary');
 
   console.log('Vokabeltrainer family sync learning-progress UI smoke: passed');
   console.log('✓ completed daily-plan state synced from device A to device B');
+  console.log('✓ today-safe evidence and optional adaptive refill sync across devices');
   console.log('✓ vocabulary progress, activity and XP synced with the completion');
-  console.log('✓ synced completion survives reload and the following day');
+  console.log('✓ synced completion and refill survive reload and the following day');
 }finally{
   await contextA.close().catch(()=>{});
   await contextB.close().catch(()=>{});
