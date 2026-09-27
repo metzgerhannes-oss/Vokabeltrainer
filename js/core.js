@@ -223,14 +223,16 @@ function learnerAlreadyKnowsSense(learnerId,senseId){
   const learnerSetIds=new Set((state.sets||[]).filter(s=>s.learnerId===learnerId).map(s=>s.id));
   return (state.setVocabulary||[]).some(link=>learnerSetIds.has(link.setId)&&link.senseId===senseId&&link.firstContactCompletedAt);
 }
-function assignBookRowsToLearner(bookId,section,learnerId,rowIds=[]){
+function assignBookRowsToLearner(bookId,section,learnerId,rowIds=[],opts={}){
   const book=bookById(bookId),l=(state.learners||[]).find(x=>x.id===learnerId),group=knownBookSections(bookId).find(x=>x.section===section);
   if(!book||!l||!group)return {set:null,links:0,total:0,linkIds:[]};
   const wanted=new Set((rowIds||[]).filter(Boolean)),items=wanted.size?group.items.filter(r=>wanted.has(r.id)):group.items;
   assignBookToLearner(learnerId,book.subject,book.id,{gradeLevel:l.gradeLevel,schoolYear:currentSchoolYear()});
-  let set=(state.sets||[]).find(s=>s.learnerId===learnerId&&s.bookId===bookId&&s.bookSection===section);
+  const preferredDate=String(opts?.testDate||'');
+  let set=preferredDate?(state.sets||[]).find(s=>s.learnerId===learnerId&&s.bookId===bookId&&s.bookSection===section&&s.testDate===preferredDate):null;
+  if(!set&&!opts?.forceNewSet)set=(state.sets||[]).find(s=>s.learnerId===learnerId&&s.bookId===bookId&&s.bookSection===section);
   if(!set){
-    set={id:uid('set'),learnerId,subject:book.subject,title:section,schoolYear:currentSchoolYear(),bookId,bookSection:section,testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',testSelectedLinkIds:[],from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+    set={id:uid('set'),learnerId,subject:book.subject,title:section,schoolYear:currentSchoolYear(),bookId,bookSection:section,testDate:preferredDate||'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',testSelectedLinkIds:[],from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
     state.sets.push(set);
   }
   let links=0;const linkIds=[];
