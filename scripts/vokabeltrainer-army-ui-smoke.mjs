@@ -133,7 +133,7 @@ try{
     fullArmyOpacity:parseFloat(getComputedStyle(document.querySelector('[data-army-hero-art]')).opacity||'0'),
     visibleGrowthUnits:[...document.querySelectorAll('#armyHero .army-camp-growth-unit')].filter(el=>getComputedStyle(el).display!=='none').length
   }));
-  assert(yearArmyVisual.growth===0&&yearArmyVisual.stage==='1','one mastered word remains an early school-year army stage');
+  assert(yearArmyVisual.growth===1&&yearArmyVisual.stage==='1','one mastered word earns only the first visible year-growth point and stays an early army stage');
   assert(yearArmyVisual.fullArmyOpacity===0,'the fully equipped hero army is hidden before the final development stage');
   assert(yearArmyVisual.visibleGrowthUnits===2,'the hero composition contains only currently unlocked unit groups at the early stage');
 
