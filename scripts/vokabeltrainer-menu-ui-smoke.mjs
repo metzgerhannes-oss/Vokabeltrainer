@@ -171,9 +171,10 @@ try{
     summary:document.querySelector('#todaySummary')?.textContent||'',
     context:document.querySelector('#todayContext')?.textContent||'',
     completed:!!testCompletionForDate(today(),'english'),
-    nextDate:upcomingTestContext()?.date||''
+    nextDate:upcomingTestContext()?.date||'',
+    expectedNextDate:datePlusDays(4)
   }));
-  assert(afterComplete.completed&&afterComplete.nextDate===datePlusDays(4),'confirming completion persists the finished test and activates the next planned test');
+  assert(afterComplete.completed&&afterComplete.nextDate===afterComplete.expectedNextDate,'confirming completion persists the finished test and activates the next planned test');
   assert(afterComplete.context.includes('in 4 Tagen')||afterComplete.context.includes('Nächster Test'),'Today immediately shows the next test after the current one is completed');
 
   assert(errors.length===0,'menu navigation must not produce browser errors: '+errors.join(' | '));
