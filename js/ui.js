@@ -1528,14 +1528,29 @@ function openFamilySyncSwitch(){
 async function runFamilySync(){
   if(!window.VTFamilySync)return;const btn=$('#familySyncNowBtn');btn.disabled=true;renderFamilySync();try{await VTFamilySync.syncNow(true);renderAll();toast('Synchronisierung abgeschlossen.','good')}catch(e){toast(e.message||'Synchronisierung fehlgeschlagen.','bad');renderFamilySync()}finally{btn.disabled=false}
 }
+function openAnswerReviewQueue(){
+  if(!isParentMode()){toast('Diese Prüfung ist nur im Elternbereich möglich.','warn');return}
+  const reviews=pendingAnswerReviews();
+  if(!reviews.length){modal('<div class="eyebrow">Antworten prüfen</div><h2>Keine offenen Meldungen</h2><p>Aktuell wartet keine vom Kind beanstandete Systembewertung auf eine Entscheidung.</p><div class="modal-actions"><button value="ok" class="primary">Schließen</button></div>');return}
+  const cards=reviews.map(req=>{
+    const set=(state.sets||[]).find(x=>x.id===req.setId),canAccept=!!String(req.answer||'').trim()&&!!(state.setVocabulary||[]).find(x=>x.id===req.setLinkId);
+    return `<article class="answer-review-card" data-answer-review-card="${esc(req.id)}"><div class="row spread align-center wrap"><div><small>${esc(subjectLabel(req.subject))}${set?.title?' · '+esc(set.title):''}</small><strong>Systembewertung prüfen</strong></div><span class="pill warn">Lernstand eingefroren</span></div><div class="answer-review-grid"><div><small>Frage</small><strong>${esc(req.prompt||'–')}</strong></div><div><small>Antwort des Kindes</small><strong>${esc(req.answer||'–')}</strong></div><div><small>Bisher akzeptiert</small><span>${esc((req.targets||[]).join(' · ')||'–')}</span></div></div><p class="muted-line">Der beanstandete Versuch zählt bis zu deiner Entscheidung weder als richtig noch als falsch.</p><div class="row gap wrap answer-review-actions">${canAccept?`<button type="button" class="primary" data-review-accept="${esc(req.id)}">Antwort als richtig freigeben</button>`:''}${req.vocabId?`<button type="button" class="secondary" data-review-edit="${esc(req.id)}">Vokabel bearbeiten</button>`:''}<button type="button" class="ghost" data-review-reject="${esc(req.id)}">Systembewertung bestätigen</button></div></article>`;
+  }).join('');
+  modal(`<div class="eyebrow">Fachliche Prüfung</div><h2>Antworten prüfen · ${reviews.length}</h2><p>Hier entscheidest du nur strittige Bewertungen. Eine freigegebene Antwort wird für genau diesen Lernbereich als zulässige Variante gespeichert und rückwirkend als richtig gewertet.</p><div class="answer-review-list">${cards}</div><div class="modal-actions"><button value="cancel" class="ghost">Später</button></div>`);
+  const resolve=(id,kind)=>{const result=kind==='accept'?acceptAnswerReview(id):rejectAnswerReview(id);if(!result.ok){toast(result.error||'Prüffall konnte nicht abgeschlossen werden.','bad');return}closeModal();save();toast(kind==='accept'?'Antwort freigegeben und künftig akzeptiert.':'Systembewertung bestätigt; der Fehler zählt jetzt fachlich.','good');setTimeout(()=>{if(pendingAnswerReviews().length)openAnswerReviewQueue()},80)};
+  $('[data-review-accept]').forEach(b=>b.onclick=()=>resolve(b.dataset.reviewAccept,'accept'));
+  $('[data-review-reject]').forEach(b=>b.onclick=()=>resolve(b.dataset.reviewReject,'reject'));
+  $('[data-review-edit]').forEach(b=>b.onclick=()=>{const req=answerReviewById(b.dataset.reviewEdit);if(!req?.vocabId)return;closeModal();openWordEditor(req.vocabId,req.setId||'')});
+}
 function renderParentOverview(){
   const box=$('#parentAttention');if(!box)return;
-  const sets=mySets(),draft=sets.find(s=>s.pendingTestPlan),review=sets.find(s=>!s.pendingTestPlan&&setNeedsPairReview(s)),pending=seriesScopePending(),ctx=upcomingTestContext(),tasks=[];
+  const sets=mySets(),draft=sets.find(s=>s.pendingTestPlan),review=sets.find(s=>!s.pendingTestPlan&&setNeedsPairReview(s)),answerReviews=pendingAnswerReviews(),pending=seriesScopePending(),ctx=upcomingTestContext(),tasks=[];
   const planBtn=$('#parentTestPlanBtn'),newPlanBtn=$('#parentNewTestPlanBtn');if(planBtn){const editable=!!(ctx&&ctx.source!=='series'&&ctx.sets?.[0]),strong=planBtn.querySelector('strong'),small=planBtn.querySelector('small');planBtn.dataset.setId=editable?(ctx.sets[0].id||''):'';if(strong)strong.textContent=editable?'Aktuellen Test bearbeiten':'Test vorbereiten';if(small)small.textContent=editable?'Termin oder Vokabeln bis zum Abschluss ändern':'Datum wählen, Vokabeln festlegen und prüfen';newPlanBtn?.classList.toggle('hidden',!editable)}
   if(draft){
     const count=setWords(draft.id).length,when=draft.pendingTestPlan?.testDate?formatDateShort(draft.pendingTestPlan.testDate):'offen';
     tasks.push(`<div class="parent-task"><div><strong>Testvorbereitung abschließen</strong><small>${esc(draft.title)} · ${count} Vokabel${count===1?'':'n'} · Termin ${esc(when)}. Der Entwurf beeinflusst das Lernen noch nicht.</small></div><button class="primary" data-parent-draft="${draft.id}">Fortsetzen</button></div>`);
   }
+  if(answerReviews.length)tasks.push(`<div class="parent-task"><div><strong>Strittige Antworten prüfen</strong><small>${answerReviews.length} ${answerReviews.length===1?'Bewertung wartet':'Bewertungen warten'} auf deine fachliche Entscheidung. Bis dahin entsteht dem Kind kein Lernnachteil.</small></div><button class="primary" data-parent-answer-reviews>Antworten prüfen</button></div>`);
   if(review)tasks.push(`<div class="parent-task"><div><strong>Vokabelpaare prüfen</strong><small>${esc(review.title)} muss vor dem ersten Lernen fachlich bestätigt werden.</small></div><button class="primary" data-parent-audit="${review.id}">Jetzt prüfen</button></div>`);
   if(pending)tasks.push('<div class="parent-task"><div><strong>Testumfang festlegen</strong><small>Für den nächsten wöchentlichen Test fehlen noch die konkreten Vokabeln.</small></div><button class="primary" data-parent-plan>Test planen</button></div>');
   if(!sets.length)tasks.push('<div class="parent-task"><div><strong>Noch kein Lernstoff</strong><small>Steht ein Test an, plane ihn direkt. Sonst kannst du Vokabeln ohne Testtermin vorbereiten.</small></div><div class="row gap wrap"><button class="primary" data-parent-plan-first>Test planen</button><button class="secondary" data-parent-newset>Ohne Test vorbereiten</button></div></div>');
@@ -1545,6 +1560,7 @@ function renderParentOverview(){
   }
   box.innerHTML=tasks.join('');
   box.querySelector('[data-parent-draft]')?.addEventListener('click',e=>{const set=state.sets.find(s=>s.id===e.currentTarget.dataset.parentDraft);if(!set)return;if(set.captureSource==='manual')openWordEditor(null,set.id);else if(setWords(set.id).length)openSetPairAudit(set.id);else openScanImport(set.id)});
+  box.querySelector('[data-parent-answer-reviews]')?.addEventListener('click',openAnswerReviewQueue);
   box.querySelector('[data-parent-audit]')?.addEventListener('click',e=>openSetPairAudit(e.currentTarget.dataset.parentAudit));
   box.querySelector('[data-parent-plan]')?.addEventListener('click',openTestDatePlanner);
   box.querySelector('[data-parent-plan-first]')?.addEventListener('click',openTestDatePlanner);
