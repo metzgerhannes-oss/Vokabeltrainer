@@ -141,6 +141,14 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    Erst wenn alle Pflichtwörter fachlich abgeschlossen sind, endet der Übungsraum mit einer
    kompakten Ergebniszusammenfassung. Freiwillige Zusatz- und Rettungsrunden bleiben davon getrennt.
 
+   **Am Testtag endet der Lernzyklus ausdrücklich.** Ab dem Testdatum zeigt der Tagesbereich
+   „Test abschließen“ statt eines neuen Pflicht-Lernblocks. Der Test bleibt solange als aktuelles
+   Ziel sichtbar, bis bestätigt wurde, dass er tatsächlich geschrieben wurde. Für diesen Abschluss
+   ist keine Note erforderlich; die reale Schulnote kann später im Elternbereich ergänzt werden.
+   Nach dem Abschluss wechselt die App sofort zum nächsten bereits geplanten Test. Gibt es noch
+   keinen nächsten Test, zeigt sie stattdessen dessen Vorbereitung. Bei wiederkehrenden Tests wird
+   direkt die Vorbereitung des nächsten Serientermins geöffnet.
+
    **T−1-Rettungsmodus:** Liegt der Test am nächsten Tag und ist noch deutlicher Rückstand
    vorhanden, wird nicht der komplette Testumfang stumpf als Karteikasten abgefragt. Nach dem
    kurzen Pflichtkern bietet die App getrennte freiwillige Rettungsrunden mit höchstens sechs
