@@ -942,7 +942,7 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         calmFires(this, 1100 * scale);
       });
 
-      at(12650, () => {
+      at(13500, () => {
         if (this.__captureOutcome) {
           beat('profile-banner');
           hooks.onStatus?.('Alle Einheiten sind in der Festung. Jetzt wird der Profilbanner gehisst.');
@@ -959,14 +959,14 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         }
       });
 
-      at(13900, () => {
+      at(14800, () => {
         if (this.__captureOutcome) {
           beat('secured');
           hooks.onStatus?.('Die Festung ist übernommen. Der Profilbanner steht über der eroberten Stellung.');
         }
       });
 
-      at(14700, () => {
+      at(15600, () => {
         this.__running = false;
         hooks.onComplete?.();
       });
@@ -1247,7 +1247,7 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         });
       });
 
-      at(resultAt + 2500, () => {
+      at(resultAt + 3100, () => {
         if (this.__captureOutcome) {
           beat('profile-banner');
           hooks.onStatus?.('Die letzten Einheiten verschwinden im Tor. Der Profilbanner wird gehisst.');
@@ -1264,14 +1264,14 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         }
       });
 
-      at(resultAt + 3600, () => {
+      at(resultAt + 4200, () => {
         if (this.__captureOutcome) {
           beat('secured');
           hooks.onStatus?.('Die Stellung ist übernommen. Der Profilbanner bleibt sichtbar.');
         }
       });
 
-      at(resultAt + 4250, () => {
+      at(resultAt + 4900, () => {
         this.__running = false;
         hooks.onComplete?.();
       });
