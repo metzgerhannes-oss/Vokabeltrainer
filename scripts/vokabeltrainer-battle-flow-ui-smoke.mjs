@@ -5,6 +5,15 @@ const {browser,page,assert,activate,reset,openBattle,waitForBattleResult,errors,
 
 try{
   await reset({revealed:true,ticket:true});
+  await page.evaluate(()=>{
+    const l=learner();
+    for(let i=1;i<=40;i++){
+      const d=datePlusDays(-i);
+      if(!dateInSchoolYear(d,currentSchoolYear()))continue;
+      l.completedTests[`english:${d}`]={subject:'english',date:d,completedAt:new Date().toISOString(),scopeText:'Battle growth fixture',wordCount:1};
+    }
+    renderAll();
+  });
   await openBattle();
 
   const rolePowerSpread=await page.evaluate(()=>({
@@ -13,7 +22,7 @@ try{
     mobility:armyUnitPowerFromValue('cavalry',30)
   }));
   assert(rolePowerSpread.front>rolePowerSpread.ranged&&rolePowerSpread.ranged>rolePowerSpread.mobility,'different unit progressions create distinct tactical role strength');
-  assert(!(await page.locator('[data-battle-attack="ram"]').isDisabled()),'ram attack unlocks from learning progress');
+  assert(!(await page.locator('[data-battle-attack="ram"]').isDisabled()),'ram attack unlocks from fully developed year-campaign progress');
   assert((await page.locator('[data-battle-attack="ram"] small').textContent())?.includes('Belagerung'),'attack choice names the matching army role');
   assert((await page.locator('[data-battle-attack="ram"] small').textContent())?.includes('+10 Taktik'),'maxed siege unit exposes only the capped 10-point tactical bonus');
   await activate('[data-battle-attack="ram"]','ram attack choice');
