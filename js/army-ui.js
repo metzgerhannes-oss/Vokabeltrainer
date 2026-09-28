@@ -6,31 +6,31 @@
       id:'infantry',icon:'⚔',names:{english:'Infanterie',latin:'Legionäre'},role:'Front',roleText:'Hält die Linie und bildet die verlässliche Basis des Heeres.',
       description:{english:'Die verlässliche Basis deiner Armee.',latin:'Das Rückgrat deiner Legion.'},
       tiers:['Grundausrüstung','Verstärkte Schilde','Stahlhelme','Veteranenrüstung','Eliteformation'],
-      thresholds:ARMY_UNIT_THRESHOLDS.infantry,metric:c=>c.p.pct,metricName:'Lernfortschritt',suffix:'%'
+      thresholds:ARMY_UNIT_THRESHOLDS.infantry,metric:c=>c.growth.pct,metricName:'Jahresentwicklung',suffix:'%'
     },
     {
       id:'archers',icon:'➶',names:{english:'Bogenschützen',latin:'Sagittarii'},role:'Fernkampf',roleText:'Unterstützt Angriffe aus der Distanz und deckt das Vorrücken.',
       description:{english:'Treffen aus der Distanz und eröffnen neue Angriffsmöglichkeiten.',latin:'Fernkämpfer für gezielte Salven.'},
       tiers:['Übungsbögen','Langbögen','Große Köcher','Veteranenbogen','Präzisionssalve'],
-      thresholds:ARMY_UNIT_THRESHOLDS.archers,metric:c=>c.p.pct,metricName:'Lernfortschritt',suffix:'%'
+      thresholds:ARMY_UNIT_THRESHOLDS.archers,metric:c=>c.growth.pct,metricName:'Jahresentwicklung',suffix:'%'
     },
     {
       id:'cavalry',icon:'♞',names:{english:'Kavallerie',latin:'Equites'},role:'Mobilität',roleText:'Bewegt sich schnell, flankiert und macht die Armee beweglicher.',
       description:{english:'Schnelle Eliteeinheiten für den späteren Feldzug.',latin:'Schnelle Reitereinheiten für die Flanke.'},
       tiers:['Späher','Leichte Reiterei','Gepanzerte Reiter','Veteranenreiter','Elite-Kavallerie'],
-      thresholds:ARMY_UNIT_THRESHOLDS.cavalry,metric:c=>c.p.pct,metricName:'Lernfortschritt',suffix:'%'
+      thresholds:ARMY_UNIT_THRESHOLDS.cavalry,metric:c=>c.growth.pct,metricName:'Jahresentwicklung',suffix:'%'
     },
     {
       id:'ram',icon:'▰',names:{english:'Rammbock',latin:'Belagerungsgerät'},role:'Belagerung',roleText:'Konzentriert die Kraft der Armee auf Tore und befestigte Ziele.',
       description:{english:'Wird mit wachsendem Feldzug immer stärker.',latin:'Schweres Gerät für befestigte Ziele.'},
       tiers:['Leichter Rammbock','Verstärkter Balken','Schutzdach','Belagerungsramme','Festungsbrecher'],
-      thresholds:ARMY_UNIT_THRESHOLDS.ram,metric:c=>c.p.pct,metricName:'Lernfortschritt',suffix:'%'
+      thresholds:ARMY_UNIT_THRESHOLDS.ram,metric:c=>c.growth.pct,metricName:'Jahresentwicklung',suffix:'%'
     },
     {
       id:'shield',icon:'⬟',names:{english:'Schildträger',latin:'Scutum-Träger'},role:'Schutz',roleText:'Sichert die Formation und bereits eroberte Stellungen.',
       description:{english:'Belohnt Wissen, das schon über mehrere Tage stabil bleibt.',latin:'Stabile Reihen aus nachhaltig gefestigtem Wissen.'},
       tiers:['Holzschild','Verstärkter Schild','Schildwall','Veteranenwall','Elite-Schildwall'],
-      thresholds:ARMY_UNIT_THRESHOLDS.shield,metric:c=>c.stablePct,metricName:'stabile Wörter',suffix:'%'
+      thresholds:ARMY_UNIT_THRESHOLDS.shield,metric:c=>c.growth.pct,metricName:'Jahresentwicklung',suffix:'%'
     },
     {
       id:'support',icon:'✚',names:{english:'Sanitäter',latin:'Unterstützung'},role:'Versorgung',roleText:'Hält die Truppe einsatzbereit und stützt Moral und Ausdauer.',
@@ -46,10 +46,10 @@
   };
 
   const BONUS_DEFS = [
-    {id:'banner',icon:'⚑',title:'Banner',text:'Moralbonus',ready:c=>c.p.pct>=15,goal:'15% Lernfortschritt'},
-    {id:'armor',icon:'⛨',title:'Rüstung',text:'stabilere Formation',ready:c=>c.stablePct>=35,goal:'35% stabile Wörter'},
+    {id:'banner',icon:'⚑',title:'Banner',text:'Moralbonus',ready:c=>c.growth.pct>=15,goal:'15% Jahresentwicklung'},
+    {id:'armor',icon:'⛨',title:'Rüstung',text:'stabilere Formation',ready:c=>c.growth.pct>=35,goal:'35% Jahresentwicklung'},
     {id:'formation',icon:'◆',title:'Formation',text:'geschlossene Reihen',ready:c=>c.learningDays>=3,goal:'3 Lerntage'},
-    {id:'special',icon:'✦',title:'Spezialfähigkeit',text:'Eliteangriff',ready:c=>c.p.pct>=70,goal:'70% Lernfortschritt'}
+    {id:'special',icon:'✦',title:'Spezialfähigkeit',text:'Eliteangriff',ready:c=>c.growth.pct>=70,goal:'70% Jahresentwicklung'}
   ];
 
   let selectedUnitId='infantry';
@@ -75,19 +75,20 @@
   }
   function context(){
     const p=subjectProgress();
+    const growth=campaignGrowthState(state.activeSubject,p.schoolYear);
     const l=learner();
-    const learningDays=new Set(l?.streakDays||[]).size;
+    const learningDays=growth.learningDays;
     const currentStreak=typeof streak==='function'?streak():0;
     const history=typeof testFortressHistory==='function'?testFortressHistory():[];
     const captured=history.filter(f=>f.capturedAt);
     const mission=typeof currentTestFortress==='function'?currentTestFortress():null;
     const stablePct=p.total?Math.round((p.stable/p.total)*100):0;
     return {
-      p,l,learningDays,currentStreak,history,captured,mission,stablePct,
+      p,growth,l,learningDays,currentStreak,history,captured,mission,stablePct,
       testBadges:typeof testBadgeCount==='function'?testBadgeCount():0,
       strength:armyStrength(),
-      rank:rankFor(p.pct,state.activeSubject),
-      gear:gearLabelFor(p.pct,state.activeSubject),
+      rank:rankFor(growth.pct,state.activeSubject),
+      gear:gearLabelFor(growth.pct,state.activeSubject),
       tickets:battleTickets()
     };
   }
@@ -160,10 +161,19 @@
       return `<span class="army-fortress-step ${won?'won':''} ${active?'next':''}" title="${safe(f.name)} · Test ${safe(formatDateShort(f.testDate))}"><i>${won?'✓':'♜'}</i><small>${grade?safe('Note '+grade.grade):safe(formatDateShort(f.testDate))}</small></span>`;
     }).join('');
   }
+  function heroGrowthMarkup(c){
+    const positions={infantry:'front',shield:'guard',archers:'rear',support:'support',ram:'siege',cavalry:'flank'};
+    return `<div class="army-camp-growth" aria-hidden="true">${UNIT_DEFS.map(def=>{
+      const s=unitState(def,c);if(!s.unlocked)return '';
+      const copies=Math.min(3,1+Math.floor((Math.max(1,s.level)-1)/2));
+      return `<span class="army-camp-growth-group growth-${safe(positions[def.id]||def.id)} stage-${s.level}">${Array.from({length:copies},(_,i)=>`<span class="army-camp-growth-unit army-formation-art unit-art-${safe(def.id)} stage-${s.level} copy-${i+1}"><img data-army-unit-art alt=""><b>${def.icon}</b></span>`).join('')}</span>`;
+    }).join('')}</div>`;
+  }
   function heroMarkup(c){
     const morale=moraleMeta(c);
     return `
       <img class="army-camp-art" data-army-hero-art alt="" aria-hidden="true">
+      ${heroGrowthMarkup(c)}
       <div class="army-camp-sky" aria-hidden="true"></div>
       <div class="army-camp-banner" aria-hidden="true"><span>♜</span></div>
       <div class="army-camp-copy">
@@ -298,7 +308,7 @@
     const subjectLabel=state.activeSubject==='latin'?'Spiel · Latein · Legion':'Spiel · Englisch · Armee';
 
     const hero=document.querySelector('#armyHero');
-    if(hero)hero.innerHTML=heroMarkup(c);
+    if(hero){hero.dataset.growthStage=String(c.growth.level);hero.innerHTML=heroMarkup(c)}
     const subject=document.querySelector('#armySubjectLabel');
     if(subject)subject.textContent=subjectLabel;
     const rank=document.querySelector('#armyRankLabel');
@@ -307,7 +317,7 @@
     if(summary){
       const morale=moraleMeta(c);
       summary.innerHTML=`
-        <div><small>Armeestärke</small><strong>${safe(c.strength)}</strong></div>
+        <div><small>Jahresentwicklung</small><strong>${safe(c.growth.pct)}%</strong></div>
         <div><small>Moral</small><strong>${safe(morale.label)}</strong></div>
         <div><small>Testfestungen</small><strong>${safe(c.captured.length)}</strong></div>
         <div><small>Prüfungsabzeichen</small><strong>${safe(c.testBadges)}</strong></div>
