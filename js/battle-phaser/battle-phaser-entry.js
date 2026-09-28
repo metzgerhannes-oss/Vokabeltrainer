@@ -19,7 +19,7 @@ const phaseCopy = {
   advance: ['VORRÜCKEN', 'Die Armee setzt sich in Bewegung'],
   barrage: ['ANGRIFF', 'Die Pfeilsalve steigt über das Feld'],
   impact: ['EINSCHLAG', 'Der Rammbock trifft das Tor'],
-  result: ['ERGEBNIS', 'Die Festung ist bezwungen']
+  result: ['ÜBERNAHME', 'Die Festung wird übernommen']
 };
 
 let game = null;
@@ -46,6 +46,15 @@ function setStatus(text) {
   message.textContent = text;
 }
 
+function setBeat(beat) {
+  window.__VT_PHASER_BATTLE_BEATS__ = window.__VT_PHASER_BATTLE_BEATS__ || [];
+  window.__VT_PHASER_BATTLE_BEATS__.push(beat);
+  stage.dataset.beat = beat;
+  if (beat === 'damage-1') stage.dataset.damage = 'medium';
+  if (beat === 'damage-2' || beat === 'fire') stage.dataset.damage = 'heavy';
+  if (beat === 'takeover' || beat === 'secured') stage.dataset.control = 'own';
+}
+
 function readyUi() {
   running = false;
   start.disabled = false;
@@ -64,7 +73,7 @@ function completeUi() {
   actionTitle.textContent = 'Vorschau abgeschlossen';
   actionHint.textContent = 'Die Szene kann direkt erneut abgespielt werden.';
   message.className = 'phaser-battle-message victory';
-  message.innerHTML = '<strong>Festung bezwungen</strong><span>Die Bewegung beruhigt sich und gibt den Weg frei.</span>';
+  message.innerHTML = '<strong>Festung übernommen</strong><span>Das Tor ist aufgebrochen, das eigene Banner steht und die Feuer beruhigen sich.</span>';
   stage.classList.add('is-complete');
 }
 
@@ -95,6 +104,7 @@ async function boot() {
         }
       },
       onPhase: setPhase,
+      onBeat: setBeat,
       onStatus: setStatus,
       onComplete: completeUi
     });
@@ -130,6 +140,10 @@ start.addEventListener('click', () => {
   if (running || !scene) return;
   running = true;
   stage.classList.remove('is-complete');
+  delete stage.dataset.damage;
+  delete stage.dataset.control;
+  window.__VT_PHASER_BATTLE_COMPLETE__ = false;
+  window.__VT_PHASER_BATTLE_BEATS__ = [];
   start.disabled = true;
   actionTitle.textContent = 'Schlacht läuft';
   actionHint.textContent = 'Einheiten, Kamera und Effekte laufen in einer gemeinsamen Timeline.';

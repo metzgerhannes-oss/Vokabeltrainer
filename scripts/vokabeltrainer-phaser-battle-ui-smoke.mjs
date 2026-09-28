@@ -4,7 +4,7 @@ const base = process.env.APP_BASE || 'http://127.0.0.1:4173';
 const browser = await webkit.launch({ headless: true });
 const context = await browser.newContext({ ...devices['iPhone 13'], reducedMotion: 'no-preference' });
 const page = await context.newPage();
-page.setDefaultTimeout(15000);
+page.setDefaultTimeout(18000);
 
 const errors = [];
 const external = [];
@@ -69,7 +69,7 @@ try {
   assert(external.length === 0, 'Phaser battle uses no external CDN requests');
 
   await page.locator('#phaserBattleStart').click();
-  await page.waitForFunction(() => window.__VT_PHASER_BATTLE_COMPLETE__ === true, null, { timeout: 20000 });
+  await page.waitForFunction(() => window.__VT_PHASER_BATTLE_COMPLETE__ === true, null, { timeout: 26000 });
 
   const result = await page.evaluate(() => {
     const stage = document.querySelector('#phaserBattleStage');
@@ -80,7 +80,11 @@ try {
       buttonEnabled: document.querySelector('#phaserBattleStart')?.disabled === false,
       resultText: document.querySelector('#phaserBattleMessage')?.textContent?.trim() || '',
       cinematic: document.querySelector('#phaserBattleCinematicTitle')?.textContent?.trim() || '',
-      phases: window.__VT_PHASER_BATTLE_PHASES__ || []
+      phases: window.__VT_PHASER_BATTLE_PHASES__ || [],
+      beats: window.__VT_PHASER_BATTLE_BEATS__ || [],
+      damage: stage?.dataset.damage || '',
+      control: stage?.dataset.control || '',
+      beat: stage?.dataset.beat || ''
     };
   });
 
@@ -90,7 +94,20 @@ try {
   assert(result.phase === 'result', 'scene ends in result phase');
   assert(result.complete, 'result completion state is visible');
   assert(result.buttonEnabled && result.buttonText.includes('Nochmal'), 'scene can be replayed');
-  assert(result.resultText.includes('Festung bezwungen'), 'result message is explicit');
+  const expectedBeats = ['rally','advance','volley-1','ram-charge-1','damage-1','volley-2','ram-charge-2','damage-2','fire','breach','takeover','secured'];
+  for (const beat of expectedBeats) {
+    assert(result.beats.includes(beat), 'extended sequence contains beat ' + beat);
+  }
+  for (let i = 1; i < expectedBeats.length; i += 1) {
+    assert(
+      result.beats.indexOf(expectedBeats[i - 1]) < result.beats.indexOf(expectedBeats[i]),
+      'extended beats stay in cinematic order'
+    );
+  }
+  assert(result.damage === 'heavy', 'final rendered fortress state keeps heavy damage');
+  assert(result.control === 'own', 'takeover marks fortress as own control');
+  assert(result.beat === 'secured', 'sequence settles only after takeover');
+  assert(result.resultText.includes('Festung übernommen'), 'result message confirms takeover');
   assert(result.cinematic.includes('Festung'), 'cinematic result headline remains readable');
 
   if (errors.length) throw new Error(errors.join(' | '));

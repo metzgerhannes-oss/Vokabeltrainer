@@ -157,6 +157,18 @@ Abnahme des Spikes: Die Szene muss visuell erkennbar besser als die aktuelle DOM
 sein; insbesondere dürfen keine bloßen Gesamtbild-Verschiebungen, leeren Fallback-Landschaften
 oder artefaktartigen Einschlagseffekte als finale Lösung gelten.
 
+**Iteration 2 – längere Belagerung und Übernahme:**
+- Gesamtablauf deutlich länger als der erste Spike, ohne Leerlauf
+- mindestens zwei klar getrennte Treffer-/Beschädigungsstufen
+- sichtbare strukturelle Schäden an Tor/Mauer statt nur Partikel
+- kleine stilisierte Feuer-/Glutstellen und Rauch nach stärkerem Treffer; kindgerecht und ohne Gewaltfokus
+- gegnerisches Banner fällt erst nach der Beschädigungsphase
+- eigene Truppen rücken anschließend sichtbar in Richtung Tor nach
+- eigenes Banner markiert die Übernahme; Feuer beruhigt sich im Ergebniszustand
+- Ergebnisphase erst nach der Übernahme, nicht unmittelbar nach dem ersten Treffer
+- Reduced Motion bleibt verkürzt, aber bildet alle fachlich irrelevanten visuellen Kernbeats ab
+- bestehende Lern-, Battle-Ticket-, Schadens- und Festungslogik bleibt unverändert
+
 ## B-013 – Kurze 3D-Storyszenen prüfen
 **Status:** APPROVED_BACKLOG  
 **Priorität:** nach stabilem Phaser-Battle  

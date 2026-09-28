@@ -392,3 +392,27 @@ button,a{font:inherit}
   *{scroll-behavior:auto!important}
   .phaser-phase-strip>span{transition:none}
 }
+
+.phaser-stage[data-damage="medium"]{
+  box-shadow:
+    0 30px 70px rgba(0,0,0,.34),
+    0 0 0 1px rgba(210,162,86,.22),
+    inset 0 0 0 1px rgba(255,255,255,.025);
+}
+.phaser-stage[data-damage="heavy"]{
+  box-shadow:
+    0 30px 70px rgba(0,0,0,.36),
+    0 0 24px rgba(196,94,45,.16),
+    0 0 0 1px rgba(219,128,72,.25),
+    inset 0 0 0 1px rgba(255,255,255,.025);
+}
+.phaser-stage[data-control="own"] .phaser-stage-label.target{
+  border-color:rgba(136,181,126,.42);
+  background:rgba(33,67,43,.72);
+}
+.phaser-stage[data-control="own"] .phaser-stage-label.target strong::after{
+  content:" · übernommen";
+  color:#cfe5c8;
+  font-size:.67em;
+  font-weight:800;
+}

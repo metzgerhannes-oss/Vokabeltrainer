@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>Phaser-Kampf – Bewegungsstudie</title>
-  <link rel="stylesheet" href="css/phaser-battle-demo.css?v=1">
+  <link rel="stylesheet" href="css/phaser-battle-demo.css?v=2">
 </head>
 <body>
   <main class="phaser-page">
@@ -23,7 +23,7 @@
         <div>
           <p class="phaser-kicker">Kampf · 2D/2.5D Bewegungsstudie</p>
           <h1 id="phaserBattleTitle">Angriff auf die Bergzitadelle</h1>
-          <p>Ein echter Renderer steuert jetzt Einheiten, Kamera, Pfeile, Rammbock, Staub und Festungsreaktion getrennt.</p>
+          <p>Die längere Belagerung zeigt jetzt gestaffelte Angriffe, zwei Beschädigungsstufen, Feuer/Rauch und anschließend die sichtbare Übernahme.</p>
         </div>
         <div class="phaser-target-card" aria-label="Angreifer und Ziel">
           <div><small>ANGREIFER</small><strong>Deine Armee</strong></div>
@@ -37,7 +37,7 @@
         <span data-phaser-battle-phase="advance"><i>2</i><b>Vorrücken</b></span>
         <span data-phaser-battle-phase="barrage"><i>3</i><b>Angriff</b></span>
         <span data-phaser-battle-phase="impact"><i>4</i><b>Einschlag</b></span>
-        <span data-phaser-battle-phase="result"><i>5</i><b>Ergebnis</b></span>
+        <span data-phaser-battle-phase="result"><i>5</i><b>Übernahme</b></span>
       </div>
 
       <section id="phaserBattleStage" class="phaser-stage" data-phase="ready" aria-label="Animierte Phaser-Kampfszene">
@@ -79,11 +79,13 @@
         <span>Reihen bewegen sich zeitversetzt statt als Block.</span>
         <span>Kamera und Landschaft erzeugen räumliche Tiefe.</span>
         <span>Pfeile fliegen als eigene Objekte.</span>
-        <span>Rammbock, Tor, Staub und Trümmer reagieren getrennt.</span>
+        <span>Zwei Trefferstufen beschädigen Tor und Mauer sichtbar.</span>
+        <span>Feuer und Rauch bleiben klein und stilisiert.</span>
+        <span>Die Übernahme folgt erst nach dem Durchbruch.</span>
       </section>
     </section>
   </main>
 
-  <script type="module" src="js/battle-phaser/battle-phaser-entry.js?v=1"></script>
+  <script type="module" src="js/battle-phaser/battle-phaser-entry.js?v=2"></script>
 </body>
 </html>
