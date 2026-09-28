@@ -1550,6 +1550,7 @@ function showView(id){
   }
   if(PARENT_VIEW_IDS.has(id)&&!isParentMode()){toast(isPairedChildDevice()?'Der Elternbereich ist auf diesem Kindergerät gesperrt.':'Diese Funktion liegt im Elternbereich.','subtle');id='homeView'}
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
+  document.body.classList.toggle('battle-view-active',id==='battleView');
   if(id==='battleView')setBattleImmersive(false);
   const navRoot=childNavRootView(id);
   document.querySelectorAll('.nav-btn[data-view]').forEach(b=>{const active=!isParentMode()&&b.dataset.view===navRoot;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
