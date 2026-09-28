@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 28.09.2026 · Basis: v0.21.27 · Release-Kandidat: nahtloser Übungsraum + Testabschlussbelohnung
+Stand: 28.09.2026 · Basis: v0.21.28 · Release-Kandidat: Cinematic Battle Upgrade
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
