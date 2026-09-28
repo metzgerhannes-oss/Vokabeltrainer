@@ -322,6 +322,7 @@ function startBattleFortressReveal(f=currentTestFortress()){
 }
 
 function renderBattleView(){
+  window.VTBattlePhaserProduction?.destroyProductionBattle?.();
   const stage=$('#battleStage');if(!stage)return;
   const p=subjectProgress(),f=currentTestFortress(),tickets=battleTickets(),count=Math.min(18,Math.max(7,soldiersFor(p.pct)+4)),sea=seasonInfo(),revealActive=battleFortressRevealActive(f);
   const campaign=subjectCampaign(state.activeSubject),present=battlePresentation(),isRoman=state.activeSubject==='latin',isVoyage=state.activeSubject==='french';
@@ -407,7 +408,7 @@ function setBattlePreviewMode(on){
     }
   }
 }
-function returnFromBattle(){if(battleStoryNarrating)stopBattleStoryNarration();setBattlePreviewMode(false);showView(BATTLE_RETURN_META[battleReturnView]?battleReturnView:'armyView')}
+function returnFromBattle(){if(battleStoryNarrating)stopBattleStoryNarration();window.VTBattlePhaserProduction?.destroyProductionBattle?.();setBattlePreviewMode(false);showView(BATTLE_RETURN_META[battleReturnView]?battleReturnView:'armyView')}
 function openBattleView(){
   if(isParentMode())return;
   const f=currentTestFortress(),present=battlePresentation();
@@ -453,14 +454,131 @@ function scheduleBattleStep(generation,delay,callback){
   battleSequenceTimers.add(id);
   return id;
 }
-function runBattleAnimation(){
+let battlePhaserProductionModulePromise=null;
+function useProductionPhaserBattle(secureBefore=false){
+  return state.activeSubject==='english'&&!secureBefore&&window.__VT_BATTLE_TEST_MODE__!==true;
+}
+function loadProductionPhaserBattle(){
+  if(!battlePhaserProductionModulePromise){
+    const moduleUrl=new URL('js/battle-phaser/battle-phaser-production.js?v=0.21.27',document.baseURI).href;
+    battlePhaserProductionModulePromise=import(moduleUrl).catch(error=>{
+      battlePhaserProductionModulePromise=null;
+      throw error;
+    });
+  }
+  return battlePhaserProductionModulePromise;
+}
+function setBattlePhaseUi(stage,phase,message=''){
+  stage.dataset.phase=phase;
+  stage.classList.remove('phase-rally','phase-advance','phase-barrage','phase-impact','phase-result');
+  stage.classList.add('phase-'+phase);
+  document.querySelectorAll('.battle-phase-strip [data-battle-phase]').forEach(el=>{
+    const order={rally:1,advance:2,barrage:3,impact:4,result:5},here=el.dataset.battlePhase;
+    el.classList.toggle('active',here===phase);
+    el.classList.toggle('done',(order[here]||0)<(order[phase]||0));
+  });
+  if(message)$('#battleMessage').textContent=message;
+}
+function updateEnglishBattlePostActionUi(result,{f,stage,button,targetName,boss,generation}){
+  const won=result?.result==='win',secured=result?.result==='secure';
+  stage.classList.remove('phaser-production-running','is-attacking','is-barrage','is-strike','is-impact');
+  stage.classList.add('battle-finished',(won||secured)?'is-victory':'is-hold');
+  setBattlePhaseUi(stage,'result');
+
+  const visual=battleFortressVisualState(f);
+  stage.dataset.fortressState=visual.id;
+  stage.classList.remove('fortress-visual-intact','fortress-visual-scratched','fortress-visual-damaged','fortress-visual-critical','fortress-visual-captured');
+  stage.classList.add('fortress-visual-'+visual.id);
+
+  if(secured){
+    $('#battleMessage').className='battle-message victory';
+    $('#battleMessage').innerHTML='<strong>Festung gesichert!</strong><span>Die Stellung bleibt bis zum Test unter Kontrolle.</span>';
+  }else if(won){
+    $('#battleMessage').className='battle-message victory';
+    $('#battleMessage').innerHTML=`<strong>${boss?'Boss besiegt!':'Festung erobert!'}</strong><span>${esc(f.name)} ist gefallen. +20 XP · Jetzt bis zum Test sichern.</span>`;
+  }else{
+    $('#battleMessage').className='battle-message hold';
+    $('#battleMessage').innerHTML=`<strong>Angriff gelungen!</strong><span>${result?.damage||0} Schaden. Noch ${result?.remaining||0} Verteidigung bis zur Eroberung.</span>`;
+  }
+
+  persistOnly();
+  document.dispatchEvent(new CustomEvent('vt-battle-result',{detail:{result:result?.result||'',won,secured,generation,renderer:'phaser4'}}));
+
+  const live=currentTestFortress(),left=battleTickets(),secure=!!live?.capturedAt,usedToday=!!battleDayState(state.activeSubject,false)?.actionUsed,liveName=battleTargetName(live);
+  $('#battleTicketPill').textContent=secure?(left?'1 Sicherung':'0 Sicherungen'):(left?'1 Angriff':'0 Angriffe');
+  $('#battleStrength').textContent=armyStrength();
+  $('#battleFortressName').textContent=live?`${liveName} · Test ${formatDateShort(live.testDate)}`:'Kein Test geplant';
+  $('#battleFortressProgress').textContent=!live?'–':secure?'Erobert · gesichert '+(live.securedDates?.length||0)+'×':`${live.defense} / ${live.maxDefense} Verteidigung`;
+  button.disabled=!live||left<1;
+  button.textContent=!live?'Kein Test geplant':left?(secure?'Festung sichern':`${battleAttackMeta(battleAttackMode).short}: Angriff starten`):usedToday?(secure?'Heute bereits gesichert ✓':'Heute bereits angegriffen ✓'):'Nach Tagesziel verfügbar';
+  if($('#battleActionTitle'))$('#battleActionTitle').textContent=secure?'Festung erobert':'Belagerung läuft';
+  if($('#battleActionHint'))$('#battleActionHint').textContent=secure?'Bis zum Test bleibt diese Festung dein Ziel.':'Morgen bringt das nächste Tagesziel einen neuen Angriff.';
+  $('#battleFullscreenBtn').disabled=false;
+  renderBattlefield();
+}
+async function runEnglishPhaserBattle({module,f,stage,button,targetName,boss,visualHit,generation}){
+  const maxDefense=Math.max(1,Number(f.maxDefense)||1);
+  const beforeDefense=Math.max(0,Number(f.defense)||0);
+  const initialDamagePct=clamp(Math.round((1-beforeDefense/maxDefense)*100),0,100);
+  const captureOutcome=Math.max(0,beforeDefense-(visualHit?.damage||0))===0;
+  const profileName=learner()?.name||'Mein Profil';
+
+  button.disabled=true;
+  $('#battleFullscreenBtn').disabled=true;
+  document.querySelectorAll('.battle-attack-choice').forEach(b=>b.disabled=true);
+  $('#battleMessage').className='battle-message active';
+  if($('#battleActionTitle'))$('#battleActionTitle').textContent='Schlacht läuft';
+  if($('#battleActionHint'))$('#battleActionHint').textContent='Phaser 4 inszeniert den gewählten Angriff. Schaden und Ergebnis bleiben in der App-Logik.';
+
+  window.__VT_PRODUCTION_BATTLE_BEATS__=[];
+  await module.playProductionBattle({
+    stage,
+    attack:battleAttackMode,
+    captureOutcome,
+    profileName,
+    initialDamagePct,
+    onPhase:phase=>setBattlePhaseUi(stage,phase),
+    onStatus:status=>{if(status)$('#battleMessage').textContent=status},
+    onBeat:beat=>{stage.dataset.phaserBeat=beat;window.__VT_PRODUCTION_BATTLE_BEATS__.push(beat)}
+  });
+
+  if(generation!==battleSequenceGeneration)return;
+  const result=resolveTestFortressAction(battleAttackMode);
+  updateEnglishBattlePostActionUi(result,{f,stage,button,targetName,boss,generation});
+}
+
+async function runBattleAnimation(){
   const f=currentTestFortress(),stage=$('#battleStage'),button=$('#battleAttackBtn');if(!f||!stage||!button)return;
   const secureBefore=!!f.capturedAt,present=battlePresentation(),isRoman=state.activeSubject==='latin',isVoyage=state.activeSubject==='french',targetName=battleTargetName(f);
-  if(!spendBattleTicket()){toast('Die heutige Aktion wird erst nach dem Tagesziel freigeschaltet.','subtle');renderBattleView();return}
-  cancelBattleSequence();
-  const generation=battleSequenceGeneration;
   const p=subjectProgress(),reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,attack=battleAttackMeta(battleAttackMode)||battleAttackMeta('charge'),boss=!secureBefore&&!isVoyage?battleBossFor(f):null;
   const visualHit=secureBefore?null:testFortressDamage(f,state.activeSubject,battleAttackMode),tactical=battleAttackTacticalMeta(battleAttackMode);
+  let ticketSpent=false;
+
+  if(useProductionPhaserBattle(secureBefore)){
+    button.disabled=true;
+    try{
+      const module=await loadProductionPhaserBattle();
+      if(!spendBattleTicket()){toast('Die heutige Aktion wird erst nach dem Tagesziel freigeschaltet.','subtle');renderBattleView();return}
+      ticketSpent=true;
+      cancelBattleSequence();
+      const generation=battleSequenceGeneration;
+      try{
+        await runEnglishPhaserBattle({module,f,stage,button,targetName,boss,visualHit,generation});
+        return;
+      }catch(error){
+        console.warn('Phaser battle fallback to legacy renderer',error);
+        window.VTBattlePhaserProduction?.destroyProductionBattle?.();
+        stage.classList.remove('phaser-production-failed','phaser-production-active','phaser-production-running','phaser-production-complete');
+      }
+    }catch(error){
+      console.warn('Phaser battle module unavailable, using legacy renderer',error);
+      button.disabled=false;
+    }
+  }
+
+  if(!ticketSpent&&!spendBattleTicket()){toast('Die heutige Aktion wird erst nach dem Tagesziel freigeschaltet.','subtle');renderBattleView();return}
+  cancelBattleSequence();
+  const generation=battleSequenceGeneration;
   const timing=battleAnimationTiming(reduced);
 
   const phaseCopy=secureBefore?(isVoyage?{
