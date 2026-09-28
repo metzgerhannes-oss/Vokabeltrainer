@@ -1,0 +1,141 @@
+'use strict';
+
+import Phaser from '../vendor/phaser-4.2.1.esm.min.js';
+import { createBattleSceneClass } from './battle-phaser-scene.js';
+
+const stage = document.querySelector('#phaserBattleStage');
+const mount = document.querySelector('#phaserBattleCanvas');
+const start = document.querySelector('#phaserBattleStart');
+const message = document.querySelector('#phaserBattleMessage');
+const actionTitle = document.querySelector('#phaserBattleActionTitle');
+const actionHint = document.querySelector('#phaserBattleActionHint');
+const phaseLabel = document.querySelector('#phaserBattleCinematicLabel');
+const phaseTitle = document.querySelector('#phaserBattleCinematicTitle');
+const fallback = document.querySelector('#phaserBattleFallback');
+
+const phaseCopy = {
+  ready: ['BEREIT', 'Die Armee wartet auf dein Signal'],
+  rally: ['SAMMELN', 'Die Reihen sammeln sich'],
+  advance: ['VORRÜCKEN', 'Die Armee setzt sich in Bewegung'],
+  barrage: ['ANGRIFF', 'Die Pfeilsalve steigt über das Feld'],
+  impact: ['EINSCHLAG', 'Der Rammbock trifft das Tor'],
+  result: ['ERGEBNIS', 'Die Festung ist bezwungen']
+};
+
+let game = null;
+let scene = null;
+let running = false;
+
+function setPhase(phase) {
+  stage.dataset.phase = phase;
+  const [label, title] = phaseCopy[phase] || phaseCopy.ready;
+  phaseLabel.textContent = label;
+  phaseTitle.textContent = title;
+
+  const order = { rally: 1, advance: 2, barrage: 3, impact: 4, result: 5 };
+  document.querySelectorAll('[data-phaser-battle-phase]').forEach(el => {
+    const here = el.dataset.phaserBattlePhase;
+    el.classList.toggle('active', here === phase);
+    el.classList.toggle('done', (order[here] || 0) < (order[phase] || 0));
+  });
+}
+
+function setStatus(text) {
+  message.textContent = text;
+}
+
+function readyUi() {
+  running = false;
+  start.disabled = false;
+  start.textContent = 'Sequenz abspielen';
+  actionTitle.textContent = 'Angriff bereit';
+  actionHint.textContent = 'Phaser steuert Bewegung, Kamera und Trefferinszenierung.';
+  message.className = 'phaser-battle-message';
+  setStatus('Phaser 4 ist geladen. Bereit für die Bewegungsstudie.');
+}
+
+function completeUi() {
+  running = false;
+  start.disabled = false;
+  start.textContent = 'Nochmal abspielen';
+  actionTitle.textContent = 'Vorschau abgeschlossen';
+  actionHint.textContent = 'Die Szene kann direkt erneut abgespielt werden.';
+  message.className = 'phaser-battle-message victory';
+  message.innerHTML = '<strong>Festung bezwungen</strong><span>Die Bewegung beruhigt sich und gibt den Weg frei.</span>';
+  stage.classList.add('is-complete');
+}
+
+function failUi(error) {
+  console.error('Phaser battle demo failed', error);
+  stage.classList.add('phaser-failed');
+  fallback.hidden = false;
+  start.disabled = true;
+  actionTitle.textContent = 'Phaser-Vorschau nicht verfügbar';
+  actionHint.textContent = 'Die bestehende CSS-Demo bleibt als technischer Fallback erhalten.';
+  message.className = 'phaser-battle-message';
+  message.textContent = 'Der Phaser-Renderer konnte auf diesem Gerät nicht gestartet werden.';
+}
+
+async function boot() {
+  try {
+    const BattleScene = createBattleSceneClass(Phaser, {
+      onReady: ({ reducedMotion }) => {
+        scene = game.scene.getScene('BattleSpike');
+        stage.classList.add('phaser-ready');
+        fallback.hidden = true;
+        stage.dataset.reducedMotion = reducedMotion ? 'true' : 'false';
+        readyUi();
+
+        if (new URLSearchParams(location.search).get('autoplay') !== '0') {
+          window.setTimeout(() => start.click(), 650);
+        }
+      },
+      onPhase: setPhase,
+      onStatus: setStatus,
+      onComplete: completeUi
+    });
+
+    game = new Phaser.Game({
+      type: Phaser.AUTO,
+      parent: mount,
+      width: 1280,
+      height: 720,
+      backgroundColor: '#263944',
+      transparent: false,
+      antialias: true,
+      roundPixels: false,
+      render: {
+        antialias: true,
+        pixelArt: false,
+        powerPreference: 'high-performance'
+      },
+      scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 1280,
+        height: 720
+      },
+      scene: [BattleScene]
+    });
+  } catch (error) {
+    failUi(error);
+  }
+}
+
+start.addEventListener('click', () => {
+  if (running || !scene) return;
+  running = true;
+  stage.classList.remove('is-complete');
+  start.disabled = true;
+  actionTitle.textContent = 'Schlacht läuft';
+  actionHint.textContent = 'Einheiten, Kamera und Effekte laufen in einer gemeinsamen Timeline.';
+  message.className = 'phaser-battle-message active';
+  scene.playSequence();
+});
+
+window.addEventListener('error', event => {
+  if (!stage.classList.contains('phaser-ready')) failUi(event.error || new Error(event.message));
+});
+
+setPhase('ready');
+boot();
