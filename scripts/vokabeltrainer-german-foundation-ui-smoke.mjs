@@ -28,11 +28,16 @@ try{
   assert(await page.locator('#germanFoundationCard').evaluate(el=>!el.classList.contains('hidden')),'German foundation card is enabled for the active subject');
   await page.evaluate(()=>showView('practiceView'));
   assert(await page.locator('#germanFoundationCard').isVisible(),'German foundation card is visible in Lernen');
+  assert((await page.locator('#germanFoundationCard .german-fox').count())===2,'German hub shows two calm fox guides');
+  assert((await page.locator('#germanFoundationCard .wood-sword').count())===3,'German hub shows wooden-sword learning stations');
+  assert((await page.locator('.bottom-nav [data-view="armyView"]').textContent())?.includes('Wortreich'),'German game navigation uses the Wortreich identity');
   await page.evaluate(()=>showView('homeView'));
   assert((await page.locator('#quickLearnHeroBtn').textContent())?.includes('Deutsch'),'German CTA is primary');
 
   await page.click('#quickLearnHeroBtn');
   await page.waitForSelector('.german-foundation-card');
+  assert((await page.locator('.german-foundation-card .german-fox').count())===0,'active retrieval stays free of fox distractions');
+  assert((await page.locator('.german-foundation-card .wood-sword').count())===0,'active retrieval stays free of game-like wooden-sword decoration');
 
   for(const answer of ['M','M','Mama']){
     await page.click('[data-german-answer="'+answer+'"]');
@@ -64,13 +69,15 @@ try{
   assert((await page.locator('#todayProgressText').textContent())?.includes('Heute geübt'),'Today reflects German practice');
   await page.click('.nav-btn[data-view="armyView"]');
   await page.waitForSelector('dialog[open]');
-  assert((await page.locator('dialog[open]').textContent())?.includes('Wortreich wird aufgebaut'),'German never falls through to English army');
+  assert((await page.locator('dialog[open]').textContent())?.includes('Ritter, Burgen und Belagerungen'),'German game preview uses the knight/castle Wortreich identity');
+  assert((await page.locator('dialog[open] .wordrealm-preview-route').textContent())?.includes('Ritterheer'),'Wortreich preview shows the Ritterheer-to-Burg route');
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer German foundation UI smoke: passed');
   console.log('✓ German is selectable and routes to a dedicated grade-one path');
   console.log('✓ five native-literacy competencies persist without vocabulary mastery');
-  console.log('✓ German battle remains explicitly gated instead of using English assets');
+  console.log('✓ foxes and wooden-sword stations stay in the calm learning hub, not active retrieval');
+  console.log('✓ Wortreich is visibly knight/castle themed while battle remains gated');
 }finally{
   await browser.close();
 }
