@@ -348,6 +348,10 @@
 
   function open(){
     if(typeof isParentMode==='function'&&isParentMode())return;
+    if(typeof subjectHasCapability==='function'&&!subjectHasCapability(state?.activeSubject,'battle')){
+      if(state?.activeSubject==='german')window.VTGermanLearning?.openWortreichPreview?.();
+      return;
+    }
     render();
     if(typeof showView==='function')showView('armyView');
   }
