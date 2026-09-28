@@ -20,18 +20,15 @@ try{
   await page.waitForFunction(()=>{
     const stage=document.querySelector('#battleStage');
     const canvas=stage?.querySelector('.battle-phaser-production canvas');
-    const rect=canvas?.getBoundingClientRect();
     return stage?.dataset.renderer==='phaser4'
       &&stage?.dataset.phaserReady==='true'
       &&stage.classList.contains('phaser-production-active')
-      &&!!canvas
-      &&(rect?.width||0)>300
-      &&(rect?.height||0)>160;
+      &&!!canvas;
   },null,{timeout:20000});
 
   const live=await page.evaluate(()=>{
     const stage=document.querySelector('#battleStage'),mount=stage?.querySelector('.battle-phaser-production'),canvas=mount?.querySelector('canvas');
-    const rect=canvas?.getBoundingClientRect();
+    const rect=canvas?.getBoundingClientRect(),stageRect=stage?.getBoundingClientRect(),mountRect=mount?.getBoundingClientRect();
     return {
       renderer:stage?.dataset.renderer||'',
       ready:stage?.dataset.phaserReady||'',
@@ -41,6 +38,10 @@ try{
       version:mount?.dataset.version||'',
       width:rect?.width||0,
       height:rect?.height||0,
+      stageWidth:stageRect?.width||0,
+      stageHeight:stageRect?.height||0,
+      mountWidth:mountRect?.width||0,
+      mountHeight:mountRect?.height||0,
       moduleVersion:window.VTBattlePhaserProduction?.version||''
     };
   });
@@ -51,7 +52,9 @@ try{
   assert(live.profile==='MP','profile initials are passed into the capture banner');
   assert(live.version.includes('v0.21.27'),'visible live renderer badge shows the release version');
   assert(live.moduleVersion==='0.21.27-phaser-production.1','production bridge exposes its renderer version');
-  assert(live.width>300&&live.height>160,'Phaser canvas visibly fills the battle stage');
+  assert(live.stageWidth>300&&live.stageHeight>160,'battle stage has usable mobile geometry');
+  assert(live.mountWidth>=live.stageWidth*.95&&live.mountHeight>=live.stageHeight*.95,'Phaser mount fills the battle stage');
+  assert(live.width>=live.stageWidth*.75&&live.height>=live.stageHeight*.75,'Phaser canvas visibly occupies the battle stage');
 
   await waitForBattleResult({timeout:30000});
   const capture=await page.evaluate(()=>({
