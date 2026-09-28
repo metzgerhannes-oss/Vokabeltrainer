@@ -287,7 +287,7 @@ Produktionsnachweis B-015: PR #192 gemergt auf `main` (`491d03fbe649332b8b050333
 
 
 ## B-016 – Vokabel neutral ans Abfrageende verschieben
-**Status:** IN_IMPLEMENTATION / RELEASE_CANDIDATE v0.21.32  
+**Status:** PRODUCTION / LIVE_VERIFIED v0.21.32  
 **Priorität:** P1 Lernkomfort ohne fachliche Wirkung  
 **Decision:** D-20260928-007  
 **Betroffene Quellen:** `PRODUCT_DNA.md` Rollenmodell Kind, Lernqueue
@@ -301,6 +301,8 @@ Umsetzung v0.21.32:
 - keinerlei Ergebnis-, XP-, Mastery-, Leitner-, Spacing- oder Fehlerwirkung
 - am letzten Queue-Platz ist erneutes Überspringen deaktiviert
 - eigener iPhone-WebKit-Smoke prüft Reihenfolge und Neutralität
+
+Produktionsnachweis B-016: PR #194 gemergt auf `main` (`cb306ad4571832d6115aab38438093c58d4b5cc4`), main-CI #1193 vollständig grün und GitHub Pages #554 inklusive Live-Verifikation erfolgreich.
 
 
 ## Pflege
