@@ -249,6 +249,9 @@ jobs:
       - name: WebKit Phaser battle spike
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-phaser-battle-ui-smoke.mjs
 
+      - name: WebKit production Phaser battle
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-production-phaser-battle-ui-smoke.mjs
+
       - name: WebKit My Army overview
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-army-ui-smoke.mjs
 
