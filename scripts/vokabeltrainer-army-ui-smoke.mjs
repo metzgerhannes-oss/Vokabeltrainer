@@ -125,7 +125,7 @@ try{
   assert(commandComposition.ownOverflow==='visible'&&commandComposition.ownHasTextSpan&&commandComposition.targetHasTextSpan,'profile and test text remain inside the parchment while heraldic details remain visible');
   await page.waitForFunction(()=>document.querySelector('[data-army-hero-art]')?.naturalWidth>0);
   await page.waitForFunction(()=>document.querySelectorAll('#armyUnitGrid .army-unit-art.art-loaded').length===6);
-  await page.waitForFunction(()=>document.querySelectorAll('#armyFormationField .army-formation-art.art-loaded').length===6);
+  await page.waitForFunction(()=>document.querySelectorAll('#armyFormationField .army-formation-art.art-loaded').length===2);
   assert(await page.locator('[data-army-hero-art]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'illustrated camp artwork loads');
   const yearArmyVisual=await page.evaluate(()=>({
     growth:campaignGrowthState().pct,
@@ -138,9 +138,10 @@ try{
   assert(yearArmyVisual.visibleGrowthUnits===2,'the hero composition contains only currently unlocked unit groups at the early stage');
 
   assert(await page.locator('#armyUnitGrid .army-unit-art.art-loaded').count()===6,'six illustrated unit artworks load');
-  assert(await page.locator('#armyFormationField .army-formation-unit').count()===6,'heerlager shows all six units in one formation');
-  assert(await page.locator('#armyFormationField .army-formation-art.art-loaded').count()===6,'heerlager reuses all six local illustrated unit artworks');
-  assert((await page.locator('#armyFormationField').textContent())?.includes('Fernkampf'),'heerlager exposes tactical roles directly in the formation');
+  assert(await page.locator('#armyFormationField .army-formation-unit').count()===2,'early-year heerlager shows only the actually unlocked units');
+  assert(await page.locator('#armyFormationField .army-formation-art.art-loaded').count()===2,'heerlager loads artwork only for the units currently fielded');
+  assert(!(await page.locator('#armyFormationField').textContent())?.includes('Fernkampf'),'locked ranged unit is absent from the early-year field formation');
+  assert((await page.locator('#armyFormationField .army-formation-growth-note').textContent())?.includes('2 von 6'),'heerlager explicitly states that the visible army is still growing');
   assert((await page.locator('#armyFormationField [data-army-unit="infantry"]').textContent())?.includes('Rekrut'),'early-year formation starts visibly small instead of showing a veteran army');
   assert(await page.locator('#armyUnitGrid .army-unit-card').count()===6,'six unit cards are shown');
   assert(await page.locator('#armyUnitGrid .army-stage-badge').count()===6,'every unit card shows its visible development stage');
@@ -164,7 +165,7 @@ try{
   assert(await page.locator('#armyRoleGrid progress').count()===6,'every role exposes a visible strength value');
   assert(await page.locator('#armyBonusGrid .army-bonus').count()===4,'four presentation bonuses are shown');
   assert(await page.locator('#armyUnitGrid .army-unit-card.unlocked').count()===2,'early-year state exposes only the basic infantry plus earned support instead of a full army');
-  await page.click('#armyFormationField [data-army-unit="archers"]');
+  await page.click('#armyUnitGrid [data-army-unit="archers"]');
   await page.waitForSelector('#armyUnitView.active');
   assert((await page.locator('#armyUnitViewTitle').textContent())?.includes('Bogenschützen'),'formation unit opens the same dedicated detail view');
   await page.click('#armyUnitBackBtn');
