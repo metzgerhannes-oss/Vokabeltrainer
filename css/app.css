@@ -4119,8 +4119,9 @@ body.battle-preview #battleView .battle-action-dock{
 body.battle-preview #battleView .battle-shell{
   display:block!important;
   width:100%!important;
-  height:100%!important;
-  overflow:hidden!important;
+  height:auto!important;
+  min-height:0!important;
+  overflow:visible!important;
 }
 body.battle-preview #battleView .battle-toolbar{
   display:grid!important;
@@ -4365,6 +4366,12 @@ body.battle-preview #battleView .battle-rank-badge{
 #battleView .battle-message.phaser-phase-hidden{display:none!important}
 
 /* Battle navigation is normally scrollable; fullscreen is always explicit. */
+#battleFullscreenBtn{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+}
+#battleFocusAttackBtn{display:none!important}
 body:not(.battle-focus-fallback) #battleView.active{
   position:static!important;
   overflow:visible!important;
