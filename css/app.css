@@ -3889,8 +3889,19 @@ body.learning-focus #learnView .study-shell{
 
 /* v0.21.20 – Battle is always a clean full-screen scene.
    Persistent navigation and information must never cover the campaign artwork. */
-#battleFullscreenBtn,
 #battleFocusAttackBtn{display:none!important}
+#battleFullscreenBtn{display:inline-flex!important;align-items:center;justify-content:center}
+body.battle-view-active .bottom-nav{display:none!important}
+@media(max-width:720px){
+  body:not(.battle-immersive) #battleView.active{
+    width:calc(100% + 24px);
+    margin-left:-12px;
+    margin-right:-12px;
+  }
+  body.battle-view-active:not(.battle-immersive) #battleView.active .battle-shell{
+    padding-bottom:30px!important;
+  }
+}
 
 body.battle-immersive{
   overflow:hidden!important;
@@ -3938,9 +3949,25 @@ body.battle-immersive #battleView .battle-toolbar{
   z-index:30!important;
 }
 body.battle-immersive #battleView .battle-ticket-pill{
-  justify-self:end!important;
-  grid-column:2!important;
-  grid-row:1!important;
+  display:none!important;
+}
+body.battle-immersive #battleView #battleFullscreenBtn{
+  position:fixed!important;
+  top:max(8px,env(safe-area-inset-top))!important;
+  right:max(8px,env(safe-area-inset-right))!important;
+  z-index:1400!important;
+  display:inline-flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  width:auto!important;
+  min-width:108px!important;
+  min-height:42px!important;
+  max-width:46vw!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+  justify-self:auto!important;
+  transform:none!important;
+  pointer-events:auto!important;
 }
 body.battle-immersive #battleView .battle-stage-wrap{
   width:100%!important;
@@ -4182,6 +4209,27 @@ body.battle-preview #battleView .battle-rank-badge{
   }
 }
 
+/* v0.21.28 – locked fortress preview must keep its full-screen exit reachable.
+   WebKit can clip a fixed child when the preview shell itself owns overflow;
+   pin the toolbar as the viewport-level control only for the combined state. */
+body.battle-preview.battle-immersive #battleView .battle-toolbar{
+  position:fixed!important;
+  top:max(8px,env(safe-area-inset-top))!important;
+  right:max(8px,env(safe-area-inset-right))!important;
+  left:auto!important;
+  width:auto!important;
+  display:block!important;
+  z-index:1500!important;
+  pointer-events:auto!important;
+}
+body.battle-preview.battle-immersive #battleView #battleFullscreenBtn{
+  position:static!important;
+  display:inline-flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+}
+
 /* v0.21.24 – ein Tages-Übungsraum statt künstlicher Mini-Lektionsenden */
 .daily-room-transition{
   max-width:620px!important;
@@ -4313,18 +4361,18 @@ body.battle-preview #battleView .battle-rank-badge{
   background:#263944;
   isolation:isolate;
 }
-body.battle-immersive #battleView .battle-stage-wrap.phaser-production-layout{
+#battleView .battle-stage-wrap.phaser-production-layout{
   grid-template-rows:minmax(0,1fr)!important;
   gap:0!important;
   place-items:center stretch!important;
 }
-body.battle-immersive #battleView .battle-stage-wrap.phaser-production-layout > .battle-scene-hud,
-body.battle-immersive #battleView .battle-stage-wrap.phaser-production-layout > .battle-focus-attack,
-body.battle-immersive #battleView .battle-stage-wrap.phaser-production-layout > .battle-scene-tactics,
-body.battle-immersive #battleView .battle-stage-wrap.phaser-production-layout > .battle-action-dock{
+#battleView .battle-stage-wrap.phaser-production-layout > .battle-scene-hud,
+#battleView .battle-stage-wrap.phaser-production-layout > .battle-focus-attack,
+#battleView .battle-stage-wrap.phaser-production-layout > .battle-scene-tactics,
+#battleView .battle-stage-wrap.phaser-production-layout > .battle-action-dock{
   display:none!important;
 }
-body.battle-immersive #battleView .battle-stage-wrap.phaser-production-layout > .battle-stage{
+#battleView .battle-stage-wrap.phaser-production-layout > .battle-stage{
   width:100%!important;
   height:auto!important;
   min-height:0!important;
@@ -4334,7 +4382,7 @@ body.battle-immersive #battleView .battle-stage-wrap.phaser-production-layout > 
   justify-self:center!important;
 }
 @media(orientation:landscape) and (max-height:560px){
-  body.battle-immersive #battleView .battle-stage-wrap.phaser-production-layout > .battle-stage{
+  #battleView .battle-stage-wrap.phaser-production-layout > .battle-stage{
     width:auto!important;
     height:100%!important;
     max-width:100%!important;

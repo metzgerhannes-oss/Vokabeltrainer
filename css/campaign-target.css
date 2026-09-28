@@ -974,3 +974,28 @@ body.battle-immersive.battle-preview #battleView .battle-rank-badge{
   }
 }
 
+/* v0.21.28 – normal battle keeps every KPI outside the cinematic artwork.
+   Older campaign-target mobile rules hid the middle KPIs and floated the HUD
+   over the scene; that conflicts with the current non-overlapping battle layout. */
+body:not(.battle-immersive):not(.battle-preview) #battleView .battle-scene-hud.battle-readout{
+  position:static!important;
+  inset:auto!important;
+  width:100%!important;
+  margin:0!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:7px!important;
+  pointer-events:auto!important;
+}
+body:not(.battle-immersive):not(.battle-preview) #battleView .battle-scene-hud.battle-readout>div,
+body:not(.battle-immersive):not(.battle-preview) #battleView .battle-scene-hud.battle-readout>div:nth-child(2),
+body:not(.battle-immersive):not(.battle-preview) #battleView .battle-scene-hud.battle-readout>div:nth-child(3){
+  display:flex!important;
+}
+@media(max-width:720px){
+  body:not(.battle-immersive):not(.battle-preview) #battleView .battle-scene-hud.battle-readout{
+    grid-template-columns:1fr 1fr!important;
+    gap:6px!important;
+  }
+}
+

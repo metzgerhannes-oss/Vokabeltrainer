@@ -22,7 +22,8 @@ try{
 
   const expectedRamDamage=await page.evaluate(()=>testFortressDamage(currentTestFortress(),'english','ram').damage);
   assert((await page.locator('#battleTicketPill').textContent())?.includes('1'),'battle screen shows earned attack');
-  assert(await page.locator('body.battle-immersive').count()===1,'battle is already in mandatory full-screen mode');
+  assert(await page.locator('body.battle-immersive').count()===0,'battle stays scrollable until full-screen is explicitly requested');
+  assert(await page.locator('#battleFullscreenBtn').isVisible(),'optional full-screen remains directly available');
   assert(await page.locator('.bottom-nav').isHidden(),'primary navigation stays hidden during battle');
   assert(await page.locator('#battleAttackBtn').isVisible(),'primary attack action remains available below the artwork');
   await activate('#battleAttackBtn','battle primary action');

@@ -201,6 +201,17 @@ Produktionsnachweis der isolierten Vorschau:
 - Phaser-Engine und Produktionsmodule werden lokal im Service Worker vorgecached; kein CDN
 - sichtbarer Produktions-Buildmarker im Canvas-Bereich: `v0.21.27 · Phaser`
 - eigener iPhone-WebKit-Smoke prüft Capture und normalen Treffer im echten Battle-Flow sowie unveränderte fachliche Mastery
+- Produktionsnachweis: PR #185 gemergt auf `main`; CI #1150 vollständig grün
+
+**Iteration 5 – Cinematic Upgrade v0.21.28:**
+- Festung und Profilbanner werden in der Phaser-Szene deutlich größer und präsenter
+- die Festung wehrt sich sichtbar mit Pfeilsalven und einem stilisierten Katapult
+- Gegenwehr kann einzelne eigene Einheiten rein visuell aus dem weiteren Vormarsch nehmen; daraus entsteht **kein** fachlicher Malus und keine Änderung an Mastery, Testbereitschaft oder Ticketlogik
+- bei Eroberung ziehen nur die visuell verbliebenen Einheiten durch das Tor; der Profilbanner folgt erst danach
+- kurze Sound-Cues werden lokal über Web Audio erzeugt; keine externen Sounddateien und keine zusätzliche Netzabhängigkeit
+- Schlachtansicht bleibt standardmäßig scrollbar; Vollbild ist eine optionale app-eigene Ansicht und lässt sich wieder verlassen, ohne die Schlacht zu schließen
+- Browser-Smokes decken Gegenwehr, visuelle Verluste, Sound-Fähigkeit, unveränderte fachliche Mastery sowie optionales Vollbild ab
+- Release-Kandidat: PR #187
 
 ## B-013 – Kurze 3D-Storyszenen prüfen
 **Status:** APPROVED_BACKLOG  

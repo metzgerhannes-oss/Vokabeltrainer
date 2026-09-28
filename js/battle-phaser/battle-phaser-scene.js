@@ -235,8 +235,33 @@ function createRam(scene, x, y) {
   return c;
 }
 
+function createDefenderCatapult(scene) {
+  const root = scene.add.container(0, 0);
+  const frame = g(scene);
+  frame.lineStyle(9, C.woodDark, 1);
+  frame.lineBetween(-34, 22, 0, -28);
+  frame.lineBetween(34, 22, 0, -28);
+  frame.lineBetween(-30, 22, 30, 22);
+  frame.fillStyle(C.wood, 1).fillCircle(-28, 24, 9);
+  frame.fillCircle(28, 24, 9);
+
+  const arm = g(scene);
+  arm.lineStyle(8, C.wood, 1).lineBetween(-4, 8, 52, -42);
+  arm.fillStyle(C.woodDark, 1).fillCircle(-5, 9, 8);
+  arm.fillStyle(C.stoneDark, 1).fillCircle(54, -44, 10);
+
+  const sling = g(scene);
+  sling.lineStyle(3, C.leather, 0.95).lineBetween(50, -40, 68, -55);
+  sling.fillStyle(C.leather, 1).fillEllipse(70, -57, 17, 10);
+
+  root.add([frame, arm, sling]);
+  root.__arm = arm;
+  root.__sling = sling;
+  return root;
+}
+
 function createFortress(scene, x, y, profileInitials = 'P') {
-  const root = scene.add.container(x, y).setDepth(2);
+  const root = scene.add.container(x, y).setDepth(2).setScale(1.08);
 
   const back = g(scene);
   back.fillStyle(0x000000, 0.18).fillRoundedRect(-177, -183, 368, 220, 18);
@@ -282,19 +307,22 @@ function createFortress(scene, x, y, profileInitials = 'P') {
   gate.lineStyle(3, C.steel, 0.8).lineBetween(-31, -4, 31, -4);
 
   const enemyBanner = createBanner(scene, 0, -278, C.red, false);
-  enemyBanner.setScale(0.78).setDepth(4);
+  enemyBanner.setScale(0.96).setDepth(4);
   enemyBanner.__cloth.fillStyle(C.goldLight, 1).fillCircle(26, -34, 6);
 
   const ownBanner = createBanner(scene, 0, -245, C.blue, false);
   const profileMark = scene.add.text(27, -34, String(profileInitials || 'P').slice(0, 2).toUpperCase(), {
     fontFamily: 'Arial, sans-serif',
-    fontSize: '15px',
+    fontSize: '21px',
     fontStyle: 'bold',
     color: '#fff1c4'
   }).setOrigin(0.5);
   ownBanner.add(profileMark);
-  ownBanner.setScale(0.82).setAlpha(0).setY(ownBanner.y + 38).setDepth(5);
+  ownBanner.setScale(1.16).setAlpha(0).setY(ownBanner.y + 46).setDepth(5);
   ownBanner.__profileMark = profileMark;
+
+  const defenderCatapult = createDefenderCatapult(scene);
+  defenderCatapult.setPosition(-108, -225).setScale(0.78);
 
   const cracks = g(scene).setAlpha(0);
   cracks.lineStyle(4, 0x423a34, 0.8);
@@ -345,6 +373,7 @@ function createFortress(scene, x, y, profileInitials = 'P') {
   scorch.fillStyle(0x34231d, 0.25).fillEllipse(4, -12, 90, 54);
 
   root.add([back, towerLeft, towerRight, keep, blocks, gate, breach, scorch, rubblePile, cracks, damage1]);
+  root.add(defenderCatapult);
   root.add(enemyBanner);
   root.add(ownBanner);
 
@@ -356,6 +385,7 @@ function createFortress(scene, x, y, profileInitials = 'P') {
   root.__scorch = scorch;
   root.__enemyBanner = enemyBanner;
   root.__ownBanner = ownBanner;
+  root.__catapult = defenderCatapult;
   root.__baseX = x;
   root.__baseY = y;
   return root;
@@ -516,7 +546,7 @@ function calmFires(scene, duration = 950) {
 }
 
 function marchUnitsIntoFortress(scene, units, scale = 1) {
-  const ordered = [...units].sort((a, b) => (b.x || 0) - (a.x || 0));
+  const ordered = [...units].filter(u => !u.__casualty).sort((a, b) => (b.x || 0) - (a.x || 0));
   ordered.forEach((u, i) => {
     const delay = i * 115 * scale;
     const laneOffset = (i % 3 - 1) * 10;
@@ -545,18 +575,18 @@ function marchUnitsIntoFortress(scene, units, scale = 1) {
   return 720 + 430 + Math.max(0, ordered.length - 1) * 115;
 }
 
-function createArrow(scene, x, y) {
+function createArrow(scene, x, y, { enemy = false } = {}) {
   const c = scene.add.container(x, y).setDepth(35).setVisible(false);
   const a = g(scene);
   a.lineStyle(3, 0x3a3027, 1).lineBetween(-16, 0, 12, 0);
   a.fillStyle(C.steelLight, 1).fillTriangle(12, -4, 22, 0, 12, 4);
-  a.fillStyle(C.red, 0.9).fillTriangle(-16, 0, -23, -5, -20, 0);
+  a.fillStyle(enemy ? C.red : C.blue, 0.95).fillTriangle(-16, 0, -23, -5, -20, 0);
   a.fillTriangle(-16, 0, -23, 5, -20, 0);
   c.add(a);
   return c;
 }
 
-function animateArrow(scene, arrow, from, to, delay, duration = 960) {
+function animateArrow(scene, arrow, from, to, delay, duration = 960, onImpact = null) {
   const state = { t: 0 };
   scene.time.delayedCall(delay, () => {
     arrow.setVisible(true).setAlpha(1);
@@ -575,8 +605,103 @@ function animateArrow(scene, arrow, from, to, delay, duration = 960) {
         arrow.setRotation(Math.atan2(dy, dx));
         if (t > 0.88) arrow.setAlpha((1 - t) / 0.12);
       },
-      onComplete: () => arrow.setVisible(false)
+      onComplete: () => {
+        arrow.setVisible(false);
+        onImpact?.();
+      }
     });
+  });
+}
+
+function markVisualCasualty(scene, unit, delay = 0) {
+  if (!unit || unit.__casualty) return;
+  scene.time.delayedCall(Math.max(0, delay), () => {
+    if (!unit.active || unit.__casualty) return;
+    unit.__casualty = true;
+    scene.__friendlyLosses = (scene.__friendlyLosses || 0) + 1;
+    scene.__onBeat?.('friendly-loss');
+    scene.tweens.add({
+      targets: unit,
+      y: unit.y + 18,
+      rotation: ((Math.round(unit.x) % 2) ? -1 : 1) * 1.04,
+      alpha: 0.34,
+      duration: 360,
+      ease: 'Cubic.Out'
+    });
+    if (unit.__shadow) {
+      scene.tweens.add({ targets: unit.__shadow, alpha: 0.06, duration: 280, ease: 'Sine.Out' });
+    }
+  });
+}
+
+function launchDefenseVolley(scene, scale = 1, count = 10) {
+  const candidates = scene.__units.filter(u => !u.__casualty);
+  if (!candidates.length) return;
+  for (let i = 0; i < count; i += 1) {
+    const sourceLeft = i % 2 === 0;
+    const target = candidates[(i * 3 + 2) % candidates.length];
+    const arrow = createArrow(scene, 1180, 360, { enemy: true });
+    scene.__dynamic.push(arrow);
+    const tx = target.x + scene.__Phaser.Math.Between(-16, 18);
+    const ty = target.y - scene.__Phaser.Math.Between(4, 30);
+    animateArrow(
+      scene,
+      arrow,
+      { x: sourceLeft ? 1045 : 1330, y: 332 + (i % 4) * 13 },
+      { x: tx, y: ty },
+      i * 72 * scale,
+      (700 + (i % 4) * 70) * scale,
+      () => {
+        if ((i === 3 || i === 8) && !scene.__reduced) {
+          emitDust(scene, tx, ty + 18, 5);
+          markVisualCasualty(scene, target, 0);
+        }
+      }
+    );
+  }
+}
+
+function launchDefenseCatapult(scene, scale = 1) {
+  const target = scene.__units.filter(u => !u.__casualty).sort((a, b) => (b.x || 0) - (a.x || 0))[2] || scene.__units[0];
+  if (!target) return;
+  const shot = scene.add.circle(1212, 300, 13, C.stoneDark, 1).setDepth(47);
+  shot.setStrokeStyle?.(3, C.stoneLight, 0.45);
+  scene.__dynamic.push(shot);
+
+  const catapult = scene.__fortress?.__catapult;
+  if (catapult) {
+    scene.tweens.add({
+      targets: catapult,
+      rotation: -0.28,
+      duration: 150 * scale,
+      yoyo: true,
+      ease: 'Back.Out'
+    });
+  }
+
+  const from = { x: 1212, y: 300 };
+  const to = { x: target.x + 6, y: target.y + 8 };
+  const state = { t: 0 };
+  scene.tweens.add({
+    targets: state,
+    t: 1,
+    duration: 1050 * scale,
+    ease: 'Linear',
+    onUpdate: () => {
+      const t = state.t;
+      shot.x = from.x + (to.x - from.x) * t;
+      shot.y = from.y + (to.y - from.y) * t - Math.sin(Math.PI * t) * 205;
+      shot.rotation += 0.15;
+    },
+    onComplete: () => {
+      shot.destroy();
+      if (!scene.__reduced) {
+        scene.cameras.main.shake(170, 0.0035);
+        emitDust(scene, to.x, to.y + 18, 18);
+        emitRubble(scene, to.x, to.y + 12, 6);
+      }
+      markVisualCasualty(scene, target, 0);
+    }
   });
 }
 
@@ -595,6 +720,8 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       this.__archers = [];
       this.__cavalry = [];
       this.__phase = 'ready';
+      this.__friendlyLosses = 0;
+      this.__onBeat = hooks.onBeat || null;
     }
 
     create() {
@@ -685,6 +812,7 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       }
       this.__running = false;
       this.__elapsed = 0;
+      this.__friendlyLosses = 0;
       this.cameras.main.setScroll(this.__initial.cameraX, 0);
       this.cameras.main.setZoom(1);
       this.__ram.setPosition(this.__initial.ram.x, this.__initial.ram.y).setRotation(this.__initial.ram.rotation).setAlpha(1);
@@ -692,6 +820,8 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         const p = this.__initial.units[i];
         u.setPosition(p.x, p.y).setAlpha(p.alpha).setRotation(p.rotation).setScale(p.scaleX, p.scaleY).setDepth(p.depth);
         u.__baseY = p.y;
+        u.__casualty = false;
+        if (u.__shadow) u.__shadow.setAlpha(0.22);
       });
       const gate = this.__fortress.__gate;
       gate.setPosition(this.__initial.gate.x, this.__initial.gate.y).setRotation(this.__initial.gate.rotation).setAlpha(this.__initial.gate.alpha);
@@ -703,6 +833,7 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       this.__fires = [];
       this.__fortress.__enemyBanner.setAlpha(this.__initial.enemy.alpha).setY(this.__initial.enemy.y).setRotation(this.__initial.enemy.rotation);
       this.__fortress.__ownBanner.setAlpha(this.__initial.own.alpha).setY(this.__initial.own.y).setRotation(this.__initial.own.rotation);
+      if (this.__fortress.__catapult) this.__fortress.__catapult.setRotation(0);
       this.__flash.setAlpha(0).setScale(1);
       this.__setPhase('ready');
     }
@@ -760,6 +891,18 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
           at(3250, () => emitDust(this, 680, 620, 14));
           at(4350, () => emitDust(this, 825, 607, 12));
         }
+      });
+
+      at(3050, () => {
+        beat('defense-volley');
+        hooks.onStatus?.('Die Festung erwidert den Vormarsch mit einer Pfeilsalve.');
+        launchDefenseVolley(this, scale, this.__reduced ? 5 : 10);
+      });
+
+      at(5150, () => {
+        beat('defense-catapult');
+        hooks.onStatus?.('Ein Verteidigungskatapult feuert in die vorrückenden Reihen.');
+        launchDefenseCatapult(this, scale);
       });
 
       at(4300, () => {
@@ -1090,6 +1233,18 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
           at(1650, () => emitDust(this, is('cavalry') ? 470 : 500, 635, is('cavalry') ? 18 : 10));
           at(2700, () => emitDust(this, is('cavalry') ? 760 : 690, 615, is('cavalry') ? 20 : 12));
         }
+      });
+
+      at(2850, () => {
+        beat('defense-volley');
+        hooks.onStatus?.('Die Verteidiger antworten mit Pfeilen aus den Türmen.');
+        launchDefenseVolley(this, scale, this.__reduced ? 4 : 9);
+      });
+
+      at(is('volley') ? 5600 : is('special') ? 4700 : 4300, () => {
+        beat('defense-catapult');
+        hooks.onStatus?.('Ein schweres Geschoss schlägt vor der Angriffsformation ein.');
+        launchDefenseCatapult(this, scale);
       });
 
       at(is('cavalry') ? 3300 : 3800, () => {

@@ -35,6 +35,7 @@ try{
       attack:stage?.dataset.phaserAttack||'',
       outcome:stage?.dataset.phaserOutcome||'',
       profile:stage?.dataset.phaserProfile||'',
+      sound:stage?.dataset.phaserSound||'',
       version:mount?.dataset.version||'',
       width:rect?.width||0,
       height:rect?.height||0,
@@ -50,8 +51,9 @@ try{
   assert(live.attack==='ram','selected production attack is passed to Phaser');
   assert(live.outcome==='capture','actual fortress state selects capture outcome');
   assert(live.profile==='MP','profile initials are passed into the capture banner');
-  assert(live.version.includes('v0.21.27'),'visible live renderer badge shows the release version');
-  assert(live.moduleVersion==='0.21.27-phaser-production.1','production bridge exposes its renderer version');
+  assert(live.sound==='web-audio'||live.sound==='silent','production bridge reports battle-sound capability');
+  assert(live.version.includes('v0.21.28'),'visible live renderer badge shows the cinematic release version');
+  assert(live.moduleVersion==='0.21.28-phaser-production.2','production bridge exposes its cinematic renderer version');
   console.log('PRODUCTION_PHASER_GEOMETRY',JSON.stringify(live));
   assert(live.stageWidth>300&&live.stageHeight>160,'battle stage keeps a cinematic mobile viewport');
   const stageRatio=live.stageWidth/live.stageHeight;
@@ -68,7 +70,10 @@ try{
     mastery:subjectProgress().pct,
     stageState:document.querySelector('#battleStage')?.dataset.fortressState||''
   }));
-  assert(capture.beats.includes('breach-entry'),'capture sends units through the gate');
+  assert(capture.beats.includes('defense-volley'),'fortress visibly answers with defensive arrows');
+  assert(capture.beats.includes('defense-catapult'),'fortress visibly answers with a catapult shot');
+  assert(capture.beats.includes('friendly-loss'),'defensive fire can cause visual player losses without changing learning state');
+  assert(capture.beats.includes('breach-entry'),'capture sends surviving units through the gate');
   assert(capture.beats.includes('profile-banner'),'capture raises the profile banner');
   assert(capture.beats.indexOf('breach-entry')<capture.beats.indexOf('profile-banner'),'all-unit gate entry starts before profile banner');
   assert(capture.beats.at(-1)==='secured','capture settles after profile banner');
@@ -103,6 +108,7 @@ try{
     captured:!!currentTestFortress()?.capturedAt,
     mastery:subjectProgress().pct
   }));
+  assert(hit.beats.includes('defense-volley')&&hit.beats.includes('defense-catapult'),'damage-only battle still includes fortress counterfire');
   assert(hit.beats.includes('hold')&&hit.beats.includes('settled'),'normal hit visibly settles without capture');
   assert(!hit.beats.includes('breach-entry')&&!hit.beats.includes('profile-banner'),'normal hit never shows conquest choreography');
   assert(hit.result?.result==='damage'&&hit.result?.attack==='volley','business logic records damage-only volley');

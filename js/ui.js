@@ -422,8 +422,8 @@ function setBattleImmersive(on){
   document.body.classList.toggle('battle-immersive',!!on);
   const btn=$('#battleFullscreenBtn');
   btn?.setAttribute('aria-pressed',String(!!on));
-  btn?.setAttribute('aria-label',on?'Schlachtansicht verlassen':'Schlachtansicht öffnen');
-  if(btn)btn.textContent=on?'✕ Schlacht verlassen':'⛶ Schlacht';
+  btn?.setAttribute('aria-label',on?'Vollbild verlassen':'Schlacht im Vollbild anzeigen');
+  if(btn)btn.textContent=on?'✕ Vollbild':'⛶ Vollbild';
   $('#battleFocusAttackBtn')?.classList.add('hidden');
 }
 function closeBattleImmersive(){setBattleImmersive(false)}
@@ -431,7 +431,7 @@ function openBattleAttackPickerFromFocus(){
   const tactics=$('#battleAttackChoices')?.closest('.battle-tactics');
   if(tactics)requestAnimationFrame(()=>tactics.scrollIntoView({block:'nearest',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
 }
-function toggleBattleFullscreen(){setBattleImmersive(true)}
+function toggleBattleFullscreen(){setBattleImmersive(!document.body.classList.contains('battle-immersive'))}
 let battleSequenceGeneration=0;
 const battleSequenceTimers=new Set();
 function cancelBattleSequence(){
@@ -460,7 +460,7 @@ function useProductionPhaserBattle(secureBefore=false){
 }
 function loadProductionPhaserBattle(){
   if(!battlePhaserProductionModulePromise){
-    const moduleUrl=new URL('js/battle-phaser/battle-phaser-production.js?v=0.21.27',document.baseURI).href;
+    const moduleUrl=new URL('js/battle-phaser/battle-phaser-production.js?v=0.21.28',document.baseURI).href;
     battlePhaserProductionModulePromise=import(moduleUrl).catch(error=>{
       battlePhaserProductionModulePromise=null;
       throw error;
@@ -490,16 +490,10 @@ function updateEnglishBattlePostActionUi(result,{f,stage,button,targetName,boss,
   stage.classList.remove('fortress-visual-intact','fortress-visual-scratched','fortress-visual-damaged','fortress-visual-critical','fortress-visual-captured');
   stage.classList.add('fortress-visual-'+visual.id);
 
-  $('#battleMessage').classList.remove('phaser-phase-hidden');
-  if(secured){
-    $('#battleMessage').className='battle-message victory';
-    $('#battleMessage').innerHTML='<strong>Festung gesichert!</strong><span>Die Stellung bleibt bis zum Test unter Kontrolle.</span>';
-  }else if(won){
-    $('#battleMessage').className='battle-message victory';
-    $('#battleMessage').innerHTML=`<strong>${boss?'Boss besiegt!':'Festung erobert!'}</strong><span>${esc(f.name)} ist gefallen. +20 XP · Jetzt bis zum Test sichern.</span>`;
-  }else{
-    $('#battleMessage').className='battle-message hold';
-    $('#battleMessage').innerHTML=`<strong>Angriff gelungen!</strong><span>${result?.damage||0} Schaden. Noch ${result?.remaining||0} Verteidigung bis zur Eroberung.</span>`;
+  const phaseMessage=$('#battleMessage');
+  if(phaseMessage){
+    phaseMessage.className='battle-message phaser-phase-hidden';
+    phaseMessage.textContent='';
   }
 
   persistOnly();
@@ -1550,7 +1544,8 @@ function showView(id){
   }
   if(PARENT_VIEW_IDS.has(id)&&!isParentMode()){toast(isPairedChildDevice()?'Der Elternbereich ist auf diesem Kindergerät gesperrt.':'Diese Funktion liegt im Elternbereich.','subtle');id='homeView'}
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
-  if(id==='battleView')setBattleImmersive(true);
+  document.body.classList.toggle('battle-view-active',id==='battleView');
+  if(id==='battleView')setBattleImmersive(false);
   const navRoot=childNavRootView(id);
   document.querySelectorAll('.nav-btn[data-view]').forEach(b=>{const active=!isParentMode()&&b.dataset.view===navRoot;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
   if(id==='homeView'){document.querySelectorAll('.home-disclosure').forEach(d=>{d.open=isDesktopLayout()&&d.id==='practiceDisclosure'});window.VTMenuUi?.render?.();}
@@ -1564,7 +1559,7 @@ function bind(){
   $('#newSetBtn').onclick=()=>openLearningContentPlanner(); $('#addGradeBtn').onclick=()=>addGrade(); $('#practiceTestBtn').onclick=openPracticeTestChooser; $('#addProfileBtn').onclick=addProfile; $('#profileBtn').onclick=openProfileSwitcher; $('#attackBtn').onclick=openBattleView; $('#duelBtn').onclick=openDuel;
   $('#battleBackBtn').onclick=returnFromBattle; $('#battleReturnBtn').onclick=returnFromBattle; $('#battleAttackBtn').onclick=runBattleAnimation; $('#battleFullscreenBtn').onclick=toggleBattleFullscreen; $('#battleFocusAttackBtn').onclick=openBattleAttackPickerFromFocus; $('#battleStorySpeakBtn').onclick=toggleBattleStoryNarration;
   $('#battleAttackChoices').addEventListener('click',e=>{const b=e.target.closest('[data-battle-attack]');if(b&&!b.disabled)selectBattleAttack(b.dataset.battleAttack)});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('battle-immersive'))returnFromBattle()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('battle-immersive'))closeBattleImmersive()});
   $('#parentAreaBtn').onclick=()=>openParentGate(); $('#childModeBtn').onclick=exitParentMode;
   $('#parentLibraryBtn').onclick=openLearningContentPlanner; $('#parentTestPlanBtn').onclick=()=>openTestDatePlanner($('#parentTestPlanBtn')?.dataset.setId||''); $('#parentNewTestPlanBtn')?.addEventListener('click',()=>openTestDatePlanner('')); $('#parentDashboardBtn').onclick=()=>showView('dashboardView'); $('#parentSettingsBtn').onclick=()=>showView('settingsView');
   window.VTParentDocs?.bind?.();

@@ -1,9 +1,10 @@
 # Finales Audit
 
-Stand: 28.09.2026 · App v0.21.27
+Stand: 28.09.2026 · App v0.21.28
 
 ## Ergebnis
 
+- v0.21.28 erweitert ausschließlich die Kampfdarstellung: Festungs-Gegenwehr, visuelle eigene Verluste, Sound-Cues und optionales Vollbild bleiben von fachlicher Mastery, Testidentität und Lernlogik getrennt.
 - v0.21.27 trennt die Identität eines Tests vom Kalenderdatum. Zwei geplante Tests am selben Datum werden nicht mehr automatisch zu einem gemeinsamen Wortumfang zusammengezogen. Ein verschobener, noch offener Test bleibt im Elternbereich unabhängig vom Abstand zum Termin bearbeitbar; vorhandene Lernhistorie und eine bereits gestartete Testfestung werden dem konkreten Test zugeordnet und erhalten.
 
 - v0.21.26 liefert die Bearbeitung offener Tests zuverlässig als neuen Shell-/PWA-Stand aus. Im Elternbereich kann ein noch nicht abgeschlossener Test bis einschließlich Testtag in Termin und Umfang geändert werden; bestehende Lernhistorie und laufender Festungsfortschritt bleiben erhalten. Der Versionssprung aktualisiert Asset-URLs und Service-Worker-Shell-Cache, damit installierte iOS-/PWA-Geräte nicht auf v0.21.25 hängen bleiben.

@@ -18,7 +18,7 @@ try{
     ownBanner:document.querySelector('#battleStage .battle-scene-banner-own')?.textContent?.trim()||'',
     targetBanner:document.querySelector('#battleStage .battle-scene-banner-target')?.textContent?.trim()||''
   }));
-  assert(previewState.preview&&previewState.immersive,'locked fortress opens as a dedicated full-screen preview');
+  assert(previewState.preview&&!previewState.immersive,'locked fortress opens as a dedicated scrollable preview');
   assert(previewState.nav==='none','fortress preview keeps the app navigation out of the scene');
   assert(previewState.ticket==='none'&&previewState.readout==='none'&&previewState.tactics==='none'&&previewState.dock==='none','fortress preview hides battle-only HUD, tactics and disabled action controls');
   assert(previewState.stageVisible&&previewState.ownBanner==='Mein Profil'&&previewState.targetBanner==='Test 1','fortress preview keeps the approved campaign artwork and both identity banners');
@@ -29,7 +29,7 @@ try{
   await openBattle();
   await page.setViewportSize({width:1180,height:720});
   await page.evaluate(()=>renderBattleView());
-  assert(await page.evaluate(()=>document.body.classList.contains('battle-immersive')),'battle opens directly in full-screen immersive mode');
+  assert(!(await page.evaluate(()=>document.body.classList.contains('battle-immersive'))),'battle opens in normal scrollable mode by default');
   assert(await page.locator('.bottom-nav').evaluate(el=>getComputedStyle(el).display)==='none','primary navigation is hidden for the entire battle view');
 
   await page.waitForFunction(()=>window.VTBattleArt?.ready===true);
@@ -90,16 +90,17 @@ try{
     const stage=document.querySelector('#battleStage')?.getBoundingClientRect();
     const tactics=document.querySelector('#battleView .battle-scene-tactics')?.getBoundingClientRect();
     const dock=document.querySelector('#battleView .battle-action-dock')?.getBoundingClientRect();
-    const view=document.querySelector('#battleView')?.getBoundingClientRect();
+    const view=document.querySelector('#battleView');
+    const bodyStyle=getComputedStyle(document.body),viewStyle=view?getComputedStyle(view):null;
     return {
       readoutAboveStage:!!readout&&!!stage&&readout.bottom<=stage.top+1,
       tacticsBelowStage:!!tactics&&!!stage&&tactics.top>=stage.bottom-1,
       dockBelowTactics:!!dock&&!!tactics&&dock.top>=tactics.bottom-1,
-      fillsViewport:!!view&&Math.abs(view.top)<2&&Math.abs(view.left)<2&&Math.abs(view.width-innerWidth)<4&&Math.abs(view.height-innerHeight)<4
+      normalScrollable:!!view&&!document.body.classList.contains('battle-immersive')&&viewStyle?.position!=='fixed'&&bodyStyle.overflow!=='hidden'&&bodyStyle.overflowY!=='hidden'
     };
   });
   assert(cleanComposition.readoutAboveStage&&cleanComposition.tacticsBelowStage&&cleanComposition.dockBelowTactics,'persistent battle controls are laid out around the artwork with no geometric overlap');
-  assert(cleanComposition.fillsViewport,'battle view occupies the full viewport');
+  assert(cleanComposition.normalScrollable,'battle view stays in the normal scrollable page unless full-screen is explicitly requested');
   assert(await page.locator('#battleStage .battle-unit').count()>=6,'fallback army formation remains structurally available');
   assert(await page.locator('#battleStage .unit-archer').count()>=1,'progress unlocks archers');
   assert(await page.locator('#battleStage .unit-cavalry').count()>=1,'high progress unlocks cavalry');
@@ -188,9 +189,10 @@ try{
 
   const actionAccess=await page.evaluate(()=>{
     const button=document.querySelector('#battleAttackBtn'),nav=document.querySelector('.bottom-nav');
-    button?.focus({preventScroll:true});
-    const action=button?.getBoundingClientRect();
-    if(!button||!action)return {navHidden:false,hit:false,focused:false};
+    if(!button)return {navHidden:false,hit:false,focused:false};
+    button.scrollIntoView({block:'center',inline:'nearest'});
+    button.focus({preventScroll:true});
+    const action=button.getBoundingClientRect();
     const x=action.left+action.width/2,y=action.top+action.height/2;
     const hit=document.elementFromPoint(x,y);
     return {

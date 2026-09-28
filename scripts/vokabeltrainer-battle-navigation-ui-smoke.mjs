@@ -12,7 +12,7 @@ try{
   await page.waitForSelector('#battleView.active');
   await page.waitForFunction(()=>window.VTBattleArt?.ready===true&&document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
   assert(await page.locator('#battleStage [data-battle-scene-art]').evaluate(img=>img.naturalWidth>0),'painted battle artwork loads on the iPhone path');
-  assert(await page.evaluate(()=>document.body.classList.contains('battle-immersive')),'fortress preview opens directly in app-owned full-screen mode');
+  assert(!(await page.evaluate(()=>document.body.classList.contains('battle-immersive'))),'fortress preview opens in normal scrollable mode');
   assert(await page.evaluate(()=>document.body.classList.contains('battle-preview')),'locked fortress uses the dedicated preview state');
   assert(await page.locator('.bottom-nav').isHidden(),'primary navigation is hidden throughout the fortress preview');
   assert(await page.locator('.battle-stage-wrap > .battle-scene-hud').count()===1,'battle KPIs stay structurally attached to the battle composition');
@@ -26,9 +26,9 @@ try{
   });
   console.log('FORTRESS_PREVIEW_GEOMETRY',JSON.stringify(armyPreviewGeometry));
   assert(armyPreviewGeometry.width>=armyPreviewGeometry.vw*.9&&armyPreviewGeometry.height>=160,'Army "Festung ansehen" keeps a real visible 16:9 battlefield on compact iPhone viewports: '+JSON.stringify(armyPreviewGeometry));
-  assert(armyPreviewGeometry.bottom<=armyPreviewGeometry.vh+2&&armyPreviewGeometry.artWidth>=armyPreviewGeometry.width*.95&&armyPreviewGeometry.artHeight>=armyPreviewGeometry.height*.95,'Army fortress preview artwork fills its visible stage instead of collapsing to a line');
-  assert(await page.locator('#battleFullscreenBtn').isHidden(),'battle no longer needs a second focus/full-screen toggle');
-  assert(await page.locator('.battle-story').isHidden(),'story card is removed from the full-screen battle composition');
+  assert(armyPreviewGeometry.artWidth>=armyPreviewGeometry.width*.95&&armyPreviewGeometry.artHeight>=armyPreviewGeometry.height*.95,'Army fortress preview artwork fills its visible stage instead of collapsing to a line');
+  assert(await page.locator('#battleFullscreenBtn').isVisible(),'battle exposes an optional full-screen toggle');
+  assert(await page.locator('.battle-story').isVisible(),'story card remains available in the normal scrollable battle view');
   assert(await page.locator('#battleStorySpeakBtn').count()===1,'battle story narration control remains available in the DOM');
   assert((await page.locator('#battleStorySpeakBtn').textContent()).includes('Geschichte hören'),'battle story control describes listening instead of overpromising a dramatic narrator');
   assert(await page.locator('#battleStorySpeakBtn').getAttribute('aria-pressed')==='false','battle story narration starts stopped');
@@ -62,10 +62,14 @@ try{
     renderBattleView();
   });
   assert(await page.locator('#battleStage [data-battle-target-reveal]').isHidden(),'reveal reaches stable hidden state');
-  assert(await page.locator('#battleStage').isVisible(),'battle artwork remains visible in full-screen mode');
+  assert(await page.locator('#battleStage').isVisible(),'battle artwork remains visible in normal scroll mode');
   assert(await page.locator('#battleFocusAttackBtn').isHidden(),'obsolete focus-only attack control stays hidden');
   assert(await page.locator('#battleStage .battle-fortress-state-badge').isHidden(),'duplicate fortress status plaque never covers the painted fortress');
-  assert(await page.evaluate(()=>document.fullscreenElement===null),'app-owned full-screen mode does not depend on the browser Fullscreen API');
+  await activate('#battleFullscreenBtn','enter optional battle full-screen');
+  assert(await page.evaluate(()=>document.body.classList.contains('battle-immersive')),'optional battle full-screen can be entered explicitly');
+  assert(await page.evaluate(()=>document.fullscreenElement===null),'app-owned full-screen does not depend on the browser Fullscreen API');
+  await activate('#battleFullscreenBtn','leave optional battle full-screen');
+  assert(!(await page.evaluate(()=>document.body.classList.contains('battle-immersive'))),'optional battle full-screen can be left without leaving the battle');
 
   await activate('#battleBackBtn','battle return action');
   await page.waitForSelector('#armyView.active');
@@ -81,7 +85,7 @@ try{
     const stage=document.querySelector('#battleStage')?.getBoundingClientRect();
     return {width:stage?.width||0,height:stage?.height||0,bottom:stage?.bottom||0,vw:innerWidth,vh:innerHeight};
   });
-  assert(mapPreviewGeometry.width>=mapPreviewGeometry.vw*.9&&mapPreviewGeometry.height>=160&&mapPreviewGeometry.bottom<=mapPreviewGeometry.vh+2,'"campaign-map "Zur Schlacht" opens the same visible fortress preview instead of a blank screen');
+  assert(mapPreviewGeometry.width>=mapPreviewGeometry.vw*.9&&mapPreviewGeometry.height>=160,'"campaign-map "Zur Schlacht" opens the same visible fortress preview instead of a blank screen');
   await activate('#battleBackBtn','campaign map preview return');
   await page.waitForSelector('#campaignMapView.active');
   await page.evaluate(()=>window.VTArmyUi.open());
@@ -97,8 +101,14 @@ try{
   await activate('#attackBtn','battle entry');
   await page.waitForSelector('#battleView.active');
   assert(!(await page.evaluate(()=>document.body.classList.contains('battle-preview'))),'earned daily action opens the full battle instead of preview mode');
-  const visibleBattleKpis=await page.locator('.battle-scene-hud>div:visible').count();
-  assert(visibleBattleKpis===4,'all four battle KPIs are readable outside the artwork when an action is ready');
+  const battleKpiGeometry=await page.locator('.battle-scene-hud>div').evaluateAll(items=>items.map(el=>{
+    const rect=el.getBoundingClientRect(),style=getComputedStyle(el);
+    return {width:rect.width,height:rect.height,display:style.display,visibility:style.visibility};
+  }));
+  assert(
+    battleKpiGeometry.length===4&&battleKpiGeometry.every(item=>item.width>0&&item.height>0&&item.display!=='none'&&item.visibility!=='hidden'),
+    'all four battle KPIs are readable outside the artwork when an action is ready: '+JSON.stringify(battleKpiGeometry)
+  );
   assert(await page.locator('.battle-scene-tactics').isVisible(),'battle tactics are usable below the artwork when an action is ready');
   assert(await page.locator('.battle-action-dock').isVisible(),'active battle shows the primary action block');
   const composition=await page.evaluate(()=>{
