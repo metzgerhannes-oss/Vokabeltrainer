@@ -37,6 +37,23 @@ Nach Bereitstellung der OCR-Ressource darf die Freischaltung nur noch eine Konfi
 
 Explizit unbekannte Fachwerte aus Importen werden verworfen statt still zu Englisch umgedeutet. Fehlende Fachangaben dürfen weiterhin auf das aktuell gewählte Fach zurückfallen.
 
+## Deutsch vor v1.0
+
+**Deutsch ist ein verpflichtender Bestandteil des v1.0-Scopes.** Es nutzt die gemeinsame Fachinfrastruktur, ist fachlich aber kein gewöhnliches Fremdsprachen-Vokabelmodul.
+
+Konfiguration / Architekturziel:
+
+- sichtbarer Fachname: `Deutsch`
+- `speechLang: de-DE`
+- `ocrLang: deu`
+- eigene Capability für Schriftspracherwerb / native Literacy
+- eigene Kompetenzdimensionen gemäß `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`
+- gemeinsame Infrastruktur für Profile, Tests, Sync, Audio und Spielanbindung nur dort wiederverwenden, wo sie fachlich passt
+- eigene Aufgabentypen für Buchstaben, Laut–Schrift, Lesen, Schreiben, Lernwörter und Sätze
+- eigene Spielwelt `Das Wortreich` gemäß `docs/project/DEUTSCH_WORTREICH_V1.md`
+
+Deutsch darf nicht dadurch „generisch“ gemacht werden, dass fremdsprachige Übersetzungs-Mastery unverändert auf Lesen, Schreiben oder Rechtschreibung übertragen wird.
+
 ## Capabilities statt Fachabfragen
 
 Sprachspezifische Funktionen werden als Fähigkeit modelliert:
