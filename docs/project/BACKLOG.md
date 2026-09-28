@@ -190,6 +190,18 @@ Produktionsnachweis der isolierten Vorschau:
 - Browser-Smoke prüft alle fünf Angriffstypen sowie die Trennung Treffer/Eroberung
 - bei Eroberung ziehen erst alle sichtbaren Einheiten durch das aufgebrochene Tor und verschwinden in der Festung; erst danach wird der Profilbanner gehisst
 
+**Iteration 4 – Produktivintegration Englisch:**
+- der echte Englisch-Tagesangriff nutzt Phaser 4 statt der DOM/CSS-Kampfanimation
+- Phaser wird erst beim tatsächlichen Angriff lazy geladen; Lernen und übrige App-Bereiche laden die Engine nicht
+- bestehende App-Logik bleibt alleinige Quelle für Ticketverbrauch, Angriffsschaden, Taktikbonus, Festungsverteidigung, Eroberung und XP
+- Phaser erhält nur Angriffstyp, bestehenden sichtbaren Schadensstand, Profilinitialen und das aus der App-Logik vorab ableitbare Outcome `hit|capture`
+- tatsächliche Zustandsänderung wird erst nach Abschluss der visuellen Phaser-Sequenz über `resolveTestFortressAction()` geschrieben
+- schlägt das Laden/Starten von Phaser fehl, fällt derselbe bereits begonnene Angriff ohne doppelten Ticketverbrauch auf den bestehenden Renderer zurück
+- Latein, Französisch und Sicherung einer bereits eroberten Festung bleiben zunächst auf dem bestehenden Renderer
+- Phaser-Engine und Produktionsmodule werden lokal im Service Worker vorgecached; kein CDN
+- sichtbarer Produktions-Buildmarker im Canvas-Bereich: `v0.21.27 · Phaser`
+- eigener iPhone-WebKit-Smoke prüft Capture und normalen Treffer im echten Battle-Flow sowie unveränderte fachliche Mastery
+
 ## B-013 – Kurze 3D-Storyszenen prüfen
 **Status:** APPROVED_BACKLOG  
 **Priorität:** nach stabilem Phaser-Battle  
