@@ -281,7 +281,7 @@ function defaultState(){
     version: VERSION,senseModelVersion:1,spellingLeakRepairVersion:1,pairAuditVersion:1,firstContactVersion:1,
     activeLearnerId: 'learner_demo',activeSubject: 'english',
     learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',avatarStyle:'male',activeSubjects:['english'],xp:0,literacySupport:{reading:false,spelling:false},reducedLoad:false,lrsMode:false,fontSize:17,letterSpacing:0,flashSpeed:1600,autoSpeakCorrection:true,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),battleDays:{},testFortresses:{},yearFortresses:{},completedTests:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
-    books:[],learnerBooks:[],bookVocabulary:[],sets:[],vocabulary:[],setVocabulary:[],learnerVocabulary:[],grades:[],practiceTests:[],activity:[]
+    books:[],learnerBooks:[],bookVocabulary:[],sets:[],vocabulary:[],setVocabulary:[],learnerVocabulary:[],grades:[],practiceTests:[],answerReviews:[],activity:[]
   };
   attachRuntimeWordApi(s);return s;
 }
