@@ -7,16 +7,16 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
 - App-Version: **v0.21.29**
-- produktiver Stand auf `main`: **v0.21.28 / Merge-Commit `2bb58cca1736004c1616cf586c15c66f7a6b0008` / PR #187**
-- aktueller Release-Kandidat: **PR #188 – v0.21.29 – dauerhafte Jahresentwicklung & datierbare Jahresfestung**
-- Release-Kandidat-Branch: **`feat/year-campaign-growth-v02129`**
+- produktiver Stand auf `main`: **v0.21.29 / Merge-Commit `2c5801d0d43bbc7cd10d4092b283ea0ceea76f5f` / PR #188**
+- jüngster produktiver Release: **PR #188 – v0.21.29 – dauerhafte Jahresentwicklung & datierbare Jahresfestung**
+- Produktionsnachweis v0.21.29: **PR-CI #1169 success · main-CI #1170 success · GitHub Pages #549 success inkl. Live-Verifikation**
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
 - fachliche Schutzlinie: Spielprogression, Battle-Choreografie und Jahresfestungsdatum verändern weder Mastery noch Vokabelbewertung oder Testbereitschaft
-- v0.21.29 trennt den schwankenden fachlichen Prozentwert von der kumulativen Jahresentwicklung; Avatar/Rang/Armee werden durch neuen Stoff nicht zurückgestuft
+- v0.21.29 trennt den schwankenden fachlichen Prozentwert von der kumulativen Jahresentwicklung; Avatar/Rang/Armee werden durch neuen Stoff nicht zurückgestuft; Jahresfestungsdatum ist optional, gehärtet und synchronisiert
 - praktische v1-Abnahme: weiterhin **OFFEN**
 
-PR #187 ist auf `main` gemergt. Der v0.21.29-Kandidat wurde anschließend frisch auf genau diesem Stand aufgebaut; der veraltete PR #173 wird nicht gemergt.
+PR #187 und PR #188 sind auf `main` gemergt. v0.21.29 ist durch main-CI #1170 und Pages #549 inklusive Live-Verifikation produktiv bestätigt. Die veralteten Parallel-/Alt-PRs #173 und #186 wurden bewusst ohne Merge geschlossen.
 
 Dieser Abschnitt ist ein Snapshot. Für Statusfragen muss der aktuelle GitHub-Stand erneut live geprüft werden; genannte SHAs und CI-Nummern dürfen nicht ohne erneute Prüfung als dauerhaft neuester Stand interpretiert werden.
 
@@ -46,7 +46,8 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Kindnavigation Lernen vs. Spiel | PRODUCTION | `PRODUCT_DNA.md`, `VISUAL_DNA.md` |
 | Battle-Viewport / Vollbild | PRODUCTION v0.21.28 | PR #187; standardmäßig scrollbar, optionaler app-eigener Vollbildmodus |
 | Phaser-4-Battle-Renderer Englisch | PRODUCTION v0.21.28; weitere Fächer/Fallbacks offen | D-20260928-004, B-012, PR #185/#187 |
-| Dauerhafte Jahresentwicklung / Jahresfestung | RELEASE-KANDIDAT v0.21.29 | D-20260928-005, B-014, PR #188 |\n| Family Sync | PRODUCTION / Beta-Grenze | `SYNC_ARCHITECTURE.md`, `FINAL_AUDIT.md` |
+| Dauerhafte Jahresentwicklung / Jahresfestung | PRODUCTION / LIVE VERIFIED v0.21.29 | D-20260928-005, B-014, PR #188 |
+| Family Sync | PRODUCTION / Beta-Grenze | `SYNC_ARCHITECTURE.md`, `FINAL_AUDIT.md` |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 
 ## Offene Verifikationsgrenzen
