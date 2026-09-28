@@ -4,7 +4,7 @@
   const CONFIG_KEY='vokabeltrainer_family_sync_v1';
   const SUPABASE_URL='https://ilfblkqxbldkzmqczbgo.supabase.co';
   const SUPABASE_KEY='sb_publishable_zkzIhxq7Xby65AbNnAkiyQ_0ZfAAU4V';
-  const PROFILE_PROGRESS_FIELDS=['xp','streakDays','milestones','fortressWins','fortressWinsByYear','battleTickets','battleDays','testFortresses','completedTests','campaignLog','dailyPlans'];
+  const PROFILE_PROGRESS_FIELDS=['xp','germanLiteracy','streakDays','milestones','fortressWins','fortressWinsByYear','battleTickets','battleDays','testFortresses','completedTests','campaignLog','dailyPlans'];
   const PROFILE_SETUP_FIELDS=['id','name','gradeLevel','avatarStyle','activeSubjects','literacySupport','reducedLoad','lrsMode','fontSize','letterSpacing','flashSpeed','autoSpeakCorrection','testSeries','yearFortresses','gradeScales','createdAt'];
   const runtime={applying:false,busy:false,timer:null,poll:null,snapshots:new Map()};
 
@@ -100,7 +100,7 @@
   }
   function applyProgress(key,payload){
     const id=docProfileId(key),incoming=payload?.learner||{};if(!id)return;
-    const l=ensureLearner(id,{id});PROFILE_PROGRESS_FIELDS.forEach(k=>{if(incoming[k]!==undefined)l[k]=clone(incoming[k])});
+    const l=ensureLearner(id,{id});PROFILE_PROGRESS_FIELDS.forEach(k=>{if(incoming[k]!==undefined)l[k]=clone(incoming[k])});l.germanLiteracy=normalizeGermanLiteracyProgress(l.germanLiteracy);
     state.learnerVocabulary=(state.learnerVocabulary||[]).filter(x=>x.learnerId!==id).concat(clone(payload?.learnerVocabulary||[]));
     state.practiceTests=(state.practiceTests||[]).filter(x=>x.learnerId!==id).concat(clone(payload?.practiceTests||[]));
     state.answerReviews=(state.answerReviews||[]).filter(x=>x.learnerId!==id).concat(clone(payload?.answerReviews||[]));
