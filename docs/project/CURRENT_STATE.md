@@ -6,13 +6,13 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.26**
-- aktueller `main`-Commit: `dcce2da8f7cacddf540e86c3591116934a3706e9` (Merge von PR #176 – Phaser-Battle Iteration 2)
+- App-Version: **v0.21.27** (Release-Kandidat; produktives `main` aktuell v0.21.26)
+- aktueller `main`-Commit: `1fd165db76f9b5d92d5341b6b183db352ef0c755` (PR #182 – v0.21.26 Testbearbeitung live)
 - letzter fachlicher Lernrelease: **PR #148 – v0.21.12 – Differenzierte LRS-Unterstützung**
 - letzter produktiver Release: **PR #165 – v0.21.22 – kurzer Tageskern, T−1-Rettungsmodus und getrennte Festungsvorschau**
 - letzter produktiver Release: **PR #167 – v0.21.23 – iPhone-Fix für kollabierte Festungsvorschau**
-- jüngster Merge auf `main`: **PR #176 – Phaser-Battle Iteration 2 – längere Belagerung, Beschädigung, Feuer und Übernahme**
-- aktueller Release-Kandidat: **PR #170 – v0.21.25 – kurze Konfetti-Belohnung nach bestätigtem Testabschluss**
+- jüngster Merge auf `main`: **PR #182 – v0.21.26 – Testbearbeitung live ausliefern**
+- aktueller Release-Kandidat: **PR #181 – v0.21.27 – Phaser 4 im echten Englisch-Angriff**
 - PR-CI letzter produktiver Release: **Vokabeltrainer CI #1036 – success**
 - main-CI letzter produktiver Release: **Vokabeltrainer CI #1037 – success**
 - Produktionsdeploy letzter produktiver Release: **GitHub Pages #530 – success**
@@ -25,7 +25,7 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 - main-CI Bibliothek: **Vokabeltrainer CI #962 – success**
 - Produktionsdeploy Bibliothek: **GitHub Pages #510 – success**, inklusive Live-Verifikation
 
-PR #176 ist auf `main` gemergt. Main-CI #1102 und GitHub Pages #540 sind erfolgreich. Die Phaser-Szene ist damit als isolierte Vorschau produktiv erreichbar; die eigentliche Battle-Logik der App verwendet weiterhin den bisherigen Renderer, bis B-012 praktisch abgenommen und integriert wird.
+PR #179 ist auf `main` gemergt; Main-CI #1119 und GitHub Pages #544 waren erfolgreich. PR #181 integriert den abgenommenen Phaser-Renderer als v0.21.27 in den echten Englisch-Tagesangriff; das aktuelle produktive `main` bleibt bis zum Merge dieses PR auf v0.21.26.
 
 Dieser Abschnitt ist ein Snapshot. Für Statusfragen muss der aktuelle GitHub-Stand erneut live geprüft werden; die hier genannte SHA darf nicht als dauerhaft „neuester Stand“ interpretiert werden.
 
@@ -54,7 +54,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Schutz vor System-Schreibvorschlägen | PRODUCTION | README v0.21.3 + Code/Tests |
 | Kindnavigation Lernen vs. Spiel | PRODUCTION | `PRODUCT_DNA.md`, `VISUAL_DNA.md` |
 | iPhone Battle-Fokusmodus | VERIFIED / Release-Kandidat v0.21.22 | PR #165, `V1_ACCEPTANCE_TEST.md` |
-| Phaser-4-Battle-Spike | PRODUCTION als isolierte Demo / Integration offen | D-20260928-004, B-012, PR #175/#176 |
+| Phaser-4-Battle-Renderer | PRODUCTION als isolierte Demo / Release-Kandidat für Englisch-Integration | D-20260928-004, B-012, PR #175/#176/#179, PR #181 |
 | Family Sync | PRODUCTION / Beta-Grenze | `SYNC_ARCHITECTURE.md`, `FINAL_AUDIT.md` |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 
