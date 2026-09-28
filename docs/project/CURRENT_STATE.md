@@ -8,7 +8,7 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 - produktiver Branch: `main`
 - App-Version: **v0.21.29**
 - produktiver Stand auf `main`: **v0.21.28 / Merge-Commit `2bb58cca1736004c1616cf586c15c66f7a6b0008` / PR #187**
-- aktueller Release-Kandidat: **v0.21.29 – dauerhafte Jahresentwicklung & datierbare Jahresfestung**
+- aktueller Release-Kandidat: **PR #188 – v0.21.29 – dauerhafte Jahresentwicklung & datierbare Jahresfestung**
 - Release-Kandidat-Branch: **`feat/year-campaign-growth-v02129`**
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
@@ -46,7 +46,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Kindnavigation Lernen vs. Spiel | PRODUCTION | `PRODUCT_DNA.md`, `VISUAL_DNA.md` |
 | Battle-Viewport / Vollbild | PRODUCTION v0.21.28 | PR #187; standardmäßig scrollbar, optionaler app-eigener Vollbildmodus |
 | Phaser-4-Battle-Renderer Englisch | PRODUCTION v0.21.28; weitere Fächer/Fallbacks offen | D-20260928-004, B-012, PR #185/#187 |
-| Dauerhafte Jahresentwicklung / Jahresfestung | RELEASE-KANDIDAT v0.21.29 | D-20260928-005, B-014 |\n| Family Sync | PRODUCTION / Beta-Grenze | `SYNC_ARCHITECTURE.md`, `FINAL_AUDIT.md` |
+| Dauerhafte Jahresentwicklung / Jahresfestung | RELEASE-KANDIDAT v0.21.29 | D-20260928-005, B-014, PR #188 |\n| Family Sync | PRODUCTION / Beta-Grenze | `SYNC_ARCHITECTURE.md`, `FINAL_AUDIT.md` |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 
 ## Offene Verifikationsgrenzen
