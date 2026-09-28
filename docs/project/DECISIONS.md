@@ -212,3 +212,24 @@ kriterien nicht ab. Er dokumentiert ausschließlich tatsächlich erbrachte Lernl
 Mehrere Rettungsrunden bleiben getrennte kurze Einheiten; eine lange Vollstoff-Massensession
 wird nicht automatisch gestartet.
 
+### D-20260928-001 – Pflicht-Tageskern ist ein durchgehender Übungsraum
+**Status:** LOCKED  
+**Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P6
+
+Der verpflichtende Tageskern wird aus Kindersicht als **ein zusammenhängender Übungsraum**
+behandelt. Ein interner Methoden- oder Queue-Durchlauf ist kein Lektionsende. Solange noch
+Pflichtwörter offen sind, führt die App diese Wörter innerhalb derselben Session automatisch
+in den nächsten adaptiv passenden Lernschritt weiter. Bereits aufgebaute Scaffolding-
+Informationen und die Ergebnis-Historie des Raums bleiben erhalten.
+
+Zwischen Lernschritten darf eine sehr kurze Orientierung („Weiter geht’s“) erscheinen, aber
+kein Abschlussbildschirm und keine Wahl zwischen „Zur Übersicht“ und „weitere Lektion“.
+Der normale Zurück-Button bleibt als bewusste Abbruchmöglichkeit erhalten.
+
+Erst wenn der Pflicht-Tagesplan vollständig erledigt ist, erscheint **„Übungsraum
+abgeschlossen“**. Die Ergebnisansicht fasst Fokuswörter, Zahl der Aufgaben, Aufgaben-
+Trefferquote, verwendete Lernmethoden und nötige Korrekturrunden kompakt zusammen.
+Einzelabfragen bleiben für Transparenz einklappbar. Freiwilliges Nachrücken, Bonuslernen und
+T−1-Rettungsrunden sind weiterhin getrennte Einheiten und werden nicht still an den
+Pflicht-Übungsraum angehängt.
+
