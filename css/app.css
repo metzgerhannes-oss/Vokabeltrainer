@@ -3891,6 +3891,7 @@ body.learning-focus #learnView .study-shell{
    Persistent navigation and information must never cover the campaign artwork. */
 #battleFocusAttackBtn{display:none!important}
 #battleFullscreenBtn{display:inline-flex!important;align-items:center;justify-content:center}
+body.battle-view-active .bottom-nav{display:none!important}
 
 body.battle-immersive{
   overflow:hidden!important;
