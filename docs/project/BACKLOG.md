@@ -190,6 +190,20 @@ Produktionsnachweis der isolierten Vorschau:
 - Browser-Smoke prüft alle fünf Angriffstypen sowie die Trennung Treffer/Eroberung
 - bei Eroberung ziehen erst alle sichtbaren Einheiten durch das aufgebrochene Tor und verschwinden in der Festung; erst danach wird der Profilbanner gehisst
 
+**Iteration 4 – Cinematic Battle Upgrade + Vollbild neu ordnen:**
+- die Burg wird als aktiver Gegner inszeniert: sichtbare Verteidiger, Pfeilsalven und Katapult-/Steinbeschuss
+- Gegenfeuer darf rein visuelle Verluste/Zurückweichen in der eigenen Armee zeigen; keine dieser Animationen verändert Mastery, XP, Battle-Ticket, dauerhafte Armeestärke oder andere fachliche Zustände
+- keine blutige oder brutale Darstellung; Treffer werden über Schildreaktionen, Zurückweichen, Staub und das vorübergehende Verschwinden einzelner Figuren gezeigt
+- Szene erhält deutlich mehr Detailtiefe: zusätzliche Landschaftsebenen, Vegetation/Felsen, Wehrgänge, Zinnen, Torhaus, Schatten, Rauch und Feuer
+- Festung wird größer und imposanter; Profilbanner nach Eroberung deutlich größer und zentral lesbar
+- Angriffsdynamik wird in Angriff → Gegenfeuer → erneuter Vorstoß → Belagerung → Durchbruch → Einmarsch → Profilbanner erweitert
+- Soundeffekte sind lokal/offline, starten ausschließlich nach Nutzergeste, besitzen Stumm-Schalter und beeinflussen keine fachliche Logik
+- erste Soundstufe darf prozedural per Web Audio erzeugt werden; keine externe Audio-/CDN-Abhängigkeit
+- der bisherige automatisch erzwungene immersive Modus wird entfernt: Battle-Seite bleibt normal scrollbar
+- Vollbild ist eine explizite Nutzeraktion; bevorzugt echtes Fullscreen API, mit sauberem Fallback ohne dauerhaftes Body-Scroll-Locking
+- Zurück/Escape/Fullscreen-Ende müssen Scroll- und UI-Zustand zuverlässig wiederherstellen
+- iPhone-Portrait, iPhone-Landscape und Desktop werden als eigene Browser-Geometrieprüfungen abgedeckt
+
 ## B-013 – Kurze 3D-Storyszenen prüfen
 **Status:** APPROVED_BACKLOG  
 **Priorität:** nach stabilem Phaser-Battle  
