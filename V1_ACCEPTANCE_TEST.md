@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 28.09.2026 · Basis: v0.21.32 · Produktionsbasis; Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
+Stand: 28.09.2026 · Basis: v0.21.34 · Produktionsbasis; Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -47,7 +47,7 @@ Zusatz für v0.21.24 – Übungsraum: Einen Tages-Übungsraum mit mindestens ein
 Zusatz für v0.21.24 – Testtag: Einen Test auf **heute** setzen. Der primäre Button muss **„Test abschließen“** heißen. Nach Antippen muss eine Bestätigung erscheinen; erst danach wird der Test als abgeschlossen gespeichert. Ohne eingetragene Schulnote muss die Kampagnenstation trotzdem „Test abgeschlossen“ anzeigen, die Note bleibt später nachtragbar. Ist ein weiterer Test geplant, muss er unmittelbar danach als nächstes Ziel erscheinen. Gibt es keinen Folgetest, muss im Elternmodus **„Nächsten Test vorbereiten“** und im Kindermodus die entsprechende Vorbereitungsanzeige erscheinen. Bei einem wöchentlichen Test muss nach Abschluss der nächste Serientermin zur Umfangsvorbereitung erscheinen. Einen gestern fälligen, nicht abgeschlossenen Test ebenfalls prüfen: Er darf nicht still übersprungen werden. Nach der bestätigten Abschlussaktion muss einmal kurz Konfetti erscheinen; bei aktivierter Systemeinstellung für reduzierte Bewegung darf diese Animation entfallen. Das Konfetti darf weder Klicks blockieren noch den Wechsel zum nächsten Test verzögern.
 
 
-Zusatz für v0.21.32 – Vokabel überspringen: In einer laufenden normalen Lernabfrage bei mindestens zwei Vokabeln **„Vokabel überspringen“** wählen. Sofort muss die nächste Vokabel erscheinen; die übersprungene Vokabel muss am Ende derselben Einheit erneut erscheinen. Vorher/nachher müssen XP, Mastery, Leitner-Box, Fehlerzahl und Ergebniszähler für diesen Skip unverändert sein. Am letzten Queue-Platz ist erneutes Überspringen deaktiviert. In Prüfungsmodus, Wortblitz und Vokabeldusche darf der Button nicht angeboten werden.
+Zusatz für v0.21.33 – Vokabel überspringen: In einer laufenden normalen Lernabfrage bei mindestens zwei Vokabeln **„Vokabel überspringen“** wählen. Sofort muss die nächste Vokabel erscheinen; die übersprungene Vokabel muss am Ende derselben Einheit erneut erscheinen. Vorher/nachher müssen XP, Mastery, Leitner-Box, Fehlerzahl und Ergebniszähler für diesen Skip unverändert sein. Am letzten Queue-Platz ist erneutes Überspringen deaktiviert. In Prüfungsmodus, Wortblitz und Vokabeldusche darf der Button nicht angeboten werden.
 
 Zusatz für v0.21.31 – strittige Systembewertung: Eine fachlich vertretbare, vom System aber zunächst als falsch bewertete Satz-/Antwortvariante eingeben und **„Bewertung prüfen lassen“** wählen. Der gerade erzeugte Fehler muss sofort aus Mastery, Spacing, Leitner-Box und Fehlerstatistik entfernt werden. Im Elternbereich muss die Meldung mit Frage, Kinderantwort und bisher akzeptierten Antworten erscheinen. „Antwort als richtig freigeben“ muss die Variante lokal speichern, den ursprünglichen aktiven Abruf rückwirkend positiv werten und dieselbe Antwort beim nächsten Auftreten automatisch akzeptieren. Ein zweiter Prüffall mit eindeutig falscher Antwort muss nach „Systembewertung bestätigen“ genau einen fachlichen Fehler erzeugen. Den offenen Prüffall zusätzlich einmal über Family Sync zwischen Kinder- und Eltern-Gerät prüfen.
 
@@ -426,8 +426,8 @@ Diese Sektion ist vor v1.0 verpflichtend. Ein deaktivierter Platzhalter oder rei
 
 ## G1 – Fach und Klasse-1-Einstieg
 
-- [ ] Deutsch ist als eigenes Fach auswählbar
-- [ ] Fachwechsel vermischt keine Lernstände mit Englisch/Latein
+- [x] Deutsch ist als eigenes Fach auswählbar
+- [x] Fachwechsel vermischt keine Lernstände mit Englisch/Latein
 - [ ] Buchstaben-/Graphemaufgabe funktioniert
 - [ ] Laut–Buchstaben-Zuordnung funktioniert
 - [ ] Nachspuren bzw. geführter Buchstabeneinstieg besitzt einen Übergang zu eigenständiger Produktion
@@ -438,9 +438,9 @@ Diese Sektion ist vor v1.0 verpflichtend. Ein deaktivierter Platzhalter oder rei
 
 ## G2 – Deutsche Bewertung
 
-- [ ] Groß-/Kleinschreibung wird je Aufgabentyp fachlich korrekt behandelt
-- [ ] Rechtschreibaufgaben verlangen die definierte Sollschreibung
-- [ ] reine Lese-/Erkennungsaufgaben werden nicht künstlich zu Rechtschreibtests
+- [x] Groß-/Kleinschreibung wird je Aufgabentyp fachlich korrekt behandelt
+- [x] Rechtschreibaufgaben verlangen die definierte Sollschreibung
+- [x] reine Lese-/Erkennungsaufgaben werden nicht künstlich zu Rechtschreibtests
 - [ ] technische Satz-/Platzhaltervarianten werden nur bei fachlicher Gleichwertigkeit toleriert
 - [ ] „Bewertung prüfen lassen“ neutralisiert einen strittigen Versuch auch in Deutsch
 - [ ] Elternentscheidung kann Variante freigeben, Sollinhalt korrigieren oder Systembewertung bestätigen
@@ -448,9 +448,9 @@ Diese Sektion ist vor v1.0 verpflichtend. Ein deaktivierter Platzhalter oder rei
 
 ## G3 – Das Wortreich
 
-- [ ] eigener Deutsch-Spielbereich ist sichtbar
-- [ ] Lernmodus bleibt frei von Battle-Animation
-- [ ] eigene Burg-/Ritteridentität ist ohne reine Beschriftung erkennbar
+- [x] eigener Deutsch-Spielbereich ist sichtbar
+- [x] Lernmodus bleibt frei von Battle-Animation
+- [x] eigene Burg-/Ritteridentität ist ohne reine Beschriftung erkennbar
 - [ ] eigener Fortschritt startet klein und wächst aus tatsächlichem Lernfortschritt
 - [ ] mindestens ein echter Belagerungskampf ist spielbar
 - [ ] eigene Armee steht links, Kampfzone in der Mitte, Zielburg rechts

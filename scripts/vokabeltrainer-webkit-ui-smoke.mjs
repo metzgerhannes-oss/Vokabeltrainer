@@ -41,6 +41,7 @@ try{
   await page.locator('#parentAreaBtn').click();
   await page.locator('#confirmParentMode').click();
 
+
   // Regression: profile editor switches must stay compact on iPhone and the
   // cancel/save action row must be scroll-reachable.
   await page.evaluate(()=>addProfile());
@@ -49,34 +50,44 @@ try{
     const input=document.querySelector('[data-profile-subject]');
     const row=input?.closest('.switch-row');
     const copy=row?.querySelector('span');
-    const dialog=document.querySelector('#modal');
+    const content=document.querySelector('#modalContent');
+    const footer=document.querySelector('#modalFooter');
     const ir=input?.getBoundingClientRect();
     const cr=copy?.getBoundingClientRect();
     return {
       inputWidth:ir?.width||0,
       copyWidth:cr?.width||0,
-      overflowY:dialog?getComputedStyle(dialog).overflowY:'',
-      clientHeight:dialog?.clientHeight||0,
-      scrollHeight:dialog?.scrollHeight||0
+      contentOverflowY:content?getComputedStyle(content).overflowY:'',
+      footerVisible:!!footer?.getBoundingClientRect().height
     };
   });
   if(profileDialogLayout.inputWidth>40)throw new Error('profile subject checkbox expands across the mobile dialog');
   if(profileDialogLayout.copyWidth<160)throw new Error('profile subject label is squeezed into an unreadable narrow column');
-  if(!['auto','scroll'].includes(profileDialogLayout.overflowY))throw new Error('profile editor dialog is not vertically scrollable');
-  await page.locator('#saveProfile').scrollIntoViewIfNeeded();
-  const saveBox=await page.locator('#saveProfile').boundingBox();
-  const viewport=page.viewportSize();
-  if(!saveBox||!viewport||saveBox.y<0||saveBox.y+saveBox.height>viewport.height+1)throw new Error('profile editor save action is not reachable on compact iPhone');
-  await page.locator('#modalContent button[value="cancel"]').click();
+  if(!['auto','scroll'].includes(profileDialogLayout.contentOverflowY))throw new Error('profile editor content is not vertically scrollable');
+  if(!profileDialogLayout.footerVisible)throw new Error('profile editor action footer is not visible');
 
+  // Simulate the reduced visual viewport caused by the iPhone keyboard after
+  // entering a name. Abbrechen/Anlegen must remain reachable without scrolling.
+  await page.locator('#profileName').fill('Testkind');
+  await page.setViewportSize({width:375,height:430});
+  await page.evaluate(()=>syncModalViewport());
+  const keyboardLayout=await page.evaluate(()=>{
+    const footer=document.querySelector('#modalFooter')?.getBoundingClientRect();
+    const save=document.querySelector('#saveProfile')?.getBoundingClientRect();
+    return {footerTop:footer?.top||0,footerBottom:footer?.bottom||0,saveTop:save?.top||0,saveBottom:save?.bottom||0,viewport:window.innerHeight};
+  });
+  if(!keyboardLayout.footerBottom||keyboardLayout.footerBottom>keyboardLayout.viewport+1)throw new Error('profile action footer falls below the reduced iPhone keyboard viewport');
+  if(!keyboardLayout.saveBottom||keyboardLayout.saveBottom>keyboardLayout.viewport+1)throw new Error('profile save action is hidden by the iPhone keyboard');
+  await page.locator('#modalFooter button[value="cancel"]').click();
+  await page.setViewportSize({width:375,height:667});
   await page.locator('#parentManageDisclosure > summary').click();
   await page.locator('#parentSettingsBtn').click();
   await page.locator('#familySyncSetupBtn').click();
   await page.locator('#familySyncChildJoinChoiceBtn').waitFor({state:'visible'});
   if((await page.locator('#familySyncChildJoinChoiceBtn').textContent())?.trim()!=='Kindergerät verbinden')throw new Error('child-device choice missing');
   if(!/Weiteres Eltern-Gerät verbinden/.test(await page.locator('#familySyncJoinChoiceBtn').textContent()||''))throw new Error('parent-device choice not clearly separated');
-  const setupDialog=await page.locator('#modal').evaluate(el=>({overflowY:getComputedStyle(el).overflowY,clientHeight:el.clientHeight,scrollHeight:el.scrollHeight}));
-  if(!['auto','scroll'].includes(setupDialog.overflowY))throw new Error('setup dialog is not vertically scrollable on compact iPhone');
+  const setupDialog=await page.locator('#modal').evaluate(el=>{const content=document.querySelector('#modalContent');return {overflowY:content?getComputedStyle(content).overflowY:'',clientHeight:el.clientHeight,scrollHeight:content?.scrollHeight||0}});
+  if(!['auto','scroll'].includes(setupDialog.overflowY))throw new Error('setup dialog content is not vertically scrollable on compact iPhone');
   if(setupDialog.clientHeight>667)throw new Error('setup dialog exceeds compact iPhone viewport');
 
   await page.locator('#familySyncChildJoinChoiceBtn').click();

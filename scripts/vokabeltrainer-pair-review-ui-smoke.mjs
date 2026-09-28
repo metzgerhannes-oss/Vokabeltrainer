@@ -39,7 +39,7 @@ try{
   assert(await audit.isVisible(),'pair review is surfaced as the primary parent task');
   await audit.click();
   await page.waitForSelector('#modal[open] #confirmSetPairsBtn');
-  const modal=await page.locator('#modalContent').textContent();
+  const modal=await page.locator('#modal').textContent();
   assert(modal?.includes('write')&&modal?.includes('schreiben'),'review shows exact word↔meaning pair used by quiz');
   assert(modal?.includes('fürs Lernen freigeben'),'confirmation wording releases learning rather than forcing copying');
   await page.click('#confirmSetPairsBtn');

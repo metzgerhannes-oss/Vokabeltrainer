@@ -20,7 +20,7 @@ Konfiguriert werden pro Fach:
 
 ## Aktueller Stand
 
-**Englisch** und **Latein** bleiben produktiv aktiv.
+**Englisch**, **Latein** und **Deutsch** sind produktiv aktiv.
 
 **Französisch** ist vollständig im Fachmodell vorbereitet, aber noch `available:false`. Grund: Das lokale Offline-OCR-Paket enthält aktuell `eng.traineddata`, `deu.traineddata` und `lat.traineddata`, jedoch noch kein `fra.traineddata`. Die Oberfläche soll kein Fach freigeben, dessen Fotoimport nicht vollständig funktioniert.
 
@@ -41,7 +41,7 @@ Explizit unbekannte Fachwerte aus Importen werden verworfen statt still zu Engli
 
 **Deutsch ist ein verpflichtender Bestandteil des v1.0-Scopes.** Es nutzt die gemeinsame Fachinfrastruktur, ist fachlich aber kein gewöhnliches Fremdsprachen-Vokabelmodul.
 
-Konfiguration / Architekturziel:
+Paket-B-Stand ab v0.21.33:
 
 - sichtbarer Fachname: `Deutsch`
 - `speechLang: de-DE`
@@ -49,10 +49,10 @@ Konfiguration / Architekturziel:
 - eigene Capability für Schriftspracherwerb / native Literacy
 - eigene Kompetenzdimensionen gemäß `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`
 - gemeinsame Infrastruktur für Profile, Tests, Sync, Audio und Spielanbindung nur dort wiederverwenden, wo sie fachlich passt
-- eigene Aufgabentypen für Buchstaben, Laut–Schrift, Lesen, Schreiben, Lernwörter und Sätze
+- erste native Aufgabentypen für Hören/Erkennen und Lernwort-Schreiben sind aktiv; Buchstaben, Laut–Schrift, weiterführendes Lesen und Satzproduktion folgen in Paket C/D
 - eigene Spielwelt `Das Wortreich` gemäß `docs/project/DEUTSCH_WORTREICH_V1.md`
 
-Deutsch darf nicht dadurch „generisch“ gemacht werden, dass fremdsprachige Übersetzungs-Mastery unverändert auf Lesen, Schreiben oder Rechtschreibung übertragen wird.
+Deutsch darf nicht dadurch „generisch“ gemacht werden, dass fremdsprachige Übersetzungs-Mastery unverändert auf Lesen, Schreiben oder Rechtschreibung übertragen wird. Deshalb speichert Paket B eigene Literacy-Evidenz pro Lernwort (`recognized`, `decoded`, `fluency`, `meaning`, `phonologicalSpelling`, `orthographicSpelling`, `dictation`, `sentenceUse`).
 
 ## Capabilities statt Fachabfragen
 

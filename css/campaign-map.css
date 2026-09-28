@@ -493,3 +493,38 @@ body.lrs-mode .campaign-map-board{box-shadow:none}body.lrs-mode .campaign-map-st
 .campaign-map-view[data-visual-theme="voyage"] .campaign-map-unknown::after{
   background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(244,247,244,.7) 42%,rgba(244,247,244,.88));
 }
+
+.campaign-map-view[data-visual-theme="wordrealm"]{
+  --world-bg-top:#f1e8d5;
+  --world-bg-bottom:#cfdabd;
+  --world-panel:#fbf3df;
+  --world-panel-2:#e6dbc0;
+  --world-border:#a88c61;
+  --world-accent:#6e4a2d;
+  --world-accent-2:#6f8150;
+  --world-ink:#3f382d;
+  --world-muted:#736755;
+}
+.campaign-map-view[data-visual-theme="wordrealm"] .campaign-map-board{
+  background:
+    radial-gradient(circle at 15% 12%,rgba(130,158,94,.16),transparent 13rem),
+    radial-gradient(circle at 82% 24%,rgba(128,104,69,.14),transparent 16rem),
+    linear-gradient(180deg,#faf2de,#e9ddbd);
+}
+.campaign-map-view[data-visual-theme="wordrealm"] .campaign-map-board::before{
+  opacity:.18;
+  background:
+    radial-gradient(circle at 13% 17%,#6e8250 0 3px,transparent 4px),
+    radial-gradient(circle at 87% 31%,#788c58 0 3px,transparent 4px),
+    repeating-linear-gradient(112deg,transparent 0 36px,rgba(91,68,42,.05) 37px 39px,transparent 40px 76px);
+}
+.campaign-map-view[data-visual-theme="wordrealm"] .campaign-map-route::before{
+  background:repeating-linear-gradient(180deg,#9a7547 0 12px,#d8c39b 12px 19px,#738555 19px 25px);
+}
+.campaign-map-view[data-visual-theme="wordrealm"] .campaign-map-start>span,
+.campaign-map-view[data-visual-theme="wordrealm"] .status-active .campaign-map-route-node span{
+  background:#6e4a2d;border-color:#a98150
+}
+.campaign-map-view[data-visual-theme="wordrealm"] .campaign-map-year-fortress{
+  background:linear-gradient(180deg,#f3dfae,#d4b77e);border-color:#806038
+}

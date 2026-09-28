@@ -157,6 +157,7 @@ const unionLimited=(a,b,max=1000)=>[...new Set([...(Array.isArray(a)?a:[]),...(A
 const newerDate=(a,b)=>String(a||'')>=String(b||'')?a:b;
 function mergeProgress(target,source){
   const ts={...defaultSkills(),...(target.skills||{})},ss={...defaultSkills(),...(source.skills||{})};for(const k of Object.keys(ts))ts[k]=Math.max(Number(ts[k])||0,Number(ss[k])||0);target.skills=ts;
+  const tl={...defaultLiteracySkills(),...(target.literacySkills||{})},sl={...defaultLiteracySkills(),...(source.literacySkills||{})};for(const k of Object.keys(tl))tl[k]=Math.max(Number(tl[k])||0,Number(sl[k])||0);target.literacySkills=tl;
   for(const k of ['level','repetitions','successes','independentSuccesses','assistedSuccesses','failures','intervalDays','maxActiveGapDays','coldRecallSuccesses'])target[k]=Math.max(Number(target[k])||0,Number(source[k])||0);
   for(const k of ['activeSuccessDays','activePracticeDays','coldRecallDays','spellingSuccessDays','practiceDays','modesSeen','grammarSuccessDays'])target[k]=unionLimited(target[k],source[k],1000);
   const td=normalizeDirectionalRecall(target.directionalRecall),sd=normalizeDirectionalRecall(source.directionalRecall);

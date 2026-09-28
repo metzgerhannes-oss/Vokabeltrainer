@@ -27,8 +27,9 @@ Verbindliche Leitlinien:
 - keine Rückwirkung von Kampf/Armee auf Mastery, Spacing, Testbereitschaft oder fachliche Bewertung
 - strittige Bewertungen und Überspringen müssen auch in Deutsch gemäß D-20260928-006/007 neutral funktionieren
 
-**Paket A – Produkt-/Architekturverankerung:** in Umsetzung in diesem Änderungsstrang.  
-**Pakete B–F:** Fachgrundgerüst, Klasse-1-Kern, Lernwörter/Rechtschreibung, Wortreich und v1-Abnahme folgen als technische Umsetzung.
+**Paket A – Produkt-/Architekturverankerung:** IMPLEMENTED.  
+**Paket B – Fachgrundgerüst:** IMPLEMENTED im Release-Kandidaten v0.21.34; CI-/Browser-Verifikation läuft.  
+**Pakete C–F:** Klasse-1-Kern, Lernwörter/Rechtschreibung, vollständiger Wortreich-Battle und v1-Abnahme folgen.
 
 ## B-002 – Eigene finale Latein-Grafikserie
 **Status:** APPROVED_BACKLOG  

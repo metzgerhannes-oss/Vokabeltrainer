@@ -1568,3 +1568,43 @@ body.lrs-mode .army-unit-card,body.lrs-mode .army-command,body.lrs-mode .army-un
   #armyView .battlefield.integrated-campaign-artwork .frontline-own{left:16%}
   #armyView .battlefield.integrated-campaign-artwork .frontline-target{right:16%}
 }
+
+/* Deutsch · Das Wortreich */
+#armyView[data-visual-theme="wordrealm"]{
+  --army-blue:#6b4b2d;
+  --army-blue-2:#8a653e;
+  --army-gold:#d5b66d;
+  --army-green:#718354;
+  --army-paper:#f7edd7;
+  --army-ink:#40382d;
+}
+#armyView[data-visual-theme="wordrealm"] .army-shell{
+  background:
+    radial-gradient(circle at 14% 8%,rgba(130,157,92,.13),transparent 24rem),
+    linear-gradient(180deg,#f3ead8,#e7dcc5);
+}
+#armyView[data-visual-theme="wordrealm"] .army-toolbar,
+#armyView[data-visual-theme="wordrealm"] .army-section,
+#armyView[data-visual-theme="wordrealm"] .army-command{
+  border-color:rgba(128,93,54,.28);
+}
+#armyView[data-visual-theme="wordrealm"] .army-camp-scene{
+  background:
+    radial-gradient(circle at 76% 18%,rgba(255,236,183,.42),transparent 16rem),
+    linear-gradient(180deg,#cbd8ba 0 45%,#adbb8e 46% 62%,#8d7958 63% 100%);
+}
+#armyView[data-visual-theme="wordrealm"] .army-camp-banner span{color:#f0d58d}
+#armyView[data-visual-theme="wordrealm"] .army-formation-field{
+  background:
+    radial-gradient(circle at 16% 22%,rgba(112,139,78,.18),transparent 14rem),
+    linear-gradient(180deg,#e8dfca,#d6c5a6);
+}
+#armyView[data-visual-theme="wordrealm"] .unit-infantry.stage-1 .army-unit-art::after,
+#armyView[data-visual-theme="wordrealm"] .unit-infantry.stage-1 .army-formation-art::after{
+  content:"";position:absolute;width:7px;height:42%;right:22%;bottom:18%;border-radius:5px;
+  background:#b8834a;border:1px solid #79522e;transform:rotate(24deg)
+}
+#armyView[data-visual-theme="wordrealm"] .unit-infantry.stage-1 .army-unit-art::before,
+#armyView[data-visual-theme="wordrealm"] .unit-infantry.stage-1 .army-formation-art::before{
+  content:"";position:absolute;width:24px;height:5px;right:14%;bottom:29%;border-radius:4px;background:#765033;transform:rotate(24deg)
+}

@@ -13,11 +13,13 @@
     const frame=document.querySelector('#projectMenuAvatarFrame');
     if(!img||!fallback||!frame||typeof state!=='object'||!state||!state.activeSubject)return;
     const level=Math.max(1,Math.min(6,Number(frame.dataset.avatarStage)||1));
+    const isGerman=state.activeSubject==='german';
     const style=learner()?.avatarStyle==='female'?'female':'male';
+    frame.classList.toggle('german-fox-avatar',isGerman);
     const key=`${state.activeSubject}-${style}-stage-${level}`;
     frame.dataset.avatarStyle=style;
-    const finalUrl=window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'';
-    const armyUrl=window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'';
+    const finalUrl=isGerman?'':(window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'');
+    const armyUrl=isGerman?'':(window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'');
     const url=finalUrl||armyUrl;
     if(url){
       if(img.src!==url)img.src=url;

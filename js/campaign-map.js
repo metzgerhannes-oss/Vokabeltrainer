@@ -25,6 +25,18 @@
       targetNames:{outpost:'Marschlager',tower:'Wachturm',wall:'Grenzkastell',citadel:'Bergkastell',capital:'Provinzkastell',final:'Großes Kastell'},
       battleAction:'Zum Kastell',securedAction:'Kastell ansehen / sichern'
     }),
+    wordrealm:Object.freeze({
+      places:['Fuchshain','Buchenfurt','Moosbrück','Eichenwall','Klingenpfad','Burgwiese','Worttal','Steintor','Lindenhain','Ritterfurt','Silbenwald','Kronenberg'],
+      regions:{autumn:'Herbstmark',winter:'Winterburg',spring:'Frühlingshain',summer:'Sommermark'},
+      viewTitle:'Das Wortreich',routeLabel:'PFAD DURCH DAS WORTREICH',won:n=>`${n} Burgen erobert`,next:'NÄCHSTE BURG',
+      startKicker:'FUCHSLAGER',startTitle:'Der Weg ins Wortreich beginnt',unknownKicker:'HINTER DEM WALD',unknownTitle:'Nächste Burg',
+      unknownText:'Neue Burgen erscheinen, sobald ein Test oder Lernziel geplant wird.',yearKicker:'FERNZIEL',yearTitle:'Jahresfestung',
+      yearDone:'Ritterheer vollständig entwickelt',yearOpen:p=>`${p}% Jahresentwicklung`,detailProgress:'Burgfortschritt',
+      captured:'Burg erobert',secured:'Burg gesichert',securedDetail:n=>`${n} Sicherungstage`,hold:'Bis zum Test halten',
+      active:'Aktuelle Belagerung',planned:'Burg entdeckt',awaiting:'Ergebnis offen',plannedNoun:'Burg',
+      targetNames:{outpost:'Holztor',tower:'Wachturm',wall:'Mauerburg',citadel:'Höhenburg',capital:'Königsburg',final:'Jahresfestung'},
+      battleAction:'Zur Belagerung',securedAction:'Burg ansehen / sichern'
+    }),
     voyage:Object.freeze({
       places:['Belle-Rive','Pont-Clair','Mont-Lumière','Val-Fleuri','Rive-Dorée','Belle-Place','Fontaine-Claire','Port-Lumière','Jardin-Neuf','Pont-des-Fleurs','Côte-Claire','Ville-Jolie'],
       regions:{autumn:'Herbstetappe',winter:'Winterreise',spring:'Frühlingsroute',summer:'Sommerroute'},
