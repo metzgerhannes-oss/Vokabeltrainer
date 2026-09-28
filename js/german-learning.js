@@ -108,7 +108,7 @@
   }
   function openWortreichPreview(){
     if(typeof modal!=='function')return;
-    modal('<div class="eyebrow">Deutsch · Das Wortreich</div><h2>Das Wortreich wird aufgebaut</h2><p>Dein Deutsch-Lernstand ist bereits ein eigener Fachbereich. Die Ritter-, Burg- und Belagerungswelt wird im nächsten Umsetzungspaket angeschlossen.</p><div class="notice subtle"><strong>Wichtig:</strong> Bis dahin wird für Deutsch keine englische Armee als Platzhalter angezeigt.</div><div class="modal-actions"><button value="ok" class="primary">Zurück zum Lernen</button></div>');
+    modal('<div class="eyebrow">Deutsch · Das Wortreich</div><h2>Ritter, Burgen und Belagerungen</h2><p>Hier entsteht dein eigenes Ritterheer. Später ziehst du mit ihm gegen fiktionale Burgen – getrennt vom Lernen und ohne Einfluss auf deinen Deutsch-Lernstand.</p><div class="wordrealm-preview-route" aria-hidden="true"><span>⚔ Ritterheer</span><b>→</b><span>♜ Burg</span></div><div class="notice subtle"><strong>Paket B:</strong> Das Wortreich ist als eigene Deutsch-Spielwelt verankert. Die vollständige Belagerungsszene folgt im Wortreich-Paket; bis dahin gibt es keinen englischen Armee-Platzhalter.</div><div class="modal-actions"><button value="ok" class="primary">Zurück zum Lernen</button></div>');
   }
 
   window.VTGermanLearning={active,startFoundation,renderHub,progressSnapshot,openWortreichPreview,tasks:()=>FOUNDATION_TASKS.map(x=>({...x}))};
