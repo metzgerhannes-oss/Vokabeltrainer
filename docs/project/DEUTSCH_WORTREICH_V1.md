@@ -221,7 +221,7 @@ Fehlt einer der fachlichen Punkte 1–6 oder greift die Spielwelt in die fachlic
 - Backlog und Release-Gates
 
 ### Paket B – Fachgrundgerüst
-**Status: umgesetzt in v0.21.33.**
+**Status: umgesetzt im Release-Kandidaten v0.21.34; automatisierte Verifikation läuft.**
 - Deutsch in Fachmodell und Navigation
 - Datenmodell/Kompetenzzustände
 - Audio über `de-DE`
