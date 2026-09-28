@@ -515,24 +515,35 @@ function answerReviewActivity(req,type,meta={}){
   state.activity=state.activity||[];
   state.activity.push({id:uid('a'),learnerId:req.learnerId,date:new Date().toISOString(),type,answerReviewId:req.id,wordId:req.wordId,...meta});
 }
+function answerReviewAttemptTime(req){
+  const raw=String(req?.createdAt||'');return /^\d{4}-\d{2}-\d{2}T/.test(raw)?raw:new Date().toISOString();
+}
+function applyAnswerReviewDirection(w,req,correct){
+  const direction=recallDirectionForMode(req?.mode||req?.skill||'');if(!w||!direction)return '';
+  const all=normalizeDirectionalRecall(w.directionalRecall),node=all[direction],at=answerReviewAttemptTime(req),day=/^\d{4}-\d{2}-\d{2}$/.test(String(req?.attemptDate||''))?req.attemptDate:at.slice(0,10);
+  if(correct)node.successDays=[...new Set([...(node.successDays||[]),day])].slice(-1000);
+  if(!node.lastAt||String(node.lastAt)<=at){node.lastCorrect=!!correct;node.lastAt=at}
+  w.directionalRecall=all;return direction;
+}
 function applyAcceptedAnswerReview(req){
   const w=answerReviewProgress(req),l=(state.learners||[]).find(x=>x.id===req.learnerId);if(!w||!l)return;
-  const cfg=answerReviewSkill(req),attemptDay=/^\d{4}-\d{2}-\d{2}$/.test(String(req.attemptDate||''))?req.attemptDate:today(),now=new Date().toISOString();
-  w.repetitions=(w.repetitions||0)+1;w.lastReviewedAt=now;w.practiceDays=[...new Set([...(w.practiceDays||[]),attemptDay])];w.modesSeen=[...new Set([...(w.modesSeen||[]),req.mode||req.skill].filter(Boolean))];
+  const cfg=answerReviewSkill(req),attemptDay=/^\d{4}-\d{2}-\d{2}$/.test(String(req.attemptDate||''))?req.attemptDate:today(),attemptAt=answerReviewAttemptTime(req);
+  w.repetitions=(w.repetitions||0)+1;w.lastReviewedAt=!w.lastReviewedAt||String(w.lastReviewedAt)<attemptAt?attemptAt:w.lastReviewedAt;w.practiceDays=[...new Set([...(w.practiceDays||[]),attemptDay])];w.modesSeen=[...new Set([...(w.modesSeen||[]),req.mode||req.skill].filter(Boolean))];
   if(cfg.active){
     w.successes=(w.successes||0)+1;w.independentSuccesses=(w.independentSuccesses||0)+1;w.activePracticeDays=[...new Set([...(w.activePracticeDays||[]),attemptDay])];w.activeSuccessDays=[...new Set([...(w.activeSuccessDays||[]),attemptDay])];w.recentActiveResults=[...(w.recentActiveResults||[]),true].slice(-8);
     cfg.credits.forEach((key,i)=>{w.skills[key]=clamp((w.skills[key]||0)+(i===0?1:.55),0,4)});
     if(req.mode==='spelling')w.spellingSuccessDays=[...new Set([...(w.spellingSuccessDays||[]),attemptDay])];
-    w.lastSuccessAt=now;w.lastActiveSuccessAt=w.lastActiveSuccessAt&&String(w.lastActiveSuccessAt)>now?w.lastActiveSuccessAt:now;l.xp=(l.xp||0)+3;
-    refreshMastery(w);updateLeitnerBox(w,true,{assisted:false,active:true,orthographyOk:true});
+    w.lastSuccessAt=!w.lastSuccessAt||String(w.lastSuccessAt)<attemptAt?attemptAt:w.lastSuccessAt;w.lastActiveSuccessAt=!w.lastActiveSuccessAt||String(w.lastActiveSuccessAt)<attemptAt?attemptAt:w.lastActiveSuccessAt;l.xp=(l.xp||0)+3;
+    applyAnswerReviewDirection(w,req,true);refreshMastery(w);updateLeitnerBox(w,true,{assisted:false,active:true,orthographyOk:true});
+    if(req.dailyAttempt&&attemptDay===today()&&req.learnerId===state.activeLearnerId&&req.subject===state.activeSubject)markDailyPlanWordDone(w);
   }
 }
 function applyRejectedAnswerReview(req){
   const w=answerReviewProgress(req);if(!w)return;
-  const cfg=answerReviewSkill(req),now=new Date().toISOString(),attemptDay=/^\d{4}-\d{2}-\d{2}$/.test(String(req.attemptDate||''))?req.attemptDate:today();
-  w.repetitions=(w.repetitions||0)+1;w.lastReviewedAt=now;w.practiceDays=[...new Set([...(w.practiceDays||[]),attemptDay])];w.modesSeen=[...new Set([...(w.modesSeen||[]),req.mode||req.skill].filter(Boolean))];
+  const cfg=answerReviewSkill(req),attemptAt=answerReviewAttemptTime(req),attemptDay=/^\d{4}-\d{2}-\d{2}$/.test(String(req.attemptDate||''))?req.attemptDate:today();
+  w.repetitions=(w.repetitions||0)+1;w.lastReviewedAt=!w.lastReviewedAt||String(w.lastReviewedAt)<attemptAt?attemptAt:w.lastReviewedAt;w.practiceDays=[...new Set([...(w.practiceDays||[]),attemptDay])];w.modesSeen=[...new Set([...(w.modesSeen||[]),req.mode||req.skill].filter(Boolean))];
   if(cfg.active){
-    w.failures=(w.failures||0)+1;cfg.credits.forEach((key,i)=>{w.skills[key]=clamp((w.skills[key]||0)-(i===0?1:.35),0,4)});w.errorProfile[cfg.error]=(w.errorProfile[cfg.error]||0)+1;w.intervalDays=0;w.dueDate=today();w.recentActiveResults=[...(w.recentActiveResults||[]),false].slice(-8);refreshMastery(w);updateLeitnerBox(w,false,{assisted:false,active:true,orthographyOk:true});
+    w.failures=(w.failures||0)+1;cfg.credits.forEach((key,i)=>{w.skills[key]=clamp((w.skills[key]||0)-(i===0?1:.35),0,4)});w.errorProfile[cfg.error]=(w.errorProfile[cfg.error]||0)+1;w.intervalDays=0;w.dueDate=today();w.recentActiveResults=[...(w.recentActiveResults||[]),false].slice(-8);applyAnswerReviewDirection(w,req,false);refreshMastery(w);updateLeitnerBox(w,false,{assisted:false,active:true,orthographyOk:true});
   }
 }
 function acceptAnswerReview(id){
