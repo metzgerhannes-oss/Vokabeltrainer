@@ -4209,6 +4209,27 @@ body.battle-preview #battleView .battle-rank-badge{
   }
 }
 
+/* v0.21.28 – locked fortress preview must keep its full-screen exit reachable.
+   WebKit can clip a fixed child when the preview shell itself owns overflow;
+   pin the toolbar as the viewport-level control only for the combined state. */
+body.battle-preview.battle-immersive #battleView .battle-toolbar{
+  position:fixed!important;
+  top:max(8px,env(safe-area-inset-top))!important;
+  right:max(8px,env(safe-area-inset-right))!important;
+  left:auto!important;
+  width:auto!important;
+  display:block!important;
+  z-index:1500!important;
+  pointer-events:auto!important;
+}
+body.battle-preview.battle-immersive #battleView #battleFullscreenBtn{
+  position:static!important;
+  display:inline-flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+}
+
 /* v0.21.24 – ein Tages-Übungsraum statt künstlicher Mini-Lektionsenden */
 .daily-room-transition{
   max-width:620px!important;
