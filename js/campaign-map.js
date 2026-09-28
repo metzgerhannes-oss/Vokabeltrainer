@@ -7,7 +7,7 @@
       viewTitle:'Mein Feldzug',routeLabel:'KAMPAGNENPFAD',won:n=>`${n} Ziele erreicht`,next:'NÄCHSTER SCHRITT',
       startKicker:'DEIN LAGER',startTitle:'Die Kampagne beginnt',unknownKicker:'UNERKUNDETES GEBIET',unknownTitle:'Nächstes Ziel',
       unknownText:'Neue Tests erscheinen automatisch, sobald sie geplant werden.',yearKicker:'FERNZIEL',yearTitle:'Jahresfestung',
-      yearDone:'Schuljahr gemeistert',yearOpen:p=>`${p}% Schuljahresfortschritt`,detailProgress:'Festungsfortschritt',
+      yearDone:'Armee vollständig entwickelt',yearOpen:p=>`${p}% Jahresentwicklung`,detailProgress:'Festungsfortschritt',
       captured:'Festung erobert',secured:'Festung gesichert',securedDetail:n=>`${n} Sicherungstage`,hold:'Bis zum Test halten',
       active:'Aktuelles Testziel',planned:'Ziel entdeckt',awaiting:'Ergebnis offen',plannedNoun:'Ziel',
       targetNames:{outpost:'Vorposten',tower:'Wachturm',wall:'Grenzfestung',citadel:'Zitadelle',capital:'Hauptfestung',final:'Große Festung'},
@@ -19,7 +19,7 @@
       viewTitle:'Marschroute der Legion',routeLabel:'RÖMISCHE MARSCHROUTE',won:n=>`${n} Etappen gesichert`,next:'NÄCHSTE ETAPPE',
       startKicker:'MARSCHLAGER',startTitle:'Die Legion bricht auf',unknownKicker:'UNBEKANNTE PROVINZ',unknownTitle:'Nächste Etappe',
       unknownText:'Neue Prüfungsziele erscheinen entlang der Straße, sobald sie geplant werden.',yearKicker:'TRIUMPHZIEL',yearTitle:'Triumphort',
-      yearDone:'Schuljahr gemeistert',yearOpen:p=>`${p}% auf dem Weg zum Triumphort`,detailProgress:'Kastellfortschritt',
+      yearDone:'Legion vollständig entwickelt',yearOpen:p=>`${p}% Jahresentwicklung`,detailProgress:'Kastellfortschritt',
       captured:'Kastell eingenommen',secured:'Kastell gesichert',securedDetail:n=>`${n} Sicherungstage`,hold:'Bis zur Prüfung halten',
       active:'Aktuelles Kastell',planned:'Etappe voraus',awaiting:'Ergebnis offen',plannedNoun:'Kastell',
       targetNames:{outpost:'Marschlager',tower:'Wachturm',wall:'Grenzkastell',citadel:'Bergkastell',capital:'Provinzkastell',final:'Großes Kastell'},
@@ -31,7 +31,7 @@
       viewTitle:'Meine Sprachreise',routeLabel:'REISEWEG',won:n=>`${n} Etappen entdeckt`,next:'NÄCHSTER ORT',
       startKicker:'AUFBRUCH',startTitle:'Die Sprachreise beginnt',unknownKicker:'NOCH OFFEN',unknownTitle:'Nächster Ort',
       unknownText:'Neue Reiseziele erscheinen automatisch, sobald Tests geplant werden.',yearKicker:'FERNZIEL',yearTitle:'Jahresziel',
-      yearDone:'Sprachreise gemeistert',yearOpen:p=>`${p}% der Jahresreise geschafft`,detailProgress:'Etappenfortschritt',
+      yearDone:'Jahresentwicklung vollständig',yearOpen:p=>`${p}% Jahresreise`,detailProgress:'Etappenfortschritt',
       captured:'Ziel erreicht',secured:'Etappe gefestigt',securedDetail:n=>`${n} Wiederholungstage`,hold:'Bis zum Test weiter festigen',
       active:'Aktuelle Sprachmission',planned:'Neuer Ort entdeckt',awaiting:'Ergebnis offen',plannedNoun:'Reiseziel',
       targetNames:{outpost:'Erste Station',tower:'Stadtetappe',wall:'Brückenetappe',citadel:'Kulturstation',capital:'Große Etappe',final:'Abschlussetappe'},
@@ -107,7 +107,7 @@
     const next=list.find(s=>s.status==='active')?.title||list.find(s=>s.date>=today())?.title||(yearGoal.date?`${t.yearTitle} · ${dateLabel(yearGoal.date)}`:t.yearTitle);
     const yearWhen=yearGoal.date?`Termin ${dateLabel(yearGoal.date)}`:'Datum noch offen';
     const yearState=pct>=100?t.yearDone:t.yearOpen(pct);
-    return `<div class="campaign-war-header"><div><small>${safe(t.routeLabel)}</small><strong>${safe(t.won(won))}</strong></div><div><small>${safe(t.next)}</small><strong>${safe(next)}</strong></div></div><div class="campaign-map-start"><span aria-hidden="true">⚑</span><div><small>${safe(t.startKicker)}</small><strong>${safe(t.startTitle)}</strong></div></div><div class="campaign-map-route">${list.map(stop).join('')}<article class="campaign-map-stop campaign-map-unknown"><div class="campaign-map-route-node" aria-hidden="true"><span>?</span></div><div class="campaign-map-fog-card"><small>${safe(t.unknownKicker)}</small><strong>${safe(t.unknownTitle)}</strong><span>${safe(t.unknownText)}</span></div></article><article class="campaign-map-stop campaign-map-year-goal ${pct>=100?'completed':''} ${yearGoal.date?'dated':'undated'}"><div class="campaign-map-route-node" aria-hidden="true"><span>${pct>=100?'✓':'♛'}</span></div><button type="button" class="campaign-map-station campaign-map-year-fortress" data-campaign-station="year-goal"><small>${safe(t.yearKicker)} · ${safe(yearWhen)}</small><strong>${safe(t.yearTitle)}</strong><span>${safe(yearState)}</span><progress max="100" value="${pct}" aria-label="Jahresentwicklung"></progress></button></article></div>`;
+    return `<div class="campaign-war-header"><div><small>${safe(t.routeLabel)}</small><strong>${safe(t.won(won))}</strong></div><div><small>${safe(t.next)}</small><strong>${safe(next)}</strong></div></div><div class="campaign-map-start"><span aria-hidden="true">⚑</span><div><small>${safe(t.startKicker)}</small><strong>${safe(t.startTitle)}</strong></div></div><div class="campaign-map-route">${list.map(stop).join('')}<article class="campaign-map-stop campaign-map-unknown"><div class="campaign-map-route-node" aria-hidden="true"><span>?</span></div><div class="campaign-map-fog-card"><small>${safe(t.unknownKicker)}</small><strong>${safe(t.unknownTitle)}</strong><span>${safe(t.unknownText)}</span></div></article><article class="campaign-map-stop campaign-map-year-goal ${pct>=100?'growth-max':''} ${yearGoal.date?'dated':'undated'}"><div class="campaign-map-route-node" aria-hidden="true"><span>♛</span></div><button type="button" class="campaign-map-station campaign-map-year-fortress" data-campaign-station="year-goal"><small>${safe(t.yearKicker)} · ${safe(yearWhen)}</small><strong>${safe(t.yearTitle)}</strong><span>${safe(yearState)}</span><progress max="100" value="${pct}" aria-label="Jahresentwicklung"></progress></button></article></div>`;
   }
   function detail(st){
     const root=document.querySelector('#campaignMapDetail'),battle=document.querySelector('#campaignMapBattleBtn');if(!root)return;
