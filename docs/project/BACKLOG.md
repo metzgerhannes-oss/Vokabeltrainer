@@ -169,6 +169,14 @@ oder artefaktartigen Einschlagseffekte als finale Lösung gelten.
 - Reduced Motion bleibt verkürzt, aber bildet alle fachlich irrelevanten visuellen Kernbeats ab
 - bestehende Lern-, Battle-Ticket-, Schadens- und Festungslogik bleibt unverändert
 
+Produktionsnachweis der isolierten Vorschau:
+- Basis-Renderer: PR #175
+- Iteration 2: PR #176
+- PR-CI #1101 nach erfolgreichem Browser-Game-Rerun grün
+- main-CI #1102 grün
+- GitHub Pages #540 erfolgreich
+- B-012 bleibt **IN_IMPLEMENTATION**, weil die Phaser-Szene noch nicht die produktive Battle-Darstellung ersetzt und die visuelle praktische Abnahme weiterhin erforderlich ist.
+
 ## B-013 – Kurze 3D-Storyszenen prüfen
 **Status:** APPROVED_BACKLOG  
 **Priorität:** nach stabilem Phaser-Battle  
