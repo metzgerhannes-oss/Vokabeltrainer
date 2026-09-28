@@ -1,6 +1,6 @@
 # Vokabeltrainer – Backlog
 
-Stand: 27.09.2026
+Stand: 28.09.2026
 
 Dieses Backlog enthält nur Punkte, die als Projektarbeit erhalten bleiben sollen. Reine Ideen ohne Bewertung gehören zunächst in den Status `IDEA`; als sinnvoll bestätigte, aber noch nicht umgesetzte Punkte in `APPROVED_BACKLOG`.
 
@@ -27,8 +27,9 @@ Verbindliche Leitlinien:
 - keine Rückwirkung von Kampf/Armee auf Mastery, Spacing, Testbereitschaft oder fachliche Bewertung
 - strittige Bewertungen und Überspringen müssen auch in Deutsch gemäß D-20260928-006/007 neutral funktionieren
 
-**Paket A – Produkt-/Architekturverankerung:** in Umsetzung in diesem Änderungsstrang.  
-**Pakete B–F:** Fachgrundgerüst, Klasse-1-Kern, Lernwörter/Rechtschreibung, Wortreich und v1-Abnahme folgen als technische Umsetzung.
+**Paket A – Produkt-/Architekturverankerung:** abgeschlossen über PR #196 / D-20260928-008.  
+**Paket B – Fachgrundgerüst:** in Umsetzung als v0.21.33: Deutsch in `SUBJECT_META`, eigene Native-Literacy-Kompetenzen, Family Sync, deutsches Audio und erster Klasse-1-Grundlagenpfad.  
+**Pakete C–F:** Ausbau Klasse 1, Lernwörter/Rechtschreibung, Wortreich und v1-Abnahme folgen.
 
 ## B-002 – Eigene finale Latein-Grafikserie
 **Status:** APPROVED_BACKLOG  
