@@ -30,7 +30,11 @@ const C = {
   skin: 0xd7a77e,
   horse: 0x8b8175,
   horseDark: 0x574f48,
-  dust: 0xc9ab7a
+  dust: 0xc9ab7a,
+  fire: 0xe86f2a,
+  fireLight: 0xffd36a,
+  ember: 0xffa13a,
+  smoke: 0x4d4a45
 };
 
 function g(scene) {
@@ -291,12 +295,57 @@ function createFortress(scene, x, y) {
   cracks.lineBetween(59, -74, 42, -51);
   cracks.lineBetween(42, -51, 55, -32);
 
-  root.add([back, towerLeft, towerRight, keep, blocks, gate, cracks]);
+  const damage1 = g(scene).setAlpha(0);
+  damage1.fillStyle(C.stoneDark, 0.9);
+  damage1.fillTriangle(-71, -35, -48, -58, -41, -25);
+  damage1.fillTriangle(46, -36, 70, -62, 63, -24);
+  damage1.fillStyle(C.woodDark, 1).fillRect(-31, -31, 14, 7);
+  damage1.fillRect(10, -7, 18, 7);
+  damage1.lineStyle(3, 0x3c342f, 0.82);
+  damage1.lineBetween(-78, -94, -61, -74);
+  damage1.lineBetween(-61, -74, -70, -55);
+  damage1.lineBetween(78, -85, 61, -68);
+  damage1.lineBetween(61, -68, 70, -48);
+
+  const breach = g(scene).setAlpha(0);
+  breach.fillStyle(0x373632, 0.96);
+  breach.beginPath();
+  breach.moveTo(-59, 26);
+  breach.lineTo(-62, -43);
+  breach.lineTo(-47, -71);
+  breach.lineTo(-24, -86);
+  breach.lineTo(7, -82);
+  breach.lineTo(39, -62);
+  breach.lineTo(55, -35);
+  breach.lineTo(54, 26);
+  breach.closePath();
+  breach.fillPath();
+
+  const rubblePile = g(scene).setAlpha(0);
+  rubblePile.fillStyle(C.stoneDark, 1);
+  rubblePile.fillTriangle(-72, 28, -42, -12, -18, 28);
+  rubblePile.fillTriangle(-31, 28, -4, -20, 22, 28);
+  rubblePile.fillTriangle(8, 28, 41, -10, 68, 28);
+  rubblePile.fillStyle(C.stone, 1);
+  rubblePile.fillRect(-55, 12, 23, 15);
+  rubblePile.fillRect(-12, 7, 27, 20);
+  rubblePile.fillRect(31, 15, 22, 12);
+
+  const scorch = g(scene).setAlpha(0);
+  scorch.fillStyle(0x1f1d1b, 0.36).fillEllipse(-45, -51, 56, 42);
+  scorch.fillStyle(0x1f1d1b, 0.28).fillEllipse(48, -36, 62, 48);
+  scorch.fillStyle(0x34231d, 0.25).fillEllipse(4, -12, 90, 54);
+
+  root.add([back, towerLeft, towerRight, keep, blocks, gate, breach, scorch, rubblePile, cracks, damage1]);
   root.add(enemyBanner);
   root.add(ownBanner);
 
   root.__gate = gate;
   root.__cracks = cracks;
+  root.__damage1 = damage1;
+  root.__breach = breach;
+  root.__rubblePile = rubblePile;
+  root.__scorch = scorch;
   root.__enemyBanner = enemyBanner;
   root.__ownBanner = ownBanner;
   root.__baseX = x;
@@ -372,6 +421,88 @@ function emitRubble(scene, x, y, amount = 16) {
         p.alpha = 1 - Math.max(0, (t - 0.72) / 0.28);
       },
       onComplete: () => p.destroy()
+    });
+  }
+}
+
+function createFireCluster(scene, x, y, scale = 1) {
+  const root = scene.add.container(x, y).setDepth(52).setScale(scale);
+  const glow = scene.add.circle(0, 0, 25, C.ember, 0.16);
+  glow.setBlendMode?.(scene.__Phaser.BlendModes.ADD);
+
+  const flameOuter = scene.add.ellipse(0, -8, 24, 42, C.fire, 0.9);
+  const flameInner = scene.add.ellipse(0, -10, 12, 29, C.fireLight, 0.95);
+  const ember = scene.add.circle(4, -3, 5, C.fireLight, 0.9);
+  const smoke1 = scene.add.circle(-4, -30, 13, C.smoke, 0.28);
+  const smoke2 = scene.add.circle(7, -47, 17, C.smoke, 0.2);
+  root.add([glow, flameOuter, flameInner, ember, smoke1, smoke2]);
+  scene.__dynamic.push(root);
+
+  scene.tweens.add({
+    targets: flameOuter,
+    scaleX: 0.72,
+    scaleY: 1.17,
+    x: 2,
+    duration: 260,
+    yoyo: true,
+    repeat: -1,
+    ease: 'Sine.InOut'
+  });
+  scene.tweens.add({
+    targets: flameInner,
+    scaleX: 0.78,
+    scaleY: 1.2,
+    x: -2,
+    duration: 190,
+    yoyo: true,
+    repeat: -1,
+    ease: 'Sine.InOut'
+  });
+  scene.tweens.add({
+    targets: [smoke1, smoke2],
+    y: '-=34',
+    x: '+=8',
+    alpha: 0.04,
+    scale: 1.45,
+    duration: 1250,
+    stagger: 220,
+    yoyo: true,
+    repeat: -1,
+    ease: 'Sine.Out'
+  });
+  scene.tweens.add({
+    targets: glow,
+    alpha: 0.27,
+    scale: 1.18,
+    duration: 360,
+    yoyo: true,
+    repeat: -1,
+    ease: 'Sine.InOut'
+  });
+
+  return root;
+}
+
+function igniteFortress(scene) {
+  if (scene.__fires?.length) return scene.__fires;
+  scene.__fires = [
+    createFireCluster(scene, 1162, 520, 0.82),
+    createFireCluster(scene, 1218, 491, 0.62),
+    createFireCluster(scene, 1262, 526, 0.72)
+  ];
+  return scene.__fires;
+}
+
+function calmFires(scene, duration = 950) {
+  for (const fire of scene.__fires || []) {
+    if (!fire?.active) continue;
+    scene.tweens.add({
+      targets: fire,
+      alpha: 0.28,
+      scaleX: fire.scaleX * 0.78,
+      scaleY: fire.scaleY * 0.78,
+      duration,
+      ease: 'Sine.Out'
     });
   }
 }
@@ -479,6 +610,10 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         units: this.__units.map(u => ({ x: u.x, y: u.y, alpha: u.alpha, rotation: u.rotation, scaleX: u.scaleX, scaleY: u.scaleY })),
         gate: { x: this.__fortress.__gate.x, y: this.__fortress.__gate.y, rotation: this.__fortress.__gate.rotation, alpha: this.__fortress.__gate.alpha },
         cracksAlpha: this.__fortress.__cracks.alpha,
+        damage1Alpha: this.__fortress.__damage1.alpha,
+        breachAlpha: this.__fortress.__breach.alpha,
+        rubblePileAlpha: this.__fortress.__rubblePile.alpha,
+        scorchAlpha: this.__fortress.__scorch.alpha,
         enemy: { alpha: this.__fortress.__enemyBanner.alpha, y: this.__fortress.__enemyBanner.y, rotation: this.__fortress.__enemyBanner.rotation },
         own: { alpha: this.__fortress.__ownBanner.alpha, y: this.__fortress.__ownBanner.y, rotation: this.__fortress.__ownBanner.rotation }
       };
@@ -507,6 +642,11 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       const gate = this.__fortress.__gate;
       gate.setPosition(this.__initial.gate.x, this.__initial.gate.y).setRotation(this.__initial.gate.rotation).setAlpha(this.__initial.gate.alpha);
       this.__fortress.__cracks.setAlpha(this.__initial.cracksAlpha);
+      this.__fortress.__damage1.setAlpha(this.__initial.damage1Alpha);
+      this.__fortress.__breach.setAlpha(this.__initial.breachAlpha);
+      this.__fortress.__rubblePile.setAlpha(this.__initial.rubblePileAlpha);
+      this.__fortress.__scorch.setAlpha(this.__initial.scorchAlpha);
+      this.__fires = [];
       this.__fortress.__enemyBanner.setAlpha(this.__initial.enemy.alpha).setY(this.__initial.enemy.y).setRotation(this.__initial.enemy.rotation);
       this.__fortress.__ownBanner.setAlpha(this.__initial.own.alpha).setY(this.__initial.own.y).setRotation(this.__initial.own.rotation);
       this.__flash.setAlpha(0).setScale(1);
@@ -518,31 +658,34 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       this.resetBattle();
       this.__running = true;
       this.__elapsed = 0;
-      const scale = this.__reduced ? 0.24 : 1;
+      const scale = this.__reduced ? 0.22 : 1;
       const at = (ms, fn) => this.time.delayedCall(Math.max(40, ms * scale), fn);
+      const beat = id => hooks.onBeat?.(id);
 
       this.__setPhase('rally');
-      hooks.onStatus?.('Die Reihen sammeln sich.');
+      beat('rally');
+      hooks.onStatus?.('Die Reihen sammeln sich und der Rammbock wird ausgerichtet.');
 
-      at(900, () => {
+      at(1250, () => {
         this.__setPhase('advance');
-        hooks.onStatus?.('Die Armee rückt in mehreren Reihen vor.');
+        beat('advance');
+        hooks.onStatus?.('Die Armee rückt gestaffelt über das Feld vor.');
 
         this.tweens.add({
           targets: this.cameras.main,
-          scrollX: this.__reduced ? 65 : 150,
-          duration: 2500 * scale,
+          scrollX: this.__reduced ? 75 : 165,
+          duration: 3300 * scale,
           ease: 'Sine.InOut'
         });
 
         this.__units.forEach((u, i) => {
           const isCavalry = u.__cavalry;
-          const dist = isCavalry ? 540 : 420 + (i % 3) * 18;
+          const dist = isCavalry ? 585 : 445 + (i % 3) * 20;
           this.tweens.add({
             targets: u,
             x: u.x + dist,
-            duration: (isCavalry ? 2050 : 2650 + (i % 4) * 120) * scale,
-            delay: (i % 7) * 90 * scale,
+            duration: (isCavalry ? 2500 : 3250 + (i % 4) * 150) * scale,
+            delay: (i % 7) * 120 * scale,
             ease: 'Sine.InOut',
             onUpdate: () => { u.__baseY = u.y; }
           });
@@ -550,125 +693,243 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
 
         this.tweens.add({
           targets: this.__ram,
-          x: 805,
-          duration: 3350 * scale,
+          x: 760,
+          duration: 4200 * scale,
           ease: 'Sine.InOut'
         });
 
         if (!this.__reduced) {
-          at(1500, () => emitDust(this, 520, 635, 10));
-          at(2500, () => emitDust(this, 740, 615, 12));
+          at(2050, () => emitDust(this, 505, 635, 11));
+          at(3250, () => emitDust(this, 680, 620, 14));
+          at(4350, () => emitDust(this, 825, 607, 12));
         }
       });
 
-      at(3150, () => {
+      at(4300, () => {
         this.__setPhase('barrage');
-        hooks.onStatus?.('Die Bogenschützen lösen die Salve aus.');
+        beat('volley-1');
+        hooks.onStatus?.('Die erste Pfeilsalve deckt den letzten Vormarsch.');
 
-        for (let i = 0; i < 14; i += 1) {
+        for (let i = 0; i < 18; i += 1) {
           const arrow = createArrow(this, 520, 500);
           this.__dynamic.push(arrow);
           animateArrow(
             this,
             arrow,
-            { x: 510 + (i % 4) * 18, y: 485 + (i % 3) * 14 },
-            { x: 1110 + (i % 5) * 26, y: 390 + (i % 4) * 30 },
-            i * 60 * scale,
-            (760 + (i % 3) * 90) * scale
+            { x: 520 + (i % 5) * 16, y: 485 + (i % 4) * 12 },
+            { x: 1090 + (i % 6) * 28, y: 372 + (i % 5) * 26 },
+            i * 68 * scale,
+            (860 + (i % 4) * 90) * scale
           );
         }
       });
 
-      at(4700, () => {
-        hooks.onStatus?.('Der Rammbock geht in den letzten Anlauf.');
+      at(5700, () => {
+        beat('ram-charge-1');
+        hooks.onStatus?.('Der Rammbock beschleunigt zum ersten Treffer.');
         this.tweens.add({
           targets: this.__ram,
-          x: 1035,
-          duration: 760 * scale,
+          x: 1022,
+          duration: 900 * scale,
           ease: 'Cubic.In'
         });
       });
 
-      at(5450, () => {
+      at(6550, () => {
         this.__setPhase('impact');
-        hooks.onStatus?.('Der Rammbock trifft das Tor.');
+        beat('damage-1');
+        hooks.onStatus?.('Erster Treffer: Tor und Mauer zeigen deutliche Schäden.');
 
         this.__fortress.__cracks.setAlpha(1);
-        this.__flash.setPosition(1122, 505).setAlpha(0.95).setScale(0.35);
+        this.__fortress.__damage1.setAlpha(1);
+        this.__flash.setPosition(1124, 505).setAlpha(0.92).setScale(0.28);
         this.tweens.add({
           targets: this.__flash,
           alpha: 0,
-          scale: 7,
-          duration: 520 * scale,
+          scale: 6.3,
+          duration: 560 * scale,
           ease: 'Quad.Out'
         });
 
         this.tweens.add({
           targets: this.__fortress.__gate,
-          x: 10,
-          rotation: 0.09,
-          alpha: 0.82,
-          duration: 120 * scale,
+          x: 9,
+          rotation: 0.08,
+          alpha: 0.9,
+          duration: 150 * scale,
           yoyo: true,
           repeat: 2,
           ease: 'Sine.InOut'
         });
 
         if (!this.__reduced) {
-          this.cameras.main.shake(230, 0.0065);
-          emitRubble(this, 1120, 515, 20);
-          emitDust(this, 1120, 545, 24);
+          this.cameras.main.shake(230, 0.0055);
+          emitRubble(this, 1123, 520, 13);
+          emitDust(this, 1125, 548, 20);
         }
 
         this.tweens.add({
           targets: this.__ram,
-          x: 1000,
-          duration: 220 * scale,
-          yoyo: true,
+          x: 980,
+          duration: 250 * scale,
           ease: 'Quad.Out'
         });
       });
 
-      at(6650, () => {
+      at(7350, () => {
+        beat('volley-2');
+        hooks.onStatus?.('Eine zweite Salve trifft die bereits beschädigte Verteidigung.');
+
+        for (let i = 0; i < 12; i += 1) {
+          const arrow = createArrow(this, 660, 490);
+          this.__dynamic.push(arrow);
+          animateArrow(
+            this,
+            arrow,
+            { x: 640 + (i % 4) * 17, y: 480 + (i % 3) * 12 },
+            { x: 1110 + (i % 5) * 25, y: 395 + (i % 4) * 22 },
+            i * 62 * scale,
+            (700 + (i % 3) * 75) * scale
+          );
+        }
+
+        this.tweens.add({
+          targets: this.__ram,
+          x: 925,
+          duration: 320 * scale,
+          ease: 'Sine.Out'
+        });
+      });
+
+      at(8050, () => {
+        beat('ram-charge-2');
+        hooks.onStatus?.('Der zweite Rammbockstoß zielt auf das geschwächte Tor.');
+        this.tweens.add({
+          targets: this.__ram,
+          x: 1042,
+          duration: 520 * scale,
+          ease: 'Cubic.In'
+        });
+      });
+
+      at(8580, () => {
+        beat('damage-2');
+        hooks.onStatus?.('Zweiter Treffer: Das Tor bricht auf, Steine lösen sich.');
+
+        this.__fortress.__breach.setAlpha(1);
+        this.__fortress.__rubblePile.setAlpha(1);
+        this.__fortress.__scorch.setAlpha(0.88);
+        this.__flash.setPosition(1120, 510).setAlpha(1).setScale(0.35);
+        this.tweens.add({
+          targets: this.__flash,
+          alpha: 0,
+          scale: 8,
+          duration: 720 * scale,
+          ease: 'Quad.Out'
+        });
+        this.tweens.add({
+          targets: this.__fortress.__gate,
+          y: 25,
+          rotation: 0.28,
+          alpha: 0.32,
+          duration: 620 * scale,
+          ease: 'Back.In'
+        });
+
+        if (!this.__reduced) {
+          this.cameras.main.shake(300, 0.007);
+          emitRubble(this, 1120, 515, 27);
+          emitDust(this, 1120, 548, 30);
+        }
+
+        this.tweens.add({
+          targets: this.__ram,
+          x: 985,
+          duration: 300 * scale,
+          ease: 'Quad.Out'
+        });
+      });
+
+      at(9000, () => {
+        beat('fire');
+        hooks.onStatus?.('Kleine Feuerstellen und Rauch markieren die beschädigte Torzone.');
+        const fires = igniteFortress(this);
+        if (this.__reduced) fires.forEach(fire => fire.setAlpha(0.42));
+      });
+
+      at(9650, () => {
+        beat('breach');
+        hooks.onStatus?.('Die Verteidigung gibt nach. Die vorderen Reihen rücken zum Tor.');
+        this.__units.slice(0, 8).forEach((u, i) => {
+          this.tweens.add({
+            targets: u,
+            x: u.x + 120 + (i % 3) * 24,
+            duration: (850 + (i % 4) * 120) * scale,
+            delay: i * 55 * scale,
+            ease: 'Sine.InOut'
+          });
+        });
+      });
+
+      at(10450, () => {
         this.__setPhase('result');
-        hooks.onStatus?.('Die Festung ist bezwungen.');
+        beat('takeover');
+        hooks.onStatus?.('Übernahme: Das gegnerische Banner fällt, die eigene Fahne wird gesetzt.');
 
         this.tweens.add({
           targets: this.__fortress.__enemyBanner,
-          y: this.__fortress.__enemyBanner.y + 44,
+          y: this.__fortress.__enemyBanner.y + 62,
           alpha: 0,
-          rotation: -0.1,
-          duration: 650 * scale,
+          rotation: -0.16,
+          duration: 780 * scale,
           ease: 'Sine.In'
         });
         this.tweens.add({
           targets: this.__fortress.__ownBanner,
           y: this.__fortress.__ownBanner.y - 38,
           alpha: 1,
-          duration: 850 * scale,
+          duration: 960 * scale,
           ease: 'Back.Out'
         });
         this.tweens.add({
           targets: this.cameras.main,
-          scrollX: this.__reduced ? 95 : 175,
-          duration: 900 * scale,
+          scrollX: this.__reduced ? 105 : 185,
+          duration: 1050 * scale,
           ease: 'Sine.InOut'
         });
 
-        this.__units.slice(0, 8).forEach((u, i) => {
+        const takeoverUnits = this.__units.slice(0, 6);
+        takeoverUnits.forEach((u, i) => {
           this.tweens.add({
             targets: u,
-            y: u.y - (i % 2 ? 5 : 8),
-            duration: 240 * scale,
+            x: Math.min(1050 + (i % 2) * 25, u.x + 190),
+            y: u.y - (i % 2 ? 5 : 9),
+            duration: (980 + i * 80) * scale,
+            delay: i * 80 * scale,
+            ease: 'Sine.InOut'
+          });
+        });
+
+        calmFires(this, 1100 * scale);
+      });
+
+      at(11700, () => {
+        beat('secured');
+        hooks.onStatus?.('Die Festung ist übernommen. Rauch und Feuer beruhigen sich.');
+        this.__units.slice(0, 6).forEach((u, i) => {
+          this.tweens.add({
+            targets: u,
+            y: u.y - (i % 2 ? 4 : 7),
+            duration: 260 * scale,
             yoyo: true,
             repeat: this.__reduced ? 0 : 1,
-            delay: i * 45 * scale,
+            delay: i * 50 * scale,
             ease: 'Sine.InOut'
           });
         });
       });
 
-      at(7800, () => {
+      at(12600, () => {
         this.__running = false;
         hooks.onComplete?.();
       });
