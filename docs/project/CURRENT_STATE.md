@@ -10,12 +10,13 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 - produktiver Stand auf `main`: **v0.21.30 / Merge-Commit `cdefc0490f0821d476fef0e43a9528dfaa0edf4a` / PR #191**
 - jüngster produktiver Release: **PR #191 – v0.21.30 – sichtbar wachsende Armee**
 - Produktionsnachweis v0.21.30: **PR-CI #1179 success · main-CI #1180 success · GitHub Pages #552 success inkl. Live-Verifikation**
-- aktueller Release-Kandidat: **v0.21.31 – strittige Systembewertung mit Elternfreigabe** (`feat/answer-review-parent-approval-v02131`)
+- aktueller Release-Kandidat: **v0.21.31 – strittige Systembewertung mit Elternfreigabe + neutrales Vokabel-Überspringen** (`feat/answer-review-parent-approval-v02131`)
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
 - fachliche Schutzlinie: Spielprogression, Battle-Choreografie und Jahresfestungsdatum verändern weder Mastery noch Vokabelbewertung oder Testbereitschaft
 - v0.21.31 schützt strittige Bewertungen: Kind meldet → Fehlwirkung wird neutralisiert → Eltern entscheiden → lokale Variante wird freigegeben oder Fehler erst dann bestätigt
+- v0.21.31 erlaubt zusätzlich „Vokabel überspringen“: ausschließlich ans Ende derselben Session, ohne Bewertung oder Lernstandsänderung
 - v0.21.29 trennt den schwankenden fachlichen Prozentwert von der kumulativen Jahresentwicklung; Avatar/Rang/Armee werden durch neuen Stoff nicht zurückgestuft; Jahresfestungsdatum ist optional, gehärtet und synchronisiert
 - praktische v1-Abnahme: weiterhin **OFFEN**
 
