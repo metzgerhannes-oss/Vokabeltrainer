@@ -12,7 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.26**
+App-Version: **v0.21.27**
+
+- v0.21.27: Geplante Tests erhalten eine eigene Identität statt über das Datum zusammengefasst zu werden. Ein verschobener Test bleibt auch vor dem Testtag bearbeitbar und verschmilzt nicht mehr mit einem anderen Test am selben Datum; bestehender Lern- und Festungsfortschritt bleibt erhalten.
 
 - v0.21.26: Offene Tests bleiben bis zum tatsächlichen Abschluss bearbeitbar. Testdatum und Testumfang können im Elternbereich geändert werden, ohne Lernhistorie oder laufenden Festungsfortschritt zurückzusetzen. Der Versionssprung aktualisiert zugleich Shell- und Service-Worker-Cache, damit diese Änderung auf installierten iOS-/PWA-Geräten zuverlässig geladen wird.
 

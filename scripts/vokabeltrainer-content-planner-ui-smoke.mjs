@@ -63,7 +63,7 @@ try{
   assert(saved.intro===1&&saved.target===5&&saved.acquisitionDays===6,'saved daily plan matches the compact preview and adapts workload to the available time');
 
   // A later library-backed test must queue behind the earlier test instead of replacing it.
-  await page.click('#parentTestPlanBtn');
+  await page.click('#parentNewTestPlanBtn');
   await page.waitForSelector('#modal[open] #planWordPicker');
   const secondLibraryDate=await page.evaluate(()=>datePlusDays(8));
   await page.locator('#testPlanDate').fill(secondLibraryDate);
@@ -83,7 +83,7 @@ try{
   assert(queuedLibrary.secondCount===4,'later library test keeps its own selected vocabulary scope');
 
   // Manual source: capture remains a draft until the exact pairs are approved.
-  await page.click('#parentTestPlanBtn');
+  await page.click('#parentNewTestPlanBtn');
   await page.waitForSelector('#modal[open] #planSourceManual');
   const manualDate=await page.evaluate(()=>datePlusDays(9));
   await page.locator('#testPlanDate').fill(manualDate);
@@ -127,7 +127,7 @@ try{
   assert(manualFinal.futureDates.includes(manualDate),'approved manual test remains stored for its later date');
 
   // OCR source: import feeds the same pending-test approval gate.
-  await page.click('#parentTestPlanBtn');
+  await page.click('#parentNewTestPlanBtn');
   await page.waitForSelector('#modal[open] #planSourceOcr');
   const ocrDate=await page.evaluate(()=>datePlusDays(11));
   await page.locator('#testPlanDate').fill(ocrDate);
@@ -176,7 +176,7 @@ try{
   assert((await page.locator('#modalContent h2').textContent())?.includes('bearbeiten'),'current-test editor is explicitly labeled as editing');
   assert(await page.locator('#testPlanDate').inputValue()===await page.evaluate(()=>today()),'editor opens with the current test date');
   assert((await page.locator('#planSelectionCount').textContent())?.startsWith('6 '),'editor restores the current vocabulary selection');
-  const postponedDate=await page.evaluate(()=>datePlusDays(2));
+  const postponedDate=secondLibraryDate;
   await page.locator('#testPlanDate').fill(postponedDate);
   await page.locator('#planRangeFrom').fill('1');
   await page.locator('#planRangeTo').fill('4');
@@ -185,10 +185,12 @@ try{
   await page.waitForSelector('#parentView.active');
   const edited=await page.evaluate(fixture=>{
     const ctx=upcomingTestContext('english'),set=state.sets.find(s=>s.id===fixture.setId),progress=(state.learnerVocabulary||[]).find(p=>p.id===fixture.removedProgressId),fortress=currentTestFortress('english');
-    const oldDateStillActive=(state.sets||[]).some(s=>s.learnerId===state.activeLearnerId&&s.subject==='english'&&s.testDate===today());
-    return {date:ctx?.date||'',setId:ctx?.sets?.[0]?.id||'',count:ctx?.words?.length||0,selected:set?.testSelectedLinkIds?.length||0,totalLinks:set?setWords(set.id).length:0,removedSuccesses:progress?.successes||0,fortressDate:fortress?.testDate||'',fortressWordCount:fortress?.wordCount||0,fortressCreatedAt:fortress?.createdAt||'',fortressDefense:fortress?.defense,oldDateStillActive};
+    const sameDay=(state.sets||[]).filter(s=>s.learnerId===state.activeLearnerId&&s.subject==='english'&&s.testDate===datePlusDays(8)),oldDateStillActive=(state.sets||[]).some(s=>s.learnerId===state.activeLearnerId&&s.subject==='english'&&s.testDate===today());
+    return {date:ctx?.date||'',setId:ctx?.sets?.[0]?.id||'',ctxSetCount:ctx?.sets?.length||0,count:ctx?.words?.length||0,selected:set?.testSelectedLinkIds?.length||0,totalLinks:set?setWords(set.id).length:0,removedSuccesses:progress?.successes||0,fortressDate:fortress?.testDate||'',fortressWordCount:fortress?.wordCount||0,fortressCreatedAt:fortress?.createdAt||'',fortressDefense:fortress?.defense,oldDateStillActive,sameDayIds:sameDay.map(s=>s.id)};
   },editFixture);
-  assert(edited.date===postponedDate&&edited.setId===saved.id&&edited.count===4&&edited.selected===4,'postponed current test keeps its identity and exact new vocabulary scope');
+  assert(edited.date===postponedDate&&edited.setId===saved.id&&edited.ctxSetCount===1&&edited.count===4&&edited.selected===4,'postponed current test keeps its identity and exact new vocabulary scope even when another test already has the target date');
+  assert(edited.sameDayIds.includes(saved.id)&&edited.sameDayIds.includes(queuedLibrary.secondId),'same-day planned tests remain separate instead of merging their vocabulary scopes');
+  assert((await page.locator('#parentTestPlanBtn').textContent())?.includes('Aktuellen Test bearbeiten'),'future current test stays editable after postponing');
   assert(edited.totalLinks>=6&&edited.removedSuccesses===17,'removed test words keep their links and learning history outside the test scope');
   assert(edited.fortressDate===postponedDate&&edited.fortressWordCount===4&&edited.fortressCreatedAt===editFixture.fortressCreatedAt&&edited.fortressDefense===editFixture.fortressDefense,'existing fortress progress follows the edited test instead of resetting');
   assert(!edited.oldDateStillActive,'old test date no longer remains active after postponing');
