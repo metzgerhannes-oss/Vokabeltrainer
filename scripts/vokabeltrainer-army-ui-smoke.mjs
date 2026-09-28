@@ -256,6 +256,20 @@ try{
   const mapRect=await page.locator('#campaignMapView').boundingBox();
   assert(mapRect&&mapRect.width<=page.viewportSize().width+1,'campaign map view does not overflow iPhone viewport');
 
+  await page.evaluate(()=>{
+    state.activeSubject='latin';
+    VTCampaignMap.render();
+  });
+  assert((await page.locator('#campaignMapView').getAttribute('data-visual-theme'))==='roman','Latin map switches to the Roman visual theme');
+  assert((await page.locator('#campaignMapViewTitle').textContent())?.includes('Marschroute'),'Latin map uses a Roman route title');
+  assert((await page.locator('#campaignMapBoard .campaign-war-header').textContent())?.includes('RÖMISCHE MARSCHROUTE'),'Latin map uses Roman route language');
+  assert((await page.locator('#campaignMapBoard .campaign-map-unknown').textContent())?.includes('UNBEKANNTE PROVINZ'),'Latin unknown future is a province rather than generic fog of war');
+  await page.evaluate(()=>{
+    state.activeSubject='english';
+    VTCampaignMap.render();
+  });
+  assert(await page.evaluate(()=>subjectProgress().pct)===before,'campaign map never changes academic mastery');
+
   const monotonicGrowth=await page.evaluate(()=>{
     const l=learner();
     for(let i=1;i<=12;i++){const d=datePlusDays(-i);l.completedTests[`english:${d}`]={subject:'english',date:d,completedAt:new Date().toISOString(),scopeText:'Smoke',wordCount:1}}
@@ -270,19 +284,6 @@ try{
   assert(monotonicGrowth.afterAcademic<monotonicGrowth.beforeAcademic,'newly introduced future vocabulary may lower the current academic known-word percentage');
   assert(monotonicGrowth.afterGrowth.points===monotonicGrowth.beforeGrowth.points&&monotonicGrowth.afterGrowth.level===monotonicGrowth.beforeGrowth.level,'new future vocabulary never downgrades accumulated avatar or army development');
 
-  await page.evaluate(()=>{
-    state.activeSubject='latin';
-    VTCampaignMap.render();
-  });
-  assert((await page.locator('#campaignMapView').getAttribute('data-visual-theme'))==='roman','Latin map switches to the Roman visual theme');
-  assert((await page.locator('#campaignMapViewTitle').textContent())?.includes('Marschroute'),'Latin map uses a Roman route title');
-  assert((await page.locator('#campaignMapBoard .campaign-war-header').textContent())?.includes('RÖMISCHE MARSCHROUTE'),'Latin map uses Roman route language');
-  assert((await page.locator('#campaignMapBoard .campaign-map-unknown').textContent())?.includes('UNBEKANNTE PROVINZ'),'Latin unknown future is a province rather than generic fog of war');
-  await page.evaluate(()=>{
-    state.activeSubject='english';
-    VTCampaignMap.render();
-  });
-  assert(await page.evaluate(()=>subjectProgress().pct)===before,'campaign map never changes academic mastery');
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer army UI smoke: passed');
 }finally{
