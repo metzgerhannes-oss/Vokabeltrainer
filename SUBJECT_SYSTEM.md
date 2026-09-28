@@ -1,6 +1,6 @@
 # Vokabeltrainer – generisches Fachsystem
 
-Fachlich zuletzt geprüft: 27.09.2026 · Gültig für aktuellen Stand: ja
+Fachlich zuletzt geprüft: 28.09.2026 · Gültig für aktuellen Stand: ja
 
 Punkt 2 des Pre-v1-Fahrplans macht Fremdsprachen zu Konfiguration statt Sonderlogik.
 
@@ -20,7 +20,7 @@ Konfiguriert werden pro Fach:
 
 ## Aktueller Stand
 
-**Englisch** und **Latein** bleiben produktiv aktiv.
+**Englisch** und **Latein** bleiben produktiv aktiv. **Deutsch** ist ab v0.21.33 als eigener Fachbereich aktiviert; sein erster produktiver Pfad ist der getrennte Klasse-1-Schriftsprach-/Grundlagenbereich und nicht die Fremdsprachen-Übersetzungslogik.
 
 **Französisch** ist vollständig im Fachmodell vorbereitet, aber noch `available:false`. Grund: Das lokale Offline-OCR-Paket enthält aktuell `eng.traineddata`, `deu.traineddata` und `lat.traineddata`, jedoch noch kein `fra.traineddata`. Die Oberfläche soll kein Fach freigeben, dessen Fotoimport nicht vollständig funktioniert.
 
@@ -61,6 +61,8 @@ Sprachspezifische Funktionen werden als Fähigkeit modelliert:
 - `hybridDictionary`: aktuell Englisch
 - `latinGrammar`: Latein
 - `extraIdentity`: Latein, wenn Zusatzformen ein Lexem disambiguieren
+- `nativeLiteracy`: Deutsch; aktiviert den eigenständigen Schriftsprach-/Klasse-1-Pfad
+- `battle`: steuert, ob die jeweilige Fachwelt bereits eine produktive Kampf-/Spielansicht besitzt
 
 Dadurch muss z. B. Französisch nicht mit neuen `if (subject === 'french')`-Blöcken ergänzt werden.
 
