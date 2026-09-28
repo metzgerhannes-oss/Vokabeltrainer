@@ -170,22 +170,26 @@ function createSoldier(scene, x, y, opts = {}) {
     body.fillStyle(C.horseDark, 1).fillRect(-24, 18, 6, 26);
     body.fillRect(8, 18, 6, 26);
     body.fillStyle(C.blue, 1).fillRoundedRect(-14, -30, 26, 42, 7);
-    body.fillStyle(C.skin, 1).fillCircle(-2, -38, 10);
-    body.fillStyle(C.steel, 1).fillArc(-2, -40, 12, Math.PI, Math.PI * 2, false);
+    body.fillStyle(C.steel, 1).fillCircle(-2, -40, 12);
+    body.fillStyle(C.skin, 1).fillCircle(-2, -36, 9);
+    body.fillStyle(C.steel, 1).fillRect(-14, -42, 24, 5);
     body.lineStyle(3, C.steelLight, 1).lineBetween(7, -24, 28, -54);
     body.fillStyle(C.blueLight, 1).fillTriangle(-18, -18, -37, 10, -7, 7);
   } else {
     body.fillStyle(elite ? C.blueLight : C.blue, 1).fillRoundedRect(-13, -18, 26, 42, 7);
     body.fillStyle(C.leather, 0.9).fillRect(-11, 8, 22, 5);
-    body.fillStyle(C.skin, 1).fillCircle(0, -28, 10);
-    body.fillStyle(C.steel, 1).fillArc(0, -30, 12, Math.PI, Math.PI * 2, false);
+    body.fillStyle(C.steel, 1).fillCircle(0, -30, 12);
+    body.fillStyle(C.skin, 1).fillCircle(0, -26, 9);
+    body.fillStyle(C.steel, 1).fillRect(-12, -32, 24, 5);
     body.lineStyle(2, C.steelLight, 0.8).lineBetween(-11, -31, 11, -31);
     body.fillStyle(C.steelLight, 1).fillRect(-11, 23, 8, 19);
     body.fillRect(3, 23, 8, 19);
 
     if (archer) {
       body.lineStyle(3, C.wood, 1);
-      body.strokeArc(18, -4, 16, -1.15, 1.15, false);
+      body.beginPath();
+      body.arc(18, -4, 16, -1.15, 1.15, false);
+      body.strokePath();
       body.lineStyle(1, C.goldLight, 0.9).lineBetween(24, -19, 24, 11);
     } else {
       body.fillStyle(elite ? C.goldLight : C.steel, 1).fillCircle(-18, 1, 14);
