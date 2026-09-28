@@ -4,6 +4,8 @@ Stand: 27.09.2026 · App v0.21.22
 
 ## Ergebnis
 
+- v0.21.22 trennt „Festung ansehen“ wieder klar von einer echten Schlacht: Ohne freigeschaltete Tagesaktion öffnet die Festung als reduzierte Vollbild-Vorschau mit Kampagnenbild und den beiden Bannern. Battle-KPIs, Angriffsauswahl, Ticketanzeige und der gesperrte Aktionsblock werden dort nicht gerendert. Sobald eine Tagesaktion vorhanden ist, bleibt die vollständige Schlachtansicht mit den außerhalb des Bildes angeordneten Bedienelementen erhalten. Browserregressionen sichern beide Zustände getrennt.
+
 - v0.21.22 ergänzt den kurzen Pflichtkern um einen T−1-Rettungsmodus für den Tag vor dem Test: Nach dem Pflichtteil werden bei weiterem Rückstand nur nicht testbereite Wörter in getrennten freiwilligen 6er- bzw. 4er-Blöcken angeboten. Fehler aus der vorherigen Runde haben Vorrang, danach folgen noch ungeprüfte unbekannte und schwache Testwörter; bereits testbereite Wörter werden ausgelassen. Die Abfrage folgt dem realen Testformat, Diktat verlangt produktive Rechtschreibung. Rettungsrunden verändern weder Pflichtfortschritt noch Battle-Freischaltung und senken Mastery-/Spacing-Kriterien nicht ab.
 
 - v0.21.22 korrigiert die Mengeninterpretation des Tagesplans: 10–12 Lernkontakte werden nicht mehr als 10–12 unterschiedliche Pflichtwörter umgesetzt. Der Pflichtkern enthält regulär 5–6 Fokuswörter, bei „Kurze Einheiten“ 3–4; maximal drei bzw. zwei davon sind neu. Rückstand führt zu einer optional empfohlenen zweiten Kurzrunde statt zu 12–14 Pflichtwörtern. Strengere „heute sicher“-Wiederholungen werden nicht mehr automatisch in den laufenden Pflichtkern eingeschoben. Eine Migration verkleinert bestehende Tagespläne auf das neue Schema und übernimmt passende heutige Erledigungen.
