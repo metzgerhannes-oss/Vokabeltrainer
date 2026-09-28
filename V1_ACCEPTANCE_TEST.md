@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 28.09.2026 · Basis: v0.21.33 · Produktionsbasis; Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
+Stand: 28.09.2026 · Basis: v0.21.34 · Produktionsbasis; Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -426,8 +426,8 @@ Diese Sektion ist vor v1.0 verpflichtend. Ein deaktivierter Platzhalter oder rei
 
 ## G1 – Fach und Klasse-1-Einstieg
 
-- [ ] Deutsch ist als eigenes Fach auswählbar
-- [ ] Fachwechsel vermischt keine Lernstände mit Englisch/Latein
+- [x] Deutsch ist als eigenes Fach auswählbar
+- [x] Fachwechsel vermischt keine Lernstände mit Englisch/Latein
 - [ ] Buchstaben-/Graphemaufgabe funktioniert
 - [ ] Laut–Buchstaben-Zuordnung funktioniert
 - [ ] Nachspuren bzw. geführter Buchstabeneinstieg besitzt einen Übergang zu eigenständiger Produktion
@@ -438,9 +438,9 @@ Diese Sektion ist vor v1.0 verpflichtend. Ein deaktivierter Platzhalter oder rei
 
 ## G2 – Deutsche Bewertung
 
-- [ ] Groß-/Kleinschreibung wird je Aufgabentyp fachlich korrekt behandelt
-- [ ] Rechtschreibaufgaben verlangen die definierte Sollschreibung
-- [ ] reine Lese-/Erkennungsaufgaben werden nicht künstlich zu Rechtschreibtests
+- [x] Groß-/Kleinschreibung wird je Aufgabentyp fachlich korrekt behandelt
+- [x] Rechtschreibaufgaben verlangen die definierte Sollschreibung
+- [x] reine Lese-/Erkennungsaufgaben werden nicht künstlich zu Rechtschreibtests
 - [ ] technische Satz-/Platzhaltervarianten werden nur bei fachlicher Gleichwertigkeit toleriert
 - [ ] „Bewertung prüfen lassen“ neutralisiert einen strittigen Versuch auch in Deutsch
 - [ ] Elternentscheidung kann Variante freigeben, Sollinhalt korrigieren oder Systembewertung bestätigen
@@ -448,9 +448,9 @@ Diese Sektion ist vor v1.0 verpflichtend. Ein deaktivierter Platzhalter oder rei
 
 ## G3 – Das Wortreich
 
-- [ ] eigener Deutsch-Spielbereich ist sichtbar
-- [ ] Lernmodus bleibt frei von Battle-Animation
-- [ ] eigene Burg-/Ritteridentität ist ohne reine Beschriftung erkennbar
+- [x] eigener Deutsch-Spielbereich ist sichtbar
+- [x] Lernmodus bleibt frei von Battle-Animation
+- [x] eigene Burg-/Ritteridentität ist ohne reine Beschriftung erkennbar
 - [ ] eigener Fortschritt startet klein und wächst aus tatsächlichem Lernfortschritt
 - [ ] mindestens ein echter Belagerungskampf ist spielbar
 - [ ] eigene Armee steht links, Kampfzone in der Mitte, Zielburg rechts
