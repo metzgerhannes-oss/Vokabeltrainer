@@ -5,7 +5,7 @@
   const SUPABASE_URL='https://ilfblkqxbldkzmqczbgo.supabase.co';
   const SUPABASE_KEY='sb_publishable_zkzIhxq7Xby65AbNnAkiyQ_0ZfAAU4V';
   const PROFILE_PROGRESS_FIELDS=['xp','streakDays','milestones','fortressWins','fortressWinsByYear','battleTickets','battleDays','testFortresses','completedTests','campaignLog','dailyPlans'];
-  const PROFILE_SETUP_FIELDS=['id','name','gradeLevel','avatarStyle','activeSubjects','literacySupport','reducedLoad','lrsMode','fontSize','letterSpacing','flashSpeed','autoSpeakCorrection','testSeries','gradeScales','createdAt'];
+  const PROFILE_SETUP_FIELDS=['id','name','gradeLevel','avatarStyle','activeSubjects','literacySupport','reducedLoad','lrsMode','fontSize','letterSpacing','flashSpeed','autoSpeakCorrection','testSeries','yearFortresses','gradeScales','createdAt'];
   const runtime={applying:false,busy:false,timer:null,poll:null,snapshots:new Map()};
 
   function clone(value){return value==null?value:JSON.parse(JSON.stringify(value))}

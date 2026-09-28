@@ -7,7 +7,7 @@
       viewTitle:'Mein Feldzug',routeLabel:'KAMPAGNENPFAD',won:n=>`${n} Ziele erreicht`,next:'NÄCHSTER SCHRITT',
       startKicker:'DEIN LAGER',startTitle:'Die Kampagne beginnt',unknownKicker:'UNERKUNDETES GEBIET',unknownTitle:'Nächstes Ziel',
       unknownText:'Neue Tests erscheinen automatisch, sobald sie geplant werden.',yearKicker:'FERNZIEL',yearTitle:'Jahresfestung',
-      yearDone:'Schuljahr gemeistert',yearOpen:p=>`${p}% Schuljahresfortschritt`,detailProgress:'Festungsfortschritt',
+      yearDone:'Armee vollständig entwickelt',yearOpen:p=>`${p}% Jahresentwicklung`,detailProgress:'Festungsfortschritt',
       captured:'Festung erobert',secured:'Festung gesichert',securedDetail:n=>`${n} Sicherungstage`,hold:'Bis zum Test halten',
       active:'Aktuelles Testziel',planned:'Ziel entdeckt',awaiting:'Ergebnis offen',plannedNoun:'Ziel',
       targetNames:{outpost:'Vorposten',tower:'Wachturm',wall:'Grenzfestung',citadel:'Zitadelle',capital:'Hauptfestung',final:'Große Festung'},
@@ -19,7 +19,7 @@
       viewTitle:'Marschroute der Legion',routeLabel:'RÖMISCHE MARSCHROUTE',won:n=>`${n} Etappen gesichert`,next:'NÄCHSTE ETAPPE',
       startKicker:'MARSCHLAGER',startTitle:'Die Legion bricht auf',unknownKicker:'UNBEKANNTE PROVINZ',unknownTitle:'Nächste Etappe',
       unknownText:'Neue Prüfungsziele erscheinen entlang der Straße, sobald sie geplant werden.',yearKicker:'TRIUMPHZIEL',yearTitle:'Triumphort',
-      yearDone:'Schuljahr gemeistert',yearOpen:p=>`${p}% auf dem Weg zum Triumphort`,detailProgress:'Kastellfortschritt',
+      yearDone:'Legion vollständig entwickelt',yearOpen:p=>`${p}% Jahresentwicklung`,detailProgress:'Kastellfortschritt',
       captured:'Kastell eingenommen',secured:'Kastell gesichert',securedDetail:n=>`${n} Sicherungstage`,hold:'Bis zur Prüfung halten',
       active:'Aktuelles Kastell',planned:'Etappe voraus',awaiting:'Ergebnis offen',plannedNoun:'Kastell',
       targetNames:{outpost:'Marschlager',tower:'Wachturm',wall:'Grenzkastell',citadel:'Bergkastell',capital:'Provinzkastell',final:'Großes Kastell'},
@@ -31,7 +31,7 @@
       viewTitle:'Meine Sprachreise',routeLabel:'REISEWEG',won:n=>`${n} Etappen entdeckt`,next:'NÄCHSTER ORT',
       startKicker:'AUFBRUCH',startTitle:'Die Sprachreise beginnt',unknownKicker:'NOCH OFFEN',unknownTitle:'Nächster Ort',
       unknownText:'Neue Reiseziele erscheinen automatisch, sobald Tests geplant werden.',yearKicker:'FERNZIEL',yearTitle:'Jahresziel',
-      yearDone:'Sprachreise gemeistert',yearOpen:p=>`${p}% der Jahresreise geschafft`,detailProgress:'Etappenfortschritt',
+      yearDone:'Jahresentwicklung vollständig',yearOpen:p=>`${p}% Jahresreise`,detailProgress:'Etappenfortschritt',
       captured:'Ziel erreicht',secured:'Etappe gefestigt',securedDetail:n=>`${n} Wiederholungstage`,hold:'Bis zum Test weiter festigen',
       active:'Aktuelle Sprachmission',planned:'Neuer Ort entdeckt',awaiting:'Ergebnis offen',plannedNoun:'Reiseziel',
       targetNames:{outpost:'Erste Station',tower:'Stadtetappe',wall:'Brückenetappe',citadel:'Kulturstation',capital:'Große Etappe',final:'Abschlussetappe'},
@@ -61,7 +61,7 @@
     }
     if(typeof activeSeries==='function'&&typeof nextWeeklyDate==='function'){
       const cfg=activeSeries(subject);
-      if(cfg){const d=nextWeeklyDate(cfg.weekday),r=add(d);if(r){r.series=true;const set=(state.sets||[]).find(s=>s.id===cfg.setId&&s.learnerId===state.activeLearnerId&&s.subject===subject);if(set&&!r.sets.some(x=>x.id===set.id))r.sets.push(set);const words=typeof scopedWordsForSeries==='function'?scopedWordsForSeries(cfg,subject):[];if(words.length)r.wordCount=Math.max(r.wordCount,words.length);if(!r.scopeText&&typeof seriesScopeText==='function')r.scopeText=seriesScopeText(cfg)}}
+      if(cfg){const d=typeof seriesOccurrenceDate==='function'?seriesOccurrenceDate(subject):nextWeeklyDate(cfg.weekday),r=add(d);if(r){r.series=true;const set=(state.sets||[]).find(s=>s.id===cfg.setId&&s.learnerId===state.activeLearnerId&&s.subject===subject);if(set&&!r.sets.some(x=>x.id===set.id))r.sets.push(set);const words=typeof scopedWordsForSeries==='function'?scopedWordsForSeries(cfg,subject):[];if(words.length)r.wordCount=Math.max(r.wordCount,words.length);if(!r.scopeText&&typeof seriesScopeText==='function')r.scopeText=seriesScopeText(cfg)}}
     }
     const hist=typeof testFortressHistory==='function'?testFortressHistory(subject):[];
     for(const f of hist){const r=add(f.testDate);if(r&&!r.fortress)r.fortress=f}
@@ -102,10 +102,12 @@
     const side=s.index%2?'right':'left',order=s.index+1,t=themeFor(s.subject);
     return `<article class="campaign-map-stop region-${s.region} side-${side} status-${s.status}" data-map-order="${order}"><div class="campaign-map-route-node" aria-hidden="true"><span>${icon(s)}</span><b>${order}</b></div><button type="button" class="campaign-map-station" data-campaign-station="${safe(s.key)}"><small>Etappe ${order} · ${safe(t.regions[s.region])} · ${safe(dateLabel(s.date))}</small><strong>${safe(s.title)}</strong><span>${safe(s.statusLabel)} · ${safe(s.statusDetail)}</span>${s.fortress?`<progress max="100" value="${s.siegePct}" aria-label="${safe(t.detailProgress)}"></progress>`:''}${s.grade?`<b class="campaign-map-grade">Note ${safe(s.grade.grade)}</b>`:''}</button></article>`;
   }
-  function markup(list,pct,subject){
-    const t=themeFor(subject),won=list.filter(s=>['captured','secured','completed'].includes(s.status)).length;
-    const next=list.find(s=>s.status==='active')?.title||list.find(s=>s.date>=today())?.title||t.yearTitle;
-    return `<div class="campaign-war-header"><div><small>${safe(t.routeLabel)}</small><strong>${safe(t.won(won))}</strong></div><div><small>${safe(t.next)}</small><strong>${safe(next)}</strong></div></div><div class="campaign-map-start"><span aria-hidden="true">⚑</span><div><small>${safe(t.startKicker)}</small><strong>${safe(t.startTitle)}</strong></div></div><div class="campaign-map-route">${list.map(stop).join('')}<article class="campaign-map-stop campaign-map-unknown"><div class="campaign-map-route-node" aria-hidden="true"><span>?</span></div><div class="campaign-map-fog-card"><small>${safe(t.unknownKicker)}</small><strong>${safe(t.unknownTitle)}</strong><span>${safe(t.unknownText)}</span></div></article><article class="campaign-map-stop campaign-map-year-goal ${pct>=100?'completed':''}"><div class="campaign-map-route-node" aria-hidden="true"><span>${pct>=100?'✓':'♛'}</span></div><button type="button" class="campaign-map-station campaign-map-year-fortress" data-campaign-station="year-goal"><small>${safe(t.yearKicker)}</small><strong>${safe(t.yearTitle)}</strong><span>${safe(pct>=100?t.yearDone:t.yearOpen(pct))}</span><progress max="100" value="${pct}" aria-label="Schuljahresfortschritt"></progress></button></article></div>`;
+  function markup(list,growth,yearGoal,subject){
+    const t=themeFor(subject),pct=growth.pct,won=list.filter(s=>['captured','secured','completed'].includes(s.status)).length;
+    const next=list.find(s=>s.status==='active')?.title||list.find(s=>s.date>=today())?.title||(yearGoal.date?`${t.yearTitle} · ${dateLabel(yearGoal.date)}`:t.yearTitle);
+    const yearWhen=yearGoal.date?`Termin ${dateLabel(yearGoal.date)}`:'Datum noch offen';
+    const yearState=pct>=100?t.yearDone:t.yearOpen(pct);
+    return `<div class="campaign-war-header"><div><small>${safe(t.routeLabel)}</small><strong>${safe(t.won(won))}</strong></div><div><small>${safe(t.next)}</small><strong>${safe(next)}</strong></div></div><div class="campaign-map-start"><span aria-hidden="true">⚑</span><div><small>${safe(t.startKicker)}</small><strong>${safe(t.startTitle)}</strong></div></div><div class="campaign-map-route">${list.map(stop).join('')}<article class="campaign-map-stop campaign-map-unknown"><div class="campaign-map-route-node" aria-hidden="true"><span>?</span></div><div class="campaign-map-fog-card"><small>${safe(t.unknownKicker)}</small><strong>${safe(t.unknownTitle)}</strong><span>${safe(t.unknownText)}</span></div></article><article class="campaign-map-stop campaign-map-year-goal ${pct>=100?'growth-max':''} ${yearGoal.date?'dated':'undated'}"><div class="campaign-map-route-node" aria-hidden="true"><span>♛</span></div><button type="button" class="campaign-map-station campaign-map-year-fortress" data-campaign-station="year-goal"><small>${safe(t.yearKicker)} · ${safe(yearWhen)}</small><strong>${safe(t.yearTitle)}</strong><span>${safe(yearState)}</span><progress max="100" value="${pct}" aria-label="Jahresentwicklung"></progress></button></article></div>`;
   }
   function detail(st){
     const root=document.querySelector('#campaignMapDetail'),battle=document.querySelector('#campaignMapBattleBtn');if(!root)return;
@@ -117,11 +119,12 @@
     const current=typeof currentTestFortress==='function'?currentTestFortress(st.subject):null,can=current?.testDate===st.date;
     if(battle){battle.classList.toggle('hidden',!can);battle.disabled=!can;battle.textContent=st.fortress?.capturedAt?t.securedAction:t.battleAction}
   }
-  function yearDetail(pct){
+  function yearDetail(growth,yearGoal){
     const root=document.querySelector('#campaignMapDetail');if(!root)return;
-    const t=themeFor(state.activeSubject);
+    const t=themeFor(state.activeSubject),pct=growth.pct;
     root.hidden=false;
-    root.innerHTML=`<button type="button" class="campaign-map-detail-close" data-campaign-detail-close aria-label="Zielinfo schließen">×</button><div class="campaign-map-detail-head"><small>${safe(t.yearKicker)}</small><h3>${safe(t.yearTitle)}</h3><p>${pct>=100?'Das Schuljahresziel ist erreicht.':'Dieses Ziel steht für deinen langfristigen Schuljahresfortschritt – nicht für eine feste Zahl von Tests.'}</p></div><div class="campaign-map-detail-grid"><div><small>Schuljahresfortschritt</small><strong>${pct}%</strong><span>nachhaltig gemeisterte Vokabeln</span></div><div><small>Prinzip</small><strong>Dynamischer Weg</strong><span>Neue Testziele werden unterwegs ergänzt.</span></div></div>`;
+    const dateCopy=yearGoal.date?`<strong>${safe(dateLabel(yearGoal.date))}</strong><span>Der reale Termin ist bekannt und kann im Elternbereich angepasst werden.</span>`:'<strong>Noch offen</strong><span>Die Jahresfestung bleibt am Horizont, bis ein realer Termin bekannt ist.</span>';
+    root.innerHTML=`<button type="button" class="campaign-map-detail-close" data-campaign-detail-close aria-label="Zielinfo schließen">×</button><div class="campaign-map-detail-head"><small>${safe(t.yearKicker)}</small><h3>${safe(t.yearTitle)}</h3><p>${pct>=100?'Deine Armee hat die höchste Jahresstufe erreicht.':'Dieses Ziel wächst über das ganze Schuljahr und setzt keine feste Zahl zukünftiger Tests voraus.'}</p></div><div class="campaign-map-detail-grid"><div><small>Jahresentwicklung</small><strong>${pct}%</strong><span>${growth.masteredEver} Vokabeln jemals nachhaltig gemeistert · ${growth.completedTests} Tests abgeschlossen · ${growth.capturedFortresses} Testfestungen erobert</span></div><div><small>Termin</small>${dateCopy}</div><div><small>Prinzip</small><strong>Nur vorwärts</strong><span>Neue Vokabeln oder Tests setzen Armee und Avatar nicht zurück.</span></div><div><small>Feldzug</small><strong>Dynamischer Weg</strong><span>Neue Testziele werden vor der Jahresfestung ergänzt.</span></div></div>`;
     document.querySelector('#campaignMapBattleBtn')?.classList.add('hidden');
   }
   function clearSelection(){
@@ -129,7 +132,11 @@
   }
   function applySelection(key){
     selectedKey=key;selectionDismissed=false;document.querySelectorAll('[data-campaign-station]').forEach(b=>b.classList.toggle('selected',b.dataset.campaignStation===key));
-    const pct=subjectProgress().pct;if(key==='year-goal'){yearDetail(pct);return}detail(stations().find(s=>s.key===key)||null);
+    if(key==='year-goal'){
+      const year=currentSchoolYear(),growth=campaignGrowthState(state.activeSubject,year),goal=yearFortressState(state.activeSubject,year);
+      yearDetail(growth,goal);return;
+    }
+    detail(stations().find(s=>s.key===key)||null);
   }
   function select(key){
     if(selectedKey===key&&!selectionDismissed){clearSelection();return}
@@ -137,13 +144,13 @@
   }
   function render(){
     const board=document.querySelector('#campaignMapBoard');if(!board||!state||typeof learner!=='function'||!learner())return;
-    const subject=state.activeSubject,year=currentSchoolYear(),list=stations(subject,year),p=subjectProgress(subject,year);
+    const subject=state.activeSubject,year=currentSchoolYear(),list=stations(subject,year),growth=campaignGrowthState(subject,year),yearGoal=yearFortressState(subject,year);
     const t=themeFor(subject),view=document.querySelector('#campaignMapView'),title=document.querySelector('#campaignMapViewTitle');
     if(view)view.dataset.visualTheme=typeof subjectVisualTheme==='function'?subjectVisualTheme(subject):'campaign';
     if(title)title.textContent=t.viewTitle;
     const label=document.querySelector('#campaignMapSubjectLabel');if(label)label.textContent=`${subjectLabel(subject)} · ${year}`;
     const sum=document.querySelector('#campaignMapSummary');if(sum){const done=list.filter(s=>s.status==='completed').length,won=list.filter(s=>['captured','secured','completed'].includes(s.status)).length;sum.textContent=list.length?`${done} Tests abgeschlossen · ${won} Ziele erobert · weitere Ziele erscheinen automatisch`:'Noch kein Test geplant · die Karte wächst mit deinem Schuljahr'}
-    board.innerHTML=markup(list,p.pct,subject);
+    board.innerHTML=markup(list,growth,yearGoal,subject);
     if(selectionDismissed){document.querySelectorAll('[data-campaign-station]').forEach(b=>b.classList.remove('selected'));detail(null);return}
     const active=list.find(s=>s.status==='active')||list.find(s=>s.date>=today())||list[list.length-1],want=selectedKey==='year-goal'||list.some(s=>s.key===selectedKey)?selectedKey:(active?.key||'year-goal');applySelection(want);
   }

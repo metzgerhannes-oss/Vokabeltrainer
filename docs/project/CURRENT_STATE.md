@@ -6,17 +6,17 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.28**
-- Basis auf `main`: **v0.21.27 / Merge-Commit `8cfcaed0cf166b7b8f0368b462438cb6e47337f3` / PR #185**
-- aktueller Release-Kandidat: **PR #187 – v0.21.28 – Cinematic Battle Upgrade**
-- Phaser-Produktivintegration: **PR #185**, PR-CI **#1150 – success**
-- Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Treffer und Eroberung bleiben getrennte App-Zustände
-- Cinematic-Kandidat v0.21.28: größere Festung/Profilbanner, Festungs-Gegenwehr, visuelle eigene Verluste, lokale Web-Audio-Cues und optionales Vollbild
-- fachliche Schutzlinie: visuelle Verluste, Sound und Choreografie verändern weder Mastery noch Vokabelbewertung, Ticketlogik oder Testidentität
-- letzter fachlicher Lernrelease: **PR #148 – v0.21.12 – Differenzierte LRS-Unterstützung**
+- App-Version: **v0.21.29**
+- produktiver Stand auf `main`: **v0.21.28 / Merge-Commit `2bb58cca1736004c1616cf586c15c66f7a6b0008` / PR #187**
+- aktueller Release-Kandidat: **PR #188 – v0.21.29 – dauerhafte Jahresentwicklung & datierbare Jahresfestung**
+- Release-Kandidat-Branch: **`feat/year-campaign-growth-v02129`**
+- Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
+- Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
+- fachliche Schutzlinie: Spielprogression, Battle-Choreografie und Jahresfestungsdatum verändern weder Mastery noch Vokabelbewertung oder Testbereitschaft
+- v0.21.29 trennt den schwankenden fachlichen Prozentwert von der kumulativen Jahresentwicklung; Avatar/Rang/Armee werden durch neuen Stoff nicht zurückgestuft
 - praktische v1-Abnahme: weiterhin **OFFEN**
 
-PR #185 ist auf `main` gemergt und seine vollständige Pflichtmatrix war in CI #1150 grün. PR #187 baut konfliktfrei auf genau diesem Merge-Stand auf und ist bis zur vollständig grünen CI als Release-Kandidat zu behandeln.
+PR #187 ist auf `main` gemergt. Der v0.21.29-Kandidat wurde anschließend frisch auf genau diesem Stand aufgebaut; der veraltete PR #173 wird nicht gemergt.
 
 Dieser Abschnitt ist ein Snapshot. Für Statusfragen muss der aktuelle GitHub-Stand erneut live geprüft werden; genannte SHAs und CI-Nummern dürfen nicht ohne erneute Prüfung als dauerhaft neuester Stand interpretiert werden.
 
@@ -37,16 +37,16 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Differenzierte LRS-/Lernunterstützung | PRODUCTION | `PRODUCT_DNA.md` P6/P8, D-20260927-008, PR #148 |
 | Richtungsspezifische Testbereitschaft | PRODUCTION | `PRODUCT_DNA.md` P2, D-20260927-007, PR #144 |
 | Lernbibliothek / Dokumentationskohärenz | PRODUCTION | `docs/project/LEARNING_COHERENCE_REVIEW.md`, PR #146 |
-| Tagesplanung mit testbezogener Last | VERIFIED / Release-Kandidat v0.21.22 | `PRODUCT_DNA.md` P6, D-20260927-010 + Code/Tests |
+| Tagesplanung mit testbezogener Last | PRODUCTION v0.21.22 | `PRODUCT_DNA.md` P6, D-20260927-010 + Code/Tests |
 | Mehrere kommende Einzeltests / frühester Termin | PRODUCTION | PR #160, `V1_ACCEPTANCE_TEST.md` |
 | Pflicht-Tagesziel nur nach erfolgreichem Abruf | PRODUCTION | `PRODUCT_DNA.md` P4/P6, D-20260927-005, PR #142 |
 | Adaptives Nachrücken / „heute sicher“ | PRODUCTION | `PRODUCT_DNA.md` P3/P6, D-20260927-004, PR #138 |
 | Tolerante Satzbewertung | PRODUCTION | README v0.21.2 + Code/Tests |
 | Schutz vor System-Schreibvorschlägen | PRODUCTION | README v0.21.3 + Code/Tests |
 | Kindnavigation Lernen vs. Spiel | PRODUCTION | `PRODUCT_DNA.md`, `VISUAL_DNA.md` |
-| Battle-Viewport / Vollbild | RELEASE-KANDIDAT v0.21.28 | PR #187; standardmäßig scrollbar, optionaler app-eigener Vollbildmodus |
-| Phaser-4-Battle-Renderer Englisch | PRODUCTION v0.21.27; Cinematic-Upgrade in PR #187 | D-20260928-004, B-012, PR #185/#187 |
-| Family Sync | PRODUCTION / Beta-Grenze | `SYNC_ARCHITECTURE.md`, `FINAL_AUDIT.md` |
+| Battle-Viewport / Vollbild | PRODUCTION v0.21.28 | PR #187; standardmäßig scrollbar, optionaler app-eigener Vollbildmodus |
+| Phaser-4-Battle-Renderer Englisch | PRODUCTION v0.21.28; weitere Fächer/Fallbacks offen | D-20260928-004, B-012, PR #185/#187 |
+| Dauerhafte Jahresentwicklung / Jahresfestung | RELEASE-KANDIDAT v0.21.29 | D-20260928-005, B-014, PR #188 |\n| Family Sync | PRODUCTION / Beta-Grenze | `SYNC_ARCHITECTURE.md`, `FINAL_AUDIT.md` |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 
 ## Offene Verifikationsgrenzen

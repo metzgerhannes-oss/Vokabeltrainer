@@ -276,11 +276,48 @@ function subjectProgress(subject=state.activeSubject,schoolYear=currentSchoolYea
   const words=schoolYearVerifiedWords(subject,schoolYear); const mastered=words.filter(isMastered).length; const stable=words.filter(w=>w.intervalDays>=7 && (w.independentSuccesses||0)>w.failures).length;
   return {schoolYear,total:words.length,mastered,stable,pct:words.length?Math.round(mastered/words.length*100):0};
 }
+const CAMPAIGN_GROWTH_MAX_POINTS=320;
+const CAMPAIGN_GROWTH_STAGE_POINTS=Object.freeze([0,25,70,130,210,320]);
+function schoolYearDateBounds(schoolYear=currentSchoolYear()){
+  const startYear=Number(String(schoolYear||'').split('/')[0]);
+  return Number.isFinite(startYear)?{start:`${startYear}-08-01`,end:`${startYear+1}-07-31`}:{start:'0000-01-01',end:'9999-12-31'};
+}
+function dateInSchoolYear(date,schoolYear=currentSchoolYear()){const b=schoolYearDateBounds(schoolYear),d=String(date||'');return !!d&&d>=b.start&&d<=b.end}
+function campaignGrowthState(subject=state.activeSubject,schoolYear=currentSchoolYear()){
+  const words=schoolYearVerifiedWords(subject,schoolYear);
+  const masteredEver=words.filter(w=>isMastered(w)||!!w.masteredAt||!!w.lastMasteredAt).length;
+  const completedTests=typeof completedTestsForSubject==='function'?completedTestsForSubject(subject).filter(x=>dateInSchoolYear(x.date,schoolYear)).length:0;
+  const capturedFortresses=typeof testFortressHistory==='function'?testFortressHistory(subject).filter(f=>dateInSchoolYear(f.testDate,schoolYear)&&!!f.capturedAt).length:0;
+  const learningDays=new Set((learner()?.streakDays||[]).filter(date=>dateInSchoolYear(date,schoolYear))).size;
+  const points=masteredEver+(completedTests*8)+(capturedFortresses*5);
+  const pct=points?clamp(Math.max(1,Math.round(points/CAMPAIGN_GROWTH_MAX_POINTS*100)),1,100):0;
+  const level=Math.max(1,Math.min(CAMPAIGN_GROWTH_STAGE_POINTS.length,CAMPAIGN_GROWTH_STAGE_POINTS.filter(t=>points>=t).length));
+  const nextPoints=level<CAMPAIGN_GROWTH_STAGE_POINTS.length?CAMPAIGN_GROWTH_STAGE_POINTS[level]:null;
+  return {subject,schoolYear,points,pct,level,maxLevel:CAMPAIGN_GROWTH_STAGE_POINTS.length,nextPoints,masteredEver,completedTests,capturedFortresses,learningDays};
+}
+function yearFortressKey(subject=state.activeSubject,schoolYear=currentSchoolYear()){return `${subject}:${schoolYear}`}
+function yearFortressState(subject=state.activeSubject,schoolYear=currentSchoolYear(),l=learner()){
+  const key=yearFortressKey(subject,schoolYear),store=l?.yearFortresses&&typeof l.yearFortresses==='object'?l.yearFortresses:{},row=store[key];
+  return row&&typeof row==='object'?{key,subject,schoolYear,date:String(row.date||''),updatedAt:String(row.updatedAt||'')}:{key,subject,schoolYear,date:'',updatedAt:''};
+}
+function setYearFortressDate(date='',subject=state.activeSubject,schoolYear=currentSchoolYear(),l=learner()){
+  if(!l)return {ok:false,error:'Kein Lernprofil aktiv.'};
+  const value=String(date||'').trim(),bounds=schoolYearDateBounds(schoolYear);
+  if(value&&!dateInSchoolYear(value,schoolYear))return {ok:false,error:`Das Datum muss im Schuljahr ${schoolYear} liegen.`};
+  const cfg=l.testSeries?.[subject]?.enabled?l.testSeries[subject]:null,knownTests=(state.sets||[]).filter(s=>s.learnerId===l.id&&s.subject===subject&&s.schoolYear===schoolYear).map(s=>String(s.testDate||'')).filter(Boolean);
+  if(cfg?.scopeDate&&dateInSchoolYear(cfg.scopeDate,schoolYear))knownTests.push(String(cfg.scopeDate));
+  knownTests.sort();
+  const latest=knownTests[knownTests.length-1]||'';
+  if(value&&latest&&value<latest)return {ok:false,error:`Die Jahresfestung kann nicht vor dem bereits geplanten Test am ${formatDateShort(latest)} liegen.`};
+  l.yearFortresses=l.yearFortresses&&typeof l.yearFortresses==='object'&&!Array.isArray(l.yearFortresses)?l.yearFortresses:{};
+  const key=yearFortressKey(subject,schoolYear);
+  if(!value){delete l.yearFortresses[key];return {ok:true,row:{key,subject,schoolYear,date:'',updatedAt:''},bounds}}
+  const row={subject,schoolYear,date:value,updatedAt:new Date().toISOString()};l.yearFortresses[key]=row;
+  return {ok:true,row:{key,...row},bounds};
+}
 function dueWords(subject=state.activeSubject,schoolYear=currentSchoolYear()){return schoolYearWords(subject,schoolYear).filter(w=>!w.dueDate||w.dueDate<=today()).sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||''));}
 function armyStrength(subject=state.activeSubject,schoolYear=currentSchoolYear()){
-  const p=subjectProgress(subject,schoolYear); const words=schoolYearVerifiedWords(subject,schoolYear);
-  const avg=words.length?words.reduce((s,w)=>s+masteryScore(w),0)/(words.length*4):0;
-  return Math.round(p.pct*10 + avg*100);
+  return Math.round(campaignGrowthState(subject,schoolYear).pct*11);
 }
 const ARMY_UNIT_THRESHOLDS=Object.freeze({
   infantry:Object.freeze([0,20,40,65,85]),
@@ -292,10 +329,8 @@ const ARMY_UNIT_THRESHOLDS=Object.freeze({
 });
 const BATTLE_ATTACK_UNITS=Object.freeze({charge:'infantry',volley:'archers',ram:'ram',cavalry:'cavalry'});
 function armyUnitMetricValue(unitId,subject=state.activeSubject,schoolYear=currentSchoolYear()){
-  const p=subjectProgress(subject,schoolYear);
-  if(unitId==='shield')return p.total?Math.round((p.stable/p.total)*100):0;
-  if(unitId==='support')return new Set(learner()?.streakDays||[]).size;
-  return p.pct;
+  if(unitId==='support')return campaignGrowthState(subject,schoolYear).learningDays;
+  return campaignGrowthState(subject,schoolYear).pct;
 }
 function armyUnitProgressFromValue(unitId,value){
   const thresholds=ARMY_UNIT_THRESHOLDS[unitId]||[];
@@ -502,7 +537,8 @@ function seriesOccurrenceDate(subject=state.activeSubject){
   if(scoped&&scoped<=today()&&!isTestCompleted(scoped,subject))return scoped;
   let date=nextWeeklyDate(cfg.weekday);
   if(isTestCompleted(date,subject))date=nextWeeklyDate(cfg.weekday,datePlusDays(1));
-  return date;
+  const finalDate=yearFortressState(subject,currentSchoolYear()).date;
+  return finalDate&&date>finalDate?'':date;
 }
 function seriesScopePending(subject=state.activeSubject){const cfg=activeSeries(subject);if(!cfg)return null;const date=seriesOccurrenceDate(subject);return !date||cfg.scopeDate===date?null:{date,days:daysUntil(date),series:cfg}}
 function normalizedRange(count,from,to){if(!count)return {from:1,to:0};let a=clamp(Math.max(1,Number(from)||1),1,count),b=clamp(Math.max(1,Number(to)||count),1,count);if(a>b)[a,b]=[b,a];return {from:a,to:b}}
