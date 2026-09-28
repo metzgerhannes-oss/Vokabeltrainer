@@ -6,7 +6,8 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version Produktion: **v0.21.27**
+- App-Version: **v0.21.28**
+- Produktionsbaseline vor diesem Kandidaten: **v0.21.27**
 - Release-Kandidat: **v0.21.28 – Phaser Cinematic Battle Upgrade**
 - aktueller `main`-Commit: `73c2d14c6ec3c9e74ef465adad4d3cd7a56109b9` (PR #184 – v0.21.27 Testidentität)
 - letzter fachlicher Lernrelease: **PR #148 – v0.21.12 – Differenzierte LRS-Unterstützung**
