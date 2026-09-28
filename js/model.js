@@ -454,7 +454,25 @@ const WEEKDAYS_SHORT=['So','Mo','Di','Mi','Do','Fr','Sa'];
 function localDateFromKey(key){const [y,m,d]=String(key||'').split('-').map(Number);if(!y||!m||!d)return null;const out=new Date(y,m-1,d,12,0,0,0);return Number.isNaN(out.getTime())?null:out}
 function nextWeeklyDate(weekday,fromKey=today()){const base=localDateFromKey(fromKey)||new Date();const wanted=clamp(Number(weekday)||0,0,6);const delta=(wanted-base.getDay()+7)%7;base.setDate(base.getDate()+delta);return dateKey(base)}
 function activeSeries(subject=state.activeSubject){const cfg=learner()?.testSeries?.[subject];return cfg&&cfg.enabled?cfg:null}
-function seriesScopePending(subject=state.activeSubject){const cfg=activeSeries(subject);if(!cfg)return null;const date=nextWeeklyDate(cfg.weekday);return cfg.scopeDate===date?null:{date,days:daysUntil(date),series:cfg}}
+function testCompletionKey(subject,date){return `${subject}:${date}`}
+function testCompletions(l=learner()){if(!l)return{};if(!l.completedTests||typeof l.completedTests!=='object'||Array.isArray(l.completedTests))l.completedTests={};return l.completedTests}
+function testCompletionForDate(date,subject=state.activeSubject){if(!date)return null;return testCompletions()[testCompletionKey(subject,date)]||null}
+function isTestCompleted(date,subject=state.activeSubject){
+  if(!date)return false;
+  if(testCompletionForDate(date,subject))return true;
+  return (state.grades||[]).some(g=>g.learnerId===state.activeLearnerId&&g.subject===subject&&g.date===date&&parseSchoolGrade(g.grade)!==null);
+}
+function completedTestsForSubject(subject=state.activeSubject){return Object.values(testCompletions()).filter(x=>x?.subject===subject&&x?.date).sort((a,b)=>String(a.date).localeCompare(String(b.date)))}
+function latestTestCompletion(subject=state.activeSubject){const rows=completedTestsForSubject(subject);return rows[rows.length-1]||null}
+function seriesOccurrenceDate(subject=state.activeSubject){
+  const cfg=activeSeries(subject);if(!cfg)return '';
+  const scoped=String(cfg.scopeDate||'');
+  if(scoped&&scoped<=today()&&!isTestCompleted(scoped,subject))return scoped;
+  let date=nextWeeklyDate(cfg.weekday);
+  if(isTestCompleted(date,subject))date=nextWeeklyDate(cfg.weekday,datePlusDays(1));
+  return date;
+}
+function seriesScopePending(subject=state.activeSubject){const cfg=activeSeries(subject);if(!cfg)return null;const date=seriesOccurrenceDate(subject);return !date||cfg.scopeDate===date?null:{date,days:daysUntil(date),series:cfg}}
 function normalizedRange(count,from,to){if(!count)return {from:1,to:0};let a=clamp(Math.max(1,Number(from)||1),1,count),b=clamp(Math.max(1,Number(to)||count),1,count);if(a>b)[a,b]=[b,a];return {from:a,to:b}}
 function scopedWordsForSet(set,scopeMode='set',from=1,to=null,selectedLinkIds=null){if(!set||setNeedsPairReview(set))return [];const words=setWords(set.id);if(scopeMode==='selected'){const ids=new Set((selectedLinkIds||set.testSelectedLinkIds||[]).filter(Boolean));return ids.size?words.filter(w=>ids.has(w.setLinkId)):[]}if(scopeMode!=='range'||!words.length)return words;const r=normalizedRange(words.length,from,to);return words.slice(r.from-1,r.to)}
 function scopeTextForSet(set,scopeMode='set',from=1,to=null,selectedLinkIds=null){if(!set)return '';if(scopeMode==='selected'){const count=scopedWordsForSet(set,'selected',from,to,selectedLinkIds).length;return `${set.title} · ${count} ausgewählt`}if(scopeMode!=='range')return set.title;const count=setWords(set.id).length;if(!count)return set.title;const r=normalizedRange(count,from,to);return `${set.title} · Vokabeln ${r.from}–${r.to}`}
@@ -502,17 +520,37 @@ function testReadinessForContext(ctx){
   const weak=[...words].sort((a,b)=>testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b));
   return {total:words.length,ready,pct:Math.round(ready/words.length*100),avg,weak};
 }
+function testContextPriority(a,b){
+  if(!a)return b;if(!b)return a;
+  const ad=Number(a.days),bd=Number(b.days),aDue=ad<=0,bDue=bd<=0;
+  if(aDue!==bDue)return aDue?a:b;
+  if(aDue&&bDue)return a.date>=b.date?a:b;
+  return a.date<=b.date?a:b;
+}
 function upcomingTestContext(subject=state.activeSubject){
-  const explicit=mySets(subject).filter(s=>!setNeedsPairReview(s)&&s.testDate&&daysUntil(s.testDate)>=0&&setWords(s.id).length).sort((a,b)=>a.testDate.localeCompare(b.testDate));
-  let single=null;
-  if(explicit.length){const date=explicit[0].testDate,sets=explicit.filter(s=>s.testDate===date),words=uniqueWords(sets.flatMap(set=>scopedWordsForSet(set,set.testScopeMode,set.testFrom,set.testTo,set.testSelectedLinkIds)));single={date,days:daysUntil(date),sets,words,source:'single',testFormat:sets[0]?.testFormat||'target',scopeText:sets.map(set=>scopeTextForSet(set,set.testScopeMode,set.testFrom,set.testTo,set.testSelectedLinkIds)).join(' + ')}}
+  const explicit=mySets(subject).filter(s=>!setNeedsPairReview(s)&&s.testDate&&!isTestCompleted(s.testDate,subject)&&setWords(s.id).length);
+  const overdue=explicit.filter(s=>daysUntil(s.testDate)<=0).sort((a,b)=>b.testDate.localeCompare(a.testDate)),future=explicit.filter(s=>daysUntil(s.testDate)>0).sort((a,b)=>a.testDate.localeCompare(b.testDate));
+  const lead=overdue[0]||future[0]||null;let single=null;
+  if(lead){const date=lead.testDate,sets=explicit.filter(s=>s.testDate===date),words=uniqueWords(sets.flatMap(set=>scopedWordsForSet(set,set.testScopeMode,set.testFrom,set.testTo,set.testSelectedLinkIds)));single={date,days:daysUntil(date),sets,words,source:'single',testFormat:sets[0]?.testFormat||'target',scopeText:sets.map(set=>scopeTextForSet(set,set.testScopeMode,set.testFrom,set.testTo,set.testSelectedLinkIds)).join(' + ')}}
   const cfg=activeSeries(subject); let recurring=null;
-  if(cfg){const date=nextWeeklyDate(cfg.weekday),set=state.sets.find(s=>s.id===cfg.setId&&s.learnerId===state.activeLearnerId&&s.subject===subject),words=scopedWordsForSeries(cfg,subject);if(cfg.scopeDate===date&&set&&words.length)recurring={date,days:daysUntil(date),sets:[set],words,source:'series',series:cfg,testFormat:cfg.testFormat||'target',scopeText:seriesScopeText(cfg)}}
+  if(cfg){const date=seriesOccurrenceDate(subject),set=state.sets.find(s=>s.id===cfg.setId&&s.learnerId===state.activeLearnerId&&s.subject===subject),words=scopedWordsForSeries(cfg,subject);if(date&&cfg.scopeDate===date&&!isTestCompleted(date,subject)&&set&&words.length)recurring={date,days:daysUntil(date),sets:[set],words,source:'series',series:cfg,testFormat:cfg.testFormat||'target',scopeText:seriesScopeText(cfg)}}
   if(single&&recurring&&single.date===recurring.date){const sets=uniqueById([...single.sets,...recurring.sets]);const words=uniqueWords([...single.words,...recurring.words]);return {date:single.date,days:single.days,sets,words,source:'mixed',series:cfg,testFormat:single.testFormat||recurring.testFormat||'target',scopeText:[single.scopeText,recurring.scopeText].filter(Boolean).join(' + ')}}
-  if(!single)return recurring; if(!recurring)return single; return single.date<=recurring.date?single:recurring;
+  return testContextPriority(single,recurring);
+}
+function completeTestContext(ctx=upcomingTestContext(),subject=state.activeSubject){
+  if(!ctx?.date||daysUntil(ctx.date)>0)return null;
+  const l=learner(),key=testCompletionKey(subject,ctx.date),existing=testCompletions(l)[key];if(existing)return existing;
+  const fortress=testFortressHistory(subject).find(f=>f.testDate===ctx.date)||null,stamp=new Date().toISOString();
+  const row={subject,date:ctx.date,completedAt:stamp,scopeText:ctx.scopeText||ctx.sets?.map(s=>s.title).join(' + ')||'',setIds:(ctx.sets||[]).map(s=>s.id),wordCount:(ctx.words||[]).length,source:ctx.source||'single',testFormat:ctx.testFormat||'target',fortressKey:fortress?.key||''};
+  testCompletions(l)[key]=row;
+  if(fortress)fortress.testCompletedAt=stamp;
+  if(l.dailyPlans)delete l.dailyPlans[`${today()}:${subject}`];
+  recordActivity('testCompleted',{subject,testDate:ctx.date,source:row.source,wordCount:row.wordCount,fortressKey:row.fortressKey});
+  if(typeof persistOnly==='function')persistOnly();
+  return row;
 }
 function uniqueById(list){const seen=new Set();return list.filter(x=>x&&!seen.has(x.id)&&seen.add(x.id))}
-function testContextLabel(ctx,subject=state.activeSubject){if(!ctx)return '';const subjectName=subjectLabel(subject);const when=ctx.days===0?'heute':ctx.days===1?'morgen':`in ${ctx.days} Tagen`;const recurrence=ctx.source==='series'||ctx.source==='mixed'?` · wöchentlich ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]}`:'';return `${subjectName}-Test ${when}${recurrence} · ${ctx.scopeText||ctx.sets.map(s=>s.title).join(' + ')}`}
+function testContextLabel(ctx,subject=state.activeSubject){if(!ctx)return '';const subjectName=subjectLabel(subject);const when=ctx.days===0?'heute':ctx.days===1?'morgen':ctx.days<0?`vor ${Math.abs(ctx.days)} Tag${Math.abs(ctx.days)===1?'':'en'}`:`in ${ctx.days} Tagen`;const recurrence=ctx.source==='series'||ctx.source==='mixed'?` · wöchentlich ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]}`:'';return `${subjectName}-Test ${when}${recurrence} · ${ctx.scopeText||ctx.sets.map(s=>s.title).join(' + ')}`}
 const DAILY_PLAN_SCHEMA='daily2';
 function dailyPlanSignature(ctx,subject,sessionSize){
   const words=(ctx?ctx.words:schoolYearVerifiedWords(subject)).map(w=>w.id).sort().join(',');
