@@ -208,10 +208,17 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    weitere Tagesziele schalten stattdessen einen Sicherungseinsatz für dieselbe Festung frei.
    Ein verpasster Tag verursacht keine Strafe und Angriffe werden nicht angespart.
    Rang, Einheiten und Ausrüstung bilden weiterhin den langfristigen Schuljahresfortschritt
-   ab. Der Feldzug darf keine feste Zahl zukünftiger Tests voraussetzen. Bekannte Testtermine
-   erscheinen dynamisch als Stationen; neu geplante Tests verlängern die Route, während der
-   noch unbekannte Teil des Schuljahres bewusst offen bleibt. Die Jahresfestung steht für das
-   langfristige Schuljahresziel und niemals für einen vorab angenommenen „letzten Test“.
+   ab. **Diese sichtbare Entwicklung ist innerhalb eines Fachs und Schuljahres monoton:** Ein
+   einmal erreichter Entwicklungsstand von Avatar, Rang, Einheiten oder Ausrüstung wird nicht
+   zurückgenommen, nur weil später neue Vokabeln oder Tests bekannt werden. Der fachliche
+   Mastery-Prozentsatz der aktuell bekannten Jahresvokabeln bleibt davon getrennt und darf sich
+   bei neuem Stoff rechnerisch verändern. Der Feldzug darf keine feste Zahl zukünftiger Tests
+   voraussetzen. Bekannte Testtermine erscheinen dynamisch als Stationen; neu geplante Tests
+   verlängern die Route, während der noch unbekannte Teil des Schuljahres bewusst offen bleibt.
+   Die Jahresfestung steht für das langfristige Schuljahresziel und niemals für einen vorab
+   angenommenen „letzten Test“. Solange ihr realer Termin unbekannt ist, bleibt sie ohne Datum
+   am Horizont. Sobald ein belastbarer Termin bekannt ist, darf dieser hinterlegt, geändert oder
+   wieder entfernt werden; dadurch werden weder Rang noch Armee zurückgesetzt.
    Das reale Testergebnis kann die eroberte Festung später als Auszeichnung ergänzen,
    verändert aber weder rückwirkend die Eroberung noch den Mastery-Wert. Kampfanimationen,
    Bossdarstellung, Story und Freundschaftsduelle dürfen fachliche Leistung niemals
