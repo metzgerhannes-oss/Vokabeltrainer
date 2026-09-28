@@ -110,37 +110,43 @@ async function openVariant(attack, outcome = 'capture') {
 
 try {
   const ram = await openVariant('ram', 'capture');
-  for (const beat of ['rally','advance','volley-1','ram-charge-1','damage-1','volley-2','ram-charge-2','damage-2','fire','breach','takeover','secured']) {
+  for (const beat of ['rally','advance','volley-1','ram-charge-1','damage-1','volley-2','ram-charge-2','damage-2','fire','breach','breach-entry','secured']) {
     assert(ram.beats.includes(beat), 'ram capture contains beat ' + beat);
   }
   assert(ram.damage === 'heavy', 'ram capture keeps heavy fortress damage');
+  assert(ram.beats.includes('profile-banner'), 'ram capture raises profile banner after the units enter');
+  assert(ram.beats.indexOf('breach-entry') < ram.beats.indexOf('profile-banner'), 'ram units enter before profile banner');
   assert(ram.control === 'own', 'ram capture transfers control');
-  assert(ram.resultText.includes('Festung übernommen'), 'ram capture result confirms takeover');
+  assert(ram.resultText.includes('Festung übernommen'), 'ram capture result confirms breach entry');
 
   const charge = await openVariant('charge', 'capture');
   assert(charge.beats.includes('charge-1'), 'charge uses infantry-specific attack beat');
   assert(charge.beats.includes('damage-1'), 'charge has a visible damage beat');
-  assert(charge.beats.includes('takeover'), 'charge capture can show takeover only after capture outcome');
+  assert(charge.beats.includes('breach-entry'), 'charge capture sends units through the gate');
+  assert(charge.beats.includes('profile-banner'), 'charge capture raises the profile banner after entry');
 
   const volley = await openVariant('volley', 'capture');
   assert(volley.beats.includes('volley-1') && volley.beats.includes('volley-2'), 'volley uses multiple arrow waves');
   assert(volley.beats.includes('fire'), 'volley can leave small stylized fire effects');
-  assert(volley.beats.includes('takeover'), 'volley capture resolves through takeover outcome');
+  assert(volley.beats.includes('breach-entry'), 'volley capture sends units through the gate');
+  assert(volley.beats.includes('profile-banner'), 'volley capture raises the profile banner after entry');
 
   const cavalry = await openVariant('cavalry', 'capture');
   assert(cavalry.beats.includes('flank-1'), 'cavalry uses a dedicated flank beat');
   assert(cavalry.beats.includes('damage-1'), 'cavalry ends in a visible target reaction');
-  assert(cavalry.beats.includes('takeover'), 'cavalry capture resolves through takeover outcome');
+  assert(cavalry.beats.includes('breach-entry'), 'cavalry capture sends units through the gate');
+  assert(cavalry.beats.includes('profile-banner'), 'cavalry capture raises the profile banner after entry');
 
   const special = await openVariant('special', 'capture');
   assert(special.beats.includes('elite-wave-1'), 'special starts a combined elite wave');
   assert(special.beats.includes('ram-charge'), 'special includes the ram role');
   assert(special.beats.includes('damage-2'), 'special has a coordinated second impact');
-  assert(special.beats.includes('takeover'), 'special capture resolves through takeover outcome');
+  assert(special.beats.includes('breach-entry'), 'special capture sends units through the gate');
+  assert(special.beats.includes('profile-banner'), 'special capture raises the profile banner after entry');
 
   const hitOnly = await openVariant('ram', 'hit');
   assert(hitOnly.beats.includes('hold') && hitOnly.beats.includes('settled'), 'normal hit resolves without capture');
-  assert(!hitOnly.beats.includes('takeover') && !hitOnly.beats.includes('secured'), 'normal hit never fakes takeover');
+  assert(!hitOnly.beats.includes('breach-entry') && !hitOnly.beats.includes('profile-banner') && !hitOnly.beats.includes('secured'), 'normal hit never fakes capture choreography');
   assert(hitOnly.control === '', 'normal hit keeps enemy control');
   assert(hitOnly.resultText.includes('noch nicht übernommen'), 'normal hit result explicitly keeps fortress uncaptured');
 
