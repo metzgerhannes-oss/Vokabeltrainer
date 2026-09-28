@@ -55,7 +55,10 @@ async function openVariant(attack, outcome = 'capture') {
       attack: stage?.dataset.attack || '',
       outcome: stage?.dataset.outcome || '',
       reducedMotion: stage?.dataset.reducedMotion || '',
-      label: document.querySelector('#phaserBattleCinematicLabel')?.textContent?.trim() || ''
+      label: document.querySelector('#phaserBattleCinematicLabel')?.textContent?.trim() || '',
+      previewVersion: document.querySelector('#phaserPreviewVersion')?.textContent?.trim() || '',
+      previewVersionJs: window.__VT_PHASER_PREVIEW_VERSION__ || '',
+      previewBuildJs: window.__VT_PHASER_PREVIEW_BUILD__ || ''
     };
   });
 
@@ -73,6 +76,9 @@ async function openVariant(attack, outcome = 'capture') {
   assert(ready.attack === attack, 'selected attack is reflected on the stage');
   assert(ready.outcome === outcome, 'selected outcome is reflected on the stage');
   assert(ready.reducedMotion === 'true', 'matrix runs in reduced-motion mode for CI speed');
+  assert(ready.previewVersion.includes('v0.21.25') && ready.previewVersion.includes('P3.1'), 'visible preview version is shown');
+  assert(ready.previewVersionJs === '0.21.25-phaser.3.1', 'preview JS version matches visible release');
+  assert(ready.previewBuildJs === 'attacks-gate-entry-profile-banner', 'preview build marker matches current choreography');
   assert(external.length === 0, 'Phaser battle uses no external CDN requests');
 
   await page.locator('#phaserBattleStart').click();
