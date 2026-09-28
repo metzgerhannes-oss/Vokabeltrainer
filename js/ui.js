@@ -477,6 +477,64 @@ function scheduleBattleStep(generation,delay,callback){
   battleSequenceTimers.add(id);
   return id;
 }
+
+const BATTLE_SOUND_KEY='vokabeltrainer_battle_sound';
+let battleAudioEnabled=localStorage.getItem(BATTLE_SOUND_KEY)!=='off';
+let battleAudioCtx=null;
+function syncBattleSoundUi(){
+  const btn=$('#battleSoundBtn');if(!btn)return;
+  btn.setAttribute('aria-pressed',String(battleAudioEnabled));
+  btn.setAttribute('aria-label',battleAudioEnabled?'Kampfsound ausschalten':'Kampfsound einschalten');
+  btn.textContent=battleAudioEnabled?'🔊 Ton':'🔇 Ton aus';
+}
+function battleAudioPrime(){
+  if(!battleAudioEnabled)return null;
+  try{
+    const Ctx=window.AudioContext||window.webkitAudioContext;
+    if(!Ctx)return null;
+    if(!battleAudioCtx)battleAudioCtx=new Ctx();
+    if(battleAudioCtx.state==='suspended')battleAudioCtx.resume().catch(()=>{});
+    return battleAudioCtx;
+  }catch{return null}
+}
+function battleTone(freq=110,duration=.14,type='sine',volume=.045,delay=0,endFreq=0){
+  const ctx=battleAudioPrime();if(!ctx)return;
+  const now=ctx.currentTime+Math.max(0,delay),osc=ctx.createOscillator(),gain=ctx.createGain();
+  osc.type=type;osc.frequency.setValueAtTime(Math.max(20,freq),now);
+  if(endFreq>0)osc.frequency.exponentialRampToValueAtTime(Math.max(20,endFreq),now+duration);
+  gain.gain.setValueAtTime(.0001,now);
+  gain.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),now+.012);
+  gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
+  osc.connect(gain).connect(ctx.destination);osc.start(now);osc.stop(now+duration+.03);
+}
+function battleNoise(duration=.12,volume=.025,filterFreq=1500,delay=0){
+  const ctx=battleAudioPrime();if(!ctx)return;
+  const length=Math.max(1,Math.floor(ctx.sampleRate*duration)),buffer=ctx.createBuffer(1,length,ctx.sampleRate),data=buffer.getChannelData(0);
+  for(let i=0;i<length;i++)data[i]=(Math.random()*2-1)*(1-i/length);
+  const src=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain(),now=ctx.currentTime+Math.max(0,delay);
+  src.buffer=buffer;filter.type='lowpass';filter.frequency.value=filterFreq;
+  gain.gain.setValueAtTime(volume,now);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
+  src.connect(filter).connect(gain).connect(ctx.destination);src.start(now);
+}
+function battleAudioCue(beat){
+  if(!battleAudioEnabled)return;
+  if(beat==='rally'){battleTone(92,.2,'sine',.06);battleTone(68,.24,'sine',.045,.16)}
+  else if(beat==='advance'){battleTone(78,.12,'triangle',.032);battleTone(78,.12,'triangle',.03,.22);battleTone(78,.12,'triangle',.028,.44)}
+  else if(/volley|defender-volley/.test(beat)){battleNoise(.11,.022,2800);battleTone(540,.08,'triangle',.018)}
+  else if(beat==='catapult'){battleTone(155,.42,'sine',.055,0,48);battleNoise(.18,.025,650,.3)}
+  else if(/damage-2|breach/.test(beat)){battleTone(72,.38,'sine',.07,0,42);battleNoise(.34,.045,720)}
+  else if(/damage-1|friendly-losses/.test(beat)){battleTone(88,.24,'sine',.055);battleNoise(.18,.032,950)}
+  else if(beat==='fire'){battleNoise(.28,.014,3400)}
+  else if(beat==='profile-banner'){battleTone(392,.24,'triangle',.038);battleTone(494,.28,'triangle',.035,.1);battleTone(587,.34,'triangle',.033,.2)}
+  else if(beat==='secured'){battleTone(523,.25,'triangle',.04);battleTone(659,.28,'triangle',.04,.14);battleTone(784,.42,'triangle',.045,.3)}
+}
+function toggleBattleSound(){
+  battleAudioEnabled=!battleAudioEnabled;
+  localStorage.setItem(BATTLE_SOUND_KEY,battleAudioEnabled?'on':'off');
+  if(battleAudioEnabled)battleAudioPrime();
+  syncBattleSoundUi();
+}
+
 let battlePhaserProductionModulePromise=null;
 function useProductionPhaserBattle(secureBefore=false){
   return state.activeSubject==='english'&&!secureBefore&&window.__VT_BATTLE_TEST_MODE__!==true;
@@ -555,6 +613,7 @@ async function runEnglishPhaserBattle({module,f,stage,button,targetName,boss,vis
   if($('#battleActionTitle'))$('#battleActionTitle').textContent='Schlacht läuft';
   if($('#battleActionHint'))$('#battleActionHint').textContent='Phaser 4 inszeniert den gewählten Angriff. Schaden und Ergebnis bleiben in der App-Logik.';
 
+  battleAudioPrime();
   window.__VT_PRODUCTION_BATTLE_BEATS__=[];
   await module.playProductionBattle({
     stage,
@@ -563,7 +622,7 @@ async function runEnglishPhaserBattle({module,f,stage,button,targetName,boss,vis
     profileName,
     initialDamagePct,
     onPhase:phase=>setBattlePhaseUi(stage,phase),
-    onBeat:beat=>{stage.dataset.phaserBeat=beat;window.__VT_PRODUCTION_BATTLE_BEATS__.push(beat)}
+    onBeat:beat=>{stage.dataset.phaserBeat=beat;window.__VT_PRODUCTION_BATTLE_BEATS__.push(beat);battleAudioCue(beat)}
   });
 
   if(generation!==battleSequenceGeneration)return;
@@ -1585,7 +1644,7 @@ function bind(){
   document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='armyView'&&window.VTArmyUi?.open){window.VTArmyUi.open();return}showView(b.dataset.view)}); $('#quickLearnHeroBtn').onclick=()=>{const action=$('#quickLearnHeroBtn')?.dataset.action||'learn';if(action==='completeTest')return openCompleteCurrentTest();if(action==='planTest')return openTestDatePlanner();if(action==='pairReview'){const set=mySets().find(setNeedsPairReview);if(set)return openSetPairAudit(set.id)}startDailyTodo()}; $('#quickCardsBtn')?.addEventListener('click',()=>startSession('cards')); $('#cardboxPracticeBtn').onclick=()=>startSession('cards'); $('#todayTestBtn').onclick=()=>openTestDatePlanner($('#todayTestBtn')?.dataset.setId||''); $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
   $('#practiceCardsBtn')?.addEventListener('click',()=>startSession('cards')); $('#practiceWeakBtn')?.addEventListener('click',startWeakWordsPractice); $('#practiceAllBtn')?.addEventListener('click',openAllWordsPracticeChooser); $('#practiceSpecialBtn')?.addEventListener('click',()=>{const panel=$('#optionalLearningCard'),btn=$('#practiceSpecialBtn');if(!panel)return;const open=panel.classList.contains('hidden');panel.classList.toggle('hidden',!open);btn.setAttribute('aria-expanded',String(open));if(open)panel.scrollIntoView({block:'nearest',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})});
   $('#newSetBtn').onclick=()=>openLearningContentPlanner(); $('#addGradeBtn').onclick=()=>addGrade(); $('#practiceTestBtn').onclick=openPracticeTestChooser; $('#addProfileBtn').onclick=addProfile; $('#profileBtn').onclick=openProfileSwitcher; $('#attackBtn').onclick=openBattleView; $('#duelBtn').onclick=openDuel;
-  $('#battleBackBtn').onclick=returnFromBattle; $('#battleReturnBtn').onclick=returnFromBattle; $('#battleAttackBtn').onclick=runBattleAnimation; $('#battleFullscreenBtn').onclick=toggleBattleFullscreen; $('#battleFocusAttackBtn').onclick=openBattleAttackPickerFromFocus; $('#battleStorySpeakBtn').onclick=toggleBattleStoryNarration;
+  $('#battleBackBtn').onclick=returnFromBattle; $('#battleReturnBtn').onclick=returnFromBattle; $('#battleAttackBtn').onclick=runBattleAnimation; $('#battleSoundBtn').onclick=toggleBattleSound; syncBattleSoundUi(); $('#battleFullscreenBtn').onclick=toggleBattleFullscreen; $('#battleFocusAttackBtn').onclick=openBattleAttackPickerFromFocus; $('#battleStorySpeakBtn').onclick=toggleBattleStoryNarration;
   $('#battleAttackChoices').addEventListener('click',e=>{const b=e.target.closest('[data-battle-attack]');if(b&&!b.disabled)selectBattleAttack(b.dataset.battleAttack)});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(document.fullscreenElement||document.body.classList.contains('battle-focus-fallback'))){closeBattleImmersive();return}});
   document.addEventListener('fullscreenchange',syncBattleFullscreenUi);
