@@ -60,6 +60,7 @@ assert((sync.match(/remoteFailure\(cfg,/g)||[]).length>=7, 'revoked-device handl
 assert(ui.includes('familyChildBackupBtn')&&ui.includes('familyParentJoinBackupBtn')&&ui.includes('familyConflictBackupBtn'), 'manual destructive family-data transitions offer an explicit backup action');
 assert(pairing.includes('claimChildBackupBtn')&&pairing.includes('claimParentBackupBtn')&&pairing.includes("onclick=()=>backup()"), 'direct QR/link takeover offers backup before replacing local data');
 assert(sync.includes("'avatarStyle'")&&sync.includes("'autoSpeakCorrection'"), 'profile appearance and speech-correction settings are part of synchronized setup');
+assert(sync.includes('answerReviews:clone')&&sync.includes('state.answerReviews=(state.answerReviews||[]).filter'), 'disputed answer reviews travel in the learner progress document for parent review');
 assert(sync.includes('installConnectionDocuments')&&sync.includes('previousConfigRaw')&&sync.includes('restoreRawConfig(previousConfigRaw)'), 'family takeover has an explicit local state/config rollback path');
 assert(sync.includes("const pulled=await rpc('vt_pull_documents'")&&!sync.includes("saveConfig(cfg);initSnapshots();await syncNow(true)"), 'manual family switch validates the new remote state before committing the new connection');
 assert(sync.includes('markAllLocalDocumentsDirty'), 'full local restore can explicitly mark all writable sync documents dirty');
