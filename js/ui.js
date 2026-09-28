@@ -490,6 +490,7 @@ function updateEnglishBattlePostActionUi(result,{f,stage,button,targetName,boss,
   stage.classList.remove('fortress-visual-intact','fortress-visual-scratched','fortress-visual-damaged','fortress-visual-critical','fortress-visual-captured');
   stage.classList.add('fortress-visual-'+visual.id);
 
+  $('#battleMessage').classList.remove('phaser-phase-hidden');
   if(secured){
     $('#battleMessage').className='battle-message victory';
     $('#battleMessage').innerHTML='<strong>Festung gesichert!</strong><span>Die Stellung bleibt bis zum Test unter Kontrolle.</span>';
@@ -526,7 +527,8 @@ async function runEnglishPhaserBattle({module,f,stage,button,targetName,boss,vis
   button.disabled=true;
   $('#battleFullscreenBtn').disabled=true;
   document.querySelectorAll('.battle-attack-choice').forEach(b=>b.disabled=true);
-  $('#battleMessage').className='battle-message active';
+  $('#battleMessage').className='battle-message active phaser-phase-hidden';
+  $('#battleMessage').textContent='';
   if($('#battleActionTitle'))$('#battleActionTitle').textContent='Schlacht läuft';
   if($('#battleActionHint'))$('#battleActionHint').textContent='Phaser 4 inszeniert den gewählten Angriff. Schaden und Ergebnis bleiben in der App-Logik.';
 
@@ -538,7 +540,6 @@ async function runEnglishPhaserBattle({module,f,stage,button,targetName,boss,vis
     profileName,
     initialDamagePct,
     onPhase:phase=>setBattlePhaseUi(stage,phase),
-    onStatus:status=>{if(status)$('#battleMessage').textContent=status},
     onBeat:beat=>{stage.dataset.phaserBeat=beat;window.__VT_PRODUCTION_BATTLE_BEATS__.push(beat)}
   });
 
@@ -569,6 +570,7 @@ async function runBattleAnimation(){
         console.warn('Phaser battle fallback to legacy renderer',error);
         window.VTBattlePhaserProduction?.destroyProductionBattle?.();
         stage.classList.remove('phaser-production-failed','phaser-production-active','phaser-production-running','phaser-production-complete');
+        $('#battleMessage')?.classList.remove('phaser-phase-hidden');
       }
     }catch(error){
       console.warn('Phaser battle module unavailable, using legacy renderer',error);
