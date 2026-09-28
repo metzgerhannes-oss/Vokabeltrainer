@@ -149,6 +149,12 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    keinen nächsten Test, zeigt sie stattdessen dessen Vorbereitung. Bei wiederkehrenden Tests wird
    direkt die Vorbereitung des nächsten Serientermins geöffnet.
 
+   **Bis zum tatsächlichen Abschluss bleibt ein Test bearbeitbar.** Termin und Testumfang dürfen
+   sich auch am Testtag noch ändern. Eine Terminverschiebung aktualisiert denselben Test statt
+   einen parallelen Test anzulegen. Entfernte Wörter verschwinden nur aus dem Testumfang; ihre
+   persönliche Lernhistorie bleibt erhalten. Eine bereits begonnene Testfestung folgt dem
+   geänderten Termin und Umfang, ohne den erspielten Angriffsfortschritt zurückzusetzen.
+
    **T−1-Rettungsmodus:** Liegt der Test am nächsten Tag und ist noch deutlicher Rückstand
    vorhanden, wird nicht der komplette Testumfang stumpf als Karteikasten abgefragt. Nach dem
    kurzen Pflichtkern bietet die App getrennte freiwillige Rettungsrunden mit höchstens sechs

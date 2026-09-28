@@ -157,6 +157,42 @@ try{
   assert(ocrFinal.activeTestId===saved.id&&ocrFinal.activeDays===7,'approved later OCR test is queued and does not replace the earlier test');
   assert(ocrFinal.futureDates.includes(ocrDate),'approved OCR test remains stored for its later date');
 
+  // A test that is due today remains editable: date and scope change in place,
+  // while vocabulary learning progress and the already-started fortress are preserved.
+  const editFixture=await page.evaluate(setId=>{
+    const set=state.sets.find(s=>s.id===setId),links=(state.setVocabulary||[]).filter(x=>x.setId===setId);
+    if(!set||links.length<6)throw new Error('missing edit fixture');
+    set.testDate=today();set.testScopeMode='selected';set.testSelectedLinkIds=links.slice(0,6).map(x=>x.id);set.testFrom=1;set.testTo=6;
+    learner().dailyPlans={};
+    const removed=links[5],progress=ensureLearnerVocabulary(state.activeLearnerId,removed.vocabId,removed.senseId);progress.successes=17;
+    const fortress=currentTestFortress('english');fortress.defense=Math.max(0,fortress.maxDefense-37);fortress.attacks=[...(fortress.attacks||[]),{date:new Date().toISOString(),damage:37}];
+    persistOnly();showView('parentView');renderAll();
+    return {setId,removedProgressId:progress.id,fortressCreatedAt:fortress.createdAt,fortressDefense:fortress.defense};
+  },saved.id);
+  assert(await page.locator('#parentView').isVisible(),'parent area remains the editing surface for test administration');
+  assert((await page.locator('#parentTestPlanBtn').textContent())?.includes('Aktuellen Test bearbeiten'),'parent area makes current-test editing explicit on test day');
+  await page.click('#parentTestPlanBtn');
+  await page.waitForSelector('#modal[open] #planWordPicker');
+  assert((await page.locator('#modalContent h2').textContent())?.includes('bearbeiten'),'current-test editor is explicitly labeled as editing');
+  assert(await page.locator('#testPlanDate').inputValue()===await page.evaluate(()=>today()),'editor opens with the current test date');
+  assert((await page.locator('#planSelectionCount').textContent())?.startsWith('6 '),'editor restores the current vocabulary selection');
+  const postponedDate=await page.evaluate(()=>datePlusDays(2));
+  await page.locator('#testPlanDate').fill(postponedDate);
+  await page.locator('#planRangeFrom').fill('1');
+  await page.locator('#planRangeTo').fill('4');
+  await page.click('#planSelectRange');
+  await page.click('#saveTestPlan');
+  await page.waitForSelector('#parentView.active');
+  const edited=await page.evaluate(fixture=>{
+    const ctx=upcomingTestContext('english'),set=state.sets.find(s=>s.id===fixture.setId),progress=(state.learnerVocabulary||[]).find(p=>p.id===fixture.removedProgressId),fortress=currentTestFortress('english');
+    const oldDateStillActive=(state.sets||[]).some(s=>s.learnerId===state.activeLearnerId&&s.subject==='english'&&s.testDate===today());
+    return {date:ctx?.date||'',setId:ctx?.sets?.[0]?.id||'',count:ctx?.words?.length||0,selected:set?.testSelectedLinkIds?.length||0,totalLinks:set?setWords(set.id).length:0,removedSuccesses:progress?.successes||0,fortressDate:fortress?.testDate||'',fortressWordCount:fortress?.wordCount||0,fortressCreatedAt:fortress?.createdAt||'',fortressDefense:fortress?.defense,oldDateStillActive};
+  },editFixture);
+  assert(edited.date===postponedDate&&edited.setId===saved.id&&edited.count===4&&edited.selected===4,'postponed current test keeps its identity and exact new vocabulary scope');
+  assert(edited.totalLinks>=6&&edited.removedSuccesses===17,'removed test words keep their links and learning history outside the test scope');
+  assert(edited.fortressDate===postponedDate&&edited.fortressWordCount===4&&edited.fortressCreatedAt===editFixture.fortressCreatedAt&&edited.fortressDefense===editFixture.fortressDefense,'existing fortress progress follows the edited test instead of resetting');
+  assert(!edited.oldDateStillActive,'old test date no longer remains active after postponing');
+
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer unified content planner UI smoke: passed');
 }finally{
