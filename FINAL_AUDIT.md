@@ -1,9 +1,10 @@
 # Finales Audit
 
-Stand: 28.09.2026 · App v0.21.32
+Stand: 28.09.2026 · App v0.21.33
 
 ## Ergebnis
 
+- v0.21.33 (Release-Kandidat) aktiviert Deutsch als eigenständiges Fach mit separatem Klasse-1-Grundlagenpfad und eigener Native-Literacy-Evidenz. Der neue Pfad verändert keine Vokabel-Mastery, XP oder Battle-Tickets; Deutsch-Armee und Feldzug bleiben bis zur Wortreich-Implementierung bewusst gesperrt. Produktionsnachweis steht bis Merge, main-CI und Pages-Live-Verifikation noch aus.
 - v0.21.32 ergänzt das neutrale Verschieben einer Vokabel ans Ende derselben laufenden Abfrage. Der Skip erzeugt keinerlei fachliche oder spielerische Wertung. Zusätzlich werden strittige Tagesversuche so gehärtet, dass ein offener Elternprüffall das Tagesziel nicht blockiert, ohne vorzeitig fachliche Evidenz zu erzeugen. Produktionsnachweis: PR #194 gemergt, main-CI #1193 grün, GitHub Pages #554 inklusive Live-Verifikation erfolgreich.
 - v0.21.31 führt einen fachlichen Einspruchsweg für möglicherweise systemseitig falsche Bewertungen ein. Gemeldete Versuche werden bis zur Elternentscheidung vollständig neutralisiert; Eltern können lokale Antwortvarianten freigeben, die Vokabel korrigieren oder die Systembewertung bestätigen. Offene Prüffälle werden über Family Sync übertragen. Produktionsnachweis: PR #192 gemergt, main-CI #1185 grün, GitHub Pages #553 inklusive Live-Verifikation erfolgreich.
 - v0.21.30 korrigiert einen im praktischen iPhone-Abnahmetest gefundenen Darstellungsfehler der Jahresentwicklung: Gesperrte Einheiten werden im Heerlager nicht mehr als abgedunkelte Vollformation gezeigt, sondern erscheinen erst bei tatsächlicher Freischaltung. Eine sichtbare Feldstärkenanzeige macht den wachsenden Jahresstand nachvollziehbar; fachliche Mastery und Battle-Logik bleiben unverändert.
