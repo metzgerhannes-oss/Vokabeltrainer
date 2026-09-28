@@ -1,17 +1,17 @@
 # Vokabeltrainer – Current State
 
-Stand: 28.09.2026, Release-Kandidat direkt aus GitHub geprüft.
+Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 ## Produktionsbaseline
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
 - App-Version: **v0.21.24**
-- Produktcode-Baseline vor diesem Release-Kandidaten: `1608c87010b530f23c530720535b1a7f69d7cea7` (v0.21.22)
+- aktueller `main`-Commit: `cba763131b13d778e428f09b7862b5602a205ba5` (Merge von PR #168 / v0.21.24)
 - letzter fachlicher Lernrelease: **PR #148 – v0.21.12 – Differenzierte LRS-Unterstützung**
 - letzter produktiver Release: **PR #165 – v0.21.22 – kurzer Tageskern, T−1-Rettungsmodus und getrennte Festungsvorschau**
 - letzter produktiver Release: **PR #167 – v0.21.23 – iPhone-Fix für kollabierte Festungsvorschau**
-- aktueller Release-Kandidat: **PR #168 – v0.21.24 – nahtloser Tages-Übungsraum + expliziter Testabschluss**
+- jüngster Merge auf `main`: **PR #168 – v0.21.24 – nahtloser Tages-Übungsraum + expliziter Testabschluss**
 - PR-CI letzter produktiver Release: **Vokabeltrainer CI #1036 – success**
 - main-CI letzter produktiver Release: **Vokabeltrainer CI #1037 – success**
 - Produktionsdeploy letzter produktiver Release: **GitHub Pages #530 – success**
@@ -22,6 +22,8 @@ Stand: 28.09.2026, Release-Kandidat direkt aus GitHub geprüft.
 - PR-CI Bibliothek: **Vokabeltrainer CI #961 – success**
 - main-CI Bibliothek: **Vokabeltrainer CI #962 – success**
 - Produktionsdeploy Bibliothek: **GitHub Pages #510 – success**, inklusive Live-Verifikation
+
+Der Merge-Status von PR #168 wurde für diesen Stand live über GitHub geprüft. CI-/Pages-Status des Merge-Commits konnte in dieser Dokumentationsänderung nicht belastbar aus dem Connector ausgelesen werden und wird deshalb hier nicht als neu verifiziert behauptet.
 
 Dieser Abschnitt ist ein Snapshot. Für Statusfragen muss der aktuelle GitHub-Stand erneut live geprüft werden; die hier genannte SHA darf nicht als dauerhaft „neuester Stand“ interpretiert werden.
 
