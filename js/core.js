@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.21.32';
+const VERSION = '0.21.33';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';
@@ -47,9 +47,10 @@ function normalizeDirectionalRecall(raw){
 }
 const defaultGradeScale = () => ({n1:90,n2:80,n3:65,n4:50,n5:25});
 const SUBJECT_META = Object.freeze({
-  english:{id:'english',label:'Englisch',short:'EN',available:true,aliases:['en','englisch','english'],speechLang:'en-GB',ocrLang:'eng',lexicalProfile:'english',importProfile:'modern',ocrRepairProfile:'english',functionWords:['the','to','a','an','is','are','was','were','have','has','with','from','for','of','in','on','at','my','your','we','they','he','she'],capabilities:{hybridDictionary:true,latinGrammar:false,extraIdentity:false},campaign:{unitLabel:'Armee',title:'Deine Armee',eyebrow:'Kampagne',visualTheme:'campaign',festive:'WINTERLAGER · DEZEMBER-SPEZIAL',ranks:['Rekruten','Trupp','Kompanie','Bataillon','Regiment','Armee']}},
-  latin:{id:'latin',label:'Latein',short:'LA',available:true,aliases:['la','latein','latin'],speechLang:'la',ocrLang:'lat',lexicalProfile:'latin',importProfile:'latin',ocrRepairProfile:'',functionWords:[],capabilities:{hybridDictionary:false,latinGrammar:true,extraIdentity:true},campaign:{unitLabel:'Legion',title:'Deine Legion',eyebrow:'Römische Kampagne',visualTheme:'roman',festive:'WINTERLAGER · SATURNALIA',ranks:['Tiro','Miles','Contubernium','Centurie','Cohorte','Legion']}},
-  french:{id:'french',label:'Französisch',short:'FR',available:false,aliases:['fr','französisch','franzoesisch','french','français','francais'],speechLang:'fr-FR',ocrLang:'fra',lexicalProfile:'french',importProfile:'modern',ocrRepairProfile:'',functionWords:['le','la','les','un','une','des','de','du','est','sont','avec','pour','dans','sur','mon','ma','mes','ton','ta','tes','nous','vous','ils','elles'],capabilities:{hybridDictionary:false,latinGrammar:false,extraIdentity:false},campaign:{unitLabel:'Reise',title:'Deine Sprachreise',eyebrow:'Entdeckungsreise',visualTheme:'voyage',festive:'WINTERREISE · DEZEMBER-SPEZIAL',ranks:['Aufbruch','Entdecker','Reisende','Wegkundig','Weltenbummler','Sprachreisende']}}
+  english:{id:'english',label:'Englisch',short:'EN',available:true,aliases:['en','englisch','english'],speechLang:'en-GB',ocrLang:'eng',lexicalProfile:'english',importProfile:'modern',ocrRepairProfile:'english',functionWords:['the','to','a','an','is','are','was','were','have','has','with','from','for','of','in','on','at','my','your','we','they','he','she'],capabilities:{hybridDictionary:true,latinGrammar:false,extraIdentity:false,nativeLiteracy:false,battle:true},campaign:{unitLabel:'Armee',title:'Deine Armee',eyebrow:'Kampagne',visualTheme:'campaign',festive:'WINTERLAGER · DEZEMBER-SPEZIAL',ranks:['Rekruten','Trupp','Kompanie','Bataillon','Regiment','Armee']}},
+  latin:{id:'latin',label:'Latein',short:'LA',available:true,aliases:['la','latein','latin'],speechLang:'la',ocrLang:'lat',lexicalProfile:'latin',importProfile:'latin',ocrRepairProfile:'',functionWords:[],capabilities:{hybridDictionary:false,latinGrammar:true,extraIdentity:true,nativeLiteracy:false,battle:true},campaign:{unitLabel:'Legion',title:'Deine Legion',eyebrow:'Römische Kampagne',visualTheme:'roman',festive:'WINTERLAGER · SATURNALIA',ranks:['Tiro','Miles','Contubernium','Centurie','Cohorte','Legion']}},
+  german:{id:'german',label:'Deutsch',short:'DE',available:true,aliases:['de','deutsch','german'],speechLang:'de-DE',ocrLang:'deu',lexicalProfile:'german',importProfile:'german',ocrRepairProfile:'',functionWords:['der','die','das','ein','eine','und','ist','sind','ich','du','er','sie','wir','ihr','mit','in','auf'],capabilities:{hybridDictionary:false,latinGrammar:false,extraIdentity:false,nativeLiteracy:true,battle:false},campaign:{unitLabel:'Ritterheer',title:'Das Wortreich',eyebrow:'Wortreich',visualTheme:'wordrealm',festive:'WINTERBURG · DEZEMBER-SPEZIAL',ranks:['Burgwache','Schildträger','Ritter','Hauptmann','Bannerherr','Burgherr']}},
+  french:{id:'french',label:'Französisch',short:'FR',available:false,aliases:['fr','französisch','franzoesisch','french','français','francais'],speechLang:'fr-FR',ocrLang:'fra',lexicalProfile:'french',importProfile:'modern',ocrRepairProfile:'',functionWords:['le','la','les','un','une','des','de','du','est','sont','avec','pour','dans','sur','mon','ma','mes','ton','ta','tes','nous','vous','ils','elles'],capabilities:{hybridDictionary:false,latinGrammar:false,extraIdentity:false,nativeLiteracy:false,battle:false},campaign:{unitLabel:'Reise',title:'Deine Sprachreise',eyebrow:'Entdeckungsreise',visualTheme:'voyage',festive:'WINTERREISE · DEZEMBER-SPEZIAL',ranks:['Aufbruch','Entdecker','Reisende','Wegkundig','Weltenbummler','Sprachreisende']}}
 });
 const knownSubjectIds=()=>Object.keys(SUBJECT_META);
 const availableSubjectIds=()=>Object.values(SUBJECT_META).filter(x=>x.available).map(x=>x.id);
@@ -96,6 +97,32 @@ function readingSupportEnabled(l){return literacySupportFor(l).reading}
 function spellingSupportEnabled(l){return literacySupportFor(l).spelling}
 function reducedLoadEnabled(l){return literacySupportFor(l).reducedLoad}
 function literacySupportActive(l){const x=literacySupportFor(l);return x.reading||x.spelling}
+
+const GERMAN_LITERACY_SKILLS=Object.freeze(['letterRecognition','graphemePhoneme','wordReading','wordWriting','sentenceReading']);
+const defaultGermanLiteracySkill=()=>({attempts:0,correct:0,successDays:[],lastAt:null});
+const defaultGermanLiteracyProgress=()=>({schema:1,skills:Object.fromEntries(GERMAN_LITERACY_SKILLS.map(key=>[key,defaultGermanLiteracySkill()])),letters:{},sessions:0,practiceDays:[],lastPracticedAt:null});
+function normalizeGermanLiteracyProgress(raw){
+  const src=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{},out=defaultGermanLiteracyProgress();
+  for(const key of GERMAN_LITERACY_SKILLS){
+    const node=src.skills?.[key]&&typeof src.skills[key]==='object'?src.skills[key]:{};
+    out.skills[key]={
+      attempts:Math.max(0,Math.round(Number(node.attempts)||0)),
+      correct:Math.max(0,Math.round(Number(node.correct)||0)),
+      successDays:[...new Set((Array.isArray(node.successDays)?node.successDays:[]).map(x=>String(x||'')).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)))].slice(-1000),
+      lastAt:node.lastAt?String(node.lastAt):null
+    };
+  }
+  const letters=src.letters&&typeof src.letters==='object'&&!Array.isArray(src.letters)?src.letters:{};
+  for(const [rawKey,rawNode] of Object.entries(letters).slice(0,80)){
+    const key=String(rawKey||'').normalize('NFC').trim().slice(0,4);if(!key)continue;
+    const node=rawNode&&typeof rawNode==='object'?rawNode:{};
+    out.letters[key]={attempts:Math.max(0,Math.round(Number(node.attempts)||0)),correct:Math.max(0,Math.round(Number(node.correct)||0)),lastAt:node.lastAt?String(node.lastAt):null};
+  }
+  out.sessions=Math.max(0,Math.round(Number(src.sessions)||0));
+  out.practiceDays=[...new Set((Array.isArray(src.practiceDays)?src.practiceDays:[]).map(x=>String(x||'')).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)))].slice(-1000);
+  out.lastPracticedAt=src.lastPracticedAt?String(src.lastPracticedAt):null;
+  return out;
+}
 
 const PROGRESS_FIELDS = new Set([
   'skills','level','repetitions','successes','independentSuccesses','assistedSuccesses','failures','intervalDays','dueDate',
@@ -273,7 +300,7 @@ function clearLearnerLearningData(learnerId){
   state.answerReviews=(state.answerReviews||[]).filter(x=>x.learnerId!==learnerId);
   state.activity=(state.activity||[]).filter(a=>a.learnerId!==learnerId);
   state.grades=(state.grades||[]).filter(g=>g.learnerId!==learnerId||!g.practiceTestId);
-  l.xp=0;l.streakDays=[];l.milestones={};l.fortressWins=defaultSubjectArrays();l.fortressWinsByYear={};l.battleTickets=defaultSubjectNumbers();l.battleDays={};l.testFortresses={};l.yearFortresses={};l.completedTests={};l.campaignLog=[];l.dailyPlans={};l.testSeries=defaultTestSeries();
+  l.xp=0;l.germanLiteracy=defaultGermanLiteracyProgress();l.streakDays=[];l.milestones={};l.fortressWins=defaultSubjectArrays();l.fortressWinsByYear={};l.battleTickets=defaultSubjectNumbers();l.battleDays={};l.testFortresses={};l.yearFortresses={};l.completedTests={};l.campaignLog=[];l.dailyPlans={};l.testSeries=defaultTestSeries();
   rebuildWordIndexes();return {sets:setIds.size,links:linksBefore,progress:progressBefore,orphanVocabulary:beforeVocabulary-(state.vocabulary||[]).length};
 }
 
@@ -281,7 +308,7 @@ function defaultState(){
   const s={
     version: VERSION,senseModelVersion:1,spellingLeakRepairVersion:1,pairAuditVersion:1,firstContactVersion:1,
     activeLearnerId: 'learner_demo',activeSubject: 'english',
-    learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',avatarStyle:'male',activeSubjects:['english'],xp:0,literacySupport:{reading:false,spelling:false},reducedLoad:false,lrsMode:false,fontSize:17,letterSpacing:0,flashSpeed:1600,autoSpeakCorrection:true,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),battleDays:{},testFortresses:{},yearFortresses:{},completedTests:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
+    learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',avatarStyle:'male',activeSubjects:['english'],xp:0,germanLiteracy:defaultGermanLiteracyProgress(),literacySupport:{reading:false,spelling:false},reducedLoad:false,lrsMode:false,fontSize:17,letterSpacing:0,flashSpeed:1600,autoSpeakCorrection:true,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),battleDays:{},testFortresses:{},yearFortresses:{},completedTests:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
     books:[],learnerBooks:[],bookVocabulary:[],sets:[],vocabulary:[],setVocabulary:[],learnerVocabulary:[],grades:[],practiceTests:[],answerReviews:[],activity:[]
   };
   attachRuntimeWordApi(s);return s;
