@@ -4450,3 +4450,129 @@ body.battle-preview.battle-immersive #battleView #battleFullscreenBtn{
 #battleView .battle-message.phaser-phase-hidden{
   display:none!important;
 }
+
+
+/* Deutsch Paket B · Fuchspfad: ruhig lernen, Ritterwelt bleibt außerhalb des Abrufs */
+.german-foundation-hub{
+  overflow:hidden;
+  border-color:#d8c7a5;
+  background:linear-gradient(180deg,#fffdf8 0%,#fbf3e6 100%);
+}
+.german-foundation-scene{
+  position:relative;
+  display:grid;
+  grid-template-columns:64px minmax(0,1fr) 64px;
+  align-items:center;
+  gap:14px;
+  margin:-4px -2px 18px;
+  padding:14px 16px;
+  overflow:hidden;
+  border:1px solid rgba(159,126,78,.22);
+  border-radius:20px;
+  background:linear-gradient(135deg,#fbf4e8 0%,#f4ead7 55%,#e7efe0 100%);
+}
+.german-foundation-scene::after{
+  content:"";
+  position:absolute;
+  inset:auto -20px -38px;
+  height:76px;
+  border-radius:50% 50% 0 0;
+  background:rgba(117,145,91,.10);
+  pointer-events:none;
+}
+.german-fox{
+  position:relative;
+  z-index:1;
+  display:grid;
+  place-items:center;
+  width:58px;
+  height:58px;
+  border:1px solid rgba(170,116,64,.24);
+  border-radius:50%;
+  background:#fff9ef;
+  font-size:34px;
+  line-height:1;
+  filter:saturate(.88);
+}
+.german-fox.fox-right{transform:scaleX(-1)}
+.german-training-path{
+  position:relative;
+  z-index:1;
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.german-training-path span{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  min-height:34px;
+  padding:6px 10px;
+  border:1px solid rgba(105,121,80,.18);
+  border-radius:999px;
+  background:rgba(255,255,255,.72);
+  color:#4b543d;
+  font-size:.82rem;
+  font-weight:750;
+}
+.wood-sword{
+  position:relative;
+  display:inline-block;
+  width:7px;
+  height:22px;
+  border-radius:4px 4px 2px 2px;
+  background:#a97946;
+  box-shadow:inset 0 0 0 1px rgba(91,57,29,.18);
+  transform:rotate(-35deg);
+}
+.wood-sword::before{
+  content:"";
+  position:absolute;
+  left:-4px;
+  bottom:4px;
+  width:15px;
+  height:4px;
+  border-radius:3px;
+  background:#76522f;
+}
+.wood-sword::after{
+  content:"";
+  position:absolute;
+  left:1px;
+  bottom:-5px;
+  width:5px;
+  height:8px;
+  border-radius:2px;
+  background:#604228;
+}
+.german-foundation-card{
+  border-color:#dcc8a6;
+  background:linear-gradient(180deg,#fffefa 0%,#fbf5e9 100%);
+}
+.german-foundation-card .eyebrow{color:#75552f}
+.wordrealm-preview-route{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:10px;
+  align-items:center;
+  margin:16px 0;
+  padding:12px;
+  border:1px solid rgba(103,82,53,.22);
+  border-radius:16px;
+  background:linear-gradient(135deg,#f5ead7,#e8eee0);
+  color:#493d2e;
+  text-align:center;
+  font-weight:800;
+}
+.wordrealm-preview-route span{
+  padding:8px 10px;
+  border-radius:12px;
+  background:rgba(255,255,255,.72);
+}
+@media(max-width:560px){
+  .german-foundation-scene{grid-template-columns:46px minmax(0,1fr) 46px;padding:12px 8px;gap:6px}
+  .german-fox{width:44px;height:44px;font-size:27px}
+  .german-training-path{gap:5px}
+  .german-training-path span{padding:5px 8px;font-size:.75rem}
+}
