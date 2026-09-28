@@ -221,7 +221,17 @@ function learningChunksFor(w,term=w?.term){
 }
 function chunkEligibleWord(w,term=w?.term){return learningChunksFor(w,term).length>1}
 
+function nativeLiteracyWordSecure(w){
+  const e={...defaultLiteracySkills(),...(w?.literacySkills||{})},activeDays=(w?.activeSuccessDays||[]).length;
+  const sentenceOk=!String(w?.example||'').trim()||e.sentenceUse>=1;
+  return e.recognized>=1&&e.orthographicSpelling>=2&&e.dictation>=2&&sentenceOk&&activeDays>=3&&(w?.maxActiveGapDays||0)>=3&&(w?.independentSuccesses||0)>=4&&(w?.intervalDays||0)>=7;
+}
 function masteryScore(w){
+  if(subjectHasCapability(w?.subject,'nativeLiteracy')){
+    const e={...defaultLiteracySkills(),...(w?.literacySkills||{})},activeDays=Math.min(4,(w.activeSuccessDays||[]).length),delayed=w.maxActiveGapDays>=7?4:w.maxActiveGapDays>=3?3:w.maxActiveGapDays>=1?2:0;
+    const sentenceWeight=String(w?.example||'').trim()?.12:0,core=(Math.min(4,e.recognized)*.18)+(Math.min(4,e.orthographicSpelling)*.32)+(Math.min(4,e.dictation)*.28)+(Math.min(4,e.phonologicalSpelling)*.10)+(Math.min(4,e.sentenceUse)*sentenceWeight);
+    return (core*(sentenceWeight?.80:.90))+(activeDays*.07)+(delayed*.03);
+  }
   const s={...defaultSkills(),...(w.skills||{})};
   const productiveCore=(s.retrieval*.45)+(s.spelling*.35)+(s.context*.20);
   const activeDays=Math.min(4,(w.activeSuccessDays||[]).length);
@@ -229,6 +239,7 @@ function masteryScore(w){
   return (productiveCore*.68)+(activeDays*.20)+(delayed*.12);
 }
 function meetsMasteryCriteria(w){
+  if(subjectHasCapability(w?.subject,'nativeLiteracy'))return nativeLiteracyWordSecure(w);
   const s={...defaultSkills(),...(w.skills||{})};
   const activeDays=(w.activeSuccessDays||[]).length;
   const contextOk=(w.errorProfile?.context||0)<2 || s.context>=1;
