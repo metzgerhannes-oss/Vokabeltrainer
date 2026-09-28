@@ -1,6 +1,6 @@
 # Vokabeltrainer – Project Control Center
 
-Stand: 27.09.2026
+Stand: 28.09.2026
 
 Dieses Dokument ist der zentrale Einstieg für Produkt-, Architektur-, Lern-, UX- und Release-Entscheidungen. Es ersetzt keine Fachspezifikation, sondern ordnet die vorhandenen Quellen und verhindert, dass Chatverläufe, alte Audits, Implementierung und verbindliche Produktentscheidungen vermischt werden.
 
@@ -78,6 +78,7 @@ Eine Änderung ist erst vollständig dokumentiert, wenn die betroffenen Ebenen a
 - [docs/project/CURRENT_STATE.md](docs/project/CURRENT_STATE.md)
 - [docs/project/BACKLOG.md](docs/project/BACKLOG.md)
 - [docs/project/TEST_MATRIX.md](docs/project/TEST_MATRIX.md)
+- [docs/project/CHAT_LIFECYCLE.md](docs/project/CHAT_LIFECYCLE.md) – Chat-Tags, Repository-Handoff und Archivkriterien
 
 ### Fachmodelle
 - [QUIZ_ENGINE.md](QUIZ_ENGINE.md)
@@ -179,3 +180,17 @@ Fehlt ein Schritt, wird genau der erreichte Status genannt. Ein Commit, grüner 
 - eindeutige Decision- und Backlog-IDs
 
 Der Check läuft im Preflight der CI. Damit wird Dokumentationsdrift zu einem sichtbaren Buildfehler statt zu einem späteren Rekonstruktionsproblem.
+
+## 13. Chat-Lifecycle und Archivierung
+
+Projektchats sind Arbeitsprotokolle und keine dauerhafte Statusdatenbank. Die verbindliche Regel steht in [docs/project/CHAT_LIFECYCLE.md](docs/project/CHAT_LIFECYCLE.md).
+
+Für alte und neue Chats gilt:
+
+- Titel werden nach ihrem Hauptzweck mit `[DECISION]`, `[CONCEPT]`, `[RESEARCH]`, `[DEV]`, `[BUG]`, `[TEST]` oder `[ARCHIVE]` gekennzeichnet.
+- Vor Archivierung werden Ergebnis, Decision/Fachquelle, PR/Commit/Release, Verifikationsstatus und offene Restpunkte in die kanonischen Repository-Quellen überführt.
+- Offene Arbeit darf nicht ausschließlich in einem Chat verbleiben; sie erhält eine Backlog-ID.
+- Alte Versions- und CI-Stände aus Chats dürfen einen aktuelleren Repository-Stand nicht überschreiben.
+- Bei neuen Entwicklungsaufgaben wird zuerst die Repository-Baseline bestimmt; alte Chats werden nur ergänzend zur Rekonstruktion herangezogen.
+
+Damit ist Archivierung eine Aufräummaßnahme für den Arbeitsraum, nicht Teil der fachlichen Wahrheit des Projekts.
