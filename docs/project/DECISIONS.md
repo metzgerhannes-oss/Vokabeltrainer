@@ -188,6 +188,16 @@ bei „Kurze Einheiten“ höchstens vier. Am Testtag werden weiterhin keine neu
 eingeführt; ein zu später Lernstart wird als Spacing-/Planungsrisiko angezeigt statt durch
 eine überlange Pflichtsession kompensiert.
 
+### D-20260928-002 – Testtag braucht einen expliziten Abschluss
+**Status:** LOCKED  
+**Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P6 und P12
+
+Ein geplanter Test verschwindet am Testtag nicht automatisch aus dem aktuellen Lernweg. Ab dem Testdatum erhält die Heute-Seite die klare Hauptaktion **„Test abschließen“**. Sie darf erst ausgelöst werden, wenn der Test tatsächlich geschrieben wurde; ein Bestätigungsschritt verhindert versehentliches Abschließen.
+
+Der Abschluss ist **unabhängig von der Schulnote**. Er dokumentiert ausschließlich, dass die Prüfung stattgefunden hat. Die Note kann später ergänzt werden und verändert weiterhin keine Mastery-, Leitner- oder Spacing-Daten.
+
+Nach dem Abschluss wird der Test sofort aus dem aktuellen Lernkontext entfernt. Ein bereits geplanter Folgetest wird unmittelbar zum aktuellen Ziel. Fehlt ein Folgetest, zeigt der Tagesbereich **„Nächsten Test vorbereiten“** bzw. im Kindermodus, dass der nächste Test vorbereitet wird. Bei einer Testserie springt die App auf die Vorbereitung des nächsten Serientermins. Ein nicht abgeschlossener Test bleibt auch nach seinem Datum sichtbar, statt still übersprungen zu werden.
+
 ## Neue Entscheidungen
 
 Neue Grundsatzentscheidungen erhalten fortlaufend eine ID im Format `D-YYYYMMDD-NNN`. Wird eine bestehende Regel ersetzt, bleibt die alte Entscheidung erhalten und wird als `SUPERSEDED` markiert; sie wird nicht gelöscht.
