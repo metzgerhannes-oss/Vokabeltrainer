@@ -282,3 +282,28 @@ nicht-interaktive Story-/Übergangsszenen darf später ein getrenntes 3D-Modul g
 noch Lernlogik zu einer 3D-Abhängigkeit machen. Alternativ bleibt für feste Storysequenzen
 vorgerendertes Video zulässig, wenn es Ladezeit und Gerätekompatibilität besser erfüllt.
 
+### D-20260928-005 – Avatar und Armee wachsen monoton über das Schuljahr
+**Status:** LOCKED  
+**Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P5/P9; [../../VISUAL_DNA.md](../../VISUAL_DNA.md) § 6; B-014
+
+Fachlicher Lernstand und sichtbare Spielentwicklung werden getrennt. Der fachliche Prozentwert
+bleibt der Anteil der nachhaltig gemeisterten **aktuell bekannten** Jahresvokabeln und darf
+sich verändern, wenn neuer Stoff hinzukommt.
+
+Avatar, Rang, Einheiten und Ausrüstung bilden dagegen eine **kumulative Jahresentwicklung**.
+Sie wächst aus tatsächlich erreichten Lern- und Feldzugsmeilensteinen und wird innerhalb
+desselben Fachs und Schuljahres nicht durch später hinzugefügte Vokabeln oder Tests
+zurückgestuft. Ein Test beginnt deshalb niemals wieder bei Stufe 1.
+
+„Meine Armee“ spiegelt diesen Zustand sichtbar: frühe Stufen zeigen eine kleine, einfach
+ausgestattete Formation; zusätzliche Einheiten, Soldaten und hochwertige Ausrüstung kommen
+mit der Jahresentwicklung hinzu. Die vollständig ausgerüstete große Armee ist der höchsten
+Entwicklungsstufe vorbehalten.
+
+Die Zahl zukünftiger Tests bleibt unbekannt und wird nicht geschätzt. Testfestungen werden
+dynamisch ergänzt. Die Jahresfestung ist von Anfang an als langfristiges Fernziel sichtbar,
+aber **ohne Datum**, solange kein realer Termin bekannt ist. Sobald ein belastbarer Termin
+bekannt wird, kann er im Elternbereich gesetzt, geändert oder wieder entfernt werden. Neue
+Testtermine dürfen weiterhin davor ergänzt werden; das Jahresfestungsdatum verändert keine
+bereits erreichten Entwicklungsstufen.
+
