@@ -17,7 +17,7 @@
     const key=`${state.activeSubject}-${style}-stage-${level}`;
     frame.dataset.avatarStyle=style;
     const finalUrl=window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'';
-    const armyUrl=window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'';
+    const armyUrl=state.activeSubject==='german'?'':(window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'');
     const url=finalUrl||armyUrl;
     if(url){
       if(img.src!==url)img.src=url;
