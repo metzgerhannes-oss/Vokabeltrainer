@@ -109,7 +109,12 @@ renderStudy=function(){
   const result=_focusedBaseRenderStudy();
   if(session&&session.index<(session.queue?.length||0)){
     const pill=$('#sessionPill');
-    if(pill)pill.textContent='Aufgabe '+(session.index+1);
+    if(pill){
+      if(session.isDaily&&!session.rescueMode&&!session.bonusMode){
+        const status=dailyPlanStatus(buildDailyPlan());
+        pill.textContent=status.done+' / '+status.total+' geschafft';
+      }else pill.textContent='Aufgabe '+(session.index+1);
+    }
   }
   focusedApplyInputIntegrity();
   return result;
