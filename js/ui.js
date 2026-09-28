@@ -795,7 +795,7 @@ function activatePendingTestPlan(set){
     owner.testSeries[set.subject]={enabled:true,weekday:Number(pending.weekday)||0,scopeMode:'selected',setId:set.id,from:1,to:selectedLinkIds.length,selectedLinkIds,scopeDate:pending.testDate||nextWeeklyDate(Number(pending.weekday)||0),testFormat:format,updatedAt:new Date().toISOString()};
     set.testDate='';
   }else{
-    set.testDate=pending.testDate||'';
+    set.testDate=pending.testDate||'';set.testPlanId=set.testPlanId||pending.testPlanId||uid('test');
   }
   set.testScopeMode='selected';set.testSelectedLinkIds=selectedLinkIds;set.testFrom=1;set.testTo=selectedLinkIds.length;set.testFormat=format;
   delete set.pendingTestPlan;
@@ -822,11 +822,11 @@ function renderSets(){
     const seriesInfo=series?.setId===s.id?` · <strong>↻ ${WEEKDAYS_SHORT[Number(series.weekday)||0]}${pending?' · Umfang neu festlegen':seriesCount?` · ${seriesCount} Vokabeln`:''}</strong>`:'';
     const testCount=s.testDate&&daysUntil(s.testDate)>=0?scopedWordsForSet(s,s.testScopeMode,s.testFrom,s.testTo,s.testSelectedLinkIds).length:0;
     const statusPill=review?'<span class="pill warn">Prüfung offen</span>':copyOpen?`<span class="pill">Lernbereit · Abschreiben optional ${fc.completed}/${fc.total}</span>`:'<span class="pill">Lernbereit</span>';
-    return `<div class="set-item ${s.schoolYear===currentSchoolYear()?'current-year':'other-year'}"><div><div class="row gap align-center"><h3>${esc(s.title)}</h3>${statusPill}</div><p>${esc(s.schoolYear)}${s.bookId&&bookById(s.bookId)?` · ${esc(bookById(s.bookId).title||formatIsbn(bookById(s.bookId).isbn13))}`:''} · ${w.length} Vokabeln · ${p}% gemeistert${s.testDate&&daysUntil(s.testDate)>=0?` · <strong>Test ${formatDateShort(s.testDate)} · ${testCount} Vokabeln</strong>`:''}${seriesInfo}</p><progress class="set-progress" max="100" value="${p}" aria-label="${esc(s.title)}: ${p}% gemeistert"></progress></div><div class="row gap wrap">${review?`<button class="primary" data-set-audit="${s.id}">Paare prüfen</button>`:''}<button class="ghost" data-set-edit="${s.id}">Details</button><button class="ghost" data-set-plan="${s.id}">Test planen</button></div></div>`;
+    return `<div class="set-item ${s.schoolYear===currentSchoolYear()?'current-year':'other-year'}"><div><div class="row gap align-center"><h3>${esc(s.title)}</h3>${statusPill}</div><p>${esc(s.schoolYear)}${s.bookId&&bookById(s.bookId)?` · ${esc(bookById(s.bookId).title||formatIsbn(bookById(s.bookId).isbn13))}`:''} · ${w.length} Vokabeln · ${p}% gemeistert${s.testDate&&daysUntil(s.testDate)>=0?` · <strong>Test ${formatDateShort(s.testDate)} · ${testCount} Vokabeln</strong>`:''}${seriesInfo}</p><progress class="set-progress" max="100" value="${p}" aria-label="${esc(s.title)}: ${p}% gemeistert"></progress></div><div class="row gap wrap">${review?`<button class="primary" data-set-audit="${s.id}">Paare prüfen</button>`:''}<button class="ghost" data-set-edit="${s.id}">Details</button><button class="ghost" data-set-plan="${s.id}">${s.testDate?'Test bearbeiten':'Test planen'}</button></div></div>`;
   }).join('');
   document.querySelectorAll('[data-set-audit]').forEach(b=>b.onclick=()=>openSetPairAudit(b.dataset.setAudit));
   document.querySelectorAll('[data-set-edit]').forEach(b=>b.onclick=()=>openSetEditor(b.dataset.setEdit));
-  document.querySelectorAll('[data-set-plan]').forEach(b=>b.onclick=()=>openTestDatePlanner());
+  document.querySelectorAll('[data-set-plan]').forEach(b=>b.onclick=()=>openTestDatePlanner(b.dataset.setPlan||''));
 }function renderDashboard(){
   const l=learner(), p=subjectProgress(); const grades=state.grades.filter(g=>g.learnerId===l.id).sort((a,b)=>b.date.localeCompare(a.date));
   const activity=state.activity.filter(a=>a.learnerId===l.id).slice(-30); const last7=new Set(activity.filter(a=>Date.now()-new Date(a.date).getTime()<=7*864e5).map(a=>dateKey(new Date(a.date)))).size;
@@ -1001,7 +1001,7 @@ function checkHundredPercent(){
 
 function editableTestSetsForLearner(l,subject=state.activeSubject){
   if(!l)return [];
-  return (state.sets||[]).filter(s=>s.learnerId===l.id&&s.subject===subject&&!setNeedsPairReview(s)&&s.testDate&&!isTestCompletedForLearner(l,s.testDate,subject)&&setWords(s.id).length);
+  return (state.sets||[]).filter(s=>s.learnerId===l.id&&s.subject===subject&&!setNeedsPairReview(s)&&s.testDate&&!isExplicitTestSetCompletedForLearner(l,s,subject)&&setWords(s.id).length);
 }
 function editableTestSetForLearner(l,subject=state.activeSubject,preferredSetId=''){
   const sets=editableTestSetsForLearner(l,subject),preferred=preferredSetId?sets.find(s=>s.id===preferredSetId):null;if(preferred)return preferred;
@@ -1009,8 +1009,8 @@ function editableTestSetForLearner(l,subject=state.activeSubject,preferredSetId=
   return overdue[0]||future[0]||null;
 }
 function explicitTestContextForSets(date,sets,subject=state.activeSubject){
-  const active=(sets||[]).filter(Boolean),words=uniqueWords(active.flatMap(set=>scopedWordsForSet(set,set.testScopeMode,set.testFrom,set.testTo,set.testSelectedLinkIds)));
-  return {date,days:daysUntil(date),sets:active,words,source:'single',testFormat:active[0]?.testFormat||'target',scopeText:active.map(set=>scopeTextForSet(set,set.testScopeMode,set.testFrom,set.testTo,set.testSelectedLinkIds)).join(' + ')};
+  const active=(sets||[]).filter(Boolean),words=uniqueWords(active.flatMap(set=>scopedWordsForSet(set,set.testScopeMode,set.testFrom,set.testTo,set.testSelectedLinkIds))),planId=testPlanIdentityForSet(active[0]);
+  return {date,days:daysUntil(date),sets:active,words,source:'single',planId,testFormat:active[0]?.testFormat||'target',scopeText:active.map(set=>scopeTextForSet(set,set.testScopeMode,set.testFrom,set.testTo,set.testSelectedLinkIds)).join(' + ')};
 }
 function openTestDatePlanner(preferredSetId=''){
   if(!isParentMode()){openParentGate();return}
@@ -1052,14 +1052,14 @@ function openTestDatePlanner(preferredSetId=''){
   const updateSections=()=>{const groups=knownBookSections(bookEl.value),existing=matchingSet();sectionEl.innerHTML=groups.map(g=>`<option value="${esc(g.section)}">${esc(g.section)} · ${g.items.length} Vokabeln</option>`).join('');const preferred=existing?.bookSection||targetFuture()?.bookSection;if(preferred&&groups.some(g=>g.section===preferred))sectionEl.value=preferred;renderRows()};
   const loadLearnerDefaults=()=>{
     const l=targetLearner(),future=(state.sets||[]).filter(s=>s.learnerId===l.id&&s.subject===subject&&s.testDate&&daysUntil(s.testDate)>=0).sort((a,b)=>a.testDate.localeCompare(b.testDate))[0],cfg=l.testSeries?.[subject];
-    const preferred=requestedSetId&&l.id===activeL.id?editableTestSetsForLearner(l,subject).find(s=>s.id===requestedSetId)||null:null,target=preferred||future;mode.value=cfg?.enabled?'weekly':'single';date.value=target?.testDate||datePlusDays(7);weekday.value=String(Number(cfg?.weekday??new Date().getDay()));const b=(target?.bookId&&bookById(target.bookId))||currentBook(l.id,subject)||books[0];if(b)bookEl.value=b.id;format.value=cfg?.enabled?(cfg.testFormat||'target'):(target?.testFormat||'target');syncMode();updateSections();
+    const preferred=requestedSetId&&l.id===activeL.id?editableTestSetsForLearner(l,subject).find(s=>s.id===requestedSetId)||null:null,target=preferred||future;mode.value=preferred?'single':cfg?.enabled?'weekly':'single';date.value=target?.testDate||datePlusDays(7);weekday.value=String(Number(cfg?.weekday??new Date().getDay()));const b=(target?.bookId&&bookById(target.bookId))||currentBook(l.id,subject)||books[0];if(b)bookEl.value=b.id;format.value=preferred?(target?.testFormat||'target'):cfg?.enabled?(cfg.testFormat||'target'):(target?.testFormat||'target');syncMode();updateSections();
   };
   const syncMode=()=>{$('#singleWhen').classList.toggle('hidden',mode.value!=='single');$('#weeklyWhen').classList.toggle('hidden',mode.value!=='weekly');updatePreview()};
   const prepareCaptureSet=source=>{
     const l=targetLearner(),when=plannedDate();if(mode.value==='single'&&!date.value){preview.className='notice warn';preview.textContent='Bitte zuerst ein Testdatum wählen.';return null}
     state.activeLearnerId=l.id;ensureActiveSubject();
     const title='Test '+when,book=bookById(bookEl.value)||currentBook(l.id,subject);
-    const set={id:uid('set'),learnerId:l.id,subject,title,schoolYear:currentSchoolYear(),bookId:book?.id||'',bookSection:'',testDate:'',testScopeMode:'set',testSelectedLinkIds:[],testFrom:1,testTo:0,testFormat:format.value,from:'',to:'',captureSource:source,pairReviewRequired:true,pairVerifiedAt:'',pairVerifiedSignature:'',pendingTestPlan:{mode:mode.value,testDate:when,weekday:Number(weekday.value)||0,testFormat:format.value,createdAt:new Date().toISOString()}};
+    const planId=uid('test'),set={id:uid('set'),learnerId:l.id,subject,title,schoolYear:currentSchoolYear(),bookId:book?.id||'',bookSection:'',testDate:'',testPlanId:planId,testScopeMode:'set',testSelectedLinkIds:[],testFrom:1,testTo:0,testFormat:format.value,from:'',to:'',captureSource:source,pairReviewRequired:true,pairVerifiedAt:'',pairVerifiedSignature:'',pendingTestPlan:{mode:mode.value,testDate:when,testPlanId:planId,weekday:Number(weekday.value)||0,testFormat:format.value,createdAt:new Date().toISOString()}};
     state.sets.push(set);save();return set;
   };
   $('#planSourceLibrary').onclick=()=>$('#planLibrarySource').scrollIntoView({block:'nearest'});
@@ -1074,7 +1074,7 @@ function openTestDatePlanner(preferredSetId=''){
     const selected=selectedRows();if(!selected.length){preview.className='notice warn';preview.textContent='Bitte mindestens eine Vokabel für den Test auswählen.';return}
     const l=targetLearner(),when=plannedDate();if(mode.value==='single'&&!date.value){preview.className='notice warn';preview.textContent='Bitte ein Testdatum wählen.';return}
     const editSet=mode.value==='single'&&requestedSetId&&l.id===activeL.id?(state.sets||[]).find(s=>s.id===requestedSetId&&s.learnerId===l.id&&s.subject===subject)||null:null;
-    const oldDate=editSet?.testDate||'',oldTestSets=oldDate?editableTestSetsForLearner(l,subject).filter(s=>s.testDate===oldDate):[],oldSetIds=oldTestSets.map(s=>s.id);
+    const planId=editSet?testPlanIdentityForSet(editSet):uid('test'),oldDate=editSet?.testDate||'',oldTestSets=oldDate?editableTestSetsForLearner(l,subject).filter(s=>s.testDate===oldDate&&testPlanIdentityForSet(s)===planId):[],oldSetIds=oldTestSets.map(s=>s.id);
     const sameSource=!!(editSet&&editSet.bookId===bookEl.value&&editSet.bookSection===sectionEl.value);
     const assignOpts=mode.value==='single'?(sameSource?{setId:editSet.id}:{testDate:date.value,forceNewSet:true}):{};
     const result=assignBookRowsToLearner(bookEl.value,sectionEl.value,l.id,selected.map(r=>r.id),assignOpts);if(!result.set)return;
@@ -1083,15 +1083,15 @@ function openTestDatePlanner(preferredSetId=''){
     }else{
       if(editSet&&oldDate&&oldDate!==date.value)for(const set of oldTestSets)set.testDate=date.value;
       if(editSet&&editSet.id!==result.set.id){editSet.testDate='';editSet.testScopeMode='set';editSet.testSelectedLinkIds=[]}
-      result.set.testDate=date.value;result.set.testScopeMode='selected';result.set.testSelectedLinkIds=result.linkIds;result.set.testFrom=1;result.set.testTo=result.linkIds.length;result.set.testFormat=format.value;
+      result.set.testPlanId=planId;result.set.testDate=date.value;result.set.testScopeMode='selected';result.set.testSelectedLinkIds=result.linkIds;result.set.testFrom=1;result.set.testTo=result.linkIds.length;result.set.testFormat=format.value;
       if(editSet&&oldDate){
-        const currentSets=editableTestSetsForLearner(l,subject).filter(s=>s.testDate===date.value),newCtx=explicitTestContextForSets(date.value,currentSets,subject);
+        const currentSets=editableTestSetsForLearner(l,subject).filter(s=>s.testDate===date.value&&testPlanIdentityForSet(s)===planId),newCtx=explicitTestContextForSets(date.value,currentSets,subject);
         retargetTestFortress(l,subject,oldDate,oldSetIds,newCtx);
       }
     }
     l.dailyPlans={};closeModal();save();toast(`${editSet?'Test aktualisiert':'Testplan gespeichert'} · ${selected.length} Vokabeln für ${l.name}.`,'good');
   };
-  $('#clearTestPlan').onclick=()=>{const l=targetLearner();if(mode.value==='weekly'){l.testSeries={...defaultTestSeries(),...(l.testSeries||{})};l.testSeries[subject]=null}else{const edit=requestedSetId&&l.id===activeL.id?(state.sets||[]).find(s=>s.id===requestedSetId&&s.learnerId===l.id&&s.subject===subject):null,targetDate=edit?.testDate||date.value;for(const set of (state.sets||[]).filter(s=>s.learnerId===l.id&&s.subject===subject&&s.testDate===targetDate)){set.testDate='';set.testScopeMode='set';set.testSelectedLinkIds=[]}}l.dailyPlans={};closeModal();save();toast('Testplan für diesen Termin entfernt.','subtle')};
+  $('#clearTestPlan').onclick=()=>{const l=targetLearner();if(mode.value==='weekly'){l.testSeries={...defaultTestSeries(),...(l.testSeries||{})};l.testSeries[subject]=null}else{const edit=requestedSetId&&l.id===activeL.id?(state.sets||[]).find(s=>s.id===requestedSetId&&s.learnerId===l.id&&s.subject===subject):null,targetDate=edit?.testDate||date.value,planId=edit?testPlanIdentityForSet(edit):'';for(const set of (state.sets||[]).filter(s=>s.learnerId===l.id&&s.subject===subject&&s.testDate===targetDate&&(!planId||testPlanIdentityForSet(s)===planId))){set.testDate='';set.testScopeMode='set';set.testSelectedLinkIds=[]}}l.dailyPlans={};closeModal();save();toast('Testplan für diesen Termin entfernt.','subtle')};
   weekday.value=String(Number(seriesCfg?.weekday??new Date().getDay()));format.value=activePlan?.testFormat||seriesCfg?.testFormat||'target';syncMode();updateSections();
 }
 
@@ -1391,7 +1391,7 @@ async function runFamilySync(){
 function renderParentOverview(){
   const box=$('#parentAttention');if(!box)return;
   const sets=mySets(),draft=sets.find(s=>s.pendingTestPlan),review=sets.find(s=>!s.pendingTestPlan&&setNeedsPairReview(s)),pending=seriesScopePending(),ctx=upcomingTestContext(),tasks=[];
-  const planBtn=$('#parentTestPlanBtn');if(planBtn){const due=!!(ctx&&ctx.days<=0),strong=planBtn.querySelector('strong'),small=planBtn.querySelector('small');planBtn.dataset.setId=due?(ctx.sets?.[0]?.id||''):'';if(strong)strong.textContent=due?'Aktuellen Test bearbeiten':'Test vorbereiten';if(small)small.textContent=due?'Termin oder Vokabeln bis zum Abschluss ändern':'Datum wählen, Vokabeln festlegen und prüfen'}
+  const planBtn=$('#parentTestPlanBtn');if(planBtn){const editable=!!(ctx&&ctx.source!=='series'&&ctx.sets?.[0]),strong=planBtn.querySelector('strong'),small=planBtn.querySelector('small');planBtn.dataset.setId=editable?(ctx.sets[0].id||''):'';if(strong)strong.textContent=editable?'Aktuellen Test bearbeiten':'Test vorbereiten';if(small)small.textContent=editable?'Termin oder Vokabeln bis zum Abschluss ändern':'Datum wählen, Vokabeln festlegen und prüfen'}
   if(draft){
     const count=setWords(draft.id).length,when=draft.pendingTestPlan?.testDate?formatDateShort(draft.pendingTestPlan.testDate):'offen';
     tasks.push(`<div class="parent-task"><div><strong>Testvorbereitung abschließen</strong><small>${esc(draft.title)} · ${count} Vokabel${count===1?'':'n'} · Termin ${esc(when)}. Der Entwurf beeinflusst das Lernen noch nicht.</small></div><button class="primary" data-parent-draft="${draft.id}">Fortsetzen</button></div>`);
