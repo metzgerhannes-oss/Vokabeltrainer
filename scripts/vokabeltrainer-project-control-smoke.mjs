@@ -20,6 +20,7 @@ const required=[
   'docs/project/BACKLOG.md',
   'docs/project/TEST_MATRIX.md',
   'docs/project/CHANGE_TEMPLATE.md',
+  'docs/project/CHAT_LIFECYCLE.md',
   'V1_ACCEPTANCE_TEST.md'
 ];
 for(const path of required){
@@ -58,9 +59,11 @@ duplicates([...backlog.matchAll(/^## (B-[0-9]+)\b/gm)].map(m=>m[1]),'Backlog-ID'
 if(!control.includes('## 11. Definition von „fertig“ und „live“')) fail('Definition of Done missing from PROJECT_CONTROL');
 if(!decisions.includes('D-20260927-009')) fail('operational Decision D-20260927-009 missing');
 if(!matrix.includes('Project-Control-Konsistenz')) fail('Project-Control gate missing from TEST_MATRIX');
+if(!control.includes('## 13. Chat-Lifecycle und Archivierung')) fail('Chat lifecycle missing from PROJECT_CONTROL');
+if(!decisions.includes('D-20260928-003')) fail('chat lifecycle Decision D-20260928-003 missing');
 
 console.log('Vokabeltrainer project control smoke passed');
 console.log('✓ canonical governance files present');
 console.log('✓ version '+version+' consistent across app and project status');
 console.log('✓ Decision and Backlog IDs unique');
-console.log('✓ Definition of Done and project-control gate present');
+console.log('✓ Definition of Done, chat lifecycle and project-control gate present');

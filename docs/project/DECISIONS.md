@@ -1,6 +1,6 @@
 # Vokabeltrainer – Decision Register
 
-Stand: 27.09.2026
+Stand: 28.09.2026
 
 Dieses Register macht Grundsatzentscheidungen referenzierbar. Es ersetzt die jeweiligen Fachquellen nicht. Bei inhaltlichen Details gilt immer die verlinkte kanonische Quelle.
 
@@ -243,3 +243,11 @@ Einzelabfragen bleiben für Transparenz einklappbar. Freiwilliges Nachrücken, B
 T−1-Rettungsrunden sind weiterhin getrennte Einheiten und werden nicht still an den
 Pflicht-Übungsraum angehängt.
 
+
+### D-20260928-003 – Chatverläufe sind Arbeitsprotokoll, Repository ist Wahrheit
+**Status:** ACTIVE  
+**Quelle:** [../../PROJECT_CONTROL.md](../../PROJECT_CONTROL.md) § 13; [CHAT_LIFECYCLE.md](CHAT_LIFECYCLE.md)
+
+Chats dürfen Ideen, Debugging, Screenshots, Zwischenstände und Entscheidungsfindung enthalten, sind aber keine dauerhafte Quelle für den aktuellen Projektstand. Vor Archivierung eines relevanten Chats werden Ergebnis, kanonische Regel/Decision, PR/Commit/Release, Verifikationsstatus und offene Restpunkte in das Repository überführt.
+
+Projektchats werden nach ihrem Hauptzweck mit `[DECISION]`, `[CONCEPT]`, `[RESEARCH]`, `[DEV]`, `[BUG]`, `[TEST]` oder `[ARCHIVE]` gekennzeichnet. Offene Arbeit erhält eine Backlog-ID; alte Versions- oder CI-Aussagen aus Chats dürfen einen neueren Repository-Stand nicht ersetzen. Für neue Entwicklungsarbeit wird die Baseline zuerst aus `PROJECT_CONTROL.md`, `CURRENT_STATE.md`, der einschlägigen Fach-/Decision-Quelle und dem aktuellen `main` bestimmt.
