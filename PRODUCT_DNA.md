@@ -20,6 +20,7 @@ damit die Vokabelabfrage zuverlässiger, wirksamer oder leichter nutzbar wird.
 Daraus folgen verbindliche Konsequenzen:
 
 - Eine falsche Sollantwort, falsche Wort↔Bedeutung-Zuordnung oder falsche Bewertung ist ein **Release-Blocker**.
+- Hält das Kind eine Bewertung für systemseitig falsch, muss es den konkreten Versuch zur fachlichen Prüfung melden können. Ein solcher **strittiger Versuch bleibt bis zur Elternentscheidung neutral**: keine negative Mastery-, Spacing-, Leitner-, Testbereitschafts- oder Fehlerwirkung. Eltern können die Antwort als lokale zulässige Variante freigeben, die Vokabel/Sollantwort korrigieren oder die Systembewertung bestätigen. Erst eine bestätigte Systembewertung darf als Fehler zählen.
 - Die Abfrage muss immer exakt nachvollziehbar machen können, **welche Antwort erwartet und warum sie gewertet wurde**.
 - Import-, OCR- und Bibliothekslogik dürfen niemals stillschweigend die fachliche Wahrheit der Abfrage verschlechtern.
 - Bei Konflikten hat die Korrektheit der Abfrage Vorrang vor Komfort, Automatisierung, Gamification oder Featureumfang.

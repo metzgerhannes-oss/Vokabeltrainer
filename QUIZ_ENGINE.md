@@ -94,6 +94,21 @@ Die Ergebnisübersicht speichert für jede Aufgabe:
 
 Damit ist eine fehlerhafte Bewertung reproduzierbar.
 
+### 8. Strittige Systembewertung und Elternfreigabe
+
+Bei einer als falsch bewerteten Kinderantwort gibt es den fachlichen Sicherheitsweg **„Bewertung prüfen lassen“**.
+
+- Die Meldung speichert den unveränderlichen Frage-Snapshot, Kinderantwort und bisher akzeptierte Sollantworten.
+- Der gerade erzeugte Fehlversuch wird sofort auf den Zustand **vor der Bewertung** zurückgesetzt.
+- Solange der Prüffall offen ist, zählt der Versuch weder positiv noch negativ für Mastery, Spacing, Leitner, Testbereitschaft oder Fehlerstatistik.
+- Im Elternbereich erscheint eine eigene Prüfliste.
+- **Antwort als richtig freigeben** speichert die Kinderantwort als akzeptierten Override für genau diesen Lernset-Link und wertet den ursprünglichen aktiven Abruf rückwirkend positiv.
+- **Systembewertung bestätigen** wendet genau einen fachlich relevanten Fehler erst nach der Elternentscheidung an.
+- **Vokabel bearbeiten** nutzt den bestehenden Vokabel-/Sense-Editor; der Prüffall bleibt offen, bis eine fachliche Entscheidung getroffen wurde.
+- Offene Prüffälle werden über Family Sync dem zugehörigen Elternaccount bereitgestellt.
+
+Damit bleibt automatische Toleranz die erste Linie; die Elternfreigabe ist das Fail-safe für fachlich korrekte Varianten, die der Algorithmus noch nicht kennt.
+
 ## Tests
 
 Der Abfragekern wird unter anderem durch folgende Prüfungen geschützt:
@@ -101,6 +116,7 @@ Der Abfragekern wird unter anderem durch folgende Prüfungen geschützt:
 - `vokabeltrainer-quiz-engine-smoke.mjs`
 - `vokabeltrainer-learning-integrity-smoke.mjs`
 - `vokabeltrainer-correct-answer-diagnostic.mjs`
+- `vokabeltrainer-answer-review-ui-smoke.mjs`
 - `vokabeltrainer-ocr-pairing-smoke.mjs`
 - `vokabeltrainer-set-repair-smoke.mjs`
 - `vokabeltrainer-pair-review-ui-smoke.mjs`

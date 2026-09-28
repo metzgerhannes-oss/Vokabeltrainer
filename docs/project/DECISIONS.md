@@ -307,3 +307,25 @@ bekannt wird, kann er im Elternbereich gesetzt, geändert oder wieder entfernt w
 Testtermine dürfen weiterhin davor ergänzt werden; das Jahresfestungsdatum verändert keine
 bereits erreichten Entwicklungsstufen.
 
+
+
+### D-20260928-006 – Strittige Systembewertungen bleiben bis zur Elternprüfung neutral
+**Status:** LOCKED  
+**Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) Oberstes Produktprinzip; [../../QUIZ_ENGINE.md](../../QUIZ_ENGINE.md) § 8; B-015
+
+Ein Kind darf eine vom System als falsch bewertete konkrete Antwort mit **„Bewertung prüfen lassen“**
+beanstanden. Der betroffene Versuch wird sofort aus allen fachlichen Negativwirkungen
+zurückgerollt und als offener Prüffall gespeichert. Solange dieser Prüffall offen ist, verändert
+er weder Mastery, Spacing, Leitner-Box, Testbereitschaft noch Fehlerstatistik.
+
+Die Entscheidung liegt ausschließlich im Elternbereich. Eltern können die konkrete Kinderantwort
+als akzeptierte lokale Variante des betroffenen Lernset-Links freigeben, die zugrunde liegende
+Vokabel/Sollantwort im bestehenden Editor korrigieren oder bestätigen, dass die ursprüngliche
+Systembewertung richtig war. Eine bestätigte Systembewertung darf erst **nach** dieser Entscheidung
+als fachlicher Fehler wirken. Eine freigegebene Variante wird künftig automatisch akzeptiert und
+der ursprüngliche aktive Abruf rückwirkend positiv gewertet.
+
+Der Mechanismus ersetzt nicht die deterministische tolerante Bewertung. Groß-/Kleinschreibung,
+technische Satz-/Platzhaltervarianten und explizit bekannte Antwortalternativen sollen weiterhin
+automatisch korrekt bewertet werden; die Elternprüfung ist das fachliche Sicherheitsnetz für
+nicht vorhersehbare korrekte Formulierungen.

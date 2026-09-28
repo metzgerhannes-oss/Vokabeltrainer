@@ -60,6 +60,7 @@
         learner:learnerProgress(learner),
         learnerVocabulary:clone((s.learnerVocabulary||[]).filter(x=>x.learnerId===learner.id)),
         practiceTests:clone((s.practiceTests||[]).filter(x=>x.learnerId===learner.id)),
+        answerReviews:clone((s.answerReviews||[]).filter(x=>x.learnerId===learner.id)),
         activity:clone((s.activity||[]).filter(x=>x.learnerId===learner.id))
       };
     }
@@ -102,6 +103,7 @@
     const l=ensureLearner(id,{id});PROFILE_PROGRESS_FIELDS.forEach(k=>{if(incoming[k]!==undefined)l[k]=clone(incoming[k])});
     state.learnerVocabulary=(state.learnerVocabulary||[]).filter(x=>x.learnerId!==id).concat(clone(payload?.learnerVocabulary||[]));
     state.practiceTests=(state.practiceTests||[]).filter(x=>x.learnerId!==id).concat(clone(payload?.practiceTests||[]));
+    state.answerReviews=(state.answerReviews||[]).filter(x=>x.learnerId!==id).concat(clone(payload?.answerReviews||[]));
     state.activity=(state.activity||[]).filter(x=>x.learnerId!==id).concat(clone(payload?.activity||[]));
   }
   function applyDocument(key,payload){
@@ -116,7 +118,7 @@
   }
 
   function resetSyncedStateForImport(){
-    state.learners=[];state.sets=[];state.vocabulary=[];state.setVocabulary=[];state.books=[];state.learnerBooks=[];state.bookVocabulary=[];state.learnerVocabulary=[];state.grades=[];state.practiceTests=[];state.activity=[];
+    state.learners=[];state.sets=[];state.vocabulary=[];state.setVocabulary=[];state.books=[];state.learnerBooks=[];state.bookVocabulary=[];state.learnerVocabulary=[];state.grades=[];state.practiceTests=[];state.answerReviews=[];state.activity=[];
   }
   function restoreRawConfig(raw){
     if(raw==null)localStorage.removeItem(CONFIG_KEY);

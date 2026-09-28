@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.21.30';
+const VERSION = '0.21.31';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';
@@ -270,6 +270,7 @@ function clearLearnerLearningData(learnerId){
   const beforeVocabulary=(state.vocabulary||[]).length;
   state.vocabulary=(state.vocabulary||[]).filter(v=>usedVocabIds.has(v.id)||(v.sources||[]).length>0);
   state.practiceTests=(state.practiceTests||[]).filter(t=>t.learnerId!==learnerId);
+  state.answerReviews=(state.answerReviews||[]).filter(x=>x.learnerId!==learnerId);
   state.activity=(state.activity||[]).filter(a=>a.learnerId!==learnerId);
   state.grades=(state.grades||[]).filter(g=>g.learnerId!==learnerId||!g.practiceTestId);
   l.xp=0;l.streakDays=[];l.milestones={};l.fortressWins=defaultSubjectArrays();l.fortressWinsByYear={};l.battleTickets=defaultSubjectNumbers();l.battleDays={};l.testFortresses={};l.yearFortresses={};l.completedTests={};l.campaignLog=[];l.dailyPlans={};l.testSeries=defaultTestSeries();
@@ -281,7 +282,7 @@ function defaultState(){
     version: VERSION,senseModelVersion:1,spellingLeakRepairVersion:1,pairAuditVersion:1,firstContactVersion:1,
     activeLearnerId: 'learner_demo',activeSubject: 'english',
     learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',avatarStyle:'male',activeSubjects:['english'],xp:0,literacySupport:{reading:false,spelling:false},reducedLoad:false,lrsMode:false,fontSize:17,letterSpacing:0,flashSpeed:1600,autoSpeakCorrection:true,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),battleDays:{},testFortresses:{},yearFortresses:{},completedTests:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
-    books:[],learnerBooks:[],bookVocabulary:[],sets:[],vocabulary:[],setVocabulary:[],learnerVocabulary:[],grades:[],practiceTests:[],activity:[]
+    books:[],learnerBooks:[],bookVocabulary:[],sets:[],vocabulary:[],setVocabulary:[],learnerVocabulary:[],grades:[],practiceTests:[],answerReviews:[],activity:[]
   };
   attachRuntimeWordApi(s);return s;
 }
@@ -377,13 +378,14 @@ function attachVocabularyToSet(setId,data={}){
   if(set.bookId&&data.verified!==false)ensureBookVocabulary(set.bookId,v.id,{senseId:sense.id,section:set.bookSection||set.title,position:link.position,termOverride:link.termOverride,translationOverride:link.translationOverride,acceptedTermOverrides:link.acceptedTermOverrides,acceptedTranslationOverrides:link.acceptedTranslationOverrides,extraOverride:link.extraOverride,exampleOverride:link.exampleOverride,verifiedAt:new Date().toISOString()});
   rebuildWordIndexes();return {word:wordViewForLink(link),vocab:v,sense,progress:p,newVocabulary:up.created,newSense:up.senseCreated,translationAdded:up.senseCreated,alreadyLinked,newLink:!alreadyLinked};
 }
-function removeSetVocabularyLink(linkId){state.setVocabulary=(state.setVocabulary||[]).filter(x=>x.id!==linkId);rebuildWordIndexes();}
-function removeSetWithLinks(setId){state.setVocabulary=(state.setVocabulary||[]).filter(x=>x.setId!==setId);state.sets=(state.sets||[]).filter(x=>x.id!==setId);(state.vocabulary||[]).forEach(v=>{v.sources=(v.sources||[]).filter(src=>src.setId!==setId)});rebuildWordIndexes();}
-function deleteGlobalVocabulary(vocabId){state.setVocabulary=(state.setVocabulary||[]).filter(x=>x.vocabId!==vocabId);state.bookVocabulary=(state.bookVocabulary||[]).filter(x=>x.vocabId!==vocabId);state.learnerVocabulary=(state.learnerVocabulary||[]).filter(x=>x.vocabId!==vocabId);state.vocabulary=(state.vocabulary||[]).filter(x=>x.id!==vocabId);rebuildWordIndexes()}
+function removeSetVocabularyLink(linkId){state.answerReviews=(state.answerReviews||[]).filter(x=>x.setLinkId!==linkId||x.status!=='pending');state.setVocabulary=(state.setVocabulary||[]).filter(x=>x.id!==linkId);rebuildWordIndexes();}
+function removeSetWithLinks(setId){state.answerReviews=(state.answerReviews||[]).filter(x=>x.setId!==setId||x.status!=='pending');state.setVocabulary=(state.setVocabulary||[]).filter(x=>x.setId!==setId);state.sets=(state.sets||[]).filter(x=>x.id!==setId);(state.vocabulary||[]).forEach(v=>{v.sources=(v.sources||[]).filter(src=>src.setId!==setId)});rebuildWordIndexes();}
+function deleteGlobalVocabulary(vocabId){state.answerReviews=(state.answerReviews||[]).filter(x=>x.vocabId!==vocabId||x.status!=='pending');state.setVocabulary=(state.setVocabulary||[]).filter(x=>x.vocabId!==vocabId);state.bookVocabulary=(state.bookVocabulary||[]).filter(x=>x.vocabId!==vocabId);state.learnerVocabulary=(state.learnerVocabulary||[]).filter(x=>x.vocabId!==vocabId);state.vocabulary=(state.vocabulary||[]).filter(x=>x.id!==vocabId);rebuildWordIndexes()}
 function remapProgressReferences(oldId,newId){
   if(!oldId||!newId||oldId===newId)return;
   (state.learners||[]).forEach(l=>{for(const plan of Object.values(l.dailyPlans||{})){if(Array.isArray(plan.wordIds))plan.wordIds=[...new Set(plan.wordIds.map(id=>id===oldId?newId:id))];if(Array.isArray(plan.wordRefs))plan.wordRefs=plan.wordRefs.map(r=>({...r,wordId:r.wordId===oldId?newId:r.wordId}));}});
   (state.practiceTests||[]).forEach(t=>{(t.answers||[]).forEach(a=>{if(a.wordId===oldId)a.wordId=newId});if(Array.isArray(t.wordIds))t.wordIds=[...new Set(t.wordIds.map(id=>id===oldId?newId:id))]});
+  (state.answerReviews||[]).forEach(x=>{if(x.wordId===oldId)x.wordId=newId});
   (state.activity||[]).forEach(a=>{if(a.wordId===oldId)a.wordId=newId});(state.learnerVocabulary||[]).forEach(p=>{p.confusionWith=(p.confusionWith||[]).map(id=>id===oldId?newId:id)});
 }
 function mergeVocabularyEntries(targetId,sourceId){

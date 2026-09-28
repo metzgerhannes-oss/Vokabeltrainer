@@ -309,16 +309,16 @@ function renderLeitnerCard(w){
 }
 function gradeLeitnerCard(w,answer,q){
   if(session.locked)return;const targetSession=session;session.locked=true;
-  const grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w);
+  const grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w),reviewSnapshot=!ok?answerReviewAttemptSnapshot(w):null;
   recordResult(w,ok,'retrieval',ok?null:'retrieval',{orthographyOk:grade.orthographyOk});
   const move=session.lastLeitnerMove||{before,after:leitnerBox(w),moved:false,blockedBySpacing:false};
   const movement=!ok?`Box ${move.before} → Box ${move.after}`:move.moved?`Box ${move.before} → Box ${move.after}`:move.blockedBySpacing?`Bleibt in Box ${move.after}: Für die nächste Stufe braucht es einen richtigen Abruf an einem späteren Tag.`:`Bleibt in Box ${move.after}.`;
   const mastered=move.after===5&&isMastered(w),track=$('#studyArea .leitner-track');
   if(track){const holder=document.createElement('div');holder.innerHTML=leitnerBoxesHtml(w);const next=holder.firstElementChild;if(next){next.classList.add(move.moved?'just-moved':'just-confirmed');track.replaceWith(next)}}
-  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}"><strong>${ok?'Richtig.':'Noch nicht richtig.'}</strong><br>${ok?'':errorFeedbackHtml(answer,q.targets)}<div><strong>${esc(w.term)}</strong> ${audioButtonHtml(w.term,'Anhören')}</div><div class="leitner-move ${ok?'forward':'back'}">${esc(movement)}</div>${mastered?'<div class="leitner-mastered">✓ Nachhaltig gemeistert</div>':''}</div>`);
+  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}"><strong>${ok?'Richtig.':'Noch nicht richtig.'}</strong><br>${ok?'':errorFeedbackHtml(answer,q.targets)}<div><strong>${esc(w.term)}</strong> ${audioButtonHtml(w.term,'Anhören')}</div><div class="leitner-move ${ok?'forward':'back'}">${esc(movement)}</div>${mastered?'<div class="leitner-mastered">✓ Nachhaltig gemeistert</div>':''}${!ok&&typeof focusedReviewActionHtml==='function'?focusedReviewActionHtml(false):''}</div>`);
   if(!ok)maybeSpeakCorrection(w);
   logSessionResult(w,{answer,target:q.targets,correct:ok,skill:'cards',orthographyOk:grade.orthographyOk,prompt:q.prompt,note:movement,boxBefore:move.before,boxAfter:move.after,reason:sessionResultReason({correct:ok,orthographyOk:grade.orthographyOk,answer,targets:q.targets,mode:'cards',assisted:false})});
-  if(typeof focusedDisableAnswerControls==='function'&&typeof focusedContinue==='function'){focusedDisableAnswerControls();focusedContinue(ok,w)}
+  if(typeof focusedDisableAnswerControls==='function'&&typeof focusedContinue==='function'){focusedDisableAnswerControls();focusedContinue(ok,w);if(!ok&&typeof bindFocusedAnswerReview==='function')bindFocusedAnswerReview(w,answer,q,'cards','retrieval',reviewSnapshot)}
   else scheduleSessionAdvance(targetSession,ok,w,ok?1000:2600);
 }
 function renderRecall(w){
@@ -431,6 +431,31 @@ function errorFeedbackHtml(answer,target){const t=closestTargetForm(answer,targe
 function gradeChoice(btn,w,answer,target,skill,nonEvaluative=false,questionSnapshot=null){if(session.locked)return;const targetSession=session;session.locked=true;const q=questionSnapshot||currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w);btn.classList.add(ok?'correct':'wrong');if(!ok){Array.from(document.querySelectorAll('[data-answer]')).find(b=>gradeQuizQuestion(q,b.dataset.answer).correct)?.classList.add('correct')}if(['recognition','listening'].includes(skill))session.scaffoldedWords[w.id]=true;if(nonEvaluative){recordNonEvaluative(w,'flash',ok,skill)}else{recordResult(w,ok,skill,ok?null:skill);logSessionResult(w,{answer,target:q.targets,correct:ok,skill,orthographyOk:grade.orthographyOk,prompt:q.prompt,boxBefore:before,boxAfter:leitnerBox(w),reason:sessionResultReason({correct:ok,orthographyOk:grade.orthographyOk,answer,targets:q.targets,mode:skill,assisted:!!session.hintUsed})});if(!ok){$('#studyArea .study-card')?.insertAdjacentHTML('beforeend',`<div class="feedback notice bad">${wordLearningCard(w,true)}</div>`);maybeSpeakCorrection(w)}}scheduleSessionAdvance(targetSession,ok,w,650)}
 function gradeText(w,answer,target,errorType,skill){if(session.locked)return;const targetSession=session;session.locked=true;const q=currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w);const detail=ok?(session.hintUsed?'Richtig mit Hinweis.':'Richtig.'):' ';$('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}">${ok?`<strong>${detail}</strong>`:errorFeedbackHtml(answer,q.targets)}<div><strong>${esc(w.term)}</strong> ${audioButtonHtml(w.term,'Anhören')}</div>${!ok?wordLearningCard(w):''}</div>`);recordResult(w,ok,skill,ok?null:errorType,{orthographyOk:grade.orthographyOk});logSessionResult(w,{answer,target:q.targets,correct:ok,skill,orthographyOk:grade.orthographyOk,assisted:!!session.hintUsed,prompt:q.prompt,boxBefore:before,boxAfter:leitnerBox(w),reason:sessionResultReason({correct:ok,orthographyOk:grade.orthographyOk,answer,targets:q.targets,mode:skill,assisted:!!session.hintUsed})});if(!ok)maybeSpeakCorrection(w);scheduleSessionAdvance(targetSession,ok,w,ok?700:2400)}
 function recordNonEvaluative(w,mode,ok,skill){w.modesSeen=[...new Set([...(w.modesSeen||[]),mode])];if(skill==='reading'){w.skills={...defaultSkills(),...(w.skills||{})};w.skills.reading=clamp((w.skills.reading||0)+(ok?0.5:-0.2),0,4)}recordActivity(mode,{wordId:w.id,correct:ok,readingSupport:skill==='reading'});session.answered++;if(ok)session.correct++}
+
+function answerReviewClone(value){return value==null?value:JSON.parse(JSON.stringify(value))}
+function answerReviewAttemptSnapshot(w){
+  const progress=(state.learnerVocabulary||[]).find(x=>x.id===w?.id),owner=(state.learners||[]).find(x=>x.id===w?.learnerId)||learner();
+  return {progress:answerReviewClone(progress),learner:answerReviewClone(owner),activityLength:(state.activity||[]).length,session:{answered:session?.answered||0,correct:session?.correct||0,activeAttemptedWords:answerReviewClone(session?.activeAttemptedWords||{}),scaffoldedWords:answerReviewClone(session?.scaffoldedWords||{}),lastLeitnerMove:answerReviewClone(session?.lastLeitnerMove||null)}};
+}
+function restoreAnswerReviewAttempt(w,snapshot){
+  const progress=(state.learnerVocabulary||[]).find(x=>x.id===w?.id),owner=(state.learners||[]).find(x=>x.id===w?.learnerId);
+  const restore=(target,source)=>{if(!target||!source)return;for(const key of Object.keys(target))delete target[key];Object.assign(target,answerReviewClone(source))};
+  restore(progress,snapshot?.progress);restore(owner,snapshot?.learner);
+  if(Array.isArray(state.activity)&&Number.isInteger(snapshot?.activityLength))state.activity.splice(snapshot.activityLength);
+  if(session&&snapshot?.session){session.answered=snapshot.session.answered;session.correct=snapshot.session.correct;session.activeAttemptedWords=answerReviewClone(snapshot.session.activeAttemptedWords||{});session.scaffoldedWords=answerReviewClone(snapshot.session.scaffoldedWords||{});session.lastLeitnerMove=answerReviewClone(snapshot.session.lastLeitnerMove||null)}
+  rebuildWordIndexes();
+}
+function flagAnswerForParentReview(w,{answer='',question=null,skill='',errorType='',snapshot=null,result=null}={}){
+  if(!w||!question||!snapshot)return {ok:false,error:'Prüffall konnte nicht gespeichert werden.'};
+  restoreAnswerReviewAttempt(w,snapshot);
+  state.answerReviews=Array.isArray(state.answerReviews)?state.answerReviews:[];
+  const existing=state.answerReviews.find(x=>x.status==='pending'&&x.learnerId===w.learnerId&&x.questionId===question.id&&x.answer===String(answer||'').trim());
+  const req=existing||{id:uid('review'),learnerId:w.learnerId,subject:w.subject||state.activeSubject,setId:question.setId||w.setId||'',setLinkId:question.setLinkId||w.setLinkId||'',wordId:question.progressId||w.id||'',vocabId:question.vocabId||w.vocabId||'',senseId:question.senseId||w.senseId||'',questionId:question.id||'',prompt:String(question.prompt||''),answer:String(answer||'').trim(),targets:[...(question.targets||[])],answerSide:String(question.answerSide||''),mode:String(question.mode||session?.currentSubmode||''),skill:String(skill||''),errorType:String(errorType||''),dailyAttempt:!!session?.isDaily,attemptDate:today(),createdAt:new Date().toISOString(),status:'pending',resolvedAt:'',resolution:''};
+  if(!existing)state.answerReviews.push(req);
+  if(result){result.reviewPending=true;result.reviewId=req.id;result.correct=null;result.reason='Von dir zur Prüfung gemeldet. Bis zur Entscheidung verändert dieser Versuch deinen Lernstand nicht.';result.boxAfter=result.boxBefore}
+  persistOnly();window.VTFamilySync?.markLocalChange?.();
+  return {ok:true,request:req};
+}
 function isActiveSkill(skill){return ['retrieval','spelling','context'].includes(skill)}
 function skillCredits(skill,opts={}){if(skill==='retrieval'&&session?.currentSubmode==='reverseRecall')return ['retrieval'];if(skill==='retrieval')return opts.orthographyOk===false?['retrieval']:['retrieval','spelling'];if(skill==='spelling')return ['spelling','listening'];if(skill==='context')return opts.orthographyOk===false?['context','retrieval']:['context','retrieval','spelling'];return [skill]}
 function recordResult(w,ok,skill,errorType,opts={}){
@@ -485,8 +510,8 @@ function scheduleSessionAdvance(targetSession,ok,w,delay){
   setTimeout(()=>{if(session===targetSession)nextStudy(ok,w)},delay);
 }
 function nextStudy(ok,w){
-  if(!ok && w && !['flash','shower'].includes(session.mode))scheduleRetry(session,w);
-  if(ok&&w&&['adaptive','allWords','weakWords'].includes(session.mode)&&['recognition','listening','chunks'].includes(session.currentSubmode))scheduleScaffoldFollowup(session,w);
+  if(ok===false && w && !['flash','shower'].includes(session.mode))scheduleRetry(session,w);
+  if(ok===true&&w&&['adaptive','allWords','weakWords'].includes(session.mode)&&['recognition','listening','chunks'].includes(session.currentSubmode))scheduleScaffoldFollowup(session,w);
   session.index++;renderStudy();
 }
 function sessionResultTargets(target){
@@ -523,7 +548,7 @@ function logSessionResult(w,{answer='',target=[],correct=false,skill='',orthogra
 function sessionResultsText(results=session?.results||[]){
   const lines=['Vokabeltrainer – Ergebnisübersicht'];
   for(const r of results){
-    const status=!r.correct?'FALSCH':r.orthographyOk===false?'INHALTLICH RICHTIG · SCHREIBWEISE':'RICHTIG';
+    const status=r.reviewPending?'ZUR PRÜFUNG':!r.correct?'FALSCH':r.orthographyOk===false?'INHALTLICH RICHTIG · SCHREIBWEISE':'RICHTIG';
     const boxMove=r.boxBefore&&r.boxAfter?'Box: '+r.boxBefore+' → '+r.boxAfter:'';
     lines.push('',r.order+'. '+r.mode+' · '+status,(r.setTitle?'Lernset: '+r.setTitle:''),(r.term?'Vokabel: '+r.term:''),'Frage: '+(r.prompt||'–'),'Meine Antwort: '+(r.answer||'–'),'Erwartet: '+((r.targets||[]).join(' | ')||'–'),r.reason?'Warum: '+r.reason:'',boxMove,r.assisted?'Mit Hilfe: ja':'Mit Hilfe: nein');
   }
@@ -536,12 +561,13 @@ async function copySessionResults(results=session?.results||[]){
 }
 function sessionResultsHtml(results=[]){
   if(!results.length)return '';
-  return `<section class="session-review" aria-labelledby="sessionReviewTitle"><div class="row spread align-center wrap"><div><div class="eyebrow">Ergebnisübersicht</div><h3 id="sessionReviewTitle">Alle Abfragen dieser Einheit</h3><p class="session-review-intro">Du siehst genau, was gefragt, geantwortet und bewertet wurde.</p></div><button id="copySessionResultsBtn" class="ghost">Ergebnisse kopieren</button></div><div class="session-result-list">${results.map(r=>{const cls=!r.correct?'bad':r.orthographyOk===false?'warn':'good',status=!r.correct?'Falsch':r.orthographyOk===false?'Richtig erinnert · Schreibweise':'Richtig',before=Number(r.boxBefore),after=Number(r.boxAfter),hasBox=before>=1&&before<=5&&after>=1&&after<=5,box=hasBox?`<span class="session-box-move" aria-label="Karteikasten Box ${before} zu Box ${after}">Box ${before} → Box ${after}</span>`:'',termAudio=r.term?`<div class="session-result-vocab"><span>Vokabel: <strong>${esc(r.term)}</strong></span>${audioButtonHtml(r.term,'Vokabel anhören')}</div>`:'';return `<article class="session-result ${cls}" data-session-result="${r.correct&&r.orthographyOk!==false?'correct':'review'}" data-word-id="${esc(r.wordId||'')}"><div class="session-result-head"><strong>${r.order}. ${esc(r.mode)}</strong><div class="session-result-status"><span class="pill">${esc(status)}</span>${box}</div></div>${r.setTitle?`<small class="session-result-set">${esc(r.setTitle)}</small>`:''}${termAudio}<div class="session-result-grid"><div><small>Frage</small><strong>${esc(r.prompt||'–')}</strong></div><div><small>Deine Antwort</small><span>${esc(r.answer||'–')}</span></div><div><small>Richtige / akzeptierte Antwort</small><span>${esc((r.targets||[]).join(' · ')||'–')}</span></div></div>${r.reason?`<div class="session-result-reason"><small>Bewertung</small><span>${esc(r.reason)}</span></div>`:''}${r.note?`<small class="session-result-note">${esc(r.note)}</small>`:r.assisted?'<small class="session-result-note">Mit Hilfe beantwortet</small>':''}</article>`}).join('')}</div></section>`;
+  return `<section class="session-review" aria-labelledby="sessionReviewTitle"><div class="row spread align-center wrap"><div><div class="eyebrow">Ergebnisübersicht</div><h3 id="sessionReviewTitle">Alle Abfragen dieser Einheit</h3><p class="session-review-intro">Du siehst genau, was gefragt, geantwortet und bewertet wurde.</p></div><button id="copySessionResultsBtn" class="ghost">Ergebnisse kopieren</button></div><div class="session-result-list">${results.map(r=>{const cls=r.reviewPending?'warn':!r.correct?'bad':r.orthographyOk===false?'warn':'good',status=r.reviewPending?'Zur Prüfung':!r.correct?'Falsch':r.orthographyOk===false?'Richtig erinnert · Schreibweise':'Richtig',before=Number(r.boxBefore),after=Number(r.boxAfter),hasBox=before>=1&&before<=5&&after>=1&&after<=5,box=hasBox?`<span class="session-box-move" aria-label="Karteikasten Box ${before} zu Box ${after}">Box ${before} → Box ${after}</span>`:'',termAudio=r.term?`<div class="session-result-vocab"><span>Vokabel: <strong>${esc(r.term)}</strong></span>${audioButtonHtml(r.term,'Vokabel anhören')}</div>`:'';return `<article class="session-result ${cls}" data-session-result="${r.correct&&r.orthographyOk!==false?'correct':'review'}" data-word-id="${esc(r.wordId||'')}"><div class="session-result-head"><strong>${r.order}. ${esc(r.mode)}</strong><div class="session-result-status"><span class="pill">${esc(status)}</span>${box}</div></div>${r.setTitle?`<small class="session-result-set">${esc(r.setTitle)}</small>`:''}${termAudio}<div class="session-result-grid"><div><small>Frage</small><strong>${esc(r.prompt||'–')}</strong></div><div><small>Deine Antwort</small><span>${esc(r.answer||'–')}</span></div><div><small>Richtige / akzeptierte Antwort</small><span>${esc((r.targets||[]).join(' · ')||'–')}</span></div></div>${r.reason?`<div class="session-result-reason"><small>Bewertung</small><span>${esc(r.reason)}</span></div>`:''}${r.note?`<small class="session-result-note">${esc(r.note)}</small>`:r.assisted?'<small class="session-result-note">Mit Hilfe beantwortet</small>':''}</article>`}).join('')}</div></section>`;
 }
 
 function sessionRepeatIds(results=[],onlyErrors=false){
   const seen=new Set(),ids=[];
   for(const r of results){
+    if(r.reviewPending)continue;
     if(onlyErrors&&r.correct&&r.orthographyOk!==false)continue;
     const id=String(r.wordId||'');if(!id||seen.has(id))continue;seen.add(id);ids.push(id);
   }
@@ -562,7 +588,7 @@ function dailyRoomSummaryStats(results=[],status=null){
   }
   const repeated=[...byWord.values()].filter(rows=>rows.length>1).length;
   const recovered=[...byWord.values()].filter(rows=>rows.some(r=>!r.correct||r.orthographyOk===false)&&rows.some(r=>r.correct&&r.orthographyOk!==false&&!r.assisted)).length;
-  const correct=results.filter(r=>r.correct).length,total=results.length,accuracy=total?Math.round(correct/total*100):100;
+  const graded=results.filter(r=>!r.reviewPending),correct=graded.filter(r=>r.correct).length,total=graded.length,accuracy=total?Math.round(correct/total*100):100;
   return {focus:Number(status?.total)||byWord.size,done:Number(status?.done)||0,total,correct,accuracy,repeated,recovered,methods};
 }
 function dailyRoomSummaryHtml(results=[],status=null){

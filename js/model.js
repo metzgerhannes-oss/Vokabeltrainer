@@ -497,6 +497,70 @@ function soldiersFor(pct){return clamp(2+Math.floor(pct/9),2,13)}
 
 const streakActivityTypes=new Set(['adaptive','recognition','recall','spelling','listening','context','chunks','flash','shower','latinGrammar','handwriting','cards','firstContact','practiceTest']);
 function recordActivity(type,meta={}){ const l=learner(); if(streakActivityTypes.has(type)&&!l.streakDays.includes(today())) l.streakDays.push(today()); state.activity.push({id:uid('a'),learnerId:l.id,date:new Date().toISOString(),type,...meta}); }
+
+function answerReviewsForLearner(learnerId=state.activeLearnerId,status=''){
+  return (state.answerReviews||[]).filter(x=>x.learnerId===learnerId&&(!status||x.status===status)).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+}
+function pendingAnswerReviews(learnerId=state.activeLearnerId){return answerReviewsForLearner(learnerId,'pending')}
+function answerReviewById(id){return (state.answerReviews||[]).find(x=>x.id===id)||null}
+function answerReviewProgress(req){return (state.learnerVocabulary||[]).find(x=>x.id===req?.wordId)||progressForSense(req?.senseId,req?.learnerId)}
+function answerReviewSkill(req){
+  const mode=String(req?.mode||req?.skill||'');
+  if(mode==='spelling')return {active:true,credits:['spelling','listening'],error:'spelling'};
+  if(mode==='context')return {active:true,credits:['context','retrieval','spelling'],error:'context'};
+  if(['recall','retrieval','reverseRecall','cards'].includes(mode))return {active:true,credits:mode==='reverseRecall'?['retrieval']:['retrieval','spelling'],error:'retrieval'};
+  return {active:false,credits:[],error:mode||'retrieval'};
+}
+function answerReviewActivity(req,type,meta={}){
+  state.activity=state.activity||[];
+  state.activity.push({id:uid('a'),learnerId:req.learnerId,date:new Date().toISOString(),type,answerReviewId:req.id,wordId:req.wordId,...meta});
+}
+function answerReviewAttemptTime(req){
+  const raw=String(req?.createdAt||'');return /^\d{4}-\d{2}-\d{2}T/.test(raw)?raw:new Date().toISOString();
+}
+function applyAnswerReviewDirection(w,req,correct){
+  const direction=recallDirectionForMode(req?.mode||req?.skill||'');if(!w||!direction)return '';
+  const all=normalizeDirectionalRecall(w.directionalRecall),node=all[direction],at=answerReviewAttemptTime(req),day=/^\d{4}-\d{2}-\d{2}$/.test(String(req?.attemptDate||''))?req.attemptDate:at.slice(0,10);
+  if(correct)node.successDays=[...new Set([...(node.successDays||[]),day])].slice(-1000);
+  if(!node.lastAt||String(node.lastAt)<=at){node.lastCorrect=!!correct;node.lastAt=at}
+  w.directionalRecall=all;return direction;
+}
+function applyAcceptedAnswerReview(req){
+  const w=answerReviewProgress(req),l=(state.learners||[]).find(x=>x.id===req.learnerId);if(!w||!l)return;
+  const cfg=answerReviewSkill(req),attemptDay=/^\d{4}-\d{2}-\d{2}$/.test(String(req.attemptDate||''))?req.attemptDate:today(),attemptAt=answerReviewAttemptTime(req);
+  w.repetitions=(w.repetitions||0)+1;w.lastReviewedAt=!w.lastReviewedAt||String(w.lastReviewedAt)<attemptAt?attemptAt:w.lastReviewedAt;w.practiceDays=[...new Set([...(w.practiceDays||[]),attemptDay])];w.modesSeen=[...new Set([...(w.modesSeen||[]),req.mode||req.skill].filter(Boolean))];
+  if(cfg.active){
+    w.successes=(w.successes||0)+1;w.independentSuccesses=(w.independentSuccesses||0)+1;w.activePracticeDays=[...new Set([...(w.activePracticeDays||[]),attemptDay])];w.activeSuccessDays=[...new Set([...(w.activeSuccessDays||[]),attemptDay])];w.recentActiveResults=[...(w.recentActiveResults||[]),true].slice(-8);
+    cfg.credits.forEach((key,i)=>{w.skills[key]=clamp((w.skills[key]||0)+(i===0?1:.55),0,4)});
+    if(req.mode==='spelling')w.spellingSuccessDays=[...new Set([...(w.spellingSuccessDays||[]),attemptDay])];
+    w.lastSuccessAt=!w.lastSuccessAt||String(w.lastSuccessAt)<attemptAt?attemptAt:w.lastSuccessAt;w.lastActiveSuccessAt=!w.lastActiveSuccessAt||String(w.lastActiveSuccessAt)<attemptAt?attemptAt:w.lastActiveSuccessAt;l.xp=(l.xp||0)+3;
+    applyAnswerReviewDirection(w,req,true);refreshMastery(w);updateLeitnerBox(w,true,{assisted:false,active:true,orthographyOk:true});
+    if(req.dailyAttempt&&attemptDay===today()&&req.learnerId===state.activeLearnerId&&req.subject===state.activeSubject)markDailyPlanWordDone(w);
+  }
+}
+function applyRejectedAnswerReview(req){
+  const w=answerReviewProgress(req);if(!w)return;
+  const cfg=answerReviewSkill(req),attemptAt=answerReviewAttemptTime(req),attemptDay=/^\d{4}-\d{2}-\d{2}$/.test(String(req.attemptDate||''))?req.attemptDate:today();
+  w.repetitions=(w.repetitions||0)+1;w.lastReviewedAt=!w.lastReviewedAt||String(w.lastReviewedAt)<attemptAt?attemptAt:w.lastReviewedAt;w.practiceDays=[...new Set([...(w.practiceDays||[]),attemptDay])];w.modesSeen=[...new Set([...(w.modesSeen||[]),req.mode||req.skill].filter(Boolean))];
+  if(cfg.active){
+    w.failures=(w.failures||0)+1;cfg.credits.forEach((key,i)=>{w.skills[key]=clamp((w.skills[key]||0)-(i===0?1:.35),0,4)});w.errorProfile[cfg.error]=(w.errorProfile[cfg.error]||0)+1;w.intervalDays=0;w.dueDate=today();w.recentActiveResults=[...(w.recentActiveResults||[]),false].slice(-8);applyAnswerReviewDirection(w,req,false);refreshMastery(w);updateLeitnerBox(w,false,{assisted:false,active:true,orthographyOk:true});
+  }
+}
+function acceptAnswerReview(id){
+  const req=answerReviewById(id);if(!req||req.status!=='pending')return {ok:false,error:'Prüffall nicht mehr offen.'};
+  const answer=String(req.answer||'').trim(),link=(state.setVocabulary||[]).find(x=>x.id===req.setLinkId),set=(state.sets||[]).find(x=>x.id===req.setId);
+  if(!answer||!link)return {ok:false,error:'Antwort oder Lernset-Zuordnung fehlt.'};
+  const existingPairReview=!!(set&&setNeedsPairReview(set)),key=req.answerSide==='translation'?'acceptedTranslationOverrides':'acceptedTermOverrides',limit=req.answerSide==='translation'?700:300;
+  if(answer.length>limit)return {ok:false,error:'Die Antwort ist für eine automatische Variante zu lang.'};
+  link[key]=[...new Set([...(link[key]||[]),answer])];
+  if(set&&existingPairReview){set.pairReviewRequired=true;set.pairVerifiedAt='';set.pairVerifiedSignature=''}
+  else if(set){set.pairReviewRequired=false;set.pairVerifiedAt=new Date().toISOString();set.pairVerifiedSignature=pairReviewSignatureForSet(set.id)}
+  applyAcceptedAnswerReview(req);req.status='accepted';req.resolution='accepted-variant';req.resolvedAt=new Date().toISOString();answerReviewActivity(req,'answerReviewAccepted',{answerSide:req.answerSide,answer});rebuildWordIndexes();return {ok:true,request:req};
+}
+function rejectAnswerReview(id){
+  const req=answerReviewById(id);if(!req||req.status!=='pending')return {ok:false,error:'Prüffall nicht mehr offen.'};
+  applyRejectedAnswerReview(req);req.status='rejected';req.resolution='system-correct';req.resolvedAt=new Date().toISOString();answerReviewActivity(req,'answerReviewRejected');return {ok:true,request:req};
+}
 function streak(){
   const days=new Set(learner().streakDays); let n=0,d=new Date(); d.setHours(12,0,0,0); for(;;){const k=dateKey(d); if(days.has(k)){n++;d.setDate(d.getDate()-1)}else break} return n;
 }
