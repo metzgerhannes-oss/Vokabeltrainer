@@ -77,7 +77,7 @@
     const p=subjectProgress();
     const growth=campaignGrowthState(state.activeSubject,p.schoolYear);
     const l=learner();
-    const learningDays=new Set(l?.streakDays||[]).size;
+    const learningDays=growth.learningDays;
     const currentStreak=typeof streak==='function'?streak():0;
     const history=typeof testFortressHistory==='function'?testFortressHistory():[];
     const captured=history.filter(f=>f.capturedAt);
