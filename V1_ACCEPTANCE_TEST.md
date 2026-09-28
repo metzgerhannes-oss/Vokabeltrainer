@@ -28,6 +28,8 @@ Zusatz für v0.21.22: Einen normalen Tagesplan mit deutlich mehr als sechs offen
 
 T−1-Zusatz für v0.21.22: Einen Test für **morgen** mit deutlichem Rückstand prüfen. Nach dem kurzen Pflichtkern muss die App eine **Rettungsrunde** anbieten, aber nicht den kompletten Testumfang am Stück. Die Runde enthält höchstens 6 Fokuswörter bzw. 4 bei „Kurze Einheiten“. Bereits testbereite Wörter dürfen nicht erscheinen. Nach einem Fehler muss das Wort in der nächsten Priorität vorne stehen; nach einer korrekten unassistierten Korrektur müssen noch ungeprüfte offene Wörter nachrücken. Bei `target`, `source`, `mixed` und `dictation` muss die Rettungsrunde die reale Testrichtung spiegeln. Diktat muss produktiv geschrieben werden. Rettungsrunden dürfen weder `completedKeys` des Pflichtziels noch eine weitere Battle-Aktion erzeugen.
 
+Festungsansicht-Zusatz für v0.21.22: Vor Abschluss des Tagesziels in „Meine Armee“ auf **„Festung ansehen“** tippen. Es muss eine saubere Vollbild-Vorschau mit Kampagnenbild, Profilbanner und „Test N“-Banner erscheinen. **Nicht** sichtbar sein dürfen die vier Battle-KPI-Karten, Angriffskarten, Ticketanzeige oder der deaktivierte Block „Tagesziel noch offen“. Nach abgeschlossenem Tagesziel muss derselbe Einstieg dagegen die vollständige Schlachtsteuerung anzeigen.
+
 ## Grundregel
 
 Die fachlich korrekte Vokabelabfrage ist die Daseinsberechtigung der App.
