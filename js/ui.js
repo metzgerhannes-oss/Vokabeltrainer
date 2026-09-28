@@ -1042,6 +1042,8 @@ function openTestDatePlanner(){
   const syncMode=()=>{$('#singleWhen').classList.toggle('hidden',mode.value!=='single');$('#weeklyWhen').classList.toggle('hidden',mode.value!=='weekly');updatePreview()};
   const prepareCaptureSet=source=>{
     const l=targetLearner(),when=plannedDate();if(mode.value==='single'&&!date.value){preview.className='notice warn';preview.textContent='Bitte zuerst ein Testdatum wählen.';return null}
+    if(yearDate.value&&when>yearDate.value){preview.className='notice warn';preview.textContent='Der geplante Test liegt nach der Jahresfestung. Bitte deren Termin zuerst anpassen.';return null}
+    const annual=setYearFortressDate(yearDate.value,subject,currentSchoolYear(),l);if(!annual.ok){preview.className='notice warn';preview.textContent=annual.error;return null}
     state.activeLearnerId=l.id;ensureActiveSubject();
     const title='Test '+when,book=bookById(bookEl.value)||currentBook(l.id,subject);
     const set={id:uid('set'),learnerId:l.id,subject,title,schoolYear:currentSchoolYear(),bookId:book?.id||'',bookSection:'',testDate:'',testScopeMode:'set',testSelectedLinkIds:[],testFrom:1,testTo:0,testFormat:format.value,from:'',to:'',captureSource:source,pairReviewRequired:true,pairVerifiedAt:'',pairVerifiedSignature:'',pendingTestPlan:{mode:mode.value,testDate:when,weekday:Number(weekday.value)||0,testFormat:format.value,createdAt:new Date().toISOString()}};
@@ -1056,7 +1058,7 @@ function openTestDatePlanner(){
   };
   $('#saveYearFortressDate').onclick=storeYearFortressDate;
   $('#clearYearFortressDate').onclick=()=>{yearDate.value='';storeYearFortressDate()};
-    $('#planSourceLibrary').onclick=()=>$('#planLibrarySource').scrollIntoView({block:'nearest'});
+  $('#planSourceLibrary').onclick=()=>$('#planLibrarySource').scrollIntoView({block:'nearest'});
   $('#planSourceManual').onclick=()=>{const set=prepareCaptureSet('manual');if(!set)return;closeModal();setTimeout(()=>openWordEditor(null,set.id),60)};
   $('#planSourceOcr').onclick=()=>{const set=prepareCaptureSet('ocr');if(!set)return;closeModal();setTimeout(()=>openScanImport(set.id),60)};
   $('#planSelectAll').onclick=()=>{picker.querySelectorAll('[data-plan-row]').forEach(x=>x.checked=true);updatePreview()};
