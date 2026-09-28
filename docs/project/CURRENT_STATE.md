@@ -6,13 +6,13 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.25**
-- aktueller `main`-Commit: `cba763131b13d778e428f09b7862b5602a205ba5` (Merge von PR #168 / v0.21.24)
+- App-Version: **v0.21.26**
+- aktueller `main`-Commit: `594d3dea61be8f094b6b0bfeee5cc2e663f27ca7` (Merge von PR #170 / v0.21.25)
 - letzter fachlicher Lernrelease: **PR #148 – v0.21.12 – Differenzierte LRS-Unterstützung**
 - letzter produktiver Release: **PR #165 – v0.21.22 – kurzer Tageskern, T−1-Rettungsmodus und getrennte Festungsvorschau**
 - letzter produktiver Release: **PR #167 – v0.21.23 – iPhone-Fix für kollabierte Festungsvorschau**
-- jüngster Merge auf `main`: **PR #168 – v0.21.24 – nahtloser Tages-Übungsraum + expliziter Testabschluss**
-- aktueller Release-Kandidat: **PR #170 – v0.21.25 – kurze Konfetti-Belohnung nach bestätigtem Testabschluss**
+- jüngster verifizierter Release-Merge auf `main`: **PR #170 – v0.21.25 – Konfetti beim Testabschluss**
+- aktueller Release-Kandidat: **v0.21.26 – monotone Jahresentwicklung + datierbare Jahresfestung** (`feat/year-campaign-growth-v02126`)
 - PR-CI letzter produktiver Release: **Vokabeltrainer CI #1036 – success**
 - main-CI letzter produktiver Release: **Vokabeltrainer CI #1037 – success**
 - Produktionsdeploy letzter produktiver Release: **GitHub Pages #530 – success**
