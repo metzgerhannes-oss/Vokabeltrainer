@@ -490,16 +490,10 @@ function updateEnglishBattlePostActionUi(result,{f,stage,button,targetName,boss,
   stage.classList.remove('fortress-visual-intact','fortress-visual-scratched','fortress-visual-damaged','fortress-visual-critical','fortress-visual-captured');
   stage.classList.add('fortress-visual-'+visual.id);
 
-  $('#battleMessage').classList.remove('phaser-phase-hidden');
-  if(secured){
-    $('#battleMessage').className='battle-message victory';
-    $('#battleMessage').innerHTML='<strong>Festung gesichert!</strong><span>Die Stellung bleibt bis zum Test unter Kontrolle.</span>';
-  }else if(won){
-    $('#battleMessage').className='battle-message victory';
-    $('#battleMessage').innerHTML=`<strong>${boss?'Boss besiegt!':'Festung erobert!'}</strong><span>${esc(f.name)} ist gefallen. +20 XP · Jetzt bis zum Test sichern.</span>`;
-  }else{
-    $('#battleMessage').className='battle-message hold';
-    $('#battleMessage').innerHTML=`<strong>Angriff gelungen!</strong><span>${result?.damage||0} Schaden. Noch ${result?.remaining||0} Verteidigung bis zur Eroberung.</span>`;
+  const phaseMessage=$('#battleMessage');
+  if(phaseMessage){
+    phaseMessage.className='battle-message phaser-phase-hidden';
+    phaseMessage.textContent='';
   }
 
   persistOnly();
