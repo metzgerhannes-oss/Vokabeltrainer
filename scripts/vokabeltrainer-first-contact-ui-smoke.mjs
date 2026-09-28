@@ -31,7 +31,7 @@ try{
   assert(before.pending===6&&before.completed===0,'copy practice starts untouched but does not gate learning');
 
   await page.click('#quickLearnHeroBtn');
-  await page.waitForFunction(()=>document.querySelector('#modePill')?.textContent?.startsWith('Adaptiv'));
+  await page.waitForFunction(()=>document.querySelector('#modePill')?.textContent?.startsWith('Übungsraum'));
   assert(await page.locator('#firstContactCopiedBtn').count()===0,'daily learning does not force the copy exercise');
   assert(await page.locator('body.learning-focus').count()===1,'daily learning starts directly');
   await page.evaluate(()=>{session=null;showView('homeView');renderAll()});
