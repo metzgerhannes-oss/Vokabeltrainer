@@ -62,7 +62,7 @@ try{
 
   await page.click('#germanDoneBtn');
   assert((await page.locator('#todayProgressText').textContent())?.includes('Heute geübt'),'Today reflects German practice');
-  await page.click('#menuArmyBtn');
+  await page.click('.nav-btn[data-view="armyView"]');
   await page.waitForSelector('dialog[open]');
   assert((await page.locator('dialog[open]').textContent())?.includes('Wortreich wird aufgebaut'),'German never falls through to English army');
 
