@@ -6,10 +6,12 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.29**
+- App-Version: **v0.21.30**
 - produktiver Stand auf `main`: **v0.21.29 / Merge-Commit `2c5801d0d43bbc7cd10d4092b283ea0ceea76f5f` / PR #188**
 - jüngster produktiver Release: **PR #188 – v0.21.29 – dauerhafte Jahresentwicklung & datierbare Jahresfestung**
 - Produktionsnachweis v0.21.29: **PR-CI #1169 success · main-CI #1170 success · GitHub Pages #549 success inkl. Live-Verifikation**
+- aktueller Release-Kandidat: **v0.21.30 – sichtbare Armee wächst tatsächlich mit dem Jahresstand** (`fix/year-army-visible-growth-v02130`)
+- praktischer Befund: v0.21.29 zeigte gesperrte Einheiten im Heerlager weiterhin abgedunkelt; dadurch wirkte die Formation trotz korrekter Wachstumslogik optisch nahezu vollständig
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
 - fachliche Schutzlinie: Spielprogression, Battle-Choreografie und Jahresfestungsdatum verändern weder Mastery noch Vokabelbewertung oder Testbereitschaft
@@ -46,7 +48,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Kindnavigation Lernen vs. Spiel | PRODUCTION | `PRODUCT_DNA.md`, `VISUAL_DNA.md` |
 | Battle-Viewport / Vollbild | PRODUCTION v0.21.28 | PR #187; standardmäßig scrollbar, optionaler app-eigener Vollbildmodus |
 | Phaser-4-Battle-Renderer Englisch | PRODUCTION v0.21.28; weitere Fächer/Fallbacks offen | D-20260928-004, B-012, PR #185/#187 |
-| Dauerhafte Jahresentwicklung / Jahresfestung | PRODUCTION / LIVE VERIFIED v0.21.29 | D-20260928-005, B-014, PR #188 |
+| Dauerhafte Jahresentwicklung / Jahresfestung | PRODUCTION v0.21.29 / visueller Fix v0.21.30 in Prüfung | D-20260928-005, B-014, PR #188 |
 | Family Sync | PRODUCTION / Beta-Grenze | `SYNC_ARCHITECTURE.md`, `FINAL_AUDIT.md` |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 

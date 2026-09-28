@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 28.09.2026 · Basis: v0.21.29 · Produktionsbasis; Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
+Stand: 28.09.2026 · Basis: v0.21.30 · Produktionsbasis; Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -11,7 +11,7 @@ Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
 
 - [x] Praxisblock 1 – Kind-End-to-End auf realem iPhone: Einstieg, Tageslernen, Fehler/Korrektur, Tagesabschluss, Testabschluss und Schlacht praktisch durchgeführt.
 - [x] Praxisblock 2 – Elternbereich: Test anlegen, bestehenden Test verschieben/bearbeiten, Vokabelumfang ändern und mehrere zukünftige Tests praktisch durchgeführt.
-- [ ] Praxisblock 3 – v0.21.29: dynamische Anfangsarmee, monotones Wachstum und datierbare Jahresfestung praktisch prüfen.
+- [ ] Praxisblock 3 – v0.21.30: dynamische Anfangsarmee nach sichtbarem Wachstumsfix, monotones Wachstum und datierbare Jahresfestung praktisch prüfen.
 - [ ] Praxisblock 4 – Family Sync, zweites Gerät, Backup/Restore und Offline/PWA praktisch prüfen.
 
 Die Detail-Checkboxen darunter bleiben der verbindliche Nachweis für Einzelfälle. Ein abgeschlossener Praxisblock ersetzt keine noch separat offene Detailprüfung außerhalb seines ausdrücklich genannten Umfangs.
@@ -47,7 +47,7 @@ Zusatz für v0.21.24 – Übungsraum: Einen Tages-Übungsraum mit mindestens ein
 Zusatz für v0.21.24 – Testtag: Einen Test auf **heute** setzen. Der primäre Button muss **„Test abschließen“** heißen. Nach Antippen muss eine Bestätigung erscheinen; erst danach wird der Test als abgeschlossen gespeichert. Ohne eingetragene Schulnote muss die Kampagnenstation trotzdem „Test abgeschlossen“ anzeigen, die Note bleibt später nachtragbar. Ist ein weiterer Test geplant, muss er unmittelbar danach als nächstes Ziel erscheinen. Gibt es keinen Folgetest, muss im Elternmodus **„Nächsten Test vorbereiten“** und im Kindermodus die entsprechende Vorbereitungsanzeige erscheinen. Bei einem wöchentlichen Test muss nach Abschluss der nächste Serientermin zur Umfangsvorbereitung erscheinen. Einen gestern fälligen, nicht abgeschlossenen Test ebenfalls prüfen: Er darf nicht still übersprungen werden. Nach der bestätigten Abschlussaktion muss einmal kurz Konfetti erscheinen; bei aktivierter Systemeinstellung für reduzierte Bewegung darf diese Animation entfallen. Das Konfetti darf weder Klicks blockieren noch den Wechsel zum nächsten Test verzögern.
 
 
-Zusatz für v0.21.29 – Jahresentwicklung: Mit wenig erreichtem Jahresfortschritt muss „Meine Armee“ als kleine, einfach ausgestattete Formation erscheinen; die vollständige große Armee darf erst auf der höchsten Entwicklungsstufe sichtbar werden. Danach neuen, noch ungelernten Stoff für einen späteren Test hinzufügen: Der fachliche Prozentwert darf dadurch sinken, **Avatarstufe, Rang und Armee dürfen aber nicht zurückgestuft werden**. Einen weiteren Test hinzufügen und prüfen, dass die Kampagnenkarte dynamisch wächst statt eine feste Gesamtzahl anzunehmen.
+Zusatz für v0.21.30 – sichtbare Anfangsarmee: Der praktische iPhone-Test zeigte in v0.21.29 noch eine optisch fast vollständige Heerlager-Formation, weil gesperrte Einheiten lediglich abgedunkelt dargestellt wurden. In v0.21.30 dürfen im Heerlager nur tatsächlich freigeschaltete Einheiten stehen; gesperrte Einheiten bleiben ausschließlich in den Upgrade-/Detailkarten sichtbar. Die Anzeige „X von 6 Einheiten im Feld“ muss dem realen Stand entsprechen.\n\nZusatz für v0.21.29 – Jahresentwicklung: Mit wenig erreichtem Jahresfortschritt muss „Meine Armee“ als kleine, einfach ausgestattete Formation erscheinen; die vollständige große Armee darf erst auf der höchsten Entwicklungsstufe sichtbar werden. Danach neuen, noch ungelernten Stoff für einen späteren Test hinzufügen: Der fachliche Prozentwert darf dadurch sinken, **Avatarstufe, Rang und Armee dürfen aber nicht zurückgestuft werden**. Einen weiteren Test hinzufügen und prüfen, dass die Kampagnenkarte dynamisch wächst statt eine feste Gesamtzahl anzunehmen.
 
 Zusatz für v0.21.29 – Jahresfestung: Ohne hinterlegten Termin muss die Jahresfestung auf der Kampagnenkarte als Fernziel mit **„Datum noch offen“** erscheinen. Im Elternbereich anschließend ein reales Datum innerhalb des Schuljahres setzen; es muss nach Family Sync im Kindermodus auf der Kampagnenkarte erscheinen. Datum ändern und anschließend wieder entfernen. Bereits erreichte Avatar-/Armeestufen dürfen sich dadurch nicht verändern. Ein Jahresfestungsdatum vor einem bereits geplanten späteren Test muss abgewiesen werden.
 
