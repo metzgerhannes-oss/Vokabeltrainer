@@ -304,7 +304,9 @@ function setYearFortressDate(date='',subject=state.activeSubject,schoolYear=curr
   if(!l)return {ok:false,error:'Kein Lernprofil aktiv.'};
   const value=String(date||'').trim(),bounds=schoolYearDateBounds(schoolYear);
   if(value&&!dateInSchoolYear(value,schoolYear))return {ok:false,error:`Das Datum muss im Schuljahr ${schoolYear} liegen.`};
-  const knownTests=schoolYearSets(subject,schoolYear).map(s=>String(s.testDate||'')).filter(Boolean).sort();
+  const cfg=activeSeries(subject),knownTests=schoolYearSets(subject,schoolYear).map(s=>String(s.testDate||'')).filter(Boolean);
+  if(cfg?.scopeDate&&dateInSchoolYear(cfg.scopeDate,schoolYear))knownTests.push(String(cfg.scopeDate));
+  knownTests.sort();
   const latest=knownTests[knownTests.length-1]||'';
   if(value&&latest&&value<latest)return {ok:false,error:`Die Jahresfestung kann nicht vor dem bereits geplanten Test am ${formatDateShort(latest)} liegen.`};
   l.yearFortresses=l.yearFortresses&&typeof l.yearFortresses==='object'&&!Array.isArray(l.yearFortresses)?l.yearFortresses:{};
@@ -503,7 +505,8 @@ function seriesOccurrenceDate(subject=state.activeSubject){
   if(scoped&&scoped<=today()&&!isTestCompleted(scoped,subject))return scoped;
   let date=nextWeeklyDate(cfg.weekday);
   if(isTestCompleted(date,subject))date=nextWeeklyDate(cfg.weekday,datePlusDays(1));
-  return date;
+  const finalDate=typeof yearFortressState==='function'?yearFortressState(subject,currentSchoolYear()).date:'';
+  return finalDate&&date>finalDate?'':date;
 }
 function seriesScopePending(subject=state.activeSubject){const cfg=activeSeries(subject);if(!cfg)return null;const date=seriesOccurrenceDate(subject);return !date||cfg.scopeDate===date?null:{date,days:daysUntil(date),series:cfg}}
 function normalizedRange(count,from,to){if(!count)return {from:1,to:0};let a=clamp(Math.max(1,Number(from)||1),1,count),b=clamp(Math.max(1,Number(to)||count),1,count);if(a>b)[a,b]=[b,a];return {from:a,to:b}}
