@@ -4384,3 +4384,8 @@ body.battle-immersive #battleView .battle-stage-wrap.phaser-production-layout > 
 @media(max-width:720px){
   .battle-phaser-production::after{right:6px;bottom:5px;font-size:9px;padding:3px 6px}
 }
+
+/* v0.21.27 – Phaser battle: phase narration stays out of the visual stage */
+#battleView .battle-message.phaser-phase-hidden{
+  display:none!important;
+}
