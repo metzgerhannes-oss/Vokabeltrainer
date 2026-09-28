@@ -6,6 +6,7 @@ import { createBattleSceneClass } from './battle-phaser-scene.js?v=0.21.27';
 let activeGame = null;
 let activeMount = null;
 let activeStage = null;
+let activeWrap = null;
 
 function initialsFor(name) {
   const text = String(name || '').trim();
@@ -19,6 +20,7 @@ function destroyProductionBattle() {
     try { activeGame.destroy(true); } catch (_error) {}
   }
   if (activeMount?.isConnected) activeMount.remove();
+  activeWrap?.classList.remove('phaser-production-layout');
   if (activeStage) {
     activeStage.classList.remove('phaser-production-active', 'phaser-production-running', 'phaser-production-complete');
     delete activeStage.dataset.renderer;
@@ -30,6 +32,7 @@ function destroyProductionBattle() {
   activeGame = null;
   activeMount = null;
   activeStage = null;
+  activeWrap = null;
 }
 
 function safeCall(fn, ...args) {
@@ -56,6 +59,9 @@ export function playProductionBattle({
 
   destroyProductionBattle();
 
+  const wrap = stage.closest('.battle-stage-wrap');
+  wrap?.classList.add('phaser-production-layout');
+
   const mount = document.createElement('div');
   mount.className = 'battle-phaser-production';
   mount.setAttribute('aria-hidden', 'true');
@@ -69,6 +75,7 @@ export function playProductionBattle({
 
   activeMount = mount;
   activeStage = stage;
+  activeWrap = wrap;
 
   return new Promise((resolve, reject) => {
     let settled = false;
@@ -83,10 +90,12 @@ export function playProductionBattle({
       safeCall(onError, error);
       try { game?.destroy(true); } catch (_error) {}
       if (mount.isConnected) mount.remove();
+      wrap?.classList.remove('phaser-production-layout');
       if (activeGame === game) {
         activeGame = null;
         activeMount = null;
         activeStage = null;
+        activeWrap = null;
       }
       reject(error);
     };
