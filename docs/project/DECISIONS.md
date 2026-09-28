@@ -251,3 +251,34 @@ Pflicht-Übungsraum angehängt.
 Chats dürfen Ideen, Debugging, Screenshots, Zwischenstände und Entscheidungsfindung enthalten, sind aber keine dauerhafte Quelle für den aktuellen Projektstand. Vor Archivierung eines relevanten Chats werden Ergebnis, kanonische Regel/Decision, PR/Commit/Release, Verifikationsstatus und offene Restpunkte in das Repository überführt.
 
 Projektchats werden nach ihrem Hauptzweck mit `[DECISION]`, `[CONCEPT]`, `[RESEARCH]`, `[DEV]`, `[BUG]`, `[TEST]` oder `[ARCHIVE]` gekennzeichnet. Offene Arbeit erhält eine Backlog-ID; alte Versions- oder CI-Aussagen aus Chats dürfen einen neueren Repository-Stand nicht ersetzen. Für neue Entwicklungsarbeit wird die Baseline zuerst aus `PROJECT_CONTROL.md`, `CURRENT_STATE.md`, der einschlägigen Fach-/Decision-Quelle und dem aktuellen `main` bestimmt.
+
+### D-20260928-004 – Battle-Rendering wechselt auf Phaser 4
+**Status:** ACTIVE  
+**Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P9; [../../VISUAL_DNA.md](../../VISUAL_DNA.md) §§ 4–6
+
+Die Kampfszene wird technisch von DOM-/CSS-Animationen auf einen **isolierten Phaser-4-Renderer**
+umgestellt. Lern-, Mastery-, Test-, Battle-Ticket- und Festungslogik bleiben weiterhin in der
+bestehenden App die fachliche Wahrheit. Phaser erhält ausschließlich einen renderbaren
+Szenenzustand und meldet abgeschlossene visuelle Phasen zurück; die Engine darf keine fachlichen
+Werte selbst berechnen oder verändern.
+
+Ziel ist eine hochwertige 2D/2.5D-Inszenierung mit getrennten Ebenen und Sprites für Hintergrund,
+Armee, Einheiten, Reiter, Banner, Festung, Tor, Geschosse, Staub, Trümmer und Trefferlicht.
+Kamerafahrt, Parallax, Tweening und Partikel werden im Renderer gekapselt. Die bestehende
+Leserichtung bleibt verbindlich: **eigene Armee links → Handlung/Weg in der Mitte → Ziel rechts**.
+
+Für die erste Umsetzung gilt:
+- Phaser 4 wird nur im Spiel-/Battle-Bereich geladen, nicht im Lernmodus.
+- Der erste technische Spike umfasst genau einen überzeugenden Angriffspfad, bevor weitere
+  Angriffsarten übertragen werden.
+- Die bestehende DOM/CSS-Schlacht bleibt bis zur praktischen Abnahme als Fallback erhalten.
+- Mobilperformance und Offline-Fähigkeit bleiben Release-Kriterien; eine CDN-Abhängigkeit ist
+  für den produktiven Stand nicht zulässig.
+- Die grafische Qualität wird über Browser-Render im Zielviewport geprüft, nicht nur über DOM-Tests.
+
+**3D-Abgrenzung:** Echtzeit-3D ist ausdrücklich **nicht** Teil des Battle-Renderers. Für kurze,
+nicht-interaktive Story-/Übergangsszenen darf später ein getrenntes 3D-Modul geprüft werden
+(z. B. Three.js/WebGL mit glTF-Assets). Dieses Modul darf optional bleiben und darf weder Battle-
+noch Lernlogik zu einer 3D-Abhängigkeit machen. Alternativ bleibt für feste Storysequenzen
+vorgerendertes Video zulässig, wenn es Ladezeit und Gerätekompatibilität besser erfüllt.
+
