@@ -10,7 +10,7 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 - produktiver Stand auf `main`: **v0.21.33 / Merge-Commit `cb306ad4571832d6115aab38438093c58d4b5cc4` / PR #194**
 - jüngster produktiver Release: **PR #194 – v0.21.33 – Vokabel überspringen & Review-Härtung**
 - Produktionsnachweis v0.21.33: **PR-CI #1187 success · main-CI #1193 success · GitHub Pages #554 success inkl. Live-Verifikation**
-- aktueller Release-Kandidat: **v0.21.34 – Deutsch Paket B / Fachgrundgerüst auf `feat/deutsch-paket-b-v02133`; Verifikation läuft**
+- aktueller Release-Kandidat: **v0.21.34 – Deutsch Paket B / Fachgrundgerüst auf `feat/deutsch-paket-b-v02134-clean` / PR #201; Verifikation läuft**
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
