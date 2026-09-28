@@ -18,6 +18,7 @@ Die detaillierte praktische v1-Abnahme bleibt in [../../V1_ACCEPTANCE_TEST.md](.
 | Lernfokus | D-0005 | keine störende Spielinszenierung im aktiven Abruf | ja, wenn kritischer Lernweg beeinträchtigt |
 | Kindnavigation | D-0007 | nächster Schritt ohne Erklärung auffindbar; kein Sackgassenpfad | ja |
 | Fachtrennung | D-0006 | Fachwechsel verändert keine fachfremden Daten/Regeln | ja bei Daten-/Bewertungsfehler |
+| Deutsch v1 / Wortreich | D-20260927-009, D-20260928-008 | Deutsch auswählbar; Klasse-1-Kern, Lernwörter/Sätze, Audio und deutsche Bewertung funktionieren; Wortreich-Battle separat; Spiel verändert keine fachlichen Werte | ja – v1 darf ohne diesen Kern nicht freigegeben werden |
 | Family Sync | Datenintegrität | Rechte, Konflikte, Revoke, Backup/Restore, Gerätewechsel | ja bei Datenverlust/Rechtebruch |
 | Accessibility | D-0007 + Grunddesign | Fokus, Dialoge, Touchflächen, Landscape, Screenreader-Semantik | nach Schweregrad; kritischer Pfad ja |
 | Battle/Game | D-0003, D-0005 | keine Rückwirkung auf Mastery; Tagesaktion nicht duplizierbar; Fokusmodus rückkehrbar | ja bei fachlicher Rückwirkung |
