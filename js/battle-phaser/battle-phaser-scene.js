@@ -316,22 +316,22 @@ function createCampProps(scene) {
 function emitDust(scene, x, y, amount = 18) {
   for (let i = 0; i < amount; i += 1) {
     const p = scene.add.circle(
-      x + Phaser.Math.Between(-24, 24),
-      y + Phaser.Math.Between(-8, 14),
-      Phaser.Math.Between(6, 15),
+      x + scene.__Phaser.Math.Between(-24, 24),
+      y + scene.__Phaser.Math.Between(-8, 14),
+      scene.__Phaser.Math.Between(6, 15),
       C.dust,
       0.32 + Math.random() * 0.28
     ).setDepth(40);
     scene.__dynamic.push(p);
-    const tx = p.x + Phaser.Math.Between(-80, 80);
-    const ty = p.y - Phaser.Math.Between(35, 115);
+    const tx = p.x + scene.__Phaser.Math.Between(-80, 80);
+    const ty = p.y - scene.__Phaser.Math.Between(35, 115);
     scene.tweens.add({
       targets: p,
       x: tx,
       y: ty,
       alpha: 0,
       scale: 1.8 + Math.random() * 1.5,
-      duration: Phaser.Math.Between(650, 1150),
+      duration: scene.__Phaser.Math.Between(650, 1150),
       ease: 'Sine.Out',
       onComplete: () => p.destroy()
     });
@@ -341,17 +341,17 @@ function emitDust(scene, x, y, amount = 18) {
 function emitRubble(scene, x, y, amount = 16) {
   for (let i = 0; i < amount; i += 1) {
     const p = scene.add.rectangle(
-      x + Phaser.Math.Between(-16, 16),
-      y + Phaser.Math.Between(-20, 12),
-      Phaser.Math.Between(5, 12),
-      Phaser.Math.Between(4, 10),
+      x + scene.__Phaser.Math.Between(-16, 16),
+      y + scene.__Phaser.Math.Between(-20, 12),
+      scene.__Phaser.Math.Between(5, 12),
+      scene.__Phaser.Math.Between(4, 10),
       i % 3 === 0 ? C.wood : C.stoneDark,
       1
     ).setDepth(45);
     scene.__dynamic.push(p);
-    const vx = Phaser.Math.Between(-120, 120);
-    const vy = Phaser.Math.Between(-150, -55);
-    const duration = Phaser.Math.Between(700, 1100);
+    const vx = scene.__Phaser.Math.Between(-120, 120);
+    const vy = scene.__Phaser.Math.Between(-150, -55);
+    const duration = scene.__Phaser.Math.Between(700, 1100);
     const startX = p.x;
     const startY = p.y;
     const state = { t: 0 };
@@ -413,6 +413,7 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
   return class BattleSpikeScene extends PhaserArg.Scene {
     constructor() {
       super({ key: 'BattleSpike' });
+      this.__Phaser = PhaserArg;
       this.__running = false;
       this.__elapsed = 0;
       this.__dynamic = [];
