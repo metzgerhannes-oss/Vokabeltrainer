@@ -6,11 +6,11 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.32**
+- App-Version: **v0.21.33**
 - produktiver Stand auf `main`: **v0.21.32 / Merge-Commit `cb306ad4571832d6115aab38438093c58d4b5cc4` / PR #194**
 - jüngster produktiver Release: **PR #194 – v0.21.32 – Vokabel überspringen & Review-Härtung**
 - Produktionsnachweis v0.21.32: **PR-CI #1187 success · main-CI #1193 success · GitHub Pages #554 success inkl. Live-Verifikation**
-- aktueller Release-Kandidat: **keiner – v0.21.32 ist produktiv verifiziert**
+- aktueller Release-Kandidat: **v0.21.33 – Deutsch-Fachgrundgerüst / Klasse-1-Grundlagenpfad; noch nicht produktiv verifiziert**
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
@@ -18,6 +18,7 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 - v0.21.31 schützt strittige Bewertungen: Kind meldet → Fehlwirkung wird neutralisiert → Eltern entscheiden → lokale Variante wird freigegeben oder Fehler erst dann bestätigt
 - v0.21.32 erlaubt „Vokabel überspringen“: ausschließlich ans Ende derselben Session, ohne Bewertung oder Lernstandsänderung; offene Prüffälle blockieren zugleich das Tagesziel nicht
 - v0.21.29 trennt den schwankenden fachlichen Prozentwert von der kumulativen Jahresentwicklung; Avatar/Rang/Armee werden durch neuen Stoff nicht zurückgestuft; Jahresfestungsdatum ist optional, gehärtet und synchronisiert
+- Deutsch v0.21.33: eigenes aktives Fach, separate Native-Literacy-Kompetenzen, Klasse-1-Grundlagenrunde und deutsches Audio; Wortreich-Battle bleibt bis zum nächsten Paket bewusst gesperrt
 - praktische v1-Abnahme: weiterhin **OFFEN**
 
 PR #187 und PR #188 sind auf `main` gemergt. v0.21.29 ist durch main-CI #1170 und Pages #549 inklusive Live-Verifikation produktiv bestätigt. Die veralteten Parallel-/Alt-PRs #173 und #186 wurden bewusst ohne Merge geschlossen.
@@ -34,6 +35,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 
 | Bereich | Status | Kanonische Quelle |
 |---|---|---|
+| Deutsch Grundschule / Klasse-1-Grundlagen | RELEASE CANDIDATE v0.21.33 | `docs/project/DEUTSCH_WORTREICH_V1.md`, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`, D-20260928-008, B-001 |
 | Fachliche Abfrage / Bewertung | PRODUCTION / LIVE VERIFIED v0.21.32 | `PRODUCT_DNA.md`, `QUIZ_ENGINE.md`, D-20260928-006/D-20260928-007, B-015/B-016 |
 | Sense-/Bedeutungsmodell | PRODUCTION | `SENSE_MODEL.md` |
 | Lern-/Mastery-Grundsätze | PRODUCTION | `PRODUCT_DNA.md` |
