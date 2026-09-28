@@ -422,8 +422,8 @@ function setBattleImmersive(on){
   document.body.classList.toggle('battle-immersive',!!on);
   const btn=$('#battleFullscreenBtn');
   btn?.setAttribute('aria-pressed',String(!!on));
-  btn?.setAttribute('aria-label',on?'Schlachtansicht verlassen':'Schlachtansicht öffnen');
-  if(btn)btn.textContent=on?'✕ Schlacht verlassen':'⛶ Schlacht';
+  btn?.setAttribute('aria-label',on?'Vollbild verlassen':'Schlacht im Vollbild anzeigen');
+  if(btn)btn.textContent=on?'✕ Vollbild':'⛶ Vollbild';
   $('#battleFocusAttackBtn')?.classList.add('hidden');
 }
 function closeBattleImmersive(){setBattleImmersive(false)}
