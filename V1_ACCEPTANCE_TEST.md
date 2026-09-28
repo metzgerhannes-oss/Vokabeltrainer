@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 28.09.2026 · Basis: v0.21.32 · Produktionsbasis; Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
+Stand: 28.09.2026 · Basis: v0.21.33 · Release-Kandidat;  Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
