@@ -6,14 +6,14 @@ Stand: 28.09.2026, Release-Kandidat direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.22**
-- Produktcode-Baseline vor diesem Release-Kandidaten: `ee63dda29bf2faa7e8d103249d60e589121f1982` (v0.21.21)
+- App-Version: **v0.21.23**
+- Produktcode-Baseline vor diesem Release-Kandidaten: `1608c87010b530f23c530720535b1a7f69d7cea7` (v0.21.22)
 - letzter fachlicher Lernrelease: **PR #148 – v0.21.12 – Differenzierte LRS-Unterstützung**
-- letzter produktiver Fixrelease: **PR #164 – v0.21.21 – Tagesfortschritt bleibt über Updates erhalten**
-- aktueller Release-Kandidat: **PR #165 – v0.21.22 – kurzer Tageskern, T−1-Rettungsmodus und getrennte Festungsvorschau**
-- PR-CI UI-/Planungsfixrelease: **Vokabeltrainer CI #994 – success**
-- main-CI UI-/Planungsfixrelease: **Vokabeltrainer CI #995 – success**
-- Produktionsdeploy UI-/Planungsfixrelease: **GitHub Pages #523 – success**, inklusive Live-Verifikation
+- letzter produktiver Release: **PR #165 – v0.21.22 – kurzer Tageskern, T−1-Rettungsmodus und getrennte Festungsvorschau**
+- aktueller Release-Kandidat: **v0.21.23 – iPhone-Fix für kollabierte Festungsvorschau**
+- PR-CI letzter produktiver Release: **Vokabeltrainer CI #1036 – success**
+- main-CI letzter produktiver Release: **Vokabeltrainer CI #1037 – success**
+- Produktionsdeploy letzter produktiver Release: **GitHub Pages #530 – success**
 - PR-CI Lernrelease: **Vokabeltrainer CI #965 – success**
 - main-CI Lernrelease: **Vokabeltrainer CI #966 – success**
 - Produktionsdeploy Lernrelease: **GitHub Pages #512 – success**, inklusive Live-Verifikation
