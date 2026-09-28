@@ -40,6 +40,35 @@ try{
   await page.setViewportSize({width:375,height:667});
   await page.locator('#parentAreaBtn').click();
   await page.locator('#confirmParentMode').click();
+
+
+  // Regression: profile editor switches must stay compact on iPhone and the
+  // cancel/save action row must be scroll-reachable.
+  await page.evaluate(()=>addProfile());
+  await page.locator('#saveProfile').waitFor({state:'attached'});
+  const profileDialogLayout=await page.evaluate(()=>{
+    const input=document.querySelector('[data-profile-subject]');
+    const row=input?.closest('.switch-row');
+    const copy=row?.querySelector('span');
+    const dialog=document.querySelector('#modal');
+    const ir=input?.getBoundingClientRect();
+    const cr=copy?.getBoundingClientRect();
+    return {
+      inputWidth:ir?.width||0,
+      copyWidth:cr?.width||0,
+      overflowY:dialog?getComputedStyle(dialog).overflowY:'',
+      clientHeight:dialog?.clientHeight||0,
+      scrollHeight:dialog?.scrollHeight||0
+    };
+  });
+  if(profileDialogLayout.inputWidth>40)throw new Error('profile subject checkbox expands across the mobile dialog');
+  if(profileDialogLayout.copyWidth<160)throw new Error('profile subject label is squeezed into an unreadable narrow column');
+  if(!['auto','scroll'].includes(profileDialogLayout.overflowY))throw new Error('profile editor dialog is not vertically scrollable');
+  await page.locator('#saveProfile').scrollIntoViewIfNeeded();
+  const saveBox=await page.locator('#saveProfile').boundingBox();
+  const viewport=page.viewportSize();
+  if(!saveBox||!viewport||saveBox.y<0||saveBox.y+saveBox.height>viewport.height+1)throw new Error('profile editor save action is not reachable on compact iPhone');
+  await page.locator('#modalContent button[value="cancel"]').click();
   await page.locator('#parentManageDisclosure > summary').click();
   await page.locator('#parentSettingsBtn').click();
   await page.locator('#familySyncSetupBtn').click();
