@@ -479,7 +479,8 @@ function scheduleBattleStep(generation,delay,callback){
 }
 
 const BATTLE_SOUND_KEY='vokabeltrainer_battle_sound';
-let battleAudioEnabled=localStorage.getItem(BATTLE_SOUND_KEY)!=='off';
+let battleAudioEnabled=true;
+try{battleAudioEnabled=localStorage.getItem(BATTLE_SOUND_KEY)!=='off'}catch{}
 let battleAudioCtx=null;
 function syncBattleSoundUi(){
   const btn=$('#battleSoundBtn');if(!btn)return;
@@ -530,7 +531,7 @@ function battleAudioCue(beat){
 }
 function toggleBattleSound(){
   battleAudioEnabled=!battleAudioEnabled;
-  localStorage.setItem(BATTLE_SOUND_KEY,battleAudioEnabled?'on':'off');
+  try{localStorage.setItem(BATTLE_SOUND_KEY,battleAudioEnabled?'on':'off')}catch{}
   if(battleAudioEnabled)battleAudioPrime();
   syncBattleSoundUi();
 }
