@@ -3893,9 +3893,10 @@ body.learning-focus #learnView .study-shell{
 #battleFullscreenBtn{display:inline-flex!important;align-items:center;justify-content:center}
 body.battle-view-active .bottom-nav{display:none!important}
 @media(max-width:720px){
-  body.battle-view-active .app-shell{
-    padding-left:max(8px,env(safe-area-inset-left))!important;
-    padding-right:max(8px,env(safe-area-inset-right))!important;
+  body:not(.battle-immersive) #battleView.active{
+    width:calc(100% + 24px);
+    margin-left:-12px;
+    margin-right:-12px;
   }
   body.battle-view-active:not(.battle-immersive) #battleView.active .battle-shell{
     padding-bottom:30px!important;
