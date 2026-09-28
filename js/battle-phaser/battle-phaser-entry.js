@@ -27,6 +27,8 @@ let scene = null;
 let running = false;
 
 function setPhase(phase) {
+  window.__VT_PHASER_BATTLE_PHASES__ = window.__VT_PHASER_BATTLE_PHASES__ || [];
+  window.__VT_PHASER_BATTLE_PHASES__.push(phase);
   stage.dataset.phase = phase;
   const [label, title] = phaseCopy[phase] || phaseCopy.ready;
   phaseLabel.textContent = label;
