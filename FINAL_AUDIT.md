@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 28.09.2026 · App v0.21.27
+Stand: 28.09.2026 · App v0.21.28
 
 ## Ergebnis
+
+- v0.21.28 integriert Phaser 4 in den echten Englisch-Angriff und erweitert die Kampfszene um aktive Burgverteidigung, Pfeil- und Katapult-Gegenfeuer, rein visuelle eigene Verluste, größere Festung/Profilbanner, lokale prozedurale Soundeffekte sowie einen neu geordneten Vollbildmodus. Die normale Battle-Seite bleibt scrollbar; Vollbild wird nur auf Nutzeraktion aktiviert. Fachliche Lern- und Battle-Zustände bleiben Quelle der Wahrheit außerhalb von Phaser.
 
 - v0.21.27 trennt die Identität eines Tests vom Kalenderdatum. Zwei geplante Tests am selben Datum werden nicht mehr automatisch zu einem gemeinsamen Wortumfang zusammengezogen. Ein verschobener, noch offener Test bleibt im Elternbereich unabhängig vom Abstand zum Termin bearbeitbar; vorhandene Lernhistorie und eine bereits gestartete Testfestung werden dem konkreten Test zugeordnet und erhalten.
 
