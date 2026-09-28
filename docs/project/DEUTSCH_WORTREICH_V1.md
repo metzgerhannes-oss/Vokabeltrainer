@@ -221,11 +221,15 @@ Fehlt einer der fachlichen Punkte 1–6 oder greift die Spielwelt in die fachlic
 - Backlog und Release-Gates
 
 ### Paket B – Fachgrundgerüst
+**Status: umgesetzt als Release-Kandidat v0.21.33.**
 - Deutsch in Fachmodell und Navigation
-- Datenmodell/Kompetenzzustände
-- Audio
-- erste Aufgabentypen
-- deutschspezifische Bewertung
+- eigener persistenter Kompetenzzustand für Deutsch statt Fremdsprachen-Mastery
+- Audio über `de-DE`
+- erste Klasse-1-Aufgabentypen: Buchstaben erkennen, Laut–Buchstaben-Zuordnung, erste Wörter hören/lesen und schreiben, einfacher Satz
+- deutschspezifische produktive Schreibbewertung
+- ruhiger Fuchs-Lernpfad mit Holzschwert-Übungsstationen; keine Kampfhandlung im aktiven Abruf
+- Wortreich als eigene Ritter-/Burg-Spielidentität; vollständige Belagerung bleibt Paket E
+- automatisierter iPhone-/WebKit-Smoke als CI-Gate
 
 ### Paket C – Klasse-1-Kern
 - Buchstaben
