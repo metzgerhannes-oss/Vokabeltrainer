@@ -351,6 +351,19 @@ function testFortressHistory(subject=state.activeSubject){
   const l=learner();l.testFortresses=l.testFortresses&&typeof l.testFortresses==='object'?l.testFortresses:{};
   return Object.values(l.testFortresses).filter(f=>f?.subject===subject).sort((a,b)=>String(a.testDate||'').localeCompare(String(b.testDate||'')));
 }
+function retargetTestFortress(learnerRow,subject,oldDate,oldSetIds,newCtx){
+  if(!learnerRow||!oldDate||!newCtx?.date)return null;
+  learnerRow.testFortresses=learnerRow.testFortresses&&typeof learnerRow.testFortresses==='object'&&!Array.isArray(learnerRow.testFortresses)?learnerRow.testFortresses:{};
+  const ids=new Set((oldSetIds||[]).map(String));
+  const entry=Object.entries(learnerRow.testFortresses).find(([,f])=>f&&f.subject===subject&&f.testDate===oldDate&&!f.testCompletedAt&&(!ids.size||(f.setIds||[]).some(id=>ids.has(String(id)))));
+  if(!entry)return null;
+  const [storedKey,fortress]=entry,key=testFortressKey(newCtx,subject);if(!key)return null;
+  const collision=learnerRow.testFortresses[key];if(collision&&collision!==fortress)return collision;
+  if(storedKey!==key)delete learnerRow.testFortresses[storedKey];
+  fortress.key=key;fortress.testDate=newCtx.date;fortress.scopeText=newCtx.scopeText||newCtx.sets?.map(s=>s.title).join(' + ')||'';
+  fortress.setIds=(newCtx.sets||[]).map(s=>s.id);fortress.wordCount=(newCtx.words||[]).length;
+  learnerRow.testFortresses[key]=fortress;return fortress;
+}
 function testSequenceNumber(testDate,subject=state.activeSubject,schoolYear=currentSchoolYear()){
   if(!testDate)return 1;
   const startYear=Number(String(schoolYear||'').split('/')[0]),start=Number.isFinite(startYear)?`${startYear}-08-01`:'0000-01-01',end=Number.isFinite(startYear)?`${startYear+1}-07-31`:'9999-12-31';
@@ -457,11 +470,12 @@ function activeSeries(subject=state.activeSubject){const cfg=learner()?.testSeri
 function testCompletionKey(subject,date){return `${subject}:${date}`}
 function testCompletions(l=learner()){if(!l)return{};if(!l.completedTests||typeof l.completedTests!=='object'||Array.isArray(l.completedTests))l.completedTests={};return l.completedTests}
 function testCompletionForDate(date,subject=state.activeSubject){if(!date)return null;return testCompletions()[testCompletionKey(subject,date)]||null}
-function isTestCompleted(date,subject=state.activeSubject){
-  if(!date)return false;
-  if(testCompletionForDate(date,subject))return true;
-  return (state.grades||[]).some(g=>g.learnerId===state.activeLearnerId&&g.subject===subject&&g.date===date&&parseSchoolGrade(g.grade)!==null);
+function isTestCompletedForLearner(l,date,subject=state.activeSubject){
+  if(!l||!date)return false;
+  if(testCompletions(l)[testCompletionKey(subject,date)])return true;
+  return (state.grades||[]).some(g=>g.learnerId===l.id&&g.subject===subject&&g.date===date&&parseSchoolGrade(g.grade)!==null);
 }
+function isTestCompleted(date,subject=state.activeSubject){return isTestCompletedForLearner(learner(),date,subject)}
 function completedTestsForSubject(subject=state.activeSubject){return Object.values(testCompletions()).filter(x=>x?.subject===subject&&x?.date).sort((a,b)=>String(a.date).localeCompare(String(b.date)))}
 function latestTestCompletion(subject=state.activeSubject){const rows=completedTestsForSubject(subject);return rows[rows.length-1]||null}
 function seriesOccurrenceDate(subject=state.activeSubject){
