@@ -221,11 +221,15 @@ Fehlt einer der fachlichen Punkte 1–6 oder greift die Spielwelt in die fachlic
 - Backlog und Release-Gates
 
 ### Paket B – Fachgrundgerüst
+**Status: umgesetzt in v0.21.33.**
 - Deutsch in Fachmodell und Navigation
 - Datenmodell/Kompetenzzustände
-- Audio
-- erste Aufgabentypen
-- deutschspezifische Bewertung
+- Audio über `de-DE`
+- erste native Aufgabentypen: Hören/Erkennen und Lernwort-Schreiben
+- deutschspezifische Bewertung mit fachlich relevanter Groß-/Kleinschreibung
+- ruhiger Fuchs-Lernpfad mit Holzschwert-Übungsstationen; keine Kampfhandlung im aktiven Abruf
+- Wortreich-Shell im Spielbereich: Ritterheer, Burg- und Belagerungsbegriffe
+- automatisierter Paket-B-Smoke-Test als CI-Gate
 
 ### Paket C – Klasse-1-Kern
 - Buchstaben
