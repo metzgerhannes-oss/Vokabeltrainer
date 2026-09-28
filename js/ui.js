@@ -928,6 +928,7 @@ function activatePendingTestPlan(set){
 }
 function openSetPairAudit(setId){
   const s=state.sets.find(x=>x.id===setId);if(!s)return;
+  const wordLabel=subjectHasCapability(s.subject,'nativeLiteracy')?'Lernwort':'Vokabel';
   const words=setWords(setId),required=setNeedsPairReview(s);
   const rows=words.map((w,i)=>`<tr><td>${i+1}</td><td><strong>${esc(w.term)}</strong> <button type="button" class="ghost" data-speak="${esc(w.term)}" aria-label="${wordLabel} anhören">🔊</button></td><td>${esc(w.translation)}</td><td><small>${esc(termTargets(w).join(' · '))}</small></td><td><small>${esc(translationTargets(w).join(' · '))}</small></td></tr>`).join('');
   const pendingTest=!!s.pendingTestPlan,pendingDate=s.pendingTestPlan?.testDate||'';
