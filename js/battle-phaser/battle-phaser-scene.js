@@ -235,7 +235,7 @@ function createRam(scene, x, y) {
   return c;
 }
 
-function createFortress(scene, x, y) {
+function createFortress(scene, x, y, profileInitials = 'P') {
   const root = scene.add.container(x, y).setDepth(2);
 
   const back = g(scene);
@@ -285,8 +285,16 @@ function createFortress(scene, x, y) {
   enemyBanner.setScale(0.78).setDepth(4);
   enemyBanner.__cloth.fillStyle(C.goldLight, 1).fillCircle(26, -34, 6);
 
-  const ownBanner = createBanner(scene, 0, -245, C.blue, true);
+  const ownBanner = createBanner(scene, 0, -245, C.blue, false);
+  const profileMark = scene.add.text(27, -34, String(profileInitials || 'P').slice(0, 2).toUpperCase(), {
+    fontFamily: 'Arial, sans-serif',
+    fontSize: '15px',
+    fontStyle: 'bold',
+    color: '#fff1c4'
+  }).setOrigin(0.5);
+  ownBanner.add(profileMark);
   ownBanner.setScale(0.82).setAlpha(0).setY(ownBanner.y + 38).setDepth(5);
+  ownBanner.__profileMark = profileMark;
 
   const cracks = g(scene).setAlpha(0);
   cracks.lineStyle(4, 0x423a34, 0.8);
@@ -507,6 +515,36 @@ function calmFires(scene, duration = 950) {
   }
 }
 
+function marchUnitsIntoFortress(scene, units, scale = 1) {
+  const ordered = [...units].sort((a, b) => (b.x || 0) - (a.x || 0));
+  ordered.forEach((u, i) => {
+    const delay = i * 115 * scale;
+    const laneOffset = (i % 3 - 1) * 10;
+    scene.tweens.add({
+      targets: u,
+      x: 1155 - (i % 2) * 12,
+      y: 548 + laneOffset,
+      duration: 720 * scale,
+      delay,
+      ease: 'Sine.InOut',
+      onComplete: () => {
+        u.setDepth(1);
+        scene.tweens.add({
+          targets: u,
+          x: 1225 + (i % 2) * 8,
+          y: 512 + (i % 3) * 4,
+          alpha: 0,
+          scaleX: u.scaleX * 0.68,
+          scaleY: u.scaleY * 0.68,
+          duration: 430 * scale,
+          ease: 'Cubic.In'
+        });
+      }
+    });
+  });
+  return 720 + 430 + Math.max(0, ordered.length - 1) * 115;
+}
+
 function createArrow(scene, x, y) {
   const c = scene.add.container(x, y).setDepth(35).setVisible(false);
   const a = g(scene);
@@ -589,7 +627,7 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       this.__cavalry.push(cav1, cav2);
 
       this.__ram = createRam(this, 235, 622);
-      this.__fortress = createFortress(this, 1225, 535);
+      this.__fortress = createFortress(this, 1225, 535, hooks.profileInitials || 'P');
 
       const mist = g(this).setDepth(1);
       mist.fillStyle(0xe8e0c8, 0.08).fillRect(680, 420, 720, 180);
@@ -607,7 +645,7 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       this.__initial = {
         cameraX: this.cameras.main.scrollX,
         ram: { x: this.__ram.x, y: this.__ram.y, rotation: this.__ram.rotation },
-        units: this.__units.map(u => ({ x: u.x, y: u.y, alpha: u.alpha, rotation: u.rotation, scaleX: u.scaleX, scaleY: u.scaleY })),
+        units: this.__units.map(u => ({ x: u.x, y: u.y, alpha: u.alpha, rotation: u.rotation, scaleX: u.scaleX, scaleY: u.scaleY, depth: u.depth })),
         gate: { x: this.__fortress.__gate.x, y: this.__fortress.__gate.y, rotation: this.__fortress.__gate.rotation, alpha: this.__fortress.__gate.alpha },
         cracksAlpha: this.__fortress.__cracks.alpha,
         damage1Alpha: this.__fortress.__damage1.alpha,
@@ -636,7 +674,7 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       this.__ram.setPosition(this.__initial.ram.x, this.__initial.ram.y).setRotation(this.__initial.ram.rotation).setAlpha(1);
       this.__units.forEach((u, i) => {
         const p = this.__initial.units[i];
-        u.setPosition(p.x, p.y).setAlpha(p.alpha).setRotation(p.rotation).setScale(p.scaleX, p.scaleY);
+        u.setPosition(p.x, p.y).setAlpha(p.alpha).setRotation(p.rotation).setScale(p.scaleX, p.scaleY).setDepth(p.depth);
         u.__baseY = p.y;
       });
       const gate = this.__fortress.__gate;
@@ -653,9 +691,12 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       this.__setPhase('ready');
     }
 
-    playSequence() {
+    playSequence(mode = 'ram', captureOutcome = true) {
+      const attackMode = ['charge', 'volley', 'ram', 'cavalry', 'special'].includes(mode) ? mode : 'ram';
+      if (attackMode !== 'ram') return this.playVariantSequence(attackMode, captureOutcome);
       if (this.__running) return false;
       this.resetBattle();
+      this.__captureOutcome = captureOutcome !== false;
       this.__running = true;
       this.__elapsed = 0;
       const scale = this.__reduced ? 0.22 : 1;
@@ -873,63 +914,364 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
 
       at(10450, () => {
         this.__setPhase('result');
-        beat('takeover');
-        hooks.onStatus?.('Übernahme: Das gegnerische Banner fällt, die eigene Fahne wird gesetzt.');
 
-        this.tweens.add({
-          targets: this.__fortress.__enemyBanner,
-          y: this.__fortress.__enemyBanner.y + 62,
-          alpha: 0,
-          rotation: -0.16,
-          duration: 780 * scale,
-          ease: 'Sine.In'
-        });
-        this.tweens.add({
-          targets: this.__fortress.__ownBanner,
-          y: this.__fortress.__ownBanner.y - 38,
-          alpha: 1,
-          duration: 960 * scale,
-          ease: 'Back.Out'
-        });
+        if (this.__captureOutcome) {
+          beat('breach-entry');
+          hooks.onStatus?.('Die Festung ist offen. Die Einheiten ziehen nacheinander durch das Tor.');
+
+          this.tweens.add({
+            targets: this.__fortress.__enemyBanner,
+            y: this.__fortress.__enemyBanner.y + 62,
+            alpha: 0,
+            rotation: -0.16,
+            duration: 780 * scale,
+            ease: 'Sine.In'
+          });
+          marchUnitsIntoFortress(this, this.__units, scale);
+        } else {
+          beat('hold');
+          hooks.onStatus?.('Treffer bestätigt: Die Festung bleibt beschädigt, ist aber noch nicht erobert.');
+        }
+
         this.tweens.add({
           targets: this.cameras.main,
           scrollX: this.__reduced ? 105 : 185,
           duration: 1050 * scale,
           ease: 'Sine.InOut'
         });
-
-        const takeoverUnits = this.__units.slice(0, 6);
-        takeoverUnits.forEach((u, i) => {
-          this.tweens.add({
-            targets: u,
-            x: Math.min(1050 + (i % 2) * 25, u.x + 190),
-            y: u.y - (i % 2 ? 5 : 9),
-            duration: (980 + i * 80) * scale,
-            delay: i * 80 * scale,
-            ease: 'Sine.InOut'
-          });
-        });
-
         calmFires(this, 1100 * scale);
       });
 
-      at(11700, () => {
-        beat('secured');
-        hooks.onStatus?.('Die Festung ist übernommen. Rauch und Feuer beruhigen sich.');
-        this.__units.slice(0, 6).forEach((u, i) => {
+      at(13500, () => {
+        if (this.__captureOutcome) {
+          beat('profile-banner');
+          hooks.onStatus?.('Alle Einheiten sind in der Festung. Jetzt wird der Profilbanner gehisst.');
+          this.tweens.add({
+            targets: this.__fortress.__ownBanner,
+            y: this.__fortress.__ownBanner.y - 38,
+            alpha: 1,
+            duration: 1050 * scale,
+            ease: 'Back.Out'
+          });
+        } else {
+          beat('settled');
+          hooks.onStatus?.('Die Angriffswelle endet. Die sichtbaren Schäden bleiben zurück.');
+        }
+      });
+
+      at(14800, () => {
+        if (this.__captureOutcome) {
+          beat('secured');
+          hooks.onStatus?.('Die Festung ist übernommen. Der Profilbanner steht über der eroberten Stellung.');
+        }
+      });
+
+      at(15600, () => {
+        this.__running = false;
+        hooks.onComplete?.();
+      });
+
+      return true;
+    }
+
+    playVariantSequence(mode = 'charge', captureOutcome = true) {
+      if (this.__running) return false;
+      this.resetBattle();
+      this.__running = true;
+      this.__captureOutcome = captureOutcome !== false;
+      this.__elapsed = 0;
+
+      const scale = this.__reduced ? 0.22 : 1;
+      const at = (ms, fn) => this.time.delayedCall(Math.max(40, ms * scale), fn);
+      const beat = id => hooks.onBeat?.(id);
+      const infantry = this.__units.filter(u => !u.__cavalry);
+      const cavalry = this.__cavalry;
+      const is = id => mode === id;
+
+      const labels = {
+        charge: {
+          rally: 'Die Infanterie schließt die Reihen.',
+          advance: 'Schilde vor – die Front rückt geschlossen vor.',
+          attack: 'Die Sturmreihe beschleunigt zum Tor.',
+          impact: 'Die geschlossene Formation trifft auf die Verteidigung.'
+        },
+        volley: {
+          rally: 'Die Bogenschützen beziehen ihre Positionen.',
+          advance: 'Die Front sichert den Raum für die Fernkämpfer.',
+          attack: 'Mehrere Pfeilwellen steigen nacheinander über das Feld.',
+          impact: 'Die Salven treffen Zinnen, Tor und Verteidigungszone.'
+        },
+        cavalry: {
+          rally: 'Die Reiter sammeln sich an der Flanke.',
+          advance: 'Die Front bindet die Verteidigung, während die Reiter ausscheren.',
+          attack: 'Die Kavallerie zieht schnell an der Flanke vorbei.',
+          impact: 'Die Reiter erreichen die offene Torzone.'
+        },
+        special: {
+          rally: 'Elite, Reiter, Bogenschützen und Rammbock werden gemeinsam vorbereitet.',
+          advance: 'Alle Einheitenrollen setzen sich gestaffelt in Bewegung.',
+          attack: 'Die Elite verbindet Salve, Flanke und Belagerungsstoß.',
+          impact: 'Der koordinierte Angriff trifft die geschwächte Verteidigung.'
+        }
+      };
+      const copy = labels[mode] || labels.charge;
+
+      this.__ram.setAlpha(is('special') ? 1 : 0.08);
+      if (is('volley')) cavalry.forEach(u => u.setAlpha(0.48));
+      if (is('cavalry')) infantry.forEach(u => u.setAlpha(0.82));
+
+      this.__setPhase('rally');
+      beat('rally');
+      hooks.onStatus?.(copy.rally);
+
+      at(950, () => {
+        this.__setPhase('advance');
+        beat('advance');
+        hooks.onStatus?.(copy.advance);
+
+        const cameraTarget = is('cavalry') ? 180 : is('volley') ? 120 : 150;
+        this.tweens.add({
+          targets: this.cameras.main,
+          scrollX: this.__reduced ? Math.round(cameraTarget * 0.5) : cameraTarget,
+          duration: 2800 * scale,
+          ease: 'Sine.InOut'
+        });
+
+        infantry.forEach((u, i) => {
+          const dist = is('volley') ? 220 + (i % 3) * 12 : is('cavalry') ? 260 + (i % 3) * 10 : 455 + (i % 3) * 22;
           this.tweens.add({
             targets: u,
-            y: u.y - (i % 2 ? 4 : 7),
-            duration: 260 * scale,
-            yoyo: true,
-            repeat: this.__reduced ? 0 : 1,
-            delay: i * 50 * scale,
+            x: u.x + dist,
+            duration: (is('charge') ? 2550 : 3000 + (i % 4) * 120) * scale,
+            delay: (i % 7) * (is('charge') ? 70 : 105) * scale,
+            ease: is('charge') ? 'Cubic.InOut' : 'Sine.InOut',
+            onUpdate: () => { u.__baseY = u.y; }
+          });
+        });
+
+        cavalry.forEach((u, i) => {
+          const dist = is('cavalry') ? 760 + i * 55 : is('special') ? 610 + i * 35 : 360 + i * 20;
+          this.tweens.add({
+            targets: u,
+            x: u.x + dist,
+            y: u.y - (is('cavalry') ? 40 + i * 16 : 10),
+            duration: (is('cavalry') ? 2150 : 2600) * scale,
+            delay: i * 160 * scale,
+            ease: 'Cubic.InOut'
+          });
+        });
+
+        if (is('special')) {
+          this.tweens.add({
+            targets: this.__ram,
+            x: 760,
+            duration: 3900 * scale,
             ease: 'Sine.InOut'
           });
+        }
+
+        if (!this.__reduced) {
+          at(1650, () => emitDust(this, is('cavalry') ? 470 : 500, 635, is('cavalry') ? 18 : 10));
+          at(2700, () => emitDust(this, is('cavalry') ? 760 : 690, 615, is('cavalry') ? 20 : 12));
+        }
+      });
+
+      at(is('cavalry') ? 3300 : 3800, () => {
+        this.__setPhase('barrage');
+        beat(is('volley') ? 'volley-1' : is('cavalry') ? 'flank-1' : is('special') ? 'elite-wave-1' : 'charge-1');
+        hooks.onStatus?.(copy.attack);
+
+        if (is('volley') || is('special')) {
+          const count = is('special') ? 16 : 22;
+          for (let i = 0; i < count; i += 1) {
+            const arrow = createArrow(this, 520, 500);
+            this.__dynamic.push(arrow);
+            animateArrow(
+              this,
+              arrow,
+              { x: 500 + (i % 5) * 20, y: 478 + (i % 4) * 13 },
+              { x: 1085 + (i % 6) * 30, y: 365 + (i % 5) * 28 },
+              i * (is('volley') ? 62 : 72) * scale,
+              (800 + (i % 4) * 85) * scale
+            );
+          }
+        }
+
+        if (is('charge')) {
+          infantry.slice(0, 10).forEach((u, i) => {
+            this.tweens.add({
+              targets: u,
+              x: u.x + 135 + (i % 3) * 18,
+              duration: (620 + (i % 4) * 70) * scale,
+              delay: i * 38 * scale,
+              ease: 'Cubic.In'
+            });
+          });
+        }
+
+        if (is('cavalry') && !this.__reduced) {
+          emitDust(this, 930, 600, 26);
+        }
+      });
+
+      if (is('volley')) {
+        at(5000, () => {
+          beat('volley-2');
+          hooks.onStatus?.('Die zweite Salve folgt versetzt und hält die Verteidigung unter Druck.');
+          for (let i = 0; i < 18; i += 1) {
+            const arrow = createArrow(this, 610, 490);
+            this.__dynamic.push(arrow);
+            animateArrow(
+              this,
+              arrow,
+              { x: 600 + (i % 4) * 18, y: 474 + (i % 3) * 12 },
+              { x: 1100 + (i % 5) * 27, y: 385 + (i % 4) * 25 },
+              i * 58 * scale,
+              (700 + (i % 3) * 80) * scale
+            );
+          }
+        });
+      }
+
+      if (is('special')) {
+        at(5100, () => {
+          beat('ram-charge');
+          hooks.onStatus?.('Der Rammbock nutzt die durch Salve und Flanke entstandene Lücke.');
+          this.tweens.add({
+            targets: this.__ram,
+            x: 1035,
+            duration: 820 * scale,
+            ease: 'Cubic.In'
+          });
+        });
+      }
+
+      at(is('volley') ? 6450 : is('special') ? 6000 : is('cavalry') ? 5200 : 5300, () => {
+        this.__setPhase('impact');
+        beat('damage-1');
+        hooks.onStatus?.(copy.impact);
+
+        this.__fortress.__cracks.setAlpha(1);
+        this.__fortress.__damage1.setAlpha(1);
+        this.__flash.setPosition(1122, 505).setAlpha(is('volley') ? 0.66 : 0.88).setScale(0.28);
+        this.tweens.add({
+          targets: this.__flash,
+          alpha: 0,
+          scale: is('special') ? 7.2 : 5.5,
+          duration: 560 * scale,
+          ease: 'Quad.Out'
+        });
+
+        if (is('volley')) {
+          this.__fortress.__scorch.setAlpha(0.46);
+          const fires = igniteFortress(this);
+          fires.forEach(fire => fire.setScale(fire.scaleX * 0.72, fire.scaleY * 0.72).setAlpha(0.72));
+          beat('fire');
+        }
+
+        if (is('special')) {
+          this.__fortress.__scorch.setAlpha(0.72);
+          this.tweens.add({
+            targets: this.__fortress.__gate,
+            x: 8,
+            rotation: 0.08,
+            alpha: 0.88,
+            duration: 145 * scale,
+            yoyo: true,
+            repeat: 2,
+            ease: 'Sine.InOut'
+          });
+        }
+
+        if (!this.__reduced) {
+          this.cameras.main.shake(is('special') ? 260 : 180, is('special') ? 0.006 : 0.004);
+          emitRubble(this, 1120, 520, is('special') ? 18 : 10);
+          emitDust(this, 1120, 548, is('cavalry') ? 18 : 15);
+        }
+      });
+
+      if (is('special')) {
+        at(6900, () => {
+          beat('damage-2');
+          hooks.onStatus?.('Der koordinierte zweite Impuls öffnet die Torzone sichtbar.');
+          this.__fortress.__breach.setAlpha(1);
+          this.__fortress.__rubblePile.setAlpha(1);
+          this.__fortress.__scorch.setAlpha(0.84);
+          this.tweens.add({
+            targets: this.__fortress.__gate,
+            y: 22,
+            rotation: 0.24,
+            alpha: 0.35,
+            duration: 580 * scale,
+            ease: 'Back.In'
+          });
+          if (!this.__reduced) {
+            emitRubble(this, 1120, 515, 23);
+            emitDust(this, 1120, 548, 24);
+          }
+          igniteFortress(this);
+          beat('fire');
+        });
+      }
+
+      const resultAt = is('volley') ? 7900 : is('special') ? 8200 : is('cavalry') ? 6800 : 6900;
+      at(resultAt, () => {
+        this.__setPhase('result');
+
+        if (this.__captureOutcome) {
+          beat('breach-entry');
+          hooks.onStatus?.('Die Verteidigung gibt nach. Alle Einheiten ziehen durch das Tor.');
+          this.__fortress.__breach.setAlpha(1);
+          this.__fortress.__rubblePile.setAlpha(1);
+
+          this.tweens.add({
+            targets: this.__fortress.__enemyBanner,
+            y: this.__fortress.__enemyBanner.y + 58,
+            alpha: 0,
+            rotation: -0.14,
+            duration: 700 * scale,
+            ease: 'Sine.In'
+          });
+          marchUnitsIntoFortress(this, this.__units, scale);
+        } else {
+          beat('hold');
+          hooks.onStatus?.('Der Angriff endet mit sichtbaren Schäden. Die Festung bleibt unter gegnerischer Kontrolle.');
+        }
+
+        calmFires(this, 900 * scale);
+        this.tweens.add({
+          targets: this.cameras.main,
+          scrollX: this.__reduced ? 100 : 180,
+          duration: 900 * scale,
+          ease: 'Sine.InOut'
         });
       });
 
-      at(12600, () => {
+      at(resultAt + 3100, () => {
+        if (this.__captureOutcome) {
+          beat('profile-banner');
+          hooks.onStatus?.('Die letzten Einheiten verschwinden im Tor. Der Profilbanner wird gehisst.');
+          this.tweens.add({
+            targets: this.__fortress.__ownBanner,
+            y: this.__fortress.__ownBanner.y - 38,
+            alpha: 1,
+            duration: 900 * scale,
+            ease: 'Back.Out'
+          });
+        } else {
+          beat('settled');
+          hooks.onStatus?.('Die Truppen lösen sich vom Ziel. Die Beschädigung bleibt sichtbar.');
+        }
+      });
+
+      at(resultAt + 4200, () => {
+        if (this.__captureOutcome) {
+          beat('secured');
+          hooks.onStatus?.('Die Stellung ist übernommen. Der Profilbanner bleibt sichtbar.');
+        }
+      });
+
+      at(resultAt + 4900, () => {
         this.__running = false;
         hooks.onComplete?.();
       });

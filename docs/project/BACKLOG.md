@@ -177,6 +177,19 @@ Produktionsnachweis der isolierten Vorschau:
 - GitHub Pages #540 erfolgreich
 - B-012 bleibt **IN_IMPLEMENTATION**, weil die Phaser-Szene noch nicht die produktive Battle-Darstellung ersetzt und die visuelle praktische Abnahme weiterhin erforderlich ist.
 
+**Iteration 3 – Angriffstypen im Phaser-Renderer:**
+- alle bestehenden produktiven Angriffsarten erhalten eine eigene sichtbare Choreografie: Sturmangriff, Pfeilhagel, Rammbock, Reiterangriff und Eliteangriff
+- die Wahl verändert nur die Darstellung; fachlicher Schaden und Taktikbonus bleiben weiterhin außerhalb von Phaser
+- Angriffstyp kann im isolierten Spike direkt gewählt und über Query-Parameter reproduzierbar gestartet werden
+- Rammbock bleibt die schwere Belagerungsreferenz aus Iteration 2
+- Sturmangriff priorisiert Infanterie und Formation
+- Pfeilhagel priorisiert mehrere gestaffelte Fernkampfwellen
+- Reiterangriff priorisiert Flankenbewegung und Geschwindigkeit
+- Eliteangriff kombiniert mehrere bereits freigeschaltete Einheitenrollen, ohne zusätzliche fachliche Wirkung zu erfinden
+- Renderer erhält zusätzlich einen Outcome-Zustand: normaler Treffer vs. tatsächliche Eroberung; Bannerwechsel/Übernahme darf nur beim Eroberungs-Outcome erscheinen
+- Browser-Smoke prüft alle fünf Angriffstypen sowie die Trennung Treffer/Eroberung
+- bei Eroberung ziehen erst alle sichtbaren Einheiten durch das aufgebrochene Tor und verschwinden in der Festung; erst danach wird der Profilbanner gehisst
+
 ## B-013 – Kurze 3D-Storyszenen prüfen
 **Status:** APPROVED_BACKLOG  
 **Priorität:** nach stabilem Phaser-Battle  
