@@ -6,7 +6,7 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.26**
+- App-Version: **v0.21.27**
 - aktueller `main`-Commit: `dcce2da8f7cacddf540e86c3591116934a3706e9` (Merge von PR #176 – Phaser-Battle Iteration 2)
 - letzter fachlicher Lernrelease: **PR #148 – v0.21.12 – Differenzierte LRS-Unterstützung**
 - letzter produktiver Release: **PR #165 – v0.21.22 – kurzer Tageskern, T−1-Rettungsmodus und getrennte Festungsvorschau**
@@ -25,7 +25,9 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 - main-CI Bibliothek: **Vokabeltrainer CI #962 – success**
 - Produktionsdeploy Bibliothek: **GitHub Pages #510 – success**, inklusive Live-Verifikation
 
-PR #176 ist auf `main` gemergt. Main-CI #1102 und GitHub Pages #540 sind erfolgreich. Die Phaser-Szene ist damit als isolierte Vorschau produktiv erreichbar; die eigentliche Battle-Logik der App verwendet weiterhin den bisherigen Renderer, bis B-012 praktisch abgenommen und integriert wird.
+PR #176 ist auf `main` gemergt. Main-CI #1102 und GitHub Pages #540 sind erfolgreich. Die Phaser-Szene ist als isolierte Vorschau produktiv erreichbar.
+
+Release-Kandidat **v0.21.27** integriert Phaser 4 in den echten Englisch-Tagesangriff. Die App bleibt alleinige Quelle für Ticket, Schaden, Taktikbonus, Festungszustand, Eroberung und XP; Phaser rendert nur die bereits feststehende Choreografie und erhält `hit|capture` als Ergebniszustand. Latein, Französisch und Sicherung bleiben zunächst beim bisherigen Renderer.
 
 Dieser Abschnitt ist ein Snapshot. Für Statusfragen muss der aktuelle GitHub-Stand erneut live geprüft werden; die hier genannte SHA darf nicht als dauerhaft „neuester Stand“ interpretiert werden.
 
@@ -54,7 +56,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Schutz vor System-Schreibvorschlägen | PRODUCTION | README v0.21.3 + Code/Tests |
 | Kindnavigation Lernen vs. Spiel | PRODUCTION | `PRODUCT_DNA.md`, `VISUAL_DNA.md` |
 | iPhone Battle-Fokusmodus | VERIFIED / Release-Kandidat v0.21.22 | PR #165, `V1_ACCEPTANCE_TEST.md` |
-| Phaser-4-Battle-Spike | PRODUCTION als isolierte Demo / Integration offen | D-20260928-004, B-012, PR #175/#176 |
+| Phaser-4-Battle-Renderer | IN_IMPLEMENTATION / Release-Kandidat v0.21.27 | D-20260928-004, B-012, PR #175/#176 + Produktionsintegration |
 | Family Sync | PRODUCTION / Beta-Grenze | `SYNC_ARCHITECTURE.md`, `FINAL_AUDIT.md` |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 
