@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 28.09.2026 · App v0.21.25
+Stand: 28.09.2026 · App v0.21.26
 
 ## Ergebnis
+
+- v0.21.26 liefert die Bearbeitung offener Tests zuverlässig als neuen Shell-/PWA-Stand aus. Im Elternbereich kann ein noch nicht abgeschlossener Test bis einschließlich Testtag in Termin und Umfang geändert werden; bestehende Lernhistorie und laufender Festungsfortschritt bleiben erhalten. Der Versionssprung aktualisiert Asset-URLs und Service-Worker-Shell-Cache, damit installierte iOS-/PWA-Geräte nicht auf v0.21.25 hängen bleiben.
 
 - v0.21.25 ergänzt am echten Testabschluss eine kurze Konfetti-Belohnung. Sie wird ausschließlich nach der bestätigten, erfolgreichen Testabschlussaktion ausgelöst, bleibt rein dekorativ, beeinflusst keine fachlichen Werte und respektiert `prefers-reduced-motion`.
 
