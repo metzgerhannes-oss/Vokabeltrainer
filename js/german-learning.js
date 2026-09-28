@@ -20,7 +20,7 @@
     return l.germanLiteracy;
   }
   function progressSnapshot(){
-    const p=progress(),skills=GERMAN_LITERACY_SKILLS.map(key=>p.skills[key]),started=skills.filter(x=>x.attempts>0).length,secure=skills.filter(x=>x.correct>=2&&x.successDays.length>=1).length;
+    const p=progress(),skills=GERMAN_LITERACY_SKILLS.map(key=>p.skills[key]),started=skills.filter(x=>x.attempts>0).length,secure=skills.filter(x=>x.correct>=2&&x.successDays.length>=2).length;
     return {sessions:p.sessions,practiceDays:p.practiceDays.length,practicedToday:p.practiceDays.includes(today()),skillsStarted:started,skillsSecure:secure,totalSkills:GERMAN_LITERACY_SKILLS.length,lastPracticedAt:p.lastPracticedAt};
   }
   function speak(text){
