@@ -3,6 +3,28 @@ import { createBattleHarness } from './helpers/vokabeltrainer-battle-harness.mjs
 const {browser,page,assert,reset,openBattle,waitForBattleResult,errors,diagnose}=await createBattleHarness();
 
 try{
+  await reset({revealed:true,ticket:false});
+  await openBattle();
+  await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
+  const previewState=await page.evaluate(()=>({
+    preview:document.body.classList.contains('battle-preview'),
+    immersive:document.body.classList.contains('battle-immersive'),
+    nav:getComputedStyle(document.querySelector('.bottom-nav')).display,
+    ticket:getComputedStyle(document.querySelector('#battleTicketPill')).display,
+    readout:getComputedStyle(document.querySelector('#battleView .battle-readout')).display,
+    tactics:getComputedStyle(document.querySelector('#battleView .battle-scene-tactics')).display,
+    dock:getComputedStyle(document.querySelector('#battleView .battle-action-dock')).display,
+    stageVisible:getComputedStyle(document.querySelector('#battleStage')).display!=='none',
+    ownBanner:document.querySelector('#battleStage .battle-scene-banner-own')?.textContent?.trim()||'',
+    targetBanner:document.querySelector('#battleStage .battle-scene-banner-target')?.textContent?.trim()||''
+  }));
+  assert(previewState.preview&&previewState.immersive,'locked fortress opens as a dedicated full-screen preview');
+  assert(previewState.nav==='none','fortress preview keeps the app navigation out of the scene');
+  assert(previewState.ticket==='none'&&previewState.readout==='none'&&previewState.tactics==='none'&&previewState.dock==='none','fortress preview hides battle-only HUD, tactics and disabled action controls');
+  assert(previewState.stageVisible&&previewState.ownBanner==='Mein Profil'&&previewState.targetBanner==='Test 1','fortress preview keeps the approved campaign artwork and both identity banners');
+  await page.evaluate(()=>returnFromBattle());
+  assert(await page.locator('body.battle-preview').count()===0,'leaving fortress preview clears preview mode');
+
   await reset({revealed:true,ticket:true});
   await openBattle();
   await page.setViewportSize({width:1180,height:720});
