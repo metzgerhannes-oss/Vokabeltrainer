@@ -304,7 +304,7 @@ function setYearFortressDate(date='',subject=state.activeSubject,schoolYear=curr
   if(!l)return {ok:false,error:'Kein Lernprofil aktiv.'};
   const value=String(date||'').trim(),bounds=schoolYearDateBounds(schoolYear);
   if(value&&!dateInSchoolYear(value,schoolYear))return {ok:false,error:`Das Datum muss im Schuljahr ${schoolYear} liegen.`};
-  const cfg=activeSeries(subject),knownTests=schoolYearSets(subject,schoolYear).map(s=>String(s.testDate||'')).filter(Boolean);
+  const cfg=l.testSeries?.[subject]?.enabled?l.testSeries[subject]:null,knownTests=(state.sets||[]).filter(s=>s.learnerId===l.id&&s.subject===subject&&s.schoolYear===schoolYear).map(s=>String(s.testDate||'')).filter(Boolean);
   if(cfg?.scopeDate&&dateInSchoolYear(cfg.scopeDate,schoolYear))knownTests.push(String(cfg.scopeDate));
   knownTests.sort();
   const latest=knownTests[knownTests.length-1]||'';
