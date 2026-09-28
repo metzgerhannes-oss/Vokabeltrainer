@@ -89,6 +89,7 @@ Eine Änderung ist erst vollständig dokumentiert, wenn die betroffenen Ebenen a
 - [FOCUSED_LEARNING_UI.md](FOCUSED_LEARNING_UI.md)
 - [CACHE_STRATEGY.md](CACHE_STRATEGY.md)
 - [docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md](docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md) – kanonische evidenzgeprüfte Fachbasis für Deutsch Grundschule 1–4
+- [docs/project/DEUTSCH_WORTREICH_V1.md](docs/project/DEUTSCH_WORTREICH_V1.md) – verbindlicher v1-Scope, Spielwelt und Release-Gate für Deutsch
 
 ### Verifikation und Historie
 - [V1_ACCEPTANCE_TEST.md](V1_ACCEPTANCE_TEST.md)
