@@ -13,11 +13,13 @@ for(const file of ['js/core.js','js/storage.js','js/model.js','js/learning.js'])
 const result=vm.runInContext(`
 (()=>{
   const passed=[];const assert=(v,n)=>{if(!v)throw new Error('Subject smoke failed: '+n);passed.push(n)};
-  assert(knownSubjectIds().join(',')==='english,latin,french','all subjects come from metadata');
-  assert(availableSubjectIds().join(',')==='english,latin','French remains gated until OCR resource exists');
+  assert(knownSubjectIds().join(',')==='english,latin,german,french','all subjects come from metadata');
+  assert(availableSubjectIds().join(',')==='english,latin,german','Deutsch is released while French remains gated');
   assert(subjectFromExternal('FR')==='french'&&subjectFromExternal('Französisch')==='french','external subject aliases resolve');
   assert(subjectFromExternal('Spanisch')===''&&normalizeSubjectId('unknown','')==='','unknown subjects are rejected instead of silently becoming English');
   assert(normalizeLearnerSubjects({activeSubjects:['unknown','latin']}).join(',')==='latin','invalid profile subjects are dropped');
+  assert(subjectSpeechLang('german')==='de-DE'&&subjectOcrLang('german')==='deu','German speech and OCR locales configured');
+  assert(subjectHasCapability('german','nativeLiteracy'),'German native-literacy capability configured');
   assert(subjectSpeechLang('french')==='fr-FR','French speech locale configured');
   assert(subjectOcrLang('french')==='fra','French OCR code configured');
   assert(subjectHasCapability('latin','latinGrammar')&&!subjectHasCapability('french','latinGrammar'),'capabilities are metadata driven');
