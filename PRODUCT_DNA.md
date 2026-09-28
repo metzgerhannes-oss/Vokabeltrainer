@@ -127,11 +127,19 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    Tagen vor dem Test werden durch dieses freiwillige Nachrücken keine zusätzlichen unbekannten
    Wörter eingeführt. Pro Tag sind höchstens drei Zusatzwörter erlaubt; bei aktivierter
    Einstellung **„Kurze Einheiten“** höchstens zwei. Lesen-/Rechtschreibunterstützung allein
-   reduziert dieses Limit nicht. Insgesamt werden weiterhin höchstens sieben neue Wörter an
-   einem Tag eingeführt.
+   reduziert dieses Limit nicht. Insgesamt werden höchstens sechs neue Wörter an
+   einem Tag eingeführt, bei „Kurze Einheiten“ höchstens vier.
    Zusatzwörter erhöhen weder das Pflicht-Tagesziel noch dessen Fortschrittsanzeige und erzeugen
    keine weitere Kampfaktion. Sie werden als freiwilliger nächster Lernschritt vorgemerkt und
    nicht automatisch an eine bereits laufende Pflicht-Einheit angehängt.
+
+   **Der Pflichtkern selbst ist ein zusammenhängender Übungsraum.** Unterstützende und produktive
+   Methoden dürfen innerhalb dieses Raums nacheinander wechseln. Solange noch ein Pflichtwort offen
+   ist, zeigt die App keinen Abschlussbildschirm und verlangt keine Entscheidung zwischen
+   „Übersicht“ und „weitere Lektion“. Nach einem internen Methoden-/Aufgabendurchlauf werden die
+   noch offenen Fokuswörter automatisch in den nächsten adaptiv passenden Lernschritt übernommen.
+   Erst wenn alle Pflichtwörter fachlich abgeschlossen sind, endet der Übungsraum mit einer
+   kompakten Ergebniszusammenfassung. Freiwillige Zusatz- und Rettungsrunden bleiben davon getrennt.
 
    **T−1-Rettungsmodus:** Liegt der Test am nächsten Tag und ist noch deutlicher Rückstand
    vorhanden, wird nicht der komplette Testumfang stumpf als Karteikasten abgefragt. Nach dem
