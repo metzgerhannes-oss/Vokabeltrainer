@@ -386,13 +386,14 @@ function renderBattleReturnUi(){
   if($('#battleBackBtn'))$('#battleBackBtn').textContent=meta.back;
   if($('#battleReturnBtn'))$('#battleReturnBtn').textContent=meta.bottom;
 }
-function returnFromBattle(){if(battleStoryNarrating)stopBattleStoryNarration();showView(BATTLE_RETURN_META[battleReturnView]?battleReturnView:'armyView')}
+function returnFromBattle(){if(battleStoryNarrating)stopBattleStoryNarration();document.body.classList.remove('battle-preview');showView(BATTLE_RETURN_META[battleReturnView]?battleReturnView:'armyView')}
 function openBattleView(){
   if(isParentMode())return;
   const f=currentTestFortress(),present=battlePresentation();
   if(!f){toast(present.noTarget,'subtle');return}
   captureBattleReturnView();
-  const reveal=!f.revealedAt;
+  const reveal=!f.revealedAt,preview=battleTickets()<1;
+  document.body.classList.toggle('battle-preview',preview);
   renderBattleView();renderBattleReturnUi();showView('battleView');
   if(reveal)startBattleFortressReveal(f);
 }
@@ -1317,6 +1318,7 @@ function showView(id){
   if(id!=='battleView'){
     cancelBattleSequence();
     window.VTBattleResultUi?.hide?.();
+    document.body.classList.remove('battle-preview');
     if(document.body.classList.contains('battle-immersive'))closeBattleImmersive();
   }
   if(PARENT_VIEW_IDS.has(id)&&!isParentMode()){toast(isPairedChildDevice()?'Der Elternbereich ist auf diesem Kindergerät gesperrt.':'Diese Funktion liegt im Elternbereich.','subtle');id='homeView'}
