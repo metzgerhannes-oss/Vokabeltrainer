@@ -29,6 +29,7 @@ const currentSchoolYear = () => {
 };
 
 const defaultSkills = () => ({recognition:0,listening:0,retrieval:0,spelling:0,reading:0,context:0});
+const defaultLiteracySkills = () => ({recognized:0,decoded:0,fluency:0,meaning:0,phonologicalSpelling:0,orthographicSpelling:0,dictation:0,sentenceUse:0});
 const defaultDirectionalRecall = () => ({
   target:{successDays:[],lastCorrect:null,lastAt:null},
   source:{successDays:[],lastCorrect:null,lastAt:null}
@@ -49,7 +50,8 @@ const defaultGradeScale = () => ({n1:90,n2:80,n3:65,n4:50,n5:25});
 const SUBJECT_META = Object.freeze({
   english:{id:'english',label:'Englisch',short:'EN',available:true,aliases:['en','englisch','english'],speechLang:'en-GB',ocrLang:'eng',lexicalProfile:'english',importProfile:'modern',ocrRepairProfile:'english',functionWords:['the','to','a','an','is','are','was','were','have','has','with','from','for','of','in','on','at','my','your','we','they','he','she'],capabilities:{hybridDictionary:true,latinGrammar:false,extraIdentity:false},campaign:{unitLabel:'Armee',title:'Deine Armee',eyebrow:'Kampagne',visualTheme:'campaign',festive:'WINTERLAGER · DEZEMBER-SPEZIAL',ranks:['Rekruten','Trupp','Kompanie','Bataillon','Regiment','Armee']}},
   latin:{id:'latin',label:'Latein',short:'LA',available:true,aliases:['la','latein','latin'],speechLang:'la',ocrLang:'lat',lexicalProfile:'latin',importProfile:'latin',ocrRepairProfile:'',functionWords:[],capabilities:{hybridDictionary:false,latinGrammar:true,extraIdentity:true},campaign:{unitLabel:'Legion',title:'Deine Legion',eyebrow:'Römische Kampagne',visualTheme:'roman',festive:'WINTERLAGER · SATURNALIA',ranks:['Tiro','Miles','Contubernium','Centurie','Cohorte','Legion']}},
-  french:{id:'french',label:'Französisch',short:'FR',available:false,aliases:['fr','französisch','franzoesisch','french','français','francais'],speechLang:'fr-FR',ocrLang:'fra',lexicalProfile:'french',importProfile:'modern',ocrRepairProfile:'',functionWords:['le','la','les','un','une','des','de','du','est','sont','avec','pour','dans','sur','mon','ma','mes','ton','ta','tes','nous','vous','ils','elles'],capabilities:{hybridDictionary:false,latinGrammar:false,extraIdentity:false},campaign:{unitLabel:'Reise',title:'Deine Sprachreise',eyebrow:'Entdeckungsreise',visualTheme:'voyage',festive:'WINTERREISE · DEZEMBER-SPEZIAL',ranks:['Aufbruch','Entdecker','Reisende','Wegkundig','Weltenbummler','Sprachreisende']}}
+  german:{id:'german',label:'Deutsch',short:'DE',available:true,aliases:['de','deutsch','german'],speechLang:'de-DE',ocrLang:'deu',lexicalProfile:'german',importProfile:'modern',ocrRepairProfile:'',functionWords:['der','die','das','ein','eine','und','oder','ist','sind','ich','du','wir','ihr','sie','mit','für','auf','in','an'],capabilities:{hybridDictionary:false,latinGrammar:false,extraIdentity:false,nativeLiteracy:true},campaign:{unitLabel:'Ritterheer',title:'Das Wortreich',eyebrow:'Ritter & Burgen',visualTheme:'wordrealm',festive:'WINTERBURG · DEZEMBER-SPEZIAL',ranks:['Holzschwert-Knappen','Knappentrupp','Burgwache','Rittertrupp','Bannerheer','Ritterheer']}},
+  french:{id:'french',label:'Französisch',short:'FR',available:false,aliases:['fr','französisch','franzoesisch','french','français','francais'],speechLang:'fr-FR',ocrLang:'fra',lexicalProfile:'french',importProfile:'modern',ocrRepairProfile:'',functionWords:['le','la','les','un','une','des','de','du','est','sont','avec','pour','dans','sur','mon','ma','mes','ton','ta','tes','nous','vous','ils','elles'],capabilities:{hybridDictionary:false,latinGrammar:false,extraIdentity:false,nativeLiteracy:false},campaign:{unitLabel:'Reise',title:'Deine Sprachreise',eyebrow:'Entdeckungsreise',visualTheme:'voyage',festive:'WINTERREISE · DEZEMBER-SPEZIAL',ranks:['Aufbruch','Entdecker','Reisende','Wegkundig','Weltenbummler','Sprachreisende']}}
 });
 const knownSubjectIds=()=>Object.keys(SUBJECT_META);
 const availableSubjectIds=()=>Object.values(SUBJECT_META).filter(x=>x.available).map(x=>x.id);
@@ -98,7 +100,7 @@ function reducedLoadEnabled(l){return literacySupportFor(l).reducedLoad}
 function literacySupportActive(l){const x=literacySupportFor(l);return x.reading||x.spelling}
 
 const PROGRESS_FIELDS = new Set([
-  'skills','level','repetitions','successes','independentSuccesses','assistedSuccesses','failures','intervalDays','dueDate',
+  'skills','literacySkills','level','repetitions','successes','independentSuccesses','assistedSuccesses','failures','intervalDays','dueDate',
   'lastReviewedAt','lastSuccessAt','lastActiveSuccessAt','activeSuccessDays','activePracticeDays','maxActiveGapDays','coldRecallDays',
   'coldRecallSuccesses','spellingSuccessDays','recentActiveResults','practiceDays','modesSeen','directionalRecall','grammarSkills','grammarSuccessDays','errorProfile',
   'masteredAt','lastMasteredAt','confusionWith','leitnerBox','leitnerUpdatedAt'
@@ -110,7 +112,7 @@ function makeLearnerVocabulary(learnerId,vocabId,senseIdOrOpts='',opts={}){
   const senseId=String(senseIdOrOpts||opts.senseId||'');
   return {
     id:opts.id||uid('w'),learnerId,vocabId,senseId,
-    skills:{...defaultSkills(),...(opts.skills||{})},level:Number(opts.level)||0,repetitions:Number(opts.repetitions)||0,
+    skills:{...defaultSkills(),...(opts.skills||{})},literacySkills:{...defaultLiteracySkills(),...(opts.literacySkills||{})},level:Number(opts.level)||0,repetitions:Number(opts.repetitions)||0,
     successes:Number(opts.successes)||0,independentSuccesses:Number(opts.independentSuccesses)||0,assistedSuccesses:Number(opts.assistedSuccesses)||0,failures:Number(opts.failures)||0,
     intervalDays:Number(opts.intervalDays)||0,dueDate:opts.dueDate||today(),lastReviewedAt:opts.lastReviewedAt||null,lastSuccessAt:opts.lastSuccessAt||null,lastActiveSuccessAt:opts.lastActiveSuccessAt||null,
     activeSuccessDays:Array.isArray(opts.activeSuccessDays)?opts.activeSuccessDays:[],activePracticeDays:Array.isArray(opts.activePracticeDays)?opts.activePracticeDays:[],maxActiveGapDays:Number(opts.maxActiveGapDays)||0,
