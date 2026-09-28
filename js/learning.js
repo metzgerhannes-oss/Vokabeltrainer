@@ -547,6 +547,44 @@ function sessionRepeatIds(results=[],onlyErrors=false){
   }
   return ids;
 }
+function dailyRoomRemainingRefs(status){
+  if(!status)return[];
+  const refs=[...(status.remainingIntroRefs||[]),...(status.remainingReviewRefs||status.remainingRefs||status.remainingIds||[])],seen=new Set();
+  return refs.filter(ref=>{const key=dailyPlanRefKey(ref);if(!key||seen.has(key))return false;seen.add(key);return true});
+}
+function dailyRoomSummaryStats(results=[],status=null){
+  const byWord=new Map(),methods=[];
+  for(const r of results){
+    const key=String(r.setLinkId||r.wordId||r.questionId||r.order||'');
+    if(!byWord.has(key))byWord.set(key,[]);
+    byWord.get(key).push(r);
+    if(r.mode&&!methods.includes(r.mode))methods.push(r.mode);
+  }
+  const repeated=[...byWord.values()].filter(rows=>rows.length>1).length;
+  const recovered=[...byWord.values()].filter(rows=>rows.some(r=>!r.correct||r.orthographyOk===false)&&rows.some(r=>r.correct&&r.orthographyOk!==false&&!r.assisted)).length;
+  const correct=results.filter(r=>r.correct).length,total=results.length,accuracy=total?Math.round(correct/total*100):100;
+  return {focus:Number(status?.total)||byWord.size,done:Number(status?.done)||0,total,correct,accuracy,repeated,recovered,methods};
+}
+function dailyRoomSummaryHtml(results=[],status=null){
+  const s=dailyRoomSummaryStats(results,status);
+  const methodHtml=s.methods.length?'<div class="daily-room-methods" aria-label="Verwendete Lernmethoden">'+s.methods.map(m=>'<span>'+esc(m)+'</span>').join('')+'</div>':'';
+  const learningNote=s.recovered?(s.recovered+' Fokuswort'+(s.recovered===1?'':'e')+' '+(s.recovered===1?'wurde':'wurden')+' nach einem Fehler noch sicher korrigiert.'):(s.repeated?(s.repeated+' Fokuswort'+(s.repeated===1?' brauchte':'e brauchten')+' mehrere Lernschritte.'):'Alle Fokuswörter wurden ohne zusätzliche Korrekturrunde abgeschlossen.');
+  const details=results.length?'<details class="daily-room-details"><summary>Abfragen im Detail ansehen</summary>'+sessionResultsHtml(results)+'</details>':'';
+  return '<section class="daily-room-summary" aria-labelledby="dailyRoomSummaryTitle"><div class="daily-room-check" aria-hidden="true">✓</div><div class="eyebrow">Übungsraum abgeschlossen</div><h2 id="dailyRoomSummaryTitle">'+(s.done||s.focus)+' von '+s.focus+' Fokuswörtern geschafft</h2><p>Der heutige Pflichtteil ist vollständig abgeschlossen.</p><div class="daily-room-metrics"><div><strong>'+s.total+'</strong><span>Aufgaben</span></div><div><strong>'+s.accuracy+'%</strong><span>richtig beantwortet</span></div><div><strong>'+s.methods.length+'</strong><span>Lernmethoden</span></div></div>'+methodHtml+'<div class="notice subtle daily-room-learning-note">'+esc(learningNote)+'</div>'+details+'</section>';
+}
+function continueDailyRoom(plan,status){
+  if(!session?.isDaily||session?.rescueMode||session?.bonusMode||!status?.remaining)return false;
+  const refs=dailyRoomRemainingRefs(status),limit=Math.max(1,Number(plan?.sessionSize)||6);if(!refs.length)return false;
+  const target=session;
+  target.roomRound=Math.max(1,Number(target.roomRound)||1)+1;
+  target.queue=refs.slice(0,limit);target.index=0;target.currentSubmode=null;target.locked=false;target.retryCounts={};target.followupCounts={};target.hintUsed=false;target.currentQuestion=null;target.currentQuestionIssues=[];
+  const nextWord=currentWord(),nextMode=nextWord?chooseAdaptiveMode(nextWord):'recall';
+  $('#modePill').textContent='Übungsraum · weiter';
+  $('#sessionPill').textContent=status.done+' / '+status.total+' geschafft';
+  $('#studyArea').innerHTML='<div class="study-card daily-room-transition" role="status"><div class="eyebrow">Übungsraum · Lernschritt '+target.roomRound+'</div><div class="daily-room-transition-mark" aria-hidden="true">→</div><h2>Weiter geht’s</h2><p>Noch '+status.remaining+' Fokuswort'+(status.remaining===1?'':'e')+'. Als Nächstes: <strong>'+esc(modeLabel(nextMode))+'</strong>.</p><div class="daily-room-transition-progress"><progress max="'+Math.max(1,status.total)+'" value="'+status.done+'"></progress><span>'+status.done+' von '+status.total+' geschafft</span></div></div>';
+  setTimeout(()=>{if(session===target)renderStudy()},650);
+  return true;
+}
 function finishSession(){
   if(session?.mode==='practiceTest')return finishPracticeTest();
   const c=session?.correct||0,a=session?.answered||0,results=[...(session?.results||[])],finishedMode=session?.mode||'adaptive',finishedSetId=session?.setId||null;
