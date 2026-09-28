@@ -186,6 +186,9 @@ jobs:
       - name: WebKit correct-answer diagnostic
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-correct-answer-diagnostic.mjs
 
+      - name: WebKit child answer dispute and parent approval
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-answer-review-ui-smoke.mjs
+
       - name: WebKit OCR pair-review end-to-end
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-pair-review-ui-smoke.mjs
 
