@@ -76,8 +76,8 @@ async function openVariant(attack, outcome = 'capture') {
   assert(ready.attack === attack, 'selected attack is reflected on the stage');
   assert(ready.outcome === outcome, 'selected outcome is reflected on the stage');
   assert(ready.reducedMotion === 'true', 'matrix runs in reduced-motion mode for CI speed');
-  assert(ready.previewVersion.includes('v0.21.25') && ready.previewVersion.includes('P3.1'), 'visible preview version is shown');
-  assert(ready.previewVersionJs === '0.21.25-phaser.3.1', 'preview JS version matches visible release');
+  assert(ready.previewVersion.includes('v0.21.27') && ready.previewVersion.includes('P3.1'), 'visible preview version is shown');
+  assert(ready.previewVersionJs === '0.21.27-phaser.3.1', 'preview JS version matches visible release');
   assert(ready.previewBuildJs === 'attacks-gate-entry-profile-banner', 'preview build marker matches current choreography');
   assert(external.length === 0, 'Phaser battle uses no external CDN requests');
 
