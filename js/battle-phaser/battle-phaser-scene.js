@@ -831,7 +831,9 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         rubblePileAlpha: this.__fortress.__rubblePile.alpha,
         scorchAlpha: this.__fortress.__scorch.alpha,
         enemy: { alpha: this.__fortress.__enemyBanner.alpha, y: this.__fortress.__enemyBanner.y, rotation: this.__fortress.__enemyBanner.rotation },
-        own: { alpha: this.__fortress.__ownBanner.alpha, y: this.__fortress.__ownBanner.y, rotation: this.__fortress.__ownBanner.rotation }
+        own: { alpha: this.__fortress.__ownBanner.alpha, y: this.__fortress.__ownBanner.y, rotation: this.__fortress.__ownBanner.rotation },
+        defenders: (this.__defense?.defenders || []).map(d => ({ alpha:d.alpha, y:d.y, rotation:d.rotation })),
+        catapult: this.__defense?.catapult ? { alpha:this.__defense.catapult.alpha, y:this.__defense.catapult.y, rotation:this.__defense.catapult.rotation } : null
       };
     }
 
@@ -866,6 +868,12 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       this.__fires = [];
       this.__fortress.__enemyBanner.setAlpha(this.__initial.enemy.alpha).setY(this.__initial.enemy.y).setRotation(this.__initial.enemy.rotation);
       this.__fortress.__ownBanner.setAlpha(this.__initial.own.alpha).setY(this.__initial.own.y).setRotation(this.__initial.own.rotation);
+      (this.__defense?.defenders || []).forEach((d,i)=>{
+        const p=this.__initial.defenders?.[i];if(p)d.setAlpha(p.alpha).setY(p.y).setRotation(p.rotation);
+      });
+      if(this.__defense?.catapult&&this.__initial.catapult){
+        const p=this.__initial.catapult;this.__defense.catapult.setAlpha(p.alpha).setY(p.y).setRotation(p.rotation);
+      }
       this.__flash.setAlpha(0).setScale(1);
       this.__setPhase('ready');
     }
