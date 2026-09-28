@@ -3949,9 +3949,12 @@ body.battle-immersive #battleView .battle-toolbar{
   z-index:30!important;
 }
 body.battle-immersive #battleView .battle-ticket-pill{
-  justify-self:end!important;
+  display:none!important;
+}
+body.battle-immersive #battleView #battleFullscreenBtn{
   grid-column:2!important;
   grid-row:1!important;
+  justify-self:end!important;
 }
 body.battle-immersive #battleView .battle-stage-wrap{
   width:100%!important;
