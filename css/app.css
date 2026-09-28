@@ -4141,13 +4141,12 @@ body.battle-preview #battleView .battle-stage{
   display:block!important;
   position:relative!important;
   flex:none!important;
-  width:min(100%,150vh,1100px)!important;
-  width:min(100%,150dvh,1100px)!important;
-  height:auto!important;
-  min-height:0!important;
-  max-height:none!important;
+  width:min(100%,1100px)!important;
+  height:56.25vw!important;
+  min-height:180px!important;
+  max-height:619px!important;
   margin:0 auto!important;
-  aspect-ratio:16 / 9!important;
+  aspect-ratio:auto!important;
   visibility:visible!important;
   opacity:1!important;
   border-radius:18px!important;
@@ -4167,9 +4166,19 @@ body.battle-preview #battleView .battle-rank-badge{
       max(8px,env(safe-area-inset-left))!important;
   }
   body.battle-preview #battleView .battle-stage{
-    width:min(100%,150vh)!important;
-    width:min(100%,150dvh)!important;
+    width:100%!important;
+    height:calc(56.25vw - 9px)!important;
+    min-height:180px!important;
+    max-height:260px!important;
     border-radius:14px!important;
+  }
+}
+@media(orientation:landscape) and (max-height:560px){
+  body.battle-preview #battleView .battle-stage{
+    width:min(100%,720px)!important;
+    height:calc(100vh - 78px)!important;
+    min-height:0!important;
+    max-height:360px!important;
   }
 }
 
