@@ -228,8 +228,9 @@ function assignBookRowsToLearner(bookId,section,learnerId,rowIds=[],opts={}){
   if(!book||!l||!group)return {set:null,links:0,total:0,linkIds:[]};
   const wanted=new Set((rowIds||[]).filter(Boolean)),items=wanted.size?group.items.filter(r=>wanted.has(r.id)):group.items;
   assignBookToLearner(learnerId,book.subject,book.id,{gradeLevel:l.gradeLevel,schoolYear:currentSchoolYear()});
-  const preferredDate=String(opts?.testDate||'');
-  let set=preferredDate?(state.sets||[]).find(s=>s.learnerId===learnerId&&s.bookId===bookId&&s.bookSection===section&&s.testDate===preferredDate):null;
+  const preferredDate=String(opts?.testDate||''),preferredSetId=String(opts?.setId||'');
+  let set=preferredSetId?(state.sets||[]).find(s=>s.id===preferredSetId&&s.learnerId===learnerId&&s.bookId===bookId&&s.bookSection===section):null;
+  if(!set)set=preferredDate?(state.sets||[]).find(s=>s.learnerId===learnerId&&s.bookId===bookId&&s.bookSection===section&&s.testDate===preferredDate):null;
   if(!set&&!opts?.forceNewSet)set=(state.sets||[]).find(s=>s.learnerId===learnerId&&s.bookId===bookId&&s.bookSection===section);
   if(!set){
     set={id:uid('set'),learnerId,subject:book.subject,title:section,schoolYear:currentSchoolYear(),bookId,bookSection:section,testDate:preferredDate||'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',testSelectedLinkIds:[],from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
