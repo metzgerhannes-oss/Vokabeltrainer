@@ -10,7 +10,7 @@ ok(index.includes('Diese Übungen unterstützen das Lernen. Sie ersetzen keinen 
 ok(focus.includes("document.body.classList.toggle('learning-focus',id==='learnView')"),'retrieval must enter the distraction-reduced learning focus');
 
 ok(storage.includes('autoSpeakCorrection:l.autoSpeakCorrection!==false'),'audio setting migration missing');
-ok(ui.includes("$('#quickLearnHeroBtn').onclick=startDailyTodo"),'Jetzt lernen must start the daily evidence-based plan directly');
+ok(ui.includes("$('#quickLearnHeroBtn').onclick=()=>")&&ui.includes("startDailyTodo()"),'Heute primary CTA must still route normal learning into the daily evidence-based plan');
 ok(ui.includes("status.done?'Weiterlernen':'Jetzt lernen'"),'daily CTA must stay explicit after rerender');
 const mastery=model.slice(model.indexOf('function masteryScore'),model.indexOf('function meetsMasteryCriteria'));
 ok(mastery.includes('productiveCore'),'productive mastery core missing');

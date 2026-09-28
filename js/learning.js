@@ -249,7 +249,7 @@ function startSession(mode='adaptive',setId=null,wordIds=null,isDaily=false,opts
   const queue=buildQueue(mode,setId,wordIds); if(!queue.length){toast('Noch keine geprüften Vokabeln vorhanden.','warn');return}
   const blocked=queue.find(w=>setNeedsPairReview(state.sets.find(s=>s.id===w.setId)));
   if(blocked){const blockedSet=state.sets.find(s=>s.id===blocked.setId);toast('Vor dem Lernen bitte zuerst die erkannten Vokabelpaare bestätigen.','warn');showView('homeView');renderAll();setTimeout(()=>openSetPairAudit?.(blockedSet?.id),80);return}
-  session={mode,setId,queue:queue.map(quizQueueRef),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily,rescueMode:!!opts.rescueMode,rescueRound:Number(opts.rescueRound)||0,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString(),currentQuestion:null,currentQuestionIssues:[]}; showView('learnView'); $('#modePill').textContent=session.rescueMode?'Test morgen · Rettungsrunde':modeLabel(mode); renderStudy();
+  session={mode,setId,queue:queue.map(quizQueueRef),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily,rescueMode:!!opts.rescueMode,bonusMode:!!opts.bonusMode,rescueRound:Number(opts.rescueRound)||0,roomRound:isDaily&&!opts.rescueMode&&!opts.bonusMode?1:0,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString(),currentQuestion:null,currentQuestionIssues:[]}; showView('learnView'); $('#modePill').textContent=session.rescueMode?'Test morgen · Rettungsrunde':session.roomRound?'Übungsraum':modeLabel(mode); renderStudy();
 }
 function modeLabel(m){return ({adaptive:'Adaptiv',allWords:'Alle Vokabeln',weakWords:'Unsichere Vokabeln',flash:'Wortblitz',shower:'Vokabeldusche',chunks:'Wortbausteine',handwriting:'Handschrift',firstContact:'Abschreiben',recognition:'Erkennen',recall:'Abrufen',reverseRecall:'Bedeutung abrufen',spelling:'Schreiben',listening:'Hören',context:'Kontext',latinGrammar:'Latein Formen',practiceTest:'Prüfung',cards:'Karteikarten'})[m]||m}
 function currentWord(){const token=session?.queue?.[session.index];return resolveQuizQueueRef(token,session?.setId||'')}
@@ -268,7 +268,7 @@ function renderStudy(){
   const adaptiveLike=['adaptive','allWords','weakWords'].includes(session.mode);let sub=adaptiveLike?chooseAdaptiveMode(w):session.mode;if(sub==='reverseRecall'&&!meaningRecallHasCue(w))sub='recall';session.currentSubmode=sub;
   const prepared=setCurrentQuizQuestion(w,sub);
   if(prepared.issues.length){renderQuizIntegrityStop(w,prepared.issues);return}
-  $('#modePill').textContent=session.rescueMode?`Test morgen · ${modeLabel(sub)}`:(adaptiveLike?`${modeLabel(session.mode)} · ${modeLabel(sub)}`:modeLabel(sub));
+  $('#modePill').textContent=session.rescueMode?`Test morgen · ${modeLabel(sub)}`:session.roomRound?`Übungsraum · ${modeLabel(sub)}`:(adaptiveLike?`${modeLabel(session.mode)} · ${modeLabel(sub)}`:modeLabel(sub));
   if(sub==='recognition')renderRecognition(w); else if(sub==='listening')renderListening(w); else if(sub==='chunks')renderChunks(w); else if(sub==='reverseRecall')renderReverseRecall(w); else if(sub==='spelling')renderSpelling(w); else if(sub==='context')renderContext(w); else renderRecall(w);
 }
 function cardExtras(w){
@@ -547,25 +547,65 @@ function sessionRepeatIds(results=[],onlyErrors=false){
   }
   return ids;
 }
+function dailyRoomRemainingRefs(status){
+  if(!status)return[];
+  const refs=[...(status.remainingIntroRefs||[]),...(status.remainingReviewRefs||status.remainingRefs||status.remainingIds||[])],seen=new Set();
+  return refs.filter(ref=>{const key=dailyPlanRefKey(ref);if(!key||seen.has(key))return false;seen.add(key);return true});
+}
+function dailyRoomSummaryStats(results=[],status=null){
+  const byWord=new Map(),methods=[];
+  for(const r of results){
+    const key=String(r.setLinkId||r.wordId||r.questionId||r.order||'');
+    if(!byWord.has(key))byWord.set(key,[]);
+    byWord.get(key).push(r);
+    if(r.mode&&!methods.includes(r.mode))methods.push(r.mode);
+  }
+  const repeated=[...byWord.values()].filter(rows=>rows.length>1).length;
+  const recovered=[...byWord.values()].filter(rows=>rows.some(r=>!r.correct||r.orthographyOk===false)&&rows.some(r=>r.correct&&r.orthographyOk!==false&&!r.assisted)).length;
+  const correct=results.filter(r=>r.correct).length,total=results.length,accuracy=total?Math.round(correct/total*100):100;
+  return {focus:Number(status?.total)||byWord.size,done:Number(status?.done)||0,total,correct,accuracy,repeated,recovered,methods};
+}
+function dailyRoomSummaryHtml(results=[],status=null){
+  const s=dailyRoomSummaryStats(results,status);
+  const methodHtml=s.methods.length?'<div class="daily-room-methods" aria-label="Verwendete Lernmethoden">'+s.methods.map(m=>'<span>'+esc(m)+'</span>').join('')+'</div>':'';
+  const learningNote=s.recovered?(s.recovered+' Fokuswort'+(s.recovered===1?'':'e')+' '+(s.recovered===1?'wurde':'wurden')+' nach einem Fehler noch sicher korrigiert.'):(s.repeated?(s.repeated+' Fokuswort'+(s.repeated===1?' brauchte':'e brauchten')+' mehrere Lernschritte.'):'Alle Fokuswörter wurden ohne zusätzliche Korrekturrunde abgeschlossen.');
+  const details=results.length?'<details class="daily-room-details"><summary>Abfragen im Detail ansehen</summary>'+sessionResultsHtml(results)+'</details>':'';
+  return '<section class="daily-room-summary" aria-labelledby="dailyRoomSummaryTitle"><div class="daily-room-check" aria-hidden="true">✓</div><div class="eyebrow">Übungsraum abgeschlossen</div><h2 id="dailyRoomSummaryTitle">'+(s.done||s.focus)+' von '+s.focus+' Fokuswörtern geschafft</h2><p>Der heutige Pflichtteil ist vollständig abgeschlossen.</p><div class="daily-room-metrics"><div><strong>'+s.total+'</strong><span>Aufgaben</span></div><div><strong>'+s.accuracy+'%</strong><span>richtig beantwortet</span></div><div><strong>'+s.methods.length+'</strong><span>Lernmethoden</span></div></div>'+methodHtml+'<div class="notice subtle daily-room-learning-note">'+esc(learningNote)+'</div>'+details+'</section>';
+}
+function continueDailyRoom(plan,status){
+  if(!session?.isDaily||session?.rescueMode||session?.bonusMode||!status?.remaining)return false;
+  const refs=dailyRoomRemainingRefs(status),limit=Math.max(1,Number(plan?.sessionSize)||6);if(!refs.length)return false;
+  const target=session;
+  target.roomRound=Math.max(1,Number(target.roomRound)||1)+1;
+  target.queue=refs.slice(0,limit);target.index=0;target.currentSubmode=null;target.locked=false;target.retryCounts={};target.followupCounts={};target.hintUsed=false;target.currentQuestion=null;target.currentQuestionIssues=[];
+  const nextWord=currentWord(),nextMode=nextWord?chooseAdaptiveMode(nextWord):'recall';
+  $('#modePill').textContent='Übungsraum · weiter';
+  $('#sessionPill').textContent=status.done+' / '+status.total+' geschafft';
+  $('#studyArea').innerHTML='<div class="study-card daily-room-transition" role="status"><div class="eyebrow">Übungsraum · Lernschritt '+target.roomRound+'</div><div class="daily-room-transition-mark" aria-hidden="true">→</div><h2>Weiter geht’s</h2><p>Noch '+status.remaining+' Fokuswort'+(status.remaining===1?'':'e')+'. Als Nächstes: <strong>'+esc(modeLabel(nextMode))+'</strong>.</p><div class="daily-room-transition-progress"><progress max="'+Math.max(1,status.total)+'" value="'+status.done+'"></progress><span>'+status.done+' von '+status.total+' geschafft</span></div></div>';
+  setTimeout(()=>{if(session===target)renderStudy()},650);
+  return true;
+}
 function finishSession(){
   if(session?.mode==='practiceTest')return finishPracticeTest();
   const c=session?.correct||0,a=session?.answered||0,results=[...(session?.results||[])],finishedMode=session?.mode||'adaptive',finishedSetId=session?.setId||null;
-  const isDaily=!!session?.isDaily,rescueMode=!!session?.rescueMode,plan=isDaily||rescueMode?buildDailyPlan():null,status=isDaily&&plan?dailyPlanStatus(plan):null;
-  const more=status?.remaining>0,bonusMore=!more&&(status?.extraRemaining||0)>0,rescue=plan?t1RescuePlan(plan):{available:false,recommended:false,weakTotal:0,refs:[]};
+  const isDaily=!!session?.isDaily,rescueMode=!!session?.rescueMode,bonusMode=!!session?.bonusMode,coreDaily=isDaily&&!rescueMode&&!bonusMode,plan=isDaily||rescueMode?buildDailyPlan():null,status=isDaily&&plan?dailyPlanStatus(plan):null;
+  const more=coreDaily&&status?.remaining>0,bonusMore=coreDaily&&!more&&(status?.extraRemaining||0)>0,rescue=plan?t1RescuePlan(plan):{available:false,recommended:false,weakTotal:0,refs:[]};
+  if(more&&continueDailyRoom(plan,status)){persistOnly();return}
   const errorIds=sessionRepeatIds(results,true),allIds=sessionRepeatIds(results,false);
-  if(isDaily&&a>0&&!more)grantBattleTicket('dailyGoal');
-  const battleAvailable=isDaily&&!more&&battleActionAvailableToday();
-  const repeatActions=!rescueMode&&allIds.length?`<div class="session-repeat-actions"><div><strong>Noch einmal üben</strong><small>Diese Zusatzrunde ist freiwillig und gibt keine weitere Kampfaktion.</small></div><div class="row gap wrap">${errorIds.length?`<button id="repeatErrorsBtn" class="secondary" type="button">↻ Fehler nochmal üben (${errorIds.length})</button>`:''}<button id="repeatAllBtn" class="ghost" type="button">Alle nochmal üben (${allIds.length})</button></div></div>`:'';
+  if(coreDaily&&a>0&&!more)grantBattleTicket('dailyGoal');
+  const battleAvailable=coreDaily&&!more&&battleActionAvailableToday();
+  const repeatActions=!coreDaily&&!rescueMode&&allIds.length?`<div class="session-repeat-actions"><div><strong>Noch einmal üben</strong><small>Diese Zusatzrunde ist freiwillig und gibt keine weitere Kampfaktion.</small></div><div class="row gap wrap">${errorIds.length?`<button id="repeatErrorsBtn" class="secondary" type="button">↻ Fehler nochmal üben (${errorIds.length})</button>`:''}<button id="repeatAllBtn" class="ghost" type="button">Alle nochmal üben (${allIds.length})</button></div></div>`:'';
   const rescueNotice=rescueMode?`<p class="notice ${rescue.available?'subtle':'good'}">${rescue.available?`Für den Test morgen sind noch ${rescue.weakTotal} Vokabeln nicht testbereit. Die nächste kurze Rettungsrunde nimmt zuerst Fehler aus dieser Runde und danach noch nicht geprüfte Wörter.`:rescue.weakTotal?`Diese Rettungsrunde ist für jetzt abgeschlossen. ${rescue.weakTotal} Wörter erfüllen wegen der kurzen Vorlaufzeit noch nicht alle Testbereitschaftskriterien. Eine Pause ist jetzt sinnvoll.`:'Alle Testwörter erfüllen aktuell die Testbereitschaft.'}</p>`:''; 
-  const dailyNotice=isDaily?`<p class="notice ${more?'subtle':'good'}">${more?`Noch ${status.remaining} Vokabel${status.remaining===1?'':'n'} im Tagesziel.`:rescue.available?`Tagesziel geschafft. Morgen ist Test: Eine kurze Rettungsrunde mit ${rescue.refs.length} Fokuswörtern wird empfohlen. Sie bleibt freiwillig und erzeugt keine weitere Kampfaktion.`:bonusMore?`Tagesziel geschafft. ${status.extraRemaining} zusätzliche Vokabel${status.extraRemaining===1?'':'n'} ${status.extraRemaining===1?'steht':'stehen'} als freiwilliger Vorsprung bereit.`:'Tagesziel für heute geschafft.'}</p>`:'';
-  $('#studyArea').innerHTML=`<div class="study-card session-finish-card"><div class="eyebrow">${rescueMode?'Rettungsrunde beendet':'Einheit beendet'}</div><div class="study-prompt">${a?Math.round(c/a*100):'✓'}${a?'%':''}</div><p>${a?`${c} von ${a} Aufgaben richtig.`:'Training abgeschlossen.'}</p>${dailyNotice}${rescueNotice}${battleAvailable?'<div class="battle-unlock"><strong>⚔ Tagesangriff freigeschaltet!</strong><span>Deine Testfestung bleibt sichtbar. Heute steht genau eine Kampfaktion bereit.</span><button id="rewardBattleBtn" class="battle-unlock-btn" type="button">Zur Schlacht</button></div>':''}${sessionResultsHtml(results)}${repeatActions}<div class="row gap center-actions wrap top-space">${more?'<button id="continueDailyBtn" class="primary">Nächste kurze Einheit</button>':rescue.available?`<button id="continueRescueBtn" class="secondary">${rescueMode?'Nächste Rettungsrunde':'Rettungsrunde starten'}</button>`:bonusMore?'<button id="continueBonusBtn" class="secondary">Vorsprung weiterlernen</button>':''}<button id="doneBtn" class="${more?'secondary':'primary'}">Zur Übersicht</button></div></div>`;
+  const dailyNotice=coreDaily?'<p class="notice good">'+(rescue.available?('Morgen ist Test: Eine kurze Rettungsrunde mit '+rescue.refs.length+' Fokuswörtern wird zusätzlich empfohlen. Sie bleibt freiwillig und erzeugt keine weitere Kampfaktion.'):(bonusMore?(status.extraRemaining+' zusätzliche Vokabel'+(status.extraRemaining===1?'':'n')+' '+(status.extraRemaining===1?'steht':'stehen')+' freiwillig als Vorsprung bereit.'):'Für heute ist nichts mehr verpflichtend.'))+'</p>':'';
+  const finalOverview=coreDaily?dailyRoomSummaryHtml(results,status):('<div class="eyebrow">'+(rescueMode?'Rettungsrunde beendet':bonusMode?'Zusatzrunde beendet':'Einheit beendet')+'</div><div class="study-prompt">'+(a?Math.round(c/a*100):'✓')+(a?'%':'')+'</div><p>'+(a?(c+' von '+a+' Aufgaben richtig.'):'Training abgeschlossen.')+'</p>'+sessionResultsHtml(results));
+  const optionalNext=coreDaily?(rescue.available?'<div class="daily-room-optional"><small>Optional</small><button id="continueRescueBtn" class="secondary">Rettungsrunde starten</button></div>':bonusMore?'<div class="daily-room-optional"><small>Optional</small><button id="continueBonusBtn" class="secondary">Vorsprung weiterlernen</button></div>':''):'';
+  $('#studyArea').innerHTML='<div class="study-card session-finish-card '+(coreDaily?'daily-room-finish':'')+'">'+finalOverview+dailyNotice+rescueNotice+(battleAvailable?'<div class="battle-unlock"><strong>⚔ Tagesangriff freigeschaltet!</strong><span>Der Übungsraum ist abgeschlossen. Heute steht genau eine Kampfaktion bereit.</span><button id="rewardBattleBtn" class="battle-unlock-btn" type="button">Zur Schlacht</button></div>':'')+repeatActions+optionalNext+'<div class="row gap center-actions wrap top-space"><button id="doneBtn" class="'+(battleAvailable?'secondary':'primary')+'">'+(coreDaily?'Fertig':'Zur Übersicht')+'</button></div></div>';
   const repeat=(ids)=>{if(!ids.length)return;session=null;startSession(finishedMode,finishedSetId,ids,false)};
   $('#sessionPill').textContent='Fertig';
   $('#copySessionResultsBtn')?.addEventListener('click',()=>copySessionResults(results));
   $('#repeatErrorsBtn')?.addEventListener('click',()=>repeat(errorIds));
   $('#repeatAllBtn')?.addEventListener('click',()=>repeat(allIds));
   $('#rewardBattleBtn')?.addEventListener('click',()=>{session=null;openBattleView()});
-  $('#continueDailyBtn')?.addEventListener('click',()=>{session=null;startDailyTodo()});
   $('#continueBonusBtn')?.addEventListener('click',()=>{session=null;startDailyTodo()});
   $('#continueRescueBtn')?.addEventListener('click',()=>{session=null;startT1RescueRound()});
   $('#doneBtn').onclick=()=>{session=null;showView('homeView');renderAll()};

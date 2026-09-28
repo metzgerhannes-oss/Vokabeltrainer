@@ -50,7 +50,7 @@
 
   function grouped(subject,year){
     const map=new Map();
-    const add=date=>{if(!date||!inYear(date,year))return null;let r=map.get(date);if(!r){r={date,sets:[],series:false,scopeText:'',wordCount:0,fortress:null,grade:null};map.set(date,r)}return r};
+    const add=date=>{if(!date||!inYear(date,year))return null;let r=map.get(date);if(!r){r={date,sets:[],series:false,scopeText:'',wordCount:0,fortress:null,grade:null,completed:null};map.set(date,r)}return r};
     const sets=(typeof mySets==='function'?mySets(subject):[]).filter(s=>s.schoolYear===year&&s.testDate&&inYear(s.testDate,year));
     for(const set of sets){const r=add(set.testDate);if(r&&!r.sets.some(x=>x.id===set.id))r.sets.push(set)}
     for(const r of map.values()){
@@ -66,11 +66,13 @@
     const hist=typeof testFortressHistory==='function'?testFortressHistory(subject):[];
     for(const f of hist){const r=add(f.testDate);if(r&&!r.fortress)r.fortress=f}
     for(const g of (state.grades||[]).filter(g=>g.learnerId===state.activeLearnerId&&g.subject===subject&&inYear(g.date,year))){const r=add(g.date);if(r&&!r.grade)r.grade=g}
+    const completed=typeof completedTestsForSubject==='function'?completedTestsForSubject(subject):[];
+    for(const done of completed.filter(x=>inYear(x.date,year))){const r=add(done.date);if(r){r.completed=done;if(!r.scopeText)r.scopeText=done.scopeText||'';if(!r.wordCount)r.wordCount=Number(done.wordCount)||0}}
     return map;
   }
 
   function status(row,current){
-    if(row.grade)return'completed';
+    if(row.grade||row.completed)return'completed';
     if(row.fortress?.capturedAt)return(row.fortress.securedDates||[]).length?'secured':'captured';
     if(current?.testDate===row.date)return'active';
     if(row.date<today())return'awaiting';
@@ -78,7 +80,7 @@
   }
   function meta(st,row,subject){
     const t=themeFor(subject),d=typeof daysUntil==='function'?daysUntil(row.date):0;
-    if(st==='completed')return['Test abgeschlossen',`Note ${row.grade?.grade||'–'} eingetragen`];
+    if(st==='completed')return['Test abgeschlossen',row.grade?`Note ${row.grade.grade} eingetragen`:'Note kann später eingetragen werden'];
     if(st==='secured')return[t.secured,t.securedDetail(row.fortress?.securedDates?.length||0)];
     if(st==='captured')return[t.captured,t.hold];
     if(st==='active')return[t.active,d===0?'Test ist heute':d===1?'Test ist morgen':`Test in ${d} Tagen`];

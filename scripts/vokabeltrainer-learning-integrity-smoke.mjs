@@ -322,6 +322,33 @@ const passed=vm.runInContext(`
   assert(learningChunksFor({term:'look after someone',chunks:[]}).join('|')==='look after|someone','short phrases may use meaningful phrase chunks');
 
   state=defaultState();
+  const completedTodaySet={id:'completed_today_set',learnerId:'learner_demo',subject:'english',title:'Test heute',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:today(),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+  const nextTestSet={id:'next_test_set',learnerId:'learner_demo',subject:'english',title:'Nächster Test',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(5),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+  state.sets.push(completedTodaySet,nextTestSet);
+  attachVocabularyToSet(completedTodaySet.id,{term:'todayword',translation:'heute',source:'test-completion-smoke',verified:true});
+  attachVocabularyToSet(nextTestSet.id,{term:'nextword',translation:'nächstes',source:'test-completion-smoke',verified:true});
+  rebuildWordIndexes();
+  const dueContext=upcomingTestContext('english'),dueFortress=currentTestFortress('english');
+  assert(dueContext?.date===today()&&dueContext.days===0,'test-day context stays active until explicitly completed');
+  const completedRow=completeTestContext(dueContext,'english');
+  assert(completedRow?.date===today()&&isTestCompleted(today(),'english'),'test can be explicitly completed from test day onward without a grade');
+  assert(dueFortress.testCompletedAt,'test completion is written back to the historical fortress');
+  const nextContext=upcomingTestContext('english');
+  assert(nextContext?.date===datePlusDays(5),'after completion the next planned test becomes current immediately');
+  assert(currentTestFortress('english')?.testDate===datePlusDays(5),'army target switches to the next test after completion');
+
+  state=defaultState();
+  const recurringSet={id:'recurring_complete_set',learnerId:'learner_demo',subject:'english',title:'Weekly Test',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+  state.sets.push(recurringSet);attachVocabularyToSet(recurringSet.id,{term:'weekly',translation:'wöchentlich',source:'test-completion-smoke',verified:true});rebuildWordIndexes();
+  const weekday=localDateFromKey(today()).getDay();
+  learner().testSeries.english={enabled:true,weekday,setId:recurringSet.id,scopeDate:today(),scopeMode:'set',from:1,to:0,selectedLinkIds:[],testFormat:'target'};
+  const weeklyContext=upcomingTestContext('english');
+  assert(weeklyContext?.date===today()&&weeklyContext.source==='series','prepared recurring test remains the active test on its test day');
+  completeTestContext(weeklyContext,'english');
+  const weeklyPending=seriesScopePending('english');
+  assert(weeklyPending?.date===datePlusDays(7),'completing a recurring test advances directly to preparation for the next weekly occurrence');
+
+  state=defaultState();
   assert(battleTickets('english')===0&&!battleUnlockedToday('english'),'battle action starts locked for the day');
   assert(grantBattleTicket('dailyGoal','english')===false,'without a planned test there is no fortress action to unlock');
   const fortressSet={id:'fortress_set',learnerId:'learner_demo',subject:'english',title:'Fortress Test',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(2),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};

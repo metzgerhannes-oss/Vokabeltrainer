@@ -1,8 +1,12 @@
 # Finales Audit
 
-Stand: 28.09.2026 · App v0.21.23
+Stand: 28.09.2026 · App v0.21.24
 
 ## Ergebnis
+
+- v0.21.24 ergänzt den Testtag-Lifecycle: Ein fälliger oder bereits vergangener, noch nicht bestätigter Test bleibt aktuelles Ziel und bietet „Test abschließen“. Der Abschluss wird separat von der Schulnote gespeichert und über Family Sync synchronisiert. Danach wechselt die App sofort auf den nächsten geplanten Test; bei Serien entsteht die Vorbereitung für den nächsten Wochentermin, ohne Folgetest erscheint „Nächsten Test vorbereiten“. Die Kampagnenkarte markiert einen bestätigten Test auch ohne bereits eingetragene Note als abgeschlossen.
+
+- v0.21.24 beseitigt außerdem künstliche Lektionsenden innerhalb des Pflicht-Tageskerns. Solange Pflichtwörter offen sind, bleibt dieselbe Lernsession aktiv und führt automatisch mit der adaptiv nächsten Methode weiter. Erst der vollständig abgeschlossene Übungsraum zeigt eine kompakte Ergebnisübersicht mit Fokuswort-, Aufgaben-, Treffer- und Methodenkennzahlen; Detailabfragen sind einklappbar.
 
 - v0.21.23 behebt einen realen iPhone/WebKit-Fehler der Festungsvorschau: Nach Ausblenden von KPI-, Taktik- und Aktionszeilen konnte der verbleibende `battleStage` trotz formal sichtbarem DOM auf nahezu null Höhe kollabieren. Die Vorschau verwendet deshalb kein flex/grid-abhängiges Resthöhenlayout mehr, sondern einen eigenständigen 16:9-Block. Browserregressionen prüfen jetzt die tatsächliche Geometrie und beide realen Einstiege („Festung ansehen“ und „Zur Schlacht“).
 

@@ -198,6 +198,68 @@ try{
   assert(handwritingAdvance.label==='Aufgabe 2','second handwriting word has clear task orientation');
 
   await page.click('#backHomeBtn');
+
+  await page.evaluate(()=>{
+    state=defaultState();
+    const set={id:'daily_room_set',learnerId:'learner_demo',subject:'english',title:'Daily Room',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(3),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+    state.sets.push(set);
+    attachVocabularyToSet(set.id,{term:'bridge',translation:'Brücke',source:'daily-room-smoke',verified:true});
+    rebuildWordIndexes();
+    renderAll();
+    startDailyTodo();
+  });
+  await page.waitForSelector('[data-answer]');
+  await page.evaluate(()=>{
+    const q=session?.currentQuestion;
+    const correct=[...document.querySelectorAll('[data-answer]')].find(b=>gradeQuizQuestion(q,b.dataset.answer).correct);
+    if(!correct)throw new Error('daily room recognition answer missing');
+    correct.click();
+  });
+  await waitForContinue();
+  await page.click('#continueStudyBtn');
+
+  for(let attempt=0;attempt<2;attempt++){
+    await page.waitForSelector('#answerField');
+    await page.fill('#answerField','wrong');
+    await page.click('#answerBtn');
+    await waitForContinue();
+    await page.click('#continueStudyBtn');
+  }
+
+  await page.waitForSelector('.daily-room-transition');
+  const seamlessRoom=await page.evaluate(()=>({
+    roomRound:session?.roomRound||0,
+    sameSession:!!session&&session.isDaily===true,
+    finish:!!document.querySelector('.session-finish-card'),
+    doneButton:!!document.querySelector('#doneBtn'),
+    copy:document.querySelector('.daily-room-transition')?.textContent||'',
+    resultCount:session?.results?.length||0
+  }));
+  assert(seamlessRoom.roomRound===2&&seamlessRoom.sameSession,'unfinished daily work continues inside the same learning room');
+  assert(!seamlessRoom.finish&&!seamlessRoom.doneButton,'an intermediate method pass never looks like a finished lesson and offers no exit-vs-next-lesson decision');
+  assert(seamlessRoom.copy.includes('Weiter geht')&&seamlessRoom.copy.includes('Abrufen'),'the room gives a brief method transition toward the next adaptive method');
+  assert(seamlessRoom.resultCount>=3,'daily room preserves its result history across the method transition');
+
+  await page.waitForSelector('#answerField',{timeout:3000});
+  await page.fill('#answerField','bridge');
+  await page.click('#answerBtn');
+  await waitForContinue();
+  await page.click('#continueStudyBtn');
+  await page.waitForSelector('.daily-room-summary');
+
+  const roomFinish=await page.evaluate(()=>({
+    title:document.querySelector('#dailyRoomSummaryTitle')?.textContent||'',
+    text:document.querySelector('.daily-room-summary')?.textContent||'',
+    done:document.querySelector('#doneBtn')?.textContent||'',
+    nextLesson:!!document.querySelector('#continueDailyBtn'),
+    details:!!document.querySelector('.daily-room-details')
+  }));
+  assert(roomFinish.title.includes('1 von 1')&&roomFinish.text.includes('Übungsraum abgeschlossen'),'only the fully completed daily room shows the final result summary');
+  assert(roomFinish.text.includes('Aufgaben')&&roomFinish.text.includes('Lernmethoden'),'daily room result is compact but informative');
+  assert(roomFinish.done.trim()==='Fertig'&&!roomFinish.nextLesson,'final room summary no longer asks the child to choose between overview and another lesson');
+  assert(roomFinish.details,'individual question details remain available without cluttering the summary');
+
+  await page.click('#doneBtn');
   await seed('salve','sei gegrüßt','recall','latin');
   const latinTheme=await page.evaluate(()=>({
     theme:document.querySelector('#learnView')?.dataset.visualTheme||'',
