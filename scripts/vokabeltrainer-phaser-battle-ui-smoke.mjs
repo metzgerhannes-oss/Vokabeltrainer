@@ -2,7 +2,7 @@ import { webkit, devices } from 'playwright';
 
 const base = process.env.APP_BASE || 'http://127.0.0.1:4173';
 const browser = await webkit.launch({ headless: true });
-const context = await browser.newContext({ ...devices['iPhone 13'], reducedMotion: 'no-preference' });
+const context = await browser.newContext({ ...devices['iPhone 13'], reducedMotion: 'reduce' });
 const page = await context.newPage();
 page.setDefaultTimeout(18000);
 
@@ -24,13 +24,12 @@ const assert = (value, message) => {
   if (!value) throw new Error('Phaser battle smoke failed: ' + message);
 };
 
-try {
-  const response = await page.goto(base + '/phaser-battle-demo.html?autoplay=0', {
-    waitUntil: 'domcontentloaded',
-    timeout: 20000
-  });
-  assert(response?.ok(), 'Phaser battle demo loads');
-
+async function openVariant(attack, outcome = 'capture') {
+  const response = await page.goto(
+    base + '/phaser-battle-demo.html?autoplay=0&attack=' + encodeURIComponent(attack) + '&outcome=' + encodeURIComponent(outcome),
+    { waitUntil: 'domcontentloaded', timeout: 20000 }
+  );
+  assert(response?.ok(), attack + ' demo loads');
   await page.waitForFunction(() => window.__VT_PHASER_BATTLE_READY__ === true, null, { timeout: 20000 });
 
   const ready = await page.evaluate(() => {
@@ -50,9 +49,13 @@ try {
       fallbackHidden: document.querySelector('#phaserBattleFallback')?.hidden === true,
       buttonEnabled: document.querySelector('#phaserBattleStart')?.disabled === false,
       phaseCount: document.querySelectorAll('[data-phaser-battle-phase]').length,
+      attackCount: document.querySelectorAll('[data-phaser-attack]').length,
+      activeAttackCount: document.querySelectorAll('[data-phaser-attack].active').length,
       phase: stage?.dataset.phase || '',
-      label: document.querySelector('#phaserBattleCinematicLabel')?.textContent?.trim() || '',
-      phases: window.__VT_PHASER_BATTLE_PHASES__ || []
+      attack: stage?.dataset.attack || '',
+      outcome: stage?.dataset.outcome || '',
+      reducedMotion: stage?.dataset.reducedMotion || '',
+      label: document.querySelector('#phaserBattleCinematicLabel')?.textContent?.trim() || ''
     };
   });
 
@@ -63,9 +66,13 @@ try {
   assert(ready.readyClass, 'stage marks Phaser renderer ready');
   assert(ready.fallbackHidden, 'fallback stays hidden when Phaser starts');
   assert(ready.buttonEnabled, 'sequence button becomes enabled');
-  assert(ready.phaseCount === 5, 'five battle phases are visible');
+  assert(ready.phaseCount === 5, 'five cinematic phases are visible');
+  assert(ready.attackCount === 5, 'five attack variants are selectable');
+  assert(ready.activeAttackCount === 1, 'exactly one attack variant is active');
   assert(ready.phase === 'ready' && ready.label === 'BEREIT', 'scene starts in ready state');
-  assert(ready.phases.includes('ready'), 'phase recorder contains ready state');
+  assert(ready.attack === attack, 'selected attack is reflected on the stage');
+  assert(ready.outcome === outcome, 'selected outcome is reflected on the stage');
+  assert(ready.reducedMotion === 'true', 'matrix runs in reduced-motion mode for CI speed');
   assert(external.length === 0, 'Phaser battle uses no external CDN requests');
 
   await page.locator('#phaserBattleStart').click();
@@ -82,6 +89,8 @@ try {
       cinematic: document.querySelector('#phaserBattleCinematicTitle')?.textContent?.trim() || '',
       phases: window.__VT_PHASER_BATTLE_PHASES__ || [],
       beats: window.__VT_PHASER_BATTLE_BEATS__ || [],
+      attack: window.__VT_PHASER_BATTLE_ATTACK__ || '',
+      outcome: window.__VT_PHASER_BATTLE_OUTCOME__ || '',
       damage: stage?.dataset.damage || '',
       control: stage?.dataset.control || '',
       beat: stage?.dataset.beat || ''
@@ -89,29 +98,54 @@ try {
   });
 
   for (const phase of ['rally', 'advance', 'barrage', 'impact', 'result']) {
-    assert(result.phases.includes(phase), 'phase sequence contains ' + phase);
+    assert(result.phases.includes(phase), attack + ' phase sequence contains ' + phase);
   }
-  assert(result.phase === 'result', 'scene ends in result phase');
-  assert(result.complete, 'result completion state is visible');
-  assert(result.buttonEnabled && result.buttonText.includes('Nochmal'), 'scene can be replayed');
-  const expectedBeats = ['rally','advance','volley-1','ram-charge-1','damage-1','volley-2','ram-charge-2','damage-2','fire','breach','takeover','secured'];
-  for (const beat of expectedBeats) {
-    assert(result.beats.includes(beat), 'extended sequence contains beat ' + beat);
+  assert(result.phase === 'result', attack + ' scene ends in result phase');
+  assert(result.complete, attack + ' result completion state is visible');
+  assert(result.buttonEnabled && result.buttonText.includes('Nochmal'), attack + ' scene can be replayed');
+  assert(result.attack === attack, attack + ' is preserved through completion');
+  assert(result.outcome === outcome, outcome + ' is preserved through completion');
+  return result;
+}
+
+try {
+  const ram = await openVariant('ram', 'capture');
+  for (const beat of ['rally','advance','volley-1','ram-charge-1','damage-1','volley-2','ram-charge-2','damage-2','fire','breach','takeover','secured']) {
+    assert(ram.beats.includes(beat), 'ram capture contains beat ' + beat);
   }
-  for (let i = 1; i < expectedBeats.length; i += 1) {
-    assert(
-      result.beats.indexOf(expectedBeats[i - 1]) < result.beats.indexOf(expectedBeats[i]),
-      'extended beats stay in cinematic order'
-    );
-  }
-  assert(result.damage === 'heavy', 'final rendered fortress state keeps heavy damage');
-  assert(result.control === 'own', 'takeover marks fortress as own control');
-  assert(result.beat === 'secured', 'sequence settles only after takeover');
-  assert(result.resultText.includes('Festung übernommen'), 'result message confirms takeover');
-  assert(result.cinematic.includes('Festung'), 'cinematic result headline remains readable');
+  assert(ram.damage === 'heavy', 'ram capture keeps heavy fortress damage');
+  assert(ram.control === 'own', 'ram capture transfers control');
+  assert(ram.resultText.includes('Festung übernommen'), 'ram capture result confirms takeover');
+
+  const charge = await openVariant('charge', 'capture');
+  assert(charge.beats.includes('charge-1'), 'charge uses infantry-specific attack beat');
+  assert(charge.beats.includes('damage-1'), 'charge has a visible damage beat');
+  assert(charge.beats.includes('takeover'), 'charge capture can show takeover only after capture outcome');
+
+  const volley = await openVariant('volley', 'capture');
+  assert(volley.beats.includes('volley-1') && volley.beats.includes('volley-2'), 'volley uses multiple arrow waves');
+  assert(volley.beats.includes('fire'), 'volley can leave small stylized fire effects');
+  assert(volley.beats.includes('takeover'), 'volley capture resolves through takeover outcome');
+
+  const cavalry = await openVariant('cavalry', 'capture');
+  assert(cavalry.beats.includes('flank-1'), 'cavalry uses a dedicated flank beat');
+  assert(cavalry.beats.includes('damage-1'), 'cavalry ends in a visible target reaction');
+  assert(cavalry.beats.includes('takeover'), 'cavalry capture resolves through takeover outcome');
+
+  const special = await openVariant('special', 'capture');
+  assert(special.beats.includes('elite-wave-1'), 'special starts a combined elite wave');
+  assert(special.beats.includes('ram-charge'), 'special includes the ram role');
+  assert(special.beats.includes('damage-2'), 'special has a coordinated second impact');
+  assert(special.beats.includes('takeover'), 'special capture resolves through takeover outcome');
+
+  const hitOnly = await openVariant('ram', 'hit');
+  assert(hitOnly.beats.includes('hold') && hitOnly.beats.includes('settled'), 'normal hit resolves without capture');
+  assert(!hitOnly.beats.includes('takeover') && !hitOnly.beats.includes('secured'), 'normal hit never fakes takeover');
+  assert(hitOnly.control === '', 'normal hit keeps enemy control');
+  assert(hitOnly.resultText.includes('noch nicht übernommen'), 'normal hit result explicitly keeps fortress uncaptured');
 
   if (errors.length) throw new Error(errors.join(' | '));
-  console.log('Vokabeltrainer Phaser battle smoke: passed');
+  console.log('Vokabeltrainer Phaser battle attack matrix smoke: passed');
 } finally {
   await browser.close();
 }
