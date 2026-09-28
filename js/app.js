@@ -14,9 +14,8 @@
     let updateReloading=false;
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       if(!hadController||updateReloading)return;
-      const key='vokabeltrainer_sw_reload_'+VERSION;
-      if(sessionStorage.getItem(key))return;
-      updateReloading=true;sessionStorage.setItem(key,'1');location.reload();
+      updateReloading=true;
+      location.reload();
     });
     navigator.serviceWorker.register('./sw.js?v=0.21.27')
       .then(reg=>reg.update().catch(()=>{}))
