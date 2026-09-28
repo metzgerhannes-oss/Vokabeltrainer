@@ -253,8 +253,8 @@ Umgesetzt im Release-Kandidaten v0.21.29:
 - Wochenserien enden hinter einer datierten Jahresfestung
 - Regressionstests sichern Nicht-Rückstufung, dynamische Feldzugskarte und unveränderte fachliche Mastery
 
-Technischer Neuaufbau erfolgt auf aktuellem v0.21.28-`main`; der veraltete PR #173 wird
-nicht gemergt, sondern durch den sauberen Nachfolger ersetzt.
+Technischer Neuaufbau erfolgt auf aktuellem v0.21.28-`main` in **PR #188**; der veraltete PR #173 wird
+nicht gemergt, sondern durch diesen sauberen Nachfolger ersetzt.
 
 ## Pflege
 
