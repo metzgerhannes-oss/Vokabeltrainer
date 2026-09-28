@@ -254,7 +254,7 @@ function startSession(mode='adaptive',setId=null,wordIds=null,isDaily=false,opts
 function modeLabel(m){return ({adaptive:'Adaptiv',allWords:'Alle Vokabeln',weakWords:'Unsichere Vokabeln',flash:'Wortblitz',shower:'Vokabeldusche',chunks:'Wortbausteine',handwriting:'Handschrift',firstContact:'Abschreiben',recognition:'Erkennen',recall:'Abrufen',reverseRecall:'Bedeutung abrufen',spelling:'Schreiben',listening:'Hören',context:'Kontext',latinGrammar:'Latein Formen',practiceTest:'Prüfung',cards:'Karteikarten'})[m]||m}
 function currentWord(){const token=session?.queue?.[session.index];return resolveQuizQueueRef(token,session?.setId||'')}
 function canSkipCurrentVocabulary(){
-  return !!(session&&!session.locked&&session.mode!=='practiceTest'&&session.index<session.queue.length-1);
+  return !!(session&&!session.locked&&!['practiceTest','flash','shower','firstContact'].includes(session.mode)&&session.index<session.queue.length-1);
 }
 function skipCurrentVocabulary(){
   if(!canSkipCurrentVocabulary()){toast('Diese Vokabel steht bereits am Ende der aktuellen Abfrage.','subtle');return false}
@@ -262,7 +262,7 @@ function skipCurrentVocabulary(){
   recordActivity('skipVocabulary',{wordId:typeof token==='string'?token:(token?.wordId||''),neutral:true});persistOnly();renderStudy();return true;
 }
 function mountSkipCurrentVocabulary(){
-  if(!session||session.mode==='practiceTest'||$('#skipVocabularyBtn'))return;
+  if(!session||['practiceTest','flash','shower','firstContact'].includes(session.mode)||$('#skipVocabularyBtn'))return;
   const card=$('#studyArea .study-card');if(!card)return;
   const available=canSkipCurrentVocabulary();
   card.insertAdjacentHTML('beforeend',`<div class="skip-vocabulary-action"><button type="button" id="skipVocabularyBtn" class="ghost" ${available?'':'disabled'}>Vokabel überspringen</button><small>${available?'Kommt am Ende dieser Abfrage noch einmal.':'Steht bereits am Ende dieser Abfrage.'}</small></div>`);
@@ -275,8 +275,8 @@ function renderStudy(){
   session.locked=false; session.hintUsed=false;session.currentQuestion=null;session.currentQuestionIssues=[];
   if(session.mode==='practiceTest') return renderPracticeTest(w);
   if(session.mode==='latinGrammar'){renderLatinGrammar(w);mountSkipCurrentVocabulary();return}
-  if(session.mode==='shower'){renderShower(w);mountSkipCurrentVocabulary();return}
-  if(session.mode==='flash'){renderFlash(w);mountSkipCurrentVocabulary();return}
+  if(session.mode==='shower') return renderShower(w);
+  if(session.mode==='flash') return renderFlash(w);
   if(session.mode==='chunks'){renderChunks(w);mountSkipCurrentVocabulary();return}
   if(session.mode==='handwriting'){renderHandwriting(w);mountSkipCurrentVocabulary();return}
   if(session.mode==='cards'){renderLeitnerCard(w);mountSkipCurrentVocabulary();return}
