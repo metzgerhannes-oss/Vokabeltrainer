@@ -158,18 +158,24 @@ sein; insbesondere dürfen keine bloßen Gesamtbild-Verschiebungen, leeren Fallb
 oder artefaktartigen Einschlagseffekte als finale Lösung gelten.
 
 ## B-013 – Kurze 3D-Storyszenen prüfen
-**Status:** IDEA  
+**Status:** APPROVED_BACKLOG  
 **Priorität:** nach stabilem Phaser-Battle  
 **Decision:** D-20260928-004  
-**Betroffene Quelle:** `VISUAL_DNA.md`
+**Kanonische Konzeptquelle:** `docs/project/STORY_3D_CONCEPT.md`  
+**Weitere Quelle:** `VISUAL_DNA.md`
 
-Späterer Technik-/UX-Spike für sehr kurze Storymomente wie Festungsenthüllung, Sieg,
-Rangaufstieg oder Kampagnenübergang. Bevorzugt wird ein isolierter Three.js/WebGL-Renderer
-mit glTF-Assets; für feste Sequenzen wird gegen vorgerendertes Video verglichen.
+3D ist als optionaler Cinematic Layer projektiert, aber ausdrücklich noch nicht zur
+Implementierung freigegeben. Geplant sind sehr kurze Storymomente wie Festungsenthüllung,
+Eroberung, Rang-/Ausrüstungsaufstieg, Kampagnenübergang und Jahresfinale.
 
-Nicht vorgesehen: 3D als Grundlage der Lernoberfläche oder als Pflichtabhängigkeit der
-eigentlichen Battle-Logik. Entscheidung erst nach Messung von Ladezeit, Speicherbedarf,
-Framerate und Verhalten auf älteren iPhones.
+Technischer Kandidat ist ein isolierter Three.js/WebGL-Renderer mit lokal ausgelieferten
+glTF/GLB-Assets. Für feste Sequenzen wird weiterhin gegen vorgerendertes Video verglichen.
+Der normale Kampf bleibt Phaser 2D/2.5D; Lern- und Battle-Logik bleiben vollständig außerhalb
+des 3D-Moduls.
+
+Vor einer Umsetzung ist genau ein Festungsenthüllungs-Spike vorgesehen. Erst nach Messung von
+Ladezeit, Framerate, Speicherbedarf, Offline-/Fallback-Verhalten und älteren iPhones wird
+entschieden, ob Three.js, Video oder kein 3D die produktive Richtung ist.
 
 ## Pflege
 
