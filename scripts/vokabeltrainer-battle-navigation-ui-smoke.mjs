@@ -101,8 +101,14 @@ try{
   await activate('#attackBtn','battle entry');
   await page.waitForSelector('#battleView.active');
   assert(!(await page.evaluate(()=>document.body.classList.contains('battle-preview'))),'earned daily action opens the full battle instead of preview mode');
-  const visibleBattleKpis=await page.locator('.battle-scene-hud>div:visible').count();
-  assert(visibleBattleKpis===4,'all four battle KPIs are readable outside the artwork when an action is ready');
+  const battleKpiGeometry=await page.locator('.battle-scene-hud>div').evaluateAll(items=>items.map(el=>{
+    const rect=el.getBoundingClientRect(),style=getComputedStyle(el);
+    return {width:rect.width,height:rect.height,display:style.display,visibility:style.visibility};
+  }));
+  assert(
+    battleKpiGeometry.length===4&&battleKpiGeometry.every(item=>item.width>0&&item.height>0&&item.display!=='none'&&item.visibility!=='hidden'),
+    'all four battle KPIs are readable outside the artwork when an action is ready: '+JSON.stringify(battleKpiGeometry)
+  );
   assert(await page.locator('.battle-scene-tactics').isVisible(),'battle tactics are usable below the artwork when an action is ready');
   assert(await page.locator('.battle-action-dock').isVisible(),'active battle shows the primary action block');
   const composition=await page.evaluate(()=>{
