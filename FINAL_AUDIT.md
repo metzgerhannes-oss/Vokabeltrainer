@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 28.09.2026 · App v0.21.24
+Stand: 28.09.2026 · App v0.21.25
 
 ## Ergebnis
+
+- v0.21.25 ergänzt am echten Testabschluss eine kurze Konfetti-Belohnung. Sie wird ausschließlich nach der bestätigten, erfolgreichen Testabschlussaktion ausgelöst, bleibt rein dekorativ, beeinflusst keine fachlichen Werte und respektiert `prefers-reduced-motion`.
 
 - v0.21.24 ergänzt den Testtag-Lifecycle: Ein fälliger oder bereits vergangener, noch nicht bestätigter Test bleibt aktuelles Ziel und bietet „Test abschließen“. Der Abschluss wird separat von der Schulnote gespeichert und über Family Sync synchronisiert. Danach wechselt die App sofort auf den nächsten geplanten Test; bei Serien entsteht die Vorbereitung für den nächsten Wochentermin, ohne Folgetest erscheint „Nächsten Test vorbereiten“. Die Kampagnenkarte markiert einen bestätigten Test auch ohne bereits eingetragene Note als abgeschlossen.
 

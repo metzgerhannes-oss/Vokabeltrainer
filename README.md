@@ -12,7 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.24**
+App-Version: **v0.21.25**
+
+- v0.21.25: Der echte Testabschluss erhält eine kurze, rein dekorative Konfetti-Belohnung. Sie startet erst nach bestätigtem und erfolgreich gespeichertem „Test abschließen“, verändert weder Lernstand noch XP und wird bei aktivierter reduzierter Bewegung nicht animiert.
 
 - v0.21.24: Der verpflichtende Tageslernweg ist ein durchgehender **Übungsraum**: interne Methodenwechsel erzeugen keinen künstlichen Lektionsabschluss; offene Pflichtwörter werden nach einer kurzen Orientierung automatisch mit der nächsten passenden Methode weitergeführt. Erst der vollständig erledigte Pflichtkern zeigt eine kompakte Ergebniszusammenfassung. Zusätzlich hat der Testtag jetzt einen expliziten Abschluss: Ab Testdatum wird **„Test abschließen“** zur Hauptaktion. Der Test bleibt bis zur Bestätigung aktuell, auch wenn das Datum bereits vorbei ist. Danach erscheint sofort der nächste geplante Test; fehlt er, wechselt die App auf **„Nächsten Test vorbereiten“**. Bei Testserien wird direkt der nächste Termin zur Vorbereitung angeboten. Der Abschluss ist unabhängig von der später nachtragbaren Schulnote.
 

@@ -165,7 +165,14 @@ try{
   assert((await page.locator('#todaySummary').textContent())?.includes('Test heute'),'Today screen changes from learning to explicit test completion on the test day');
   await page.click('#quickLearnHeroBtn');
   await page.waitForSelector('#confirmCompleteTestBtn');
+  await page.emulateMedia({reducedMotion:'no-preference'});
   await page.click('#confirmCompleteTestBtn');
+  await page.waitForSelector('.test-completion-confetti',{state:'visible'});
+  assert(await page.locator('.test-completion-confetti').getAttribute('aria-hidden')==='true','completed real test triggers a brief decorative confetti burst without adding semantic noise');
+  await page.evaluate(()=>document.querySelector('.test-completion-confetti')?.remove());
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await page.evaluate(()=>fireTestCompletionConfetti());
+  assert(await page.locator('.test-completion-confetti').count()===0,'reduced-motion preference suppresses the decorative test-completion animation');
   await page.waitForFunction(()=>upcomingTestContext()?.date===datePlusDays(4));
   const afterComplete=await page.evaluate(()=>({
     summary:document.querySelector('#todaySummary')?.textContent||'',
