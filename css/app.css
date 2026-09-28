@@ -4106,3 +4106,52 @@ body.battle-immersive #battleView .battle-action-dock-copy span{color:#bdc8d2!im
   body.battle-immersive #battleView .battle-action-dock-copy span{display:none!important}
   body.battle-immersive #battleView .battle-action-dock .battle-primary{min-height:36px!important}
 }
+
+/* v0.21.22 – "Festung ansehen" is a clean preview, not a disabled battle screen.
+   Without an earned daily action the child sees the approved scene only; battle controls
+   return automatically once an action is actually available. */
+body.battle-preview #battleView .battle-ticket-pill,
+body.battle-preview #battleView .battle-scene-hud.battle-readout,
+body.battle-preview #battleView .battle-scene-tactics,
+body.battle-preview #battleView .battle-action-dock{
+  display:none!important;
+}
+body.battle-preview #battleView .battle-stage-wrap{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:0!important;
+  height:100%!important;
+  gap:0!important;
+}
+body.battle-preview #battleView .battle-stage{
+  flex:0 1 auto!important;
+  width:min(100%,1100px)!important;
+  height:auto!important;
+  max-height:100%!important;
+  aspect-ratio:16 / 9!important;
+  border-radius:18px!important;
+}
+body.battle-preview #battleView .battle-toolbar{
+  grid-template-columns:1fr!important;
+}
+body.battle-preview #battleView .battle-phase-strip,
+body.battle-preview #battleView .battle-fortress-state-badge,
+body.battle-preview #battleView .battle-rank-badge{
+  display:none!important;
+}
+@media(max-width:720px){
+  body.battle-preview #battleView{
+    padding:
+      max(8px,env(safe-area-inset-top))
+      max(8px,env(safe-area-inset-right))
+      max(8px,env(safe-area-inset-bottom))
+      max(8px,env(safe-area-inset-left))!important;
+  }
+  body.battle-preview #battleView .battle-stage{
+    width:100%!important;
+    aspect-ratio:16 / 9!important;
+    border-radius:14px!important;
+  }
+}
+

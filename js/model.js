@@ -513,7 +513,7 @@ function upcomingTestContext(subject=state.activeSubject){
 }
 function uniqueById(list){const seen=new Set();return list.filter(x=>x&&!seen.has(x.id)&&seen.add(x.id))}
 function testContextLabel(ctx,subject=state.activeSubject){if(!ctx)return '';const subjectName=subjectLabel(subject);const when=ctx.days===0?'heute':ctx.days===1?'morgen':`in ${ctx.days} Tagen`;const recurrence=ctx.source==='series'||ctx.source==='mixed'?` · wöchentlich ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]}`:'';return `${subjectName}-Test ${when}${recurrence} · ${ctx.scopeText||ctx.sets.map(s=>s.title).join(' + ')}`}
-const DAILY_PLAN_SCHEMA='daily1';
+const DAILY_PLAN_SCHEMA='daily2';
 function dailyPlanSignature(ctx,subject,sessionSize){
   const words=(ctx?ctx.words:schoolYearVerifiedWords(subject)).map(w=>w.id).sort().join(',');
   return `${DAILY_PLAN_SCHEMA}:${ctx?`test:${ctx.source||'single'}:${ctx.date}:${ctx.sets.map(s=>s.id).sort().join(',')}`:`general:${currentSchoolYear()}`}:${sessionSize}:${words}`;
@@ -548,30 +548,29 @@ function testLearningWindow(ctx){
 }
 function dailyPacePlan(pendingCount,weakCount,ctx,reducedLoad=false){
   pendingCount=Math.max(0,Number(pendingCount)||0);weakCount=Math.max(0,Number(weakCount)||0);
+  const coreMax=reducedLoad?4:6,coreMin=reducedLoad?3:5,maxNew=reducedLoad?2:3;
   if(!ctx){
-    const quota=Math.min(pendingCount,5),dailyTarget=reducedLoad?10:12;
-    return {quota,requiredPerDay:pendingCount?5:0,requiredReviewPerDay:0,overload:false,dailyTarget,pace:'normal',...testLearningWindow(null)};
+    const quota=Math.min(pendingCount,maxNew),dailyTarget=(pendingCount+weakCount)<=coreMin?coreMin:coreMax;
+    return {quota,requiredPerDay:pendingCount?maxNew:0,requiredReviewPerDay:0,overload:false,spacingRisk:false,recommendSecondRound:false,dailyTarget,coreMax,coreMin,maxNew,pace:dailyTarget===coreMin?'ahead':'normal',...testLearningWindow(null)};
   }
   const window=testLearningWindow(ctx);
-  let requiredPerDay=0,quota=0,overload=false;
+  let requiredPerDay=0,quota=0;
   if(pendingCount){
-    if(window.acquisitionDays<1){requiredPerDay=pendingCount;overload=true}
+    if(window.acquisitionDays<1)requiredPerDay=pendingCount;
     else{
       requiredPerDay=Math.ceil(pendingCount/window.acquisitionDays);
-      quota=Math.min(pendingCount,requiredPerDay<=3?3:Math.min(7,requiredPerDay));
-      overload=requiredPerDay>7;
+      quota=Math.min(pendingCount,maxNew,Math.max(1,requiredPerDay));
     }
   }
   const spacingRisk=!!(pendingCount&&window.daysToTest<=1);
   const reviewDays=Math.max(1,window.studyDaysBeforeTest),requiredReviewPerDay=weakCount?Math.ceil(weakCount/reviewDays):0;
-  let dailyTarget=quota?quota+5:8;
-  dailyTarget=Math.max(dailyTarget,quota+requiredReviewPerDay);
-  if(overload)dailyTarget+=Math.min(2,Math.max(1,requiredPerDay-7));
-  if(window.daysToTest<=3&&weakCount>0)dailyTarget+=1;
-  const cap=reducedLoad?12:14;
-  dailyTarget=clamp(dailyTarget,Math.min(8,cap),cap);
-  const pace=overload?'overload':spacingRisk?'catchup':dailyTarget<10?'ahead':dailyTarget>12?'catchup':'normal';
-  return {quota,requiredPerDay,requiredReviewPerDay,overload,spacingRisk,dailyTarget,pace,...window};
+  const reviewCapacity=Math.max(0,coreMax-quota);
+  const overload=requiredPerDay>maxNew||requiredReviewPerDay>reviewCapacity||(window.acquisitionDays<1&&pendingCount>0);
+  const light=!overload&&!spacingRisk&&requiredPerDay<=1&&requiredReviewPerDay<=Math.max(0,coreMin-quota);
+  const dailyTarget=light?coreMin:coreMax;
+  const recommendSecondRound=overload||spacingRisk;
+  const pace=overload?'overload':spacingRisk?'catchup':light?'ahead':'normal';
+  return {quota,requiredPerDay,requiredReviewPerDay,overload,spacingRisk,recommendSecondRound,dailyTarget,coreMax,coreMin,maxNew,pace,...window};
 }
 function dailyIntroQuota(pendingCount,ctx,weakCount=0,reducedLoad=false){return dailyPacePlan(pendingCount,weakCount,ctx,reducedLoad)}
 function normalizeDailyAdaptivePlan(plan,l=learner()){
@@ -581,6 +580,10 @@ function normalizeDailyAdaptivePlan(plan,l=learner()){
   plan.securityEvidence=plan.securityEvidence&&typeof plan.securityEvidence==='object'&&!Array.isArray(plan.securityEvidence)?plan.securityEvidence:{};
   plan.extraRefs=Array.isArray(plan.extraRefs)?plan.extraRefs:[];
   plan.extraSources=plan.extraSources&&typeof plan.extraSources==='object'&&!Array.isArray(plan.extraSources)?plan.extraSources:{};
+  plan.rescueSeenKeys=Array.isArray(plan.rescueSeenKeys)?plan.rescueSeenKeys:[];
+  plan.rescueCorrectKeys=Array.isArray(plan.rescueCorrectKeys)?plan.rescueCorrectKeys:[];
+  plan.rescueWrongKeys=Array.isArray(plan.rescueWrongKeys)?plan.rescueWrongKeys:[];
+  plan.rescueRounds=Math.max(0,Number(plan.rescueRounds)||0);
   const modeLimit=reducedLoadEnabled(l)?2:3,storedLimit=Number.isFinite(Number(plan.extraLimit))?Number(plan.extraLimit):modeLimit;
   plan.extraLimit=Math.max(0,Math.min(modeLimit,storedLimit));
   if(plan.extraRefs.length>plan.extraLimit)plan.extraRefs=plan.extraRefs.slice(0,plan.extraLimit);
@@ -588,7 +591,7 @@ function normalizeDailyAdaptivePlan(plan,l=learner()){
 }
 function buildDailyPlan(subject=state.activeSubject){
   const l=learner();l.dailyPlans=l.dailyPlans||{};
-  const reducedLoad=reducedLoadEnabled(l),sessionSize=reducedLoad?6:10,ctx=upcomingTestContext(subject),key=`${today()}:${subject}`,signature=dailyPlanSignature(ctx,subject,sessionSize);
+  const reducedLoad=reducedLoadEnabled(l),sessionSize=reducedLoad?4:6,ctx=upcomingTestContext(subject),key=`${today()}:${subject}`,signature=dailyPlanSignature(ctx,subject,sessionSize);
   const existing=l.dailyPlans[key];
   if(existing&&dailyPlanSignatureCompatible(existing.signature,signature)){
     normalizeDailyAdaptivePlan(existing,l);
@@ -603,7 +606,13 @@ function buildDailyPlan(subject=state.activeSubject){
     }
   }
 
-  const pool=ctx?ctx.words:schoolYearVerifiedWords(subject);
+  if(existing){normalizeDailyAdaptivePlan(existing,l);recoverLegacyDailyPlanCompletion(existing,l)}
+  const pool=ctx?ctx.words:schoolYearVerifiedWords(subject),poolIds=new Set(pool.map(w=>w.id));
+  const previousCompleted=new Set(Array.isArray(existing?.completedKeys)?existing.completedKeys:[]);
+  const preservedDoneWords=existing?dailyPlanRefs(existing,false)
+    .filter(ref=>previousCompleted.has(dailyPlanRefKey(ref)))
+    .map(ref=>ref.setLinkId?wordByLinkId(ref.setLinkId):wordById(ref.wordId))
+    .filter(w=>w&&poolIds.has(w.id)):[];
   const hasLearningContact=w=>Number(w?.repetitions||0)>0||(w?.activePracticeDays||[]).length>0;
   const pending=pool.filter(w=>!hasLearningContact(w)),ready=pool.filter(hasLearningContact);
   const testFormat=ctx?.testFormat||'target',weakReady=ready.filter(w=>!isTestReady(w,testFormat)),introPlan=dailyIntroQuota(pending.length,ctx,weakReady.length,reducedLoad),dailyTarget=introPlan.dailyTarget;
@@ -612,10 +621,10 @@ function buildDailyPlan(subject=state.activeSubject){
   const reviewTarget=Math.max(0,dailyTarget-introWords.length);
   const due=ready.filter(w=>!w.dueDate||w.dueDate<=today()).sort((a,b)=>testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b));
   const seenWeak=ready.filter(w=>!isTestReady(w,testFormat)).sort((a,b)=>testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b));
-  let selected=uniqueWords([...due,...seenWeak,...ready]).slice(0,reviewTarget),maintenanceCount=0;
+  let selected=uniqueWords([...preservedDoneWords,...due,...seenWeak,...ready]).slice(0,reviewTarget),maintenanceCount=0;
 
   if(selected.length<reviewTarget){
-    const poolIds=new Set(pool.map(w=>w.id)),maintenance=dueWords(subject).filter(w=>!poolIds.has(w.id)).slice(0,reviewTarget-selected.length);
+    const maintenance=dueWords(subject).filter(w=>!poolIds.has(w.id)).slice(0,reviewTarget-selected.length);
     const before=selected.length;selected=uniqueWords([...selected,...maintenance]).slice(0,reviewTarget);maintenanceCount=selected.length-before;
   }
 
@@ -627,10 +636,22 @@ function buildDailyPlan(subject=state.activeSubject){
     wordIds:selected.map(w=>w.id),wordRefs:selected.map(w=>({wordId:w.id,setLinkId:w.setLinkId||''})),
     introRefs:introWords.map(w=>({wordId:w.id,setLinkId:w.setLinkId||''})),introSetId,
     introCount:introWords.length,reviewCount:selected.length,dailyTarget,requiredNewPerDay:introPlan.requiredPerDay,requiredReviewPerDay:introPlan.requiredReviewPerDay,
-    deadlineOverload:introPlan.overload,spacingRisk:introPlan.spacingRisk,pace:introPlan.pace,studyDaysBeforeTest:introPlan.studyDaysBeforeTest,acquisitionDays:introPlan.acquisitionDays,reviewOnlyDays:introPlan.reviewOnlyDays,
-    sessionSize,urgent,phase,maintenanceCount,completedKeys:[],todaySecureKeys:[],securityEvidence:{},extraRefs:[],extraSources:{},extraLimit:reducedLoad?2:3,createdAt:new Date().toISOString()
+    deadlineOverload:introPlan.overload,spacingRisk:introPlan.spacingRisk,recommendSecondRound:!!introPlan.recommendSecondRound,coreMax:introPlan.coreMax,maxNew:introPlan.maxNew,pace:introPlan.pace,studyDaysBeforeTest:introPlan.studyDaysBeforeTest,acquisitionDays:introPlan.acquisitionDays,reviewOnlyDays:introPlan.reviewOnlyDays,
+    sessionSize,urgent,phase,maintenanceCount,completedKeys:[],todaySecureKeys:[],securityEvidence:{},extraRefs:[],extraSources:{},extraLimit:reducedLoad?2:3,
+    rescueSeenKeys:[],rescueCorrectKeys:[],rescueWrongKeys:[],rescueRounds:0,createdAt:new Date().toISOString()
   };
   normalizeDailyAdaptivePlan(plan,l);
+  if(existing){
+    const allowed=new Set(dailyPlanRefs(plan,true).map(dailyPlanRefKey).filter(Boolean));
+    plan.completedKeys=[...new Set(existing.completedKeys||[])].filter(k=>allowed.has(k));
+    plan.todaySecureKeys=[...new Set(existing.todaySecureKeys||[])].filter(k=>allowed.has(k));
+    plan.securityEvidence=Object.fromEntries(Object.entries(existing.securityEvidence||{}).filter(([k])=>allowed.has(k)));
+    plan.rescueSeenKeys=[...new Set(existing.rescueSeenKeys||[])];
+    plan.rescueCorrectKeys=[...new Set(existing.rescueCorrectKeys||[])];
+    plan.rescueWrongKeys=[...new Set(existing.rescueWrongKeys||[])];
+    plan.rescueRounds=Math.max(0,Number(existing.rescueRounds)||0);
+    recoverLegacyDailyPlanCompletion(plan,l);
+  }
   l.dailyPlans[key]=plan;Object.keys(l.dailyPlans).filter(k=>k<`${datePlusDays(-21)}:`).forEach(k=>delete l.dailyPlans[k]);persistOnly();return plan;
 }
 function wordPracticedToday(w){return !!(w?.activePracticeDays||[]).includes(today())}
@@ -643,6 +664,40 @@ function dailyPlanRefs(plan=buildDailyPlan(),includeExtra=true){
   return [...review,...intro,...extra];
 }
 function dailyPlanHasLearningContact(w){return Number(w?.repetitions||0)>0||(w?.activePracticeDays||[]).length>0}
+function t1RescuePlan(plan=buildDailyPlan()){
+  if(!plan||plan.date!==today())return {available:false,recommended:false,urgent:false,refs:[],weakTotal:0,unseenTotal:0,wrongTotal:0,roundSize:0};
+  normalizeDailyAdaptivePlan(plan);
+  const ctx=upcomingTestContext(plan.subject);
+  if(!ctx||Number(ctx.days)!==1||!ctx.words?.length)return {available:false,recommended:false,urgent:false,refs:[],weakTotal:0,unseenTotal:0,wrongTotal:0,roundSize:0};
+  const format=ctx.testFormat||plan.testFormat||'target',roundSize=reducedLoadEnabled()?4:6;
+  const weak=ctx.words.filter(w=>!isTestReady(w,format));
+  if(!weak.length)return {available:false,recommended:false,urgent:false,refs:[],weakTotal:0,unseenTotal:0,wrongTotal:0,roundSize};
+  const seen=new Set(plan.rescueSeenKeys||[]),correct=new Set(plan.rescueCorrectKeys||[]),wrong=new Set(plan.rescueWrongKeys||[]);
+  const refFor=w=>({wordId:w.id,setLinkId:w.setLinkId||''}),keyFor=w=>dailyPlanRefKey(refFor(w));
+  const wrongWords=weak.filter(w=>wrong.has(keyFor(w))).sort((a,b)=>testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b));
+  const unseenWords=weak.filter(w=>!seen.has(keyFor(w))&&!wrong.has(keyFor(w))).sort((a,b)=>{
+    const au=dailyPlanHasLearningContact(a)?1:0,bu=dailyPlanHasLearningContact(b)?1:0;
+    return au-bu||testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b);
+  });
+  const candidates=uniqueWords([...wrongWords,...unseenWords]);
+  const refs=candidates.slice(0,roundSize).map(refFor);
+  const recommended=weak.length>0,urgent=weak.length>roundSize;
+  return {available:refs.length>0,recommended,urgent,refs,weakTotal:weak.length,unseenTotal:unseenWords.length,wrongTotal:wrongWords.length,roundSize,allSeen:weak.every(w=>seen.has(keyFor(w))),allRescuedToday:weak.every(w=>correct.has(keyFor(w))||isTestReady(w,format))};
+}
+function recordT1RescueResult(w,{correct=false,active=false,assisted=false,orthographyOk=true}={},plan=buildDailyPlan()){
+  if(!w||!plan||!active)return false;
+  const ctx=upcomingTestContext(plan.subject);if(!ctx||Number(ctx.days)!==1)return false;
+  normalizeDailyAdaptivePlan(plan);
+  const key=dailyPlanRefKey({wordId:w.id,setLinkId:w.setLinkId||''});if(!key)return false;
+  plan.rescueSeenKeys=[...new Set([...plan.rescueSeenKeys,key])];
+  const good=!!(correct&&!assisted&&orthographyOk!==false);
+  const correctSet=new Set(plan.rescueCorrectKeys),wrongSet=new Set(plan.rescueWrongKeys);
+  if(good){correctSet.add(key);wrongSet.delete(key)}else{correctSet.delete(key);wrongSet.add(key)}
+  plan.rescueCorrectKeys=[...correctSet];plan.rescueWrongKeys=[...wrongSet];persistOnly();return true;
+}
+function markT1RescueRoundStarted(plan=buildDailyPlan()){
+  if(!plan)return 0;normalizeDailyAdaptivePlan(plan);plan.rescueRounds=(Number(plan.rescueRounds)||0)+1;persistOnly();return plan.rescueRounds;
+}
 function dailyPlanReplacementCandidate(plan=buildDailyPlan()){
   if(!plan||plan.date!==today()||plan.subject!==state.activeSubject)return null;
   normalizeDailyAdaptivePlan(plan);
@@ -651,8 +706,8 @@ function dailyPlanReplacementCandidate(plan=buildDailyPlan()){
   const available=w=>{const key=dailyPlanRefKey({wordId:w?.id,setLinkId:w?.setLinkId||''});return !!key&&!used.has(key)};
   const ctx=upcomingTestContext(plan.subject),testFormat=ctx?.testFormat||plan.testFormat||'target',scope=ctx?.words?.length?ctx.words:schoolYearVerifiedWords(plan.subject);
   const extraNewCount=Object.values(plan.extraSources||{}).filter(source=>source==='new').length;
-  const introducedNewCount=Math.max(0,Number(plan.introCount)||0)+extraNewCount;
-  const allowNew=(!ctx||Number(ctx.days)>3)&&introducedNewCount<7;
+  const introducedNewCount=Math.max(0,Number(plan.introCount)||0)+extraNewCount,newDailyLimit=reducedLoadEnabled()?4:6;
+  const allowNew=(!ctx||Number(ctx.days)>3)&&introducedNewCount<newDailyLimit;
   if(allowNew){
     const unknown=scope.find(w=>available(w)&&!dailyPlanHasLearningContact(w));
     if(unknown)return {ref:{wordId:unknown.id,setLinkId:unknown.setLinkId||''},source:'new'};
@@ -694,17 +749,35 @@ function recordDailySecurityResult(w,{correct=false,active=false,assisted=false,
   if(evidence.successStreak<evidence.required||needsSpelling)return {becameSecure:false,replacementRef:null,replacementSource:'',required:evidence.required,successStreak:evidence.successStreak,needsSpelling};
   plan.todaySecureKeys=[...new Set([...plan.todaySecureKeys,key])];
   evidence.secureAt=evidence.secureAt||new Date().toISOString();
-  const replacement=dailyPlanReplacementCandidate(plan);
+  const ctx=upcomingTestContext(plan.subject),replacement=Number(ctx?.days)===1?null:dailyPlanReplacementCandidate(plan);
   if(replacement?.ref){
     plan.extraRefs=[...plan.extraRefs,replacement.ref];
     const replacementKey=dailyPlanRefKey(replacement.ref);if(replacementKey)plan.extraSources[replacementKey]=replacement.source||'';
   }
   return {becameSecure:true,replacementRef:replacement?.ref||null,replacementSource:replacement?.source||'',required:evidence.required,successStreak:evidence.successStreak,needsSpelling:false};
 }
+function ensureDailyRecommendedRound(plan=buildDailyPlan()){
+  if(!plan?.recommendSecondRound)return false;
+  normalizeDailyAdaptivePlan(plan);
+  if(Number(upcomingTestContext(plan.subject)?.days)===1)return false;
+  const required=new Set(dailyPlanRefs(plan,false).map(dailyPlanRefKey).filter(Boolean)),done=new Set(plan.completedKeys||[]);
+  if([...required].some(k=>!done.has(k)))return false;
+  let changed=false;
+  while(plan.extraRefs.length<plan.extraLimit){
+    const candidate=dailyPlanReplacementCandidate(plan);if(!candidate?.ref)break;
+    plan.extraRefs.push(candidate.ref);
+    const k=dailyPlanRefKey(candidate.ref);if(k)plan.extraSources[k]=candidate.source||'';
+    changed=true;
+  }
+  if(changed)persistOnly();
+  return changed;
+}
 function markDailyPlanWordDone(w,plan=buildDailyPlan()){
   if(!w||!plan||plan.date!==today()||plan.subject!==state.activeSubject)return false;
   const key=dailyPlanRefKey({wordId:w.id,setLinkId:w.setLinkId||''});if(!key)return false;
-  plan.completedKeys=[...new Set([...(Array.isArray(plan.completedKeys)?plan.completedKeys:[]),key])];return true;
+  plan.completedKeys=[...new Set([...(Array.isArray(plan.completedKeys)?plan.completedKeys:[]),key])];
+  ensureDailyRecommendedRound(plan);
+  return true;
 }
 function dailyPlanStatus(plan=buildDailyPlan()){
   normalizeDailyAdaptivePlan(plan);
@@ -727,7 +800,7 @@ function dailyPlanStatus(plan=buildDailyPlan()){
     extraTotal:extraPairs.length,extraDone:extraDone.length,extraRemaining:extraRemaining.length,extraLimit:plan.extraLimit,secureToday:secure.size,
     remainingIntroRefs:introRemaining.map(x=>x.ref),remainingReviewRefs:reviewRemaining.map(x=>x.ref),remainingExtraRefs:extraRemaining.map(x=>x.ref),
     remainingIds:reviewRemaining.map(x=>x.word.id),remainingRefs:reviewRemaining.map(x=>x.ref),
-    units:(introRemaining.length?1:0)+(reviewRemaining.length?Math.ceil(reviewRemaining.length/plan.sessionSize):0)
+    units:remaining?Math.ceil(remaining/Math.max(1,Number(plan.sessionSize)||6)):0
   };
 }
 function startDailyTodo(){
@@ -749,15 +822,14 @@ function startDailyTodo(){
     else{toast('Heute ist noch nichts vorbereitet. Bitte einen Erwachsenen um Hilfe.','subtle');showView('homeView');renderAll()}
     return;
   }
-  if(status.introRemaining){
-    const refs=status.remainingIntroRefs||[];
+  if(status.remaining){
+    const refs=[...(status.remainingIntroRefs||[]),...(status.remainingReviewRefs||status.remainingRefs||status.remainingIds||[])];
     startSession('adaptive',null,refs.slice(0,plan.sessionSize),true);return;
   }
-  if(status.reviewRemaining){
-    startSession('adaptive',null,(status.remainingReviewRefs||status.remainingRefs||status.remainingIds).slice(0,plan.sessionSize),true);return;
-  }
+  const rescue=t1RescuePlan(plan);
+  if(rescue.available){startT1RescueRound();return}
   if(status.extraRemaining){
     startSession('adaptive',null,(status.remainingExtraRefs||[]).slice(0,plan.sessionSize),true);return;
   }
-  toast('Tagesziel erledigt. Weitere Übungen sind optional.','good');
+  toast(rescue.recommended?'Rettungsrunde für jetzt abgeschlossen. Eine Pause ist sinnvoll.':'Tagesziel erledigt. Weitere Übungen sind optional.',rescue.recommended?'subtle':'good');
 }

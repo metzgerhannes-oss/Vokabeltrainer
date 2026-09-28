@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 27.09.2026 · Basis: v0.21.21 · Release-Kandidat: stabiler Tagesfortschritt über Updates
+Stand: 27.09.2026 · Basis: v0.21.22 · Release-Kandidat: kurzer verpflichtender Tageskern
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -23,6 +23,12 @@ Zusatz für v0.21.19: Zwei einmalige Tests für dasselbe Fach an unterschiedlich
 Zusatz für v0.21.20: Die Schlacht auf iPhone/iPad öffnen. Sie muss **sofort die gesamte App-Fläche belegen**, die untere Hauptnavigation darf nicht sichtbar sein. Armeestärke, Testfestung, Verteidigung und Rang/Ausrüstung müssen **außerhalb des Bildes** liegen; auch Taktik und Hauptaktion dürfen das Kampagnenbild nicht verdecken. Das zusätzliche Festungs-/Rang-Badge im Bild darf in der gemalten englischen Szene nicht erscheinen.
 
 Zusatz für v0.21.21: Im Tageslernweg mindestens zwei Vokabeln fachlich richtig und ohne Hilfe aktiv abrufen, anschließend einen simulierten/realen App-Update-Reload durchführen. Die Anzeige `X / N erledigt` darf nicht auf `0 / N` zurückspringen. Beim einmaligen Übergang von einer alten Versionssignatur dürfen nur heutige unabhängige korrekte aktive Abrufe rekonstruiert werden; Recognition/Hilfen, assistierte Antworten und Fehler dürfen den Zähler nicht erhöhen.
+
+Zusatz für v0.21.22: Einen normalen Tagesplan mit deutlich mehr als sechs offenen Testvokabeln prüfen. Der Pflichtkern darf höchstens **6 Fokuswörter** enthalten; mit „Kurze Einheiten“ höchstens **4**. Maximal 3 bzw. 2 neue Wörter dürfen im Pflichtkern liegen. Auch bei massivem Rückstand darf der Pflichtzähler nicht auf 12–14 Wörter steigen. Nach Abschluss darf eine **zweite kurze Runde** empfohlen werden, sie muss freiwillig bleiben und darf keine zweite Battle-Aktion erzeugen. Ein bestehender 12er-Tagesplan aus v0.21.21 muss beim Update verkleinert werden, ohne bereits heute erledigte passende Wörter zu verlieren.
+
+T−1-Zusatz für v0.21.22: Einen Test für **morgen** mit deutlichem Rückstand prüfen. Nach dem kurzen Pflichtkern muss die App eine **Rettungsrunde** anbieten, aber nicht den kompletten Testumfang am Stück. Die Runde enthält höchstens 6 Fokuswörter bzw. 4 bei „Kurze Einheiten“. Bereits testbereite Wörter dürfen nicht erscheinen. Nach einem Fehler muss das Wort in der nächsten Priorität vorne stehen; nach einer korrekten unassistierten Korrektur müssen noch ungeprüfte offene Wörter nachrücken. Bei `target`, `source`, `mixed` und `dictation` muss die Rettungsrunde die reale Testrichtung spiegeln. Diktat muss produktiv geschrieben werden. Rettungsrunden dürfen weder `completedKeys` des Pflichtziels noch eine weitere Battle-Aktion erzeugen.
+
+Festungsansicht-Zusatz für v0.21.22: Vor Abschluss des Tagesziels in „Meine Armee“ auf **„Festung ansehen“** tippen. Es muss eine saubere Vollbild-Vorschau mit Kampagnenbild, Profilbanner und „Test N“-Banner erscheinen. **Nicht** sichtbar sein dürfen die vier Battle-KPI-Karten, Angriffskarten, Ticketanzeige oder der deaktivierte Block „Tagesziel noch offen“. Nach abgeschlossenem Tagesziel muss derselbe Einstieg dagegen die vollständige Schlachtsteuerung anzeigen.
 
 ## Grundregel
 
@@ -214,11 +220,12 @@ Mit einem realistischen Lehrbuchfoto testen.
 ## B4 – Lernplanung
 
 - [ ] Tagespensum passt zum verbleibenden Testabstand
-- [ ] normalerweise 5–7 neue Wörter pro Tag
-- [ ] ungefähr 10–12 Kontakte als Normalbereich
-- [ ] bei Rückstand steigt das Pensum plausibel
-- [ ] bei Vorsprung sinkt das Pensum plausibel
-- [ ] maximal 7 neue Wörter pro Tag
+- [ ] Pflichtkern normalerweise 5–6 Fokuswörter; mit „Kurze Einheiten“ 3–4
+- [ ] maximal 3 neue Wörter im normalen Pflichtkern; mit „Kurze Einheiten“ maximal 2
+- [ ] mehrere Lernschritte innerhalb der Fokuswörter dürfen ungefähr 10–12 Kontakte ergeben, ohne daraus 10–12 Pflichtwörter zu machen
+- [ ] bei Rückstand bleibt der Pflichtkern kurz und empfiehlt bei Bedarf eine zweite freiwillige Kurzrunde
+- [ ] bei Vorsprung kann der Pflichtkern auf 5 bzw. 3 Fokuswörter sinken
+- [ ] insgesamt maximal 6 neue Wörter pro Tag; mit „Kurze Einheiten“ maximal 4
 - [ ] letzter Tag vor dem Test ist bei ausreichendem Vorlauf Wiederholungstag
 - [ ] am Testtag werden keine neuen Wörter eingeführt
 - [ ] fällige / unsichere Wörter werden priorisiert

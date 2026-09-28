@@ -38,7 +38,7 @@ Dort werden festgelegt:
 
 Die ausgewählten Vokabeln werden automatisch zum Lernstoff des Kindes. Es ist nicht nötig, zusätzlich einen separaten Lernbereich anzulegen.
 
-Die App berechnet das Tagespensum anschließend aus Testtermin, Restlernstand und fälligen Wiederholungen neu.
+Die App berechnet das Tagespensum anschließend aus Testtermin, Restlernstand und fälligen Wiederholungen neu. Der verpflichtende Kern bleibt dabei bewusst kurz: normalerweise **5–6 Fokuswörter**, mit der Profileinstellung **„Kurze Einheiten“ 3–4**. Ist mehr Stoff offen, wird der Pflichtblock nicht immer länger; stattdessen kann nach Abschluss eine zweite kurze freiwillige Runde empfohlen werden.
 
 ## 4. Ohne Test lernen
 

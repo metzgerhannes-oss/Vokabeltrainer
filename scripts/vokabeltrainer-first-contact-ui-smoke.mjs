@@ -25,7 +25,7 @@ try{
   });
 
   const plan=await page.evaluate(()=>buildDailyPlan());
-  assert(plan.introRefs.length===6&&plan.dailyTarget===11&&plan.acquisitionDays===1,'daily plan treats new verified words as direct learning material');
+  assert(plan.introRefs.length===3&&plan.dailyTarget===6&&plan.acquisitionDays===1,'daily plan treats new verified words as direct learning material while keeping the required core compact');
   assert(await page.evaluate(()=>schoolYearWords('english').length)===6,'all verified words are immediately available to normal learning');
   const before=await page.evaluate(()=>firstContactStatus('intro_set'));
   assert(before.pending===6&&before.completed===0,'copy practice starts untouched but does not gate learning');

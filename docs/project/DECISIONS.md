@@ -33,7 +33,7 @@ Reihenfolge: Erfassen → fachlich prüfen → aktiv abrufen → verteilt wieder
 Ein Wort wird nicht durch einen einzelnen erfolgreichen Tageskontakt nachhaltig gemeistert. XP, Kampagne und Belohnungen dürfen fachliche Mastery weder erzeugen noch verändern.
 
 ### D-0004 – Tagesplan ist testbezogen, begrenzt und adaptiv
-**Status:** LOCKED  
+**Status:** SUPERSEDED durch D-20260927-010  
 **Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P6
 
 Richtgröße: 5–7 neue Vokabeln pro Tag, typischerweise ungefähr 10–12 Kontakte; bei Vorsprung geringere Last, bei Rückstand begrenzt höhere Last. Maximal 7 neue Wörter werden erzwungen. Der letzte Tag vor einem Test bleibt bei ausreichendem Vorlauf für Wiederholung reserviert; am Testtag selbst keine neuen Wörter.
@@ -90,7 +90,7 @@ Der morgens berechnete Pflicht-Tagesplan bleibt als festes Tagesziel bestehen. E
 
 „Heute sicher“ erfordert produktiven, unassistierten und orthografisch korrekten Abruf. Bereits testbereite Wiederholungswörter benötigen einen solchen Abruf; neue oder schwache Wörter zwei getrennte erfolgreiche aktive Abrufe ohne Fehler dazwischen. Ein bloßer Kontakt über `completedKeys` reicht ausdrücklich nicht.
 
-Nachrückpriorität: unbekanntes Wort aus dem anstehenden Test → schwaches bereits bekanntes Testwort → fällige bekannte Wiederholung. In den letzten drei Tagen vor dem Test werden keine zusätzlichen unbekannten Wörter nachgezogen. Pro Tag maximal drei Zusatzwörter, bei aktivierter Einstellung „Kurze Einheiten“ zwei; die bestehende Obergrenze von sieben neu eingeführten Wörtern pro Tag bleibt erhalten. Diese Präzisierung folgt D-20260927-008; Lesen-/Rechtschreibunterstützung allein reduziert das Nachrücklimit nicht. Nachrücker werden als freiwilliger nächster Lernschritt vorgemerkt und verlängern eine bereits laufende Pflicht-Einheit nicht automatisch.
+Nachrückpriorität: unbekanntes Wort aus dem anstehenden Test → schwaches bereits bekanntes Testwort → fällige bekannte Wiederholung. In den letzten drei Tagen vor dem Test werden keine zusätzlichen unbekannten Wörter nachgezogen. Pro Tag maximal drei Zusatzwörter, bei aktivierter Einstellung „Kurze Einheiten“ zwei. Gemäß D-20260927-010 liegt die Gesamtobergrenze neu eingeführter Wörter bei sechs bzw. vier. Diese Präzisierung folgt außerdem D-20260927-008; Lesen-/Rechtschreibunterstützung allein reduziert das Nachrücklimit nicht. Nachrücker werden als freiwilliger nächster Lernschritt vorgemerkt und verlängern eine bereits laufende Pflicht-Einheit nicht automatisch.
 
 ### D-20260927-005 – Pflicht-Tagesziel braucht erfolgreichen unassistierten Abruf
 **Status:** LOCKED  
@@ -163,6 +163,52 @@ Früher Schriftspracherwerb enthält echte Handschrift und Papier als Lernkanal.
 
 Die Fachquelle dokumentiert den Evidenzstand vom 27.09.2026 und muss vor Implementierung bei definierten Review-Triggern erneut geprüft werden.
 
+### D-20260927-010 – Pflicht-Tageskern bleibt bewusst kurz
+**Status:** LOCKED  
+**Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P6; ersetzt die Mengenlogik aus D-0004
+
+Der verpflichtende Tageskern umfasst außerhalb von „Kurze Einheiten“ **5–6 unterschiedliche
+Fokuswörter**, mit „Kurze Einheiten“ **3–4**. Die frühere Formulierung von ungefähr 10–12
+Kontakten wird ausdrücklich als Lerninteraktionen innerhalb dieses kleinen Wortsets verstanden
+und nicht als 10–12 verschiedene Pflichtwörter.
+
+Im Pflichtkern werden höchstens drei neue Wörter eingeführt, mit „Kurze Einheiten“ höchstens
+zwei. Rückstand, ein naher Test oder viele schwache Wörter dürfen den Pflichtkern nicht
+verlängern. Stattdessen kann nach Abschluss eine zweite kurze Runde empfohlen werden. Diese
+Runde ist freiwillig, erhöht das Pflicht-Tagesziel nicht und erzeugt keine zusätzliche
+Battle-Freischaltung.
+
+Strengere „heute sicher“-Evidenz darf eine laufende Pflicht-Einheit nicht durch automatisch
+eingeschobene Wiederholungen verlängern. Ein notwendiger Scaffold für ein neues Wort erhält
+im Pflichtkern höchstens einen produktiven Follow-up; Fehler dürfen weiterhin einmal gezielt
+wiederholt werden. Mastery, Spacing und Testbereitschaft bleiben unverändert streng.
+
+Mit freiwilligem Nachrücken werden insgesamt höchstens sechs neue Wörter pro Tag eingeführt,
+bei „Kurze Einheiten“ höchstens vier. Am Testtag werden weiterhin keine neuen Wörter
+eingeführt; ein zu später Lernstart wird als Spacing-/Planungsrisiko angezeigt statt durch
+eine überlange Pflichtsession kompensiert.
+
 ## Neue Entscheidungen
 
 Neue Grundsatzentscheidungen erhalten fortlaufend eine ID im Format `D-YYYYMMDD-NNN`. Wird eine bestehende Regel ersetzt, bleibt die alte Entscheidung erhalten und wird als `SUPERSEDED` markiert; sie wird nicht gelöscht.
+### D-20260927-011 – T−1-Rettungsmodus priorisiert Abruf statt Vollstoff-Drill
+**Status:** LOCKED  
+**Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P3, P6 und P12
+
+Liegt ein geplanter Test am nächsten Tag und sind noch Testwörter unsicher oder unbekannt,
+bleibt der verpflichtende Tageskern aus D-20260927-010 kurz. Danach darf die App gezielte
+freiwillige Rettungsrunden anbieten. Eine Rettungsrunde enthält höchstens sechs unterschiedliche
+Fokuswörter, bei aktivierten „Kurzen Einheiten“ höchstens vier.
+
+Testbereite Wörter werden ausgelassen. Priorität: Fehler aus der vorherigen Rettungsrunde →
+noch nicht geprüfte unbekannte Testwörter → noch nicht geprüfte schwache Testwörter. Nach
+einer fachlich richtigen, unassistierten Korrektur gibt das Wort den Platz für weitere offene
+Wörter frei. Das reale Testformat wird gespiegelt; Diktat verlangt produktive Rechtschreibung.
+
+Der Rettungsmodus darf unbekannte Testwörter am Vortag noch bearbeiten, kennzeichnet den
+fehlenden Spacing-Vorlauf aber weiterhin als Risiko. Er erzeugt weder zusätzliche Pflichtwörter
+noch weitere Battle-Aktionen und senkt Mastery-, Leitner-, Spacing- oder Testbereitschafts-
+kriterien nicht ab. Er dokumentiert ausschließlich tatsächlich erbrachte Lernleistung.
+Mehrere Rettungsrunden bleiben getrennte kurze Einheiten; eine lange Vollstoff-Massensession
+wird nicht automatisch gestartet.
+

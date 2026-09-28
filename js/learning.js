@@ -48,7 +48,7 @@ function adaptiveProductiveMode(w,testCtx=null){
 }
 function chooseAdaptiveMode(w){
   const s={...defaultSkills(),...(w.skills||{})},support=literacySupportFor(),readingSupport=support.reading,spellingSupport=support.spelling,modes=new Set(w.modesSeen||[]),acc=recentActiveAccuracy(w),chunksOk=chunkEligibleWord(w);
-  const testCtx=session?.isDaily?upcomingTestContext():null,scaffoldedNow=!!session?.scaffoldedWords?.[w.id];
+  const testCtx=(session?.isDaily||session?.rescueMode)?upcomingTestContext():null,scaffoldedNow=!!session?.scaffoldedWords?.[w.id];
   const independent=Number(w.independentSuccesses)||0,spellingErrors=Number(w.errorProfile?.spelling)||0,contextErrors=Number(w.errorProfile?.context)||0;
   const newWord=independent===0&&!(w.recentActiveResults||[]).length,lastGap=adaptiveDaysSince(w.lastActiveSuccessAt),dueGap=w.dueDate?Math.max(0,dayNumber(today())-dayNumber(w.dueDate)):0;
   const productive=adaptiveProductiveMode(w,testCtx),basicKnown=s.retrieval>=1||independent>=1;
@@ -236,11 +236,20 @@ function renderFirstContactFinish(){
   $('#firstContactLearnBtn').onclick=()=>{session=null;startSession('adaptive',setId,null,false)};
 }
 
-function startSession(mode='adaptive',setId=null,wordIds=null,isDaily=false){
+function startT1RescueRound(){
+  const plan=buildDailyPlan(),rescue=t1RescuePlan(plan);
+  if(!rescue.available){
+    toast(rescue.recommended?'Für jetzt ist die Rettungsrunde abgeschlossen. Eine Pause ist sinnvoll.':'Für morgen ist aktuell keine Rettungsrunde nötig.','subtle');
+    showView('homeView');renderAll();return;
+  }
+  const round=markT1RescueRoundStarted(plan);
+  startSession('adaptive',null,rescue.refs,false,{rescueMode:true,rescueRound:round});
+}
+function startSession(mode='adaptive',setId=null,wordIds=null,isDaily=false,opts={}){
   const queue=buildQueue(mode,setId,wordIds); if(!queue.length){toast('Noch keine geprüften Vokabeln vorhanden.','warn');return}
   const blocked=queue.find(w=>setNeedsPairReview(state.sets.find(s=>s.id===w.setId)));
   if(blocked){const blockedSet=state.sets.find(s=>s.id===blocked.setId);toast('Vor dem Lernen bitte zuerst die erkannten Vokabelpaare bestätigen.','warn');showView('homeView');renderAll();setTimeout(()=>openSetPairAudit?.(blockedSet?.id),80);return}
-  session={mode,setId,queue:queue.map(quizQueueRef),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString(),currentQuestion:null,currentQuestionIssues:[]}; showView('learnView'); $('#modePill').textContent=modeLabel(mode); renderStudy();
+  session={mode,setId,queue:queue.map(quizQueueRef),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily,rescueMode:!!opts.rescueMode,rescueRound:Number(opts.rescueRound)||0,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString(),currentQuestion:null,currentQuestionIssues:[]}; showView('learnView'); $('#modePill').textContent=session.rescueMode?'Test morgen · Rettungsrunde':modeLabel(mode); renderStudy();
 }
 function modeLabel(m){return ({adaptive:'Adaptiv',allWords:'Alle Vokabeln',weakWords:'Unsichere Vokabeln',flash:'Wortblitz',shower:'Vokabeldusche',chunks:'Wortbausteine',handwriting:'Handschrift',firstContact:'Abschreiben',recognition:'Erkennen',recall:'Abrufen',reverseRecall:'Bedeutung abrufen',spelling:'Schreiben',listening:'Hören',context:'Kontext',latinGrammar:'Latein Formen',practiceTest:'Prüfung',cards:'Karteikarten'})[m]||m}
 function currentWord(){const token=session?.queue?.[session.index];return resolveQuizQueueRef(token,session?.setId||'')}
@@ -259,7 +268,7 @@ function renderStudy(){
   const adaptiveLike=['adaptive','allWords','weakWords'].includes(session.mode);let sub=adaptiveLike?chooseAdaptiveMode(w):session.mode;if(sub==='reverseRecall'&&!meaningRecallHasCue(w))sub='recall';session.currentSubmode=sub;
   const prepared=setCurrentQuizQuestion(w,sub);
   if(prepared.issues.length){renderQuizIntegrityStop(w,prepared.issues);return}
-  $('#modePill').textContent=adaptiveLike?`${modeLabel(session.mode)} · ${modeLabel(sub)}`:modeLabel(sub);
+  $('#modePill').textContent=session.rescueMode?`Test morgen · ${modeLabel(sub)}`:(adaptiveLike?`${modeLabel(session.mode)} · ${modeLabel(sub)}`:modeLabel(sub));
   if(sub==='recognition')renderRecognition(w); else if(sub==='listening')renderListening(w); else if(sub==='chunks')renderChunks(w); else if(sub==='reverseRecall')renderReverseRecall(w); else if(sub==='spelling')renderSpelling(w); else if(sub==='context')renderContext(w); else renderRecall(w);
 }
 function cardExtras(w){
@@ -461,18 +470,17 @@ function recordResult(w,ok,skill,errorType,opts={}){
   const recallDirection=active?recordDirectionalRecallResult(w,{mode:session.currentSubmode||session.mode,correct:ok,assisted}):'';
   const dailySecurity=session?.isDaily&&active?recordDailySecurityResult(w,{correct:ok,active,assisted,orthographyOk:opts.orthographyOk!==false,wasTestReady,skill}):null;
   if(dailySecurity&&!dailySecurity.becameSecure&&(dailySecurity.required>1||dailySecurity.needsSpelling)&&dailySecurity.successStreak>0)scheduleDailySecurityFollowup(session,w);
-  recordActivity(session.currentSubmode||session.mode,{wordId:w.id,correct:ok,errorType,assisted,active,cold,recallDirection,orthographyOk:opts.orthographyOk!==false,todaySecure:!!dailySecurity?.becameSecure,refillSource:dailySecurity?.replacementSource||'',leitnerBefore:session.lastLeitnerMove.before,leitnerAfter:session.lastLeitnerMove.after});persistOnly();
+  if(session?.rescueMode&&active)recordT1RescueResult(w,{correct:ok,active,assisted,orthographyOk:opts.orthographyOk!==false});
+  recordActivity(session.currentSubmode||session.mode,{wordId:w.id,correct:ok,errorType,assisted,active,cold,recallDirection,orthographyOk:opts.orthographyOk!==false,todaySecure:!!dailySecurity?.becameSecure,rescueMode:!!session?.rescueMode,refillSource:dailySecurity?.replacementSource||'',leitnerBefore:session.lastLeitnerMove.before,leitnerAfter:session.lastLeitnerMove.after});persistOnly();
 }
 function scheduleDailySecurityFollowup(targetSession,word){
+  // The required daily core must stay short. Stricter "today safe" evidence belongs
+  // to a later optional round instead of silently extending the running core session.
   if(!targetSession?.isDaily||!word)return false;
-  targetSession.dailySecurityFollowups=targetSession.dailySecurityFollowups||{};
-  const ref=quizQueueRef(word),key=dailyPlanRefKey({wordId:word.id,setLinkId:word.setLinkId||''});if(!key)return false;
-  const n=Number(targetSession.dailySecurityFollowups[key])||0;if(n>=2)return false;
-  targetSession.dailySecurityFollowups[key]=n+1;
-  const pos=Math.min(targetSession.index+3,targetSession.queue.length);targetSession.queue.splice(pos,0,ref);return true;
+  return false;
 }
 function scheduleRetry(targetSession,word){const ref=word&&typeof word==='object'&&('setLinkId' in word)?quizQueueRef(word):word,key=typeof ref==='string'?ref:(ref?.setLinkId||ref?.progressId||'');if(!key)return false;const n=targetSession.retryCounts[key]||0;if(n>=1)return false;targetSession.retryCounts[key]=n+1;const pos=Math.min(targetSession.index+3,targetSession.queue.length);targetSession.queue.splice(pos,0,ref);return true;}
-function scheduleScaffoldFollowup(targetSession,word){targetSession.followupCounts=targetSession.followupCounts||{};const ref=word&&typeof word==='object'&&('setLinkId' in word)?quizQueueRef(word):word,key=typeof ref==='string'?ref:(ref?.setLinkId||ref?.progressId||'');if(!key)return false;const n=targetSession.followupCounts[key]||0;if(n>=2)return false;targetSession.followupCounts[key]=n+1;const pos=Math.min(targetSession.index+3,targetSession.queue.length);targetSession.queue.splice(pos,0,ref);return true;}
+function scheduleScaffoldFollowup(targetSession,word){targetSession.followupCounts=targetSession.followupCounts||{};const ref=word&&typeof word==='object'&&('setLinkId' in word)?quizQueueRef(word):word,key=typeof ref==='string'?ref:(ref?.setLinkId||ref?.progressId||'');if(!key)return false;const n=targetSession.followupCounts[key]||0,limit=(targetSession?.isDaily||targetSession?.rescueMode)?1:2;if(n>=limit)return false;targetSession.followupCounts[key]=n+1;const pos=Math.min(targetSession.index+3,targetSession.queue.length);targetSession.queue.splice(pos,0,ref);return true;}
 function scheduleSessionAdvance(targetSession,ok,w,delay){
   setTimeout(()=>{if(session===targetSession)nextStudy(ok,w)},delay);
 }
@@ -541,12 +549,25 @@ function sessionRepeatIds(results=[],onlyErrors=false){
 }
 function finishSession(){
   if(session?.mode==='practiceTest')return finishPracticeTest();
-  const c=session?.correct||0,a=session?.answered||0,results=[...(session?.results||[])],finishedMode=session?.mode||'adaptive',finishedSetId=session?.setId||null,isDaily=!!session?.isDaily,plan=isDaily?buildDailyPlan():null,status=plan?dailyPlanStatus(plan):null;const more=status?.remaining>0,bonusMore=!more&&(status?.extraRemaining||0)>0;
+  const c=session?.correct||0,a=session?.answered||0,results=[...(session?.results||[])],finishedMode=session?.mode||'adaptive',finishedSetId=session?.setId||null;
+  const isDaily=!!session?.isDaily,rescueMode=!!session?.rescueMode,plan=isDaily||rescueMode?buildDailyPlan():null,status=isDaily&&plan?dailyPlanStatus(plan):null;
+  const more=status?.remaining>0,bonusMore=!more&&(status?.extraRemaining||0)>0,rescue=plan?t1RescuePlan(plan):{available:false,recommended:false,weakTotal:0,refs:[]};
   const errorIds=sessionRepeatIds(results,true),allIds=sessionRepeatIds(results,false);
   if(isDaily&&a>0&&!more)grantBattleTicket('dailyGoal');
   const battleAvailable=isDaily&&!more&&battleActionAvailableToday();
-  const repeatActions=allIds.length?`<div class="session-repeat-actions"><div><strong>Noch einmal üben</strong><small>Diese Zusatzrunde ist freiwillig und gibt keine weitere Kampfaktion.</small></div><div class="row gap wrap">${errorIds.length?`<button id="repeatErrorsBtn" class="secondary" type="button">↻ Fehler nochmal üben (${errorIds.length})</button>`:''}<button id="repeatAllBtn" class="ghost" type="button">Alle nochmal üben (${allIds.length})</button></div></div>`:'';
-  $('#studyArea').innerHTML=`<div class="study-card session-finish-card"><div class="eyebrow">Einheit beendet</div><div class="study-prompt">${a?Math.round(c/a*100):'✓'}${a?'%':''}</div><p>${a?`${c} von ${a} Aufgaben richtig.`:'Training abgeschlossen.'}</p>${isDaily?`<p class="notice ${more?'subtle':'good'}">${more?`Noch ${status.remaining} Vokabel${status.remaining===1?'':'n'} im Tagesziel.`:bonusMore?`Tagesziel geschafft. ${status.extraRemaining} zusätzliche Vokabel${status.extraRemaining===1?'':'n'} ${status.extraRemaining===1?'steht':'stehen'} als freiwilliger Vorsprung bereit.`:'Tagesziel für heute geschafft.'}</p>`:''}${battleAvailable?'<div class="battle-unlock"><strong>⚔ Tagesangriff freigeschaltet!</strong><span>Deine Testfestung bleibt sichtbar. Heute steht genau eine Kampfaktion bereit.</span><button id="rewardBattleBtn" class="battle-unlock-btn" type="button">Zur Schlacht</button></div>':''}${sessionResultsHtml(results)}${repeatActions}<div class="row gap center-actions wrap top-space">${more?'<button id="continueDailyBtn" class="primary">Nächste kurze Einheit</button>':bonusMore?'<button id="continueBonusBtn" class="secondary">Vorsprung weiterlernen</button>':''}<button id="doneBtn" class="${more?'secondary':'primary'}">Zur Übersicht</button></div></div>`;
+  const repeatActions=!rescueMode&&allIds.length?`<div class="session-repeat-actions"><div><strong>Noch einmal üben</strong><small>Diese Zusatzrunde ist freiwillig und gibt keine weitere Kampfaktion.</small></div><div class="row gap wrap">${errorIds.length?`<button id="repeatErrorsBtn" class="secondary" type="button">↻ Fehler nochmal üben (${errorIds.length})</button>`:''}<button id="repeatAllBtn" class="ghost" type="button">Alle nochmal üben (${allIds.length})</button></div></div>`:'';
+  const rescueNotice=rescueMode?`<p class="notice ${rescue.available?'subtle':'good'}">${rescue.available?`Für den Test morgen sind noch ${rescue.weakTotal} Vokabeln nicht testbereit. Die nächste kurze Rettungsrunde nimmt zuerst Fehler aus dieser Runde und danach noch nicht geprüfte Wörter.`:rescue.weakTotal?`Diese Rettungsrunde ist für jetzt abgeschlossen. ${rescue.weakTotal} Wörter erfüllen wegen der kurzen Vorlaufzeit noch nicht alle Testbereitschaftskriterien. Eine Pause ist jetzt sinnvoll.`:'Alle Testwörter erfüllen aktuell die Testbereitschaft.'}</p>`:''; 
+  const dailyNotice=isDaily?`<p class="notice ${more?'subtle':'good'}">${more?`Noch ${status.remaining} Vokabel${status.remaining===1?'':'n'} im Tagesziel.`:rescue.available?`Tagesziel geschafft. Morgen ist Test: Eine kurze Rettungsrunde mit ${rescue.refs.length} Fokuswörtern wird empfohlen. Sie bleibt freiwillig und erzeugt keine weitere Kampfaktion.`:bonusMore?`Tagesziel geschafft. ${status.extraRemaining} zusätzliche Vokabel${status.extraRemaining===1?'':'n'} ${status.extraRemaining===1?'steht':'stehen'} als freiwilliger Vorsprung bereit.`:'Tagesziel für heute geschafft.'}</p>`:'';
+  $('#studyArea').innerHTML=`<div class="study-card session-finish-card"><div class="eyebrow">${rescueMode?'Rettungsrunde beendet':'Einheit beendet'}</div><div class="study-prompt">${a?Math.round(c/a*100):'✓'}${a?'%':''}</div><p>${a?`${c} von ${a} Aufgaben richtig.`:'Training abgeschlossen.'}</p>${dailyNotice}${rescueNotice}${battleAvailable?'<div class="battle-unlock"><strong>⚔ Tagesangriff freigeschaltet!</strong><span>Deine Testfestung bleibt sichtbar. Heute steht genau eine Kampfaktion bereit.</span><button id="rewardBattleBtn" class="battle-unlock-btn" type="button">Zur Schlacht</button></div>':''}${sessionResultsHtml(results)}${repeatActions}<div class="row gap center-actions wrap top-space">${more?'<button id="continueDailyBtn" class="primary">Nächste kurze Einheit</button>':rescue.available?`<button id="continueRescueBtn" class="secondary">${rescueMode?'Nächste Rettungsrunde':'Rettungsrunde starten'}</button>`:bonusMore?'<button id="continueBonusBtn" class="secondary">Vorsprung weiterlernen</button>':''}<button id="doneBtn" class="${more?'secondary':'primary'}">Zur Übersicht</button></div></div>`;
   const repeat=(ids)=>{if(!ids.length)return;session=null;startSession(finishedMode,finishedSetId,ids,false)};
-  $('#sessionPill').textContent='Fertig';$('#copySessionResultsBtn')?.addEventListener('click',()=>copySessionResults(results));$('#repeatErrorsBtn')?.addEventListener('click',()=>repeat(errorIds));$('#repeatAllBtn')?.addEventListener('click',()=>repeat(allIds));$('#rewardBattleBtn')?.addEventListener('click',()=>{session=null;openBattleView()});$('#continueDailyBtn')?.addEventListener('click',()=>{session=null;startDailyTodo()});$('#continueBonusBtn')?.addEventListener('click',()=>{session=null;startDailyTodo()});$('#doneBtn').onclick=()=>{session=null;showView('homeView');renderAll()};persistOnly();
+  $('#sessionPill').textContent='Fertig';
+  $('#copySessionResultsBtn')?.addEventListener('click',()=>copySessionResults(results));
+  $('#repeatErrorsBtn')?.addEventListener('click',()=>repeat(errorIds));
+  $('#repeatAllBtn')?.addEventListener('click',()=>repeat(allIds));
+  $('#rewardBattleBtn')?.addEventListener('click',()=>{session=null;openBattleView()});
+  $('#continueDailyBtn')?.addEventListener('click',()=>{session=null;startDailyTodo()});
+  $('#continueBonusBtn')?.addEventListener('click',()=>{session=null;startDailyTodo()});
+  $('#continueRescueBtn')?.addEventListener('click',()=>{session=null;startT1RescueRound()});
+  $('#doneBtn').onclick=()=>{session=null;showView('homeView');renderAll()};
+  persistOnly();
 }
