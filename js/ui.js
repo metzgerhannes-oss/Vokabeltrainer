@@ -1391,6 +1391,7 @@ async function runFamilySync(){
 function renderParentOverview(){
   const box=$('#parentAttention');if(!box)return;
   const sets=mySets(),draft=sets.find(s=>s.pendingTestPlan),review=sets.find(s=>!s.pendingTestPlan&&setNeedsPairReview(s)),pending=seriesScopePending(),ctx=upcomingTestContext(),tasks=[];
+  const planBtn=$('#parentTestPlanBtn');if(planBtn){const due=!!(ctx&&ctx.days<=0),strong=planBtn.querySelector('strong'),small=planBtn.querySelector('small');planBtn.dataset.setId=due?(ctx.sets?.[0]?.id||''):'';if(strong)strong.textContent=due?'Aktuellen Test bearbeiten':'Test vorbereiten';if(small)small.textContent=due?'Termin oder Vokabeln bis zum Abschluss ändern':'Datum wählen, Vokabeln festlegen und prüfen'}
   if(draft){
     const count=setWords(draft.id).length,when=draft.pendingTestPlan?.testDate?formatDateShort(draft.pendingTestPlan.testDate):'offen';
     tasks.push(`<div class="parent-task"><div><strong>Testvorbereitung abschließen</strong><small>${esc(draft.title)} · ${count} Vokabel${count===1?'':'n'} · Termin ${esc(when)}. Der Entwurf beeinflusst das Lernen noch nicht.</small></div><button class="primary" data-parent-draft="${draft.id}">Fortsetzen</button></div>`);
@@ -1445,7 +1446,7 @@ function bind(){
   $('#battleAttackChoices').addEventListener('click',e=>{const b=e.target.closest('[data-battle-attack]');if(b&&!b.disabled)selectBattleAttack(b.dataset.battleAttack)});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('battle-immersive'))returnFromBattle()});
   $('#parentAreaBtn').onclick=()=>openParentGate(); $('#childModeBtn').onclick=exitParentMode;
-  $('#parentLibraryBtn').onclick=openLearningContentPlanner; $('#parentTestPlanBtn').onclick=openTestDatePlanner; $('#parentDashboardBtn').onclick=()=>showView('dashboardView'); $('#parentSettingsBtn').onclick=()=>showView('settingsView');
+  $('#parentLibraryBtn').onclick=openLearningContentPlanner; $('#parentTestPlanBtn').onclick=()=>openTestDatePlanner($('#parentTestPlanBtn')?.dataset.setId||''); $('#parentDashboardBtn').onclick=()=>showView('dashboardView'); $('#parentSettingsBtn').onclick=()=>showView('settingsView');
   window.VTParentDocs?.bind?.();
   $$('[data-parent-home]').forEach(b=>b.onclick=()=>showView('parentView'));
   document.addEventListener('click',e=>{const b=e.target.closest?.('[data-speak]');if(!b)return;e.preventDefault();e.stopPropagation();speak(b.dataset.speak||'')});
