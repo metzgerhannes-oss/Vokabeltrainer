@@ -6,17 +6,17 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.32**
-- produktiver Stand auf `main`: **v0.21.32 / Merge-Commit `cb306ad4571832d6115aab38438093c58d4b5cc4` / PR #194**
-- jüngster produktiver Release: **PR #194 – v0.21.32 – Vokabel überspringen & Review-Härtung**
-- Produktionsnachweis v0.21.32: **PR-CI #1187 success · main-CI #1193 success · GitHub Pages #554 success inkl. Live-Verifikation**
-- aktueller Release-Kandidat: **keiner – v0.21.32 ist produktiv verifiziert**
+- App-Version: **v0.21.34**
+- produktiver Stand auf `main`: **v0.21.33 / Merge-Commit `cb306ad4571832d6115aab38438093c58d4b5cc4` / PR #194**
+- jüngster produktiver Release: **PR #194 – v0.21.33 – Vokabel überspringen & Review-Härtung**
+- Produktionsnachweis v0.21.33: **PR-CI #1187 success · main-CI #1193 success · GitHub Pages #554 success inkl. Live-Verifikation**
+- aktueller Release-Kandidat: **v0.21.34 – Deutsch Paket B / Fachgrundgerüst auf `feat/deutsch-paket-b-v02133`; Verifikation läuft**
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
 - fachliche Schutzlinie: Spielprogression, Battle-Choreografie und Jahresfestungsdatum verändern weder Mastery noch Vokabelbewertung oder Testbereitschaft
 - v0.21.31 schützt strittige Bewertungen: Kind meldet → Fehlwirkung wird neutralisiert → Eltern entscheiden → lokale Variante wird freigegeben oder Fehler erst dann bestätigt
-- v0.21.32 erlaubt „Vokabel überspringen“: ausschließlich ans Ende derselben Session, ohne Bewertung oder Lernstandsänderung; offene Prüffälle blockieren zugleich das Tagesziel nicht
+- v0.21.33 erlaubt „Vokabel überspringen“: ausschließlich ans Ende derselben Session, ohne Bewertung oder Lernstandsänderung; offene Prüffälle blockieren zugleich das Tagesziel nicht
 - v0.21.29 trennt den schwankenden fachlichen Prozentwert von der kumulativen Jahresentwicklung; Avatar/Rang/Armee werden durch neuen Stoff nicht zurückgestuft; Jahresfestungsdatum ist optional, gehärtet und synchronisiert
 - praktische v1-Abnahme: weiterhin **OFFEN**
 
@@ -34,7 +34,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 
 | Bereich | Status | Kanonische Quelle |
 |---|---|---|
-| Fachliche Abfrage / Bewertung | PRODUCTION / LIVE VERIFIED v0.21.32 | `PRODUCT_DNA.md`, `QUIZ_ENGINE.md`, D-20260928-006/D-20260928-007, B-015/B-016 |
+| Fachliche Abfrage / Bewertung | PRODUCTION / LIVE VERIFIED v0.21.33 | `PRODUCT_DNA.md`, `QUIZ_ENGINE.md`, D-20260928-006/D-20260928-007, B-015/B-016 |
 | Sense-/Bedeutungsmodell | PRODUCTION | `SENSE_MODEL.md` |
 | Lern-/Mastery-Grundsätze | PRODUCTION | `PRODUCT_DNA.md` |
 | Same-Day-Spacing-Härtung | PRODUCTION | `PRODUCT_DNA.md` P3, D-20260927-006, PR #143 |
@@ -52,6 +52,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Phaser-4-Battle-Renderer Englisch | PRODUCTION v0.21.28; weitere Fächer/Fallbacks offen | D-20260928-004, B-012, PR #185/#187 |
 | Dauerhafte Jahresentwicklung / Jahresfestung | PRODUCTION / LIVE VERIFIED v0.21.30 | D-20260928-005, B-014, PR #188/#191 |
 | Family Sync | PRODUCTION / Beta-Grenze | `SYNC_ARCHITECTURE.md`, `FINAL_AUDIT.md` |
+| Deutsch Paket B / Fachgrundgerüst | IMPLEMENTED im v0.21.34-Release-Kandidaten; Verifikation läuft | `docs/project/DEUTSCH_WORTREICH_V1.md`, B-001, D-20260928-008 |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 
 ## Offene Verifikationsgrenzen
@@ -151,3 +152,13 @@ Automatisierte Nachweise liegen im Learning-Integrity-Smoke und im Family-Sync-L
 Die verbindliche Arbeitsweise steht in [../../PROJECT_CONTROL.md](../../PROJECT_CONTROL.md) §§ 8–12 und Decision D-20260927-009. Vor nichttrivialen Änderungen werden Abnahmekriterien festgelegt; Statusaussagen unterscheiden strikt zwischen `IMPLEMENTED`, `VERIFIED`, `PRODUCTION` und `LIVE VERIFIED`.
 
 Versions- und Governance-Konsistenz wird durch `scripts/vokabeltrainer-project-control-smoke.mjs` im CI-Preflight geschützt.
+
+
+## Deutsch · Paket B
+
+- Deutsch ist als produktives Fach freigeschaltet (`de-DE`, `deu`, `nativeLiteracy`).
+- Eigene Literacy-Evidenz ist vom Fremdsprachen-Mastery getrennt.
+- Erste Aufgaben: Hören/Erkennen und Lernwort-Schreiben mit relevanter Groß-/Kleinschreibung.
+- Lernlayout: ruhiger Fuchspfad mit Holzschwert-Übungsstationen.
+- Spiel-Shell: `Das Wortreich` mit Ritterheer/Burg; vollständiger Wortreich-Battle-Ausbau bleibt Paket E.
+

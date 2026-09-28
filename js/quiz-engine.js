@@ -38,6 +38,17 @@ function quizOrthographyMatchDetail(answer,targets){
   return Object.freeze({correct:false,kind:'wrong',matchedTarget:''});
 }
 function quizOrthographyMatches(answer,targets){return quizOrthographyMatchDetail(answer,targets).correct}
+function quizCaseSensitiveOrthographyNormalize(value){
+  return String(value??'').normalize('NFKC').replace(/[’‘`´]/g,"'").trim().replace(/\s+/g,' ');
+}
+function quizCaseSensitiveOrthographyMatchDetail(answer,targets){
+  const normalized=quizCaseSensitiveOrthographyNormalize(answer);
+  if(!normalized)return Object.freeze({correct:false,kind:'wrong',matchedTarget:''});
+  for(const target of quizUnique(targets)){
+    if(normalized===quizCaseSensitiveOrthographyNormalize(target))return Object.freeze({correct:true,kind:'exact',matchedTarget:target});
+  }
+  return Object.freeze({correct:false,kind:'wrong',matchedTarget:''});
+}
 function quizQueueRef(w){
   return Object.freeze({
     setLinkId:String(w?.setLinkId||''),
@@ -92,6 +103,7 @@ function makeQuizQuestion(w,mode,opts={}){
     answerSide:'',
     strictOrthography:false,
     trackOrthography:false,
+    caseSensitiveOrthography:false,
     audio:false,
     createdAt:new Date().toISOString()
   };
@@ -105,15 +117,16 @@ function makeQuizQuestion(w,mode,opts={}){
     base.targets=reverse?terms:translations;
     base.answerSide=reverse?'term':'translation';
   }else if(actualMode==='spelling'){
-    base.prompt='🔊 Diktat';base.targets=terms;base.answerSide='term';base.strictOrthography=true;base.trackOrthography=true;base.audio=true;
+    base.prompt=subjectHasCapability(base.subject,'nativeLiteracy')?'🔊 Lernwort hören':'🔊 Diktat';base.targets=terms;base.answerSide='term';base.strictOrthography=true;base.trackOrthography=true;base.caseSensitiveOrthography=subjectHasCapability(base.subject,'nativeLiteracy');base.audio=true;
   }else if(actualMode==='context'){
-    base.prompt=quizContextPrompt(w);base.targets=terms;base.answerSide='term';base.trackOrthography=true;
+    base.prompt=quizContextPrompt(w);base.targets=terms;base.answerSide='term';base.trackOrthography=true;if(subjectHasCapability(base.subject,'nativeLiteracy')){base.strictOrthography=true;base.caseSensitiveOrthography=true;}
   }else{
     base.prompt=base.translation;base.targets=terms;base.answerSide='term';base.trackOrthography=true;
   }
   if(opts.prompt!=null)base.prompt=String(opts.prompt);
   if(opts.targets)base.targets=quizUnique(opts.targets);
   if(opts.strictOrthography!=null)base.strictOrthography=!!opts.strictOrthography;
+  if(opts.caseSensitiveOrthography!=null)base.caseSensitiveOrthography=!!opts.caseSensitiveOrthography;
   return Object.freeze({...base,targets:Object.freeze([...base.targets]),acceptedTerms:Object.freeze([...terms]),acceptedTranslations:Object.freeze([...translations])});
 }
 function validateQuizQuestion(q){
@@ -138,7 +151,7 @@ function validateQuizQuestion(q){
 }
 function gradeQuizQuestion(q,answer){
   const semantic=quizSemanticMatchDetail(answer,q?.targets||[]);
-  const orthography=quizOrthographyMatchDetail(answer,q?.targets||[]);
+  const orthography=q?.caseSensitiveOrthography?quizCaseSensitiveOrthographyMatchDetail(answer,q?.targets||[]):quizOrthographyMatchDetail(answer,q?.targets||[]);
   const active=q?.strictOrthography?orthography:semantic;
   const correct=active.correct;
   const matchKind=correct?active.kind:'wrong';

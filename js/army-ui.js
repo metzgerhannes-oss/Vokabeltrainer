@@ -3,38 +3,38 @@
 (() => {
   const UNIT_DEFS = [
     {
-      id:'infantry',icon:'⚔',names:{english:'Infanterie',latin:'Legionäre'},role:'Front',roleText:'Hält die Linie und bildet die verlässliche Basis des Heeres.',
-      description:{english:'Die verlässliche Basis deiner Armee.',latin:'Das Rückgrat deiner Legion.'},
+      id:'infantry',icon:'⚔',names:{english:'Infanterie',latin:'Legionäre',german:'Knappen'},role:'Front',roleText:'Hält die Linie und bildet die verlässliche Basis des Heeres.',
+      description:{english:'Die verlässliche Basis deiner Armee.',latin:'Das Rückgrat deiner Legion.',german:'Junge Knappen beginnen mit Holzschwertern und wachsen mit deinem Lernfortschritt.'},
       tiers:['Grundausrüstung','Verstärkte Schilde','Stahlhelme','Veteranenrüstung','Eliteformation'],
       thresholds:ARMY_UNIT_THRESHOLDS.infantry,metric:c=>c.growth.pct,metricName:'Jahresentwicklung',suffix:'%'
     },
     {
-      id:'archers',icon:'➶',names:{english:'Bogenschützen',latin:'Sagittarii'},role:'Fernkampf',roleText:'Unterstützt Angriffe aus der Distanz und deckt das Vorrücken.',
-      description:{english:'Treffen aus der Distanz und eröffnen neue Angriffsmöglichkeiten.',latin:'Fernkämpfer für gezielte Salven.'},
+      id:'archers',icon:'➶',names:{english:'Bogenschützen',latin:'Sagittarii',german:'Burgschützen'},role:'Fernkampf',roleText:'Unterstützt Angriffe aus der Distanz und deckt das Vorrücken.',
+      description:{english:'Treffen aus der Distanz und eröffnen neue Angriffsmöglichkeiten.',latin:'Fernkämpfer für gezielte Salven.',german:'Schützen des Wortreichs sichern den Weg zur nächsten Burg.'},
       tiers:['Übungsbögen','Langbögen','Große Köcher','Veteranenbogen','Präzisionssalve'],
       thresholds:ARMY_UNIT_THRESHOLDS.archers,metric:c=>c.growth.pct,metricName:'Jahresentwicklung',suffix:'%'
     },
     {
-      id:'cavalry',icon:'♞',names:{english:'Kavallerie',latin:'Equites'},role:'Mobilität',roleText:'Bewegt sich schnell, flankiert und macht die Armee beweglicher.',
-      description:{english:'Schnelle Eliteeinheiten für den späteren Feldzug.',latin:'Schnelle Reitereinheiten für die Flanke.'},
+      id:'cavalry',icon:'♞',names:{english:'Kavallerie',latin:'Equites',german:'Ritterreiter'},role:'Mobilität',roleText:'Bewegt sich schnell, flankiert und macht die Armee beweglicher.',
+      description:{english:'Schnelle Eliteeinheiten für den späteren Feldzug.',latin:'Schnelle Reitereinheiten für die Flanke.',german:'Erfahrene Ritter reiten erst später mit dem wachsenden Heer.'},
       tiers:['Späher','Leichte Reiterei','Gepanzerte Reiter','Veteranenreiter','Elite-Kavallerie'],
       thresholds:ARMY_UNIT_THRESHOLDS.cavalry,metric:c=>c.growth.pct,metricName:'Jahresentwicklung',suffix:'%'
     },
     {
-      id:'ram',icon:'▰',names:{english:'Rammbock',latin:'Belagerungsgerät'},role:'Belagerung',roleText:'Konzentriert die Kraft der Armee auf Tore und befestigte Ziele.',
-      description:{english:'Wird mit wachsendem Feldzug immer stärker.',latin:'Schweres Gerät für befestigte Ziele.'},
+      id:'ram',icon:'▰',names:{english:'Rammbock',latin:'Belagerungsgerät',german:'Holzramme'},role:'Belagerung',roleText:'Konzentriert die Kraft der Armee auf Tore und befestigte Ziele.',
+      description:{english:'Wird mit wachsendem Feldzug immer stärker.',latin:'Schweres Gerät für befestigte Ziele.',german:'Eine schwere Holzramme für die Tore der Wortreich-Burgen.'},
       tiers:['Leichter Rammbock','Verstärkter Balken','Schutzdach','Belagerungsramme','Festungsbrecher'],
       thresholds:ARMY_UNIT_THRESHOLDS.ram,metric:c=>c.growth.pct,metricName:'Jahresentwicklung',suffix:'%'
     },
     {
-      id:'shield',icon:'⬟',names:{english:'Schildträger',latin:'Scutum-Träger'},role:'Schutz',roleText:'Sichert die Formation und bereits eroberte Stellungen.',
-      description:{english:'Belohnt Wissen, das schon über mehrere Tage stabil bleibt.',latin:'Stabile Reihen aus nachhaltig gefestigtem Wissen.'},
+      id:'shield',icon:'⬟',names:{english:'Schildträger',latin:'Scutum-Träger',german:'Burgwache'},role:'Schutz',roleText:'Sichert die Formation und bereits eroberte Stellungen.',
+      description:{english:'Belohnt Wissen, das schon über mehrere Tage stabil bleibt.',latin:'Stabile Reihen aus nachhaltig gefestigtem Wissen.',german:'Die Burgwache steht für Wissen, das über mehrere Tage sicher bleibt.'},
       tiers:['Holzschild','Verstärkter Schild','Schildwall','Veteranenwall','Elite-Schildwall'],
       thresholds:ARMY_UNIT_THRESHOLDS.shield,metric:c=>c.growth.pct,metricName:'Jahresentwicklung',suffix:'%'
     },
     {
-      id:'support',icon:'✚',names:{english:'Sanitäter',latin:'Unterstützung'},role:'Versorgung',roleText:'Hält die Truppe einsatzbereit und stützt Moral und Ausdauer.',
-      description:{english:'Regelmäßiges Lernen baut deine Unterstützungseinheit aus.',latin:'Regelmäßigkeit stärkt die Versorgung deiner Legion.'},
+      id:'support',icon:'✚',names:{english:'Sanitäter',latin:'Unterstützung',german:'Tross'},role:'Versorgung',roleText:'Hält die Truppe einsatzbereit und stützt Moral und Ausdauer.',
+      description:{english:'Regelmäßiges Lernen baut deine Unterstützungseinheit aus.',latin:'Regelmäßigkeit stärkt die Versorgung deiner Legion.',german:'Der Tross versorgt dein Ritterheer und wächst mit regelmäßigen Lerntagen.'},
       tiers:['Feldversorgung','Verbandskiste','Versorgungswagen','Erfahrenes Team','Elite-Unterstützung'],
       thresholds:ARMY_UNIT_THRESHOLDS.support,metric:c=>c.learningDays,metricName:'Lerntage',suffix:''
     }
@@ -42,7 +42,8 @@
 
   const UNIT_STAGE_NAMES = {
     english:['Gesperrt','Rekrut','Ausgebildet','Erfahren','Elite','Veteran'],
-    latin:['Gesperrt','Tiro','Miles','Veteranus','Evocatus','Primus']
+    latin:['Gesperrt','Tiro','Miles','Veteranus','Evocatus','Primus'],
+    german:['Gesperrt','Holzschwert','Knappe','Burgwache','Ritter','Bannerträger']
   };
 
   const BONUS_DEFS = [
@@ -178,12 +179,12 @@
       <div class="army-camp-sky" aria-hidden="true"></div>
       <div class="army-camp-banner" aria-hidden="true"><span>♜</span></div>
       <div class="army-camp-copy">
-        <span class="army-kicker">${safe(state.activeSubject==='latin'?'Legion':'Armee')} · ${safe(c.p.schoolYear)}</span>
+        <span class="army-kicker">${safe(subjectCampaign(state.activeSubject).unitLabel)} · ${safe(c.p.schoolYear)}</span>
         <strong id="armyRankLabel">${safe(c.rank)}</strong>
         <small>${safe(c.gear)} · Jahresstufe ${safe(c.growth.level)}/${safe(c.growth.maxLevel)}</small>
       </div>
       <div class="army-camp-strength">
-        <span>Armeestärke</span><strong>${safe(c.strength)}</strong>
+        <span>${safe(state.activeSubject==='german'?'Heeresstärke':'Armeestärke')}</span><strong>${safe(c.strength)}</strong>
         <progress class="army-morale-progress" max="100" value="${morale.score}" aria-label="Moral"></progress>
         <small>Moral: ${safe(morale.label)}</small>
       </div>
@@ -305,8 +306,9 @@
     const root=document.querySelector('#armyView');
     if(!root||!state||typeof learner!=='function'||!learner())return;
     const c=context();
+    root.dataset.visualTheme=typeof subjectVisualTheme==='function'?subjectVisualTheme(state.activeSubject):'campaign';
     const next=nextUpgrade(c);
-    const subjectLabel=state.activeSubject==='latin'?'Spiel · Latein · Legion':'Spiel · Englisch · Armee';
+    const subjectLabel=state.activeSubject==='german'?'Spiel · Deutsch · Das Wortreich':state.activeSubject==='latin'?'Spiel · Latein · Legion':'Spiel · Englisch · Armee';
 
     const hero=document.querySelector('#armyHero');
     if(hero){hero.dataset.growthStage=String(c.growth.level);hero.innerHTML=heroMarkup(c)}
@@ -320,7 +322,7 @@
       summary.innerHTML=`
         <div><small>Jahresentwicklung</small><strong>${safe(c.growth.pct)}%</strong></div>
         <div><small>Moral</small><strong>${safe(morale.label)}</strong></div>
-        <div><small>Testfestungen</small><strong>${safe(c.captured.length)}</strong></div>
+        <div><small>${safe(state.activeSubject==='german'?'Burgen':'Testfestungen')}</small><strong>${safe(c.captured.length)}</strong></div>
         <div><small>Prüfungsabzeichen</small><strong>${safe(c.testBadges)}</strong></div>
       `;
     }
@@ -336,12 +338,12 @@
     if(goal){
       goal.innerHTML=next
         ?`<span>Nächstes Upgrade</span><strong>${safe(subjectName(next.def))}</strong><small>${safe(nextText(next.def,next.s))}</small>`
-        :'<span>Armee</span><strong>Maximal ausgebaut</strong><small>Alle sichtbaren Aufwertungen sind erreicht.</small>';
+        :`<span>${safe(state.activeSubject==='german'?'Ritterheer':'Armee')}</span><strong>Maximal ausgebaut</strong><small>Alle sichtbaren Aufwertungen sind erreicht.</small>`;
     }
     const battle=document.querySelector('#armyBattleBtn');
     if(battle){
       battle.disabled=!c.mission;
-      battle.textContent=!c.mission?'Kein Test geplant':c.tickets>0?(c.mission.capturedAt?'Sicherung bereit':'Angriff bereit'):(c.mission.capturedAt?'Eroberte Festung ansehen':'Festung ansehen');
+      battle.textContent=!c.mission?'Kein Test geplant':c.tickets>0?(c.mission.capturedAt?'Sicherung bereit':state.activeSubject==='german'?'Belagerung bereit':'Angriff bereit'):(c.mission.capturedAt?state.activeSubject==='german'?'Eroberte Burg ansehen':'Eroberte Festung ansehen':state.activeSubject==='german'?'Burg ansehen':'Festung ansehen');
     }
     applyArmyArt();
   }
@@ -356,7 +358,7 @@
     if(!root||!state||typeof learner!=='function'||!learner())return;
     const c=context(),def=UNIT_DEFS.find(x=>x.id===selectedUnitId)||UNIT_DEFS[0];
     const label=document.querySelector('#armyUnitSubjectLabel');
-    if(label)label.textContent=state.activeSubject==='latin'?'Latein · Legion':'Englisch · Armee';
+    if(label)label.textContent=state.activeSubject==='german'?'Deutsch · Das Wortreich':state.activeSubject==='latin'?'Latein · Legion':'Englisch · Armee';
     const title=document.querySelector('#armyUnitViewTitle');
     if(title)title.textContent=subjectName(def);
     const detail=document.querySelector('#armyUnitDetail');

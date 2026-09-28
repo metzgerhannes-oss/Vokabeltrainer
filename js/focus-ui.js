@@ -199,6 +199,7 @@ gradeGrammar=function(w,g,answer){
 gradeChoice=function(btn,w,answer,target,skill,nonEvaluative=false,questionSnapshot=null){
   if(session.locked)return;session.locked=true;
   const q=questionSnapshot||currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct,reviewSnapshot=!ok&&!nonEvaluative?answerReviewAttemptSnapshot(w):null;
+  if(!nonEvaluative)recordNativeLiteracyEvidence(w,skill,ok,{orthographyOk:grade.orthographyOk,assisted:false});
   btn.classList.add(ok?'correct':'wrong');
   if(!ok)$$('[data-answer]').find(b=>gradeQuizQuestion(q,b.dataset.answer).correct)?.classList.add('correct');
   focusedDisableAnswerControls();
@@ -214,6 +215,7 @@ gradeChoice=function(btn,w,answer,target,skill,nonEvaluative=false,questionSnaps
 gradeText=function(w,answer,target,errorType,skill){
   if(session.locked)return;session.locked=true;
   const q=currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct,orthographyOk=grade.orthographyOk,reviewSnapshot=!ok?answerReviewAttemptSnapshot(w):null;
+  recordNativeLiteracyEvidence(w,skill,ok,{orthographyOk,assisted:!!session.hintUsed});
   const softSpelling=ok&&q.trackOrthography&&!orthographyOk;
   const detail=softSpelling?(session.hintUsed?'Richtig erinnert mit Hinweis. Schreibweise beachten.':'Richtig erinnert. Schreibweise beachten.'):(ok?(session.hintUsed?'Richtig mit Hinweis.':'Richtig.'):'');
   focusedDisableAnswerControls();

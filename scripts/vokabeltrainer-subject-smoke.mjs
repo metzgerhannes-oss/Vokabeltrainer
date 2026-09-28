@@ -7,26 +7,36 @@ const context=vm.createContext({
   document:{querySelector:()=>null,querySelectorAll:()=>[]},
   window:{},navigator:{},localStorage:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}
 });
-for(const file of ['js/core.js','js/storage.js','js/model.js','js/learning.js']){
+for(const file of ['js/core.js','js/storage.js','js/model.js','js/quiz-engine.js','js/learning.js']){
   vm.runInContext(fs.readFileSync(file,'utf8'),context,{filename:file});
 }
 const result=vm.runInContext(`
 (()=>{
   const passed=[];const assert=(v,n)=>{if(!v)throw new Error('Subject smoke failed: '+n);passed.push(n)};
-  assert(knownSubjectIds().join(',')==='english,latin,french','all subjects come from metadata');
-  assert(availableSubjectIds().join(',')==='english,latin','French remains gated until OCR resource exists');
-  assert(subjectFromExternal('FR')==='french'&&subjectFromExternal('Französisch')==='french','external subject aliases resolve');
+  assert(knownSubjectIds().join(',')==='english,latin,german,french','all subjects come from metadata');
+  assert(availableSubjectIds().join(',')==='english,latin,german','Deutsch is released while French remains gated');
+  assert(subjectFromExternal('FR')==='french'&&subjectFromExternal('Französisch')==='french'&&subjectFromExternal('DE')==='german'&&subjectFromExternal('Deutsch')==='german','external subject aliases resolve');
   assert(subjectFromExternal('Spanisch')===''&&normalizeSubjectId('unknown','')==='','unknown subjects are rejected instead of silently becoming English');
   assert(normalizeLearnerSubjects({activeSubjects:['unknown','latin']}).join(',')==='latin','invalid profile subjects are dropped');
+  assert(subjectSpeechLang('german')==='de-DE'&&subjectOcrLang('german')==='deu','German speech and OCR locales configured');
+  assert(subjectHasCapability('german','nativeLiteracy'),'German native-literacy capability configured');
+  assert(subjectSpeechLang('german')==='de-DE','German speech locale configured');
+  assert(subjectOcrLang('german')==='deu','German OCR code configured');
+  assert(subjectHasCapability('german','nativeLiteracy'),'German native-literacy capability is explicit');
   assert(subjectSpeechLang('french')==='fr-FR','French speech locale configured');
   assert(subjectOcrLang('french')==='fra','French OCR code configured');
   assert(subjectHasCapability('latin','latinGrammar')&&!subjectHasCapability('french','latinGrammar'),'capabilities are metadata driven');
   assert(lexicalKey('ou','french')!==lexicalKey('où','french'),'French accent can distinguish lexemes');
   assert(lexicalKey('cote','french')!==lexicalKey('côte','french'),'French circumflex remains part of lexical identity');
+  assert(Object.keys(defaultGradeScales()).includes('german')&&Object.keys(defaultTestSeries()).includes('german'),'German per-subject state is generated');
   assert(Object.keys(defaultGradeScales()).includes('french')&&Object.keys(defaultTestSeries()).includes('french'),'per-subject state is generated');
   const v=makeVocabulary('french','bonjour','hallo');assert(v.subject==='french','French vocabulary is not collapsed to English');
   const b=makeBook('9780140449136','french',{title:'Test'});assert(b.subject==='french','French books are not collapsed to English');
   const raw=defaultState();raw.vocabulary=[v];raw.sets=[{id:'sf',learnerId:'learner_demo',subject:'french',title:'Unité 1',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target'}];raw.activeSubject='english';const hardened=hardenState(raw);assert(hardened.vocabulary[0].subject==='french'&&hardened.sets[0].subject==='french','state hardening preserves configured inactive subjects');
+  const de=makeVocabulary('german','Haus','Gebäude');assert(de.subject==='german','German vocabulary keeps its own subject');
+  const dp=makeLearnerVocabulary('learner_demo',de.id,primarySense(de).id);assert(Object.keys(dp.literacySkills).includes('orthographicSpelling')&&Object.keys(dp.literacySkills).includes('sentenceUse'),'German literacy evidence is stored separately from foreign-language skills');
+  state=defaultState();state.vocabulary=[de];state.learners[0].activeSubjects=['german'];state.activeSubject='german';const germanGrade=gradeQuizQuestion({subject:'german',targets:['Haus'],strictOrthography:true,trackOrthography:true,caseSensitiveOrthography:true},'haus');assert(germanGrade.correct===false,'German spelling respects fachlich relevant capitalization');
+  assert(gradeQuizQuestion({subject:'german',targets:['Haus'],strictOrthography:true,trackOrthography:true,caseSensitiveOrthography:true},'Haus').correct===true,'German spelling accepts the exact orthographic form');
   SUBJECT_META.french.available=true;state=defaultState();state.learners[0].activeSubjects=['french'];state.activeSubject='french';ensureActiveSubject();assert(state.activeSubject==='french','enabling metadata is sufficient for profile activation');
   assert(rankFor(100,'french')===subjectCampaign('french').ranks.at(-1),'campaign metadata works without French branch');
   return passed;

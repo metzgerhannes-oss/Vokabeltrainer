@@ -4450,3 +4450,47 @@ body.battle-preview.battle-immersive #battleView #battleFullscreenBtn{
 #battleView .battle-message.phaser-phase-hidden{
   display:none!important;
 }
+
+
+/* Deutsch · Paket B: ruhiger Fuchspfad im Lernmodus */
+.german-learning-path{
+  position:relative;display:grid;grid-template-columns:64px minmax(0,1fr) 64px;align-items:center;gap:14px;
+  overflow:hidden;padding:16px 18px;border:1px solid #d8c7a5;border-radius:22px;
+  background:linear-gradient(135deg,#fbf4e8 0%,#f4ead7 55%,#e7efe0 100%);
+  box-shadow:0 10px 28px rgba(79,65,43,.08);
+}
+.german-learning-path::before{
+  content:"";position:absolute;inset:auto -22px -32px -22px;height:70px;
+  border-radius:50% 50% 0 0;background:rgba(117,145,91,.10);pointer-events:none;
+}
+.german-fox{
+  position:relative;z-index:1;display:grid;place-items:center;width:58px;height:58px;
+  border-radius:50%;background:#fff9ef;border:1px solid rgba(170,116,64,.24);
+  font-size:34px;line-height:1;filter:saturate(.88);
+}
+.fox-right{transform:scaleX(-1)}
+.german-learning-copy{position:relative;z-index:1;min-width:0;text-align:center}
+.german-learning-copy>small{display:block;margin-bottom:3px;font-weight:800;letter-spacing:.05em;color:#75552f}
+.german-learning-copy>strong{display:block;font-size:clamp(1rem,3vw,1.22rem);color:#3f4a31}
+.german-learning-stations{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:11px}
+.german-learning-stations span{
+  display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:6px 10px;border-radius:999px;
+  background:rgba(255,255,255,.72);border:1px solid rgba(105,121,80,.18);font-size:.82rem;font-weight:750;color:#4b543d;
+}
+.wood-sword{position:relative;display:inline-block;width:7px;height:22px;border-radius:4px 4px 2px 2px;background:#a97946;transform:rotate(-35deg);box-shadow:inset 0 0 0 1px rgba(91,57,29,.18)}
+.wood-sword::before{content:"";position:absolute;left:-4px;bottom:4px;width:15px;height:4px;border-radius:3px;background:#76522f}
+.wood-sword::after{content:"";position:absolute;left:1px;bottom:-5px;width:5px;height:8px;border-radius:2px;background:#604228}
+html[data-subject="german"] #practiceView .practice-intro{
+  border-color:#dcc8a6;background:linear-gradient(180deg,#fffdf8 0%,#fbf3e6 100%);
+}
+html[data-subject="german"] #learnView .german-literacy-card{
+  border-color:#dcc8a6;background:linear-gradient(180deg,#fffefa 0%,#fbf5e9 100%);
+}
+html[data-subject="german"] #learnView .german-literacy-card .eyebrow{color:#75552f}
+html[data-subject="german"] #learnView .german-literacy-card .secondary{border-color:#cdb78d}
+@media(max-width:560px){
+  .german-learning-path{grid-template-columns:48px minmax(0,1fr) 48px;padding:13px 10px;gap:7px}
+  .german-fox{width:44px;height:44px;font-size:27px}
+  .german-learning-stations{gap:5px}
+  .german-learning-stations span{padding:5px 8px;font-size:.76rem}
+}

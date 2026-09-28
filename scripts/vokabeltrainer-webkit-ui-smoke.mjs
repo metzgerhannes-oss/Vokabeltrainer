@@ -41,6 +41,7 @@ try{
   await page.locator('#parentAreaBtn').click();
   await page.locator('#confirmParentMode').click();
 
+
   // Regression: profile editor switches must stay compact on iPhone and the
   // cancel/save action row must be scroll-reachable.
   await page.evaluate(()=>addProfile());
@@ -68,7 +69,6 @@ try{
   const viewport=page.viewportSize();
   if(!saveBox||!viewport||saveBox.y<0||saveBox.y+saveBox.height>viewport.height+1)throw new Error('profile editor save action is not reachable on compact iPhone');
   await page.locator('#modalContent button[value="cancel"]').click();
-
   await page.locator('#parentManageDisclosure > summary').click();
   await page.locator('#parentSettingsBtn').click();
   await page.locator('#familySyncSetupBtn').click();
