@@ -253,23 +253,39 @@ function startSession(mode='adaptive',setId=null,wordIds=null,isDaily=false,opts
 }
 function modeLabel(m){return ({adaptive:'Adaptiv',allWords:'Alle Vokabeln',weakWords:'Unsichere Vokabeln',flash:'Wortblitz',shower:'Vokabeldusche',chunks:'Wortbausteine',handwriting:'Handschrift',firstContact:'Abschreiben',recognition:'Erkennen',recall:'Abrufen',reverseRecall:'Bedeutung abrufen',spelling:'Schreiben',listening:'Hören',context:'Kontext',latinGrammar:'Latein Formen',practiceTest:'Prüfung',cards:'Karteikarten'})[m]||m}
 function currentWord(){const token=session?.queue?.[session.index];return resolveQuizQueueRef(token,session?.setId||'')}
+function canSkipCurrentVocabulary(){
+  return !!(session&&!session.locked&&session.mode!=='practiceTest'&&session.index<session.queue.length-1);
+}
+function skipCurrentVocabulary(){
+  if(!canSkipCurrentVocabulary()){toast('Diese Vokabel steht bereits am Ende der aktuellen Abfrage.','subtle');return false}
+  const [token]=session.queue.splice(session.index,1);session.queue.push(token);session.currentQuestion=null;session.currentQuestionIssues=[];session.hintUsed=false;
+  recordActivity('skipVocabulary',{wordId:typeof token==='string'?token:(token?.wordId||''),neutral:true});persistOnly();renderStudy();return true;
+}
+function mountSkipCurrentVocabulary(){
+  if(!session||session.mode==='practiceTest'||$('#skipVocabularyBtn'))return;
+  const card=$('#studyArea .study-card');if(!card)return;
+  const available=canSkipCurrentVocabulary();
+  card.insertAdjacentHTML('beforeend',`<div class="skip-vocabulary-action"><button type="button" id="skipVocabularyBtn" class="ghost" ${available?'':'disabled'}>Vokabel überspringen</button><small>${available?'Kommt am Ende dieser Abfrage noch einmal.':'Steht bereits am Ende dieser Abfrage.'}</small></div>`);
+  $('#skipVocabularyBtn').onclick=skipCurrentVocabulary;
+}
 function renderStudy(){
   if(!session||session.index>=session.queue.length){finishSession();return}
   const w=currentWord(); if(!w){session.index++;renderStudy();return}
   $('#sessionPill').textContent=`${session.index+1} / ${session.queue.length}`;
   session.locked=false; session.hintUsed=false;session.currentQuestion=null;session.currentQuestionIssues=[];
   if(session.mode==='practiceTest') return renderPracticeTest(w);
-  if(session.mode==='latinGrammar') return renderLatinGrammar(w);
-  if(session.mode==='shower') return renderShower(w);
-  if(session.mode==='flash') return renderFlash(w);
-  if(session.mode==='chunks') return renderChunks(w);
-  if(session.mode==='handwriting') return renderHandwriting(w);
-  if(session.mode==='cards') return renderLeitnerCard(w);
+  if(session.mode==='latinGrammar'){renderLatinGrammar(w);mountSkipCurrentVocabulary();return}
+  if(session.mode==='shower'){renderShower(w);mountSkipCurrentVocabulary();return}
+  if(session.mode==='flash'){renderFlash(w);mountSkipCurrentVocabulary();return}
+  if(session.mode==='chunks'){renderChunks(w);mountSkipCurrentVocabulary();return}
+  if(session.mode==='handwriting'){renderHandwriting(w);mountSkipCurrentVocabulary();return}
+  if(session.mode==='cards'){renderLeitnerCard(w);mountSkipCurrentVocabulary();return}
   const adaptiveLike=['adaptive','allWords','weakWords'].includes(session.mode);let sub=adaptiveLike?chooseAdaptiveMode(w):session.mode;if(sub==='reverseRecall'&&!meaningRecallHasCue(w))sub='recall';session.currentSubmode=sub;
   const prepared=setCurrentQuizQuestion(w,sub);
   if(prepared.issues.length){renderQuizIntegrityStop(w,prepared.issues);return}
   $('#modePill').textContent=session.rescueMode?`Test morgen · ${modeLabel(sub)}`:session.roomRound?`Übungsraum · ${modeLabel(sub)}`:(adaptiveLike?`${modeLabel(session.mode)} · ${modeLabel(sub)}`:modeLabel(sub));
   if(sub==='recognition')renderRecognition(w); else if(sub==='listening')renderListening(w); else if(sub==='chunks')renderChunks(w); else if(sub==='reverseRecall')renderReverseRecall(w); else if(sub==='spelling')renderSpelling(w); else if(sub==='context')renderContext(w); else renderRecall(w);
+  mountSkipCurrentVocabulary();
 }
 function cardExtras(w){
   const conf=detectConfusions(w,myWords()); const c=conf.length?`<div class="confusion-box"><strong>Verwechslungsalarm</strong><br>${conf.map(x=>`<span class="pill">${esc(x.term)} = ${esc(x.translation)}</span>`).join(' ')}</div>`:'';
@@ -450,7 +466,12 @@ function flagAnswerForParentReview(w,{answer='',question=null,skill='',errorType
   restoreAnswerReviewAttempt(w,snapshot);
   state.answerReviews=Array.isArray(state.answerReviews)?state.answerReviews:[];
   const existing=state.answerReviews.find(x=>x.status==='pending'&&x.learnerId===w.learnerId&&x.questionId===question.id&&x.answer===String(answer||'').trim());
-  const req=existing||{id:uid('review'),learnerId:w.learnerId,subject:w.subject||state.activeSubject,setId:question.setId||w.setId||'',setLinkId:question.setLinkId||w.setLinkId||'',wordId:question.progressId||w.id||'',vocabId:question.vocabId||w.vocabId||'',senseId:question.senseId||w.senseId||'',questionId:question.id||'',prompt:String(question.prompt||''),answer:String(answer||'').trim(),targets:[...(question.targets||[])],answerSide:String(question.answerSide||''),mode:String(question.mode||session?.currentSubmode||''),skill:String(skill||''),errorType:String(errorType||''),dailyAttempt:!!session?.isDaily,attemptDate:today(),createdAt:new Date().toISOString(),status:'pending',resolvedAt:'',resolution:''};
+  let dailyPlanKey='',dailyRefKey='';
+  if(session?.isDaily){
+    const plan=buildDailyPlan(),key=dailyPlanRefKey({wordId:w.id,setLinkId:w.setLinkId||''});
+    if(plan&&key){plan.reviewPendingKeys=[...new Set([...(plan.reviewPendingKeys||[]),key])];dailyPlanKey=`${plan.date}:${plan.subject}`;dailyRefKey=key}
+  }
+  const req=existing||{id:uid('review'),learnerId:w.learnerId,subject:w.subject||state.activeSubject,setId:question.setId||w.setId||'',setLinkId:question.setLinkId||w.setLinkId||'',wordId:question.progressId||w.id||'',vocabId:question.vocabId||w.vocabId||'',senseId:question.senseId||w.senseId||'',questionId:question.id||'',prompt:String(question.prompt||''),answer:String(answer||'').trim(),targets:[...(question.targets||[])],answerSide:String(question.answerSide||''),mode:String(question.mode||session?.currentSubmode||''),skill:String(skill||''),errorType:String(errorType||''),dailyAttempt:!!session?.isDaily,dailyPlanKey,dailyRefKey,attemptDate:today(),createdAt:new Date().toISOString(),status:'pending',resolvedAt:'',resolution:''};
   if(!existing)state.answerReviews.push(req);
   if(result){result.reviewPending=true;result.reviewId=req.id;result.correct=null;result.reason='Von dir zur Prüfung gemeldet. Bis zur Entscheidung verändert dieser Versuch deinen Lernstand nicht.';result.boxAfter=result.boxBefore}
   persistOnly();window.VTFamilySync?.markLocalChange?.();
