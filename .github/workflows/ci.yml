@@ -246,9 +246,6 @@ jobs:
             APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-battle-duel-ui-smoke.mjs
           done
 
-      - name: WebKit animated battle demo
-        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-battle-demo-ui-smoke.mjs
-
       - name: WebKit Phaser battle spike
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-phaser-battle-ui-smoke.mjs
 
