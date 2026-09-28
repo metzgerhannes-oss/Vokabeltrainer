@@ -51,11 +51,11 @@ async function openVariant(attack, outcome = 'capture') {
       phaseCount: document.querySelectorAll('[data-phaser-battle-phase]').length,
       attackCount: document.querySelectorAll('[data-phaser-attack]').length,
       activeAttackCount: document.querySelectorAll('[data-phaser-attack].active').length,
+      hudAbsent: document.querySelector('.phaser-cinematic-hud') === null,
       phase: stage?.dataset.phase || '',
       attack: stage?.dataset.attack || '',
       outcome: stage?.dataset.outcome || '',
       reducedMotion: stage?.dataset.reducedMotion || '',
-      label: document.querySelector('#phaserBattleCinematicLabel')?.textContent?.trim() || '',
       previewVersion: document.querySelector('#phaserPreviewVersion')?.textContent?.trim() || '',
       previewVersionJs: window.__VT_PHASER_PREVIEW_VERSION__ || '',
       previewBuildJs: window.__VT_PHASER_PREVIEW_BUILD__ || ''
@@ -72,12 +72,13 @@ async function openVariant(attack, outcome = 'capture') {
   assert(ready.phaseCount === 5, 'five cinematic phases are visible');
   assert(ready.attackCount === 5, 'five attack variants are selectable');
   assert(ready.activeAttackCount === 1, 'exactly one attack variant is active');
-  assert(ready.phase === 'ready' && ready.label === 'BEREIT', 'scene starts in ready state');
+  assert(ready.phase === 'ready', 'scene starts in ready state');
+  assert(ready.hudAbsent, 'battle stage contains no phase narration overlay');
   assert(ready.attack === attack, 'selected attack is reflected on the stage');
   assert(ready.outcome === outcome, 'selected outcome is reflected on the stage');
   assert(ready.reducedMotion === 'true', 'matrix runs in reduced-motion mode for CI speed');
-  assert(ready.previewVersion.includes('v0.21.25') && ready.previewVersion.includes('P3.1'), 'visible preview version is shown');
-  assert(ready.previewVersionJs === '0.21.25-phaser.3.1', 'preview JS version matches visible release');
+  assert(ready.previewVersion.includes('v0.21.27') && ready.previewVersion.includes('P3.1'), 'visible preview version is shown');
+  assert(ready.previewVersionJs === '0.21.27-phaser.3.1', 'preview JS version matches visible release');
   assert(ready.previewBuildJs === 'attacks-gate-entry-profile-banner', 'preview build marker matches current choreography');
   assert(external.length === 0, 'Phaser battle uses no external CDN requests');
 
@@ -92,7 +93,6 @@ async function openVariant(attack, outcome = 'capture') {
       buttonText: document.querySelector('#phaserBattleStart')?.textContent?.trim() || '',
       buttonEnabled: document.querySelector('#phaserBattleStart')?.disabled === false,
       resultText: document.querySelector('#phaserBattleMessage')?.textContent?.trim() || '',
-      cinematic: document.querySelector('#phaserBattleCinematicTitle')?.textContent?.trim() || '',
       phases: window.__VT_PHASER_BATTLE_PHASES__ || [],
       beats: window.__VT_PHASER_BATTLE_BEATS__ || [],
       attack: window.__VT_PHASER_BATTLE_ATTACK__ || '',
