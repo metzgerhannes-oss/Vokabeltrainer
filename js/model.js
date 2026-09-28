@@ -550,10 +550,11 @@ function acceptAnswerReview(id){
   const req=answerReviewById(id);if(!req||req.status!=='pending')return {ok:false,error:'Prüffall nicht mehr offen.'};
   const answer=String(req.answer||'').trim(),link=(state.setVocabulary||[]).find(x=>x.id===req.setLinkId),set=(state.sets||[]).find(x=>x.id===req.setId);
   if(!answer||!link)return {ok:false,error:'Antwort oder Lernset-Zuordnung fehlt.'};
-  const key=req.answerSide==='translation'?'acceptedTranslationOverrides':'acceptedTermOverrides',limit=req.answerSide==='translation'?700:300;
+  const existingPairReview=!!(set&&setNeedsPairReview(set)),key=req.answerSide==='translation'?'acceptedTranslationOverrides':'acceptedTermOverrides',limit=req.answerSide==='translation'?700:300;
   if(answer.length>limit)return {ok:false,error:'Die Antwort ist für eine automatische Variante zu lang.'};
   link[key]=[...new Set([...(link[key]||[]),answer])];
-  if(set){set.pairReviewRequired=false;set.pairVerifiedAt=new Date().toISOString();set.pairVerifiedSignature=pairReviewSignatureForSet(set.id)}
+  if(set&&existingPairReview){set.pairReviewRequired=true;set.pairVerifiedAt='';set.pairVerifiedSignature=''}
+  else if(set){set.pairReviewRequired=false;set.pairVerifiedAt=new Date().toISOString();set.pairVerifiedSignature=pairReviewSignatureForSet(set.id)}
   applyAcceptedAnswerReview(req);req.status='accepted';req.resolution='accepted-variant';req.resolvedAt=new Date().toISOString();answerReviewActivity(req,'answerReviewAccepted',{answerSide:req.answerSide,answer});rebuildWordIndexes();return {ok:true,request:req};
 }
 function rejectAnswerReview(id){
