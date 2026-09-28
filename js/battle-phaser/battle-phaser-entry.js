@@ -3,6 +3,11 @@
 import Phaser from '../vendor/phaser-4.2.1.esm.min.js';
 import { createBattleSceneClass } from './battle-phaser-scene.js';
 
+const PREVIEW_VERSION = '0.21.25-phaser.3.1';
+const PREVIEW_BUILD = 'attacks-gate-entry-profile-banner';
+window.__VT_PHASER_PREVIEW_VERSION__ = PREVIEW_VERSION;
+window.__VT_PHASER_PREVIEW_BUILD__ = PREVIEW_BUILD;
+
 const stage = document.querySelector('#phaserBattleStage');
 const mount = document.querySelector('#phaserBattleCanvas');
 const start = document.querySelector('#phaserBattleStart');
