@@ -119,7 +119,7 @@ function makeQuizQuestion(w,mode,opts={}){
   }else if(actualMode==='spelling'){
     base.prompt=subjectHasCapability(base.subject,'nativeLiteracy')?'🔊 Lernwort hören':'🔊 Diktat';base.targets=terms;base.answerSide='term';base.strictOrthography=true;base.trackOrthography=true;base.caseSensitiveOrthography=subjectHasCapability(base.subject,'nativeLiteracy');base.audio=true;
   }else if(actualMode==='context'){
-    base.prompt=quizContextPrompt(w);base.targets=terms;base.answerSide='term';base.trackOrthography=true;
+    base.prompt=quizContextPrompt(w);base.targets=terms;base.answerSide='term';base.trackOrthography=true;if(subjectHasCapability(base.subject,'nativeLiteracy')){base.strictOrthography=true;base.caseSensitiveOrthography=true;}
   }else{
     base.prompt=base.translation;base.targets=terms;base.answerSide='term';base.trackOrthography=true;
   }
