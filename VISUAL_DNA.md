@@ -145,6 +145,7 @@ Verbindlich für Kampagnen- und Battle-Szenen:
 - Keine separate CSS-Burg, kein graues Ziel-Icon und keine zweite Armee dürfen über ein anderes Hintergrundmotiv gelegt werden.
 - Die Szene muss räumlich plausibel lesbar sein: eigene Truppe im Vordergrund/links, sichtbare Distanz bzw. Weg, Ziel/Festung rechts oder im Hintergrund.
 - Die Illustration ist der visuelle Schwerpunkt; Statuswerte liegen als kompakte HUD-Karten darüber und dürfen die Szene nicht ersetzen.
+- **„Meine Armee“ zeigt den tatsächlich erreichten Jahresstand.** Zu Beginn ist nur eine kleine, einfach ausgerüstete Formation sichtbar. Mit der dauerhaften Jahresentwicklung kommen sichtbar weitere Einheiten, mehr Soldaten und hochwertigere Ausrüstung hinzu. Die vollständige große Armee ist der höchsten Entwicklungsstufe vorbehalten; ein statisch voll ausgerüstetes Heer zu Schuljahresbeginn ist unzulässig.
 - Der Battle-Aufbau folgt dem freigegebenen Target-Design: ruhige Kapitelkarte → große Kampagnenszene mit 2×2-KPI-HUD → große visuelle Angriffskarten.
 - Technische CSS-Geometrie bleibt ausschließlich Fallback, falls die Illustration nicht geladen werden kann.
 
