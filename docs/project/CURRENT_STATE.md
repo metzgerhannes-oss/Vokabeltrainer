@@ -6,7 +6,7 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.26**
+- App-Version: **v0.21.27**
 - aktueller `main`-Commit: `dcce2da8f7cacddf540e86c3591116934a3706e9` (Merge von PR #176 – Phaser-Battle Iteration 2)
 - letzter fachlicher Lernrelease: **PR #148 – v0.21.12 – Differenzierte LRS-Unterstützung**
 - letzter produktiver Release: **PR #165 – v0.21.22 – kurzer Tageskern, T−1-Rettungsmodus und getrennte Festungsvorschau**
