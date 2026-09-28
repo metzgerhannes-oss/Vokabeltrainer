@@ -36,7 +36,7 @@ try{
       stageRatio:rect&&rect.width?rect.height/rect.width:0,
       dockPosition:dock?getComputedStyle(dock).position:'',
       summaryCount:document.querySelectorAll('.battle-demo-summary').length,
-      genericImpactOpacity:parseFloat(getComputedStyle(stage.querySelector('.battle-impact')||stage).opacity||'0')
+      genericImpactCount:stage?.querySelectorAll('.battle-impact').length||0
     };
   });
   console.log('BATTLE_DEMO_VISIBLE',JSON.stringify(visible));
@@ -47,7 +47,7 @@ try{
   assert(visible.stageRatio>0.5&&visible.stageRatio<0.72,'mobile stage keeps a cinematic landscape ratio');
   assert(visible.dockPosition==='static','action dock does not overlap the result as a fixed layer');
   assert(visible.summaryCount===0,'oversized attacker/target summary card is removed');
-  assert(visible.genericImpactOpacity===0,'legacy generic impact artifact is suppressed');
+  assert(visible.genericImpactCount===0,'legacy generic impact artifact is removed from the demo DOM');
 
   await page.locator('#battleDemoStart').click();
   await page.waitForFunction(()=>document.querySelector('#battleDemoStage')?.dataset.phase==='advance');
@@ -61,12 +61,12 @@ try{
     return {
       flashAnimation:flash?getComputedStyle(flash).animationName:'',
       calloutVisible:callout?parseFloat(getComputedStyle(callout).opacity||'0')>0:false,
-      legacyImpactOpacity:parseFloat(getComputedStyle(stage?.querySelector('.battle-impact')||stage).opacity||'0')
+      legacyImpactCount:stage?.querySelectorAll('.battle-impact').length||0
     };
   });
   assert(impact.flashAnimation.includes('demoImpactFlash'),'clean dedicated impact flash runs');
   assert(impact.calloutVisible,'impact callout is visible during the hit');
-  assert(impact.legacyImpactOpacity===0,'legacy impact artifact stays hidden during impact');
+  assert(impact.legacyImpactCount===0,'legacy impact artifact stays absent during impact');
 
   await page.waitForFunction(()=>document.querySelector('#battleDemoStage')?.dataset.phase==='result');
   const result=await page.evaluate(()=>({
