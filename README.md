@@ -12,7 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.25**
+App-Version: **v0.21.26**
+
+- v0.21.26: Avatar und Armee bilden jetzt eine dauerhafte, nur vorwärts laufende Jahresentwicklung statt den schwankenden Prozentwert der aktuell bekannten Vokabeln ab. Neue Tests oder Vokabeln können den bereits erreichten Spielstand nicht zurücksetzen. „Meine Armee“ wächst sichtbar von einer kleinen Formation bis zur vollständig ausgerüsteten Armee. Die Jahresfestung bleibt ohne Datum am Horizont, bis ein realer Termin bekannt ist; dieser kann im Elternbereich gesetzt, geändert oder wieder geöffnet werden. Neue Testziele werden weiterhin dynamisch davor ergänzt.
 
 - v0.21.25: Der echte Testabschluss erhält eine kurze, rein dekorative Konfetti-Belohnung. Sie startet erst nach bestätigtem und erfolgreich gespeichertem „Test abschließen“, verändert weder Lernstand noch XP und wird bei aktivierter reduzierter Bewegung nicht animiert.
 
