@@ -270,24 +270,18 @@ Paris darf eine besondere Etappe sein, aber nicht die gesamte visuelle Welt best
 Hinweis: Französisch ist visuell bereits definiert, auch wenn die fachliche Freischaltung
 technisch weiterhin den vollständigen Aktivierungs-Check aus `SUBJECT_SYSTEM.md` erfüllen muss.
 
-## 9. Deutsch Grundschule 1–4 – Fuchswelt
+## 9. Deutsch Grundschule 1–4 – Das Wortreich
 
 ### Leitidee
 
-Ein ruhiger, kluger Fuchs begleitet das Kind durch den Deutsch-Lernpfad der Klassen 1–4.
+Deutsch besitzt zwei klar getrennte Ebenen:
 
-Dieser Bereich ist ein eigener Grundlernbereich und keine vereinfachte Battle-Welt. Die Fuchswelt wächst gestalterisch mit: Klasse 1 arbeitet stärker mit Buchstaben, Bildern und Schreibspuren; bis Klasse 4 wird die Darstellung sachlicher und textorientierter, ohne den vertrauten Fuchs als Lernbegleiter aufzugeben.
+- **Lernmodus:** ruhiger, heller Deutsch-Lernraum; der vertraute Fuchs kann als kluger Lernbegleiter erhalten bleiben.
+- **Spielmodus:** **„Das Wortreich“**, eine mittelalterliche Burg-, Ritter- und Belagerungswelt mit eigener Armee.
 
-### Zielwirkung
+Damit wird Deutsch weder zu einer umgefärbten Englisch-Kampagne noch zu einer reinen Fuchswelt ohne Spielhandlung. Die fachliche Aufgabe bleibt im Lernmodus dominant; die vollständige Kampfinszenierung findet ausschließlich im eigenen Spielbereich statt.
 
-Das Kind soll erleben:
-
-- Ich darf langsam lernen.
-- Kleine Schritte zählen.
-- Fehler führen zur nächsten Lerngelegenheit.
-- Der Fuchs begleitet mich ruhig und verlässlich.
-
-### Fuchs
+### Lernmodus
 
 Der Fuchs ist:
 
@@ -298,15 +292,9 @@ Der Fuchs ist:
 - vertrauenswürdig
 - warm
 
-Er ist nicht:
+Er begleitet Buchstaben, Laute, Wörter, Lesen und Schreiben, ohne während des aktiven Abrufs um Aufmerksamkeit zu konkurrieren.
 
-- albern
-- hyperaktiv
-- babyhaft
-- übertrieben niedlich
-- comicartig verzerrt
-
-### Bildmotive
+Bildmotive:
 
 - heller Natur-/Lernraum
 - Holz und Papier
@@ -314,29 +302,75 @@ Er ist nicht:
 - Buchstabenpfade
 - Wortkarten
 - Schreibspuren
-- kleine Lernstationen
 - ruhige Pflanzen- und Naturelemente
+
+### Spielmodus – Das Wortreich
+
+Die Spielwelt zeigt den sichtbaren Aufbau eines eigenen Reichs:
+
+- Buchstabenlager
+- Dorf / befestigte Siedlung
+- Burg
+- große Festung
+- Jahresfestung
+
+Mögliche Einheiten und Belagerungselemente:
+
+- Burgwachen / Infanterie
+- Bogenschützen
+- Ritter
+- Reiter
+- Rammbock
+- Katapult
+- Banner und Schildformationen
+
+Gegner sind ausschließlich fiktional; keine realen Länder, Völker, Religionen oder Konflikte werden als Feindbild verwendet.
+
+### Kampfcharakter
+
+Der Kampf darf sichtbar und spektakulär sein, bleibt aber kindgerecht:
+
+- gegnerische Burg verteidigt sich mit Pfeilen und Belagerungsgerät
+- Mauer und Tor zeigen Beschädigungsstufen
+- eigene Truppen können stilisiert zurückweichen oder sichtbare Verluste erleiden
+- keine Verletzungsdetails, kein Blut, keine brutale Gewalt
+- Rauch, Staub, Feuerstellen und Trümmer nur als stilisierte Belagerungseffekte
+- fachlicher Fortschritt und Kampf bleiben vollständig getrennt
 
 ### Komposition
 
-**Fuchs links → Buchstaben-/Wort-Lernpfad in der Mitte → nächste Lernstation rechts**
+**eigene Ritterarmee links → Belagerungszone/Weg in der Mitte → gegnerische Burg rechts**
+
+Im Lernmodus gilt weiterhin:
+
+**Fuchs/Orientierung links → Lernpfad in der Mitte → nächste Lernstation rechts**
 
 ### Farb- und Lichtwelt
 
+Lernmodus:
 - warmes Beige
 - weiches Grün
 - gedecktes Orange
 - Naturholz
 - Creme
 - helles Papierweiß
-- weiches Tageslicht
+
+Wortreich:
+- warmes Stein- und Sandgrau
+- gedecktes Waldgrün
+- Burgunder-/Bannerakzente
+- Bronze und Holz
+- warmes Morgen- oder Abendlicht
 
 ### Ausschlüsse
 
 - kein Kindergarten-Look
 - keine überanimierte Cartoon-Welt
-- keine Kampfmetapher als Grundsystem
-- keine dunkle oder komplexe Fantasywelt
+- keine moderne Militärästhetik
+- keine realen Kriegsgegner
+- keine brutale oder düstere Gewaltfantasie
+- keine Kampfanimation während des aktiven Abrufs
+- keine Spielbelohnung, die Mastery oder fachliche Bewertung verändert
 
 ## 10. Leitfiguren
 
@@ -345,7 +379,7 @@ Die Fachwelten müssen nicht dieselbe Figurenlogik verwenden.
 - **Englisch:** Avatar, Heldengruppe oder Armee
 - **Latein:** Legionär, Standartenträger oder geordnete Legion
 - **Französisch:** Reisefigur oder stilvoller Entdecker
-- **Deutsch 1–4:** Fuchs als zentraler Lernbegleiter
+- **Deutsch 1–4:** Fuchs als ruhiger Lernbegleiter im Lernmodus; Ritterheer und Burg als Leitmotive des Wortreich-Spielmodus
 
 Figuren tragen den Lernprozess, dominieren ihn aber nicht.
 
@@ -379,14 +413,14 @@ Bedienmuster weitgehend fachübergreifend gleich:
 - Englisch: Kampagnenpfad
 - Latein: römische Marschroute / Provinzroute
 - Französisch: Reise- und Etappenkarte
-- Deutsch 1–4: Fuchs-Lernpfad
+- Deutsch 1–4: im Lernmodus Fuchs-Lernpfad; im Spielmodus Wortreich-/Burgfortschritt
 
 ### Test / Prüfung / Meilenstein
 
 - Englisch: Festung / Kampagnenetappe
 - Latein: Kastell / römische Prüfungsetappe
 - Französisch: besondere Reise-/Sprachmission
-- Deutsch 1–4: Lernmeilenstein, keine Schlacht im Vordergrund
+- Deutsch 1–4: Testfestung / Belagerung im Spielbereich; der Lernmodus selbst bleibt kampffrei
 - mobile Kampagnenszenen dürfen einen **app-eigenen Fokusmodus** anbieten: Querformat-Illustration dominant, keine Bottom-Navigation, keine Story, kein KPI-HUD und keine Angriffskarten über dem Bild
 - im Fokusmodus bleiben nur ein eindeutiger Rückweg, optional „Angriff wählen“ und der integrierte Zielstatus sichtbar
 - der Zielstatus bündelt Schadenszustand und verbleibende Verteidigung; derselbe Wert darf nicht zusätzlich als separates Bild-Overlay wiederholt werden
@@ -442,7 +476,7 @@ Die freigegebene 2×2-Leitbildtafel definiert gemeinsam die vier Referenzwelten:
 1. **English – The Campaign:** Gruppe → Landschaft/Weg → Festung
 2. **Latin – The Legion:** Legion → Römerstraße → Kastell
 3. **Français – Le Voyage:** Reisefigur → Reiseweg → Zielort
-4. **Deutsch – Der Fuchs:** Fuchs → Lernpfad → nächste Lernstation
+4. **Deutsch – Das Wortreich:** Lernmodus mit Fuchs; Spielmodus Ritterheer → Belagerungsweg → Burg/Festung
 
 Diese vier Keyframes sind damit die visuelle Referenz für die nachfolgende Übertragung auf
 Start-, Karten-, Lern- und Testscreen. Einzelne spätere Illustrationen dürfen Details
