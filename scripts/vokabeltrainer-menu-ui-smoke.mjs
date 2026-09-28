@@ -85,15 +85,15 @@ try{
     avatarNaturalHeight:document.querySelector('#projectMenuAvatarArt')?.naturalHeight||0
   }));
   assert(metrics.pct===50,'seed creates deterministic 50 percent mastery');
-  assert(metrics.avatarStage==='3','50 percent academic progress maps to avatar stage 3');
-  assert(metrics.avatarKey==='english-male-stage-3','avatar exposes a stable profile-specific artwork key');
-  assert(metrics.avatarLabel==='Mein Profil · Stufe 3/6','profile name replaces the generic Avatar label');
+  assert(metrics.avatarStage==='1','academic 50 percent no longer inflates the separate year-campaign avatar stage');
+  assert(metrics.avatarKey==='english-male-stage-1','avatar artwork follows persistent year-campaign growth rather than the current known-word denominator');
+  assert(metrics.avatarLabel==='Mein Profil · Stufe 1/6','profile name and the early year-development stage are visible together');
   assert(metrics.nextTestHidden===false,'upcoming test progress is visible when a test is planned');
   assert(metrics.nextTestPct==='50%','upcoming test progress shows the test-specific readiness percentage');
   assert(metrics.nextTestDetail==='1 von 2 Vokabeln sicher','upcoming test progress shows ready and total vocabulary counts');
-  assert(metrics.avatarPips===3,'avatar stage pips match current stage');
+  assert(metrics.avatarPips===1,'avatar stage pips match the separate year-development stage');
   assert(metrics.avatarFinal==='true','English menu uses final stage-specific avatar artwork');
-  assert(metrics.avatarArtKey==='english-male-stage-3','English male avatar artwork matches the computed stage');
+  assert(metrics.avatarArtKey==='english-male-stage-1','English male avatar artwork matches the computed year-development stage');
   assert(metrics.avatarSrc.startsWith('blob:'),'stage artwork is reconstructed locally from offline assets');
   assert(metrics.avatarNaturalHeight>metrics.avatarNaturalWidth*1.25,'English avatar artwork must remain a full-body portrait asset');
   const styleIsolation=await page.evaluate(()=>{
@@ -111,7 +111,7 @@ try{
     return {before,after,female};
   });
   assert(styleIsolation.female.style==='female','learner profile can select the female avatar track');
-  assert(styleIsolation.female.key==='english-female-stage-3','female profile keeps the same academic stage with its own artwork namespace');
+  assert(styleIsolation.female.key==='english-female-stage-1','female profile keeps the same year-development stage with its own artwork namespace');
   assert(styleIsolation.female.final!=='true','female track uses fallback until its dedicated artwork files are added');
   assert(styleIsolation.before===styleIsolation.after,'avatar profile style never changes academic mastery');
   const boundaries=await page.evaluate(()=>[0,17,18,35,36,53,54,71,72,89,90,100].map(p=>[p,avatarStageFor(p,'english').level]));
