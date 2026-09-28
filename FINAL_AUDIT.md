@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 28.09.2026 · App v0.21.26
+Stand: 28.09.2026 · App v0.21.27
 
 ## Ergebnis
+
+- v0.21.27 integriert Phaser 4 in den echten Englisch-Tagesangriff. Die Animation ist strikt von Lern- und Battle-Geschäftslogik getrennt: fachliche Mastery, Ticket, Schaden, Taktikbonus, Festungszustand und XP werden weiterhin ausschließlich durch die bestehende App berechnet und gespeichert. Phaser wird lazy geladen, lokal/offline vorgehalten und fällt bei Startfehler auf den bisherigen Renderer zurück.
 
 - v0.21.26 liefert die Bearbeitung offener Tests zuverlässig als neuen Shell-/PWA-Stand aus. Im Elternbereich kann ein noch nicht abgeschlossener Test bis einschließlich Testtag in Termin und Umfang geändert werden; bestehende Lernhistorie und laufender Festungsfortschritt bleiben erhalten. Der Versionssprung aktualisiert Asset-URLs und Service-Worker-Shell-Cache, damit installierte iOS-/PWA-Geräte nicht auf v0.21.25 hängen bleiben.
 
