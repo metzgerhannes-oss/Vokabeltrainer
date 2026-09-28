@@ -732,7 +732,7 @@ function renderAll(){
   loopState($('#gameLoopCapture'),captureDone,!!nf&&attackDone&&!captureDone,!nf||!attackDone);
   $('#attackBtn').disabled=!nf;$('#attackBtn').textContent=!nf?'KEIN ZIEL':tickets?(secured?'FESTUNG SICHERN':'ANGRIFF STARTEN'):(secured?'FESTUNG ANSEHEN':'FESTUNG ANSEHEN');
   $('#campaignMessage').className=`game-mission-message ${tickets?'ready':secured?'captured':usedToday?'spent':'locked'}`;$('#campaignMessage').textContent=!nf?'Plane einen Test – daraus entsteht automatisch dein nächstes Ziel.':tickets?(secured?'Heute kannst du die eroberte Festung weiter sichern.':'Dein Tagesziel ist geschafft. Eine Angriffsaktion ist bereit.'):secured?`Erobert. Bis zum Test am ${formatDateShort(nf.testDate)} hältst du die Festung.`:usedToday?`Angriff ausgeführt. Die Festung hat noch ${nf.defense} Verteidigung. Morgen kannst du erneut angreifen.`:`Erledige zuerst dein heutiges Lernziel. Dann erhältst du genau eine Angriffsaktion.`;
-  const hasSubjectWords=myWords().length>0; $('#campaignCard').classList.toggle('hidden',!hasSubjectWords); if(!hasSubjectWords)$('#optionalLearningCard')?.classList.add('hidden'); renderCardboxOverview(); renderToday(); renderTestCheck(); renderBattlefield(); renderBattleView(); renderRecommendations(); renderSets(); renderDashboard(); renderLibrary(); renderProfiles(); window.VTGermanLearning?.renderHub?.();
+  const hasSubjectWords=myWords().length>0,hasBattle=subjectHasCapability(state.activeSubject,'battle'); $('#campaignCard').classList.toggle('hidden',!hasSubjectWords||!hasBattle); if(!hasSubjectWords||subjectHasCapability(state.activeSubject,'nativeLiteracy'))$('#optionalLearningCard')?.classList.add('hidden'); renderCardboxOverview(); renderToday(); renderTestCheck(); renderBattlefield(); renderBattleView(); renderRecommendations(); renderSets(); renderDashboard(); renderLibrary(); renderProfiles(); window.VTGermanLearning?.renderHub?.();
   $('#fontSizeRange').value=l.fontSize; $('#letterSpacingRange').value=l.letterSpacing; $('#flashSpeedSelect').value=String(l.flashSpeed); if($('#autoSpeakCorrection'))$('#autoSpeakCorrection').checked=l.autoSpeakCorrection!==false;
   renderParentOverview(); renderFamilySync(); checkHundredPercent(); renderStorageStatus(); window.VTMenuUi?.render?.();
 }
@@ -791,6 +791,7 @@ function renderToday(){
   if(cardsBtn){cardsBtn.disabled=!cardCount;cardsBtn.textContent=cardCount?'▥ Karteikarten':'▥ Noch keine Karten'}
   practiceDisclosure?.classList.remove('hidden');
   if(subjectHasCapability(state.activeSubject,'nativeLiteracy')){
+    practiceDisclosure?.classList.add('hidden');if(cardsBtn){cardsBtn.disabled=true;cardsBtn.textContent='Deutsch-Grundlagen'}
     const snap=window.VTGermanLearning?.progressSnapshot?.()||{practicedToday:false,skillsStarted:0,totalSkills:5,sessions:0},progressRow=$('#todayProgress')?.closest('.today-progress-row');
     progressRow?.classList.remove('hidden');
     $('#todaySummary').textContent='Deutsch · Klasse 1';
@@ -866,6 +867,11 @@ function renderToday(){
 }function renderRecommendations(){
   const l=learner(),cardPool=schoolYearVerifiedWords(),weak=cardPool.filter(w=>!isMastered(w)).sort((a,b)=>masteryScore(a)-masteryScore(b)),chunkWords=cardPool.filter(w=>chunkEligibleWord(w)&&(w.errorProfile?.spelling||0)>0),contextWords=cardPool.filter(w=>String(w.example||'').trim());
   const cards=$('#practiceCardsBtn'),weakBtn=$('#practiceWeakBtn'),allBtn=$('#practiceAllBtn'),specialBtn=$('#practiceSpecialBtn');
+  if(subjectHasCapability(state.activeSubject,'nativeLiteracy')){
+    [cards,weakBtn,allBtn,specialBtn].forEach(button=>{if(button)button.disabled=true});
+    $('#optionalLearningCard')?.classList.add('hidden');
+    return;
+  }
   if(cards)cards.disabled=!cardPool.length;if(weakBtn)weakBtn.disabled=!weak.length;if(allBtn)allBtn.disabled=!cardPool.length;if(specialBtn)specialBtn.disabled=!cardPool.length;
   const copyPending=cardPool.filter(w=>!w.firstContactCompletedAt).length;
   const recs=[
