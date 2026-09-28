@@ -60,9 +60,10 @@
 .battle-demo-stage.battle-art-ready .battle-art-atmosphere{
   opacity:.28!important;
 }
-.battle-demo-stage.battle-art-ready .battle-sky,
-.battle-demo-stage.battle-art-ready .battle-hills,
-.battle-demo-stage.battle-art-ready .battle-ground{
+.battle-demo-body .battle-demo-stage.battle-art-ready > .battle-sky,
+.battle-demo-body .battle-demo-stage.battle-art-ready > .battle-hills,
+.battle-demo-body .battle-demo-stage.battle-art-ready > .battle-ground{
+  display:none!important;
   opacity:0!important;
 }
 .battle-demo-stage.battle-art-ready .battle-army,
