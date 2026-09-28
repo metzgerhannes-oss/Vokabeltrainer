@@ -121,6 +121,9 @@ jobs:
       - name: WebKit iPhone focused-learning smoke
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-focused-ui-smoke.mjs
 
+      - name: WebKit German grade-one foundation
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-german-foundation-ui-smoke.mjs
+
       - name: WebKit skip vocabulary to session end
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-skip-vocabulary-ui-smoke.mjs
 
