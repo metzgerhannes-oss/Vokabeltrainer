@@ -202,6 +202,15 @@ Der verpflichtende Tageskern bleibt bewusst klein: normalerweise **5–6 untersc
 
 Rückstand vergrößert den Pflichtkern nicht über diese Grenze. Wenn mehr Stoff offen ist, empfiehlt die App nach dem abgeschlossenen Pflichtteil eine zweite kurze freiwillige Runde. Sie verändert das Pflicht-Tagesziel und die Battle-Freischaltung nicht. Wenn das verbleibende Zeitfenster für sauberes verteiltes Lernen zu knapp wird, zeigt die App zusätzlich ein Risiko an, statt rechnerisch so zu tun, als sei der Lernplan weiterhin ideal.
 
+Innerhalb dieses kleinen Pflichtkerns wird nicht jeder interne Methoden-Durchlauf als eigene
+„Lektion“ dargestellt. Unterstützende Aufgaben wie Erkennen oder Hören können nahtlos in
+produktive Abrufe, Schreiben oder andere adaptiv passende Schritte übergehen. Offene
+Pflichtwörter bleiben dabei im selben **Übungsraum**, bis der erforderliche unassistierte
+aktive Abruf tatsächlich gelungen ist. Das vermeidet ein irreführendes Erfolgsgefühl nach
+einer bloßen Vorstufe und reduziert unnötige Navigationsentscheidungen. Erst der vollständig
+erledigte Pflichtkern erhält eine Ergebniszusammenfassung; freiwillige Zusatz- und
+T−1-Rettungsrunden bleiben separat.
+
 Am Testtag selbst werden keine neuen Wörter mehr eingeplant.
 
 ## 10. Testbereitschaft
