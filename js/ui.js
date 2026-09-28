@@ -624,11 +624,42 @@ function renderAll(){
 }
 function applyPreferences(){const l=learner();document.documentElement.dataset.fontSize=String(clamp(Number(l.fontSize)||17,16,24));document.documentElement.dataset.letterSpace=String(clamp(Number(l.letterSpacing)||0,0,3));document.documentElement.classList.toggle('lrs-mode',literacySupportActive(l));document.documentElement.classList.toggle('reduced-load',reducedLoadEnabled(l))}
 
+function fireTestCompletionConfetti(){
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+  document.querySelector('.test-completion-confetti')?.remove();
+  const canvas=document.createElement('canvas');
+  canvas.className='test-completion-confetti';
+  canvas.setAttribute('aria-hidden','true');
+  document.body.appendChild(canvas);
+  const ctx=canvas.getContext('2d');
+  if(!ctx){canvas.remove();return}
+  const width=Math.max(window.innerWidth||document.documentElement.clientWidth||320,320),height=Math.max(window.innerHeight||document.documentElement.clientHeight||480,480),dpr=Math.min(window.devicePixelRatio||1,2);
+  canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.scale(dpr,dpr);
+  const palette=['#7c3aed','#1d4ed8','#f59e0b','#10b981','#ef4444','#0ea5e9'];
+  const particles=Array.from({length:34},(_,i)=>{
+    const spread=(i/(34-1)-.5)*Math.PI*.72,force=8+Math.random()*4.2;
+    return {x:width/2,y:height+8,vx:Math.sin(spread)*force,vy:-Math.cos(spread)*force-2.6,w:5+Math.random()*4,h:8+Math.random()*6,rotation:Math.random()*Math.PI,spin:(Math.random()-.5)*.34,color:palette[i%palette.length]};
+  });
+  let start=performance.now(),last=start;
+  const frame=now=>{
+    const step=Math.min((now-last)/16.667,2);last=now;
+    ctx.clearRect(0,0,width,height);
+    const elapsed=now-start,alpha=elapsed<850?1:Math.max(0,1-(elapsed-850)/300);
+    particles.forEach(p=>{
+      p.x+=p.vx*step;p.y+=p.vy*step;p.vy+=.34*step;p.vx*=Math.pow(.992,step);p.rotation+=p.spin*step;
+      ctx.save();ctx.globalAlpha=alpha;ctx.translate(p.x,p.y);ctx.rotate(p.rotation);ctx.fillStyle=p.color;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();
+    });
+    if(elapsed<1150)requestAnimationFrame(frame);else canvas.remove();
+  };
+  requestAnimationFrame(frame);
+  setTimeout(()=>canvas.isConnected&&canvas.remove(),1500);
+}
+
 function openCompleteCurrentTest(){
   const ctx=upcomingTestContext();if(!ctx||ctx.days>0){toast('Der aktuelle Test kann noch nicht abgeschlossen werden.','subtle');return}
   const overdue=ctx.days<0,subjectName=subjectLabel(state.activeSubject),scope=ctx.scopeText||ctx.sets?.map(s=>s.title).join(' + ')||'Testbereich';
   modal(`<div class="eyebrow">Test ${overdue?'nachtragen':'heute'}</div><h2>Test abschließen?</h2><p><strong>${esc(subjectName)} · ${esc(formatDateShort(ctx.date))}</strong></p><p>${esc(scope)}</p><div class="notice subtle">Bestätige erst, wenn der Test wirklich geschrieben wurde. Danach verschwindet dieser Test aus dem aktuellen Lernweg und der nächste Test bzw. dessen Vorbereitung erscheint automatisch.</div><div class="modal-actions"><button value="cancel" class="ghost">Noch nicht</button><button type="button" id="confirmCompleteTestBtn" class="primary">Test abschließen</button></div>`);
-  $('#confirmCompleteTestBtn').onclick=()=>{const done=completeTestContext(ctx);if(!done)return;closeModal();save();window.VTCampaignMap?.render?.();window.VTArmyUi?.render?.();toast('Test abgeschlossen. Der nächste Schritt ist bereit.','good')};
+  $('#confirmCompleteTestBtn').onclick=()=>{const done=completeTestContext(ctx);if(!done)return;closeModal();save();window.VTCampaignMap?.render?.();window.VTArmyUi?.render?.();fireTestCompletionConfetti();toast('Test abgeschlossen. Der nächste Schritt ist bereit.','good')};
 }
 
 function renderTestCheck(){
