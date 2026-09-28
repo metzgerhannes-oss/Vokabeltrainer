@@ -189,9 +189,10 @@ try{
 
   const actionAccess=await page.evaluate(()=>{
     const button=document.querySelector('#battleAttackBtn'),nav=document.querySelector('.bottom-nav');
-    button?.focus({preventScroll:true});
-    const action=button?.getBoundingClientRect();
-    if(!button||!action)return {navHidden:false,hit:false,focused:false};
+    if(!button)return {navHidden:false,hit:false,focused:false};
+    button.scrollIntoView({block:'center',inline:'nearest'});
+    button.focus({preventScroll:true});
+    const action=button.getBoundingClientRect();
     const x=action.left+action.width/2,y=action.top+action.height/2;
     const hit=document.elementFromPoint(x,y);
     return {
