@@ -711,7 +711,15 @@ function renderAll(){
   const l=learner(); if(!l) return; ensureActiveSubject();applyPreferences();
   document.documentElement.dataset.subject=state.activeSubject;
   const gameNav=document.querySelector('.bottom-nav .nav-btn[data-view="armyView"]');
-  if(gameNav)gameNav.innerHTML='<span aria-hidden="true">⚔</span>'+(state.activeSubject==='german'?'Wortreich':'Armee');
+  const nativeGerman=state.activeSubject==='german';
+  if(gameNav)gameNav.innerHTML='<span aria-hidden="true">⚔</span>'+(nativeGerman?'Wortreich':'Armee');
+  const practiceIntro=document.querySelector('#practiceView .practice-intro');
+  if(practiceIntro){
+    const eyebrow=practiceIntro.querySelector('.eyebrow'),title=practiceIntro.querySelector('h2'),copy=practiceIntro.querySelector('.muted-line');
+    if(eyebrow)eyebrow.textContent=nativeGerman?'Deutsch · Lernen':'Lernen';
+    if(title)title.textContent=nativeGerman?'Dein Fuchspfad':'Wie möchtest du lernen?';
+    if(copy)copy.textContent=nativeGerman?'Ruhig von Buchstaben und Lauten zu ersten Wörtern und Sätzen. Holzschwerter markieren nur die Lernstationen – gekämpft wird ausschließlich im Wortreich.':'Hier liegen alle Lernwege: Karteikarten, unsichere Wörter, kompletter Lernstoff, Spezialtraining und Testcheck. Spielbereiche sind bewusst getrennt.';
+  }
   const profileBtn=$('#profileBtn'),lockedChild=isPairedChildDevice();profileBtn.textContent=l.name;profileBtn.disabled=lockedChild;profileBtn.classList.toggle('profile-locked',lockedChild);profileBtn.setAttribute('aria-label',lockedChild?`Kinderprofil: ${l.name}. Dieses Gerät ist fest zugeordnet.`:`Lernprofil wechseln. Aktiv: ${l.name}`);profileBtn.title=lockedChild?`Dieses Kindergerät ist fest mit ${l.name} verbunden`:'Profil wechseln'; $('#lrsBadge').classList.toggle('hidden',!literacySupportActive(l)); applyRoleUi();
   const activeSubjects=learnerActiveSubjects(l),switcher=$('#subjectSwitcher');
   if(switcher){switcher.innerHTML=activeSubjects.map(subject=>`<button data-subject="${esc(subject)}" class="subject-btn ${subject===state.activeSubject?'active':''}" aria-pressed="${subject===state.activeSubject?'true':'false'}">${esc(subjectShort(subject))}</button>`).join('');switcher.classList.toggle('hidden',activeSubjects.length<=1);$$('.subject-btn').forEach(b=>b.onclick=()=>{if(!isSubjectActive(b.dataset.subject))return;state.activeSubject=b.dataset.subject;save()})}
