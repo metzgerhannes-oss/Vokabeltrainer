@@ -27,7 +27,8 @@ try{
     return {width:stage?.width||0,height:stage?.height||0,top:stage?.top||0,bottom:stage?.bottom||0,artWidth:art?.width||0,artHeight:art?.height||0,vw:innerWidth,vh:innerHeight};
   });
   console.log('FORTRESS_PREVIEW_GEOMETRY',JSON.stringify(armyPreviewGeometry));
-  assert(armyPreviewGeometry.width>=armyPreviewGeometry.vw*.9&&armyPreviewGeometry.height>=160,'Army "Festung ansehen" keeps a real visible 16:9 battlefield on compact iPhone viewports: '+JSON.stringify(armyPreviewGeometry));
+  const armyPreviewRatio=armyPreviewGeometry.width/Math.max(1,armyPreviewGeometry.height);
+  assert(armyPreviewGeometry.width>=300&&armyPreviewGeometry.height>=170&&armyPreviewRatio>1.68&&armyPreviewRatio<1.86,'Army "Festung ansehen" keeps a real visible near-16:9 battlefield on compact iPhone viewports: '+JSON.stringify(armyPreviewGeometry));
   assert(armyPreviewGeometry.artWidth>=armyPreviewGeometry.width*.95&&armyPreviewGeometry.artHeight>=armyPreviewGeometry.height*.95,'Army fortress preview artwork fills its visible stage instead of collapsing to a line');
   assert(await page.locator('#battleFullscreenBtn').isVisible(),'battle exposes fullscreen only as an explicit user action');
   assert((await page.locator('#battleFullscreenBtn').textContent())?.includes('Vollbild'),'fullscreen control is labelled as an optional fullscreen action');
@@ -84,7 +85,8 @@ try{
     const stage=document.querySelector('#battleStage')?.getBoundingClientRect();
     return {width:stage?.width||0,height:stage?.height||0,bottom:stage?.bottom||0,vw:innerWidth,vh:innerHeight};
   });
-  assert(mapPreviewGeometry.width>=mapPreviewGeometry.vw*.9&&mapPreviewGeometry.height>=160,'campaign-map "Zur Schlacht" opens the same visible, scrollable fortress preview instead of a blank screen');
+  const mapPreviewRatio=mapPreviewGeometry.width/Math.max(1,mapPreviewGeometry.height);
+  assert(mapPreviewGeometry.width>=300&&mapPreviewGeometry.height>=170&&mapPreviewRatio>1.68&&mapPreviewRatio<1.86,'campaign-map "Zur Schlacht" opens the same visible, scrollable near-16:9 fortress preview instead of a blank screen');
   await activate('#battleBackBtn','campaign map preview return');
   await page.waitForSelector('#campaignMapView.active');
   await page.evaluate(()=>window.VTArmyUi.open());
