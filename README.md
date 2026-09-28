@@ -12,7 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.27**
+App-Version: **v0.21.28**
+
+- v0.21.28: Der echte Englisch-Angriff wechselt auf den lokalen Phaser-4-Renderer. Die Festung verteidigt sich sichtbar mit Pfeilen und Katapult, eigene Einheiten reagieren rein filmisch auf Treffer, die Eroberung endet mit Toreinmarsch und großem Profilbanner. Kampfsound wird lokal per Web Audio erzeugt und kann stummgeschaltet werden. Die Battle-Seite sperrt Scrollen nicht mehr automatisch; Vollbild ist eine explizite Aktion mit Fullscreen-API/Fallback. Fachlicher Schaden, Mastery, XP, Battle-Tickets und dauerhafte Armeestärke bleiben vollständig außerhalb des Renderers.
 
 - v0.21.27: Geplante Tests erhalten eine eigene Identität statt über das Datum zusammengefasst zu werden. Ein verschobener Test bleibt auch vor dem Testtag bearbeitbar und verschmilzt nicht mehr mit einem anderen Test am selben Datum; bestehender Lern- und Festungsfortschritt bleibt erhalten.
 
