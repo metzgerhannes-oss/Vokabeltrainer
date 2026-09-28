@@ -166,6 +166,8 @@ try{
   await page.click('#quickLearnHeroBtn');
   await page.waitForSelector('#confirmCompleteTestBtn');
   await page.click('#confirmCompleteTestBtn');
+  await page.waitForSelector('.test-completion-confetti');
+  assert(await page.locator('.test-completion-confetti').getAttribute('aria-hidden')==='true','completed real test triggers a brief decorative confetti burst without adding semantic noise');
   await page.waitForFunction(()=>upcomingTestContext()?.date===datePlusDays(4));
   const afterComplete=await page.evaluate(()=>({
     summary:document.querySelector('#todaySummary')?.textContent||'',
