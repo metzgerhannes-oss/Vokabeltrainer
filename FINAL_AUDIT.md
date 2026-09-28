@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 27.09.2026 · App v0.21.22
+Stand: 28.09.2026 · App v0.21.23
 
 ## Ergebnis
+
+- v0.21.23 behebt einen realen iPhone/WebKit-Fehler der Festungsvorschau: Nach Ausblenden von KPI-, Taktik- und Aktionszeilen konnte der verbleibende `battleStage` trotz formal sichtbarem DOM auf nahezu null Höhe kollabieren. Die Vorschau verwendet deshalb kein flex/grid-abhängiges Resthöhenlayout mehr, sondern einen eigenständigen 16:9-Block. Browserregressionen prüfen jetzt die tatsächliche Geometrie und beide realen Einstiege („Festung ansehen“ und „Zur Schlacht“).
 
 - v0.21.22 trennt „Festung ansehen“ wieder klar von einer echten Schlacht: Ohne freigeschaltete Tagesaktion öffnet die Festung als reduzierte Vollbild-Vorschau mit Kampagnenbild und den beiden Bannern. Battle-KPIs, Angriffsauswahl, Ticketanzeige und der gesperrte Aktionsblock werden dort nicht gerendert. Sobald eine Tagesaktion vorhanden ist, bleibt die vollständige Schlachtansicht mit den außerhalb des Bildes angeordneten Bedienelementen erhalten. Browserregressionen sichern beide Zustände getrennt.
 
