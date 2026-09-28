@@ -386,15 +386,35 @@ function renderBattleReturnUi(){
   if($('#battleBackBtn'))$('#battleBackBtn').textContent=meta.back;
   if($('#battleReturnBtn'))$('#battleReturnBtn').textContent=meta.bottom;
 }
-function returnFromBattle(){if(battleStoryNarrating)stopBattleStoryNarration();document.body.classList.remove('battle-preview');showView(BATTLE_RETURN_META[battleReturnView]?battleReturnView:'armyView')}
+const BATTLE_PREVIEW_HIDDEN_SELECTORS=[
+  '#battleTicketPill',
+  '#battleView .battle-readout',
+  '#battleView .battle-scene-tactics',
+  '#battleView .battle-action-dock'
+];
+function setBattlePreviewMode(on){
+  document.body.classList.toggle('battle-preview',!!on);
+  for(const selector of BATTLE_PREVIEW_HIDDEN_SELECTORS){
+    const el=document.querySelector(selector);if(!el)continue;
+    if(on){
+      el.dataset.battlePreviewHidden='1';
+      el.style.setProperty('display','none','important');
+      el.setAttribute('aria-hidden','true');
+    }else if(el.dataset.battlePreviewHidden==='1'){
+      el.style.removeProperty('display');
+      el.removeAttribute('aria-hidden');
+      delete el.dataset.battlePreviewHidden;
+    }
+  }
+}
+function returnFromBattle(){if(battleStoryNarrating)stopBattleStoryNarration();setBattlePreviewMode(false);showView(BATTLE_RETURN_META[battleReturnView]?battleReturnView:'armyView')}
 function openBattleView(){
   if(isParentMode())return;
   const f=currentTestFortress(),present=battlePresentation();
   if(!f){toast(present.noTarget,'subtle');return}
   captureBattleReturnView();
   const reveal=!f.revealedAt,preview=battleTickets()<1;
-  document.body.classList.toggle('battle-preview',preview);
-  renderBattleView();renderBattleReturnUi();showView('battleView');
+  renderBattleView();renderBattleReturnUi();showView('battleView');setBattlePreviewMode(preview);
   if(reveal)startBattleFortressReveal(f);
 }
 function setBattleImmersive(on){
@@ -1318,7 +1338,7 @@ function showView(id){
   if(id!=='battleView'){
     cancelBattleSequence();
     window.VTBattleResultUi?.hide?.();
-    document.body.classList.remove('battle-preview');
+    setBattlePreviewMode(false);
     if(document.body.classList.contains('battle-immersive'))closeBattleImmersive();
   }
   if(PARENT_VIEW_IDS.has(id)&&!isParentMode()){toast(isPairedChildDevice()?'Der Elternbereich ist auf diesem Kindergerät gesperrt.':'Diese Funktion liegt im Elternbereich.','subtle');id='homeView'}
