@@ -629,6 +629,22 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       this.__ram = createRam(this, 235, 622);
       this.__fortress = createFortress(this, 1225, 535, hooks.profileInitials || 'P');
 
+      const initialDamagePct = Math.max(0, Math.min(100, Number(hooks.initialDamagePct) || 0));
+      if (initialDamagePct >= 18) this.__fortress.__cracks.setAlpha(0.82);
+      if (initialDamagePct >= 38) this.__fortress.__damage1.setAlpha(0.88);
+      if (initialDamagePct >= 62) {
+        this.__fortress.__scorch.setAlpha(0.4);
+        this.__fortress.__rubblePile.setAlpha(0.42);
+        this.__fortress.__gate.setRotation(0.035).setAlpha(0.94);
+      }
+      if (initialDamagePct >= 82) {
+        this.__fortress.__cracks.setAlpha(1);
+        this.__fortress.__damage1.setAlpha(1);
+        this.__fortress.__scorch.setAlpha(0.62);
+        this.__fortress.__rubblePile.setAlpha(0.68);
+        this.__fortress.__gate.setRotation(0.075).setAlpha(0.88);
+      }
+
       const mist = g(this).setDepth(1);
       mist.fillStyle(0xe8e0c8, 0.08).fillRect(680, 420, 720, 180);
       this.__mist = mist;
