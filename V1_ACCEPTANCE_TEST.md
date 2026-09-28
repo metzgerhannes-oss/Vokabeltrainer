@@ -1,6 +1,8 @@
 # V1 Acceptance Test
 
-Stand: 28.09.2026 · Basis: v0.21.27 · Release-Kandidat: nahtloser Übungsraum + Testabschlussbelohnung
+Stand: 28.09.2026 · Basis: v0.21.28 · Release-Kandidat: nahtloser Übungsraum + Testabschlussbelohnung
+
+Zusatz für v0.21.28: Auf iPhone im normalen Battle-View prüfen, dass die Seite ohne erzwungenen Fokusmodus scrollbar bleibt. Vollbild muss ausschließlich über „⛶ Vollbild“ starten und nach Verlassen Scroll-/UI-Zustand vollständig wiederherstellen. Während des Phaser-Kampfs darf kein unterer Phasen-Textblock die Szene verdecken. Die Festung muss sichtbar zurückschießen (Pfeile + Katapult), eigene Trefferreaktionen dürfen keine dauerhafte Armeestärke verändern, und „🔊 Ton“ muss stumm-/einschaltbar sein. Bei Eroberung ziehen die verbleibenden Einheiten durch das Tor; erst danach erscheint der große Profilbanner.
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
