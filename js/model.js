@@ -829,7 +829,7 @@ function startDailyTodo(){
   const rescue=t1RescuePlan(plan);
   if(rescue.available){startT1RescueRound();return}
   if(status.extraRemaining){
-    startSession('adaptive',null,(status.remainingExtraRefs||[]).slice(0,plan.sessionSize),true);return;
+    startSession('adaptive',null,(status.remainingExtraRefs||[]).slice(0,plan.sessionSize),true,{bonusMode:true});return;
   }
   toast(rescue.recommended?'Rettungsrunde für jetzt abgeschlossen. Eine Pause ist sinnvoll.':'Tagesziel erledigt. Weitere Übungen sind optional.',rescue.recommended?'subtle':'good');
 }
