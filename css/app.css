@@ -4107,33 +4107,50 @@ body.battle-immersive #battleView .battle-action-dock-copy span{color:#bdc8d2!im
   body.battle-immersive #battleView .battle-action-dock .battle-primary{min-height:36px!important}
 }
 
-/* v0.21.22 – "Festung ansehen" is a clean preview, not a disabled battle screen.
-   Without an earned daily action the child sees the approved scene only; battle controls
-   return automatically once an action is actually available. */
+/* v0.21.23 – fortress preview must keep a real 16:9 box on iPhone/WebKit.
+   Do not let the preview stage participate in the immersive battle grid/flex sizing:
+   with all battle rows hidden WebKit could collapse the artwork to a 1px line. */
 body.battle-preview #battleView .battle-ticket-pill,
 body.battle-preview #battleView .battle-scene-hud.battle-readout,
 body.battle-preview #battleView .battle-scene-tactics,
 body.battle-preview #battleView .battle-action-dock{
   display:none!important;
 }
-body.battle-preview #battleView .battle-stage-wrap{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  min-height:0!important;
+body.battle-preview #battleView .battle-shell{
+  display:block!important;
+  width:100%!important;
   height:100%!important;
-  gap:0!important;
-}
-body.battle-preview #battleView .battle-stage{
-  flex:0 1 auto!important;
-  width:min(100%,1100px)!important;
-  height:auto!important;
-  max-height:100%!important;
-  aspect-ratio:16 / 9!important;
-  border-radius:18px!important;
+  overflow:hidden!important;
 }
 body.battle-preview #battleView .battle-toolbar{
+  display:grid!important;
   grid-template-columns:1fr!important;
+  width:100%!important;
+  margin:0!important;
+}
+body.battle-preview #battleView .battle-stage-wrap{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:10px 0 0!important;
+  padding:0!important;
+  overflow:visible!important;
+}
+body.battle-preview #battleView .battle-stage{
+  display:block!important;
+  position:relative!important;
+  flex:none!important;
+  width:min(100%,1100px)!important;
+  height:56.25vw!important;
+  min-height:180px!important;
+  max-height:619px!important;
+  margin:0 auto!important;
+  aspect-ratio:auto!important;
+  visibility:visible!important;
+  opacity:1!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
 }
 body.battle-preview #battleView .battle-phase-strip,
 body.battle-preview #battleView .battle-fortress-state-badge,
@@ -4150,8 +4167,18 @@ body.battle-preview #battleView .battle-rank-badge{
   }
   body.battle-preview #battleView .battle-stage{
     width:100%!important;
-    aspect-ratio:16 / 9!important;
+    height:calc(56.25vw - 9px)!important;
+    min-height:180px!important;
+    max-height:260px!important;
     border-radius:14px!important;
+  }
+}
+@media(orientation:landscape) and (max-height:560px){
+  body.battle-preview #battleView .battle-stage{
+    width:min(100%,720px)!important;
+    height:calc(100vh - 78px)!important;
+    min-height:0!important;
+    max-height:360px!important;
   }
 }
 

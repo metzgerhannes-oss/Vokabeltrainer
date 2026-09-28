@@ -3,6 +3,7 @@ import { createBattleHarness } from './helpers/vokabeltrainer-battle-harness.mjs
 const {browser,page,assert,activate,reset,errors,diagnose}=await createBattleHarness();
 
 try{
+  await page.setViewportSize({width:375,height:667});
   await reset({revealed:false,ticket:false});
   assert(!(await page.locator('#attackBtn').isDisabled()),'planned fortress remains viewable before daily reward');
   assert((await page.locator('#attackBtn').textContent())?.toUpperCase().includes('FESTUNG'),'game command points clearly to the current fortress');
@@ -19,6 +20,13 @@ try{
   assert(await page.locator('.battle-stage-wrap > .battle-scene-tactics').count()===1,'battle tactics stay structurally attached for the active-battle state');
   assert(await page.locator('.battle-scene-tactics').isHidden(),'locked fortress preview hides battle tactics');
   assert(await page.locator('.battle-action-dock').isHidden(),'locked fortress preview hides the disabled action block');
+  const armyPreviewGeometry=await page.evaluate(()=>{
+    const stage=document.querySelector('#battleStage')?.getBoundingClientRect(),art=document.querySelector('#battleStage [data-battle-scene-art]')?.getBoundingClientRect();
+    return {width:stage?.width||0,height:stage?.height||0,top:stage?.top||0,bottom:stage?.bottom||0,artWidth:art?.width||0,artHeight:art?.height||0,vw:innerWidth,vh:innerHeight};
+  });
+  console.log('FORTRESS_PREVIEW_GEOMETRY',JSON.stringify(armyPreviewGeometry));
+  assert(armyPreviewGeometry.width>=armyPreviewGeometry.vw*.9&&armyPreviewGeometry.height>=160,'Army "Festung ansehen" keeps a real visible 16:9 battlefield on compact iPhone viewports: '+JSON.stringify(armyPreviewGeometry));
+  assert(armyPreviewGeometry.bottom<=armyPreviewGeometry.vh+2&&armyPreviewGeometry.artWidth>=armyPreviewGeometry.width*.95&&armyPreviewGeometry.artHeight>=armyPreviewGeometry.height*.95,'Army fortress preview artwork fills its visible stage instead of collapsing to a line');
   assert(await page.locator('#battleFullscreenBtn').isHidden(),'battle no longer needs a second focus/full-screen toggle');
   assert(await page.locator('.battle-story').isHidden(),'story card is removed from the full-screen battle composition');
   assert(await page.locator('#battleStorySpeakBtn').count()===1,'battle story narration control remains available in the DOM');
@@ -61,6 +69,24 @@ try{
 
   await activate('#battleBackBtn','battle return action');
   await page.waitForSelector('#armyView.active');
+
+  await page.evaluate(()=>window.VTCampaignMap.open());
+  await page.waitForSelector('#campaignMapView.active');
+  assert(await page.locator('#campaignMapBattleBtn').isVisible(),'current fortress exposes the campaign-map "Zur Schlacht" entry');
+  await activate('#campaignMapBattleBtn','campaign map battle entry');
+  await page.waitForSelector('#battleView.active');
+  await page.waitForFunction(()=>document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
+  assert((await page.locator('#battleBackBtn').textContent())?.includes('Feldzug'),'campaign-map preview keeps the correct return destination');
+  const mapPreviewGeometry=await page.evaluate(()=>{
+    const stage=document.querySelector('#battleStage')?.getBoundingClientRect();
+    return {width:stage?.width||0,height:stage?.height||0,bottom:stage?.bottom||0,vw:innerWidth,vh:innerHeight};
+  });
+  assert(mapPreviewGeometry.width>=mapPreviewGeometry.vw*.9&&mapPreviewGeometry.height>=160&&mapPreviewGeometry.bottom<=mapPreviewGeometry.vh+2,'"campaign-map "Zur Schlacht" opens the same visible fortress preview instead of a blank screen');
+  await activate('#battleBackBtn','campaign map preview return');
+  await page.waitForSelector('#campaignMapView.active');
+  await page.evaluate(()=>window.VTArmyUi.open());
+  await page.waitForSelector('#armyView.active');
+
   await page.evaluate(()=>{grantBattleTicket('dailyGoal');renderAll()});
   assert(await page.locator('#gameLoopLearn.done').count()===1,'learning step becomes complete after the daily reward');
   assert(await page.locator('#gameLoopAttack.current').count()===1,'attack becomes the current game step after learning');
