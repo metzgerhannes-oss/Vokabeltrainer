@@ -6,17 +6,17 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.31**
-- produktiver Stand auf `main`: **v0.21.30 / Merge-Commit `cdefc0490f0821d476fef0e43a9528dfaa0edf4a` / PR #191**
-- jüngster produktiver Release: **PR #191 – v0.21.30 – sichtbar wachsende Armee**
-- Produktionsnachweis v0.21.30: **PR-CI #1179 success · main-CI #1180 success · GitHub Pages #552 success inkl. Live-Verifikation**
-- aktueller Release-Kandidat: **v0.21.31 – strittige Systembewertung mit Elternfreigabe + neutrales Vokabel-Überspringen** (`feat/answer-review-parent-approval-v02131`)
+- App-Version: **v0.21.32**
+- produktiver Stand auf `main`: **v0.21.31 / Merge-Commit `491d03fbe649332b8b05033300a2edea7f95dab8` / PR #192**
+- jüngster produktiver Release: **PR #192 – v0.21.31 – strittige Bewertungen mit Elternfreigabe**
+- Produktionsnachweis v0.21.31: **main-CI #1185 success · GitHub Pages #553 success inkl. Live-Verifikation**
+- aktueller Release-Kandidat: **v0.21.32 – neutrales Vokabel-Überspringen + Tagesplan-Härtung für strittige Bewertungen** (`feat/v02132-skip-review-hardening`)
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
 - fachliche Schutzlinie: Spielprogression, Battle-Choreografie und Jahresfestungsdatum verändern weder Mastery noch Vokabelbewertung oder Testbereitschaft
 - v0.21.31 schützt strittige Bewertungen: Kind meldet → Fehlwirkung wird neutralisiert → Eltern entscheiden → lokale Variante wird freigegeben oder Fehler erst dann bestätigt
-- v0.21.31 erlaubt zusätzlich „Vokabel überspringen“: ausschließlich ans Ende derselben Session, ohne Bewertung oder Lernstandsänderung
+- v0.21.32 erlaubt „Vokabel überspringen“: ausschließlich ans Ende derselben Session, ohne Bewertung oder Lernstandsänderung; offene Prüffälle blockieren zugleich das Tagesziel nicht
 - v0.21.29 trennt den schwankenden fachlichen Prozentwert von der kumulativen Jahresentwicklung; Avatar/Rang/Armee werden durch neuen Stoff nicht zurückgestuft; Jahresfestungsdatum ist optional, gehärtet und synchronisiert
 - praktische v1-Abnahme: weiterhin **OFFEN**
 
@@ -34,7 +34,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 
 | Bereich | Status | Kanonische Quelle |
 |---|---|---|
-| Fachliche Abfrage / Bewertung | PRODUCTION v0.21.30 / Elternfreigabe v0.21.31 in Prüfung | `PRODUCT_DNA.md`, `QUIZ_ENGINE.md`, D-20260928-006, B-015 |
+| Fachliche Abfrage / Bewertung | PRODUCTION / LIVE VERIFIED v0.21.31 · Tagesplan-Härtung v0.21.32 in Prüfung | `PRODUCT_DNA.md`, `QUIZ_ENGINE.md`, D-20260928-006, B-015 |
 | Sense-/Bedeutungsmodell | PRODUCTION | `SENSE_MODEL.md` |
 | Lern-/Mastery-Grundsätze | PRODUCTION | `PRODUCT_DNA.md` |
 | Same-Day-Spacing-Härtung | PRODUCTION | `PRODUCT_DNA.md` P3, D-20260927-006, PR #143 |
