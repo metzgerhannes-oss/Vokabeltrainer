@@ -92,6 +92,75 @@ button,a{font:inherit}
 .phaser-target-card strong{font-size:.92rem;color:#fff8eb}
 .phaser-target-card>span{text-align:center;color:#e3c074;font-weight:900}
 
+.phaser-attack-selector{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:7px;
+  margin:0 0 9px;
+}
+.phaser-attack-selector button{
+  min-width:0;
+  min-height:62px;
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr);
+  grid-template-rows:auto auto;
+  column-gap:7px;
+  align-items:center;
+  padding:8px 9px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:13px;
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.025));
+  color:#c8d1d5;
+  text-align:left;
+  cursor:pointer;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,opacity .2s ease;
+}
+.phaser-attack-selector button>span{
+  grid-row:1/3;
+  display:grid;
+  place-items:center;
+  width:30px;
+  height:30px;
+  border-radius:9px;
+  background:rgba(255,255,255,.075);
+  color:#e4c67f;
+  font-size:1rem;
+  font-weight:900;
+}
+.phaser-attack-selector strong{
+  overflow:hidden;
+  color:#eef3f4;
+  font-size:.76rem;
+  line-height:1.1;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.phaser-attack-selector small{
+  overflow:hidden;
+  color:#94a5ac;
+  font-size:.62rem;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.phaser-attack-selector button.active{
+  transform:translateY(-1px);
+  border-color:rgba(225,187,105,.68);
+  background:linear-gradient(180deg,rgba(165,121,52,.28),rgba(98,75,41,.22));
+  box-shadow:0 8px 20px rgba(0,0,0,.16);
+}
+.phaser-attack-selector button.active>span{
+  background:#b6843a;
+  color:#fff8ea;
+}
+.phaser-attack-selector button:disabled{cursor:default;opacity:.62}
+.phaser-stage[data-attack="volley"] .phaser-cinematic-hud span{color:#d8d69a}
+.phaser-stage[data-attack="cavalry"] .phaser-cinematic-hud span{color:#c7d3e3}
+.phaser-stage[data-attack="special"] .phaser-cinematic-hud span{color:#ead18e}
+.phaser-stage[data-outcome="hit"].is-complete .phaser-cinematic-hud{
+  border-color:rgba(207,171,105,.28);
+  background:linear-gradient(180deg,rgba(77,61,39,.82),rgba(48,39,28,.76));
+}
+
 .phaser-phase-strip{
   display:grid;
   grid-template-columns:repeat(5,minmax(0,1fr));
@@ -357,6 +426,20 @@ button,a{font:inherit}
     grid-template-columns:1fr 24px 1fr;
     padding:8px 10px;
   }
+  .phaser-attack-selector{
+    display:flex;
+    gap:5px;
+    overflow-x:auto;
+    padding-bottom:2px;
+    scroll-snap-type:x proximity;
+  }
+  .phaser-attack-selector button{
+    flex:0 0 132px;
+    min-height:54px;
+    scroll-snap-align:start;
+    padding:7px 8px;
+  }
+  .phaser-attack-selector button>span{width:27px;height:27px}
   .phaser-phase-strip{
     gap:4px;
     overflow-x:auto;
