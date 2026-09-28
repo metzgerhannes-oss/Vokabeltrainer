@@ -249,7 +249,7 @@ function startSession(mode='adaptive',setId=null,wordIds=null,isDaily=false,opts
   const queue=buildQueue(mode,setId,wordIds); if(!queue.length){toast('Noch keine geprüften Vokabeln vorhanden.','warn');return}
   const blocked=queue.find(w=>setNeedsPairReview(state.sets.find(s=>s.id===w.setId)));
   if(blocked){const blockedSet=state.sets.find(s=>s.id===blocked.setId);toast('Vor dem Lernen bitte zuerst die erkannten Vokabelpaare bestätigen.','warn');showView('homeView');renderAll();setTimeout(()=>openSetPairAudit?.(blockedSet?.id),80);return}
-  session={mode,setId,queue:queue.map(quizQueueRef),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily,rescueMode:!!opts.rescueMode,rescueRound:Number(opts.rescueRound)||0,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString(),currentQuestion:null,currentQuestionIssues:[]}; showView('learnView'); $('#modePill').textContent=session.rescueMode?'Test morgen · Rettungsrunde':modeLabel(mode); renderStudy();
+  session={mode,setId,queue:queue.map(quizQueueRef),index:0,correct:0,answered:0,currentSubmode:null,locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily,rescueMode:!!opts.rescueMode,bonusMode:!!opts.bonusMode,rescueRound:Number(opts.rescueRound)||0,roomRound:isDaily&&!opts.rescueMode&&!opts.bonusMode?1:0,scaffoldedWords:{},activeAttemptedWords:{},grammarIntroShown:false,results:[],startedAt:new Date().toISOString(),currentQuestion:null,currentQuestionIssues:[]}; showView('learnView'); $('#modePill').textContent=session.rescueMode?'Test morgen · Rettungsrunde':session.roomRound?'Übungsraum':modeLabel(mode); renderStudy();
 }
 function modeLabel(m){return ({adaptive:'Adaptiv',allWords:'Alle Vokabeln',weakWords:'Unsichere Vokabeln',flash:'Wortblitz',shower:'Vokabeldusche',chunks:'Wortbausteine',handwriting:'Handschrift',firstContact:'Abschreiben',recognition:'Erkennen',recall:'Abrufen',reverseRecall:'Bedeutung abrufen',spelling:'Schreiben',listening:'Hören',context:'Kontext',latinGrammar:'Latein Formen',practiceTest:'Prüfung',cards:'Karteikarten'})[m]||m}
 function currentWord(){const token=session?.queue?.[session.index];return resolveQuizQueueRef(token,session?.setId||'')}
@@ -268,7 +268,7 @@ function renderStudy(){
   const adaptiveLike=['adaptive','allWords','weakWords'].includes(session.mode);let sub=adaptiveLike?chooseAdaptiveMode(w):session.mode;if(sub==='reverseRecall'&&!meaningRecallHasCue(w))sub='recall';session.currentSubmode=sub;
   const prepared=setCurrentQuizQuestion(w,sub);
   if(prepared.issues.length){renderQuizIntegrityStop(w,prepared.issues);return}
-  $('#modePill').textContent=session.rescueMode?`Test morgen · ${modeLabel(sub)}`:(adaptiveLike?`${modeLabel(session.mode)} · ${modeLabel(sub)}`:modeLabel(sub));
+  $('#modePill').textContent=session.rescueMode?`Test morgen · ${modeLabel(sub)}`:session.roomRound?`Übungsraum · ${modeLabel(sub)}`:(adaptiveLike?`${modeLabel(session.mode)} · ${modeLabel(sub)}`:modeLabel(sub));
   if(sub==='recognition')renderRecognition(w); else if(sub==='listening')renderListening(w); else if(sub==='chunks')renderChunks(w); else if(sub==='reverseRecall')renderReverseRecall(w); else if(sub==='spelling')renderSpelling(w); else if(sub==='context')renderContext(w); else renderRecall(w);
 }
 function cardExtras(w){
