@@ -61,7 +61,7 @@
     }
     if(typeof activeSeries==='function'&&typeof nextWeeklyDate==='function'){
       const cfg=activeSeries(subject);
-      if(cfg){const d=nextWeeklyDate(cfg.weekday),r=add(d);if(r){r.series=true;const set=(state.sets||[]).find(s=>s.id===cfg.setId&&s.learnerId===state.activeLearnerId&&s.subject===subject);if(set&&!r.sets.some(x=>x.id===set.id))r.sets.push(set);const words=typeof scopedWordsForSeries==='function'?scopedWordsForSeries(cfg,subject):[];if(words.length)r.wordCount=Math.max(r.wordCount,words.length);if(!r.scopeText&&typeof seriesScopeText==='function')r.scopeText=seriesScopeText(cfg)}}
+      if(cfg){const d=typeof seriesOccurrenceDate==='function'?seriesOccurrenceDate(subject):nextWeeklyDate(cfg.weekday),r=add(d);if(r){r.series=true;const set=(state.sets||[]).find(s=>s.id===cfg.setId&&s.learnerId===state.activeLearnerId&&s.subject===subject);if(set&&!r.sets.some(x=>x.id===set.id))r.sets.push(set);const words=typeof scopedWordsForSeries==='function'?scopedWordsForSeries(cfg,subject):[];if(words.length)r.wordCount=Math.max(r.wordCount,words.length);if(!r.scopeText&&typeof seriesScopeText==='function')r.scopeText=seriesScopeText(cfg)}}
     }
     const hist=typeof testFortressHistory==='function'?testFortressHistory(subject):[];
     for(const f of hist){const r=add(f.testDate);if(r&&!r.fortress)r.fortress=f}
