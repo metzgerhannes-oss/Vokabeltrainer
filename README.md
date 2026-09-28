@@ -10,7 +10,9 @@ Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änd
 
 ## Aktueller Stand
 
-App-Version: **v0.21.23**
+App-Version: **v0.21.24**
+
+- v0.21.24: Der verpflichtende Tageslernweg ist ein durchgehender **Übungsraum**: interne Methodenwechsel erzeugen keinen künstlichen Lektionsabschluss; offene Pflichtwörter werden nach einer kurzen Orientierung automatisch mit der nächsten passenden Methode weitergeführt. Erst der vollständig erledigte Pflichtkern zeigt eine kompakte Ergebniszusammenfassung. Zusätzlich hat der Testtag jetzt einen expliziten Abschluss: Ab Testdatum wird **„Test abschließen“** zur Hauptaktion. Der Test bleibt bis zur Bestätigung aktuell, auch wenn das Datum bereits vorbei ist. Danach erscheint sofort der nächste geplante Test; fehlt er, wechselt die App auf **„Nächsten Test vorbereiten“**. Bei Testserien wird direkt der nächste Termin zur Vorbereitung angeboten. Der Abschluss ist unabhängig von der später nachtragbaren Schulnote.
 
 - v0.21.23: Behebt die auf realen iPhones sichtbare leere Festungsvorschau. WebKit konnte den 16:9-Bildbereich nach dem Ausblenden der Battle-Steuerung auf nahezu null Höhe zusammenschieben. Die Vorschau erhält jetzt eine eigenständige, nicht schrumpfende 16:9-Geometrie. Regressionstests prüfen beide Einstiege – „Festung ansehen“ aus der Armee und „Zur Schlacht“ aus „Mein Feldzug“ – auf echte sichtbare Bildhöhe statt nur auf `display != none`.
 
