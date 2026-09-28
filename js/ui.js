@@ -995,10 +995,16 @@ function compareDuel(a,b){
 }
 
 function checkHundredPercent(){
-  const p=subjectProgress(),growth=campaignGrowthState(state.activeSubject,p.schoolYear),key=`year_growth_${state.activeSubject}_${p.schoolYear}`;
-  if(growth.pct===100&&!learner().milestones[key]){
-    learner().milestones[key]=new Date().toISOString();persistOnly();
+  const p=subjectProgress(),growth=campaignGrowthState(state.activeSubject,p.schoolYear),l=learner();
+  const growthKey=`year_growth_${state.activeSubject}_${p.schoolYear}`,masteryKey=`hundred_${state.activeSubject}_${p.schoolYear}`;
+  if(growth.pct===100&&!l.milestones[growthKey]){
+    l.milestones[growthKey]=new Date().toISOString();persistOnly();
     setTimeout(()=>modal(`<div class="celebration"><div class="celebration-icon">🏛️</div><div class="eyebrow">Jahresentwicklung komplett</div><h2>Deine Armee ist vollständig entwickelt.</h2><p>${growth.masteredEver} Vokabeln wurden im Schuljahr nachhaltig gemeistert. Abgeschlossene Tests und eroberte Testfestungen haben den Feldzug zusätzlich wachsen lassen.</p><div class="modal-actions center-actions"><button value="ok" class="primary">Weiter</button></div></div>`),300);
+    return;
+  }
+  if(p.total&&p.pct===100&&!l.milestones[masteryKey]){
+    l.milestones[masteryKey]=new Date().toISOString();persistOnly();
+    setTimeout(()=>modal(`<div class="celebration"><div class="celebration-icon">✓</div><div class="eyebrow">Aktueller Lernstoff</div><h2>Alles Erfasste ist nachhaltig gemeistert.</h2><p>Alle aktuell erfassten ${p.total} Vokabeln des Schuljahres ${esc(p.schoolYear)} erfüllen die Mastery-Kriterien. Später hinzukommender Stoff bleibt davon getrennt.</p><div class="modal-actions center-actions"><button value="ok" class="primary">Weiter</button></div></div>`),300);
   }
 }
 
