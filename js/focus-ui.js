@@ -153,6 +153,23 @@ function focusedContinue(ok,w){
 }
 function focusedCorrectTarget(target){return quizUnique(target)[0]||''}
 
+function focusedReviewActionHtml(ok){
+  return ok?'':'<div class="focused-review-action"><button type="button" id="answerReviewBtn" class="ghost">Bewertung prüfen lassen</button><small>Wenn die Lösung oder Bewertung des Systems falsch sein könnte.</small></div>';
+}
+function bindFocusedAnswerReview(w,answer,q,skill,errorType,snapshot){
+  const btn=$('#answerReviewBtn');if(!btn)return;
+  const result=session?.results?.at(-1)||null;
+  btn.onclick=()=>{
+    if(btn.disabled)return;
+    const saved=flagAnswerForParentReview(w,{answer,question:q,skill,errorType,snapshot,result});
+    if(!saved.ok){toast(saved.error||'Prüffall konnte nicht gespeichert werden.','bad');return}
+    btn.disabled=true;btn.textContent='Zur Prüfung vorgemerkt';
+    const feedback=btn.closest('.feedback');if(feedback){feedback.classList.remove('bad');feedback.classList.add('subtle');feedback.insertAdjacentHTML('beforeend','<div class="notice subtle top-space"><strong>Kein Lernnachteil.</strong><br>Ein Elternaccount prüft diese Antwort. Bis dahin zählt sie weder als richtig noch als falsch.</div>')}
+    const next=$('#continueStudyBtn');if(next)next.onclick=()=>nextStudy(null,w);
+    toast('Zur Prüfung durch einen Elternaccount vorgemerkt.','good');
+  };
+}
+
 /* During retrieval, progress diagnostics and confusion warnings stay out of sight.
    Relevant support is shown only after an answer. */
 cardExtras=function(){return ''};
@@ -181,7 +198,7 @@ gradeGrammar=function(w,g,answer){
 
 gradeChoice=function(btn,w,answer,target,skill,nonEvaluative=false,questionSnapshot=null){
   if(session.locked)return;session.locked=true;
-  const q=questionSnapshot||currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct;
+  const q=questionSnapshot||currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct,reviewSnapshot=!ok&&!nonEvaluative?answerReviewAttemptSnapshot(w):null;
   btn.classList.add(ok?'correct':'wrong');
   if(!ok)$$('[data-answer]').find(b=>gradeQuizQuestion(q,b.dataset.answer).correct)?.classList.add('correct');
   focusedDisableAnswerControls();
@@ -189,22 +206,22 @@ gradeChoice=function(btn,w,answer,target,skill,nonEvaluative=false,questionSnaps
   logSessionResult(w,{answer,target:q.targets,correct:ok,skill:q.mode,orthographyOk:grade.orthographyOk,assisted:false,prompt:q.prompt});
   if(nonEvaluative)recordNonEvaluative(w,'flash',ok,skill);else recordResult(w,ok,skill,ok?null:skill,{orthographyOk:grade.orthographyOk});
   const correct=focusedCorrectTarget(q.targets);
-  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status"><strong>${ok?'Richtig.':'Noch nicht richtig.'}</strong>${!ok&&correct?`<br>Richtig: <strong>${esc(correct)}</strong>`:''}<div class="focused-answer-audio"><strong>${esc(w.term)}</strong>${audioButtonHtml(w.term,'Anhören')}</div>${!ok?focusedConfusionHtml(w):''}</div>`);
+  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status"><strong>${ok?'Richtig.':'Noch nicht richtig.'}</strong>${!ok&&correct?`<br>Richtig: <strong>${esc(correct)}</strong>`:''}<div class="focused-answer-audio"><strong>${esc(w.term)}</strong>${audioButtonHtml(w.term,'Anhören')}</div>${!ok?focusedConfusionHtml(w)+focusedReviewActionHtml(ok):''}</div>`);
   if(!ok)maybeSpeakCorrection(w);
-  focusedContinue(ok,w);
+  focusedContinue(ok,w);if(!ok&&!nonEvaluative)bindFocusedAnswerReview(w,answer,q,skill,skill,reviewSnapshot);
 };
 
 gradeText=function(w,answer,target,errorType,skill){
   if(session.locked)return;session.locked=true;
-  const q=currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct,orthographyOk=grade.orthographyOk;
+  const q=currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct,orthographyOk=grade.orthographyOk,reviewSnapshot=!ok?answerReviewAttemptSnapshot(w):null;
   const softSpelling=ok&&q.trackOrthography&&!orthographyOk;
   const detail=softSpelling?(session.hintUsed?'Richtig erinnert mit Hinweis. Schreibweise beachten.':'Richtig erinnert. Schreibweise beachten.'):(ok?(session.hintUsed?'Richtig mit Hinweis.':'Richtig.'):'');
   focusedDisableAnswerControls();
   const spellingNote=softSpelling?`<br>Schreibweise: <strong>${esc(focusedCorrectTarget(q.targets))}</strong>`:'';
-  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status">${ok?`<strong>${detail}</strong>${spellingNote}`:errorFeedbackHtml(answer,q.targets)}<div class="focused-answer-audio"><strong>${esc(w.term)}</strong>${audioButtonHtml(w.term,'Anhören')}</div>${!ok?wordLearningCard(w)+focusedConfusionHtml(w):''}</div>`);
+  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}" role="status">${ok?`<strong>${detail}</strong>${spellingNote}`:errorFeedbackHtml(answer,q.targets)}<div class="focused-answer-audio"><strong>${esc(w.term)}</strong>${audioButtonHtml(w.term,'Anhören')}</div>${!ok?wordLearningCard(w)+focusedConfusionHtml(w)+focusedReviewActionHtml(ok):''}</div>`);
   if(!ok||softSpelling)maybeSpeakCorrection(w);
   logSessionResult(w,{answer,target:q.targets,correct:ok,skill:q.mode,orthographyOk,assisted:!!session.hintUsed,prompt:q.prompt});
   recordResult(w,ok,skill,ok?null:errorType,{orthographyOk});
-  focusedContinue(ok,w);
+  focusedContinue(ok,w);if(!ok)bindFocusedAnswerReview(w,answer,q,skill,errorType,reviewSnapshot);
 };
 
