@@ -133,6 +133,50 @@ Die praktische Checkliste auf realem Gerät/Browser muss tatsächlich durchgefü
 
 Die administrative Repository-Regel ist laut Final Audit noch gesondert zu aktivieren bzw. zu verifizieren.
 
+
+## B-012 – Phaser-4-Battle-Renderer
+**Status:** IN_IMPLEMENTATION  
+**Priorität:** P1 visuelle Kampfüberarbeitung  
+**Decision:** D-20260928-004  
+**Betroffene Quellen:** `VISUAL_DNA.md` §§ 4–6, `PRODUCT_DNA.md` P9, Battle-UI/Renderer
+
+Ziel ist, die bestehende CSS-/DOM-Kampfanimation durch eine eigenständige Phaser-4-Szene
+zu ersetzen, ohne die fachliche Battle-Logik anzutasten.
+
+Erster Spike:
+- nur Englisch / eine Testfestung / ein Angriffspfad
+- klar sichtbare getrennte Ebenen für Landschaft, Armee und Festung
+- glaubwürdiges Vorrücken mit zeitversetzten Einheiten
+- Projektil-/Rammbock-/Treffersequenz mit Kamera und Partikeln
+- Ergebnisphase ohne UI-Überlagerung
+- iPhone-Zielviewport und Desktop
+- produktiv später ausschließlich mit lokal ausgelieferter Engine/Assets für Offline-Fähigkeit
+- bestehende Battle-Logik und Tagesaktion bleiben unverändert
+
+Abnahme des Spikes: Die Szene muss visuell erkennbar besser als die aktuelle DOM/CSS-Version
+sein; insbesondere dürfen keine bloßen Gesamtbild-Verschiebungen, leeren Fallback-Landschaften
+oder artefaktartigen Einschlagseffekte als finale Lösung gelten.
+
+## B-013 – Kurze 3D-Storyszenen prüfen
+**Status:** APPROVED_BACKLOG  
+**Priorität:** nach stabilem Phaser-Battle  
+**Decision:** D-20260928-004  
+**Kanonische Konzeptquelle:** `docs/project/STORY_3D_CONCEPT.md`  
+**Weitere Quelle:** `VISUAL_DNA.md`
+
+3D ist als optionaler Cinematic Layer projektiert, aber ausdrücklich noch nicht zur
+Implementierung freigegeben. Geplant sind sehr kurze Storymomente wie Festungsenthüllung,
+Eroberung, Rang-/Ausrüstungsaufstieg, Kampagnenübergang und Jahresfinale.
+
+Technischer Kandidat ist ein isolierter Three.js/WebGL-Renderer mit lokal ausgelieferten
+glTF/GLB-Assets. Für feste Sequenzen wird weiterhin gegen vorgerendertes Video verglichen.
+Der normale Kampf bleibt Phaser 2D/2.5D; Lern- und Battle-Logik bleiben vollständig außerhalb
+des 3D-Moduls.
+
+Vor einer Umsetzung ist genau ein Festungsenthüllungs-Spike vorgesehen. Erst nach Messung von
+Ladezeit, Framerate, Speicherbedarf, Offline-/Fallback-Verhalten und älteren iPhones wird
+entschieden, ob Three.js, Video oder kein 3D die produktive Richtung ist.
+
 ## Pflege
 
 Ein Backlog-Punkt wird nicht gelöscht, wenn er umgesetzt oder verworfen wird:
