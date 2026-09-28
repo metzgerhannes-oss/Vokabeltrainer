@@ -6,13 +6,14 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.27**
-- aktueller `main`-Commit: `dcce2da8f7cacddf540e86c3591116934a3706e9` (Merge von PR #176 – Phaser-Battle Iteration 2)
+- App-Version Produktion: **v0.21.27**
+- Release-Kandidat: **v0.21.28 – Phaser Cinematic Battle Upgrade**
+- aktueller `main`-Commit: `73c2d14c6ec3c9e74ef465adad4d3cd7a56109b9` (PR #184 – v0.21.27 Testidentität)
 - letzter fachlicher Lernrelease: **PR #148 – v0.21.12 – Differenzierte LRS-Unterstützung**
 - letzter produktiver Release: **PR #165 – v0.21.22 – kurzer Tageskern, T−1-Rettungsmodus und getrennte Festungsvorschau**
 - letzter produktiver Release: **PR #167 – v0.21.23 – iPhone-Fix für kollabierte Festungsvorschau**
 - jüngster Merge auf `main`: **PR #176 – Phaser-Battle Iteration 2 – längere Belagerung, Beschädigung, Feuer und Übernahme**
-- aktueller Release-Kandidat: **PR #170 – v0.21.25 – kurze Konfetti-Belohnung nach bestätigtem Testabschluss**
+- aktueller Release-Kandidat: **v0.21.28 – produktiver Phaser-Englischkampf + Cinematic Upgrade + explizites Vollbild**
 - PR-CI letzter produktiver Release: **Vokabeltrainer CI #1036 – success**
 - main-CI letzter produktiver Release: **Vokabeltrainer CI #1037 – success**
 - Produktionsdeploy letzter produktiver Release: **GitHub Pages #530 – success**
@@ -25,7 +26,7 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 - main-CI Bibliothek: **Vokabeltrainer CI #962 – success**
 - Produktionsdeploy Bibliothek: **GitHub Pages #510 – success**, inklusive Live-Verifikation
 
-PR #176 ist auf `main` gemergt. Main-CI #1102 und GitHub Pages #540 sind erfolgreich. Die Phaser-Szene ist damit als isolierte Vorschau produktiv erreichbar; die eigentliche Battle-Logik der App verwendet weiterhin den bisherigen Renderer, bis B-012 praktisch abgenommen und integriert wird.
+Die isolierte Phaser-Vorschau ist produktiv erreichbar. Der Release-Kandidat v0.21.28 überträgt den Renderer in den echten Englisch-Angriff und erweitert B-012 um aktive Burgverteidigung, rein visuelle Trefferverluste, lokale Soundeffekte und einen expliziten Vollbildmodus. Bis Merge, Main-CI, Pages-Deploy und praktische Live-Abnahme ist dieser Stand **nicht** als Produktion zu kennzeichnen.
 
 Dieser Abschnitt ist ein Snapshot. Für Statusfragen muss der aktuelle GitHub-Stand erneut live geprüft werden; die hier genannte SHA darf nicht als dauerhaft „neuester Stand“ interpretiert werden.
 
