@@ -546,6 +546,14 @@ function applyRejectedAnswerReview(req){
     w.failures=(w.failures||0)+1;cfg.credits.forEach((key,i)=>{w.skills[key]=clamp((w.skills[key]||0)-(i===0?1:.35),0,4)});w.errorProfile[cfg.error]=(w.errorProfile[cfg.error]||0)+1;w.intervalDays=0;w.dueDate=today();w.recentActiveResults=[...(w.recentActiveResults||[]),false].slice(-8);applyAnswerReviewDirection(w,req,false);refreshMastery(w);updateLeitnerBox(w,false,{assisted:false,active:true,orthographyOk:true});
   }
 }
+function answerReviewDailyPlan(req){
+  const l=(state.learners||[]).find(x=>x.id===req?.learnerId);return l?.dailyPlans?.[req?.dailyPlanKey||'']||null;
+}
+function resolveAnswerReviewDailyPlan(req,accepted){
+  const plan=answerReviewDailyPlan(req),key=String(req?.dailyRefKey||'');if(!plan||!key)return;
+  plan.reviewPendingKeys=(plan.reviewPendingKeys||[]).filter(x=>x!==key);
+  if(accepted)plan.completedKeys=[...new Set([...(plan.completedKeys||[]),key])];
+}
 function acceptAnswerReview(id){
   const req=answerReviewById(id);if(!req||req.status!=='pending')return {ok:false,error:'Prüffall nicht mehr offen.'};
   const answer=String(req.answer||'').trim(),link=(state.setVocabulary||[]).find(x=>x.id===req.setLinkId),set=(state.sets||[]).find(x=>x.id===req.setId);
@@ -554,12 +562,12 @@ function acceptAnswerReview(id){
   if(answer.length>limit)return {ok:false,error:'Die Antwort ist für eine automatische Variante zu lang.'};
   link[key]=[...new Set([...(link[key]||[]),answer])];
   if(set&&existingPairReview){set.pairReviewRequired=true;set.pairVerifiedAt='';set.pairVerifiedSignature=''}
-  else if(set){set.pairReviewRequired=false;set.pairVerifiedAt=new Date().toISOString();set.pairVerifiedSignature=pairReviewSignatureForSet(set.id)}
-  applyAcceptedAnswerReview(req);req.status='accepted';req.resolution='accepted-variant';req.resolvedAt=new Date().toISOString();answerReviewActivity(req,'answerReviewAccepted',{answerSide:req.answerSide,answer});rebuildWordIndexes();return {ok:true,request:req};
+  else if(set){set.pairReviewRequired=false;set.pairVerifiedAt=set.pairVerifiedAt||new Date().toISOString();set.pairVerifiedSignature=pairReviewSignatureForSet(set.id)}
+  applyAcceptedAnswerReview(req);resolveAnswerReviewDailyPlan(req,true);req.status='accepted';req.resolution='accepted-variant';req.resolvedAt=new Date().toISOString();answerReviewActivity(req,'answerReviewAccepted',{answerSide:req.answerSide,answer});rebuildWordIndexes();return {ok:true,request:req};
 }
 function rejectAnswerReview(id){
   const req=answerReviewById(id);if(!req||req.status!=='pending')return {ok:false,error:'Prüffall nicht mehr offen.'};
-  applyRejectedAnswerReview(req);req.status='rejected';req.resolution='system-correct';req.resolvedAt=new Date().toISOString();answerReviewActivity(req,'answerReviewRejected');return {ok:true,request:req};
+  applyRejectedAnswerReview(req);resolveAnswerReviewDailyPlan(req,false);req.status='rejected';req.resolution='system-correct';req.resolvedAt=new Date().toISOString();answerReviewActivity(req,'answerReviewRejected');return {ok:true,request:req};
 }
 function streak(){
   const days=new Set(learner().streakDays); let n=0,d=new Date(); d.setHours(12,0,0,0); for(;;){const k=dateKey(d); if(days.has(k)){n++;d.setDate(d.getDate()-1)}else break} return n;
@@ -960,7 +968,7 @@ function dailyPlanStatus(plan=buildDailyPlan()){
   const reviewPairs=reviewRefs.map(r=>({ref:r,word:r.setLinkId?wordByLinkId(r.setLinkId):wordById(r.wordId)})).filter(x=>x.word);
   const introPairs=introRefs.map(r=>({ref:r,word:r.setLinkId?wordByLinkId(r.setLinkId):wordById(r.wordId)})).filter(x=>x.word);
   const extraPairs=extraRefs.map(r=>({ref:r,word:r.setLinkId?wordByLinkId(r.setLinkId):wordById(r.wordId)})).filter(x=>x.word);
-  const completed=new Set(Array.isArray(plan.completedKeys)?plan.completedKeys:[]);
+  const completed=new Set([...(Array.isArray(plan.completedKeys)?plan.completedKeys:[]),...(Array.isArray(plan.reviewPendingKeys)?plan.reviewPendingKeys:[])]);
   const secure=new Set(Array.isArray(plan.todaySecureKeys)?plan.todaySecureKeys:[]);
   const reviewDone=reviewPairs.filter(x=>completed.has(dailyPlanRefKey(x.ref))),reviewRemaining=reviewPairs.filter(x=>!completed.has(dailyPlanRefKey(x.ref)));
   const introDone=introPairs.filter(x=>completed.has(dailyPlanRefKey(x.ref))),introRemaining=introPairs.filter(x=>!completed.has(dailyPlanRefKey(x.ref)));

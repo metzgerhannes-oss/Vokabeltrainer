@@ -329,3 +329,17 @@ Der Mechanismus ersetzt nicht die deterministische tolerante Bewertung. Groß-/K
 technische Satz-/Platzhaltervarianten und explizit bekannte Antwortalternativen sollen weiterhin
 automatisch korrekt bewertet werden; die Elternprüfung ist das fachliche Sicherheitsnetz für
 nicht vorhersehbare korrekte Formulierungen.
+
+
+### D-20260928-007 – Überspringen verschiebt neutral ans Ende derselben Abfrage
+**Status:** LOCKED  
+**Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) Rollenmodell Kind / aktiver Abruf; B-016
+
+Das Kind darf eine aktuell angezeigte Vokabel vor der Bewertung mit **„Vokabel überspringen“**
+zurückstellen. Der aktuelle Queue-Eintrag wird ausschließlich ans Ende derselben laufenden
+Abfrage verschoben. Die Vokabel wird weder entfernt noch als beantwortet behandelt.
+
+Das Überspringen ist fachlich neutral: kein Erfolg, kein Fehler, keine XP, keine Änderung an
+Mastery, Spacing, Leitner-Box, Testbereitschaft, Tages-Sicherheitsnachweis oder Fehlerstatistik.
+Sobald die zurückgestellte Vokabel am Ende angekommen ist, kann sie nicht erneut aus der Einheit
+entfernt werden; sie muss beantwortet oder die gesamte Einheit bewusst beendet werden.

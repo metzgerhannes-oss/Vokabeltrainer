@@ -286,6 +286,7 @@ das Kind nur einen verständlichen Status und keine administrative Handlungsauff
 - Heute: eine klare Hauptaufgabe
 - täglicher Lernweg ohne Einweisung durch Erwachsene bedienbar
 - Lernmodus: fokussierter Abruf
+- Vokabel darf neutral übersprungen werden: Sie bleibt in derselben Einheit und wird lediglich ans Ende der aktuellen Abfrage verschoben; Überspringen erzeugt weder Erfolg noch Fehler, XP, Mastery- oder Spacing-Wirkung.
 - Fortschritt: verständlich und motivierend
 - Kampagne/Belohnung: ergänzend
 - nur aktive Fremdsprachen sichtbar

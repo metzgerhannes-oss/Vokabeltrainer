@@ -262,7 +262,7 @@ Produktionsnachweis: PR #188 gemergt auf `main` (`2c5801d0d43bbc7cd10d4092b283ea
 
 
 ## B-015 – Strittige Systembewertung & Elternfreigabe
-**Status:** IN_IMPLEMENTATION / RELEASE_CANDIDATE v0.21.31  
+**Status:** PRODUCTION / LIVE_VERIFIED v0.21.31  
 **Priorität:** P0 fachliche Korrektheit  
 **Decision:** D-20260928-006  
 **Betroffene Quellen:** `PRODUCT_DNA.md` Oberstes Produktprinzip, `QUIZ_ENGINE.md` § 8
@@ -282,6 +282,25 @@ Umsetzung v0.21.31:
 - bestätigte Systembewertung erzeugt erst nach der Entscheidung genau einen fachlichen Fehler
 - Family Sync transportiert offene und entschiedene Prüffälle
 - Browser-Regressionsprüfung schützt Neutralität, Elternfreigabe und spätere automatische Akzeptanz
+
+Produktionsnachweis B-015: PR #192 gemergt auf `main` (`491d03fbe649332b8b05033300a2edea7f95dab8`), main-CI #1185 grün und GitHub Pages #553 inklusive Live-Verifikation erfolgreich. v0.21.32 ergänzt die Tagesplan-Härtung: offene Prüffälle zählen für den aktuellen Tagesauftrag organisatorisch als bearbeitet, bleiben fachlich aber neutral; Elternfreigabe übernimmt die Erledigung, Ablehnung öffnet sie wieder.
+
+
+## B-016 – Vokabel neutral ans Abfrageende verschieben
+**Status:** IN_IMPLEMENTATION / RELEASE_CANDIDATE v0.21.32  
+**Priorität:** P1 Lernkomfort ohne fachliche Wirkung  
+**Decision:** D-20260928-007  
+**Betroffene Quellen:** `PRODUCT_DNA.md` Rollenmodell Kind, Lernqueue
+
+Ziel: Das Kind kann eine aktuell ungünstige Vokabel zurückstellen, ohne sie aus der Lerneinheit
+zu entfernen oder eine Bewertung auszulösen.
+
+Umsetzung v0.21.32:
+- Button **„Vokabel überspringen“** vor der Bewertung
+- aktueller Queue-Eintrag wandert ans Ende derselben Session
+- keinerlei Ergebnis-, XP-, Mastery-, Leitner-, Spacing- oder Fehlerwirkung
+- am letzten Queue-Platz ist erneutes Überspringen deaktiviert
+- eigener iPhone-WebKit-Smoke prüft Reihenfolge und Neutralität
 
 
 ## Pflege
