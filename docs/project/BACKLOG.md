@@ -233,6 +233,29 @@ Vor einer Umsetzung ist genau ein Festungsenthüllungs-Spike vorgesehen. Erst na
 Ladezeit, Framerate, Speicherbedarf, Offline-/Fallback-Verhalten und älteren iPhones wird
 entschieden, ob Three.js, Video oder kein 3D die produktive Richtung ist.
 
+
+## B-014 – Dauerhafte Jahresentwicklung & Jahresfestung
+**Status:** IMPLEMENTED / RELEASE_CANDIDATE  
+**Priorität:** P1 Spielprogression  
+**Decision:** D-20260928-005  
+**Betroffene Quellen:** `PRODUCT_DNA.md` P5/P9, `VISUAL_DNA.md` § 6, Armee-/Kampagnenmodell
+
+Ziel: Fachlichen Prozentwert und langfristige Spielentwicklung sauber trennen. Avatar, Rang,
+Einheiten und Ausrüstung wachsen kumulativ über ein Schuljahr und dürfen durch später neu
+bekannt werdende Vokabeln oder Tests nicht zurückgestuft werden.
+
+Umgesetzt im Release-Kandidaten v0.21.29:
+- eigene kumulative Jahresentwicklung aus gemeisterten Wörtern, abgeschlossenen Tests und eroberten Testfestungen
+- Armee-/Avatarstufen verwenden die Jahresentwicklung statt des schwankenden aktuellen Mastery-Prozentsatzes
+- „Meine Armee“ wächst sichtbar von kleiner Formation bis zum vollständigen Heer
+- Jahresfestung bleibt ohne realen Termin undatiert; Termin kann im Elternbereich gesetzt, geändert oder entfernt werden
+- Termin wird gehärtet, über Family Sync übertragen und darf nicht vor bereits geplanten späteren Tests liegen
+- Wochenserien enden hinter einer datierten Jahresfestung
+- Regressionstests sichern Nicht-Rückstufung, dynamische Feldzugskarte und unveränderte fachliche Mastery
+
+Technischer Neuaufbau erfolgt auf aktuellem v0.21.28-`main`; der veraltete PR #173 wird
+nicht gemergt, sondern durch den sauberen Nachfolger ersetzt.
+
 ## Pflege
 
 Ein Backlog-Punkt wird nicht gelöscht, wenn er umgesetzt oder verworfen wird:
