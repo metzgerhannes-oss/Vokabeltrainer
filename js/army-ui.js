@@ -127,13 +127,14 @@
   }
   function formationMarkup(c){
     const positions={shield:'front-left',infantry:'front-center',ram:'center',archers:'rear-left',support:'rear-right',cavalry:'flank-right'};
-    return `<div class="army-formation-ground" aria-hidden="true"><i class="camp-path"></i><i class="camp-tent tent-a"></i><i class="camp-tent tent-b"></i><i class="camp-fire"></i></div>${UNIT_DEFS.map(def=>{
-      const s=unitState(def,c),name=subjectName(def),position=positions[def.id]||'center';
-      return `<button type="button" class="army-formation-unit formation-${position} unit-${safe(def.id)} stage-${s.level} ${s.unlocked?'unlocked':'locked'}" data-army-unit="${safe(def.id)}" aria-label="${safe(name)} · ${safe(def.role)} · Stufe ${s.level} ${safe(unitStageName(s.level))}">
+    const fielded=UNIT_DEFS.map(def=>({def,s:unitState(def,c)})).filter(x=>x.s.unlocked);
+    return `<div class="army-formation-ground" aria-hidden="true"><i class="camp-path"></i><i class="camp-tent tent-a"></i><i class="camp-tent tent-b"></i><i class="camp-fire"></i></div>${fielded.map(({def,s})=>{
+      const name=subjectName(def),position=positions[def.id]||'center';
+      return `<button type="button" class="army-formation-unit formation-${position} unit-${safe(def.id)} stage-${s.level} unlocked" data-army-unit="${safe(def.id)}" aria-label="${safe(name)} · ${safe(def.role)} · Stufe ${s.level} ${safe(unitStageName(s.level))}">
         <span class="army-formation-art unit-art-${safe(def.id)} stage-${s.level}" aria-hidden="true"><img data-army-unit-art alt=""><b>${def.icon}</b>${stagePipsMarkup(s.level)}</span>
         <span class="army-formation-copy"><strong>${safe(name)}</strong><small>${safe(def.role)} · ${safe(unitStageName(s.level))}</small></span>
       </button>`;
-    }).join('')}`;
+    }).join('')}<div class="army-formation-growth-note"><strong>${fielded.length} von ${UNIT_DEFS.length} Einheiten im Feld</strong><small>Weitere Einheiten erscheinen erst mit deiner Jahresentwicklung.</small></div>`;
   }
   function nextText(def,s){
     if(s.next===null)return 'Maximale Stufe erreicht';
@@ -179,7 +180,7 @@
       <div class="army-camp-copy">
         <span class="army-kicker">${safe(state.activeSubject==='latin'?'Legion':'Armee')} · ${safe(c.p.schoolYear)}</span>
         <strong id="armyRankLabel">${safe(c.rank)}</strong>
-        <small>${safe(c.gear)}</small>
+        <small>${safe(c.gear)} · Jahresstufe ${safe(c.growth.level)}/${safe(c.growth.maxLevel)}</small>
       </div>
       <div class="army-camp-strength">
         <span>Armeestärke</span><strong>${safe(c.strength)}</strong>
