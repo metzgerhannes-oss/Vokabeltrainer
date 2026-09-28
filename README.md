@@ -12,7 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.26**
+App-Version: **v0.21.27**
+
+- v0.21.27: Der echte **Englisch-Tagesangriff** nutzt jetzt den lokal ausgelieferten Phaser-4-Renderer. Ticketverbrauch, Schaden, Taktikbonus, Festungszustand, Eroberung und XP bleiben vollständig in der bestehenden App-Logik. Bei tatsächlicher Eroberung ziehen die Einheiten durch das Tor und erst danach wird der Profilbanner gehisst; bei normalem Treffer bleibt die Festung gegnerisch.
 
 - v0.21.26: Offene Tests bleiben bis zum tatsächlichen Abschluss bearbeitbar. Testdatum und Testumfang können im Elternbereich geändert werden, ohne Lernhistorie oder laufenden Festungsfortschritt zurückzusetzen. Der Versionssprung aktualisiert zugleich Shell- und Service-Worker-Cache, damit diese Änderung auf installierten iOS-/PWA-Geräten zuverlässig geladen wird.
 
