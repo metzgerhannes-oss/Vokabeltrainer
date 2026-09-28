@@ -152,6 +152,30 @@ try{
   assert(await page.locator('#menuNextTestProgress').isHidden(),'test progress hides when the active subject has no upcoming test');
   assert(await page.evaluate(()=>subjectProgress('english').pct)===beforeSwitch,'rendering and switching avatar context never changes academic mastery');
 
+  await page.evaluate(()=>{
+    state=defaultState();state.activeSubject='english';
+    const due={id:'menu_due_test',learnerId:'learner_demo',subject:'english',title:'Heute Test',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:today(),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+    const next={id:'menu_next_test',learnerId:'learner_demo',subject:'english',title:'Nächster Test',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(4),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+    state.sets.push(due,next);
+    attachVocabularyToSet(due.id,{term:'today',translation:'heute',source:'menu-test-completion',verified:true});
+    attachVocabularyToSet(next.id,{term:'later',translation:'später',source:'menu-test-completion',verified:true});
+    rebuildWordIndexes();renderAll();showView('homeView');
+  });
+  await page.waitForFunction(()=>document.querySelector('#quickLearnHeroBtn')?.textContent?.includes('Test abschließen'));
+  assert((await page.locator('#todaySummary').textContent())?.includes('Test heute'),'Today screen changes from learning to explicit test completion on the test day');
+  await page.click('#quickLearnHeroBtn');
+  await page.waitForSelector('#confirmCompleteTestBtn');
+  await page.click('#confirmCompleteTestBtn');
+  await page.waitForFunction(()=>upcomingTestContext()?.date===datePlusDays(4));
+  const afterComplete=await page.evaluate(()=>({
+    summary:document.querySelector('#todaySummary')?.textContent||'',
+    context:document.querySelector('#todayContext')?.textContent||'',
+    completed:!!testCompletionForDate(today(),'english'),
+    nextDate:upcomingTestContext()?.date||''
+  }));
+  assert(afterComplete.completed&&afterComplete.nextDate===datePlusDays(4),'confirming completion persists the finished test and activates the next planned test');
+  assert(afterComplete.context.includes('in 4 Tagen')||afterComplete.context.includes('Nächster Test'),'Today immediately shows the next test after the current one is completed');
+
   assert(errors.length===0,'menu navigation must not produce browser errors: '+errors.join(' | '));
   console.log('Vokabeltrainer Project Menu smoke: passed');
   console.log('✓ landscape menu shell and dominant learning CTA');
