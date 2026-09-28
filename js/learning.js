@@ -309,16 +309,16 @@ function renderLeitnerCard(w){
 }
 function gradeLeitnerCard(w,answer,q){
   if(session.locked)return;const targetSession=session;session.locked=true;
-  const grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w);
+  const grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w),reviewSnapshot=!ok?answerReviewAttemptSnapshot(w):null;
   recordResult(w,ok,'retrieval',ok?null:'retrieval',{orthographyOk:grade.orthographyOk});
   const move=session.lastLeitnerMove||{before,after:leitnerBox(w),moved:false,blockedBySpacing:false};
   const movement=!ok?`Box ${move.before} → Box ${move.after}`:move.moved?`Box ${move.before} → Box ${move.after}`:move.blockedBySpacing?`Bleibt in Box ${move.after}: Für die nächste Stufe braucht es einen richtigen Abruf an einem späteren Tag.`:`Bleibt in Box ${move.after}.`;
   const mastered=move.after===5&&isMastered(w),track=$('#studyArea .leitner-track');
   if(track){const holder=document.createElement('div');holder.innerHTML=leitnerBoxesHtml(w);const next=holder.firstElementChild;if(next){next.classList.add(move.moved?'just-moved':'just-confirmed');track.replaceWith(next)}}
-  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}"><strong>${ok?'Richtig.':'Noch nicht richtig.'}</strong><br>${ok?'':errorFeedbackHtml(answer,q.targets)}<div><strong>${esc(w.term)}</strong> ${audioButtonHtml(w.term,'Anhören')}</div><div class="leitner-move ${ok?'forward':'back'}">${esc(movement)}</div>${mastered?'<div class="leitner-mastered">✓ Nachhaltig gemeistert</div>':''}</div>`);
+  $('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}"><strong>${ok?'Richtig.':'Noch nicht richtig.'}</strong><br>${ok?'':errorFeedbackHtml(answer,q.targets)}<div><strong>${esc(w.term)}</strong> ${audioButtonHtml(w.term,'Anhören')}</div><div class="leitner-move ${ok?'forward':'back'}">${esc(movement)}</div>${mastered?'<div class="leitner-mastered">✓ Nachhaltig gemeistert</div>':''}${!ok&&typeof focusedReviewActionHtml==='function'?focusedReviewActionHtml(false):''}</div>`);
   if(!ok)maybeSpeakCorrection(w);
   logSessionResult(w,{answer,target:q.targets,correct:ok,skill:'cards',orthographyOk:grade.orthographyOk,prompt:q.prompt,note:movement,boxBefore:move.before,boxAfter:move.after,reason:sessionResultReason({correct:ok,orthographyOk:grade.orthographyOk,answer,targets:q.targets,mode:'cards',assisted:false})});
-  if(typeof focusedDisableAnswerControls==='function'&&typeof focusedContinue==='function'){focusedDisableAnswerControls();focusedContinue(ok,w)}
+  if(typeof focusedDisableAnswerControls==='function'&&typeof focusedContinue==='function'){focusedDisableAnswerControls();focusedContinue(ok,w);if(!ok&&typeof bindFocusedAnswerReview==='function')bindFocusedAnswerReview(w,answer,q,'cards','retrieval',reviewSnapshot)}
   else scheduleSessionAdvance(targetSession,ok,w,ok?1000:2600);
 }
 function renderRecall(w){
