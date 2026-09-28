@@ -32,16 +32,18 @@ try{
       naturalWidth:background?.naturalWidth||0,
       naturalHeight:background?.naturalHeight||0,
       skyOpacity:sky?parseFloat(getComputedStyle(sky).opacity||'1'):1,
+      skyDisplay:sky?getComputedStyle(sky).display:'none',
       stageRatio:rect&&rect.width?rect.height/rect.width:0,
       dockPosition:dock?getComputedStyle(dock).position:'',
       summaryCount:document.querySelectorAll('.battle-demo-summary').length,
       genericImpactOpacity:parseFloat(getComputedStyle(stage.querySelector('.battle-impact')||stage).opacity||'0')
     };
   });
+  console.log('BATTLE_DEMO_VISIBLE',JSON.stringify(visible));
   assert(visible.artMounted,'painted scene stack is mounted');
   assert(visible.backgroundOpacity>=0.95&&visible.armyOpacity>=0.95&&visible.fortressOpacity>=0.95,'painted background, army and fortress layers are visibly rendered');
   assert(visible.naturalWidth>0&&visible.naturalHeight>0,'painted scene image is loaded');
-  assert(visible.skyOpacity===0,'fallback sky is hidden when painted scene is ready');
+  assert(visible.skyDisplay==='none'||visible.skyOpacity===0,'fallback sky is hidden when painted scene is ready');
   assert(visible.stageRatio>0.5&&visible.stageRatio<0.72,'mobile stage keeps a cinematic landscape ratio');
   assert(visible.dockPosition==='static','action dock does not overlap the result as a fixed layer');
   assert(visible.summaryCount===0,'oversized attacker/target summary card is removed');
