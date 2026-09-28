@@ -25,7 +25,7 @@ try{
     return {width:stage?.width||0,height:stage?.height||0,top:stage?.top||0,bottom:stage?.bottom||0,artWidth:art?.width||0,artHeight:art?.height||0,vw:innerWidth,vh:innerHeight};
   });
   console.log('FORTRESS_PREVIEW_GEOMETRY',JSON.stringify(armyPreviewGeometry));
-  assert(armyPreviewGeometry.width>=armyPreviewGeometry.vw*.9&&armyPreviewGeometry.height>=160,'Army "Festung ansehen" keeps a real visible 16:9 battlefield on compact iPhone viewports');
+  assert(armyPreviewGeometry.width>=armyPreviewGeometry.vw*.9&&armyPreviewGeometry.height>=160,'Army "Festung ansehen" keeps a real visible 16:9 battlefield on compact iPhone viewports: '+JSON.stringify(armyPreviewGeometry));
   assert(armyPreviewGeometry.bottom<=armyPreviewGeometry.vh+2&&armyPreviewGeometry.artWidth>=armyPreviewGeometry.width*.95&&armyPreviewGeometry.artHeight>=armyPreviewGeometry.height*.95,'Army fortress preview artwork fills its visible stage instead of collapsing to a line');
   assert(await page.locator('#battleFullscreenBtn').isHidden(),'battle no longer needs a second focus/full-screen toggle');
   assert(await page.locator('.battle-story').isHidden(),'story card is removed from the full-screen battle composition');
