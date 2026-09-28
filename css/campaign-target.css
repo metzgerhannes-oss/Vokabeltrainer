@@ -893,3 +893,84 @@ body.battle-immersive #battleView .battle-action-dock-copy span{color:#bdc8d2!im
 }
 
 body.battle-immersive #battleView .battle-scene-tactics.hidden{display:none!important}
+
+/* v0.21.23 – final stylesheet authority for the locked fortress preview.
+   campaign-target.css loads after app.css, so the preview must override the immersive
+   battle grid here as well. This prevents WebKit from collapsing the artwork to its borders. */
+body.battle-immersive.battle-preview #battleView .battle-shell{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  height:100%!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+body.battle-immersive.battle-preview #battleView .battle-toolbar{
+  position:relative!important;
+  inset:auto!important;
+  width:100%!important;
+  margin:0!important;
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  pointer-events:auto!important;
+}
+body.battle-immersive.battle-preview #battleView #battleBackBtn{
+  display:inline-flex!important;
+  justify-self:start!important;
+}
+body.battle-immersive.battle-preview #battleView .battle-ticket-pill,
+body.battle-immersive.battle-preview #battleView .battle-scene-hud.battle-readout,
+body.battle-immersive.battle-preview #battleView .battle-scene-tactics.battle-tactics,
+body.battle-immersive.battle-preview #battleView .battle-action-dock{
+  display:none!important;
+}
+body.battle-immersive.battle-preview #battleView .battle-stage-wrap{
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:10px 0 0!important;
+  padding:0!important;
+  overflow:visible!important;
+}
+body.battle-immersive.battle-preview #battleView .battle-stage{
+  display:block!important;
+  position:relative!important;
+  width:min(100%,1100px)!important;
+  height:56.25vw!important;
+  min-height:180px!important;
+  max-height:619px!important;
+  margin:0 auto!important;
+  aspect-ratio:auto!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  border-radius:18px!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+body.battle-immersive.battle-preview #battleView .battle-phase-strip,
+body.battle-immersive.battle-preview #battleView .battle-fortress-state-badge,
+body.battle-immersive.battle-preview #battleView .battle-rank-badge{
+  display:none!important;
+}
+@media(max-width:720px){
+  body.battle-immersive.battle-preview #battleView .battle-stage{
+    width:100%!important;
+    height:calc(56.25vw - 9px)!important;
+    min-height:180px!important;
+    max-height:260px!important;
+    border-radius:14px!important;
+  }
+}
+@media(orientation:landscape) and (max-height:560px){
+  body.battle-immersive.battle-preview #battleView .battle-stage{
+    width:min(100%,720px)!important;
+    height:calc(100vh - 78px)!important;
+    min-height:0!important;
+    max-height:360px!important;
+  }
+}
+
