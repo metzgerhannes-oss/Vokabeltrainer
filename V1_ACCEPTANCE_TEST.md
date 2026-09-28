@@ -414,3 +414,59 @@ Freigabedatum:
 Geprüfte Version / Commit:
 
 Offene Restpunkte:
+
+
+---
+
+# G. Deutsch-v1-Freigabe
+
+**Kanonische Quellen:** `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`, `docs/project/DEUTSCH_WORTREICH_V1.md`, D-20260928-008.
+
+Diese Sektion ist vor v1.0 verpflichtend. Ein deaktivierter Platzhalter oder reine Dokumentation genügt nicht.
+
+## G1 – Fach und Klasse-1-Einstieg
+
+- [ ] Deutsch ist als eigenes Fach auswählbar
+- [ ] Fachwechsel vermischt keine Lernstände mit Englisch/Latein
+- [ ] Buchstaben-/Graphemaufgabe funktioniert
+- [ ] Laut–Buchstaben-Zuordnung funktioniert
+- [ ] Nachspuren bzw. geführter Buchstabeneinstieg besitzt einen Übergang zu eigenständiger Produktion
+- [ ] erste Wörter können gelesen/geübt werden
+- [ ] erste Wörter können produktiv geschrieben werden
+- [ ] einfache Sätze können geübt werden
+- [ ] deutsche Aufgabentexte und Wörter können dort vorgelesen werden, wo Audio die Lösung nicht vorwegnimmt
+
+## G2 – Deutsche Bewertung
+
+- [ ] Groß-/Kleinschreibung wird je Aufgabentyp fachlich korrekt behandelt
+- [ ] Rechtschreibaufgaben verlangen die definierte Sollschreibung
+- [ ] reine Lese-/Erkennungsaufgaben werden nicht künstlich zu Rechtschreibtests
+- [ ] technische Satz-/Platzhaltervarianten werden nur bei fachlicher Gleichwertigkeit toleriert
+- [ ] „Bewertung prüfen lassen“ neutralisiert einen strittigen Versuch auch in Deutsch
+- [ ] Elternentscheidung kann Variante freigeben, Sollinhalt korrigieren oder Systembewertung bestätigen
+- [ ] „Vokabel überspringen“ verschiebt auch in Deutsch nur ans Ende derselben Session und bleibt neutral
+
+## G3 – Das Wortreich
+
+- [ ] eigener Deutsch-Spielbereich ist sichtbar
+- [ ] Lernmodus bleibt frei von Battle-Animation
+- [ ] eigene Burg-/Ritteridentität ist ohne reine Beschriftung erkennbar
+- [ ] eigener Fortschritt startet klein und wächst aus tatsächlichem Lernfortschritt
+- [ ] mindestens ein echter Belagerungskampf ist spielbar
+- [ ] eigene Armee steht links, Kampfzone in der Mitte, Zielburg rechts
+- [ ] gegnerische Burg reagiert sichtbar (z. B. Pfeile / Gegenfeuer / Verteidigung)
+- [ ] Kampf bleibt kindgerecht ohne Verletzungs-/Gewaltdetails
+- [ ] Gegner sind fiktional und nicht realweltlich codiert
+- [ ] Kampfergebnis verändert Mastery, Spacing, Testbereitschaft und fachliche Bewertung nicht
+- [ ] freiwilliges Üben erzeugt keine zusätzliche Tages-Kampfaktion
+
+## G4 – Plattform / Release
+
+- [ ] Kernpfad auf iPhone-Zielviewport praktisch geprüft
+- [ ] Kernpfad auf Desktop praktisch geprüft
+- [ ] Offline-/PWA-Grundfunktion für den Deutsch-Kern geprüft
+- [ ] Deutsch-Audio praktisch geprüft
+- [ ] automatisierte Fachtrennungs- und Bewertungsregressionen grün
+- [ ] reale Kind-/Eltern-End-to-End-Abnahme für Deutsch durchgeführt
+
+**Release-Regel:** Die fachlichen Punkte aus G1/G2 sowie mindestens ein funktionsfähiger Wortreich-Kampf aus G3 sind vor v1.0 verpflichtend. Eine Rückwirkung der Spielwelt auf fachliche Lernwerte ist ein Release-Blocker.
