@@ -1,15 +1,16 @@
 # Vokabeltrainer – Current State
 
-Stand: 27.09.2026, Baseline direkt aus GitHub geprüft.
+Stand: 28.09.2026, Release-Kandidat direkt aus GitHub geprüft.
 
 ## Produktionsbaseline
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.21**
-- Produktcode-Baseline des aktuellen Releases: `ee63dda29bf2faa7e8d103249d60e589121f1982`
+- App-Version: **v0.21.22**
+- Produktcode-Baseline vor diesem Release-Kandidaten: `ee63dda29bf2faa7e8d103249d60e589121f1982` (v0.21.21)
 - letzter fachlicher Lernrelease: **PR #148 – v0.21.12 – Differenzierte LRS-Unterstützung**
 - letzter produktiver Fixrelease: **PR #164 – v0.21.21 – Tagesfortschritt bleibt über Updates erhalten**
+- aktueller Release-Kandidat: **PR #165 – v0.21.22 – kurzer Tageskern, T−1-Rettungsmodus und getrennte Festungsvorschau**
 - PR-CI UI-/Planungsfixrelease: **Vokabeltrainer CI #994 – success**
 - main-CI UI-/Planungsfixrelease: **Vokabeltrainer CI #995 – success**
 - Produktionsdeploy UI-/Planungsfixrelease: **GitHub Pages #523 – success**, inklusive Live-Verifikation
@@ -40,14 +41,14 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Differenzierte LRS-/Lernunterstützung | PRODUCTION | `PRODUCT_DNA.md` P6/P8, D-20260927-008, PR #148 |
 | Richtungsspezifische Testbereitschaft | PRODUCTION | `PRODUCT_DNA.md` P2, D-20260927-007, PR #144 |
 | Lernbibliothek / Dokumentationskohärenz | PRODUCTION | `docs/project/LEARNING_COHERENCE_REVIEW.md`, PR #146 |
-| Tagesplanung mit testbezogener Last | PRODUCTION | `PRODUCT_DNA.md` P6 + Code/Tests |
+| Tagesplanung mit testbezogener Last | VERIFIED / Release-Kandidat v0.21.22 | `PRODUCT_DNA.md` P6, D-20260927-010 + Code/Tests |
 | Mehrere kommende Einzeltests / frühester Termin | PRODUCTION | PR #160, `V1_ACCEPTANCE_TEST.md` |
 | Pflicht-Tagesziel nur nach erfolgreichem Abruf | PRODUCTION | `PRODUCT_DNA.md` P4/P6, D-20260927-005, PR #142 |
 | Adaptives Nachrücken / „heute sicher“ | PRODUCTION | `PRODUCT_DNA.md` P3/P6, D-20260927-004, PR #138 |
 | Tolerante Satzbewertung | PRODUCTION | README v0.21.2 + Code/Tests |
 | Schutz vor System-Schreibvorschlägen | PRODUCTION | README v0.21.3 + Code/Tests |
 | Kindnavigation Lernen vs. Spiel | PRODUCTION | `PRODUCT_DNA.md`, `VISUAL_DNA.md` |
-| iPhone Battle-Fokusmodus | PRODUCTION | PR #136, `VISUAL_DNA.md` |
+| iPhone Battle-Fokusmodus | VERIFIED / Release-Kandidat v0.21.22 | PR #165, `V1_ACCEPTANCE_TEST.md` |
 | Family Sync | PRODUCTION / Beta-Grenze | `SYNC_ARCHITECTURE.md`, `FINAL_AUDIT.md` |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 

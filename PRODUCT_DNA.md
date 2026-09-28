@@ -97,16 +97,22 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
 6. **Tagesziel beantwortet: Was muss ich heute lernen?**
    Testdatum, Testumfang, fällige Wiederholungen und schwache Wörter steuern das Tagespensum.
    Kurze, realistische Einheiten haben Vorrang vor langen Sessions.
-   Als Richtgröße werden pro Tag **5–7 neue Vokabeln** eingeführt. Fällige und unsichere
-   Wiederholungen ergänzen das Tagesziel normalerweise auf ungefähr **10–12 Vokabelkontakte**.
-   Bei einem bekannten Testtermin wird das Pensum jedoch **täglich aus dem tatsächlichen
-   Restlernstand neu berechnet**: Rückstand erhöht die Last, Vorsprung reduziert sie. Bei
-   deutlichem Vorsprung sind kleinere 3er-Blöcke und etwa 8 Kontakte zulässig; bei Rückstand
-   kann das Gesamtpensum vorübergehend bis etwa 14 Kontakte steigen. Mehr als **7 neue Wörter
-   pro Tag** werden weiterhin nicht erzwungen. Wenn mindestens zwei Tage Vorlauf bestehen,
-   bleibt der letzte Tag vor dem Test für Wiederholung reserviert. Neue Wörter am Tag vor
-   dem Test werden als Spacing-Risiko gekennzeichnet; am Testtag selbst werden keine neuen
-   Wörter eingeplant. Vorschau und Tagesplan müssen dieselbe Formel verwenden.
+   Der **verpflichtende Tageskern** umfasst normalerweise **5–6 unterschiedliche Fokuswörter**;
+   mit aktivierter Einstellung **„Kurze Einheiten“** sind es **3–4 Fokuswörter**. Innerhalb
+   dieses kleinen Wortsets entstehen durch Erkennen, produktiven Abruf und nötige
+   Fehlerwiederholung mehrere Lernkontakte. Die frühere Richtgröße „10–12 Kontakte“ ist damit
+   eine ungefähre Folge der Lernschritte und **kein Ziel von 10–12 unterschiedlichen
+   Pflichtwörtern**.
+   Pro Pflichtkern werden höchstens **3 neue Wörter** eingeführt, bei „Kurze Einheiten“
+   höchstens **2**. Ein Rückstand darf den Pflichtkern nicht über sechs bzw. vier Fokuswörter
+   aufblasen. Wenn der rechnerisch nötige Stoff größer ist, markiert die App den Rückstand
+   und empfiehlt nach dem abgeschlossenen Pflichtkern eine **zweite kurze, freiwillige
+   Runde**. Diese ist getrennt vom Tagesziel und von der Battle-Freischaltung.
+   Mit freiwilligem Nachrücken werden insgesamt höchstens **6 neue Wörter pro Tag** eingeführt,
+   bei „Kurze Einheiten“ höchstens **4**. Wenn mindestens zwei Tage Vorlauf bestehen, bleibt
+   der letzte Tag vor dem Test für Wiederholung reserviert. Neue Wörter am Tag vor dem Test
+   werden als Spacing-Risiko gekennzeichnet; am Testtag selbst werden keine neuen Wörter
+   eingeplant. Vorschau und Tagesplan müssen dieselbe Formel verwenden.
    Der morgens berechnete Pflichtteil bleibt innerhalb des Kalendertags als festes Tagesziel
    bestehen. Ein Pflichtwort gilt erst nach einem **fachlich richtigen, unassistierten aktiven Abruf**
    als für das Tagesziel erledigt. Ein bloßer Kontakt, ein falscher Versuch oder eine richtige Antwort
@@ -126,6 +132,21 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
    Zusatzwörter erhöhen weder das Pflicht-Tagesziel noch dessen Fortschrittsanzeige und erzeugen
    keine weitere Kampfaktion. Sie werden als freiwilliger nächster Lernschritt vorgemerkt und
    nicht automatisch an eine bereits laufende Pflicht-Einheit angehängt.
+
+   **T−1-Rettungsmodus:** Liegt der Test am nächsten Tag und ist noch deutlicher Rückstand
+   vorhanden, wird nicht der komplette Testumfang stumpf als Karteikasten abgefragt. Nach dem
+   kurzen Pflichtkern bietet die App getrennte freiwillige Rettungsrunden mit höchstens sechs
+   Fokuswörtern, bei „Kurze Einheiten“ höchstens vier. Testbereite Wörter werden ausgelassen.
+   Priorität haben Fehler aus der vorherigen Rettungsrunde und danach noch nicht geprüfte
+   unsichere bzw. unbekannte Testwörter. Neue Wörter dürfen hier trotz des knappen Abstands
+   bearbeitet werden, werden aber ausdrücklich nicht als verteilt gemeistert behandelt.
+   Jede Runde spiegelt das reale Testformat bzw. die Abfragerichtung; bei Diktat ist produktive
+   Rechtschreibung erforderlich. Ein falscher Abruf erhält eine begrenzte erneute Lernchance.
+   Rettungsrunden verändern das Pflicht-Tagesziel und die Zahl der Battle-Aktionen nicht.
+   Richtige Abrufe fließen nur als tatsächlich erbrachte Evidenz in den Lernstand ein; die
+   bestehenden Mastery- und Spacing-Kriterien werden nicht abgesenkt. Nach einer Runde soll
+   eine Pause möglich und bei weiterem Rückstand eine weitere kurze Runde gezielt angeboten
+   werden, statt eine lange Massensession zu erzwingen.
 
 7. **Neue Wörter im Kontext, Wiederholung gemischt**
    Erstaneignung respektiert soweit sinnvoll Buch-/Unit-Reihenfolge und Zusammenhang.

@@ -386,14 +386,35 @@ function renderBattleReturnUi(){
   if($('#battleBackBtn'))$('#battleBackBtn').textContent=meta.back;
   if($('#battleReturnBtn'))$('#battleReturnBtn').textContent=meta.bottom;
 }
-function returnFromBattle(){if(battleStoryNarrating)stopBattleStoryNarration();showView(BATTLE_RETURN_META[battleReturnView]?battleReturnView:'armyView')}
+const BATTLE_PREVIEW_HIDDEN_SELECTORS=[
+  '#battleTicketPill',
+  '#battleView .battle-readout',
+  '#battleView .battle-scene-tactics',
+  '#battleView .battle-action-dock'
+];
+function setBattlePreviewMode(on){
+  document.body.classList.toggle('battle-preview',!!on);
+  for(const selector of BATTLE_PREVIEW_HIDDEN_SELECTORS){
+    const el=document.querySelector(selector);if(!el)continue;
+    if(on){
+      el.dataset.battlePreviewHidden='1';
+      el.style.setProperty('display','none','important');
+      el.setAttribute('aria-hidden','true');
+    }else if(el.dataset.battlePreviewHidden==='1'){
+      el.style.removeProperty('display');
+      el.removeAttribute('aria-hidden');
+      delete el.dataset.battlePreviewHidden;
+    }
+  }
+}
+function returnFromBattle(){if(battleStoryNarrating)stopBattleStoryNarration();setBattlePreviewMode(false);showView(BATTLE_RETURN_META[battleReturnView]?battleReturnView:'armyView')}
 function openBattleView(){
   if(isParentMode())return;
   const f=currentTestFortress(),present=battlePresentation();
   if(!f){toast(present.noTarget,'subtle');return}
   captureBattleReturnView();
-  const reveal=!f.revealedAt;
-  renderBattleView();renderBattleReturnUi();showView('battleView');
+  const reveal=!f.revealedAt,preview=battleTickets()<1;
+  renderBattleView();renderBattleReturnUi();showView('battleView');setBattlePreviewMode(preview);
   if(reveal)startBattleFortressReveal(f);
 }
 function setBattleImmersive(on){
@@ -625,7 +646,7 @@ function renderToday(){
     $('#quickLearnHeroBtn').disabled=!parent;$('#quickLearnHeroBtn').textContent=parent?'Paare prüfen':'Noch nicht bereit';
     $('#todayTestPill').classList.add('hidden');$('#todayTestBtn').classList.add('hidden');return;
   }
-  const plan=buildDailyPlan(),status=dailyPlanStatus(plan),ctx=upcomingTestContext(),pending=seriesScopePending(),pendingIsNext=!!(pending&&(!ctx||pending.date<=ctx.date)),hasWords=(ctx?.words.length||schoolYearVerifiedWords().length)>0; const progressRow=$('#todayProgress')?.closest('.today-progress-row');
+  const plan=buildDailyPlan(),status=dailyPlanStatus(plan),ctx=upcomingTestContext(),rescue=t1RescuePlan(plan),pending=seriesScopePending(),pendingIsNext=!!(pending&&(!ctx||pending.date<=ctx.date)),hasWords=(ctx?.words.length||schoolYearVerifiedWords().length)>0; const progressRow=$('#todayProgress')?.closest('.today-progress-row');
   if(pendingIsNext){
     const subjectName=subjectLabel(state.activeSubject),when=pending.days===0?'heute':pending.days===1?'morgen':`in ${pending.days} Tagen`;
     $('#todaySummary').textContent=parent?'Testumfang festlegen':'Der nächste Test wird vorbereitet';
@@ -643,19 +664,20 @@ function renderToday(){
     $('#todayContext').textContent=parent?'Plane einen Test oder bereite Vokabeln ohne Testtermin vor.':'Bitte einen Erwachsenen, neue Vokabeln vorzubereiten.';
     $('#todayEstimate').textContent=parent?'Danach erscheinen die freigegebenen Wörter automatisch im Kindermodus.':'Sobald alles vorbereitet ist, erscheint hier automatisch deine nächste Lernaufgabe.';
   }else if(!status.total){$('#todaySummary').textContent='Tagesziel geschafft';$('#todayContext').textContent=ctx?testContextLabel(ctx):'Heute ist keine Pflicht-Wiederholung offen.';$('#todayEstimate').textContent='Weitere Übungen sind optional.';}
-  else if(!status.remaining){$('#todaySummary').textContent=`${status.total} von ${status.total} erledigt ✓`;$('#todayContext').textContent=ctx?testContextLabel(ctx):'Dein heutiges Lernpensum ist erledigt.';$('#todayEstimate').textContent=status.extraRemaining?`${status.extraRemaining} zusätzliche Vokabel${status.extraRemaining===1?'':'n'} ${status.extraRemaining===1?'steht':'stehen'} als freiwilliger Vorsprung bereit. Das Tagesziel bleibt abgeschlossen.`:status.extraDone?`${status.extraDone} zusätzliche Vokabel${status.extraDone===1?'':'n'} heute sicher. Das Tagesziel bleibt unverändert.`:'Weitere Übungen sind optional.';}
+  else if(!status.remaining){$('#todaySummary').textContent=`${status.total} von ${status.total} erledigt ✓`;$('#todayContext').textContent=ctx?testContextLabel(ctx):'Dein heutiges Lernpensum ist erledigt.';$('#todayEstimate').textContent=rescue.available?`Morgen ist Test. Noch ${rescue.weakTotal} Vokabel${rescue.weakTotal===1?' ist':'n sind'} nicht testbereit. Eine Rettungsrunde mit ${rescue.refs.length} Fokuswörtern ist empfohlen – freiwillig und ohne zusätzliche Kampfaktion.`:rescue.recommended?`Rettungsrunde für jetzt abgeschlossen. ${rescue.weakTotal} Vokabel${rescue.weakTotal===1?' erfüllt':'n erfüllen'} wegen der kurzen Vorlaufzeit noch nicht alle Testbereitschaftskriterien. Jetzt ist eine Pause sinnvoll.`:status.extraRemaining?(plan.recommendSecondRound?`Pflichtteil geschafft. Später sind ${status.extraRemaining} Vokabel${status.extraRemaining===1?'':'n'} als zweite kurze Runde empfohlen – freiwillig.`:`${status.extraRemaining} zusätzliche Vokabel${status.extraRemaining===1?'':'n'} ${status.extraRemaining===1?'steht':'stehen'} als freiwilliger Vorsprung bereit. Das Tagesziel bleibt abgeschlossen.`):status.extraDone?`${status.extraDone} zusätzliche Vokabel${status.extraDone===1?'':'n'} heute sicher. Das Tagesziel bleibt unverändert.`:'Weitere Übungen sind optional.';}
   else{
     const mix=[];if(status.introRemaining)mix.push(`${status.introRemaining} neu`);if(status.reviewRemaining)mix.push(`${status.reviewRemaining} Wiederholung${status.reviewRemaining===1?'':'en'}`);
     $('#todaySummary').textContent=status.done?`Noch ${status.remaining} von ${status.total} Vokabeln`:`${status.total} Vokabel${status.total===1?'':'n'} heute`;
     $('#todayContext').textContent=ctx?testContextLabel(ctx):(mix.length?mix.join(' · '):'Automatisch aus fälligen und unsicheren Vokabeln');
-    const mins=Math.max(2,Math.ceil(status.remaining*(literacySupportActive(learner())?0.9:0.65))),phaseText=plan.phase==='acquire'?' · Neue Wörter früh aufbauen.':plan.phase==='consolidate'?' · Schwerpunkt: aktiv festigen.':plan.phase==='rehearse'?' · Kurz vor dem Test: überwiegend abrufen und wiederholen.':'';
-    const maintenance=plan.maintenanceCount?` · ${plan.maintenanceCount} ältere Wiederholung${plan.maintenanceCount===1?'':'en'} dabei.`:'',deadline=plan.deadlineOverload?` · Mit maximal 7 neuen Wörtern pro Tag reicht die Zeit bis zum Test rechnerisch nicht ganz; Testumfang oder Starttermin prüfen.`:'';
-    const paceText=ctx?(plan.spacingRisk?' · Der Test ist sehr nah; für neue Wörter fehlt ausreichender Wiederholungsabstand.':plan.pace==='ahead'?' · Du liegst vor dem Plan; das Tagesziel wurde reduziert.':plan.pace==='catchup'?' · Es gibt Nachholbedarf; das Tagesziel wurde erhöht.':plan.pace==='overload'?' · Deutlicher Rückstand: maximale neue Wörter plus zusätzliche Wiederholungen.':' · Das Tagesziel passt zum aktuellen Lernstand.'):'';
-    $('#todayEstimate').textContent=`${status.units} kurze ${status.units===1?'Einheit':'Einheiten'} · ca. ${mins} Min. · Ziel heute: ${plan.dailyTarget} Kontakte.${phaseText}${maintenance}${paceText}${deadline}`;
+    const shortMode=reducedLoadEnabled(learner()),mins=Math.max(2,Math.ceil(status.remaining*(shortMode?1.0:1.1))),phaseText=plan.phase==='acquire'?' · Neue Wörter früh aufbauen.':plan.phase==='consolidate'?' · Schwerpunkt: aktiv festigen.':plan.phase==='rehearse'?' · Kurz vor dem Test: überwiegend abrufen und wiederholen.':'';
+    const maintenance=plan.maintenanceCount?` · ${plan.maintenanceCount} ältere Wiederholung${plan.maintenanceCount===1?'':'en'} dabei.`:'',deadline=plan.deadlineOverload?' · Der offene Stoff ist zu groß für eine einzige kurze Pflicht-Einheit; eine zweite kurze Runde wird empfohlen oder der Testumfang sollte geprüft werden.':'';
+    const paceText=ctx?(plan.spacingRisk?' · Der Test ist sehr nah; neue Wörter können heute nicht mehr ausreichend verteilt gefestigt werden.':plan.pace==='ahead'?' · Du liegst vor dem Plan; der Pflichtblock bleibt besonders klein.':plan.pace==='overload'?' · Trotz Rückstand bleibt der Pflichtblock bewusst kurz.':' · Der Pflichtblock passt zum aktuellen Lernstand.'):'';
+    const secondRound=plan.recommendSecondRound?' · Danach kann eine zweite kurze Runde sinnvoll sein; sie bleibt freiwillig.':'';
+    $('#todayEstimate').textContent=`1 kurze Pflicht-Einheit · noch ca. ${mins} Min. · ${status.total} Fokuswörter.${phaseText}${maintenance}${paceText}${deadline}${secondRound}`;
   }
   $('#todayProgress').max=Math.max(1,status.total); $('#todayProgress').value=status.done; $('#todayProgress').setAttribute('aria-valuetext',`${status.done} von ${status.total} Vokabeln heute erledigt`); $('#todayProgressText').textContent=status.total?`${status.done} / ${status.total} erledigt`:'';
-  const bonusAvailable=!status.remaining&&status.extraRemaining>0;
-  $('#quickLearnHeroBtn').disabled=!hasWords||(!status.remaining&&!bonusAvailable); $('#quickLearnHeroBtn').textContent=!hasWords?'Noch nicht bereit':status.remaining?(status.done?'Weiterlernen':'Jetzt lernen'):bonusAvailable?'Vorsprung weiterlernen':'Heute erledigt ✓';
+  const rescueAvailable=!status.remaining&&rescue.available,bonusAvailable=!status.remaining&&status.extraRemaining>0;
+  $('#quickLearnHeroBtn').disabled=!hasWords||(!status.remaining&&!rescueAvailable&&!bonusAvailable); $('#quickLearnHeroBtn').textContent=!hasWords?'Noch nicht bereit':status.remaining?(status.done?'Weiterlernen':'Jetzt lernen'):rescueAvailable?'Rettungsrunde starten':bonusAvailable?(plan.recommendSecondRound?'Zweite Runde (optional)':'Vorsprung weiterlernen'):'Heute erledigt ✓';
   if(ctx){$('#todayTestPill').textContent=(ctx.source==='series'||ctx.source==='mixed')?`↻ ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]} · ${formatDateShort(ctx.date)}`:`Test ${formatDateShort(ctx.date)}`;$('#todayTestPill').classList.remove('hidden');if(parent){$('#todayTestBtn').textContent='Testplan ändern';$('#todayTestBtn').classList.remove('hidden');$('#todayTestBtn').dataset.setId=ctx.sets[0]?.id||'';}else $('#todayTestBtn').classList.add('hidden');}
   else{$('#todayTestPill').classList.add('hidden');if(parent&&mySets().length){$('#todayTestBtn').textContent='Testplan festlegen';$('#todayTestBtn').classList.remove('hidden');}else $('#todayTestBtn').classList.add('hidden');}
 }function renderRecommendations(){
@@ -801,15 +823,15 @@ function contentPlanPreviewData(rows,learnerId,testDate=''){
   return {l,count,newCount,weakCount,days,pace};
 }
 function contentPlanPreviewText(rows,learnerId,testDate=''){
-  const {count,newCount,days,pace}=contentPlanPreviewData(rows,learnerId,testDate);
+  const {count,newCount,days,pace}=contentPlanPreviewData(rows,learnerId,testDate),newLabel=`${pace.quota} neue${pace.quota===1?'s':''} Wort${pace.quota===1?'':'e'}`;
   if(!count)return 'Noch keine Vokabel ausgewählt.';
-  if(!testDate)return `${count} Vokabeln ausgewählt. Ohne Testtermin startet die App normalerweise mit bis zu ${pace.quota||5} neuen Wörtern und ungefähr ${pace.dailyTarget} Kontakten pro Tag.`;
+  if(!testDate)return `${count} Vokabeln ausgewählt. Der Pflichtkern bleibt kurz: ${newLabel} in höchstens ${pace.dailyTarget} Fokuswörtern.`;
   if(days<1)return `${count} Vokabeln ausgewählt · Test ist heute. Für neue Wörter bleibt kein sinnvoller Lernabstand mehr; heute nur gezielt wiederholen.`;
   const windowText=pace.reviewOnlyDays?`${pace.acquisitionDays} Tag${pace.acquisitionDays===1?'':'e'} für neue Wörter + 1 Wiederholungstag`:`${pace.acquisitionDays} Lerntag${pace.acquisitionDays===1?'':'e'} vor dem Test`;
-  if(pace.overload)return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · ${newCount} noch neu · rechnerisch ${pace.requiredPerDay} neue Wörter pro Lerntag nötig. Maximal 7 werden angesetzt; das Tagesziel steigt auf bis zu etwa ${pace.dailyTarget} Kontakte. Zeit bis zum Test ist zu knapp für den vorgesehenen Abstand.`;
-  if(pace.spacingRisk)return `${count} ausgewählt · Test ${days===1?'morgen':'heute'} · ${newCount} noch neu. Neue Wörter können noch begonnen werden, aber für verteilte Wiederholungen bleibt zu wenig Zeit. Der Plan priorisiert deshalb die wichtigsten Abrufe und markiert die Situation als knapp.`;
-  if(!newCount)return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · alle Wörter kennengelernt. Das Tagesziel wird anhand der noch unsicheren Wörter dynamisch auf etwa ${pace.dailyTarget} Kontakte angepasst.`;
-  return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · ${newCount} noch neu · ${windowText}. Aktuell etwa ${pace.quota} neue Wörter und insgesamt ${pace.dailyTarget} Kontakte pro Tag. Der Plan wird jeden Tag aus dem tatsächlichen Lernstand neu berechnet.`;
+  if(pace.overload)return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · ${newCount} noch neu · rechnerisch ${pace.requiredPerDay} neue Wörter pro Lerntag nötig. Der Pflichtkern bleibt trotzdem bei höchstens ${pace.dailyTarget} Fokuswörtern mit maximal ${pace.maxNew} neuen Wörtern. Danach wird eine zweite kurze Runde empfohlen. Zeit bis zum Test ist zu knapp für den vorgesehenen Abstand.`;
+  if(pace.spacingRisk)return `${count} ausgewählt · Test ${days===1?'morgen':'heute'} · ${newCount} noch neu. Der Pflichtkern bleibt bei höchstens ${pace.dailyTarget} Fokuswörtern; danach kann eine zweite kurze Runde sinnvoll sein. Für verteilte Wiederholungen bleibt zu wenig Zeit.`;
+  if(!newCount)return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · alle Wörter kennengelernt. Der Pflichtkern umfasst höchstens ${pace.dailyTarget} Fokuswörter und priorisiert die noch unsicheren Wörter.`;
+  return `${count} ausgewählt · Test in ${days} Tag${days===1?'':'en'} · ${newCount} noch neu · ${windowText}. Aktuell ${newLabel} in einem Pflichtkern von höchstens ${pace.dailyTarget} Fokuswörtern. Der Plan wird jeden Tag aus dem tatsächlichen Lernstand neu berechnet.`;
 }
 function applyVocabularyPickerRange(picker,selector,fromInput,toInput,onChange){
   const boxes=[...picker.querySelectorAll(selector)],count=boxes.length;if(!count)return;
@@ -1316,6 +1338,7 @@ function showView(id){
   if(id!=='battleView'){
     cancelBattleSequence();
     window.VTBattleResultUi?.hide?.();
+    setBattlePreviewMode(false);
     if(document.body.classList.contains('battle-immersive'))closeBattleImmersive();
   }
   if(PARENT_VIEW_IDS.has(id)&&!isParentMode()){toast(isPairedChildDevice()?'Der Elternbereich ist auf diesem Kindergerät gesperrt.':'Diese Funktion liegt im Elternbereich.','subtle');id='homeView'}

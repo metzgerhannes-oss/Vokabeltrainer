@@ -49,7 +49,7 @@ try{
   assert((await page.locator('#planSelectionCount').textContent())?.startsWith('6 '),'selection counter follows the range selection');
   const preview=await page.locator('#planDailyPreview').textContent();
   assert(preview?.includes('6 ausgewählt')&&preview?.includes('Test in 7 Tagen'),'preview shows the exact selected vocabulary count and calendar distance to the test');
-  assert(preview?.includes('3 neue Wörter')&&preview?.includes('8 Kontakte'),'preview uses the same adaptive pacing formula as the daily plan');
+  assert(preview?.includes('1 neues Wort')&&preview?.includes('5 Fokuswörtern'),'preview uses the same compact pacing formula as the daily plan');
   await page.click('#saveTestPlan');
   await page.waitForSelector('#parentView.active');
 
@@ -60,7 +60,7 @@ try{
     return {id:set?.id||'',date:ctx?.date||'',count:ctx?.words?.length||0,days:ctx?.days,mode:set?.testScopeMode||'',selected:set?.testSelectedLinkIds?.length||0,title:set?.title||'',links:set?setWords(set.id).length:0,intro:plan.introCount,target:plan.dailyTarget,acquisitionDays:plan.acquisitionDays};
   });
   assert(saved.id&&saved.count===6&&saved.days===7&&saved.mode==='selected'&&saved.selected===6&&saved.links>=6,'test plan keeps exact vocabulary count and exact test-day distance');
-  assert(saved.intro===3&&saved.target===8&&saved.acquisitionDays===6,'saved daily plan matches the preview and adapts workload to the available time');
+  assert(saved.intro===1&&saved.target===5&&saved.acquisitionDays===6,'saved daily plan matches the compact preview and adapts workload to the available time');
 
   // A later library-backed test must queue behind the earlier test instead of replacing it.
   await page.click('#parentTestPlanBtn');
