@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#18232d">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; media-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-src 'none'">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Phaser-Kampf – Bewegungsstudie</title>
+  <link rel="stylesheet" href="css/phaser-battle-demo.css?v=1">
+</head>
+<body>
+  <main class="phaser-page">
+    <section class="phaser-shell" aria-labelledby="phaserBattleTitle">
+      <div class="phaser-topline">
+        <span class="phaser-chip">Phaser 4 · Spike</span>
+        <span>Nur Darstellung · keine Lern- oder Sync-Daten</span>
+      </div>
+
+      <header class="phaser-header">
+        <div>
+          <p class="phaser-kicker">Kampf · 2D/2.5D Bewegungsstudie</p>
+          <h1 id="phaserBattleTitle">Angriff auf die Bergzitadelle</h1>
+          <p>Ein echter Renderer steuert jetzt Einheiten, Kamera, Pfeile, Rammbock, Staub und Festungsreaktion getrennt.</p>
+        </div>
+        <div class="phaser-target-card" aria-label="Angreifer und Ziel">
+          <div><small>ANGREIFER</small><strong>Deine Armee</strong></div>
+          <span aria-hidden="true">→</span>
+          <div><small>ZIEL</small><strong>Test 1</strong></div>
+        </div>
+      </header>
+
+      <div class="phaser-phase-strip" aria-label="Ablauf der Kampfszene">
+        <span data-phaser-battle-phase="rally"><i>1</i><b>Sammeln</b></span>
+        <span data-phaser-battle-phase="advance"><i>2</i><b>Vorrücken</b></span>
+        <span data-phaser-battle-phase="barrage"><i>3</i><b>Angriff</b></span>
+        <span data-phaser-battle-phase="impact"><i>4</i><b>Einschlag</b></span>
+        <span data-phaser-battle-phase="result"><i>5</i><b>Ergebnis</b></span>
+      </div>
+
+      <section id="phaserBattleStage" class="phaser-stage" data-phase="ready" aria-label="Animierte Phaser-Kampfszene">
+        <div id="phaserBattleCanvas" class="phaser-canvas"></div>
+
+        <div class="phaser-stage-label own" aria-hidden="true">
+          <small>ANGREIFER</small>
+          <strong>Deine Armee</strong>
+        </div>
+        <div class="phaser-stage-label target" aria-hidden="true">
+          <small>ZIEL</small>
+          <strong>Bergzitadelle</strong>
+        </div>
+
+        <div class="phaser-cinematic-hud" aria-live="polite">
+          <span id="phaserBattleCinematicLabel">BEREIT</span>
+          <strong id="phaserBattleCinematicTitle">Die Armee wartet auf dein Signal</strong>
+        </div>
+
+        <div id="phaserBattleFallback" class="phaser-fallback" hidden>
+          <strong>Phaser konnte nicht gestartet werden.</strong>
+          <span>Die bestehende Battle-Demo bleibt als technischer Fallback erhalten.</span>
+          <a href="battle-demo.html">Alte Battle-Demo öffnen</a>
+        </div>
+      </section>
+
+      <div id="phaserBattleMessage" class="phaser-battle-message">Phaser wird geladen …</div>
+
+      <div class="phaser-action-dock">
+        <div>
+          <strong id="phaserBattleActionTitle">Renderer wird geladen</strong>
+          <span id="phaserBattleActionHint">Die Szene startet, sobald Phaser bereit ist.</span>
+        </div>
+        <button id="phaserBattleStart" type="button" disabled>Sequenz abspielen</button>
+      </div>
+
+      <section class="phaser-notes" aria-label="Abnahmekriterien des Spikes">
+        <strong>Dieser Spike beweist nur einen Angriffspfad.</strong>
+        <span>Reihen bewegen sich zeitversetzt statt als Block.</span>
+        <span>Kamera und Landschaft erzeugen räumliche Tiefe.</span>
+        <span>Pfeile fliegen als eigene Objekte.</span>
+        <span>Rammbock, Tor, Staub und Trümmer reagieren getrennt.</span>
+      </section>
+    </section>
+  </main>
+
+  <script type="module" src="js/battle-phaser/battle-phaser-entry.js?v=1"></script>
+</body>
+</html>
