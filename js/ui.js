@@ -777,7 +777,7 @@ function openCompleteCurrentTest(){
 }
 
 function renderTestCheck(){
-  const card=$('#testCheckCard'); if(!card)return; const ctx=upcomingTestContext();
+  const card=$('#testCheckCard'); if(!card)return;if(subjectHasCapability(state.activeSubject,'nativeLiteracy')){card.classList.add('hidden');return} const ctx=upcomingTestContext();
   if(!ctx||!ctx.words.length||ctx.days>3){card.classList.add('hidden');return}
   const r=testReadinessForContext(ctx); card.classList.remove('hidden');
   $('#testCheckTitle').textContent=ctx.days===0?'Test heute – kurzer Check?':ctx.days===1?'Test morgen – bereit?':'Testcheck vor dem Termin';
@@ -869,6 +869,7 @@ function renderToday(){
   const cards=$('#practiceCardsBtn'),weakBtn=$('#practiceWeakBtn'),allBtn=$('#practiceAllBtn'),specialBtn=$('#practiceSpecialBtn');
   if(subjectHasCapability(state.activeSubject,'nativeLiteracy')){
     [cards,weakBtn,allBtn,specialBtn].forEach(button=>{if(button)button.disabled=true});
+    const recommendations=$('#recommendations');if(recommendations)recommendations.innerHTML='';
     $('#optionalLearningCard')?.classList.add('hidden');
     return;
   }
