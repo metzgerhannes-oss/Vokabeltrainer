@@ -51,6 +51,7 @@ async function openVariant(attack, outcome = 'capture') {
       phaseCount: document.querySelectorAll('[data-phaser-battle-phase]').length,
       attackCount: document.querySelectorAll('[data-phaser-attack]').length,
       activeAttackCount: document.querySelectorAll('[data-phaser-attack].active').length,
+      hudAbsent: document.querySelector('.phaser-cinematic-hud') === null,
       phase: stage?.dataset.phase || '',
       attack: stage?.dataset.attack || '',
       outcome: stage?.dataset.outcome || '',
@@ -72,7 +73,7 @@ async function openVariant(attack, outcome = 'capture') {
   assert(ready.attackCount === 5, 'five attack variants are selectable');
   assert(ready.activeAttackCount === 1, 'exactly one attack variant is active');
   assert(ready.phase === 'ready', 'scene starts in ready state');
-  assert(document.querySelector('.phaser-cinematic-hud') === null, 'battle stage contains no phase narration overlay');
+  assert(ready.hudAbsent, 'battle stage contains no phase narration overlay');
   assert(ready.attack === attack, 'selected attack is reflected on the stage');
   assert(ready.outcome === outcome, 'selected outcome is reflected on the stage');
   assert(ready.reducedMotion === 'true', 'matrix runs in reduced-motion mode for CI speed');
