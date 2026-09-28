@@ -25,7 +25,10 @@ try{
 
   assert((await page.locator('#menuSubjectLabel').textContent())==='Deutsch','German subject is visible');
   assert((await page.locator('#todaySummary').textContent())==='Deutsch · Klasse 1','Today routes to German grade-one foundation');
-  assert(await page.locator('#germanFoundationCard').isVisible(),'German foundation card is visible');
+  assert(await page.locator('#germanFoundationCard').evaluate(el=>!el.classList.contains('hidden')),'German foundation card is enabled for the active subject');
+  await page.evaluate(()=>showView('practiceView'));
+  assert(await page.locator('#germanFoundationCard').isVisible(),'German foundation card is visible in Lernen');
+  await page.evaluate(()=>showView('homeView'));
   assert((await page.locator('#quickLearnHeroBtn').textContent())?.includes('Deutsch'),'German CTA is primary');
 
   await page.click('#quickLearnHeroBtn');
