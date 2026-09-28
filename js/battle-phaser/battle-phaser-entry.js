@@ -55,6 +55,7 @@ function readyUi() {
 }
 
 function completeUi() {
+  window.__VT_PHASER_BATTLE_COMPLETE__ = true;
   running = false;
   start.disabled = false;
   start.textContent = 'Nochmal abspielen';
@@ -84,6 +85,7 @@ async function boot() {
         stage.classList.add('phaser-ready');
         fallback.hidden = true;
         stage.dataset.reducedMotion = reducedMotion ? 'true' : 'false';
+        window.__VT_PHASER_BATTLE_READY__ = true;
         readyUi();
 
         if (new URLSearchParams(location.search).get('autoplay') !== '0') {
