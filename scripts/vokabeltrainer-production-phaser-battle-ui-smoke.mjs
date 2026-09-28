@@ -53,8 +53,10 @@ try{
   assert(live.version.includes('v0.21.27'),'visible live renderer badge shows the release version');
   assert(live.moduleVersion==='0.21.27-phaser-production.1','production bridge exposes its renderer version');
   console.log('PRODUCTION_PHASER_GEOMETRY',JSON.stringify(live));
-  assert(live.stageWidth>0&&live.stageHeight>0,'battle stage is visible');
-  assert(live.mountWidth>=live.stageWidth*.95&&live.mountHeight>=live.stageHeight*.95,'Phaser mount fills the battle stage');
+  assert(live.stageWidth>300&&live.stageHeight>160,'battle stage keeps a cinematic mobile viewport');
+  const stageRatio=live.stageWidth/live.stageHeight;
+  assert(stageRatio>1.65&&stageRatio<1.9,'production battle keeps a near-16:9 stage');
+  assert(live.mountWidth>=live.stageWidth*.98&&live.mountHeight>=live.stageHeight*.98,'Phaser mount fills the battle stage');
   assert(live.width>0&&live.height>0,'Phaser canvas has visible geometry');
   assert(live.width>=live.stageWidth*.75&&live.height>=live.stageHeight*.75,'Phaser canvas visibly occupies the battle stage');
 
