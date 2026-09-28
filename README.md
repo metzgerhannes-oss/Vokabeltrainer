@@ -8,6 +8,8 @@ Verbindlicher Einstieg für Quellenhierarchie, Entscheidungen, Backlog, Produkti
 
 Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änderung getrennt und mit der jeweiligen Repository-Quelle belegt.
 
+Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](docs/project/CHAT_LIFECYCLE.md)**.
+
 ## Aktueller Stand
 
 App-Version: **v0.21.24**
