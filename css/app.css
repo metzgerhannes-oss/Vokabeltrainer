@@ -3952,9 +3952,16 @@ body.battle-immersive #battleView .battle-ticket-pill{
   display:none!important;
 }
 body.battle-immersive #battleView #battleFullscreenBtn{
-  grid-column:2!important;
-  grid-row:1!important;
-  justify-self:end!important;
+  position:fixed!important;
+  top:max(8px,env(safe-area-inset-top))!important;
+  right:max(8px,env(safe-area-inset-right))!important;
+  z-index:1400!important;
+  display:inline-flex!important;
+  width:auto!important;
+  max-width:46vw!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+  justify-self:auto!important;
 }
 body.battle-immersive #battleView .battle-stage-wrap{
   width:100%!important;
