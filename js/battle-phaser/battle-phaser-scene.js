@@ -133,7 +133,36 @@ function drawBackdrop(scene) {
     detail.lineBetween(x + 2, y, x + 4, y - h + 1);
   }
 
-  return { sky, sun, sunCore, far, near, mid, ground, path, detail };
+  const forest = g(scene).setScrollFactor(0.48).setDepth(-66);
+  for (let i = 0; i < 34; i += 1) {
+    const x = 35 + ((i * 83) % 1390);
+    const y = 430 + (i % 4) * 8;
+    const h = 22 + (i % 5) * 7;
+    forest.fillStyle(i % 3 === 0 ? 0x405747 : 0x4b6250, 0.72);
+    forest.fillTriangle(x - 12, y, x, y - h, x + 12, y);
+    forest.fillStyle(0x3b4b3c, 0.68).fillRect(x - 2, y - 2, 4, 13);
+  }
+
+  const rocks = g(scene).setDepth(-54);
+  for (let i = 0; i < 18; i += 1) {
+    const x = 55 + ((i * 127) % 1340);
+    const y = 528 + ((i * 39) % 142);
+    const w = 12 + (i % 4) * 7;
+    const h = 7 + (i % 3) * 5;
+    rocks.fillStyle(i % 2 ? 0x6b6c61 : 0x77776b, 0.6);
+    rocks.fillEllipse(x, y, w, h);
+  }
+
+  const foreground = g(scene).setDepth(55);
+  for (let i = 0; i < 14; i += 1) {
+    const x = 18 + ((i * 137) % 1440);
+    const y = 690 + (i % 3) * 6;
+    foreground.lineStyle(3, 0x344936, 0.5);
+    foreground.lineBetween(x, y, x - 7, y - 28 - (i % 4) * 6);
+    foreground.lineBetween(x + 2, y, x + 10, y - 22 - (i % 3) * 5);
+  }
+
+  return { sky, sun, sunCore, far, near, mid, ground, path, detail, forest, rocks, foreground };
 }
 
 function createBanner(scene, x, y, color, crest = true) {
@@ -236,7 +265,15 @@ function createRam(scene, x, y) {
 }
 
 function createFortress(scene, x, y, profileInitials = 'P') {
-  const root = scene.add.container(x, y).setDepth(2);
+  const root = scene.add.container(x, y).setDepth(2).setScale(1.08);
+
+  const outerWall = g(scene);
+  outerWall.fillStyle(0x000000, 0.16).fillRect(-258, -132, 520, 166);
+  outerWall.fillStyle(C.stoneDark, 1).fillRect(-250, -126, 500, 158);
+  outerWall.fillStyle(C.stone, 1).fillRect(-240, -116, 480, 148);
+  outerWall.fillStyle(C.stoneLight, 0.26).fillRect(-232, -108, 464, 8);
+  outerWall.fillStyle(C.stoneDark, 1);
+  for (let i = 0; i < 12; i += 1) outerWall.fillRect(-246 + i * 43, -144, 24, 28);
 
   const back = g(scene);
   back.fillStyle(0x000000, 0.18).fillRoundedRect(-177, -183, 368, 220, 18);
@@ -281,19 +318,19 @@ function createFortress(scene, x, y, profileInitials = 'P') {
   for (let xx = -22; xx <= 22; xx += 22) gate.lineBetween(xx, -58, xx, 20);
   gate.lineStyle(3, C.steel, 0.8).lineBetween(-31, -4, 31, -4);
 
-  const enemyBanner = createBanner(scene, 0, -278, C.red, false);
-  enemyBanner.setScale(0.78).setDepth(4);
+  const enemyBanner = createBanner(scene, 0, -286, C.red, false);
+  enemyBanner.setScale(0.96).setDepth(4);
   enemyBanner.__cloth.fillStyle(C.goldLight, 1).fillCircle(26, -34, 6);
 
   const ownBanner = createBanner(scene, 0, -245, C.blue, false);
   const profileMark = scene.add.text(27, -34, String(profileInitials || 'P').slice(0, 2).toUpperCase(), {
     fontFamily: 'Arial, sans-serif',
-    fontSize: '15px',
+    fontSize: '20px',
     fontStyle: 'bold',
     color: '#fff1c4'
   }).setOrigin(0.5);
   ownBanner.add(profileMark);
-  ownBanner.setScale(0.82).setAlpha(0).setY(ownBanner.y + 38).setDepth(5);
+  ownBanner.setScale(1.28).setAlpha(0).setY(ownBanner.y + 52).setDepth(7);
   ownBanner.__profileMark = profileMark;
 
   const cracks = g(scene).setAlpha(0);
@@ -344,7 +381,13 @@ function createFortress(scene, x, y, profileInitials = 'P') {
   scorch.fillStyle(0x1f1d1b, 0.28).fillEllipse(48, -36, 62, 48);
   scorch.fillStyle(0x34231d, 0.25).fillEllipse(4, -12, 90, 54);
 
-  root.add([back, towerLeft, towerRight, keep, blocks, gate, breach, scorch, rubblePile, cracks, damage1]);
+  const slits = g(scene);
+  slits.fillStyle(0x343630, 0.8);
+  [-174,-150,150,174,-55,0,55].forEach((xx, i) => slits.fillRoundedRect(xx - 3, i < 4 ? -128 : -204, 6, 22, 3));
+  const parapetShadow = g(scene);
+  parapetShadow.fillStyle(0x353732, 0.32).fillRect(-235, -99, 470, 13);
+
+  root.add([outerWall, back, towerLeft, towerRight, keep, blocks, slits, parapetShadow, gate, breach, scorch, rubblePile, cracks, damage1]);
   root.add(enemyBanner);
   root.add(ownBanner);
 
@@ -516,7 +559,7 @@ function calmFires(scene, duration = 950) {
 }
 
 function marchUnitsIntoFortress(scene, units, scale = 1) {
-  const ordered = [...units].sort((a, b) => (b.x || 0) - (a.x || 0));
+  const ordered = [...units].filter(u => !u.__visualLost).sort((a, b) => (b.x || 0) - (a.x || 0));
   ordered.forEach((u, i) => {
     const delay = i * 115 * scale;
     const laneOffset = (i % 3 - 1) * 10;
@@ -580,6 +623,120 @@ function animateArrow(scene, arrow, from, to, delay, duration = 960) {
   });
 }
 
+
+function createDefender(scene, x, y, scale = 1) {
+  const root = scene.add.container(x, y).setDepth(16).setScale(scale);
+  const body = g(scene);
+  body.fillStyle(C.redDark, 1).fillRoundedRect(-7, -10, 14, 24, 4);
+  body.fillStyle(C.steel, 1).fillCircle(0, -18, 8);
+  body.fillStyle(C.skin, 1).fillCircle(0, -15, 6);
+  body.lineStyle(2, C.wood, 1);
+  body.beginPath();body.arc(-11, -4, 12, 1.0, 5.2, false);body.strokePath();
+  body.lineStyle(1, C.goldLight, 0.8).lineBetween(-18, -13, -18, 7);
+  root.add(body);
+  root.__baseY = y;
+  return root;
+}
+
+function createDefenderCatapult(scene, x, y) {
+  const root = scene.add.container(x, y).setDepth(14);
+  const body = g(scene);
+  body.fillStyle(C.woodDark, 1).fillRect(-34, 2, 68, 10);
+  body.fillStyle(C.wood, 1).fillTriangle(-30, 2, -5, -42, 12, 2);
+  body.fillTriangle(28, 2, 5, -42, -12, 2);
+  body.fillStyle(C.woodDark, 1).fillCircle(-24, 18, 10);
+  body.fillCircle(24, 18, 10);
+  body.lineStyle(6, C.wood, 1).lineBetween(0, -10, 24, -62);
+  body.fillStyle(C.stoneDark, 1).fillCircle(28, -66, 11);
+  root.add(body);
+  root.__arm = body;
+  return root;
+}
+
+function createFortressDefense(scene) {
+  const defenders = [
+    createDefender(scene, 1062, 323, 0.92),
+    createDefender(scene, 1130, 286, 0.94),
+    createDefender(scene, 1210, 244, 1.0),
+    createDefender(scene, 1298, 286, 0.94),
+    createDefender(scene, 1370, 323, 0.9)
+  ];
+  const catapult = createDefenderCatapult(scene, 1325, 408);
+  return { defenders, catapult };
+}
+
+function fireDefenderVolley(scene, targetX = 610, targetY = 575, count = 14, scale = 1) {
+  const origins = [
+    {x:1062,y:320},{x:1130,y:282},{x:1210,y:240},{x:1298,y:282},{x:1370,y:320}
+  ];
+  for (let i = 0; i < count; i += 1) {
+    const from = origins[i % origins.length];
+    const arrow = createArrow(scene, from.x, from.y);
+    scene.__dynamic.push(arrow);
+    animateArrow(
+      scene,
+      arrow,
+      { x: from.x + (i % 3) * 5, y: from.y + (i % 2) * 4 },
+      { x: targetX + ((i * 47) % 250) - 125, y: targetY + (i % 4) * 14 },
+      i * 58 * scale,
+      (720 + (i % 4) * 70) * scale
+    );
+  }
+}
+
+function fireCatapult(scene, targetX = 620, targetY = 610, scale = 1) {
+  const stone = scene.add.circle(1328, 338, 13, C.stoneDark, 1).setDepth(48);
+  stone.setStrokeStyle(2, C.stoneLight, 0.45);
+  scene.__dynamic.push(stone);
+  const start = { x:1328, y:338 }, state = { t:0 };
+  scene.tweens.add({
+    targets: scene.__defense?.catapult || {},
+    rotation: -0.06,
+    duration: 120 * scale,
+    yoyo: true,
+    repeat: 1,
+    ease: 'Sine.InOut'
+  });
+  scene.tweens.add({
+    targets: state,
+    t:1,
+    duration: 1180 * scale,
+    ease:'Linear',
+    onUpdate:()=>{
+      const t=state.t;
+      stone.x=start.x+(targetX-start.x)*t;
+      stone.y=start.y+(targetY-start.y)*t-Math.sin(Math.PI*t)*255;
+      stone.rotation+=0.12;
+      stone.setScale(1+0.12*Math.sin(Math.PI*t));
+    },
+    onComplete:()=>{
+      stone.setAlpha(0);
+      emitDust(scene,targetX,targetY,24);
+      const ring=scene.add.circle(targetX,targetY,18,0xe4c18a,0.28).setDepth(52);
+      scene.__dynamic.push(ring);
+      scene.tweens.add({targets:ring,scale:4.2,alpha:0,duration:520*scale,ease:'Quad.Out',onComplete:()=>ring.destroy()});
+    }
+  });
+}
+
+function applyVisualLosses(scene, count = 2, scale = 1) {
+  const candidates = scene.__units.filter(u => !u.__visualLost && !u.__elite).sort((a,b)=>(b.x||0)-(a.x||0));
+  const affected = candidates.filter((_u,i)=>i%2===0).slice(0,Math.max(1,count));
+  affected.forEach((u,i)=>{
+    u.__visualLost=true;
+    scene.tweens.add({
+      targets:u,
+      x:u.x-(28+i*9),
+      y:u.y+(10+i*3),
+      rotation:i%2?0.82:-0.72,
+      alpha:0.12,
+      duration:(420+i*80)*scale,
+      ease:'Quad.Out'
+    });
+  });
+  return affected.length;
+}
+
 export function createBattleSceneClass(PhaserArg, hooks = {}) {
   globalThis.Phaser = PhaserArg;
 
@@ -594,6 +751,7 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       this.__units = [];
       this.__archers = [];
       this.__cavalry = [];
+      this.__defense = null;
       this.__phase = 'ready';
     }
 
@@ -627,7 +785,8 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       this.__cavalry.push(cav1, cav2);
 
       this.__ram = createRam(this, 235, 622);
-      this.__fortress = createFortress(this, 1225, 535, hooks.profileInitials || 'P');
+      this.__fortress = createFortress(this, 1215, 535, hooks.profileInitials || 'P');
+      this.__defense = createFortressDefense(this);
 
       const initialDamagePct = Math.max(0, Math.min(100, Number(hooks.initialDamagePct) || 0));
       if (initialDamagePct >= 18) this.__fortress.__cracks.setAlpha(0.82);
@@ -692,6 +851,7 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         const p = this.__initial.units[i];
         u.setPosition(p.x, p.y).setAlpha(p.alpha).setRotation(p.rotation).setScale(p.scaleX, p.scaleY).setDepth(p.depth);
         u.__baseY = p.y;
+        u.__visualLost = false;
       });
       const gate = this.__fortress.__gate;
       gate.setPosition(this.__initial.gate.x, this.__initial.gate.y).setRotation(this.__initial.gate.rotation).setAlpha(this.__initial.gate.alpha);
