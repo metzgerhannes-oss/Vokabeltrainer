@@ -3957,11 +3957,17 @@ body.battle-immersive #battleView #battleFullscreenBtn{
   right:max(8px,env(safe-area-inset-right))!important;
   z-index:1400!important;
   display:inline-flex!important;
+  visibility:visible!important;
+  opacity:1!important;
   width:auto!important;
+  min-width:108px!important;
+  min-height:42px!important;
   max-width:46vw!important;
   grid-column:auto!important;
   grid-row:auto!important;
   justify-self:auto!important;
+  transform:none!important;
+  pointer-events:auto!important;
 }
 body.battle-immersive #battleView .battle-stage-wrap{
   width:100%!important;
