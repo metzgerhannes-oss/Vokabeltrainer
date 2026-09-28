@@ -302,6 +302,8 @@ Bildmotive:
 - Buchstabenpfade
 - Wortkarten
 - Schreibspuren
+- **Holzschwerter als ruhiges Anfänger-/Übungsplatzmotiv**, nicht als Kampfhandlung
+- kleine Fuchs-/Holzschwert-Lernstationen für Hören, Erkennen und Schreiben
 - ruhige Pflanzen- und Naturelemente
 
 ### Spielmodus – Das Wortreich
