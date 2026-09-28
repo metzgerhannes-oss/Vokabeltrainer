@@ -8,40 +8,41 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>Kampfszene – Vokabeltrainer</title>
-  <link rel="stylesheet" href="css/app.css?v=0.18.19">
-  <link rel="stylesheet" href="css/battle-demo.css?v=1">
+  <title>Kampf – animierte Vorschau</title>
+  <link rel="stylesheet" href="css/app.css?v=0.21.24">
+  <link rel="stylesheet" href="css/battle-art.css?v=0.21.24">
+  <link rel="stylesheet" href="css/battle-demo.css?v=2">
 </head>
 <body class="battle-demo-body">
   <main class="battle-demo-main">
     <section class="battle-view active" aria-labelledby="battleDemoTitle">
       <div class="battle-shell battle-demo-shell">
         <div class="battle-demo-meta">
-          <span class="battle-ticket-pill">Vorschau</span>
-          <span>Keine Lern- oder Sync-Daten werden verändert.</span>
+          <span class="battle-ticket-pill">Bewegungsstudie</span>
+          <span>Nur Vorschau · keine Lern- oder Sync-Daten</span>
         </div>
 
         <header class="battle-head battle-demo-head">
-          <div class="battle-kicker">Schlacht · Direktvorschau</div>
-          <h1 id="battleDemoTitle">Die Bergzitadelle</h1>
-          <p>Die Sequenz entspricht dem aktuellen 5-Phasen-Kampfablauf.</p>
+          <div class="battle-kicker">Kampf · Animierte Vorschau</div>
+          <h1 id="battleDemoTitle">Angriff auf die Bergzitadelle</h1>
+          <p>Hier beurteilen wir ausschließlich Inszenierung, Timing und Lesbarkeit des Kampfes.</p>
         </header>
 
-        <section class="battle-boss-panel" aria-label="Bosskampf">
+        <section class="battle-boss-panel battle-demo-summary" aria-label="Kampfstatus">
           <div>
-            <small>Bosskampf</small>
-            <strong>Der Torwächter</strong>
-            <span>Er hält den Zugang zur Bergzitadelle.</span>
+            <small>Angreifer</small>
+            <strong>Deine Armee</strong>
+            <span>Vorrücken von links nach rechts</span>
           </div>
           <div class="battle-boss-meter">
-            <small>Durchbruch durch Lernen</small>
-            <progress max="100" value="72" aria-label="Fortschritt im Bosskampf"></progress>
-            <span>72%</span>
+            <small>Ziel</small>
+            <strong>Test 1</strong>
+            <span>Festung durch Lernfortschritt bezwingen</span>
           </div>
         </section>
 
         <div class="battle-stage-wrap battle-demo-stage-wrap">
-          <div id="battleDemoStage" class="battle-stage season-autumn subject-english gear-3 fortress-stage-citadel boss-stage" role="img" aria-label="Animierte Armee vor der Bergzitadelle">
+          <div id="battleDemoStage" class="battle-stage battle-demo-stage season-autumn subject-english gear-3 fortress-stage-citadel boss-stage" data-damage="low" role="img" aria-label="Animierte Armee vor der Bergzitadelle">
             <div class="battle-sky"><i class="battle-sun"></i><i class="battle-cloud cloud-1"></i><i class="battle-cloud cloud-2"></i></div>
             <div class="battle-hills"></div>
             <div class="battle-ground"></div>
@@ -87,12 +88,17 @@
               <div class="battle-keep"></div><div class="battle-enemy-flag"></div>
             </div>
             <div class="battle-dust"></div>
+
+            <div class="battle-demo-cinematic-hud" aria-hidden="true">
+              <span id="battleDemoCinematicLabel">BEREIT</span>
+              <strong id="battleDemoCinematicTitle">Die Reihen sammeln sich</strong>
+            </div>
           </div>
 
           <div class="battle-action-dock battle-demo-action-dock" aria-label="Schlachtaktion">
             <div class="battle-action-dock-copy">
               <strong id="battleDemoActionTitle">Angriff bereit</strong>
-              <span id="battleDemoActionHint">Die Vorschau startet direkt mit der aktuellen Kampfdauer.</span>
+              <span id="battleDemoActionHint">Angriffsart wählen und Sequenz starten.</span>
             </div>
             <button id="battleDemoStart" class="battle-primary" type="button">Sequenz abspielen</button>
           </div>
@@ -101,15 +107,24 @@
         <div id="battleDemoMessage" class="battle-message">Bereit für die Vorschau.</div>
 
         <div class="battle-demo-controls" aria-label="Angriffsart">
-          <button type="button" class="battle-attack-choice active" data-demo-attack="charge"><span>⚔</span><strong>Sturm</strong><small>bereit</small></button>
-          <button type="button" class="battle-attack-choice" data-demo-attack="volley"><span>➶</span><strong>Pfeile</strong><small>bereit</small></button>
-          <button type="button" class="battle-attack-choice" data-demo-attack="ram"><span>▰</span><strong>Rammbock</strong><small>bereit</small></button>
-          <button type="button" class="battle-attack-choice" data-demo-attack="cavalry"><span>♞</span><strong>Reiter</strong><small>bereit</small></button>
-          <button type="button" class="battle-attack-choice special" data-demo-attack="special"><span>★</span><strong>Elite</strong><small>bereit</small></button>
+          <button type="button" class="battle-attack-choice active" data-demo-attack="charge"><span>⚔</span><strong>Sturm</strong><small>Nahkampf</small></button>
+          <button type="button" class="battle-attack-choice" data-demo-attack="volley"><span>➶</span><strong>Pfeile</strong><small>Distanz</small></button>
+          <button type="button" class="battle-attack-choice" data-demo-attack="ram"><span>▰</span><strong>Rammbock</strong><small>Tor</small></button>
+          <button type="button" class="battle-attack-choice" data-demo-attack="cavalry"><span>♞</span><strong>Reiter</strong><small>Flanke</small></button>
+          <button type="button" class="battle-attack-choice special" data-demo-attack="special"><span>★</span><strong>Elite</strong><small>Finale</small></button>
         </div>
+
+        <section class="battle-demo-notes" aria-label="Prüfpunkte">
+          <strong>Beim Überarbeiten prüfen</strong>
+          <span>Wirkt das Vorrücken räumlich?</span>
+          <span>Ist der Einschlag deutlich, aber nicht hektisch?</span>
+          <span>Bleibt die Festung trotz Effekten lesbar?</span>
+          <span>Fühlt sich das Ergebnis wie ein Abschluss an?</span>
+        </section>
       </div>
     </section>
   </main>
-  <script src="js/battle-demo.js?v=1"></script>
+  <script src="js/battle-art.js?v=0.21.24"></script>
+  <script src="js/battle-demo.js?v=2"></script>
 </body>
 </html>
