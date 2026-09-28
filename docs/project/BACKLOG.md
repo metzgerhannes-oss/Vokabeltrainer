@@ -175,7 +175,7 @@ Produktionsnachweis der isolierten Vorschau:
 - PR-CI #1101 nach erfolgreichem Browser-Game-Rerun grün
 - main-CI #1102 grün
 - GitHub Pages #540 erfolgreich
-- B-012 bleibt **IN_IMPLEMENTATION**, weil die Phaser-Szene noch nicht die produktive Battle-Darstellung ersetzt und die visuelle praktische Abnahme weiterhin erforderlich ist.
+- B-012 bleibt **IN_IMPLEMENTATION**, weil der Phaser-Renderer zwar für den echten Englisch-Tagesangriff produktiv ist, Latein/weitere Fallback-Fälle und die praktische visuelle Gesamt-Abnahme aber noch offen sind.
 
 **Iteration 3 – Angriffstypen im Phaser-Renderer:**
 - alle bestehenden produktiven Angriffsarten erhalten eine eigene sichtbare Choreografie: Sturmangriff, Pfeilhagel, Rammbock, Reiterangriff und Eliteangriff
@@ -244,7 +244,7 @@ Ziel: Fachlichen Prozentwert und langfristige Spielentwicklung sauber trennen. A
 Einheiten und Ausrüstung wachsen kumulativ über ein Schuljahr und dürfen durch später neu
 bekannt werdende Vokabeln oder Tests nicht zurückgestuft werden.
 
-Umgesetzt im Release-Kandidaten v0.21.29:
+Produktiv umgesetzt in v0.21.29:
 - eigene kumulative Jahresentwicklung aus gemeisterten Wörtern, abgeschlossenen Tests und eroberten Testfestungen
 - Armee-/Avatarstufen verwenden die Jahresentwicklung statt des schwankenden aktuellen Mastery-Prozentsatzes
 - „Meine Armee“ wächst sichtbar von kleiner Formation bis zum vollständigen Heer
@@ -253,8 +253,8 @@ Umgesetzt im Release-Kandidaten v0.21.29:
 - Wochenserien enden hinter einer datierten Jahresfestung
 - Regressionstests sichern Nicht-Rückstufung, dynamische Feldzugskarte und unveränderte fachliche Mastery
 
-Technischer Neuaufbau erfolgt auf aktuellem v0.21.28-`main` in **PR #188**; der veraltete PR #173 wird
-nicht gemergt, sondern durch diesen sauberen Nachfolger ersetzt.
+Der technische Neuaufbau erfolgte auf v0.21.28-`main` in **PR #188**; der veraltete PR #173 wurde
+bewusst ohne Merge geschlossen und durch diesen sauberen Nachfolger ersetzt.
 
 Produktionsnachweis: PR #188 gemergt auf `main` (`2c5801d0d43bbc7cd10d4092b283ea0ceea76f5f`), PR-CI #1169 grün, main-CI #1170 grün und GitHub Pages #549 inklusive Live-Verifikation erfolgreich.
 
