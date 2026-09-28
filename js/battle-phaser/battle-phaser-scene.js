@@ -799,6 +799,9 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       if (initialDamagePct >= 82) {
         this.__fortress.__cracks.setAlpha(1);
         this.__fortress.__damage1.setAlpha(1);
+        (this.__defense?.defenders || []).slice(0,2).forEach((d,i)=>this.tweens.add({
+          targets:d,alpha:0.42,y:d.y+10,duration:(380+i*90)*scale,ease:'Sine.Out'
+        }));
         this.__fortress.__scorch.setAlpha(0.62);
         this.__fortress.__rubblePile.setAlpha(0.68);
         this.__fortress.__gate.setRotation(0.075).setAlpha(0.88);
@@ -922,6 +925,19 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         }
       });
 
+      at(3000, () => {
+        beat('defender-volley');
+        hooks.onStatus?.('Die Festung antwortet: Verteidiger eröffnen das Feuer.');
+        fireDefenderVolley(this, 575, 575, this.__reduced ? 7 : 16, scale);
+      });
+
+      at(3880, () => {
+        beat('friendly-losses');
+        hooks.onStatus?.('Einige Einheiten werden aus der Formation gedrängt.');
+        applyVisualLosses(this, this.__reduced ? 1 : 2, scale);
+        if (!this.__reduced) emitDust(this, 585, 610, 12);
+      });
+
       at(4300, () => {
         this.__setPhase('barrage');
         beat('volley-1');
@@ -939,6 +955,17 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
             (860 + (i % 4) * 90) * scale
           );
         }
+      });
+
+      at(5150, () => {
+        beat('catapult');
+        hooks.onStatus?.('Das Katapult auf der Festung schleudert einen Stein in die Angriffsformation.');
+        fireCatapult(this, 690, 612, scale);
+      });
+
+      at(6300, () => {
+        beat('friendly-losses');
+        applyVisualLosses(this, this.__reduced ? 1 : 2, scale);
       });
 
       at(5700, () => {
@@ -1018,6 +1045,11 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         });
       });
 
+      at(7600, () => {
+        beat('defender-volley-2');
+        fireDefenderVolley(this, 815, 570, this.__reduced ? 5 : 12, scale);
+      });
+
       at(8050, () => {
         beat('ram-charge-2');
         hooks.onStatus?.('Der zweite Rammbockstoß zielt auf das geschwächte Tor.');
@@ -1035,6 +1067,10 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
 
         this.__fortress.__breach.setAlpha(1);
         this.__fortress.__rubblePile.setAlpha(1);
+        (this.__defense?.defenders || []).forEach((d,i)=>this.tweens.add({
+          targets:d,alpha:i<2?0.12:0.28,y:d.y+18,duration:(420+i*70)*scale,ease:'Sine.Out'
+        }));
+        if(this.__defense?.catapult)this.tweens.add({targets:this.__defense.catapult,alpha:0.25,rotation:0.12,duration:520*scale,ease:'Sine.Out'});
         this.__fortress.__scorch.setAlpha(0.88);
         this.__flash.setPosition(1120, 510).setAlpha(1).setScale(0.35);
         this.tweens.add({
@@ -1067,14 +1103,14 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         });
       });
 
-      at(9000, () => {
+      at(9700, () => {
         beat('fire');
         hooks.onStatus?.('Kleine Feuerstellen und Rauch markieren die beschädigte Torzone.');
         const fires = igniteFortress(this);
         if (this.__reduced) fires.forEach(fire => fire.setAlpha(0.42));
       });
 
-      at(9650, () => {
+      at(10850, () => {
         beat('breach');
         hooks.onStatus?.('Die Verteidigung gibt nach. Die vorderen Reihen rücken zum Tor.');
         this.__units.slice(0, 8).forEach((u, i) => {
@@ -1088,7 +1124,7 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         });
       });
 
-      at(10450, () => {
+      at(12100, () => {
         this.__setPhase('result');
 
         if (this.__captureOutcome) {
@@ -1118,7 +1154,7 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         calmFires(this, 1100 * scale);
       });
 
-      at(13500, () => {
+      at(15300, () => {
         if (this.__captureOutcome) {
           beat('profile-banner');
           hooks.onStatus?.('Alle Einheiten sind in der Festung. Jetzt wird der Profilbanner gehisst.');
@@ -1135,14 +1171,14 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         }
       });
 
-      at(14800, () => {
+      at(16600, () => {
         if (this.__captureOutcome) {
           beat('secured');
           hooks.onStatus?.('Die Festung ist übernommen. Der Profilbanner steht über der eroberten Stellung.');
         }
       });
 
-      at(15600, () => {
+      at(17600, () => {
         this.__running = false;
         hooks.onComplete?.();
       });
@@ -1252,6 +1288,17 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         }
       });
 
+      at(2450, () => {
+        beat('defender-volley');
+        hooks.onStatus?.('Die Festung wehrt sich mit einer Pfeilsalve.');
+        fireDefenderVolley(this, is('cavalry') ? 720 : 570, is('cavalry') ? 560 : 585, this.__reduced ? 6 : 14, scale);
+      });
+
+      at(3300, () => {
+        beat('friendly-losses');
+        applyVisualLosses(this, this.__reduced ? 1 : (is('special') ? 1 : 2), scale);
+      });
+
       at(is('cavalry') ? 3300 : 3800, () => {
         this.__setPhase('barrage');
         beat(is('volley') ? 'volley-1' : is('cavalry') ? 'flank-1' : is('special') ? 'elite-wave-1' : 'charge-1');
@@ -1322,6 +1369,17 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         });
       }
 
+      at(is('cavalry') ? 4300 : 4850, () => {
+        beat('catapult');
+        hooks.onStatus?.('Ein Katapultschuss zwingt die Angreifer zum Ausweichen.');
+        fireCatapult(this, is('cavalry') ? 820 : 655, is('cavalry') ? 575 : 612, scale);
+      });
+
+      at(is('cavalry') ? 5350 : 5950, () => {
+        beat('friendly-losses');
+        applyVisualLosses(this, 1, scale);
+      });
+
       at(is('volley') ? 6450 : is('special') ? 6000 : is('cavalry') ? 5200 : 5300, () => {
         this.__setPhase('impact');
         beat('damage-1');
@@ -1390,7 +1448,7 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
         });
       }
 
-      const resultAt = is('volley') ? 7900 : is('special') ? 8200 : is('cavalry') ? 6800 : 6900;
+      const resultAt = is('volley') ? 9700 : is('special') ? 10000 : is('cavalry') ? 8600 : 8700;
       at(resultAt, () => {
         this.__setPhase('result');
 
