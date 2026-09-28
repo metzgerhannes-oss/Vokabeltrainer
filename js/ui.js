@@ -1394,14 +1394,30 @@ function restoreModalFocus(){
     if(target?.isConnected&&!target.disabled&&target.getClientRects().length)target.focus({preventScroll:true});
   });
 }
+let modalViewportBound=false;
+function syncModalViewport(){
+  const h=Math.max(240,Math.round(window.visualViewport?.height||window.innerHeight||0));
+  document.documentElement.style.setProperty('--modal-viewport-height',h+'px');
+}
+function ensureModalViewportBinding(){
+  if(modalViewportBound)return;
+  modalViewportBound=true;
+  window.visualViewport?.addEventListener('resize',syncModalViewport,{passive:true});
+  window.addEventListener('resize',syncModalViewport,{passive:true});
+}
 function modal(html){
-  const dialog=$('#modal');
-  if(!dialog)return;
+  const dialog=$('#modal'),content=$('#modalContent'),footer=$('#modalFooter');
+  if(!dialog||!content||!footer)return;
   if(!dialog.open){
     const active=document.activeElement;
     modalReturnFocus=active&&active!==document.body&&!dialog.contains(active)?active:null;
   }
-  $('#modalContent').innerHTML=html;
+  ensureModalViewportBinding();syncModalViewport();
+  content.innerHTML=html;
+  footer.replaceChildren();
+  const directActions=[...content.children].filter(el=>el.classList?.contains('modal-actions'));
+  const actions=directActions[directActions.length-1];
+  if(actions)footer.append(actions);
   if(!dialog.open){
     try{dialog.showModal()}catch(_e){dialog.setAttribute('open','')}
   }
