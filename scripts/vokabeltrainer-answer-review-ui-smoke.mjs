@@ -10,7 +10,7 @@ page.on('pageerror',e=>errors.push(String(e?.message||e)));
 page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
 const assert=(v,m)=>{if(!v)throw new Error('Answer review UI smoke failed: '+m)};
 
-async function startWrong(answer){
+async function submitAnswer(answer,{expectReview=true}={}){
   await page.evaluate(()=>{
     const w=setWords('review_set')[0];
     startSession('reverseRecall','review_set',[quizQueueRef(w)],false);
@@ -18,7 +18,8 @@ async function startWrong(answer){
   await page.waitForSelector('#answerField');
   await page.fill('#answerField',answer);
   await page.click('#answerBtn');
-  await page.waitForSelector('#answerReviewBtn');
+  if(expectReview)await page.waitForSelector('#answerReviewBtn');
+  else await page.waitForSelector('#continueStudyBtn');
 }
 async function enterParent(){
   await page.evaluate(()=>{session=null;showView('homeView');renderAll()});
@@ -44,7 +45,7 @@ try{
   });
 
   const before=await page.evaluate(()=>{const w=setWords('review_set')[0];return {failures:w.failures,successes:w.successes,independent:w.independentSuccesses,box:leitnerBox(w),retrieval:w.skills.retrieval,spelling:w.skills.spelling}});
-  await startWrong('Schön, dich kennenzulernen.');
+  await submitAnswer('Schön, dich kennenzulernen.');
   const afterWrong=await page.evaluate(()=>{const w=setWords('review_set')[0];return {failures:w.failures,box:leitnerBox(w)}});
   assert(afterWrong.failures===before.failures+1,'initial system-wrong result applies the normal error before child disputes it');
 
@@ -72,13 +73,13 @@ try{
 
   await page.click('#childModeBtn');
   await page.waitForSelector('#homeView.active');
-  await startWrong('Schön, dich kennenzulernen.');
+  await submitAnswer('Schön, dich kennenzulernen.',{expectReview:false});
   assert(!(await page.locator('#answerReviewBtn').count()),'approved variant is no longer graded wrong');
   assert((await page.locator('.feedback').textContent())?.includes('Richtig'),'approved variant grades correct on the next occurrence');
 
   await page.click('#continueStudyBtn');
   await page.evaluate(()=>{session=null;showView('homeView');renderAll()});
-  await startWrong('Ganz falsche Antwort');
+  await submitAnswer('Ganz falsche Antwort');
   await page.click('#answerReviewBtn');
   await enterParent();
   await page.click('[data-parent-answer-reviews]');
