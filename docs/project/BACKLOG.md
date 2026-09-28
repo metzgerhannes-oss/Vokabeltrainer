@@ -235,7 +235,7 @@ entschieden, ob Three.js, Video oder kein 3D die produktive Richtung ist.
 
 
 ## B-014 – Dauerhafte Jahresentwicklung & Jahresfestung
-**Status:** PRODUCTION / LIVE_VERIFIED  
+**Status:** IN_FIX / RELEASE_CANDIDATE v0.21.30  
 **Priorität:** P1 Spielprogression  
 **Decision:** D-20260928-005  
 **Betroffene Quellen:** `PRODUCT_DNA.md` P5/P9, `VISUAL_DNA.md` § 6, Armee-/Kampagnenmodell
@@ -257,6 +257,8 @@ Der technische Neuaufbau erfolgte auf v0.21.28-`main` in **PR #188**; der veralt
 bewusst ohne Merge geschlossen und durch diesen sauberen Nachfolger ersetzt.
 
 Produktionsnachweis: PR #188 gemergt auf `main` (`2c5801d0d43bbc7cd10d4092b283ea0ceea76f5f`), PR-CI #1169 grün, main-CI #1170 grün und GitHub Pages #549 inklusive Live-Verifikation erfolgreich.
+
+**Praktischer Befund v0.21.29:** Die Wachstumswerte waren korrekt, aber gesperrte Einheiten blieben im Heerlager als abgedunkelte Vollformation sichtbar. Dadurch war die geforderte kleine Anfangsarmee praktisch nicht erkennbar. **Fix v0.21.30:** Im Heerlager werden nur tatsächlich freigeschaltete Einheiten gerendert; die Upgrade-Karten zeigen weiterhin auch gesperrte spätere Einheiten. Eine sichtbare `X von 6`-Anzeige macht den Feldstand eindeutig.
 
 ## Pflege
 
