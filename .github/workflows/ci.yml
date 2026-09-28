@@ -136,6 +136,9 @@ jobs:
       - name: WebKit Project Menu shell
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-menu-ui-smoke.mjs
 
+      - name: WebKit Deutsch Paket B
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-deutsch-paket-b-ui-smoke.mjs
+
       - name: WebKit dialog and keyboard accessibility
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-accessibility-ui-smoke.mjs
 
