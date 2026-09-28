@@ -6,11 +6,11 @@ Stand: 28.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.33**
+- App-Version: **v0.21.34**
 - produktiver Stand auf `main`: **v0.21.33 / Merge-Commit `cb306ad4571832d6115aab38438093c58d4b5cc4` / PR #194**
 - jüngster produktiver Release: **PR #194 – v0.21.33 – Vokabel überspringen & Review-Härtung**
 - Produktionsnachweis v0.21.33: **PR-CI #1187 success · main-CI #1193 success · GitHub Pages #554 success inkl. Live-Verifikation**
-- aktueller Release-Kandidat: **keiner – v0.21.33 ist produktiv verifiziert**
+- aktueller Release-Kandidat: **v0.21.34 – Deutsch Paket B / Fachgrundgerüst auf `feat/deutsch-paket-b-v02133`; Verifikation läuft**
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
@@ -52,6 +52,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Phaser-4-Battle-Renderer Englisch | PRODUCTION v0.21.28; weitere Fächer/Fallbacks offen | D-20260928-004, B-012, PR #185/#187 |
 | Dauerhafte Jahresentwicklung / Jahresfestung | PRODUCTION / LIVE VERIFIED v0.21.30 | D-20260928-005, B-014, PR #188/#191 |
 | Family Sync | PRODUCTION / Beta-Grenze | `SYNC_ARCHITECTURE.md`, `FINAL_AUDIT.md` |
+| Deutsch Paket B / Fachgrundgerüst | IMPLEMENTED im v0.21.34-Release-Kandidaten; Verifikation läuft | `docs/project/DEUTSCH_WORTREICH_V1.md`, B-001, D-20260928-008 |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 
 ## Offene Verifikationsgrenzen
