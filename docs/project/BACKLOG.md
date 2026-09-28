@@ -211,7 +211,7 @@ Produktionsnachweis der isolierten Vorschau:
 - kurze Sound-Cues werden lokal über Web Audio erzeugt; keine externen Sounddateien und keine zusätzliche Netzabhängigkeit
 - Schlachtansicht bleibt standardmäßig scrollbar; Vollbild ist eine optionale app-eigene Ansicht und lässt sich wieder verlassen, ohne die Schlacht zu schließen
 - Browser-Smokes decken Gegenwehr, visuelle Verluste, Sound-Fähigkeit, unveränderte fachliche Mastery sowie optionales Vollbild ab
-- Release-Kandidat: PR #187
+- Produktionsnachweis: PR #187 gemergt auf `main`; CI #1166 vollständig grün
 
 ## B-013 – Kurze 3D-Storyszenen prüfen
 **Status:** APPROVED_BACKLOG  
