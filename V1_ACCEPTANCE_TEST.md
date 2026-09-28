@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 28.09.2026 · Basis: v0.21.24 · Release-Kandidat: nahtloser Übungsraum + Testabschluss
+Stand: 28.09.2026 · Basis: v0.21.25 · Release-Kandidat: nahtloser Übungsraum + Testabschlussbelohnung
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -34,7 +34,7 @@ Zusatz für v0.21.23: Dies auf einem realen iPhone über **beide** Wege prüfen:
 
 Zusatz für v0.21.24 – Übungsraum: Einen Tages-Übungsraum mit mindestens einem neuen/unsicheren Wort so bearbeiten, dass nach dem ersten Methoden-Durchlauf noch mindestens ein Pflichtwort offen ist. Es darf **kein** Abschlussbildschirm mit „Zur Übersicht“ oder „weitere/nächste Lektion“ erscheinen. Nach einer kurzen Orientierung muss derselbe Übungsraum automatisch mit den offenen Wörtern und der adaptiv nächsten passenden Methode weitergehen. Erst bei vollständig erledigtem Pflichtkern erscheint „Übungsraum abgeschlossen“ mit Fokuswörtern, Aufgaben, Trefferquote und verwendeten Lernmethoden. Bonuslernen und T−1-Rettungsrunde dürfen nicht automatisch angehängt werden.
 
-Zusatz für v0.21.24 – Testtag: Einen Test auf **heute** setzen. Der primäre Button muss **„Test abschließen“** heißen. Nach Antippen muss eine Bestätigung erscheinen; erst danach wird der Test als abgeschlossen gespeichert. Ohne eingetragene Schulnote muss die Kampagnenstation trotzdem „Test abgeschlossen“ anzeigen, die Note bleibt später nachtragbar. Ist ein weiterer Test geplant, muss er unmittelbar danach als nächstes Ziel erscheinen. Gibt es keinen Folgetest, muss im Elternmodus **„Nächsten Test vorbereiten“** und im Kindermodus die entsprechende Vorbereitungsanzeige erscheinen. Bei einem wöchentlichen Test muss nach Abschluss der nächste Serientermin zur Umfangsvorbereitung erscheinen. Einen gestern fälligen, nicht abgeschlossenen Test ebenfalls prüfen: Er darf nicht still übersprungen werden.
+Zusatz für v0.21.24 – Testtag: Einen Test auf **heute** setzen. Der primäre Button muss **„Test abschließen“** heißen. Nach Antippen muss eine Bestätigung erscheinen; erst danach wird der Test als abgeschlossen gespeichert. Ohne eingetragene Schulnote muss die Kampagnenstation trotzdem „Test abgeschlossen“ anzeigen, die Note bleibt später nachtragbar. Ist ein weiterer Test geplant, muss er unmittelbar danach als nächstes Ziel erscheinen. Gibt es keinen Folgetest, muss im Elternmodus **„Nächsten Test vorbereiten“** und im Kindermodus die entsprechende Vorbereitungsanzeige erscheinen. Bei einem wöchentlichen Test muss nach Abschluss der nächste Serientermin zur Umfangsvorbereitung erscheinen. Einen gestern fälligen, nicht abgeschlossenen Test ebenfalls prüfen: Er darf nicht still übersprungen werden. Nach der bestätigten Abschlussaktion muss einmal kurz Konfetti erscheinen; bei aktivierter Systemeinstellung für reduzierte Bewegung darf diese Animation entfallen. Das Konfetti darf weder Klicks blockieren noch den Wechsel zum nächsten Test verzögern.
 
 ## Grundregel
 
