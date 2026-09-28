@@ -127,16 +127,26 @@ try{
   await page.waitForFunction(()=>document.querySelectorAll('#armyUnitGrid .army-unit-art.art-loaded').length===6);
   await page.waitForFunction(()=>document.querySelectorAll('#armyFormationField .army-formation-art.art-loaded').length===6);
   assert(await page.locator('[data-army-hero-art]').evaluate(img=>img.naturalWidth>0&&img.naturalHeight>0),'illustrated camp artwork loads');
+  const yearArmyVisual=await page.evaluate(()=>({
+    growth:campaignGrowthState().pct,
+    stage:document.querySelector('#armyHero')?.dataset.growthStage||'',
+    fullArmyOpacity:parseFloat(getComputedStyle(document.querySelector('[data-army-hero-art]')).opacity||'0'),
+    visibleGrowthUnits:[...document.querySelectorAll('#armyHero .army-camp-growth-unit')].filter(el=>getComputedStyle(el).display!=='none').length
+  }));
+  assert(yearArmyVisual.growth===0&&yearArmyVisual.stage==='1','one mastered word remains an early school-year army stage');
+  assert(yearArmyVisual.fullArmyOpacity===0,'the fully equipped hero army is hidden before the final development stage');
+  assert(yearArmyVisual.visibleGrowthUnits===2,'the hero composition contains only currently unlocked unit groups at the early stage');
+
   assert(await page.locator('#armyUnitGrid .army-unit-art.art-loaded').count()===6,'six illustrated unit artworks load');
   assert(await page.locator('#armyFormationField .army-formation-unit').count()===6,'heerlager shows all six units in one formation');
   assert(await page.locator('#armyFormationField .army-formation-art.art-loaded').count()===6,'heerlager reuses all six local illustrated unit artworks');
   assert((await page.locator('#armyFormationField').textContent())?.includes('Fernkampf'),'heerlager exposes tactical roles directly in the formation');
-  assert((await page.locator('#armyFormationField [data-army-unit="infantry"]').textContent())?.includes('Veteran'),'formation reflects the same visible unit stage as the unit card');
+  assert((await page.locator('#armyFormationField [data-army-unit="infantry"]').textContent())?.includes('Rekrut'),'early-year formation starts visibly small instead of showing a veteran army');
   assert(await page.locator('#armyUnitGrid .army-unit-card').count()===6,'six unit cards are shown');
   assert(await page.locator('#armyUnitGrid .army-stage-badge').count()===6,'every unit card shows its visible development stage');
   assert(await page.locator('#armyUnitGrid .army-stage-pips i').count()===30,'all unit cards expose the full five-stage ladder');
-  assert(await page.locator('#armyUnitGrid [data-army-unit="infantry"]').getAttribute('data-unit-stage')==='5','mastered progress renders infantry at stage five');
-  assert((await page.locator('#armyUnitGrid [data-army-unit="infantry"] .army-unit-level').textContent())?.includes('Veteran'),'stage five has a visible veteran label');
+  assert(await page.locator('#armyUnitGrid [data-army-unit="infantry"]').getAttribute('data-unit-stage')==='1','one mastered word does not create a fully equipped army');
+  assert((await page.locator('#armyUnitGrid [data-army-unit="infantry"] .army-unit-level').textContent())?.includes('Rekrut'),'the first visible infantry stage is clearly labelled recruit');
   assert(await page.locator('#armyUnitGrid [data-army-unit="support"]').getAttribute('data-unit-stage')==='1','five learning days render support at stage one');
   assert((await page.locator('#armyUnitGrid [data-army-unit="support"] .army-unit-level').textContent())?.includes('Rekrut'),'stage one has a visible recruit label');
   assert((await page.locator('#armyViewTitle').textContent())?.includes('Armee'),'game area has a clear army title');
@@ -153,7 +163,7 @@ try{
   for(const role of ['Front','Fernkampf','Mobilität','Belagerung','Schutz','Versorgung'])assert(roleText?.includes(role),'army role is visible: '+role);
   assert(await page.locator('#armyRoleGrid progress').count()===6,'every role exposes a visible strength value');
   assert(await page.locator('#armyBonusGrid .army-bonus').count()===4,'four presentation bonuses are shown');
-  assert(await page.locator('#armyUnitGrid .army-unit-card.unlocked').count()>=4,'high learning progress visibly unlocks units');
+  assert(await page.locator('#armyUnitGrid .army-unit-card.unlocked').count()===2,'early-year state exposes only the basic infantry plus earned support instead of a full army');
   await page.click('#armyFormationField [data-army-unit="archers"]');
   await page.waitForSelector('#armyUnitView.active');
   assert((await page.locator('#armyUnitViewTitle').textContent())?.includes('Bogenschützen'),'formation unit opens the same dedicated detail view');
@@ -227,8 +237,38 @@ try{
   assert(mapAfter.length===mapBefore.length+1,'adding a newly planned test grows the campaign map by exactly one station');
   assert(mapBefore.every((key,i)=>mapAfter[i]===key),'existing earlier campaign stations keep their order when a later test is added');
   assert(await page.locator('#campaignMapBoard .campaign-map-station').count()===4,'newly planned test appears before the year fortress without a hard-coded total');
+  const yearGoalDate=await page.evaluate(()=>{
+    const target=datePlusDays(35),saved=setYearFortressDate(target,'english',currentSchoolYear());
+    if(!saved.ok)throw new Error(saved.error);
+    VTCampaignMap.render();return target;
+  });
+  assert((await page.locator('#campaignMapBoard .campaign-map-year-fortress').textContent())?.includes(await page.evaluate(d=>formatDateShort(d),yearGoalDate)),'annual fortress shows its real date once that date is known');
+  await page.click('#campaignMapBoard .campaign-map-year-fortress');
+  assert((await page.locator('#campaignMapDetail').textContent())?.includes('Nur vorwärts'),'annual-fortress detail explains monotonic year progression');
+  assert((await page.locator('#campaignMapDetail').textContent())?.includes(await page.evaluate(d=>formatDateShort(d),yearGoalDate)),'annual-fortress detail shows the stored real date');
+  const rejectedYearGoal=await page.evaluate(()=>{
+    const before=yearFortressState('english',currentSchoolYear()).date;
+    const result=setYearFortressDate(datePlusDays(10),'english',currentSchoolYear());
+    return {ok:result.ok,before,after:yearFortressState('english',currentSchoolYear()).date};
+  });
+  assert(rejectedYearGoal.ok===false&&rejectedYearGoal.after===rejectedYearGoal.before,'annual fortress cannot be dated before an already planned later test');
+
   const mapRect=await page.locator('#campaignMapView').boundingBox();
   assert(mapRect&&mapRect.width<=page.viewportSize().width+1,'campaign map view does not overflow iPhone viewport');
+
+  const monotonicGrowth=await page.evaluate(()=>{
+    const l=learner();
+    for(let i=1;i<=12;i++){const d=datePlusDays(-i);l.completedTests[`english:${d}`]={subject:'english',date:d,completedAt:new Date().toISOString(),scopeText:'Smoke',wordCount:1}}
+    const beforeGrowth=campaignGrowthState('english',currentSchoolYear()),beforeAcademic=subjectProgress('english').pct;
+    const set={id:'growth_denominator_set',learnerId:l.id,subject:'english',title:'New future material',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+    state.sets.push(set);
+    for(let i=0;i<12;i++)attachVocabularyToSet(set.id,{term:`future-${i}`,translation:`neu-${i}`,source:'growth-smoke',verified:true});
+    rebuildWordIndexes();
+    const afterGrowth=campaignGrowthState('english',currentSchoolYear()),afterAcademic=subjectProgress('english').pct;
+    return {beforeGrowth,afterGrowth,beforeAcademic,afterAcademic};
+  });
+  assert(monotonicGrowth.afterAcademic<monotonicGrowth.beforeAcademic,'newly introduced future vocabulary may lower the current academic known-word percentage');
+  assert(monotonicGrowth.afterGrowth.points===monotonicGrowth.beforeGrowth.points&&monotonicGrowth.afterGrowth.level===monotonicGrowth.beforeGrowth.level,'new future vocabulary never downgrades accumulated avatar or army development');
 
   await page.evaluate(()=>{
     state.activeSubject='latin';
