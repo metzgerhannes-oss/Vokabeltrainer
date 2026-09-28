@@ -71,6 +71,8 @@ const params = new URLSearchParams(location.search);
 const requestedAttack = params.get('attack');
 let selectedAttack = ATTACKS[requestedAttack] ? requestedAttack : 'ram';
 const captureOutcome = params.get('outcome') !== 'hit';
+const profileName = String(params.get('profile') || 'Mein Profil').trim();
+const profileInitials = profileName.split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0]).join('').toUpperCase() || 'P';
 
 const genericPhaseCopy = {
   ready: ['BEREIT', 'Die Armee wartet auf dein Signal'],
@@ -119,7 +121,10 @@ function setBeat(beat) {
   stage.dataset.beat = beat;
   if (beat === 'damage-1') stage.dataset.damage = 'medium';
   if (beat === 'damage-2' || beat === 'fire') stage.dataset.damage = 'heavy';
-  if (beat === 'takeover' || beat === 'secured') stage.dataset.control = 'own';
+  if (beat === 'profile-banner' || beat === 'secured') stage.dataset.control = 'own';
+  if (beat === 'breach-entry') stage.dataset.captureStep = 'entering';
+  if (beat === 'profile-banner') stage.dataset.captureStep = 'banner';
+  if (beat === 'secured') stage.dataset.captureStep = 'secured';
 }
 
 function syncAttackUi() {
@@ -196,6 +201,7 @@ function selectAttack(mode) {
 async function boot() {
   try {
     const BattleScene = createBattleSceneClass(Phaser, {
+      profileInitials,
       onReady: ({ reducedMotion }) => {
         scene = game.scene.getScene('BattleSpike');
         stage.classList.add('phaser-ready');
