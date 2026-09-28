@@ -624,6 +624,13 @@ function renderAll(){
 }
 function applyPreferences(){const l=learner();document.documentElement.dataset.fontSize=String(clamp(Number(l.fontSize)||17,16,24));document.documentElement.dataset.letterSpace=String(clamp(Number(l.letterSpacing)||0,0,3));document.documentElement.classList.toggle('lrs-mode',literacySupportActive(l));document.documentElement.classList.toggle('reduced-load',reducedLoadEnabled(l))}
 
+function openCompleteCurrentTest(){
+  const ctx=upcomingTestContext();if(!ctx||ctx.days>0){toast('Der aktuelle Test kann noch nicht abgeschlossen werden.','subtle');return}
+  const overdue=ctx.days<0,subjectName=subjectLabel(state.activeSubject),scope=ctx.scopeText||ctx.sets?.map(s=>s.title).join(' + ')||'Testbereich';
+  modal(`<div class="eyebrow">Test ${overdue?'nachtragen':'heute'}</div><h2>Test abschließen?</h2><p><strong>${esc(subjectName)} · ${esc(formatDateShort(ctx.date))}</strong></p><p>${esc(scope)}</p><div class="notice subtle">Bestätige erst, wenn der Test wirklich geschrieben wurde. Danach verschwindet dieser Test aus dem aktuellen Lernweg und der nächste Test bzw. dessen Vorbereitung erscheint automatisch.</div><div class="modal-actions"><button value="cancel" class="ghost">Noch nicht</button><button type="button" id="confirmCompleteTestBtn" class="primary">Test abschließen</button></div>`);
+  $('#confirmCompleteTestBtn').onclick=()=>{const done=completeTestContext(ctx);if(!done)return;closeModal();save();window.VTCampaignMap?.render?.();window.VTArmyUi?.render?.();toast('Test abgeschlossen. Der nächste Schritt ist bereit.','good')};
+}
+
 function renderTestCheck(){
   const card=$('#testCheckCard'); if(!card)return; const ctx=upcomingTestContext();
   if(!ctx||!ctx.words.length||ctx.days>3){card.classList.add('hidden');return}
@@ -634,7 +641,8 @@ function renderTestCheck(){
   $('#testReadyDetail').textContent=r.ready===r.total?'Alle Wörter sind nach dem Lernmodell testbereit.':`${r.total-r.ready} ${r.total-r.ready===1?'Wort braucht':'Wörter brauchen'} noch Festigung.`;
 }
 function renderToday(){
-  const parent=isParentMode(),reviewSet=mySets().find(setNeedsPairReview),practiceDisclosure=$('#practiceDisclosure'),cardCount=schoolYearVerifiedWords().length,cardsBtn=$('#quickCardsBtn');
+  const parent=isParentMode(),reviewSet=mySets().find(setNeedsPairReview),practiceDisclosure=$('#practiceDisclosure'),cardCount=schoolYearVerifiedWords().length,cardsBtn=$('#quickCardsBtn'),hero=$('#quickLearnHeroBtn');
+  if(hero)hero.dataset.action='learn';
   if(cardsBtn){cardsBtn.disabled=!cardCount;cardsBtn.textContent=cardCount?'▥ Karteikarten':'▥ Noch keine Karten'}
   practiceDisclosure?.classList.remove('hidden');
   if(reviewSet){
@@ -643,20 +651,38 @@ function renderToday(){
     $('#todaySummary').textContent=parent?'Vokabelpaare prüfen':'Neue Wörter werden vorbereitet';
     $('#todayContext').textContent=`${reviewSet.title} · ${count} ${count===1?'Vokabel':'Vokabeln'}`;
     $('#todayEstimate').textContent=parent?'Prüfe Wort und Bedeutung, bevor das Kind mit diesen Vokabeln lernt.':'Ein Erwachsener prüft noch, ob Wort und Bedeutung richtig zusammengehören.';
-    $('#quickLearnHeroBtn').disabled=!parent;$('#quickLearnHeroBtn').textContent=parent?'Paare prüfen':'Noch nicht bereit';
+    $('#quickLearnHeroBtn').disabled=!parent;$('#quickLearnHeroBtn').textContent=parent?'Paare prüfen':'Noch nicht bereit';if(parent)$('#quickLearnHeroBtn').dataset.action='pairReview';
     $('#todayTestPill').classList.add('hidden');$('#todayTestBtn').classList.add('hidden');return;
   }
-  const plan=buildDailyPlan(),status=dailyPlanStatus(plan),ctx=upcomingTestContext(),rescue=t1RescuePlan(plan),pending=seriesScopePending(),pendingIsNext=!!(pending&&(!ctx||pending.date<=ctx.date)),hasWords=(ctx?.words.length||schoolYearVerifiedWords().length)>0; const progressRow=$('#todayProgress')?.closest('.today-progress-row');
+  const ctx=upcomingTestContext(),pending=seriesScopePending(),pendingIsNext=!!(pending&&(!ctx||pending.date<=ctx.date)),progressRow=$('#todayProgress')?.closest('.today-progress-row');
+  if(ctx&&ctx.days<=0){
+    progressRow?.classList.add('hidden');$('#todayProgressText').textContent='';
+    $('#todaySummary').textContent=ctx.days===0?'Test heute':'Test noch abschließen';
+    $('#todayContext').textContent=`${subjectLabel(state.activeSubject)} · ${ctx.scopeText||ctx.sets.map(s=>s.title).join(' + ')}`;
+    $('#todayEstimate').textContent=ctx.days===0?'Wenn der Test geschrieben ist, schließe ihn hier ab. Danach erscheint automatisch der nächste Test oder seine Vorbereitung.':`Der Test vom ${formatDateShort(ctx.date)} ist noch offen. Schließe ihn ab, sobald er geschrieben wurde.`;
+    $('#quickLearnHeroBtn').disabled=false;$('#quickLearnHeroBtn').textContent='Test abschließen';$('#quickLearnHeroBtn').dataset.action='completeTest';
+    $('#todayTestPill').textContent=ctx.days===0?'Test heute':`Test ${formatDateShort(ctx.date)}`;$('#todayTestPill').classList.remove('hidden');$('#todayTestBtn').classList.add('hidden');
+    return;
+  }
   if(pendingIsNext){
     const subjectName=subjectLabel(state.activeSubject),when=pending.days===0?'heute':pending.days===1?'morgen':`in ${pending.days} Tagen`;
     $('#todaySummary').textContent=parent?'Testumfang festlegen':'Der nächste Test wird vorbereitet';
     $('#todayContext').textContent=`${subjectName}-Test ${when}`;
     $('#todayEstimate').textContent=parent?'Lege fest, welche Lektion oder welcher Vokabelbereich drankommt.':'Ein Erwachsener trägt noch ein, welche Vokabeln im nächsten Test drankommen.';
-    progressRow?.classList.add('hidden');$('#todayProgressText').textContent='';$('#quickLearnHeroBtn').disabled=!parent||!mySets().length;$('#quickLearnHeroBtn').textContent=parent?'Testumfang festlegen':'Noch nicht bereit';
+    progressRow?.classList.add('hidden');$('#todayProgressText').textContent='';$('#quickLearnHeroBtn').disabled=!parent||!mySets().length;$('#quickLearnHeroBtn').textContent=parent?'Testumfang festlegen':'Noch nicht bereit';if(parent)$('#quickLearnHeroBtn').dataset.action='planTest';
     $('#todayTestPill').textContent=`↻ ${WEEKDAYS_SHORT[Number(pending.series.weekday)||0]} · ${formatDateShort(pending.date)}`;$('#todayTestPill').classList.remove('hidden');
     if(parent){$('#todayTestBtn').textContent='Serientermin ändern';$('#todayTestBtn').classList.remove('hidden')}else $('#todayTestBtn').classList.add('hidden');
     return;
   }
+  if(!ctx&&latestTestCompletion()){
+    progressRow?.classList.add('hidden');$('#todayProgressText').textContent='';$('#todayTestPill').classList.add('hidden');$('#todayTestBtn').classList.add('hidden');
+    $('#todaySummary').textContent=parent?'Nächsten Test vorbereiten':'Der nächste Test wird vorbereitet';
+    $('#todayContext').textContent=`${subjectLabel(state.activeSubject)} · letzter Test abgeschlossen`;
+    $('#todayEstimate').textContent=parent?'Plane jetzt den nächsten Testtermin und den passenden Vokabelbereich.':'Ein Erwachsener plant als Nächstes den neuen Test und die Vokabeln dafür.';
+    $('#quickLearnHeroBtn').disabled=!parent||!mySets().length;$('#quickLearnHeroBtn').textContent=parent?'Nächsten Test vorbereiten':'Noch nicht bereit';if(parent)$('#quickLearnHeroBtn').dataset.action='planTest';
+    return;
+  }
+  const plan=buildDailyPlan(),status=dailyPlanStatus(plan),rescue=t1RescuePlan(plan),hasWords=(ctx?.words.length||schoolYearVerifiedWords().length)>0;
   progressRow?.classList.remove('hidden');
   if(!hasWords){
     practiceDisclosure?.classList.add('hidden');
@@ -1109,7 +1135,7 @@ function openProfileEditor(id=null){
   const gradeOptions=['','1','2','3','4','5','6','7','8','9','10','11','12','13'].map(x=>`<option value="${x}" ${String(existing?.gradeLevel||'')===x?'selected':''}>${x?`Klasse ${x}`:'Klasse wählen'}</option>`).join('');
   const subjectRows=Object.values(SUBJECT_META).map((meta,index)=>`<label class="switch-row ${meta.available?'':'disabled-row'}"><span><strong>${esc(meta.label)}</strong><small>${meta.available?(index===0?'nur aktivierte Fächer werden in der App angezeigt':'aktivierbar'):'vorbereitet · noch nicht freigeschaltet'}</small></span><input data-profile-subject="${esc(meta.id)}" type="checkbox" ${active.includes(meta.id)?'checked':''} ${meta.available?'':'disabled'}></label>`).join('');
   modal(`<div class="eyebrow">Profil</div><h2>${existing?'Profil bearbeiten':'Neues Lernprofil'}</h2><label>Name<input id="profileName" value="${esc(existing?.name||'')}"></label><label>Klasse<select id="profileGrade">${gradeOptions}</select></label><fieldset class="subject-fieldset"><legend>Avatar</legend><div class="avatar-style-choice"><label><input type="radio" name="profileAvatarStyle" value="male" ${avatarStyle==='male'?'checked':''}><span><strong>Männlich</strong><small>männliche Avatarserie</small></span></label><label><input type="radio" name="profileAvatarStyle" value="female" ${avatarStyle==='female'?'checked':''}><span><strong>Weiblich</strong><small>weibliche Avatarserie</small></span></label></div></fieldset><fieldset class="subject-fieldset"><legend><span class="label-with-help">LRS-/Lernunterstützung ${helpIcon('lrs')}</span></legend><p class="muted-line">Keine Diagnose durch die App. Aktiviere nur die Bereiche, in denen das Kind Unterstützung braucht.</p><label class="switch-row"><span><strong>Lesen</strong><small>mehr Laut-Schrift-Verknüpfung, ruhiger Wortblitz und langsamere Audioführung</small></span><input id="profileLrsReading" type="checkbox" ${support.reading?'checked':''}></label><label class="switch-row"><span><strong>Rechtschreiben</strong><small>Schreibabruf, Diktat und Wortbausteine werden im Lernpfad stärker priorisiert</small></span><input id="profileLrsSpelling" type="checkbox" ${support.spelling?'checked':''}></label></fieldset><label class="switch-row"><span><strong>Kurze Einheiten</strong><small>weniger Aufgaben pro Einheit und höchstens zwei freiwillige Nachrücker · unabhängig von LRS</small></span><input id="profileReducedLoad" type="checkbox" ${support.reducedLoad?'checked':''}></label><fieldset class="subject-fieldset"><legend>Fremdsprachen</legend>${subjectRows}</fieldset><div id="profileError" class="notice subtle">Mindestens eine aktive Fremdsprache auswählen.</div><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="saveProfile" class="primary">${existing?'Speichern':'Anlegen'}</button></div>`);
-  $('#saveProfile').onclick=()=>{const name=$('#profileName').value.trim(),subjects=$$('[data-profile-subject]').filter(x=>x.checked&&!x.disabled).map(x=>x.dataset.profileSubject),avatarStyle=$('input[name="profileAvatarStyle"]:checked')?.value==='female'?'female':'male';if(!name){$('#profileError').className='notice warn';$('#profileError').textContent='Bitte einen Namen eingeben.';return}if(!subjects.length){$('#profileError').className='notice warn';$('#profileError').textContent='Mindestens eine aktive Fremdsprache auswählen.';return}const gradeLevel=$('#profileGrade').value,literacySupport={reading:$('#profileLrsReading').checked,spelling:$('#profileLrsSpelling').checked},reducedLoad=$('#profileReducedLoad').checked,lrsMode=literacySupport.reading||literacySupport.spelling;if(existing){existing.name=name;existing.gradeLevel=gradeLevel;existing.avatarStyle=avatarStyle;existing.literacySupport=literacySupport;existing.reducedLoad=reducedLoad;existing.lrsMode=lrsMode;existing.activeSubjects=subjects;normalizeLiteracySupport(existing)}else{const learnerId=uid('learner');state.learners.push({id:learnerId,name,gradeLevel,avatarStyle,activeSubjects:subjects,xp:0,literacySupport,reducedLoad,lrsMode,fontSize:17,letterSpacing:0,flashSpeed:1600,autoSpeakCorrection:true,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()});state.activeLearnerId=learnerId}ensureActiveSubject();closeModal();save()};
+  $('#saveProfile').onclick=()=>{const name=$('#profileName').value.trim(),subjects=$$('[data-profile-subject]').filter(x=>x.checked&&!x.disabled).map(x=>x.dataset.profileSubject),avatarStyle=$('input[name="profileAvatarStyle"]:checked')?.value==='female'?'female':'male';if(!name){$('#profileError').className='notice warn';$('#profileError').textContent='Bitte einen Namen eingeben.';return}if(!subjects.length){$('#profileError').className='notice warn';$('#profileError').textContent='Mindestens eine aktive Fremdsprache auswählen.';return}const gradeLevel=$('#profileGrade').value,literacySupport={reading:$('#profileLrsReading').checked,spelling:$('#profileLrsSpelling').checked},reducedLoad=$('#profileReducedLoad').checked,lrsMode=literacySupport.reading||literacySupport.spelling;if(existing){existing.name=name;existing.gradeLevel=gradeLevel;existing.avatarStyle=avatarStyle;existing.literacySupport=literacySupport;existing.reducedLoad=reducedLoad;existing.lrsMode=lrsMode;existing.activeSubjects=subjects;normalizeLiteracySupport(existing)}else{const learnerId=uid('learner');state.learners.push({id:learnerId,name,gradeLevel,avatarStyle,activeSubjects:subjects,xp:0,literacySupport,reducedLoad,lrsMode,fontSize:17,letterSpacing:0,flashSpeed:1600,autoSpeakCorrection:true,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),completedTests:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()});state.activeLearnerId=learnerId}ensureActiveSubject();closeModal();save()};
 }
 function openBookManager(learnerId=state.activeLearnerId){
   const l=state.learners.find(x=>x.id===learnerId);if(!l)return;const subjects=learnerActiveSubjects(l);
@@ -1352,7 +1378,7 @@ function showView(id){
 }
 
 function bind(){
-  document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='armyView'&&window.VTArmyUi?.open){window.VTArmyUi.open();return}showView(b.dataset.view)}); $('#quickLearnHeroBtn').onclick=startDailyTodo; $('#quickCardsBtn')?.addEventListener('click',()=>startSession('cards')); $('#cardboxPracticeBtn').onclick=()=>startSession('cards'); $('#todayTestBtn').onclick=openTestDatePlanner; $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
+  document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='armyView'&&window.VTArmyUi?.open){window.VTArmyUi.open();return}showView(b.dataset.view)}); $('#quickLearnHeroBtn').onclick=()=>{const action=$('#quickLearnHeroBtn')?.dataset.action||'learn';if(action==='completeTest')return openCompleteCurrentTest();if(action==='planTest')return openTestDatePlanner();if(action==='pairReview'){const set=mySets().find(setNeedsPairReview);if(set)return openSetPairAudit(set.id)}startDailyTodo()}; $('#quickCardsBtn')?.addEventListener('click',()=>startSession('cards')); $('#cardboxPracticeBtn').onclick=()=>startSession('cards'); $('#todayTestBtn').onclick=openTestDatePlanner; $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
   $('#practiceCardsBtn')?.addEventListener('click',()=>startSession('cards')); $('#practiceWeakBtn')?.addEventListener('click',startWeakWordsPractice); $('#practiceAllBtn')?.addEventListener('click',openAllWordsPracticeChooser); $('#practiceSpecialBtn')?.addEventListener('click',()=>{const panel=$('#optionalLearningCard'),btn=$('#practiceSpecialBtn');if(!panel)return;const open=panel.classList.contains('hidden');panel.classList.toggle('hidden',!open);btn.setAttribute('aria-expanded',String(open));if(open)panel.scrollIntoView({block:'nearest',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})});
   $('#newSetBtn').onclick=()=>openLearningContentPlanner(); $('#addGradeBtn').onclick=()=>addGrade(); $('#practiceTestBtn').onclick=openPracticeTestChooser; $('#addProfileBtn').onclick=addProfile; $('#profileBtn').onclick=openProfileSwitcher; $('#attackBtn').onclick=openBattleView; $('#duelBtn').onclick=openDuel;
   $('#battleBackBtn').onclick=returnFromBattle; $('#battleReturnBtn').onclick=returnFromBattle; $('#battleAttackBtn').onclick=runBattleAnimation; $('#battleFullscreenBtn').onclick=toggleBattleFullscreen; $('#battleFocusAttackBtn').onclick=openBattleAttackPickerFromFocus; $('#battleStorySpeakBtn').onclick=toggleBattleStoryNarration;
