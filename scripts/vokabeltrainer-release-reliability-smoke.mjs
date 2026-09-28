@@ -17,6 +17,8 @@ assert(ci.includes('ready_for_review')&&ci.includes('github.event.pull_request.d
 assert(ci.includes('needs: [preflight, browser-core, browser-data, browser-game]'),'required test check aggregates all release gates');
 assert(ci.includes('name: test'),'required branch-protection context remains named test');
 assert(app.includes("window.__VT_APP_READY__=true")&&app.includes("dispatchEvent(new Event('vt-app-ready'))"),'app exposes a deterministic local bootstrap boundary');
+assert(app.includes("navigator.serviceWorker.addEventListener('controllerchange'")&&app.includes("updateReloading=true;")&&app.includes("location.reload();"),'service-worker controller changes force a one-time in-memory reload');
+assert(!app.includes("vokabeltrainer_sw_reload_")&&!app.includes("sessionStorage.getItem(key)"),'service-worker refresh is not blocked by a stale per-version session flag');
 assert(pages.includes('Verify live deployment')&&pages.includes('EXPECTED_VERSION')&&pages.includes('APP_VERSION'),'Pages workflow verifies the live version after deployment');
 assert(migrationV2.includes('private.vt_parent_invites')&&migrationV2.includes("interval '15 minutes'"),'deployed parent-invite migration is timestamped in the repository');
 assert(rateLimit.includes("rpc/vt_create_parent_invite")&&rateLimit.includes("rpc/vt_claim_parent_invite"),'parent-invite RPCs are covered by the rate-limit migration');
