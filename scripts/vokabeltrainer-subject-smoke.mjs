@@ -13,17 +13,24 @@ for(const file of ['js/core.js','js/storage.js','js/model.js','js/learning.js'])
 const result=vm.runInContext(`
 (()=>{
   const passed=[];const assert=(v,n)=>{if(!v)throw new Error('Subject smoke failed: '+n);passed.push(n)};
-  assert(knownSubjectIds().join(',')==='english,latin,french','all subjects come from metadata');
-  assert(availableSubjectIds().join(',')==='english,latin','French remains gated until OCR resource exists');
+  assert(knownSubjectIds().join(',')==='english,latin,german,french','all subjects come from metadata');
+  assert(availableSubjectIds().join(',')==='english,latin,german','German is active while French remains gated until OCR resource exists');
   assert(subjectFromExternal('FR')==='french'&&subjectFromExternal('Französisch')==='french','external subject aliases resolve');
   assert(subjectFromExternal('Spanisch')===''&&normalizeSubjectId('unknown','')==='','unknown subjects are rejected instead of silently becoming English');
   assert(normalizeLearnerSubjects({activeSubjects:['unknown','latin']}).join(',')==='latin','invalid profile subjects are dropped');
   assert(subjectSpeechLang('french')==='fr-FR','French speech locale configured');
   assert(subjectOcrLang('french')==='fra','French OCR code configured');
+  assert(subjectSpeechLang('german')==='de-DE','German speech locale configured');
+  assert(subjectOcrLang('german')==='deu','German OCR code configured');
+  assert(subjectHasCapability('german','nativeLiteracy')&&!subjectHasCapability('english','nativeLiteracy'),'German native-literacy capability is isolated');
+  assert(!subjectHasCapability('german','battle'),'German battle stays gated until Wortreich renderer package');
   assert(subjectHasCapability('latin','latinGrammar')&&!subjectHasCapability('french','latinGrammar'),'capabilities are metadata driven');
   assert(lexicalKey('ou','french')!==lexicalKey('où','french'),'French accent can distinguish lexemes');
   assert(lexicalKey('cote','french')!==lexicalKey('côte','french'),'French circumflex remains part of lexical identity');
   assert(Object.keys(defaultGradeScales()).includes('french')&&Object.keys(defaultTestSeries()).includes('french'),'per-subject state is generated');
+  assert(Object.keys(defaultGradeScales()).includes('german')&&Object.keys(defaultTestSeries()).includes('german'),'German per-subject state is generated');
+  const gp=defaultGermanLiteracyProgress();assert(Object.keys(gp.skills).join(',')===GERMAN_LITERACY_SKILLS.join(','),'German literacy state uses dedicated competencies');
+  const hardenedGerman=normalizeGermanLiteracyProgress({skills:{wordWriting:{attempts:2,correct:1,successDays:['2026-09-28']}}});assert(hardenedGerman.skills.wordWriting.attempts===2&&hardenedGerman.skills.wordWriting.correct===1,'German literacy progress normalizes independently');
   const v=makeVocabulary('french','bonjour','hallo');assert(v.subject==='french','French vocabulary is not collapsed to English');
   const b=makeBook('9780140449136','french',{title:'Test'});assert(b.subject==='french','French books are not collapsed to English');
   const raw=defaultState();raw.vocabulary=[v];raw.sets=[{id:'sf',learnerId:'learner_demo',subject:'french',title:'Unité 1',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target'}];raw.activeSubject='english';const hardened=hardenState(raw);assert(hardened.vocabulary[0].subject==='french'&&hardened.sets[0].subject==='french','state hardening preserves configured inactive subjects');
