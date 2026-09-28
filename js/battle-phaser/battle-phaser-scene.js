@@ -618,6 +618,8 @@ function markVisualCasualty(scene, unit, delay = 0) {
   scene.time.delayedCall(Math.max(0, delay), () => {
     if (!unit.active || unit.__casualty) return;
     unit.__casualty = true;
+    scene.__friendlyLosses = (scene.__friendlyLosses || 0) + 1;
+    scene.__onBeat?.('friendly-loss');
     scene.tweens.add({
       targets: unit,
       y: unit.y + 18,
@@ -718,6 +720,8 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       this.__archers = [];
       this.__cavalry = [];
       this.__phase = 'ready';
+      this.__friendlyLosses = 0;
+      this.__onBeat = hooks.onBeat || null;
     }
 
     create() {
@@ -808,6 +812,7 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       }
       this.__running = false;
       this.__elapsed = 0;
+      this.__friendlyLosses = 0;
       this.cameras.main.setScroll(this.__initial.cameraX, 0);
       this.cameras.main.setZoom(1);
       this.__ram.setPosition(this.__initial.ram.x, this.__initial.ram.y).setRotation(this.__initial.ram.rotation).setAlpha(1);
