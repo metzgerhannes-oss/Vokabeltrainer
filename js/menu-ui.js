@@ -70,12 +70,13 @@
 
   function render(){
     if(typeof state!=='object'||!state||typeof learner!=='function'||!learner())return;
-    const p=typeof subjectProgress==='function'?subjectProgress():{mastered:0,pct:0};
+    const p=typeof subjectProgress==='function'?subjectProgress():{mastered:0,pct:0,schoolYear:currentSchoolYear()};
+    const growth=typeof campaignGrowthState==='function'?campaignGrowthState(state.activeSubject,p.schoolYear):{pct:p.pct};
     const subject=document.querySelector('#menuSubjectLabel');
     const rank=document.querySelector('#menuRankLabel');
     const learned=document.querySelector('#menuLearnedCount');
     const castles=document.querySelector('#menuFortressCount');
-    const avatarStage=renderAvatarStage(p.pct);
+    const avatarStage=renderAvatarStage(growth.pct);
     const stageRoot=document.querySelector('.project-menu-stage');
     const visualTheme=typeof subjectVisualTheme==='function'?subjectVisualTheme(state.activeSubject):'campaign';
     if(stageRoot){
@@ -83,7 +84,7 @@
       stageRoot.dataset.subject=state.activeSubject;
     }
     if(subject)subject.textContent=subjectLabel(state.activeSubject);
-    if(rank)rank.textContent=avatarStage?.rank||rankFor(p.pct,state.activeSubject);
+    if(rank)rank.textContent=avatarStage?.rank||rankFor(growth.pct,state.activeSubject);
     if(learned)learned.textContent=String(p.mastered||0);
     if(castles)castles.textContent=String(currentCapturedFortresses());
     const testRoot=document.querySelector('#menuNextTestProgress');
@@ -135,6 +136,6 @@
     render();
   }
 
-  window.VTMenuUi={render,openHome,showProgressTarget,applyAvatarArt,renderAvatarStage,avatarStage:()=>typeof avatarStageFor==='function'?avatarStageFor(subjectProgress().pct,state.activeSubject):null};
+  window.VTMenuUi={render,openHome,showProgressTarget,applyAvatarArt,renderAvatarStage,avatarStage:()=>typeof avatarStageFor==='function'?avatarStageFor(campaignGrowthState(state.activeSubject,subjectProgress().schoolYear).pct,state.activeSubject):null};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});else bind();
 })();
