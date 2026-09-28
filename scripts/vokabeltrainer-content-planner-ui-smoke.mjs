@@ -63,7 +63,7 @@ try{
   assert(saved.intro===1&&saved.target===5&&saved.acquisitionDays===6,'saved daily plan matches the compact preview and adapts workload to the available time');
 
   // A later library-backed test must queue behind the earlier test instead of replacing it.
-  await page.click('#parentTestPlanBtn');
+  await page.click('#parentNewTestPlanBtn');
   await page.waitForSelector('#modal[open] #planWordPicker');
   const secondLibraryDate=await page.evaluate(()=>datePlusDays(8));
   await page.locator('#testPlanDate').fill(secondLibraryDate);
@@ -83,7 +83,7 @@ try{
   assert(queuedLibrary.secondCount===4,'later library test keeps its own selected vocabulary scope');
 
   // Manual source: capture remains a draft until the exact pairs are approved.
-  await page.click('#parentTestPlanBtn');
+  await page.click('#parentNewTestPlanBtn');
   await page.waitForSelector('#modal[open] #planSourceManual');
   const manualDate=await page.evaluate(()=>datePlusDays(9));
   await page.locator('#testPlanDate').fill(manualDate);
@@ -127,7 +127,7 @@ try{
   assert(manualFinal.futureDates.includes(manualDate),'approved manual test remains stored for its later date');
 
   // OCR source: import feeds the same pending-test approval gate.
-  await page.click('#parentTestPlanBtn');
+  await page.click('#parentNewTestPlanBtn');
   await page.waitForSelector('#modal[open] #planSourceOcr');
   const ocrDate=await page.evaluate(()=>datePlusDays(11));
   await page.locator('#testPlanDate').fill(ocrDate);
