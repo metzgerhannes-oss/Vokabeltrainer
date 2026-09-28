@@ -6,6 +6,16 @@ Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
 Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
 
+
+## Aktueller Praxisfortschritt
+
+- [x] Praxisblock 1 – Kind-End-to-End auf realem iPhone: Einstieg, Tageslernen, Fehler/Korrektur, Tagesabschluss, Testabschluss und Schlacht praktisch durchgeführt.
+- [x] Praxisblock 2 – Elternbereich: Test anlegen, bestehenden Test verschieben/bearbeiten, Vokabelumfang ändern und mehrere zukünftige Tests praktisch durchgeführt.
+- [ ] Praxisblock 3 – v0.21.29: dynamische Anfangsarmee, monotones Wachstum und datierbare Jahresfestung praktisch prüfen.
+- [ ] Praxisblock 4 – Family Sync, zweites Gerät, Backup/Restore und Offline/PWA praktisch prüfen.
+
+Die Detail-Checkboxen darunter bleiben der verbindliche Nachweis für Einzelfälle. Ein abgeschlossener Praxisblock ersetzt keine noch separat offene Detailprüfung außerhalb seines ausdrücklich genannten Umfangs.
+
 Zusatz aus v0.21.12: Im Elternprofil praktisch prüfen, dass **Lesen**, **Rechtschreiben** und **Kurze Einheiten** unabhängig speicherbar sind. Ein Profil nur mit Leseunterstützung darf nicht automatisch die Tageslast verkleinern; ein Profil nur mit Rechtschreibunterstützung muss im Tageslernweg einen echten Schreibabruf erhalten. Nach Family Sync muss dieselbe Einstellung auf dem zugeordneten Kindergerät ankommen.
 
 Zusatz für v0.21.13: Auf einem iPhone prüfen, dass Avatarbild, Stufen-/Teststatus und „Was steht heute an?“ klar untereinander liegen und der dunkle Statusblock das Avatarbild nicht überdeckt.
