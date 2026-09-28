@@ -133,6 +133,44 @@ Die praktische Checkliste auf realem Gerät/Browser muss tatsächlich durchgefü
 
 Die administrative Repository-Regel ist laut Final Audit noch gesondert zu aktivieren bzw. zu verifizieren.
 
+
+## B-012 – Phaser-4-Battle-Renderer
+**Status:** IN_IMPLEMENTATION  
+**Priorität:** P1 visuelle Kampfüberarbeitung  
+**Decision:** D-20260928-004  
+**Betroffene Quellen:** `VISUAL_DNA.md` §§ 4–6, `PRODUCT_DNA.md` P9, Battle-UI/Renderer
+
+Ziel ist, die bestehende CSS-/DOM-Kampfanimation durch eine eigenständige Phaser-4-Szene
+zu ersetzen, ohne die fachliche Battle-Logik anzutasten.
+
+Erster Spike:
+- nur Englisch / eine Testfestung / ein Angriffspfad
+- klar sichtbare getrennte Ebenen für Landschaft, Armee und Festung
+- glaubwürdiges Vorrücken mit zeitversetzten Einheiten
+- Projektil-/Rammbock-/Treffersequenz mit Kamera und Partikeln
+- Ergebnisphase ohne UI-Überlagerung
+- iPhone-Zielviewport und Desktop
+- produktiv später ausschließlich mit lokal ausgelieferter Engine/Assets für Offline-Fähigkeit
+- bestehende Battle-Logik und Tagesaktion bleiben unverändert
+
+Abnahme des Spikes: Die Szene muss visuell erkennbar besser als die aktuelle DOM/CSS-Version
+sein; insbesondere dürfen keine bloßen Gesamtbild-Verschiebungen, leeren Fallback-Landschaften
+oder artefaktartigen Einschlagseffekte als finale Lösung gelten.
+
+## B-013 – Kurze 3D-Storyszenen prüfen
+**Status:** IDEA  
+**Priorität:** nach stabilem Phaser-Battle  
+**Decision:** D-20260928-004  
+**Betroffene Quelle:** `VISUAL_DNA.md`
+
+Späterer Technik-/UX-Spike für sehr kurze Storymomente wie Festungsenthüllung, Sieg,
+Rangaufstieg oder Kampagnenübergang. Bevorzugt wird ein isolierter Three.js/WebGL-Renderer
+mit glTF-Assets; für feste Sequenzen wird gegen vorgerendertes Video verglichen.
+
+Nicht vorgesehen: 3D als Grundlage der Lernoberfläche oder als Pflichtabhängigkeit der
+eigentlichen Battle-Logik. Entscheidung erst nach Messung von Ladezeit, Speicherbedarf,
+Framerate und Verhalten auf älteren iPhones.
+
 ## Pflege
 
 Ein Backlog-Punkt wird nicht gelöscht, wenn er umgesetzt oder verworfen wird:
