@@ -284,6 +284,23 @@ Umsetzung v0.21.31:
 - Browser-Regressionsprüfung schützt Neutralität, Elternfreigabe und spätere automatische Akzeptanz
 
 
+## B-016 – Vokabel neutral ans Abfrageende verschieben
+**Status:** IN_IMPLEMENTATION / RELEASE_CANDIDATE v0.21.31  
+**Priorität:** P1 Lernkomfort ohne fachliche Wirkung  
+**Decision:** D-20260928-007  
+**Betroffene Quellen:** `PRODUCT_DNA.md` Rollenmodell Kind, Lernqueue
+
+Ziel: Das Kind kann eine aktuell ungünstige Vokabel zurückstellen, ohne sie aus der Lerneinheit
+zu entfernen oder eine Bewertung auszulösen.
+
+Umsetzung v0.21.31:
+- Button **„Vokabel überspringen“** vor der Bewertung
+- aktueller Queue-Eintrag wandert ans Ende derselben Session
+- keinerlei Ergebnis-, XP-, Mastery-, Leitner-, Spacing- oder Fehlerwirkung
+- am letzten Queue-Platz ist erneutes Überspringen deaktiviert
+- eigener iPhone-WebKit-Smoke prüft Reihenfolge und Neutralität
+
+
 ## Pflege
 
 Ein Backlog-Punkt wird nicht gelöscht, wenn er umgesetzt oder verworfen wird:
