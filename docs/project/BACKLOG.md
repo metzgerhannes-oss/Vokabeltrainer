@@ -188,6 +188,7 @@ Produktionsnachweis der isolierten Vorschau:
 - Eliteangriff kombiniert mehrere bereits freigeschaltete Einheitenrollen, ohne zusätzliche fachliche Wirkung zu erfinden
 - Renderer erhält zusätzlich einen Outcome-Zustand: normaler Treffer vs. tatsächliche Eroberung; Bannerwechsel/Übernahme darf nur beim Eroberungs-Outcome erscheinen
 - Browser-Smoke prüft alle fünf Angriffstypen sowie die Trennung Treffer/Eroberung
+- bei Eroberung ziehen erst alle sichtbaren Einheiten durch das aufgebrochene Tor und verschwinden in der Festung; erst danach wird der Profilbanner gehisst
 
 ## B-013 – Kurze 3D-Storyszenen prüfen
 **Status:** APPROVED_BACKLOG  
