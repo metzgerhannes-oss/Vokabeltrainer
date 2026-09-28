@@ -12,9 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.32**
+App-Version: **v0.21.33**
 
-- v0.21.32: Das Kind kann eine aktuelle Vokabel neutral überspringen; sie wird ausschließlich ans Ende derselben laufenden Abfrage verschoben und bleibt ohne Bewertungs-, XP- oder Lernstandsänderung. Offene strittige Bewertungen blockieren außerdem das heutige Tagesziel nicht: Sie gelten bis zur Elternentscheidung nur organisatorisch als bearbeitet, fachlich aber weiterhin neutral.
+- v0.21.33: Das Kind kann eine aktuelle Vokabel neutral überspringen; sie wird ausschließlich ans Ende derselben laufenden Abfrage verschoben und bleibt ohne Bewertungs-, XP- oder Lernstandsänderung. Offene strittige Bewertungen blockieren außerdem das heutige Tagesziel nicht: Sie gelten bis zur Elternentscheidung nur organisatorisch als bearbeitet, fachlich aber weiterhin neutral.
 - v0.21.31: Kinder können eine möglicherweise systemseitig falsche Bewertung direkt mit „Bewertung prüfen lassen“ melden. Der Versuch bleibt bis zur Elternentscheidung fachlich neutral. Eltern können die Antwort als lokale zulässige Variante freigeben, die Vokabel bearbeiten oder die Systembewertung bestätigen; freigegebene Varianten werden künftig automatisch akzeptiert.
 - v0.21.30: Praktischer iPhone-Abnahmetest deckte auf, dass „Meine Armee“ trotz neuer Jahresentwicklung weiterhin wie die volle Armee wirkte, weil gesperrte Einheiten im Heerlager nur abgedunkelt statt entfernt wurden. Das Heerlager zeigt jetzt ausschließlich tatsächlich freigeschaltete Einheiten und kennzeichnet sichtbar, wie viele von sechs Einheiten bereits im Feld stehen.
 - v0.21.29: Avatar, Rang und Armee erhalten eine dauerhafte Jahresentwicklung, die durch später ergänzten Lernstoff nicht zurückgestuft wird. „Meine Armee“ wächst sichtbar mit dem tatsächlich erreichten Stand; die Jahresfestung bleibt bis zu einem real bekannten Termin undatiert und kann im Elternbereich datiert, geändert oder wieder geöffnet werden.
