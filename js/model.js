@@ -288,11 +288,12 @@ function campaignGrowthState(subject=state.activeSubject,schoolYear=currentSchoo
   const masteredEver=words.filter(w=>isMastered(w)||!!w.masteredAt||!!w.lastMasteredAt).length;
   const completedTests=typeof completedTestsForSubject==='function'?completedTestsForSubject(subject).filter(x=>dateInSchoolYear(x.date,schoolYear)).length:0;
   const capturedFortresses=typeof testFortressHistory==='function'?testFortressHistory(subject).filter(f=>dateInSchoolYear(f.testDate,schoolYear)&&!!f.capturedAt).length:0;
+  const learningDays=new Set((learner()?.streakDays||[]).filter(date=>dateInSchoolYear(date,schoolYear))).size;
   const points=masteredEver+(completedTests*8)+(capturedFortresses*5);
   const pct=clamp(Math.round(points/CAMPAIGN_GROWTH_MAX_POINTS*100),0,100);
   const level=Math.max(1,Math.min(CAMPAIGN_GROWTH_STAGE_POINTS.length,CAMPAIGN_GROWTH_STAGE_POINTS.filter(t=>points>=t).length));
   const nextPoints=level<CAMPAIGN_GROWTH_STAGE_POINTS.length?CAMPAIGN_GROWTH_STAGE_POINTS[level]:null;
-  return {subject,schoolYear,points,pct,level,maxLevel:CAMPAIGN_GROWTH_STAGE_POINTS.length,nextPoints,masteredEver,completedTests,capturedFortresses};
+  return {subject,schoolYear,points,pct,level,maxLevel:CAMPAIGN_GROWTH_STAGE_POINTS.length,nextPoints,masteredEver,completedTests,capturedFortresses,learningDays};
 }
 function yearFortressKey(subject=state.activeSubject,schoolYear=currentSchoolYear()){return `${subject}:${schoolYear}`}
 function yearFortressState(subject=state.activeSubject,schoolYear=currentSchoolYear(),l=learner()){
@@ -326,7 +327,7 @@ const ARMY_UNIT_THRESHOLDS=Object.freeze({
 });
 const BATTLE_ATTACK_UNITS=Object.freeze({charge:'infantry',volley:'archers',ram:'ram',cavalry:'cavalry'});
 function armyUnitMetricValue(unitId,subject=state.activeSubject,schoolYear=currentSchoolYear()){
-  if(unitId==='support')return new Set(learner()?.streakDays||[]).size;
+  if(unitId==='support')return campaignGrowthState(subject,schoolYear).learningDays;
   return campaignGrowthState(subject,schoolYear).pct;
 }
 function armyUnitProgressFromValue(unitId,value){
