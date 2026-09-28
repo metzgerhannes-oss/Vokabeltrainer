@@ -18,7 +18,7 @@ try{
     ownBanner:document.querySelector('#battleStage .battle-scene-banner-own')?.textContent?.trim()||'',
     targetBanner:document.querySelector('#battleStage .battle-scene-banner-target')?.textContent?.trim()||''
   }));
-  assert(previewState.preview&&previewState.immersive,'locked fortress opens as a dedicated full-screen preview');
+  assert(previewState.preview&&!previewState.immersive,'locked fortress opens as a dedicated scrollable preview');
   assert(previewState.nav==='none','fortress preview keeps the app navigation out of the scene');
   assert(previewState.ticket==='none'&&previewState.readout==='none'&&previewState.tactics==='none'&&previewState.dock==='none','fortress preview hides battle-only HUD, tactics and disabled action controls');
   assert(previewState.stageVisible&&previewState.ownBanner==='Mein Profil'&&previewState.targetBanner==='Test 1','fortress preview keeps the approved campaign artwork and both identity banners');
@@ -29,7 +29,7 @@ try{
   await openBattle();
   await page.setViewportSize({width:1180,height:720});
   await page.evaluate(()=>renderBattleView());
-  assert(await page.evaluate(()=>document.body.classList.contains('battle-immersive')),'battle opens directly in full-screen immersive mode');
+  assert(!(await page.evaluate(()=>document.body.classList.contains('battle-immersive'))),'battle opens in normal scrollable mode by default');
   assert(await page.locator('.bottom-nav').evaluate(el=>getComputedStyle(el).display)==='none','primary navigation is hidden for the entire battle view');
 
   await page.waitForFunction(()=>window.VTBattleArt?.ready===true);
