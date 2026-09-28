@@ -53,7 +53,7 @@ try{
   assert((await page.locator('#todaySummary').textContent())?.includes('Vokabel heute'),'verified words become part of the bounded daily child learning task');
   assert(await page.evaluate(()=>schoolYearWords('english').length)===1,'verified word is immediately available without copy completion');
   await page.click('#quickLearnHeroBtn');
-  await page.waitForFunction(()=>document.querySelector('#modePill')?.textContent?.startsWith('Adaptiv'));
+  await page.waitForFunction(()=>document.querySelector('#modePill')?.textContent?.startsWith('Übungsraum'));
   assert(await page.locator('#firstContactCopiedBtn').count()===0,'child starts direct learning after pair verification');
   assert(await page.locator('body.learning-focus').count()===1,'direct learning is focused');
 
