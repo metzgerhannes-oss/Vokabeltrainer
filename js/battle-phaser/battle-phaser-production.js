@@ -162,6 +162,6 @@ if (typeof window !== 'undefined') {
   window.VTBattlePhaserProduction = {
     playProductionBattle,
     destroyProductionBattle,
-    version: '0.21.28-phaser-production.1'
+    version: '0.21.28-phaser-production.2'
   };
 }
