@@ -1069,7 +1069,7 @@ function openTestDatePlanner(){
   $('#saveTestPlan').onclick=()=>{
     const selected=selectedRows();if(!selected.length){preview.className='notice warn';preview.textContent='Bitte mindestens eine Vokabel für den Test auswählen.';return}
     const l=targetLearner(),when=plannedDate();if(mode.value==='single'&&!date.value){preview.className='notice warn';preview.textContent='Bitte ein Testdatum wählen.';return}
-    const latestKnown=schoolYearSets(subject,currentSchoolYear()).map(s=>String(s.testDate||'')).filter(Boolean).sort().at(-1)||'';
+    const latestKnown=(state.sets||[]).filter(s=>s.learnerId===l.id&&s.subject===subject&&s.schoolYear===currentSchoolYear()).map(s=>String(s.testDate||'')).filter(Boolean).sort().at(-1)||'';
     if(yearDate.value&&((when&&when>yearDate.value)||(latestKnown&&latestKnown>yearDate.value))){preview.className='notice warn';preview.textContent='Mindestens ein geplanter Test liegt nach der Jahresfestung. Bitte deren Termin zuerst anpassen.';return}
     const result=assignBookRowsToLearner(bookEl.value,sectionEl.value,l.id,selected.map(r=>r.id),mode.value==='single'?{testDate:date.value,forceNewSet:true}:{});if(!result.set)return;
     if(mode.value==='weekly'){
