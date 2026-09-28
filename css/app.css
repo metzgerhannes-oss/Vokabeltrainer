@@ -348,6 +348,17 @@ body.learning-focus .help-popover{display:none!important}
 .parent-task{display:grid;grid-template-columns:1fr auto;align-items:center;gap:14px;border:1px solid #fed7aa;background:#fff7ed;border-radius:16px;padding:14px 16px}
 .parent-task strong{display:block}
 .parent-task small{display:block;color:#9a3412;margin-top:2px}
+.focused-review-action{display:grid;justify-items:start;gap:5px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(23,32,51,.12)}
+.focused-review-action small{color:var(--muted);font-size:.78rem}
+.answer-review-list{display:grid;gap:12px;margin-top:16px}
+.answer-review-card{display:grid;gap:12px;padding:14px;border:1px solid #f0c78c;border-radius:15px;background:#fffaf2}
+.answer-review-card>div:first-child>div{display:grid;gap:2px}
+.answer-review-card>div:first-child small{color:var(--muted)}
+.answer-review-grid{display:grid;grid-template-columns:1.1fr 1fr 1.2fr;gap:8px}
+.answer-review-grid>div{display:grid;gap:3px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.answer-review-grid small{color:var(--muted);font-weight:700}
+.answer-review-grid strong,.answer-review-grid span{overflow-wrap:anywhere}
+@media(max-width:620px){.answer-review-grid{grid-template-columns:1fr}.answer-review-actions{display:grid}.answer-review-actions button{width:100%}}
 .parent-subnav{max-width:980px;margin:0 auto 10px}
 .parent-sets-card{margin-top:8px}
 .child-practice-disclosure{margin-top:2px}
