@@ -154,7 +154,7 @@
     if(selectionDismissed){document.querySelectorAll('[data-campaign-station]').forEach(b=>b.classList.remove('selected'));detail(null);return}
     const active=list.find(s=>s.status==='active')||list.find(s=>s.date>=today())||list[list.length-1],want=selectedKey==='year-goal'||list.some(s=>s.key===selectedKey)?selectedKey:(active?.key||'year-goal');applySelection(want);
   }
-  function open(){if(typeof isParentMode==='function'&&isParentMode())return;selectedKey='';selectionDismissed=false;render();if(typeof showView==='function')showView('campaignMapView')}
+  function open(){if(typeof isParentMode==='function'&&isParentMode())return;if(typeof subjectHasCapability==='function'&&!subjectHasCapability(state?.activeSubject,'battle')){if(state?.activeSubject==='german')window.VTGermanLearning?.openWortreichPreview?.();return}selectedKey='';selectionDismissed=false;render();if(typeof showView==='function')showView('campaignMapView')}
   function bind(){
     document.querySelector('#campaignMapBtn')?.addEventListener('click',open);
     document.querySelector('#campaignMapBackBtn')?.addEventListener('click',()=>{window.VTArmyUi?.open?.()||showView('armyView')});
