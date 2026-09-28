@@ -343,3 +343,16 @@ Das Überspringen ist fachlich neutral: kein Erfolg, kein Fehler, keine XP, kein
 Mastery, Spacing, Leitner-Box, Testbereitschaft, Tages-Sicherheitsnachweis oder Fehlerstatistik.
 Sobald die zurückgestellte Vokabel am Ende angekommen ist, kann sie nicht erneut aus der Einheit
 entfernt werden; sie muss beantwortet oder die gesamte Einheit bewusst beendet werden.
+
+
+### D-20260928-008 – Deutsch ist v1-Pflichtfach und erhält „Das Wortreich“
+**Status:** LOCKED  
+**Quelle:** [DEUTSCH_WORTREICH_V1.md](DEUTSCH_WORTREICH_V1.md); [DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md](DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md); [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P9/P11; [../../VISUAL_DNA.md](../../VISUAL_DNA.md) § 9; B-001
+
+Deutsch muss **vor v1.0 produktiv integriert** sein. Der fachliche Bereich bleibt ein eigenständiges Grundschul-Kompetenzmodell und wird nicht auf das Fremdsprachen-Vokabelmodell reduziert.
+
+Die motivierende Spielwelt heißt **„Das Wortreich“**. Der aktive Lernmodus bleibt ruhig und darf den bereits definierten Fuchs als Lernbegleiter nutzen; die vollständige Spielinszenierung findet separat als mittelalterliche Burg-/Ritter-/Belagerungswelt statt. Deutsch erhält damit echte Kämpfe und eine eigene Armee. Gegner sind fiktional und nicht realweltlich codiert.
+
+Diese Entscheidung **ersetzt ausschließlich die frühere visuelle Einschränkung** aus B-001 / VISUAL_DNA § 9, wonach Deutsch ein reiner Fuchs-Lernbereich ohne Battle-Welt sein sollte. D-20260927-009 bleibt für das evidenzbasierte Kompetenzmodell vollständig gültig.
+
+Für v1.0 sind mindestens verpflichtend: auswählbares Fach Deutsch; Klasse-1-Einstieg mit Buchstaben/Lauten/ersten Wörtern; Lernwörter und einfache Sätze; deutsches Audio; deutschspezifische Bewertung; neutrale Systemfehler-/Überspringlogik; eigener Wortreich-Spielbereich und mindestens ein echter Belagerungskampf. Spielprogression darf Mastery, Spacing, Testbereitschaft oder fachliche Bewertung niemals verändern.
