@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 28.09.2026 · App v0.21.25
+Stand: 28.09.2026 · App v0.21.26
 
 ## Ergebnis
+
+- v0.21.26 trennt fachlichen Prozentwert und langfristige Spielentwicklung. Avatar, Rang und Armee wachsen kumulativ über das Schuljahr und werden durch später ergänzten Stoff nicht zurückgestuft. Die große voll ausgerüstete Armee erscheint erst auf der höchsten Entwicklungsstufe; vorher wird die Formation aus den tatsächlich freigeschalteten Einheiten aufgebaut. Die Jahresfestung besitzt ein eigenes optionales Datum pro Kind/Fach/Schuljahr, bleibt ohne bekannten Termin undatiert und wird über Family Sync übertragen. Neue Tests bleiben dynamisch und dürfen nicht hinter einer bereits datierten Jahresfestung liegen.
 
 - v0.21.25 ergänzt am echten Testabschluss eine kurze Konfetti-Belohnung. Sie wird ausschließlich nach der bestätigten, erfolgreichen Testabschlussaktion ausgelöst, bleibt rein dekorativ, beeinflusst keine fachlichen Werte und respektiert `prefers-reduced-motion`.
 
