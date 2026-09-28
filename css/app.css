@@ -4143,11 +4143,11 @@ body.battle-preview #battleView .battle-stage{
   position:relative!important;
   flex:none!important;
   width:min(100%,1100px)!important;
-  height:56.25vw!important;
+  height:auto!important;
   min-height:180px!important;
   max-height:619px!important;
   margin:0 auto!important;
-  aspect-ratio:auto!important;
+  aspect-ratio:16 / 9!important;
   visibility:visible!important;
   opacity:1!important;
   border-radius:18px!important;
@@ -4168,9 +4168,10 @@ body.battle-preview #battleView .battle-rank-badge{
   }
   body.battle-preview #battleView .battle-stage{
     width:100%!important;
-    height:calc(56.25vw - 9px)!important;
+    height:auto!important;
     min-height:180px!important;
     max-height:260px!important;
+    aspect-ratio:16 / 9!important;
     border-radius:14px!important;
   }
 }
