@@ -243,10 +243,15 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
     Lernfortschritt hängt an der Bedeutung und am Lernenden, nicht nur an der Zeichenfolge.
     Schulbuchform und akzeptierte Antworten bleiben set-/sense-spezifisch.
 
-11. **Sprachen sind fachlich eigenständige Module**
-    Englisch, Latein und später Französisch teilen technische Grundlagen, aber
-    sprachspezifische Lernanforderungen werden explizit modelliert. Lateinische Formen,
-    französische Akzente usw. werden nicht in ein Englisch-Schema gezwängt.
+11. **Fächer sind fachlich eigenständige Module**
+    Englisch, Latein, Deutsch und später Französisch teilen technische Grundlagen, aber
+    fachspezifische Lernanforderungen werden explizit modelliert. Lateinische Formen,
+    französische Akzente und der deutsche Schriftspracherwerb werden nicht in ein
+    Englisch-Schema gezwängt.
+    **Deutsch ist Bestandteil des v1.0-Scopes.** Der Deutschbereich folgt dem eigenen
+    Kompetenzmodell aus `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`.
+    Seine motivierende Spielwelt **„Das Wortreich“** bleibt gemäß P9 strikt vom aktiven
+    Lernmodus getrennt; Kampf und Reichsentwicklung dürfen keine fachliche Kompetenz erzeugen.
 
 12. **Evidenz vor Gewohnheit**
     Größere Produktentscheidungen werden regelmäßig gegen aktuelle Lernforschung,

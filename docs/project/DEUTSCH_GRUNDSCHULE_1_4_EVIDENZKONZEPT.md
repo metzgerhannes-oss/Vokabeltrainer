@@ -1,15 +1,15 @@
 # Deutsch Grundschule 1–4 – evidenzgeprüftes Fachkonzept
 
-**Status:** REVIEWED / kanonische Fachspezifikation für die spätere Umsetzung  
-**Stand:** 27.09.2026  
+**Status:** REVIEWED / kanonische Fachspezifikation für die Umsetzung vor v1.0  
+**Stand:** 28.09.2026  
 **Geltungsbereich:** Deutsch Grundschule Klassen 1–4, Baden-Württemberg  
-**Zugehörige Entscheidungen:** D-0001, D-0006, D-0008, D-20260927-008, D-20260927-009  
+**Zugehörige Entscheidungen:** D-0001, D-0006, D-0008, D-20260927-008, D-20260927-009, D-20260928-008  
 **Backlog:** B-001  
-**Visuelle Quelle:** `VISUAL_DNA.md` § 9 „Deutsch Grundschule 1–4 – Fuchswelt“
+**Visuelle Quelle:** `VISUAL_DNA.md` § 9 „Deutsch Grundschule 1–4 – Das Wortreich“; v1-Scope: `DEUTSCH_WORTREICH_V1.md`
 
 ## 1. Zweck und Evidenzstatus
 
-Diese Spezifikation hält den fachlich geprüften Zielzustand für den späteren Deutsch-Grundschulbereich fest. Sie ist keine Implementierungsbeschreibung und behauptet keine therapeutische Wirkung.
+Diese Spezifikation hält den fachlich geprüften Zielzustand für den vor v1.0 umzusetzenden Deutsch-Grundschulbereich fest. Sie ist keine Implementierungsbeschreibung und behauptet keine therapeutische Wirkung.
 
 Die Gegenprüfung wurde am 27.09.2026 gegen den zu diesem Zeitpunkt geltenden Bildungsplan Baden-Württemberg sowie aktuelle systematische Reviews, Meta-Analysen, randomisierte Studien und deutschsprachige Interventionsforschung vorgenommen. Die im Quellenverzeichnis geführten Kernquellen und DOI-/Publikationsangaben wurden am selben Tag nochmals gegen Bildungsplan/AWMF bzw. Original- oder Verlagsseiten bibliografisch verifiziert.
 
@@ -20,6 +20,8 @@ Evidenzklassen in diesem Dokument:
 - **C – Produktentscheidung / technisch zu validieren:** pädagogisch plausibel und mit den Quellen vereinbar, aber nicht direkt durch eine einzelne Studie als konkrete App-Funktion nachgewiesen
 
 Die Recherche ist eine gezielte Produkt-Evidenzprüfung und keine eigene vollständige systematische Review. Bei späterer Umsetzung ist die Literatur seit diesem Stichtag erneut auf Aktualisierungen zu prüfen.
+
+**Abgrenzung Spielwelt:** Die fachliche Evidenz- und Kompetenzlogik dieses Dokuments bleibt unabhängig von der motivierenden Spielwelt. Der Lernmodus kann den Fuchs als ruhigen Begleiter verwenden; **„Das Wortreich“** mit Ritterheer und Belagerungen liegt ausschließlich außerhalb des aktiven Abrufs. Kampfereignisse liefern keine fachliche Evidenz.
 
 ## 2. Curriculare Grundlage Baden-Württemberg
 

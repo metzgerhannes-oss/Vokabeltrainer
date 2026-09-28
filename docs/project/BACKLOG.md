@@ -4,27 +4,31 @@ Stand: 27.09.2026
 
 Dieses Backlog enthält nur Punkte, die als Projektarbeit erhalten bleiben sollen. Reine Ideen ohne Bewertung gehören zunächst in den Status `IDEA`; als sinnvoll bestätigte, aber noch nicht umgesetzte Punkte in `APPROVED_BACKLOG`.
 
-## B-001 – Deutsch Grundschule 1–4
-**Status:** APPROVED_BACKLOG  
-**Priorität:** noch nicht terminiert  
-**Decision:** D-20260927-009  
+## B-001 – Deutsch Grundschule 1–4 / Das Wortreich
+**Status:** IN_IMPLEMENTATION  
+**Priorität:** P0 / Release-Blocker vor v1.0  
+**Decisions:** D-20260927-009, D-20260928-008  
 **Kanonische Fachquelle:** `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`  
-**Weitere Quellen:** `PRODUCT_DNA.md` P8, `VISUAL_DNA.md` § 9, `SUBJECT_SYSTEM.md`, D-20260927-008
+**v1-/Spiel-Spezifikation:** `docs/project/DEUTSCH_WORTREICH_V1.md`  
+**Weitere Quellen:** `PRODUCT_DNA.md` P8/P9/P11, `VISUAL_DNA.md` § 9, `SUBJECT_SYSTEM.md`, D-20260927-008
 
-Der ursprünglich nur für die 1. Klasse vorgemerkte Deutschbereich ist nach Gegenprüfung gegen den aktuellen Bildungsplan Baden-Württemberg und aktuelle Fachliteratur auf **Klasse 1–4** erweitert.
+Deutsch ist vor v1.0 verpflichtend produktiv zu integrieren. Der Fachbereich bleibt evidenzbasiert und kompetenzorientiert; seine motivierende Spielwelt heißt **„Das Wortreich“**.
 
-Verbindliche Leitlinien der späteren Umsetzung:
-- eigener Fuchs-Lernbereich statt Battle-Welt
-- Kompetenzmodell von phonologischer Bewusstheit/Buchstaben über Lesen und Handschrift bis Rechtschreibung, Grammatik und Textproduktion
-- LRS-Unterstützung dediziert als **Lesen**, **Rechtschreiben** oder **beides**
-- DaZ/Mehrsprachigkeit als unabhängige Unterstützungsdimension, nicht als LRS
-- früher Schriftspracherwerb mit expliziter Laut–Schrift-Verknüpfung und echter Handschrift; Nachspuren geht in freie Produktion über
-- Lernwörter als Teil eines Mehrkomponenten-Rechtschreibsystems
-- Papier-Diktat mit Foto/OCR als geplanter Modus; unsichere OCR darf nie als Fehler des Kindes gewertet werden
-- LLM darf erklären/klassifizieren, aber nicht die deterministische Richtig/Falsch-Entscheidung oder rohe Handschrift ersetzen
-- eigene Deutsch-Mastery-Dimensionen für Lesen, Schreiben/Rechtschreibung, Verstehen usw.
+Verbindliche Leitlinien:
+- Klasse 1 als produktiver Einstieg: Buchstaben, Laut–Buchstaben-Zuordnung, Nachspuren → freie Produktion, erste Wörter und einfache Sätze
+- Lernwörter, Rechtschreibung und deutsche Sätze als Anschluss
+- deutsches Audio/Vorlesen dort, wo es die Lösung nicht vorwegnimmt
+- eigene deutsche Bewertungslogik; Groß-/Kleinschreibung nicht pauschal tolerant
+- LRS Lesen / Rechtschreiben und DaZ bleiben getrennte Unterstützungsdimensionen
+- Fuchs bleibt als ruhiger Lernbegleiter möglich
+- separater Spielbereich **Das Wortreich** mit Ritterheer, Burgprogression und Belagerungskämpfen
+- mindestens ein echter Deutsch-Kampf vor v1.0
+- Gegner rein fiktional
+- keine Rückwirkung von Kampf/Armee auf Mastery, Spacing, Testbereitschaft oder fachliche Bewertung
+- strittige Bewertungen und Überspringen müssen auch in Deutsch gemäß D-20260928-006/007 neutral funktionieren
 
-Die vollständige Evidenzbasis, Anpassungen und Literatur sind in der kanonischen Fachquelle dokumentiert.
+**Paket A – Produkt-/Architekturverankerung:** in Umsetzung in diesem Änderungsstrang.  
+**Pakete B–F:** Fachgrundgerüst, Klasse-1-Kern, Lernwörter/Rechtschreibung, Wortreich und v1-Abnahme folgen als technische Umsetzung.
 
 ## B-002 – Eigene finale Latein-Grafikserie
 **Status:** APPROVED_BACKLOG  
