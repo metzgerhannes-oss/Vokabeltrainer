@@ -10,7 +10,9 @@ Bei Grundsatzfragen werden bestehende Projektregel, Bewertung und mögliche Änd
 
 ## Aktueller Stand
 
-App-Version: **v0.21.22**
+App-Version: **v0.21.23**
+
+- v0.21.23: Behebt die auf realen iPhones sichtbare leere Festungsvorschau. WebKit konnte den 16:9-Bildbereich nach dem Ausblenden der Battle-Steuerung auf nahezu null Höhe zusammenschieben. Die Vorschau erhält jetzt eine eigenständige, nicht schrumpfende 16:9-Geometrie. Regressionstests prüfen beide Einstiege – „Festung ansehen“ aus der Armee und „Zur Schlacht“ aus „Mein Feldzug“ – auf echte sichtbare Bildhöhe statt nur auf `display != none`.
 
 - v0.21.22: Der verpflichtende Tageskern ist auf 5–6 Fokuswörter begrenzt, mit „Kurze Einheiten“ auf 3–4. Rückstand bläht die Pflichtsession nicht mehr auf. Zusätzlich gibt es für den Tag vor einem Test einen T−1-Rettungsmodus: testbereite Wörter werden ausgelassen, Fehler und noch ungeprüfte unsichere/ unbekannte Testwörter werden in getrennten freiwilligen Kurzrunden priorisiert, und die Abfrage spiegelt das reale Testformat. Rettungsrunden erzeugen keine zusätzliche Battle-Aktion und lockern Mastery oder Spacing nicht. Automatische „heute sicher“-Wiederholungen verlängern den Pflichtkern nicht mehr. Bereits heutiger Fortschritt aus dem alten 12er-Plan wird beim Wechsel auf den kompakten Plan soweit fachlich passend übernommen. Die Armee-Schaltfläche „Festung ansehen“ ist wieder ein reiner bildfokussierter Vorschauweg: Solange keine Tagesaktion freigeschaltet ist, werden Battle-HUD, Angriffskarten und der gesperrte Aktionsblock vollständig ausgeblendet; erst mit echter Angriffs-/Sicherungsaktion erscheint die Schlachtsteuerung.
 
