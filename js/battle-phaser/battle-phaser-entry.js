@@ -14,8 +14,6 @@ const start = document.querySelector('#phaserBattleStart');
 const message = document.querySelector('#phaserBattleMessage');
 const actionTitle = document.querySelector('#phaserBattleActionTitle');
 const actionHint = document.querySelector('#phaserBattleActionHint');
-const phaseLabel = document.querySelector('#phaserBattleCinematicLabel');
-const phaseTitle = document.querySelector('#phaserBattleCinematicTitle');
 const fallback = document.querySelector('#phaserBattleFallback');
 const selector = document.querySelector('#phaserAttackSelector');
 
@@ -104,10 +102,6 @@ function setPhase(phase) {
   window.__VT_PHASER_BATTLE_PHASES__ = window.__VT_PHASER_BATTLE_PHASES__ || [];
   window.__VT_PHASER_BATTLE_PHASES__.push(phase);
   stage.dataset.phase = phase;
-  const [label, title] = phaseCopyFor(phase);
-  phaseLabel.textContent = label;
-  phaseTitle.textContent = title;
-
   const order = { rally: 1, advance: 2, barrage: 3, impact: 4, result: 5 };
   document.querySelectorAll('[data-phaser-battle-phase]').forEach(el => {
     const here = el.dataset.phaserBattlePhase;
