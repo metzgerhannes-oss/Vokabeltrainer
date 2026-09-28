@@ -448,7 +448,7 @@ function inspectBackup(x){
   const legacy=Array.isArray(x.words),normalized=Array.isArray(x.vocabulary)&&Array.isArray(x.setVocabulary)&&Array.isArray(x.learnerVocabulary);if(!legacy&&!normalized)return 'Vokabeldaten fehlen.';
   if(x.learners.length>20||x.sets.length>10000)return 'Das Backup ist für diese App ungewöhnlich groß.';
   if(legacy&&x.words.length>100000)return 'Das Backup enthält ungewöhnlich viele Vokabeln.';
-  if(normalized&&(x.vocabulary.length>100000||x.setVocabulary.length>250000||x.learnerVocabulary.length>150000||(Array.isArray(x.books)&&x.books.length>5000)||(Array.isArray(x.learnerBooks)&&x.learnerBooks.length>10000)||(Array.isArray(x.bookVocabulary)&&x.bookVocabulary.length>250000)))return 'Das Backup ist für diese App ungewöhnlich groß.';
+  if(normalized&&(x.vocabulary.length>100000||x.setVocabulary.length>250000||x.learnerVocabulary.length>150000||(Array.isArray(x.books)&&x.books.length>5000)||(Array.isArray(x.learnerBooks)&&x.learnerBooks.length>10000)||(Array.isArray(x.bookVocabulary)&&x.bookVocabulary.length>250000)||(Array.isArray(x.answerReviews)&&x.answerReviews.length>3000)))return 'Das Backup ist für diese App ungewöhnlich groß.';
   return '';
 }
 function repairReplacedFutureTests(s,sourceVersion){
