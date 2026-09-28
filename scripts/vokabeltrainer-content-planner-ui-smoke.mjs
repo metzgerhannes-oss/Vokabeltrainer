@@ -166,12 +166,12 @@ try{
     learner().dailyPlans={};
     const removed=links[5],progress=ensureLearnerVocabulary(state.activeLearnerId,removed.vocabId,removed.senseId);progress.successes=17;
     const fortress=currentTestFortress('english');fortress.defense=Math.max(0,fortress.maxDefense-37);fortress.attacks=[...(fortress.attacks||[]),{date:new Date().toISOString(),damage:37}];
-    persistOnly();showView('homeView');renderToday();
+    persistOnly();showView('parentView');renderAll();
     return {setId,removedProgressId:progress.id,fortressCreatedAt:fortress.createdAt,fortressDefense:fortress.defense};
   },saved.id);
-  assert((await page.locator('#todaySummary').textContent())?.includes('Test heute'),'due-today state is shown before editing');
-  assert(await page.locator('#todayTestBtn').isVisible()&&(await page.locator('#todayTestBtn').textContent())?.includes('Test bearbeiten'),'parent can edit the current test on test day');
-  await page.click('#todayTestBtn');
+  assert(await page.locator('#parentView').isVisible(),'parent area remains the editing surface for test administration');
+  assert((await page.locator('#parentTestPlanBtn').textContent())?.includes('Aktuellen Test bearbeiten'),'parent area makes current-test editing explicit on test day');
+  await page.click('#parentTestPlanBtn');
   await page.waitForSelector('#modal[open] #planWordPicker');
   assert((await page.locator('#modalContent h2').textContent())?.includes('bearbeiten'),'current-test editor is explicitly labeled as editing');
   assert(await page.locator('#testPlanDate').inputValue()===await page.evaluate(()=>today()),'editor opens with the current test date');
@@ -182,7 +182,7 @@ try{
   await page.locator('#planRangeTo').fill('4');
   await page.click('#planSelectRange');
   await page.click('#saveTestPlan');
-  await page.waitForSelector('#homeView.active');
+  await page.waitForSelector('#parentView.active');
   const edited=await page.evaluate(fixture=>{
     const ctx=upcomingTestContext('english'),set=state.sets.find(s=>s.id===fixture.setId),progress=(state.learnerVocabulary||[]).find(p=>p.id===fixture.removedProgressId),fortress=currentTestFortress('english');
     const oldDateStillActive=(state.sets||[]).some(s=>s.learnerId===state.activeLearnerId&&s.subject==='english'&&s.testDate===today());
