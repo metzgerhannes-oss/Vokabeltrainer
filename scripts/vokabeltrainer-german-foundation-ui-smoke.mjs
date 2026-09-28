@@ -28,6 +28,8 @@ try{
   assert(await page.locator('#germanFoundationCard').evaluate(el=>!el.classList.contains('hidden')),'German foundation card is enabled for the active subject');
   await page.evaluate(()=>showView('practiceView'));
   assert(await page.locator('#germanFoundationCard').isVisible(),'German foundation card is visible in Lernen');
+  assert((await page.locator('#practiceView .practice-intro h2').textContent())==='Dein Fuchspfad','German learning hub uses its own Fuchspfad heading');
+  assert(!(await page.locator('#practiceView .practice-path-grid').isVisible()),'foreign-language practice tiles stay hidden in German');
   assert((await page.locator('#germanFoundationCard .german-fox').count())===2,'German hub shows two calm fox guides');
   assert((await page.locator('#germanFoundationCard .wood-sword').count())===3,'German hub shows wooden-sword learning stations');
   assert((await page.locator('.bottom-nav [data-view="armyView"]').textContent())?.includes('Wortreich'),'German game navigation uses the Wortreich identity');
