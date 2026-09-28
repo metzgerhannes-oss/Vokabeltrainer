@@ -350,6 +350,8 @@ body.learning-focus .help-popover{display:none!important}
 .parent-task small{display:block;color:#9a3412;margin-top:2px}
 .focused-review-action{display:grid;justify-items:start;gap:5px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(23,32,51,.12)}
 .focused-review-action small{color:var(--muted);font-size:.78rem}
+.skip-vocabulary-action{display:grid;justify-items:center;gap:4px;margin-top:18px;padding-top:14px;border-top:1px solid rgba(23,32,51,.1)}
+.skip-vocabulary-action small{color:var(--muted);font-size:.78rem}
 .answer-review-list{display:grid;gap:12px;margin-top:16px}
 .answer-review-card{display:grid;gap:12px;padding:14px;border:1px solid #f0c78c;border-radius:15px;background:#fffaf2}
 .answer-review-card>div:first-child>div{display:grid;gap:2px}
