@@ -151,9 +151,11 @@ Spacing-Modells über mehrere unabhängige Abrufe und Tage.
 
    **Bis zum tatsächlichen Abschluss bleibt ein Test bearbeitbar.** Termin und Testumfang dürfen
    sich auch am Testtag noch ändern. Eine Terminverschiebung aktualisiert denselben Test statt
-   einen parallelen Test anzulegen. Entfernte Wörter verschwinden nur aus dem Testumfang; ihre
-   persönliche Lernhistorie bleibt erhalten. Eine bereits begonnene Testfestung folgt dem
-   geänderten Termin und Umfang, ohne den erspielten Angriffsfortschritt zurückzusetzen.
+   einen parallelen Test anzulegen. Die Identität eines Tests ist dabei unabhängig vom Kalenderdatum:
+   zwei getrennt geplante Tests am selben Tag dürfen weder ihre Vokabelumfänge noch ihren Abschluss-
+   oder Festungsstatus automatisch zusammenlegen. Entfernte Wörter verschwinden nur aus dem
+   Testumfang; ihre persönliche Lernhistorie bleibt erhalten. Eine bereits begonnene Testfestung
+   folgt dem geänderten Termin und Umfang, ohne den erspielten Angriffsfortschritt zurückzusetzen.
 
    **T−1-Rettungsmodus:** Liegt der Test am nächsten Tag und ist noch deutlicher Rückstand
    vorhanden, wird nicht der komplette Testumfang stumpf als Karteikasten abgefragt. Nach dem
