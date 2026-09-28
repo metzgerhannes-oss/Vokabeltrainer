@@ -235,7 +235,7 @@ entschieden, ob Three.js, Video oder kein 3D die produktive Richtung ist.
 
 
 ## B-014 – Dauerhafte Jahresentwicklung & Jahresfestung
-**Status:** IMPLEMENTED / RELEASE_CANDIDATE  
+**Status:** PRODUCTION / LIVE_VERIFIED  
 **Priorität:** P1 Spielprogression  
 **Decision:** D-20260928-005  
 **Betroffene Quellen:** `PRODUCT_DNA.md` P5/P9, `VISUAL_DNA.md` § 6, Armee-/Kampagnenmodell
@@ -255,6 +255,8 @@ Umgesetzt im Release-Kandidaten v0.21.29:
 
 Technischer Neuaufbau erfolgt auf aktuellem v0.21.28-`main` in **PR #188**; der veraltete PR #173 wird
 nicht gemergt, sondern durch diesen sauberen Nachfolger ersetzt.
+
+Produktionsnachweis: PR #188 gemergt auf `main` (`2c5801d0d43bbc7cd10d4092b283ea0ceea76f5f`), PR-CI #1169 grün, main-CI #1170 grün und GitHub Pages #549 inklusive Live-Verifikation erfolgreich.
 
 ## Pflege
 
