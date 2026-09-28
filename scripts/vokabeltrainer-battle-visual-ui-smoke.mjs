@@ -90,16 +90,17 @@ try{
     const stage=document.querySelector('#battleStage')?.getBoundingClientRect();
     const tactics=document.querySelector('#battleView .battle-scene-tactics')?.getBoundingClientRect();
     const dock=document.querySelector('#battleView .battle-action-dock')?.getBoundingClientRect();
-    const view=document.querySelector('#battleView')?.getBoundingClientRect();
+    const view=document.querySelector('#battleView');
+    const bodyStyle=getComputedStyle(document.body),viewStyle=view?getComputedStyle(view):null;
     return {
       readoutAboveStage:!!readout&&!!stage&&readout.bottom<=stage.top+1,
       tacticsBelowStage:!!tactics&&!!stage&&tactics.top>=stage.bottom-1,
       dockBelowTactics:!!dock&&!!tactics&&dock.top>=tactics.bottom-1,
-      fillsViewport:!!view&&Math.abs(view.top)<2&&Math.abs(view.left)<2&&Math.abs(view.width-innerWidth)<4&&Math.abs(view.height-innerHeight)<4
+      normalScrollable:!!view&&!document.body.classList.contains('battle-immersive')&&viewStyle?.position!=='fixed'&&bodyStyle.overflow!=='hidden'&&bodyStyle.overflowY!=='hidden'
     };
   });
   assert(cleanComposition.readoutAboveStage&&cleanComposition.tacticsBelowStage&&cleanComposition.dockBelowTactics,'persistent battle controls are laid out around the artwork with no geometric overlap');
-  assert(cleanComposition.fillsViewport,'battle view occupies the full viewport');
+  assert(cleanComposition.normalScrollable,'battle view stays in the normal scrollable page unless full-screen is explicitly requested');
   assert(await page.locator('#battleStage .battle-unit').count()>=6,'fallback army formation remains structurally available');
   assert(await page.locator('#battleStage .unit-archer').count()>=1,'progress unlocks archers');
   assert(await page.locator('#battleStage .unit-cavalry').count()>=1,'high progress unlocks cavalry');
