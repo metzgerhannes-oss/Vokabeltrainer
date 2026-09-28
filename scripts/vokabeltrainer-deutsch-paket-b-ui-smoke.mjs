@@ -69,7 +69,7 @@ try{
   assert((await page.locator('#armyView').textContent())?.includes('Knappen'),'Ritterheer uses German-specific unit names');
   await page.click('#campaignMapBtn');
   await page.waitForSelector('#campaignMapView.active[data-visual-theme="wordrealm"]');
-  assert((await page.locator('#campaignMapTitle').textContent())?.includes('Wortreich'),'campaign map uses the Wortreich title');
+  assert((await page.locator('#campaignMapViewTitle').textContent())?.includes('Wortreich'),'campaign map uses the Wortreich title');
 
   await page.setViewportSize({width:1200,height:800});
   await page.evaluate(()=>{window.VTMenuUi.openHome();renderAll()});
