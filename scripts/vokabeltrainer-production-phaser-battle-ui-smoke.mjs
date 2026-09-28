@@ -76,7 +76,8 @@ try{
   assert(capture.tickets===0,'Phaser production attack consumes exactly one daily action');
   assert(capture.mastery===masteryBefore,'Phaser animation cannot alter academic mastery');
   assert(capture.stageState==='captured','live battle ends in captured fortress state');
-  assert(await page.locator('#battleMessage').isVisible(),'result message returns after the choreography');
+  assert(!(await page.locator('#battleMessage').isVisible()),'phase narration stays hidden after the choreography');
+  assert(await page.locator('#battleResultOverlay').isVisible(),'result overlay appears after the choreography');
 
   await activate('#battleResultContinue','capture result continue');
   await page.waitForFunction(()=>document.querySelector('#battleResultOverlay')?.classList.contains('visible')!==true);
