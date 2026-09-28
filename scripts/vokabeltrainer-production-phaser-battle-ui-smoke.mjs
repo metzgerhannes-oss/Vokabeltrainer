@@ -13,6 +13,33 @@ try{
     renderAll();
   });
   await openBattle();
+
+  const navigationState=await page.evaluate(()=>({
+    legacyImmersive:document.body.classList.contains('battle-immersive'),
+    fallback:document.body.classList.contains('battle-focus-fallback'),
+    bodyOverflow:getComputedStyle(document.body).overflow,
+    soundPressed:document.querySelector('#battleSoundBtn')?.getAttribute('aria-pressed')||'',
+    soundText:document.querySelector('#battleSoundBtn')?.textContent?.trim()||''
+  }));
+  assert(!navigationState.legacyImmersive&&!navigationState.fallback,'opening battle never auto-locks the page into immersive mode');
+  assert(navigationState.bodyOverflow!=='hidden','normal battle page keeps body scrolling available');
+  assert(navigationState.soundPressed==='true'&&navigationState.soundText.includes('Ton'),'battle sound control is visible and enabled by default');
+
+  await page.evaluate(()=>{
+    const shell=document.querySelector('#battleView .battle-shell');
+    if(shell)Object.defineProperty(shell,'requestFullscreen',{configurable:true,value:undefined});
+  });
+  await activate('#battleFullscreenBtn','explicit fullscreen fallback');
+  assert(await page.locator('body').evaluate(el=>el.classList.contains('battle-focus-fallback')),'fullscreen fallback starts only after explicit user action');
+  assert(await page.locator('#battleView').evaluate(el=>getComputedStyle(el).overflowY==='auto'||getComputedStyle(el).overflow==='auto'),'fullscreen fallback scrolls inside the battle view');
+  await activate('#battleFullscreenBtn','leave fullscreen fallback');
+  assert(!(await page.locator('body').evaluate(el=>el.classList.contains('battle-focus-fallback'))),'leaving fullscreen restores normal page state');
+
+  await activate('#battleSoundBtn','mute battle sound');
+  assert(await page.locator('#battleSoundBtn').getAttribute('aria-pressed')==='false','sound can be muted');
+  await activate('#battleSoundBtn','enable battle sound');
+  assert(await page.locator('#battleSoundBtn').getAttribute('aria-pressed')==='true','sound can be re-enabled');
+
   await activate('[data-battle-attack="ram"]','ram attack choice');
   const masteryBefore=await page.evaluate(()=>subjectProgress().pct);
   await activate('#battleAttackBtn','live Phaser battle action');
@@ -59,6 +86,7 @@ try{
   assert(live.mountWidth>=live.stageWidth*.98&&live.mountHeight>=live.stageHeight*.98,'Phaser mount fills the battle stage');
   assert(live.width>0&&live.height>0,'Phaser canvas has visible geometry');
   assert(live.width>=live.stageWidth*.75&&live.height>=live.stageHeight*.75,'Phaser canvas visibly occupies the battle stage');
+  assert(await page.locator('#battleMessage').isHidden(),'phase narration does not consume space during the Phaser choreography');
 
   await waitForBattleResult({timeout:30000});
   const capture=await page.evaluate(()=>({
@@ -68,7 +96,10 @@ try{
     mastery:subjectProgress().pct,
     stageState:document.querySelector('#battleStage')?.dataset.fortressState||''
   }));
-  assert(capture.beats.includes('breach-entry'),'capture sends units through the gate');
+  assert(capture.beats.includes('defender-volley'),'fortress fires a defensive arrow volley');
+  assert(capture.beats.includes('catapult'),'fortress launches a catapult counterattack');
+  assert(capture.beats.includes('friendly-losses'),'own army visibly reacts to defensive hits');
+  assert(capture.beats.includes('breach-entry'),'capture sends surviving units through the gate');
   assert(capture.beats.includes('profile-banner'),'capture raises the profile banner');
   assert(capture.beats.indexOf('breach-entry')<capture.beats.indexOf('profile-banner'),'all-unit gate entry starts before profile banner');
   assert(capture.beats.at(-1)==='secured','capture settles after profile banner');
@@ -102,6 +133,8 @@ try{
     captured:!!currentTestFortress()?.capturedAt,
     mastery:subjectProgress().pct
   }));
+  assert(hit.beats.includes('defender-volley')&&hit.beats.includes('catapult'),'damage-only battle still contains active fortress defense');
+  assert(hit.beats.includes('friendly-losses'),'visual friendly losses can occur without changing persistent army state');
   assert(hit.beats.includes('hold')&&hit.beats.includes('settled'),'normal hit visibly settles without capture');
   assert(!hit.beats.includes('breach-entry')&&!hit.beats.includes('profile-banner'),'normal hit never shows conquest choreography');
   assert(hit.result?.result==='damage'&&hit.result?.attack==='volley','business logic records damage-only volley');
