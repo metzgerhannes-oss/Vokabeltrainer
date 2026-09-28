@@ -1538,9 +1538,9 @@ function openAnswerReviewQueue(){
   }).join('');
   modal(`<div class="eyebrow">Fachliche Prüfung</div><h2>Antworten prüfen · ${reviews.length}</h2><p>Hier entscheidest du nur strittige Bewertungen. Eine freigegebene Antwort wird für genau diesen Lernbereich als zulässige Variante gespeichert und rückwirkend als richtig gewertet.</p><div class="answer-review-list">${cards}</div><div class="modal-actions"><button value="cancel" class="ghost">Später</button></div>`);
   const resolve=(id,kind)=>{const result=kind==='accept'?acceptAnswerReview(id):rejectAnswerReview(id);if(!result.ok){toast(result.error||'Prüffall konnte nicht abgeschlossen werden.','bad');return}closeModal();save();toast(kind==='accept'?'Antwort freigegeben und künftig akzeptiert.':'Systembewertung bestätigt; der Fehler zählt jetzt fachlich.','good');setTimeout(()=>{if(pendingAnswerReviews().length)openAnswerReviewQueue()},80)};
-  $('[data-review-accept]').forEach(b=>b.onclick=()=>resolve(b.dataset.reviewAccept,'accept'));
-  $('[data-review-reject]').forEach(b=>b.onclick=()=>resolve(b.dataset.reviewReject,'reject'));
-  $('[data-review-edit]').forEach(b=>b.onclick=()=>{const req=answerReviewById(b.dataset.reviewEdit);if(!req?.vocabId)return;closeModal();openWordEditor(req.vocabId,req.setId||'')});
+  $$('[data-review-accept]').forEach(b=>b.onclick=()=>resolve(b.dataset.reviewAccept,'accept'));
+  $$('[data-review-reject]').forEach(b=>b.onclick=()=>resolve(b.dataset.reviewReject,'reject'));
+  $$('[data-review-edit]').forEach(b=>b.onclick=()=>{const req=answerReviewById(b.dataset.reviewEdit);if(!req?.vocabId)return;closeModal();openWordEditor(req.vocabId,req.setId||'')});
 }
 function renderParentOverview(){
   const box=$('#parentAttention');if(!box)return;
