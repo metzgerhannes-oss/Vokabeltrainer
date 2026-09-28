@@ -251,3 +251,29 @@ Pflicht-Übungsraum angehängt.
 Chats dürfen Ideen, Debugging, Screenshots, Zwischenstände und Entscheidungsfindung enthalten, sind aber keine dauerhafte Quelle für den aktuellen Projektstand. Vor Archivierung eines relevanten Chats werden Ergebnis, kanonische Regel/Decision, PR/Commit/Release, Verifikationsstatus und offene Restpunkte in das Repository überführt.
 
 Projektchats werden nach ihrem Hauptzweck mit `[DECISION]`, `[CONCEPT]`, `[RESEARCH]`, `[DEV]`, `[BUG]`, `[TEST]` oder `[ARCHIVE]` gekennzeichnet. Offene Arbeit erhält eine Backlog-ID; alte Versions- oder CI-Aussagen aus Chats dürfen einen neueren Repository-Stand nicht ersetzen. Für neue Entwicklungsarbeit wird die Baseline zuerst aus `PROJECT_CONTROL.md`, `CURRENT_STATE.md`, der einschlägigen Fach-/Decision-Quelle und dem aktuellen `main` bestimmt.
+
+### D-20260928-004 – Avatar und Armee wachsen monoton über das Schuljahr
+**Status:** LOCKED  
+**Quelle:** [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) P5 und P9; [../../VISUAL_DNA.md](../../VISUAL_DNA.md) § 6
+
+Fachlicher Lernstand und sichtbare Spielentwicklung werden getrennt. Der fachliche Prozentwert
+bleibt der Anteil der nachhaltig gemeisterten **aktuell bekannten** Jahresvokabeln und darf
+sich rechnerisch verändern, wenn neuer Stoff hinzukommt.
+
+Avatar, Rang, Einheiten und Ausrüstung bilden dagegen eine **kumulative Jahresentwicklung**.
+Sie wächst aus tatsächlich erreichten Lern- und Feldzugsmeilensteinen und wird innerhalb
+desselben Fachs und Schuljahres nicht durch später hinzugefügte Vokabeln oder Tests
+zurückgestuft. Ein Test beginnt deshalb niemals wieder bei Stufe 1.
+
+Die Darstellung „Meine Armee“ muss diesen Zustand sichtbar spiegeln: frühe Stufen zeigen eine
+kleine, einfach ausgestattete Formation; zusätzliche Einheiten, Soldaten und hochwertige
+Ausrüstung kommen mit der Jahresentwicklung hinzu. Die vollständig ausgerüstete große Armee
+ist der höchsten Entwicklungsstufe vorbehalten.
+
+Die Zahl zukünftiger Tests bleibt unbekannt und wird nicht geschätzt. Testfestungen werden
+dynamisch ergänzt. Die Jahresfestung ist von Anfang an als langfristiges Fernziel sichtbar,
+aber **ohne Datum**, solange kein realer Termin bekannt ist. Sobald ein belastbarer Termin
+bekannt wird, kann er im Elternbereich gesetzt oder geändert werden. Neue Testtermine dürfen
+weiterhin davor ergänzt werden; das Jahresfestungsdatum verändert keine bereits erreichten
+Entwicklungsstufen.
+
