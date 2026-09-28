@@ -8,12 +8,15 @@
   const hint = document.querySelector('#battleDemoActionHint');
   const cinematicLabel = document.querySelector('#battleDemoCinematicLabel');
   const cinematicTitle = document.querySelector('#battleDemoCinematicTitle');
+  const impactTitle = document.querySelector('[data-battle-impact-title]');
+  const impactDamage = document.querySelector('[data-battle-impact-damage]');
+  const impactTactic = document.querySelector('[data-battle-impact-tactic]');
   const choices = [...document.querySelectorAll('[data-demo-attack]')];
 
   const phaseClasses = ['phase-rally','phase-advance','phase-barrage','phase-impact','phase-result'];
   const transientClasses = [
     'battle-finished','is-victory','is-hold','is-impact','is-attacking','is-barrage',
-    'battle-sequence','fortress-secured',
+    'is-strike','show-impact-callout','battle-sequence','fortress-secured',
     'attack-charge','attack-volley','attack-ram','attack-cavalry','attack-special'
   ];
 
@@ -28,7 +31,8 @@
       advance: 'Die Front setzt sich in Bewegung',
       barrage: 'Der Sturmangriff beginnt',
       impact: 'Die Truppen erreichen die Verteidigung',
-      result: 'Die Festung ist bezwungen'
+      result: 'Die Festung ist bezwungen',
+      hit: 'Front durchbrochen'
     },
     volley: {
       label: 'Pfeilhagel',
@@ -36,7 +40,8 @@
       advance: 'Die Linie rückt in Reichweite',
       barrage: 'Die Salve steigt über das Feld',
       impact: 'Pfeile treffen Zinnen und Tor',
-      result: 'Die Verteidigung bricht'
+      result: 'Die Verteidigung bricht',
+      hit: 'Salve trifft'
     },
     ram: {
       label: 'Rammbock',
@@ -44,7 +49,8 @@
       advance: 'Die Mannschaft zieht zum Tor',
       barrage: 'Der letzte Anlauf beginnt',
       impact: 'Der Rammbock trifft das Tor',
-      result: 'Das Tor gibt nach'
+      result: 'Das Tor gibt nach',
+      hit: 'Tor getroffen'
     },
     cavalry: {
       label: 'Reiterangriff',
@@ -52,7 +58,8 @@
       advance: 'Die Flanke setzt sich in Bewegung',
       barrage: 'Der Angriff beschleunigt',
       impact: 'Die Reiter erreichen die Mauer',
-      result: 'Die Flanke ist durchbrochen'
+      result: 'Die Flanke ist durchbrochen',
+      hit: 'Flanke durchbrochen'
     },
     special: {
       label: 'Eliteangriff',
@@ -60,16 +67,17 @@
       advance: 'Der entscheidende Vorstoß beginnt',
       barrage: 'Alle Einheiten greifen gemeinsam an',
       impact: 'Der finale Schlag trifft',
-      result: 'Die Bergzitadelle fällt'
+      result: 'Die Bergzitadelle fällt',
+      hit: 'Entscheidender Treffer'
     }
   };
 
   const timings = {
-    advance: 1150,
-    barrage: 3200,
-    impact: 5200,
-    result: 7050,
-    ready: 8500
+    advance: 1100,
+    barrage: 3000,
+    impact: 4850,
+    result: 6600,
+    ready: 7900
   };
 
   function clearTimers() {
@@ -139,12 +147,27 @@
     let loaded = 0;
     const markLoaded = () => {
       loaded += 1;
-      if (loaded >= 3) stage.classList.add('battle-art-ready', 'battle-art-layered');
+      if (loaded >= 3) {
+        stage.classList.add('battle-art-ready', 'battle-art-layered');
+        message.className = 'battle-message';
+        message.textContent = 'Kampfszene geladen. Bereit für die Vorschau.';
+      }
     };
     [background, army, fortress].forEach(img => {
       img.addEventListener('load', markLoaded, {once:true});
+      img.addEventListener('error', () => {
+        message.className = 'battle-message';
+        message.textContent = 'Kampfillustration konnte nicht geladen werden – Fallback bleibt sichtbar.';
+      }, {once:true});
       if (img.complete && img.naturalWidth) markLoaded();
     });
+  }
+
+  function resetImpactCallout() {
+    stage.classList.remove('show-impact-callout');
+    if (impactTitle) impactTitle.textContent = 'TREFFER!';
+    if (impactDamage) impactDamage.textContent = copy[attack].hit;
+    if (impactTactic) impactTactic.textContent = copy[attack].label;
   }
 
   function reset() {
@@ -153,13 +176,16 @@
     [...phaseClasses, ...transientClasses].forEach(className => stage.classList.remove(className));
     delete stage.dataset.phase;
     stage.dataset.damage = 'low';
+    resetImpactCallout();
 
     document.querySelectorAll('.battle-phase-strip [data-battle-phase]').forEach(el => {
       el.classList.remove('active','done');
     });
 
     message.className = 'battle-message';
-    message.textContent = 'Bereit für die Vorschau.';
+    message.textContent = stage.classList.contains('battle-art-ready')
+      ? 'Kampfszene geladen. Bereit für die Vorschau.'
+      : 'Kampfszene wird geladen …';
     title.textContent = 'Angriff bereit';
     hint.textContent = copy[attack].label + ' auswählen und die Schlacht starten.';
     setCinematic('BEREIT', copy[attack].rally);
@@ -174,44 +200,47 @@
     clearTimers();
     running = true;
     transientClasses.forEach(className => stage.classList.remove(className));
+    resetImpactCallout();
     stage.dataset.damage = 'low';
     stage.classList.add('battle-sequence', 'attack-' + attack);
 
     message.className = 'battle-message active';
     title.textContent = 'Schlacht läuft';
-    hint.textContent = 'Die Kamera folgt dem Angriff bis zum Ergebnis.';
+    hint.textContent = 'Die Szene folgt dem Angriff bis zum Ergebnis.';
     start.disabled = true;
     choices.forEach(btn => btn.disabled = true);
 
-    setPhase('rally', 'Die Reihen schließen sich. Die Szene bleibt einen Moment ruhig.');
+    setPhase('rally', 'Die Truppe sammelt sich vor dem Angriff.');
 
     timers.push(setTimeout(() => {
       stage.classList.add('is-attacking');
-      setPhase('advance', 'Die Armee rückt sichtbar auf die Festung vor.');
+      setPhase('advance', 'Die Armee rückt auf die Festung vor.');
     }, timings.advance));
 
     timers.push(setTimeout(() => {
-      stage.classList.add('is-barrage');
+      stage.classList.add('is-barrage', 'is-strike');
       setPhase('barrage', copy[attack].barrage + '.');
     }, timings.barrage));
 
     timers.push(setTimeout(() => {
       stage.dataset.damage = 'mid';
-      stage.classList.add('is-impact');
+      stage.classList.add('is-impact', 'show-impact-callout');
       setPhase('impact', copy[attack].impact + '.');
+      if (impactDamage) impactDamage.textContent = copy[attack].hit;
+      if (impactTactic) impactTactic.textContent = copy[attack].label;
     }, timings.impact));
 
     timers.push(setTimeout(() => {
-      stage.classList.remove('is-attacking','is-barrage');
+      stage.classList.remove('is-attacking','is-barrage','is-strike','is-impact','show-impact-callout');
       stage.classList.add('battle-finished','is-victory','fortress-secured');
       stage.dataset.damage = 'high';
-      setPhase('result');
+      setPhase('result', 'Die Festung ist bezwungen.');
       message.className = 'battle-message victory';
-      message.innerHTML = '<strong>Festung bezwungen</strong><span>Die Bewegung beruhigt sich und gibt die Übersicht zurück.</span>';
+      message.innerHTML = '<strong>Festung bezwungen</strong><span>Die Szene beruhigt sich und zeigt das Ergebnis klar.</span>';
     }, timings.result));
 
     timers.push(setTimeout(() => {
-      stage.classList.remove('battle-sequence','is-impact');
+      stage.classList.remove('battle-sequence');
       running = false;
       title.textContent = 'Vorschau abgeschlossen';
       hint.textContent = 'Andere Angriffsart wählen oder die Sequenz erneut abspielen.';
@@ -243,6 +272,6 @@
       reset();
     }
 
-    if (params.get('autoplay') !== '0') timers.push(setTimeout(play, 700));
+    if (params.get('autoplay') !== '0') timers.push(setTimeout(play, 900));
   });
 })();
