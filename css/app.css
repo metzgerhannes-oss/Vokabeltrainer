@@ -4576,3 +4576,8 @@ body.battle-preview.battle-immersive #battleView #battleFullscreenBtn{
   .german-training-path{gap:5px}
   .german-training-path span{padding:5px 8px;font-size:.75rem}
 }
+
+html[data-subject="german"] #practiceView .practice-path-grid,
+html[data-subject="german"] #practiceView .learning-status-grid{
+  display:none;
+}
