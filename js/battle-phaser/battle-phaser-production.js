@@ -1,12 +1,74 @@
 'use strict';
 
-import Phaser from '../vendor/phaser-4.2.1.esm.min.js?v=0.21.27';
-import { createBattleSceneClass } from './battle-phaser-scene.js?v=0.21.27';
+import Phaser from '../vendor/phaser-4.2.1.esm.min.js?v=0.21.28';
+import { createBattleSceneClass } from './battle-phaser-scene.js?v=0.21.28';
 
 let activeGame = null;
 let activeMount = null;
 let activeStage = null;
 let activeWrap = null;
+let activeAudio = null;
+
+function createBattleAudio() {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) return { available: false, playForBeat() {}, close() {} };
+
+  let ctx;
+  let master;
+  try {
+    ctx = new AudioCtx();
+    master = ctx.createGain();
+    master.gain.value = 0.035;
+    master.connect(ctx.destination);
+    ctx.resume?.().catch(() => {});
+  } catch (_error) {
+    return { available: false, playForBeat() {}, close() {} };
+  }
+
+  const tone = ({ freq = 220, endFreq = freq, duration = 0.12, type = 'sine', gain = 0.5, delay = 0 } = {}) => {
+    try {
+      const now = ctx.currentTime + delay;
+      const osc = ctx.createOscillator();
+      const env = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(Math.max(35, freq), now);
+      osc.frequency.exponentialRampToValueAtTime(Math.max(35, endFreq), now + duration);
+      env.gain.setValueAtTime(0.0001, now);
+      env.gain.exponentialRampToValueAtTime(Math.max(0.0002, gain), now + 0.012);
+      env.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      osc.connect(env);
+      env.connect(master);
+      osc.start(now);
+      osc.stop(now + duration + 0.03);
+    } catch (_error) {}
+  };
+
+  const chord = (base = 220) => {
+    tone({ freq: base, endFreq: base * 1.02, duration: 0.34, type: 'triangle', gain: 0.34 });
+    tone({ freq: base * 1.25, endFreq: base * 1.28, duration: 0.38, type: 'sine', gain: 0.24, delay: 0.05 });
+    tone({ freq: base * 1.5, endFreq: base * 1.54, duration: 0.42, type: 'sine', gain: 0.22, delay: 0.09 });
+  };
+
+  return {
+    available: true,
+    playForBeat(beat) {
+      if (ctx.state === 'suspended') ctx.resume?.().catch(() => {});
+      if (beat === 'rally') tone({ freq: 105, endFreq: 78, duration: 0.24, type: 'sine', gain: 0.42 });
+      else if (beat === 'defense-volley') {
+        tone({ freq: 1500, endFreq: 520, duration: 0.11, type: 'triangle', gain: 0.12 });
+        tone({ freq: 1250, endFreq: 430, duration: 0.13, type: 'triangle', gain: 0.10, delay: 0.08 });
+      } else if (beat === 'defense-catapult') tone({ freq: 150, endFreq: 58, duration: 0.42, type: 'sawtooth', gain: 0.28 });
+      else if (beat.startsWith('volley')) tone({ freq: 1180, endFreq: 390, duration: 0.10, type: 'triangle', gain: 0.10 });
+      else if (beat.startsWith('damage') || beat.startsWith('ram-charge')) tone({ freq: 92, endFreq: 45, duration: 0.34, type: 'sawtooth', gain: 0.46 });
+      else if (beat === 'breach-entry') tone({ freq: 118, endFreq: 76, duration: 0.26, type: 'square', gain: 0.20 });
+      else if (beat === 'profile-banner') chord(247);
+      else if (beat === 'secured') chord(294);
+    },
+    close() {
+      try { ctx.close?.(); } catch (_error) {}
+    }
+  };
+}
 
 function initialsFor(name) {
   const text = String(name || '').trim();
@@ -16,6 +78,8 @@ function initialsFor(name) {
 }
 
 function destroyProductionBattle() {
+  activeAudio?.close?.();
+  activeAudio = null;
   if (activeGame) {
     try { activeGame.destroy(true); } catch (_error) {}
   }
@@ -28,6 +92,7 @@ function destroyProductionBattle() {
     delete activeStage.dataset.phaserOutcome;
     delete activeStage.dataset.phaserProfile;
     delete activeStage.dataset.phaserReady;
+    delete activeStage.dataset.phaserSound;
   }
   activeGame = null;
   activeMount = null;
@@ -71,7 +136,10 @@ export function playProductionBattle({
   stage.dataset.phaserAttack = attack;
   stage.dataset.phaserOutcome = captureOutcome ? 'capture' : 'hit';
   stage.dataset.phaserProfile = initialsFor(profileName);
-  mount.dataset.version = 'v0.21.27 · Phaser';
+  mount.dataset.version = 'v0.21.28 · Phaser Cinematic';
+  const audio = createBattleAudio();
+  activeAudio = audio;
+  stage.dataset.phaserSound = audio.available ? 'web-audio' : 'silent';
 
   activeMount = mount;
   activeStage = stage;
@@ -92,6 +160,8 @@ export function playProductionBattle({
       if (mount.isConnected) mount.remove();
       wrap?.classList.remove('phaser-production-layout');
       if (activeGame === game) {
+        activeAudio?.close?.();
+        activeAudio = null;
         activeGame = null;
         activeMount = null;
         activeStage = null;
@@ -115,7 +185,10 @@ export function playProductionBattle({
           });
         },
         onPhase: phase => safeCall(onPhase, phase),
-        onBeat: beat => safeCall(onBeat, beat),
+        onBeat: beat => {
+          audio.playForBeat(beat);
+          safeCall(onBeat, beat);
+        },
         onStatus: status => safeCall(onStatus, status),
         onComplete: () => {
           if (settled) return;
@@ -162,6 +235,6 @@ if (typeof window !== 'undefined') {
   window.VTBattlePhaserProduction = {
     playProductionBattle,
     destroyProductionBattle,
-    version: '0.21.27-phaser-production.1'
+    version: '0.21.28-phaser-production.2'
   };
 }
