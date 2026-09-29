@@ -2,7 +2,7 @@
 
 Stand: 29.09.2026  
 Status: **VERBINDLICH FREIGEGEBEN**  
-Decision: **D-20260929-001**
+Decision: **D-20260929-003**
 
 ## 1. Zielbild
 
