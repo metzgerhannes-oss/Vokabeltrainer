@@ -252,7 +252,7 @@ Fehlt einer der fachlichen Punkte 1–6 oder greift die Spielwelt in die fachlic
 - strittige Systembewertung rollt auch das Deutsch-Fehlerprofil vollständig auf neutral zurück
 
 ### Paket E – Wortreich
-**Status: umgesetzt im Release-Kandidaten v0.21.37; automatisierte Verifikation läuft.**
+**Status: produktiv verifiziert in v0.21.37 / PR #204; PR-CI #1246, main-CI #1247 und Pages #562 grün.**
 - eigener Spielbereich „Das Wortreich“ mit Ritterheer und Burgroute
 - echter Phaser-4-Produktionskampf auch für Deutsch; nicht nur Battle-Shell
 - eigene Wortreich-Optik im Renderer: warme Wald-/Pergamentpalette, grün-braunes Ritterheer, Holzramme, Banner, Burg- und Waldkulisse
@@ -261,6 +261,13 @@ Fehlt einer der fachlichen Punkte 1–6 oder greift die Spielwelt in die fachlic
 - Schaden, Ticketverbrauch, Kampflog und Eroberung bleiben vollständig in der bestehenden App-Logik
 - fachliche Mastery/Testbereitschaft wird durch den Renderer nicht verändert
 - eigener Domain-Smoke plus echter iPhone-WebKit-Smoke prüft German/wordrealm-Renderer, Eroberung, Ticketverbrauch, XP und unveränderte Mastery
+
+### Layout-/Barrierefreiheits-Paket v0.21.38
+- freigegebenes Wortreich-Startlayout aus DEUTSCH_WORTREICH_LAYOUT_V1.md
+- konsistente Stufen: Grundausrüstung → Lederzeug → Ritterlehrling → Ritter → Kronritter → König
+- zentrale sichtbare Vorlesefunktion für Navigation und sichere Anweisungen
+- Audio bleibt dort gesperrt, wo es Lösung oder Leseevidenz vorwegnehmen würde
+- Wortreich-Startseite erhält Burgkulisse, SVG-Fuchsserie, Stufenleiste und direkte Deutsch-Aktionskarten
 
 ### Paket F – v1-Abnahme
 - automatisierte Fachtests
