@@ -32,7 +32,9 @@
     Y:[24.54825,0.97419],Z:[25.77244,0.7445],'Ä':[26.76694,0.964],'Ö':[27.98094,0.93294],'Ü':[29.16387,0.97419]
   };
   let phonemeContext=null,phonemeBufferPromise=null,phonemeSource=null;
+  let phonemeLast={state:'idle',letter:null,error:null,duration:0};
   function phonemeClip(letter){return PHONEME_CLIPS[String(letter||'').trim().toUpperCase()]||null}
+  function phonemeStatus(){return {...phonemeLast}}
   function audioContext(){
     const AudioContextClass=window.AudioContext||window.webkitAudioContext;
     if(!AudioContextClass)return null;
@@ -51,17 +53,39 @@
       if(!encoded)throw new Error('empty phoneme sprite');
       const raw=atob(encoded),bytes=new Uint8Array(raw.length);
       for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);
-      return ctx.decodeAudioData(bytes.buffer.slice(0));
+      const buffer=await ctx.decodeAudioData(bytes.buffer.slice(0));
+      if(!buffer||!Number.isFinite(buffer.duration)||buffer.duration<30)throw new Error('phoneme sprite decode too short');
+      return buffer;
     })().catch(error=>{phonemeBufferPromise=null;throw error});
     return phonemeBufferPromise;
   }
+  async function decodePhonemeSprite(){
+    const ctx=audioContext();
+    if(!ctx)return {ok:false,error:'AudioContext unavailable'};
+    try{
+      const buffer=await loadPhonemeBuffer(ctx);
+      return {ok:true,duration:buffer.duration,channels:buffer.numberOfChannels,sampleRate:buffer.sampleRate};
+    }catch(error){
+      return {ok:false,error:String(error?.message||error)};
+    }
+  }
   async function playPhoneme(letter){
-    const clip=phonemeClip(letter),ctx=audioContext();
-    if(!clip){if(typeof toast==='function')toast('Für diesen Buchstaben ist noch kein Laut hinterlegt.','subtle');return false}
-    if(!ctx){if(typeof toast==='function')toast('Buchstabenlaute werden auf diesem Gerät nicht unterstützt.','bad');return false}
+    const key=String(letter||'').trim().toUpperCase(),clip=phonemeClip(key),ctx=audioContext();
+    phonemeLast={state:'loading',letter:key||null,error:null,duration:0};
+    if(!clip){
+      phonemeLast={state:'error',letter:key||null,error:'missing phoneme clip',duration:0};
+      if(typeof toast==='function')toast('Für diesen Buchstaben ist noch kein Laut hinterlegt.','subtle');
+      return false
+    }
+    if(!ctx){
+      phonemeLast={state:'error',letter:key,error:'AudioContext unavailable',duration:0};
+      if(typeof toast==='function')toast('Buchstabenlaute werden auf diesem Gerät nicht unterstützt.','bad');
+      return false
+    }
     try{
       if(ctx.state==='suspended')await ctx.resume();
       const buffer=await loadPhonemeBuffer(ctx);
+      if(clip[0]+clip[1]>buffer.duration+0.05)throw new Error('phoneme clip outside decoded sprite');
       if(ctx.state==='suspended')await ctx.resume();
       try{phonemeSource?.stop?.()}catch(_e){}
       const source=ctx.createBufferSource();
@@ -69,9 +93,12 @@
       source.connect(ctx.destination);
       source.start(0,clip[0],clip[1]);
       phonemeSource=source;
+      phonemeLast={state:'started',letter:key,error:null,duration:clip[1]};
       source.onended=()=>{if(phonemeSource===source)phonemeSource=null};
       return true;
     }catch(error){
+      const message=String(error?.message||error);
+      phonemeLast={state:'error',letter:key,error:message,duration:0};
       console.warn('Buchstabenlaut konnte nicht abgespielt werden.',error);
       if(typeof toast==='function')toast('Der Buchstabenlaut konnte nicht abgespielt werden.','bad');
       return false;
@@ -336,5 +363,5 @@
     area.querySelector('#foundationNext').onclick=()=>open(completion().next);
   }
 
-  window.VTGermanFoundation={available,progress,completion,renderHub,open,openFreeWriting,freeWritingState,playPhoneme,phonemeClip,phonemeSpriteParts:[...PHONEME_SPRITE_PARTS],course:COURSE,stageTasks,freeWritingLetters:FREE_WRITING_LETTERS};
+  window.VTGermanFoundation={available,progress,completion,renderHub,open,openFreeWriting,freeWritingState,playPhoneme,phonemeClip,phonemeStatus,decodePhonemeSprite,phonemeSpriteParts:[...PHONEME_SPRITE_PARTS],course:COURSE,stageTasks,freeWritingLetters:FREE_WRITING_LETTERS};
 })();
