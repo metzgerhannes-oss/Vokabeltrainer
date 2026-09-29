@@ -29,6 +29,27 @@ try{
   assert(response?.ok(),'app loads');
   await page.waitForFunction(()=>window.__VT_APP_READY__===true&&!!window.VTArmyUi&&!!window.VTCampaignMap&&!!window.VTWorldStory);
 
+  const avatarMatrix=await page.evaluate(()=>{
+    state=defaultState();showView('homeView');
+    const l=learner(),out={};
+    for(const subject of ['english','latin','german','french']){
+      state.activeSubject=subject;
+      setLearnerWorldMode(l,subject,'battle');
+      window.VTMenuUi.renderAvatarStage(38);window.VTMenuUi.applyAvatarArt();
+      const battle=document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarRenderKey||'';
+      setLearnerWorldMode(l,subject,'adventure');
+      window.VTMenuUi.renderAvatarStage(38);window.VTMenuUi.applyAvatarArt();
+      const adventure=document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarRenderKey||'';
+      out[subject]={battle,adventure};
+    }
+    return out;
+  });
+  for(const subject of ['english','latin','german','french']){
+    assert(avatarMatrix[subject].battle.includes(subject+'-battle-'),subject+' battle avatar key is world-specific');
+    assert(avatarMatrix[subject].adventure.includes(subject+'-adventure-'),subject+' adventure avatar key is world-specific');
+    assert(avatarMatrix[subject].battle!==avatarMatrix[subject].adventure,subject+' avatar is rebuilt when the story world changes');
+  }
+
   await page.evaluate(()=>{state=defaultState();renderAll();showView('homeView');openProfileEditor()});
   await page.waitForSelector('#modal[open] #saveProfile');
   await page.locator('#profileName').fill('Welten Kind');
