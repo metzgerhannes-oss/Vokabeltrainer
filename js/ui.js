@@ -718,6 +718,7 @@ function renderAll(){
   const l=learner(); if(!l) return; ensureActiveSubject();applyPreferences();
   const nativeGerman=state.activeSubject==='german';document.documentElement.dataset.subject=state.activeSubject;
   $('#germanLearningPath')?.classList.toggle('hidden',!nativeGerman);
+  window.VTGermanFoundation?.renderHub?.();
   const gameNav=document.querySelector('.bottom-nav [data-view="armyView"]');if(gameNav)gameNav.innerHTML='<span aria-hidden="true">⚔</span>'+(nativeGerman?'Wortreich':'Armee');
   const profileBtn=$('#profileBtn'),lockedChild=isPairedChildDevice();profileBtn.textContent=l.name;profileBtn.disabled=lockedChild;profileBtn.classList.toggle('profile-locked',lockedChild);profileBtn.setAttribute('aria-label',lockedChild?`Kinderprofil: ${l.name}. Dieses Gerät ist fest zugeordnet.`:`Lernprofil wechseln. Aktiv: ${l.name}`);profileBtn.title=lockedChild?`Dieses Kindergerät ist fest mit ${l.name} verbunden`:'Profil wechseln'; $('#lrsBadge').classList.toggle('hidden',!literacySupportActive(l)); applyRoleUi();
   const activeSubjects=learnerActiveSubjects(l),switcher=$('#subjectSwitcher');
@@ -839,12 +840,20 @@ function renderToday(){
     return;
   }
   const plan=buildDailyPlan(),status=dailyPlanStatus(plan),rescue=t1RescuePlan(plan),hasWords=(ctx?.words.length||schoolYearVerifiedWords().length)>0;
+  const germanFoundationReady=state.activeSubject==='german'&&window.VTGermanFoundation?.available?.();
   progressRow?.classList.remove('hidden');
   if(!hasWords){
-    practiceDisclosure?.classList.add('hidden');
-    $('#todaySummary').textContent=parent?'Noch keine Vokabeln':'Heute ist noch nichts vorbereitet';
-    $('#todayContext').textContent=parent?'Plane einen Test oder bereite Vokabeln ohne Testtermin vor.':'Bitte einen Erwachsenen, neue Vokabeln vorzubereiten.';
-    $('#todayEstimate').textContent=parent?'Danach erscheinen die freigegebenen Wörter automatisch im Kindermodus.':'Sobald alles vorbereitet ist, erscheint hier automatisch deine nächste Lernaufgabe.';
+    if(germanFoundationReady){
+      const foundation=window.VTGermanFoundation.completion();practiceDisclosure?.classList.remove('hidden');
+      $('#todaySummary').textContent=foundation.done?`Klasse-1-Grundlagen · ${foundation.done} von ${foundation.total}`:'Deutsch-Grundlagen starten';
+      $('#todayContext').textContent='Buchstaben · Laute · Nachspuren · erste Wörter · einfache Sätze';
+      $('#todayEstimate').textContent='Ruhiger Grundlagenpfad ohne Battle-, XP- oder Lernwort-Mastery-Wertung.';
+    }else{
+      practiceDisclosure?.classList.add('hidden');
+      $('#todaySummary').textContent=parent?'Noch keine Vokabeln':'Heute ist noch nichts vorbereitet';
+      $('#todayContext').textContent=parent?'Plane einen Test oder bereite Vokabeln ohne Testtermin vor.':'Bitte einen Erwachsenen, neue Vokabeln vorzubereiten.';
+      $('#todayEstimate').textContent=parent?'Danach erscheinen die freigegebenen Wörter automatisch im Kindermodus.':'Sobald alles vorbereitet ist, erscheint hier automatisch deine nächste Lernaufgabe.';
+    }
   }else if(!status.total){$('#todaySummary').textContent='Tagesziel geschafft';$('#todayContext').textContent=ctx?testContextLabel(ctx):'Heute ist keine Pflicht-Wiederholung offen.';$('#todayEstimate').textContent='Weitere Übungen sind optional.';}
   else if(!status.remaining){$('#todaySummary').textContent=`${status.total} von ${status.total} erledigt ✓`;$('#todayContext').textContent=ctx?testContextLabel(ctx):'Dein heutiges Lernpensum ist erledigt.';$('#todayEstimate').textContent=rescue.available?`Morgen ist Test. Noch ${rescue.weakTotal} Vokabel${rescue.weakTotal===1?' ist':'n sind'} nicht testbereit. Eine Rettungsrunde mit ${rescue.refs.length} Fokuswörtern ist empfohlen – freiwillig und ohne zusätzliche Kampfaktion.`:rescue.recommended?`Rettungsrunde für jetzt abgeschlossen. ${rescue.weakTotal} Vokabel${rescue.weakTotal===1?' erfüllt':'n erfüllen'} wegen der kurzen Vorlaufzeit noch nicht alle Testbereitschaftskriterien. Jetzt ist eine Pause sinnvoll.`:status.extraRemaining?(plan.recommendSecondRound?`Pflichtteil geschafft. Später sind ${status.extraRemaining} Vokabel${status.extraRemaining===1?'':'n'} als zweite kurze Runde empfohlen – freiwillig.`:`${status.extraRemaining} zusätzliche Vokabel${status.extraRemaining===1?'':'n'} ${status.extraRemaining===1?'steht':'stehen'} als freiwilliger Vorsprung bereit. Das Tagesziel bleibt abgeschlossen.`):status.extraDone?`${status.extraDone} zusätzliche Vokabel${status.extraDone===1?'':'n'} heute sicher. Das Tagesziel bleibt unverändert.`:'Weitere Übungen sind optional.';}
   else{
@@ -859,7 +868,8 @@ function renderToday(){
   }
   $('#todayProgress').max=Math.max(1,status.total); $('#todayProgress').value=status.done; $('#todayProgress').setAttribute('aria-valuetext',`${status.done} von ${status.total} Vokabeln heute erledigt`); $('#todayProgressText').textContent=status.total?`${status.done} / ${status.total} erledigt`:'';
   const rescueAvailable=!status.remaining&&rescue.available,bonusAvailable=!status.remaining&&status.extraRemaining>0;
-  $('#quickLearnHeroBtn').disabled=!hasWords||(!status.remaining&&!rescueAvailable&&!bonusAvailable); $('#quickLearnHeroBtn').textContent=!hasWords?'Noch nicht bereit':status.remaining?(status.done?'Weiterlernen':'Jetzt lernen'):rescueAvailable?'Rettungsrunde starten':bonusAvailable?(plan.recommendSecondRound?'Zweite Runde (optional)':'Vorsprung weiterlernen'):'Heute erledigt ✓';
+  if(!hasWords&&germanFoundationReady){const foundation=window.VTGermanFoundation.completion();$('#todayProgress').max=foundation.total;$('#todayProgress').value=foundation.done;$('#todayProgress').setAttribute('aria-valuetext',`${foundation.done} von ${foundation.total} Deutsch-Grundlagenstationen abgeschlossen`);$('#todayProgressText').textContent=`${foundation.done} / ${foundation.total} Stationen`;$('#quickLearnHeroBtn').disabled=false;$('#quickLearnHeroBtn').textContent=foundation.done?'Grundlagen fortsetzen':'Buchstaben & Laute üben';$('#quickLearnHeroBtn').dataset.action='germanFoundation';}
+  else{$('#quickLearnHeroBtn').disabled=!hasWords||(!status.remaining&&!rescueAvailable&&!bonusAvailable); $('#quickLearnHeroBtn').textContent=!hasWords?'Noch nicht bereit':status.remaining?(status.done?'Weiterlernen':'Jetzt lernen'):rescueAvailable?'Rettungsrunde starten':bonusAvailable?(plan.recommendSecondRound?'Zweite Runde (optional)':'Vorsprung weiterlernen'):'Heute erledigt ✓';}
   if(ctx){$('#todayTestPill').textContent=(ctx.source==='series'||ctx.source==='mixed')?`↻ ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]} · ${formatDateShort(ctx.date)}`:`Test ${formatDateShort(ctx.date)}`;$('#todayTestPill').classList.remove('hidden');if(parent){$('#todayTestBtn').textContent='Testplan ändern';$('#todayTestBtn').classList.remove('hidden');$('#todayTestBtn').dataset.setId=ctx.sets[0]?.id||'';}else $('#todayTestBtn').classList.add('hidden');}
   else{$('#todayTestPill').classList.add('hidden');if(parent&&mySets().length){$('#todayTestBtn').textContent='Testplan festlegen';$('#todayTestBtn').classList.remove('hidden');}else $('#todayTestBtn').classList.add('hidden');}
 }function renderRecommendations(){
@@ -1624,7 +1634,7 @@ function showView(id){
 }
 
 function bind(){
-  document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='armyView'&&window.VTArmyUi?.open){window.VTArmyUi.open();return}showView(b.dataset.view)}); $('#quickLearnHeroBtn').onclick=()=>{const action=$('#quickLearnHeroBtn')?.dataset.action||'learn';if(action==='completeTest')return openCompleteCurrentTest();if(action==='planTest')return openTestDatePlanner();if(action==='pairReview'){const set=mySets().find(setNeedsPairReview);if(set)return openSetPairAudit(set.id)}startDailyTodo()}; $('#quickCardsBtn')?.addEventListener('click',()=>startSession('cards')); $('#cardboxPracticeBtn').onclick=()=>startSession('cards'); $('#todayTestBtn').onclick=()=>openTestDatePlanner($('#todayTestBtn')?.dataset.setId||''); $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
+  document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='armyView'&&window.VTArmyUi?.open){window.VTArmyUi.open();return}showView(b.dataset.view)}); $('#quickLearnHeroBtn').onclick=()=>{const action=$('#quickLearnHeroBtn')?.dataset.action||'learn';if(action==='completeTest')return openCompleteCurrentTest();if(action==='planTest')return openTestDatePlanner();if(action==='pairReview'){const set=mySets().find(setNeedsPairReview);if(set)return openSetPairAudit(set.id)}if(action==='germanFoundation')return window.VTGermanFoundation?.open?.();startDailyTodo()}; $('#quickCardsBtn')?.addEventListener('click',()=>startSession('cards')); $('#cardboxPracticeBtn').onclick=()=>startSession('cards'); $('#todayTestBtn').onclick=()=>openTestDatePlanner($('#todayTestBtn')?.dataset.setId||''); $('#backHomeBtn').onclick=()=>{session=null;showView('homeView')};
   $('#practiceCardsBtn')?.addEventListener('click',()=>startSession('cards')); $('#practiceWeakBtn')?.addEventListener('click',startWeakWordsPractice); $('#practiceAllBtn')?.addEventListener('click',openAllWordsPracticeChooser); $('#practiceSpecialBtn')?.addEventListener('click',()=>{const panel=$('#optionalLearningCard'),btn=$('#practiceSpecialBtn');if(!panel)return;const open=panel.classList.contains('hidden');panel.classList.toggle('hidden',!open);btn.setAttribute('aria-expanded',String(open));if(open)panel.scrollIntoView({block:'nearest',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})});
   $('#newSetBtn').onclick=()=>openLearningContentPlanner(); $('#addGradeBtn').onclick=()=>addGrade(); $('#practiceTestBtn').onclick=openPracticeTestChooser; $('#addProfileBtn').onclick=addProfile; $('#profileBtn').onclick=openProfileSwitcher; $('#attackBtn').onclick=openBattleView; $('#duelBtn').onclick=openDuel;
   $('#battleBackBtn').onclick=returnFromBattle; $('#battleReturnBtn').onclick=returnFromBattle; $('#battleAttackBtn').onclick=runBattleAnimation; $('#battleFullscreenBtn').onclick=toggleBattleFullscreen; $('#battleFocusAttackBtn').onclick=openBattleAttackPickerFromFocus; $('#battleStorySpeakBtn').onclick=toggleBattleStoryNarration;
