@@ -20,11 +20,11 @@ try{
   await page.locator('#profileName').fill('Weltwahl Kind');
   await page.locator('[data-profile-subject="german"]').check();
   await page.locator('input[name="profileAvatarStyle"][value="neutral"]').check();
-  assert(await page.locator('#profileGermanWorld .read-aloud-btn').count()>=1,'German world choice is readable in the profile dialog');
+  assert(await page.locator('[data-profile-world-subject="german"] .read-aloud-btn').count()>=1,'German world choice is readable in the profile dialog');
   assert(await page.locator('.profile-choice-legend .read-aloud-btn').count()>=2,'avatar and world choices both expose read-aloud controls');
   await page.locator('#saveProfile').click();
   assert((await page.locator('#profileError').textContent())?.includes('Abenteuer oder Kampf'),'new German profile cannot silently accept a default world');
-  await page.locator('input[name="profileGermanWorldMode"][value="adventure"]').check();
+  await page.locator('input[name="profileWorldMode-german"][value="adventure"]').check();
   await page.locator('#saveProfile').click();
   await page.waitForFunction(()=>learner()?.name==='Weltwahl Kind');
   const created=await page.evaluate(()=>({avatar:learner().avatarStyle,mode:learnerWorldMode('german'),subjects:[...learner().activeSubjects]}));
@@ -55,10 +55,10 @@ try{
   assert(initial.mode==='battle','German legacy profile starts in battle mode');
 
   await page.evaluate(()=>openProfileEditor(learner().id));
-  await page.waitForSelector('#profileGermanWorld:not(.hidden)');
-  assert(await page.locator('input[name="profileGermanWorldMode"][value="battle"]').isChecked(),'battle choice is selected');
-  assert(await page.locator('input[name="profileGermanWorldMode"][value="adventure"]').count()===1,'adventure choice exists');
-  await page.locator('input[name="profileGermanWorldMode"][value="adventure"]').check();
+  await page.waitForSelector('[data-profile-world-subject="german"]:not(.hidden)');
+  assert(await page.locator('input[name="profileWorldMode-german"][value="battle"]').isChecked(),'battle choice is selected');
+  assert(await page.locator('input[name="profileWorldMode-german"][value="adventure"]').count()===1,'adventure choice exists');
+  await page.locator('input[name="profileWorldMode-german"][value="adventure"]').check();
   await page.locator('#saveProfile').click();
   await page.waitForFunction(()=>learnerWorldMode('german')==='adventure');
 
@@ -79,12 +79,12 @@ try{
     mode:document.querySelector('#armyView')?.dataset.worldMode,
     className:document.querySelector('#armyView')?.className||'',
     title:document.querySelector('#armyViewTitle')?.textContent||'',
-    route:document.querySelectorAll('.german-adventure-route span').length,
+    route:document.querySelectorAll('.subject-adventure-route span').length,
     actionHidden:document.querySelector('#armyBattleBtn')?.classList.contains('hidden'),
     actionText:document.querySelector('#armyBattleBtn')?.textContent||'',
-    vectorFox:document.querySelectorAll('.german-adventure-fox .wordrealm-fox-svg.adventure').length
+    vectorFox:document.querySelectorAll('.subject-adventure-figure .wordrealm-fox-svg.adventure').length
   }));
-  assert(adventure.mode==='adventure'&&adventure.className.includes('german-adventure-mode'),'adventure hub is active');
+  assert(adventure.mode==='adventure'&&adventure.className.includes('adventure-mode'),'adventure hub is active');
   assert(adventure.title.includes('Fuchspfad'),'adventure hub uses Fuchspfad title');
   assert(adventure.route===6,'adventure hub shows six visual stages');
   assert(adventure.vectorFox===1,'adventure hub renders the dedicated vector fox instead of an emoji placeholder');
@@ -108,8 +108,8 @@ try{
   assert(route.actionUsed===true,'adventure action consumes the same daily action entitlement');
 
   await page.evaluate(()=>openProfileEditor(learner().id));
-  await page.waitForSelector('#profileGermanWorld:not(.hidden)');
-  await page.locator('input[name="profileGermanWorldMode"][value="battle"]').check();
+  await page.waitForSelector('[data-profile-world-subject="german"]:not(.hidden)');
+  await page.locator('input[name="profileWorldMode-german"][value="battle"]').check();
   await page.locator('#saveProfile').click();
   await page.waitForFunction(()=>learnerWorldMode('german')==='battle');
 
@@ -132,7 +132,7 @@ try{
   const battle=await page.evaluate(()=>({
     mode:document.querySelector('#armyView')?.dataset.worldMode,
     title:document.querySelector('#armyViewTitle')?.textContent||'',
-    adventureClass:document.querySelector('#armyView')?.classList.contains('german-adventure-mode'),
+    adventureClass:document.querySelector('#armyView')?.classList.contains('adventure-mode'),
     actionHidden:document.querySelector('#armyBattleBtn')?.classList.contains('hidden')
   }));
   assert(battle.mode==='battle'&&!battle.adventureClass,'battle hub is restored');
