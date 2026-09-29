@@ -56,6 +56,9 @@ jobs:
       - name: Deutsch Paket B smoke
         run: node scripts/vokabeltrainer-deutsch-package-b-smoke.mjs
 
+      - name: Deutsch Paket C smoke
+        run: node scripts/vokabeltrainer-deutsch-package-c-smoke.mjs
+
       - name: Library index smoke
         run: node scripts/vokabeltrainer-library-index-smoke.mjs
 
@@ -138,6 +141,9 @@ jobs:
 
       - name: WebKit Deutsch Paket B
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-deutsch-paket-b-ui-smoke.mjs
+
+      - name: WebKit Deutsch Paket C
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-deutsch-paket-c-ui-smoke.mjs
 
       - name: WebKit dialog and keyboard accessibility
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-accessibility-ui-smoke.mjs

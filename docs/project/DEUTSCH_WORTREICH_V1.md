@@ -232,11 +232,14 @@ Fehlt einer der fachlichen Punkte 1–6 oder greift die Spielwelt in die fachlic
 - automatisierter Paket-B-Smoke-Test als CI-Gate
 
 ### Paket C – Klasse-1-Kern
-- Buchstaben
-- Laute
-- Nachspuren/freie Produktion
-- erste Wörter
-- einfache Sätze
+**Status: umgesetzt im Release-Kandidaten v0.21.35; automatisierte Verifikation läuft.**
+- Buchstaben erkennen
+- Laut–Buchstaben-Zuordnung mit deutschem Audio
+- Finger-/Stift-Nachspuren mit Übergang über reduzierte Führung zur freien Produktion
+- Schreibpraxis ohne unzulässige automatische Handschriftbewertung
+- erste Wörter lesen und schreiben
+- einfache Sätze verstehen und bilden
+- eigener, Family-Sync-fähiger Grundlagenfortschritt ohne XP-, Battle- oder Lernwort-Mastery-Wirkung
 
 ### Paket D – Lernwörter/Rechtschreibung
 - Lernwortlisten

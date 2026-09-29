@@ -28,8 +28,9 @@ Verbindliche Leitlinien:
 - strittige Bewertungen und Überspringen müssen auch in Deutsch gemäß D-20260928-006/007 neutral funktionieren
 
 **Paket A – Produkt-/Architekturverankerung:** IMPLEMENTED.  
-**Paket B – Fachgrundgerüst:** IMPLEMENTED im Release-Kandidaten v0.21.34; CI-/Browser-Verifikation läuft.  
-**Pakete C–F:** Klasse-1-Kern, Lernwörter/Rechtschreibung, vollständiger Wortreich-Battle und v1-Abnahme folgen.
+**Paket B – Fachgrundgerüst:** PRODUCTION / CI VERIFIED v0.21.34 (PR #201, main-CI #1233, Pages #559).  
+**Paket C – Klasse-1-Kern:** IMPLEMENTED im Release-Kandidaten v0.21.35; CI-/Browser-Verifikation läuft.  
+**Pakete D–F:** Lernwörter/Rechtschreibung, vollständiger Wortreich-Battle und v1-Abnahme folgen.
 
 ## B-002 – Eigene finale Latein-Grafikserie
 **Status:** APPROVED_BACKLOG  

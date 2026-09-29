@@ -46,8 +46,9 @@ try{
   await page.click('.nav-btn[data-view="practiceView"]');
   await page.waitForSelector('#practiceView.active #germanLearningPath:not(.hidden)');
   assert(await page.locator('#germanLearningPath .german-fox').count()===2,'German learning path shows two calm fox markers');
-  assert(await page.locator('#germanLearningPath .wood-sword').count()===3,'German learning stations use wooden-sword motifs');
-  assert((await page.locator('#germanLearningPath').textContent())?.includes('Hören'),'German path exposes listening');
+  assert(await page.locator('#germanLearningPath .wood-sword').count()===5,'German learning stations use wooden-sword motifs');
+  assert((await page.locator('#germanLearningPath').textContent())?.includes('Buchstaben'),'German path exposes letters');
+  assert((await page.locator('#germanLearningPath').textContent())?.includes('Laute'),'German path exposes sound-letter work');
   assert((await page.locator('#germanLearningPath').textContent())?.includes('Schreiben'),'German path exposes writing');
 
   await page.evaluate(()=>{
