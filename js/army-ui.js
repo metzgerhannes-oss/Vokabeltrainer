@@ -73,11 +73,16 @@
     const stage=typeof avatarStageFor==='function'?avatarStageFor(c.growth.pct,subject):{level:1,maxLevel:6};
     const stageName=meta.stages[Math.max(0,Math.min(meta.stages.length-1,(Number(stage.level)||1)-1))];
     const figure=subject==='german'?(window.VTWordrealmUi?.adventureFoxSvg?.(stage.level)||''):`<span class="subject-adventure-emblem subject-${safe(subject)}">${safe(meta.symbol)}</span>`;
+    const story=window.VTWorldStory?.current?.(subject,'adventure',{fortress:c.mission,stage:stage.level})||{title:'Deine nächste Etappe',text:'Deine Reise wächst mit deinem echten Lernfortschritt.'};
+    const storyRoot=window.VTWorldStory?.get?.(subject,'adventure');
+    const narration=[stage.level===1?storyRoot?.opening:'',story.title,story.text].filter(Boolean).join(' ');
+    const speak=window.VTReadAloud?.button?.(narration,'Geschichte vorlesen','subject-adventure-story-read')||'';
     return `<div class="subject-adventure-scene subject-${safe(subject)}">
       <div class="subject-adventure-sky" aria-hidden="true"></div>
       <div class="subject-adventure-land" aria-hidden="true"></div>
       <div class="subject-adventure-figure" aria-hidden="true">${figure}</div>
       <div class="subject-adventure-copy"><span class="army-kicker">${safe(meta.kicker)}</span><strong>${safe(meta.title)}</strong><small>${safe(meta.stageLabel)} ${safe(stage.level)}/${safe(stage.maxLevel)} · ${safe(stageName)}</small></div>
+      <article class="subject-adventure-story" data-page-read="${safe(narration)}"><div><small>${story.finale?'FINALE':'DEINE GESCHICHTE'}</small><strong>${safe(story.title)}</strong><p>${safe(story.text)}</p></div>${speak}</article>
       <div class="subject-adventure-route" aria-label="Fortschritt der Abenteuerreise">${meta.stops.map((name,i)=>`<span class="${i<stage.level?'done':i===stage.level?'next':''}"><b>${i<stage.level?'✓':i+1}</b><small>${safe(name)}</small></span>`).join('')}</div>
     </div>`;
   }
