@@ -217,7 +217,9 @@ function autoChunks(term){
 function learningChunksFor(w,term=w?.term){
   const t=String(term||'').trim();if(!t||isSentenceTerm(t))return [];
   const custom=Array.isArray(w?.chunks)?w.chunks.map(x=>String(x||'').trim()).filter(Boolean):[];
-  return custom.length>1?custom:autoChunks(t);
+  if(custom.length>1)return custom;
+  const syllables=subjectHasCapability(w?.subject||state?.activeSubject,'nativeLiteracy')&&Array.isArray(w?.syllables)?w.syllables.map(x=>String(x||'').trim()).filter(Boolean):[];
+  return syllables.length>1?syllables:autoChunks(t);
 }
 function chunkEligibleWord(w,term=w?.term){return learningChunksFor(w,term).length>1}
 

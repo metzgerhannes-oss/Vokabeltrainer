@@ -47,6 +47,27 @@ function recordNativeLiteracyEvidence(w,skill,correct,{orthographyOk=true,assist
   }
 }
 
+
+function nativeLiteracyErrors(w){w.literacyErrors={...defaultLiteracyErrors(),...(w.literacyErrors||{})};return w.literacyErrors}
+function germanSpellingErrorKind(w,answer,targets,skill){
+  if(!nativeLiteracySubject(w?.subject||state.activeSubject))return '';
+  if(skill==='context')return 'sentenceContext';
+  const target=closestTargetForm(answer,targets),clean=v=>String(v||'').normalize('NFKC').trim().replace(/\s+/g,' ');
+  const a=clean(answer),t=clean(target);
+  if(a&&t&&a!==t&&a.toLocaleLowerCase('de-DE')===t.toLocaleLowerCase('de-DE'))return 'capitalization';
+  const explicit=[...(Array.isArray(w?.syllables)?w.syllables:[]),...(Array.isArray(w?.chunks)?w.chunks:[])].map(x=>clean(x)).filter(Boolean);
+  if(explicit.length>1){
+    const lower=a.toLocaleLowerCase('de-DE');
+    if(explicit.some(part=>!lower.includes(part.toLocaleLowerCase('de-DE'))))return 'wordStructure';
+  }
+  return 'letterSequence';
+}
+function recordNativeLiteracyError(w,answer,q,skill,correct){
+  if(correct||!w||!nativeLiteracySubject(w.subject||state.activeSubject))return '';
+  const key=germanSpellingErrorKind(w,answer,q?.targets||[],skill);if(!key)return '';
+  const e=nativeLiteracyErrors(w);e[key]=Math.min(100,(Number(e[key])||0)+1);return key;
+}
+
 function adaptiveDaysSince(value){
   if(!value)return null;
   const key=String(value).slice(0,10),then=dayNumber(key),now=dayNumber(today());
@@ -69,8 +90,10 @@ function chooseAdaptiveMode(w){
   const needsDailySpelling=!!(spellingSupport&&plan&&refKey&&!plan.securityEvidence?.[refKey]?.spellingConfirmed);
 
   if(nativeLiteracySubject()){
-    const literacy=nativeLiteracyEvidence(w);
+    const literacy=nativeLiteracyEvidence(w),errors=nativeLiteracyErrors(w);
     if(newWord&&!modes.has('listening'))return 'listening';
+    if((errors.wordStructure||0)>0&&chunksOk&&!modes.has('chunks'))return 'chunks';
+    if((errors.sentenceContext||0)>0&&w.example&&(literacy.sentenceUse||0)<2)return 'context';
     if(spellingErrors>0&&chunksOk&&!modes.has('chunks'))return 'chunks';
     if((literacy.orthographicSpelling||0)<2||(literacy.dictation||0)<2||s.spelling<2)return 'spelling';
     if(w.example&&(literacy.sentenceUse||0)<1)return 'context';
@@ -433,7 +456,7 @@ function renderContext(w){
   $('#studyArea').innerHTML=`<div class="study-card"><div class="eyebrow">Kontext</div><div class="study-prompt compact-prompt">${esc(q.prompt)}</div>${audioButtonHtml(String(q.prompt||'').replace(/_+/g,'…'),'Satz anhören')}<div class="study-sub">Setze die passende Vokabel ein.</div><input id="answerField" class="answer-input" aria-label="Deine Antwort" autocomplete="off" autocapitalize="none"><div class="top-space"><button id="answerBtn" class="primary">Prüfen</button></div>${cardExtras(w)}</div>`;
   $('#answerBtn').onclick=()=>gradeText(w,$('#answerField').value,q.targets,'context','context'); $('#answerField').onkeydown=e=>{if(e.key==='Enter')$('#answerBtn').click()};
 }
-function wordLearningCard(w,compact=false){const chunks=learningChunksFor(w);return `<div class="learning-card"><div><small>Wort</small><strong>${esc(w.term)}</strong> ${audioButtonHtml(w.term,'Anhören')}${w.extra?` · ${esc(w.extra)}`:''}</div><div><small>Bedeutung</small>${esc(w.translation)}</div>${w.example?`<div><small>Kontext</small>${esc(w.example)} ${audioButtonHtml(w.example,'Satz anhören')}</div>`:''}${w.mnemonic?`<div><small>Wortkniff / Eselsbrücke</small>${esc(w.mnemonic)}</div>`:''}${!compact&&chunks.length>1?`<div><small>Lernbausteine</small>${esc(chunks.join(' · '))}</div>`:''}</div>`}
+function wordLearningCard(w,compact=false){const chunks=learningChunksFor(w),native=nativeLiteracySubject(w?.subject||state.activeSubject);return `<div class="learning-card"><div><small>Wort</small><strong>${esc(w.term)}</strong> ${audioButtonHtml(w.term,'Anhören')}${w.extra?` · ${esc(w.extra)}`:''}</div><div><small>Bedeutung</small>${esc(w.translation)}</div>${w.example?`<div><small>Kontext</small>${esc(w.example)} ${audioButtonHtml(w.example,'Satz anhören')}</div>`:''}${native&&w.orthographyHint?`<div><small>Rechtschreibfokus</small>${esc(w.orthographyHint)}</div>`:''}${native&&w.wordStem?`<div><small>Wortstamm</small>${esc(w.wordStem)}${w.wordFamily?.length?` · Wortfamilie: ${esc(w.wordFamily.join(' · '))}`:''}</div>`:''}${w.mnemonic?`<div><small>Wortkniff / Eselsbrücke</small>${esc(w.mnemonic)}</div>`:''}${!compact&&chunks.length>1?`<div><small>${native&&w.syllables?.length>1?'Silben / Wortstruktur':'Lernbausteine'}</small>${esc(chunks.join(' · '))}</div>`:''}</div>`}
 function renderChunks(w){
   if(!session.currentQuestion)setCurrentQuizQuestion(w,'spelling');
   const q=currentQuizQuestion(w,'spelling'),chunks=learningChunksFor(w,q.term);if(chunks.length<2){session.currentSubmode='spelling';return renderSpelling(w)}
@@ -468,7 +491,7 @@ function closestTargetForm(answer,target){const raw=Array.isArray(target)?target
 function diffMarkup(value,other){const a=String(value||''),b=String(other||'');let start=0;while(start<a.length&&start<b.length&&a[start].toLowerCase()===b[start].toLowerCase())start++;let ae=a.length-1,be=b.length-1;while(ae>=start&&be>=start&&a[ae].toLowerCase()===b[be].toLowerCase()){ae--;be--}const pre=esc(a.slice(0,start)),mid=esc(a.slice(start,ae+1)),suf=esc(a.slice(ae+1));return `${pre}${mid?`<mark>${mid}</mark>`:'<mark>∅</mark>'}${suf}`}
 function errorFeedbackHtml(answer,target){const t=closestTargetForm(answer,target),d=levenshtein(answer,t),near=d>0&&d<=2&&d<=Math.max(1,Math.ceil(normalize(t).length*.25));return `<div class="spelling-feedback"><strong>${near?'Fast richtig – bleibt als Fehler markiert.':'Noch nicht richtig.'}</strong><div><small>Deine Eingabe</small>${diffMarkup(answer,t)}</div><div><small>Richtig</small>${diffMarkup(t,answer)}</div></div>`}
 function gradeChoice(btn,w,answer,target,skill,nonEvaluative=false,questionSnapshot=null){if(session.locked)return;const targetSession=session;session.locked=true;const q=questionSnapshot||currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w);recordNativeLiteracyEvidence(w,skill,ok,{orthographyOk:grade.orthographyOk,assisted:!!session.hintUsed});btn.classList.add(ok?'correct':'wrong');if(!ok){Array.from(document.querySelectorAll('[data-answer]')).find(b=>gradeQuizQuestion(q,b.dataset.answer).correct)?.classList.add('correct')}if(['recognition','listening'].includes(skill))session.scaffoldedWords[w.id]=true;if(nonEvaluative){recordNonEvaluative(w,'flash',ok,skill)}else{recordResult(w,ok,skill,ok?null:skill);logSessionResult(w,{answer,target:q.targets,correct:ok,skill,orthographyOk:grade.orthographyOk,prompt:q.prompt,boxBefore:before,boxAfter:leitnerBox(w),reason:sessionResultReason({correct:ok,orthographyOk:grade.orthographyOk,answer,targets:q.targets,mode:skill,assisted:!!session.hintUsed})});if(!ok){$('#studyArea .study-card')?.insertAdjacentHTML('beforeend',`<div class="feedback notice bad">${wordLearningCard(w,true)}</div>`);maybeSpeakCorrection(w)}}scheduleSessionAdvance(targetSession,ok,w,650)}
-function gradeText(w,answer,target,errorType,skill){if(session.locked)return;const targetSession=session;session.locked=true;const q=currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w);recordNativeLiteracyEvidence(w,skill,ok,{orthographyOk:grade.orthographyOk,assisted:!!session.hintUsed});const detail=ok?(session.hintUsed?'Richtig mit Hinweis.':'Richtig.'):' ';$('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}">${ok?`<strong>${detail}</strong>`:errorFeedbackHtml(answer,q.targets)}<div><strong>${esc(w.term)}</strong> ${audioButtonHtml(w.term,'Anhören')}</div>${!ok?wordLearningCard(w):''}</div>`);recordResult(w,ok,skill,ok?null:errorType,{orthographyOk:grade.orthographyOk});logSessionResult(w,{answer,target:q.targets,correct:ok,skill,orthographyOk:grade.orthographyOk,assisted:!!session.hintUsed,prompt:q.prompt,boxBefore:before,boxAfter:leitnerBox(w),reason:sessionResultReason({correct:ok,orthographyOk:grade.orthographyOk,answer,targets:q.targets,mode:skill,assisted:!!session.hintUsed})});if(!ok)maybeSpeakCorrection(w);scheduleSessionAdvance(targetSession,ok,w,ok?700:2400)}
+function gradeText(w,answer,target,errorType,skill){if(session.locked)return;const targetSession=session;session.locked=true;const q=currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct,before=leitnerBox(w);recordNativeLiteracyEvidence(w,skill,ok,{orthographyOk:grade.orthographyOk,assisted:!!session.hintUsed});recordNativeLiteracyError(w,answer,q,skill,ok);const detail=ok?(session.hintUsed?'Richtig mit Hinweis.':'Richtig.'):' ';$('#studyArea .study-card').insertAdjacentHTML('beforeend',`<div class="feedback notice ${ok?'good':'bad'}">${ok?`<strong>${detail}</strong>`:errorFeedbackHtml(answer,q.targets)}<div><strong>${esc(w.term)}</strong> ${audioButtonHtml(w.term,'Anhören')}</div>${!ok?wordLearningCard(w):''}</div>`);recordResult(w,ok,skill,ok?null:errorType,{orthographyOk:grade.orthographyOk});logSessionResult(w,{answer,target:q.targets,correct:ok,skill,orthographyOk:grade.orthographyOk,assisted:!!session.hintUsed,prompt:q.prompt,boxBefore:before,boxAfter:leitnerBox(w),reason:sessionResultReason({correct:ok,orthographyOk:grade.orthographyOk,answer,targets:q.targets,mode:skill,assisted:!!session.hintUsed})});if(!ok)maybeSpeakCorrection(w);scheduleSessionAdvance(targetSession,ok,w,ok?700:2400)}
 function recordNonEvaluative(w,mode,ok,skill){w.modesSeen=[...new Set([...(w.modesSeen||[]),mode])];if(skill==='reading'){w.skills={...defaultSkills(),...(w.skills||{})};w.skills.reading=clamp((w.skills.reading||0)+(ok?0.5:-0.2),0,4)}recordActivity(mode,{wordId:w.id,correct:ok,readingSupport:skill==='reading'});session.answered++;if(ok)session.correct++}
 
 function answerReviewClone(value){return value==null?value:JSON.parse(JSON.stringify(value))}

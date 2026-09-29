@@ -6,11 +6,11 @@ Stand: 29.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.35** (Release-Kandidat; produktiv v0.21.34)
-- produktiver Stand auf `main`: **v0.21.34 / Merge-Commit `c0ae7fb9574e107fc7b8780921784db00a16d085` / PR #201**
-- jüngster produktiver Release: **PR #201 – v0.21.34 – Deutsch Paket B: Fuchs-Lernwelt & Wortreich-Grundgerüst**
-- Produktionsnachweis v0.21.34: **PR-CI #1232 success · main-CI #1233 success · GitHub Pages #559 success**
-- aktueller Release-Kandidat: **v0.21.35 – Deutsch Paket C / Klasse-1-Kern auf `feat/deutsch-paket-c-v02135`; PR/Verifikation folgt**
+- App-Version: **v0.21.36** (Release-Kandidat; produktiv v0.21.35)
+- produktiver Stand auf `main`: **v0.21.35 / Merge-Commit `f28d68f62e19d0dac9e74fe2aa4625ea23f2823c` / PR #202**
+- jüngster produktiver Release: **PR #202 – v0.21.35 – Deutsch Paket C: Klasse-1-Kern**
+- Produktionsnachweis v0.21.35: **PR-CI #1235 success · main-CI #1236 success · GitHub Pages #560 success**
+- aktueller Release-Kandidat: **v0.21.36 – Deutsch Paket D / Lernwörter & Rechtschreibung auf `feat/deutsch-paket-d-v02136`; PR/Verifikation folgt**
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
@@ -53,7 +53,8 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Dauerhafte Jahresentwicklung / Jahresfestung | PRODUCTION / LIVE VERIFIED v0.21.30 | D-20260928-005, B-014, PR #188/#191 |
 | Family Sync | PRODUCTION / Beta-Grenze | `SYNC_ARCHITECTURE.md`, `FINAL_AUDIT.md` |
 | Deutsch Paket B / Fachgrundgerüst | PRODUCTION / CI VERIFIED v0.21.34 | `docs/project/DEUTSCH_WORTREICH_V1.md`, B-001, D-20260928-008, PR #201 |
-| Deutsch Paket C / Klasse-1-Kern | IMPLEMENTED im v0.21.35-Release-Kandidaten; Verifikation läuft | `docs/project/DEUTSCH_WORTREICH_V1.md`, `DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`, B-001 |
+| Deutsch Paket C / Klasse-1-Kern | PRODUCTION / LIVE VERIFIED v0.21.35 · PR #202 · CI #1236 · Pages #560 | `docs/project/DEUTSCH_WORTREICH_V1.md`, `DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`, B-001 |
+| Deutsch Paket D / Lernwörter & Rechtschreibung | IMPLEMENTED im v0.21.36-Release-Kandidaten; Verifikation läuft | `docs/project/DEUTSCH_WORTREICH_V1.md`, `DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`, B-001 |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 
 ## Offene Verifikationsgrenzen

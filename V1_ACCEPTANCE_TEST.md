@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 28.09.2026 · Basis: v0.21.35 · Produktionsbasis; Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
+Stand: 28.09.2026 · Basis: v0.21.36 · Produktionsbasis; Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -440,10 +440,15 @@ Automatisierter Implementierungsstand v0.21.35: Paket C deckt die untenstehenden
 
 ## G2 – Deutsche Bewertung
 
+Automatisierter Implementierungsstand v0.21.36: Paket D ergänzt differenzierte Deutsch-Rechtschreibfehler, Wortstrukturmetadaten und gezielte Folgeübungen. Die praktische Bewertung der Bedienbarkeit und fachlichen Verständlichkeit bleibt offen.
+
+
 - [x] Groß-/Kleinschreibung wird je Aufgabentyp fachlich korrekt behandelt
 - [x] Rechtschreibaufgaben verlangen die definierte Sollschreibung
 - [x] reine Lese-/Erkennungsaufgaben werden nicht künstlich zu Rechtschreibtests
 - [ ] technische Satz-/Platzhaltervarianten werden nur bei fachlicher Gleichwertigkeit toleriert
+- [ ] Lernwörter können Silben, Wortstamm, Wortfamilie und Rechtschreibfokus sinnvoll nutzen
+- [ ] Groß-/Kleinschreibung, Buchstabenfolge, Wortstruktur und Satzkontext werden im Fehlerprofil getrennt geführt, ohne diagnostische Aussage
 - [ ] „Bewertung prüfen lassen“ neutralisiert einen strittigen Versuch auch in Deutsch
 - [ ] Elternentscheidung kann Variante freigeben, Sollinhalt korrigieren oder Systembewertung bestätigen
 - [ ] „Vokabel überspringen“ verschiebt auch in Deutsch nur ans Ende derselben Session und bleibt neutral
