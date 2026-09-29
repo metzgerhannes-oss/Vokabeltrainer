@@ -470,6 +470,24 @@ Automatisierter Implementierungsstand v0.21.37: Ein echter deutscher Phaser-4-Be
 - [ ] Kampfergebnis verändert Mastery, Spacing, Testbereitschaft und fachliche Bewertung nicht
 - [ ] freiwilliges Üben erzeugt keine zusätzliche Tages-Kampfaktion
 
+## G3b – Deutsch-Weltwahl Abenteuer / Kampf
+
+Automatisierter Implementierungsstand v0.21.39: Profilerstellung, Persistenz, m/w/d,
+Family Sync, Weltwechsel ohne fachlichen Reset, kampffreie Abenteueraktion und sechs
+nicht-militärische Abenteuer-Fuchsstufen werden in CI/WebKit geprüft. Die praktische
+Verständlichkeit auf echtem Gerät bleibt separat abzunehmen.
+
+- [ ] neues Deutsch-Profil verlangt bewusst **Abenteuer** oder **Kampf**
+- [ ] Wahl ist ohne Lesekompetenz über Vorlesen verständlich
+- [ ] Männlich / Weiblich / Neutral-Divers sind auswählbar und bleiben nach Neustart erhalten
+- [ ] bestehendes Deutsch-Profil bleibt nach Update auf Kampf / Wortreich
+- [ ] Weltwechsel erhält Lernstand, Mastery, Spacing, Testbereitschaft und Jahresstufe
+- [ ] Abenteuer zeigt sechs klar aufbauende, nicht-militärische Fuchsstufen
+- [ ] Abenteueraktion öffnet keinen Battle-Screen
+- [ ] Abenteuer und Kampf verbrauchen höchstens dieselbe eine Tages-Spielaktion
+- [ ] Family Sync überträgt Weltwahl und Neutral/Divers zwischen Eltern- und Kindergerät
+- [ ] Rückwechsel auf Wortreich stellt die Kampfpräsentation ohne Lernstandsverlust wieder her
+
 ## G4 – Plattform / Release
 
 - [ ] Kernpfad auf iPhone-Zielviewport praktisch geprüft
