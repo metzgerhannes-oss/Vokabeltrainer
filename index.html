@@ -9,17 +9,17 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Vokabeltrainer">
-  <title>Vokabeltrainer – Beta v0.21.34</title>
+  <title>Vokabeltrainer – Beta v0.21.35</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
-  <link rel="stylesheet" href="css/app.css?v=0.21.34">
-  <link rel="stylesheet" href="css/menu.css?v=0.21.34">
-  <link rel="stylesheet" href="css/army.css?v=0.21.34">
-  <link rel="stylesheet" href="css/campaign-map.css?v=0.21.34">
-  <link rel="stylesheet" href="css/battle-art.css?v=0.21.34">
-  <link rel="stylesheet" href="css/battle-fortress.css?v=0.21.34">
-  <link rel="stylesheet" href="css/battle-result.css?v=0.21.34">
-  <link rel="stylesheet" href="css/campaign-target.css?v=0.21.34">
+  <link rel="stylesheet" href="css/app.css?v=0.21.35">
+  <link rel="stylesheet" href="css/menu.css?v=0.21.35">
+  <link rel="stylesheet" href="css/army.css?v=0.21.35">
+  <link rel="stylesheet" href="css/campaign-map.css?v=0.21.35">
+  <link rel="stylesheet" href="css/battle-art.css?v=0.21.35">
+  <link rel="stylesheet" href="css/battle-fortress.css?v=0.21.35">
+  <link rel="stylesheet" href="css/battle-result.css?v=0.21.35">
+  <link rel="stylesheet" href="css/campaign-target.css?v=0.21.35">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Zum Inhalt</a>
@@ -27,7 +27,7 @@
     <header class="topbar">
       <div class="app-title-row">
         <h1 id="appTitle">Vokabeltrainer</h1>
-        <span id="versionBadge" class="version-badge" aria-label="App-Version">v0.21.34</span>
+        <span id="versionBadge" class="version-badge" aria-label="App-Version">v0.21.35</span>
       </div>
       <div class="top-actions">
         <button id="installBtn" class="ghost hidden">Installieren</button>
@@ -124,15 +124,18 @@
             <div class="german-fox fox-left" aria-hidden="true">🦊</div>
             <div class="german-learning-copy">
               <small>Deutsch · Fuchspfad</small>
-              <strong>Wörter entdecken, hören und sicher schreiben</strong>
+              <strong>Buchstaben, Laute, erste Wörter und Sätze</strong>
               <div class="german-learning-stations" aria-hidden="true">
-                <span><i class="wood-sword"></i> Hören</span>
-                <span><i class="wood-sword"></i> Erkennen</span>
+                <span><i class="wood-sword"></i> Buchstaben</span>
+                <span><i class="wood-sword"></i> Laute</span>
                 <span><i class="wood-sword"></i> Schreiben</span>
+                <span><i class="wood-sword"></i> Wörter</span>
+                <span><i class="wood-sword"></i> Sätze</span>
               </div>
             </div>
             <div class="german-fox fox-right" aria-hidden="true">🦊</div>
           </aside>
+          <section id="germanFoundationCard" class="card german-foundation-card hidden" aria-label="Deutsch Klasse 1 Grundlagen"></section>
           <div class="practice-path-grid" aria-label="Übungswege">
             <button id="practiceCardsBtn" class="practice-path" type="button"><span aria-hidden="true">▥</span><strong>Karteikarten</strong><small>Schriftlich · 5 Boxen</small></button>
             <button id="practiceWeakBtn" class="practice-path" type="button"><span aria-hidden="true">◎</span><strong>Unsichere Wörter</strong><small>Gezielt festigen</small></button>
@@ -622,31 +625,32 @@
   <input id="fileInput" type="file" class="hidden" accept=".csv,.json,text/csv,application/json">
   <input id="photoInput" type="file" class="hidden" accept="image/*">
   <input id="isbnPhotoInput" type="file" class="hidden" accept="image/*" capture="environment">
-  <script src="js/core.js?v=0.21.34" defer></script>
-  <script src="js/help.js?v=0.21.34" defer></script>
-  <script src="js/library.js?v=0.21.34" defer></script>
-  <script src="js/builtin-library.js?v=0.21.34" defer></script>
-  <script src="js/storage.js?v=0.21.34" defer></script>
-  <script src="js/model.js?v=0.21.34" defer></script>
-  <script src="js/family-sync.js?v=0.21.34" defer></script>
-  <script src="js/quiz-engine.js?v=0.21.34" defer></script>
-  <script src="js/learning.js?v=0.21.34" defer></script>
-  <script src="js/translation.js?v=0.21.34" defer></script>
-  <script src="js/io.js?v=0.21.34" defer></script>
-  <script src="js/vendor/qrcode.js?v=0.21.34" defer></script>
-  <script src="js/qr-ui.js?v=0.21.34" defer></script>
-  <script src="js/ui.js?v=0.21.34" defer></script>
-  <script src="js/army-art.js?v=0.21.34" defer></script>
-  <script src="js/battle-art.js?v=0.21.34" defer></script>
-  <script src="js/battle-art-ui.js?v=0.21.34" defer></script>
-  <script src="js/menu-avatar-art.js?v=0.21.34" defer></script>
-  <script src="js/battle-result-ui.js?v=0.21.34" defer></script>
-  <script src="js/army-ui.js?v=0.21.34" defer></script>
-  <script src="js/campaign-map.js?v=0.21.34" defer></script>
-  <script src="js/menu-ui.js?v=0.21.34" defer></script>
-  <script src="js/library-ui.js?v=0.21.34" defer></script>
-  <script src="js/focus-ui.js?v=0.21.34" defer></script>
-  <script src="js/parent-docs.js?v=0.21.34" defer></script>
-  <script src="js/app.js?v=0.21.34" defer></script>
+  <script src="js/core.js?v=0.21.35" defer></script>
+  <script src="js/help.js?v=0.21.35" defer></script>
+  <script src="js/library.js?v=0.21.35" defer></script>
+  <script src="js/builtin-library.js?v=0.21.35" defer></script>
+  <script src="js/storage.js?v=0.21.35" defer></script>
+  <script src="js/model.js?v=0.21.35" defer></script>
+  <script src="js/family-sync.js?v=0.21.35" defer></script>
+  <script src="js/quiz-engine.js?v=0.21.35" defer></script>
+  <script src="js/learning.js?v=0.21.35" defer></script>
+  <script src="js/translation.js?v=0.21.35" defer></script>
+  <script src="js/io.js?v=0.21.35" defer></script>
+  <script src="js/vendor/qrcode.js?v=0.21.35" defer></script>
+  <script src="js/qr-ui.js?v=0.21.35" defer></script>
+  <script src="js/ui.js?v=0.21.35" defer></script>
+  <script src="js/german-foundation.js?v=0.21.35" defer></script>
+  <script src="js/army-art.js?v=0.21.35" defer></script>
+  <script src="js/battle-art.js?v=0.21.35" defer></script>
+  <script src="js/battle-art-ui.js?v=0.21.35" defer></script>
+  <script src="js/menu-avatar-art.js?v=0.21.35" defer></script>
+  <script src="js/battle-result-ui.js?v=0.21.35" defer></script>
+  <script src="js/army-ui.js?v=0.21.35" defer></script>
+  <script src="js/campaign-map.js?v=0.21.35" defer></script>
+  <script src="js/menu-ui.js?v=0.21.35" defer></script>
+  <script src="js/library-ui.js?v=0.21.35" defer></script>
+  <script src="js/focus-ui.js?v=0.21.35" defer></script>
+  <script src="js/parent-docs.js?v=0.21.35" defer></script>
+  <script src="js/app.js?v=0.21.35" defer></script>
 </body>
 </html>
