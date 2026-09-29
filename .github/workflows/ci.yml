@@ -73,6 +73,8 @@ jobs:
 
       - name: All-subject world choice smoke
         run: node scripts/vokabeltrainer-world-choice-all-subjects-smoke.mjs
+      - name: World storylines smoke
+        run: node scripts/vokabeltrainer-world-storylines-smoke.mjs
 
       - name: Library index smoke
         run: node scripts/vokabeltrainer-library-index-smoke.mjs
