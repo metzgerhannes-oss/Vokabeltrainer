@@ -33,10 +33,20 @@
   --menu-accent:#274c77;--menu-accent-soft:rgba(119,154,118,.20);--menu-accent-border:#bfd0da;
   --menu-evolution-bg:rgba(23,32,51,.88);--menu-pip:#d5bd67;--menu-cta-shadow:rgba(39,76,119,.28);
 }
+.project-menu-stage[data-visual-theme="english-adventure"]{
+  --menu-surface-1:#f5faf8;--menu-surface-2:#e9f2ed;--menu-surface-3:#e3eee8;
+  --menu-accent:#315f72;--menu-accent-soft:rgba(90,143,119,.18);--menu-accent-border:#bfd8ce;
+  --menu-evolution-bg:rgba(35,67,62,.90);--menu-pip:#d6b95f;--menu-cta-shadow:rgba(49,95,114,.24);--menu-ink:#263e42;
+}
 .project-menu-stage[data-visual-theme="roman"]{
   --menu-surface-1:#fbf8f1;--menu-surface-2:#f1e8d8;--menu-surface-3:#e8ddca;
   --menu-accent:#8b3f31;--menu-accent-soft:rgba(176,116,72,.18);--menu-accent-border:#d9c1a7;
   --menu-evolution-bg:rgba(61,44,36,.90);--menu-pip:#c99548;--menu-cta-shadow:rgba(139,63,49,.25);--menu-ink:#3d2c24;
+}
+.project-menu-stage[data-visual-theme="latin-adventure"]{
+  --menu-surface-1:#fffaf0;--menu-surface-2:#f4ead4;--menu-surface-3:#e9e0c7;
+  --menu-accent:#8a5a32;--menu-accent-soft:rgba(156,139,83,.18);--menu-accent-border:#ddc89c;
+  --menu-evolution-bg:rgba(82,64,43,.90);--menu-pip:#d3ad55;--menu-cta-shadow:rgba(138,90,50,.24);--menu-ink:#493826;
 }
 .project-menu-stage[data-visual-theme="wordrealm"]{
   --menu-surface-1:#fbf6ea;--menu-surface-2:#efe6d4;--menu-surface-3:#e4eadb;
@@ -52,6 +62,11 @@
   --menu-surface-1:#faf9f5;--menu-surface-2:#edf2f1;--menu-surface-3:#e8ece8;
   --menu-accent:#315d73;--menu-accent-soft:rgba(107,145,142,.17);--menu-accent-border:#c8d8d5;
   --menu-evolution-bg:rgba(36,54,61,.88);--menu-pip:#9aa77b;--menu-cta-shadow:rgba(49,93,115,.24);--menu-ink:#24363d;
+}
+.project-menu-stage[data-visual-theme="french-battle"]{
+  --menu-surface-1:#f8f7f2;--menu-surface-2:#ece8df;--menu-surface-3:#e1e7e4;
+  --menu-accent:#4c6174;--menu-accent-soft:rgba(121,102,132,.16);--menu-accent-border:#c9c3cf;
+  --menu-evolution-bg:rgba(49,56,69,.91);--menu-pip:#c5a960;--menu-cta-shadow:rgba(76,97,116,.25);--menu-ink:#2d3440;
 }
 .project-menu-scenery{position:absolute;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
 .project-menu-scenery::before{
@@ -576,3 +591,10 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
 .project-menu-avatar-frame[data-avatar-style="neutral"] .project-menu-avatar-fallback .avatar-shield{
   border-color:#6a633d;background:linear-gradient(145deg,#c9bc72,#7d7a48);color:#26352f;
 }
+
+.project-menu-avatar-frame.world-adventure-avatar .project-menu-avatar-standard{opacity:0!important}
+.project-menu-avatar-frame.world-adventure-avatar .project-menu-avatar-fallback .avatar-body{border-radius:38% 38% 18% 18%;background:linear-gradient(145deg,#557462,#304b43);border-color:#294239}
+.project-menu-avatar-frame.world-adventure-avatar .project-menu-avatar-fallback .avatar-shield{border-radius:50%;background:linear-gradient(145deg,#f0df9b,#bd9a4b);border-color:#80662f;color:#344b3f;font-size:1.15rem}
+.project-menu-avatar-frame.world-adventure-avatar[data-avatar-subject="english"] .project-menu-avatar-fallback .avatar-body{background:linear-gradient(145deg,#56788a,#315263)}
+.project-menu-avatar-frame.world-adventure-avatar[data-avatar-subject="latin"] .project-menu-avatar-fallback .avatar-body{background:linear-gradient(145deg,#9a744b,#62503a)}
+.project-menu-avatar-frame.world-adventure-avatar[data-avatar-subject="french"] .project-menu-avatar-fallback .avatar-body{background:linear-gradient(145deg,#66847f,#3f6262)}
