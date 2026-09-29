@@ -633,3 +633,89 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
 @media(max-width:430px){
   .project-menu-avatar-frame.german-fox-avatar .adventure-svg-avatar{width:min(88%,270px);height:79%}
 }
+
+
+/* v0.21.42 – Deutsch-Abenteuer wieder an die freigegebene Fuchswelt-Art-Direction angeglichen */
+.project-menu-stage[data-visual-theme="german-adventure"]{
+  border:2px solid #c8d2ab;
+  background:#f4f1e3;
+  box-shadow:0 20px 44px rgba(69,76,48,.13);
+}
+.project-menu-stage[data-visual-theme="german-adventure"] .project-menu-scenery::before,
+.project-menu-stage[data-visual-theme="german-adventure"] .project-menu-scenery::after{display:none}
+.project-menu-stage[data-visual-theme="german-adventure"] .project-menu-scenery{opacity:1}
+.german-adventure-scenery-svg{
+  position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover
+}
+.project-menu-stage[data-visual-theme="german-adventure"] .project-menu-avatar-panel{z-index:3}
+.project-menu-avatar-frame.german-fox-avatar.adventure-rendered{align-items:flex-end;justify-content:flex-start}
+.project-menu-avatar-frame.german-fox-avatar.adventure-rendered .adventure-svg-avatar{
+  width:min(82%,380px);
+  height:91%;
+  min-height:0;
+  margin-left:4%;
+  display:flex;
+  align-items:flex-end;
+  justify-content:flex-start;
+  overflow:visible;
+  transform:none!important;
+}
+.project-menu-avatar-frame.german-fox-avatar.adventure-rendered .adventure-svg-avatar .wordrealm-fox-svg.adventure{
+  width:100%;height:100%;display:block;overflow:visible;
+  filter:drop-shadow(0 16px 16px rgba(65,63,42,.16)) saturate(.98);
+}
+.project-menu-avatar-frame.german-fox-avatar.adventure-rendered::after{
+  left:10%;right:33%;bottom:3%;height:7%;
+  background:rgba(74,82,51,.12);filter:blur(11px)
+}
+.project-menu-stage[data-visual-theme="german-adventure"] .project-menu-avatar-evolution{
+  color:#3d4637;
+  background:linear-gradient(180deg,rgba(255,253,246,.96),rgba(245,238,218,.95));
+  border:1px solid rgba(160,143,101,.52);
+  box-shadow:0 9px 20px rgba(72,75,47,.13);
+  backdrop-filter:blur(5px);
+}
+.project-menu-stage[data-visual-theme="german-adventure"] .project-menu-avatar-evolution strong{font-size:.78rem}
+.project-menu-stage[data-visual-theme="german-adventure"] .project-menu-avatar-evolution small{color:#69715f;font-weight:750}
+.project-menu-stage[data-visual-theme="german-adventure"] .project-menu-avatar-stage-pips i{background:#c8c1aa}
+.project-menu-stage[data-visual-theme="german-adventure"] .project-menu-avatar-stage-pips i.filled{background:#c99e43}
+.project-menu-stage[data-visual-theme="german-adventure"] .project-menu-head{
+  padding:7px 10px;border-radius:16px;background:rgba(255,253,246,.79);
+  border:1px solid rgba(174,159,118,.48);backdrop-filter:blur(6px)
+}
+.project-menu-stage[data-visual-theme="german-adventure"] .project-menu-learning-card{
+  border-color:#d4cfb2;
+  background:linear-gradient(180deg,rgba(255,254,249,.97),rgba(244,247,232,.96));
+  box-shadow:0 8px 18px rgba(74,81,52,.09)
+}
+@media(max-width:760px){
+  .project-menu-stage[data-visual-theme="german-adventure"]{
+    overflow:hidden;padding:11px 10px 14px;border-radius:24px;background:#f3f0e2
+  }
+  .project-menu-stage[data-visual-theme="german-adventure"] .project-menu-scenery{
+    height:270px;bottom:auto
+  }
+  .project-menu-stage[data-visual-theme="german-adventure"] .project-menu-avatar-panel{
+    margin-bottom:10px
+  }
+  .project-menu-stage[data-visual-theme="german-adventure"] .project-menu-avatar-frame{
+    height:238px;justify-content:flex-start
+  }
+  .project-menu-avatar-frame.german-fox-avatar.adventure-rendered .adventure-svg-avatar{
+    width:min(58%,230px);height:96%;margin-left:2%
+  }
+  .project-menu-stage[data-visual-theme="german-adventure"] .project-menu-avatar-evolution{
+    width:min(96%,390px);max-width:96%;margin-top:2px;padding:9px 11px
+  }
+  .project-menu-stage[data-visual-theme="german-adventure"] .project-menu-main{gap:10px}
+}
+@media(max-width:430px){
+  .project-menu-stage[data-visual-theme="german-adventure"] .project-menu-scenery{height:250px}
+  .project-menu-stage[data-visual-theme="german-adventure"] .project-menu-avatar-frame{height:220px}
+  .project-menu-avatar-frame.german-fox-avatar.adventure-rendered .adventure-svg-avatar{
+    width:min(60%,215px);height:97%;margin-left:0
+  }
+  .project-menu-stage[data-visual-theme="german-adventure"] .project-menu-avatar-evolution{
+    width:98%;max-width:98%;padding:9px 10px
+  }
+}
