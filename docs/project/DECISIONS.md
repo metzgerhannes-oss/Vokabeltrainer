@@ -450,3 +450,27 @@ Auswahlaufgaben müssen die Position der richtigen Antwort variieren. Eine syste
 ist unzulässig. Browser-TTS für isolierte Phoneme wird auf realen Zielgeräten praktisch geprüft; bei
 unzureichender Lautqualität sind geprüfte Audioassets vorzuziehen.
 
+### D-20260929-006 – Malerische Referenzqualität ist Mindeststandard für alle Avatare
+**Status:** LOCKED  
+**Quelle:** [../../VISUAL_DNA.md](../../VISUAL_DNA.md) § 2.1/§ 10/§ 13; [LATIN_FRENCH_VISUAL_LAYOUT.md](LATIN_FRENCH_VISUAL_LAYOUT.md); B-019
+
+Alle sichtbaren Avatare in Englisch, Latein, Deutsch und Französisch müssen dieselbe
+hochwertige malerisch-cinematische Qualitätsklasse erreichen wie die freigegebene
+Kampagnen-/Ritterreferenz. Die Fachwelten unterscheiden sich in Motiven, Farben, Kleidung und
+Requisiten, **nicht** in der Ausführungsqualität.
+
+Flache CSS-/DOM-Figuren, Emoji-/Clipart-Anmutung, einfache technische SVGs und fachfremde
+Ersatzbilder sind ausschließlich Fallback und dürfen nicht als finaler Avatar abgenommen werden.
+Insbesondere darf eine komplette Schlacht-/Landschaftsillustration nicht in den Avatar-Slot
+eingesetzt werden.
+
+Sechs Entwicklungsstufen müssen dieselbe Figurenidentität nachvollziehbar weiterentwickeln.
+Auswählbare Männlich-/Weiblich-/Neutral-Divers-Varianten müssen visuell gleichwertig sein; ein
+fehlendes finales Asset darf nicht still auf eine andere Variante oder eine fachfremde Serie
+zurückfallen.
+
+Der Befund auf v0.21.43, dass Latein mangels eigener Finalserie das allgemeine
+mittelalterliche Armee-Hero-Bild im Avatarbereich zeigen konnte, verstößt gegen diese Regel.
+v0.21.44 unterbindet diesen fachfremden Ersatz. Die vollständige Produktion der fehlenden
+Finalserien wird in B-019 verfolgt.
+
