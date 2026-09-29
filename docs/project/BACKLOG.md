@@ -35,7 +35,7 @@ Verbindliche Leitlinien:
 **Paket F:** praktische v1-Abnahme folgt.
 
 ## B-002 – Eigene finale Latein-Grafikserie
-**Status:** IN_IMPLEMENTATION · Deutsch umgesetzt in v0.21.38; Englisch/Latein/Französisch folgen  
+**Status:** APPROVED_BACKLOG  
 **Priorität:** nach Kernstabilität / im Rahmen der visuellen Ausarbeitung  
 **Betroffene Quelle:** `VISUAL_DNA.md`
 
@@ -321,7 +321,7 @@ Ein Backlog-Punkt wird nicht gelöscht, wenn er umgesetzt oder verworfen wird:
 - Ersatz → `SUPERSEDED` plus Verweis auf Nachfolger
 
 ## B-017 – Weltwahl Abenteuer oder Kampf pro Fach
-**Status:** APPROVED_BACKLOG  
+**Status:** IN_IMPLEMENTATION · Deutsch umgesetzt in v0.21.38; Englisch/Latein/Französisch folgen  
 **Priorität:** P1 visuelle/Profile-UX vor finaler Fachwelten-Ausarbeitung  
 **Decision:** D-20260929-001 · D-20260929-002  
 **Betroffene Quellen:** `VISUAL_DNA.md`, `docs/project/LATIN_FRENCH_VISUAL_LAYOUT.md`, Profilmodell, Profilerstellung, Profileinstellungen, Spiel-/Fortschrittsrenderer
