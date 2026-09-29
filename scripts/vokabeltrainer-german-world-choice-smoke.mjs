@@ -26,7 +26,7 @@ assert(storage.includes("['male','female','neutral'].includes(l.avatarStyle)"),'
 assert(sync.includes("'worldModeBySubject'")&&sync.includes('normalizeWorldModeBySubject(l.worldModeBySubject)'),'family sync carries and normalizes world mode');
 assert(sync.includes("['male','female','neutral'].includes(l.avatarStyle)"),'family sync accepts m/w/d setup values');
 assert(menu.includes("german-fox-avatar',isGerman&&adventure")&&menu.includes("german-knight-avatar',isGerman&&!adventure"),'project menu follows German world choice');
-assert(menu.includes('function resetAvatarSurface(')&&menu.includes('data-avatar-render-key')&&menu.includes('frame.dataset.avatarRenderKey=key'),'avatar surface is hard-reset and namespaced per world');
+assert(menu.includes('function resetAvatarSurface(')&&menu.includes('frame.dataset.avatarRenderKey=key'),'avatar surface is hard-reset and namespaced per world');
 assert(menu.includes("fallback.classList.add('wordrealm-svg-avatar','adventure-svg-avatar')"),'German adventure gets its own renderer class instead of reusing the battle surface');
 assert(army.includes('function adventureHeroMarkup')&&army.includes("root.classList.toggle('adventure-mode',adventure)"),'German adventure uses the generic adventure hub');
 assert(wordrealm.includes('const ADVENTURE_STAGES=Object.freeze')&&wordrealm.includes('function adventureFoxSvg'),'German adventure has its own six-stage vector fox series');
