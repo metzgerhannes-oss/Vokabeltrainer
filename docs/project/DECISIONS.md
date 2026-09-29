@@ -395,6 +395,8 @@ Ein Wechsel ist in den Profileinstellungen ohne Reset möglich. Bereits erreicht
 
 Der Fuchs bleibt im Lernmodus weiterhin ruhiger Lernbegleiter. In der Abenteuerwelt ist er zusätzlich die sichtbare Spielfigur des separaten Motivationsbereichs.
 
+Die Avatarwahl **m/w/d** ist davon unabhängig und bleibt bei einem Weltwechsel erhalten. Für Klasse 1 sind Avatar- und Weltwahl direkt im Profildialog vorlesbar.
+
 ### D-20260929-003 – Wortreich-Startlayout, Stufenlaufbahn und Vorlesen sind verbindlich
 **Status:** LOCKED  
 **Quelle:** [DEUTSCH_WORTREICH_LAYOUT_V1.md](DEUTSCH_WORTREICH_LAYOUT_V1.md); [../../VISUAL_DNA.md](../../VISUAL_DNA.md) § 9; D-20260928-008; D-20260929-002; D-20260927-009
