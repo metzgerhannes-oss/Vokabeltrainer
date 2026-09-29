@@ -467,7 +467,7 @@ function useProductionPhaserBattle(secureBefore=false){
 }
 function loadProductionPhaserBattle(){
   if(!battlePhaserProductionModulePromise){
-    const moduleUrl=new URL('js/battle-phaser/battle-phaser-production.js?v=0.21.37',document.baseURI).href;
+    const moduleUrl=new URL('js/battle-phaser/battle-phaser-production.js?v=0.21.38',document.baseURI).href;
     battlePhaserProductionModulePromise=import(moduleUrl).catch(error=>{
       battlePhaserProductionModulePromise=null;
       throw error;
