@@ -242,7 +242,7 @@ Fehlt einer der fachlichen Punkte 1–6 oder greift die Spielwelt in die fachlic
 - eigener, Family-Sync-fähiger Grundlagenfortschritt ohne XP-, Battle- oder Lernwort-Mastery-Wirkung
 
 ### Paket D – Lernwörter/Rechtschreibung
-**Status: umgesetzt im Release-Kandidaten v0.21.36; automatisierte Verifikation läuft.**
+**Status: produktiv verifiziert in v0.21.36 / PR #203; PR-CI #1239, main-CI #1240 und Pages #561 grün.**
 - Lernwortlisten und produktiver Schreibabruf auf Basis der bestehenden Lernset-Infrastruktur
 - Diktat-/Audioanschluss über `de-DE`
 - Satzkontext als eigener Evidenzpfad
