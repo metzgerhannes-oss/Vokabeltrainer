@@ -367,7 +367,7 @@
 .project-menu-avatar-frame.german-knight-avatar .avatar-shield{background:linear-gradient(145deg,#86633c,#5f472d);border-color:#4c3924;color:#f7e8bb}
 
 /* v0.21.38 – freigegebenes Deutsch-Layout: Das Wortreich */
-.project-menu-stage:not([data-subject="german"]) .wordrealm-only{display:none!important}
+.project-menu-stage:not([data-subject="german"]) .wordrealm-only{display:none!important}\n.project-menu-stage[data-visual-theme="german-adventure"] .wordrealm-only{display:none!important}
 .project-menu-stage[data-visual-theme="wordrealm"]{
   --menu-accent:#6d43b6;
   --menu-accent-soft:rgba(112,73,178,.16);
@@ -415,18 +415,18 @@
 }
 .wordrealm-signpost button:nth-child(2){transform:translateX(7px)}.wordrealm-signpost button:nth-child(3){transform:translateX(-3px)}
 .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-panel{z-index:5}
-.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered{align-items:flex-end}
-.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered::after{
+.project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered{align-items:flex-end}
+.project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered::after{
   left:24%;right:24%;bottom:4%;height:7%;background:rgba(73,48,24,.18);filter:blur(8px)
 }
-.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .project-menu-avatar-fallback{
+.project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered .project-menu-avatar-fallback{
   width:min(72%,340px);height:82%;min-height:0;display:flex;align-items:flex-end;justify-content:center;
   transform:none!important;
 }
-.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .wordrealm-fox-svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 13px 10px rgba(72,45,22,.17))}
-.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .avatar-head,
-.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .avatar-body,
-.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .avatar-shield{display:none}
+.project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered .wordrealm-fox-svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 13px 10px rgba(72,45,22,.17))}
+.project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered .avatar-head,
+.project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered .avatar-body,
+.project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered .avatar-shield{display:none}
 .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution{
   width:min(100%,500px);max-width:100%;padding:10px 11px 11px;border-radius:17px;
   color:#332c24;background:linear-gradient(180deg,rgba(255,251,239,.97),rgba(247,232,199,.97));
@@ -525,7 +525,7 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
   .wordrealm-home-brand small{font-size:.55rem}
   .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-panel{width:100%;padding-top:29px;margin-bottom:11px}
   .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-frame{height:250px}
-  .project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .project-menu-avatar-fallback{width:min(65%,270px);height:232px}
+  .project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered .project-menu-avatar-fallback{width:min(65%,270px);height:232px}
   .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution{width:100%;max-width:100%;margin-top:5px}
   .wordrealm-stage-strip{gap:2px}
   .wordrealm-stage-tile{grid-template-rows:47px 15px auto;padding:2px 1px 4px}
@@ -540,7 +540,7 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
   .project-menu-stage[data-visual-theme="wordrealm"]{padding:9px 8px 12px}
   .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-scenery{height:258px}
   .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-frame{height:224px}
-  .project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .project-menu-avatar-fallback{width:min(70%,245px);height:210px}
+  .project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered .project-menu-avatar-fallback{width:min(70%,245px);height:210px}
   .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution{padding:9px 7px}
   .wordrealm-stage-tile{grid-template-rows:43px 14px auto}
   .wordrealm-stage-fox{width:42px;height:44px}
