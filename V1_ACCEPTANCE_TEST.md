@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 29.09.2026 · Basis: v0.21.40 · Release-Kandidat; Prüfschwerpunkt: Deutsch-Weltwahl, m/w/d, Vorlesen und unveränderte Lernlogik
+Stand: 29.09.2026 · Basis: v0.21.41 · Release-Kandidat; Prüfschwerpunkt: B-018 Freies Schreiben, Grundschul-Lineatur, freie Buchstabenauswahl und unveränderte Lernlogik
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -15,6 +15,16 @@ Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
 - [ ] Praxisblock 4 – Family Sync, zweites Gerät, Backup/Restore und Offline/PWA praktisch prüfen.
 
 Die Detail-Checkboxen darunter bleiben der verbindliche Nachweis für Einzelfälle. Ein abgeschlossener Praxisblock ersetzt keine noch separat offene Detailprüfung außerhalb seines ausdrücklich genannten Umfangs.
+
+### Praxiszusatz v0.21.41 – B-018 Freies Schreiben
+
+- [ ] Auf einem realen iPhone/kleinen Display ist die Schreiblineatur **Dachgeschoss – Erdgeschoss – Keller** während des gesamten Finger-/Stift-Schreibens klar sichtbar; die eigene Spur liegt sichtbar über den Hilfslinien.
+- [ ] Nur `a` auswählen: Die Runde enthält ausschließlich `a`.
+- [ ] `M/m` auswählen: Die Runde enthält ausschließlich `M` und `m` in der gewählten Groß-/Klein-Variante.
+- [ ] `a, e, m, s` auswählen: Die Runde enthält ausschließlich diese vier Buchstaben und behält die Auswahl bis zum Ändern/Zurücksetzen.
+- [ ] Mindestens einen Buchstaben mit Oberlänge und einen mit Unterlänge (z. B. `h` und `g/j/p/q/y`) schreiben; ihre Zuordnung zur Lineatur ist ohne Erklärung erkennbar.
+- [ ] Buchstabenlaut/Vorlesen ist erreichbar und auf dem realen Zielgerät verständlich.
+- [ ] Dieselbe freie Auswahl mehrfach wiederholen und vorher/nachher Grundlagen-Evidenz, Mastery/Testbereitschaft, XP und Battle-Fortschritt vergleichen: allein durch freie Wiederholung darf sich keiner dieser fachlichen Fortschrittswerte erhöhen.
 
 Zusatz aus v0.21.12: Im Elternprofil praktisch prüfen, dass **Lesen**, **Rechtschreiben** und **Kurze Einheiten** unabhängig speicherbar sind. Ein Profil nur mit Leseunterstützung darf nicht automatisch die Tageslast verkleinern; ein Profil nur mit Rechtschreibunterstützung muss im Tageslernweg einen echten Schreibabruf erhalten. Nach Family Sync muss dieselbe Einstellung auf dem zugeordneten Kindergerät ankommen.
 
