@@ -363,7 +363,7 @@ Abnahme:
 5. Bestehende Profile funktionieren ohne manuelle Migration weiter.
 
 ## B-018 – Freies Schreiben: Grundschul-Hilfslinien und freie Buchstabenauswahl
-**Status:** APPROVED_BACKLOG · Umsetzung unmittelbar nach Abschluss von v0.21.40  
+**Status:** VERIFIED · v0.21.41 · PR #212 · CI #1326 vollständig grün · Praxisabnahme offen  
 **Priorität:** P0 für Deutsch Klasse 1 / praktische v1-Abnahme  
 **Bezug:** B-001, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`
 
@@ -391,4 +391,13 @@ Abnahme:
 3. Beim Schreiben sind Dach-, Erdgeschoss- und Kellerbereich jederzeit sichtbar.
 4. Buchstaben mit Ober- und Unterlängen lassen sich eindeutig zur Lineatur einordnen.
 5. Freies Üben verändert keine fachliche Bewertung allein durch Anzahl der Wiederholungen.
+
+Umsetzung v0.21.41:
+- eigener Einstieg „Freies Schreiben“ im Deutsch-Klasse-1-Grundlagenbereich
+- Einzelauswahl von Groß- und Kleinbuchstaben sowie Mehrfachauswahl; die Auswahl bleibt bis Änderung/Reset erhalten
+- Aufgabenzyklus wird ausschließlich aus den gewählten Zeichen aufgebaut
+- Canvas-Lineatur mit Dachgeschoss, Erdgeschoss und Keller; Hilfslinien liegen unter der Schreibspur
+- Buchstabenlaut bleibt verfügbar
+- freie Wiederholung schreibt keinerlei Foundation-, Mastery-, Readiness-, Tagesziel-, XP- oder Battle-Evidenz
+- statischer B-018-Smoke und WebKit-iPhone-Regressionsprüfung ergänzen die CI
 

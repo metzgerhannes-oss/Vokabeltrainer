@@ -1,3 +1,12 @@
+## B-018 · Freies Schreiben Deutsch Klasse 1
+
+| Prüfung | Automatisierung | Erwartung |
+|---|---|---|
+| Dachgeschoss – Erdgeschoss – Keller | `vokabeltrainer-b018-free-writing-smoke.mjs` + WebKit Paket C | drei klar benannte Schreibzonen, Hilfslinien unter der Spur |
+| freie Buchstabenauswahl | WebKit Paket C | nur `m`, `M/m` und Mehrfachauswahl möglich; Aufgaben bleiben in der Auswahl |
+| Buchstabenlaut | statischer B-018-Smoke + Praxisabnahme | Lautfunktion vorhanden; Zielgerätqualität praktisch prüfen |
+| Fortschrittsneutralität | statischer B-018-Smoke + WebKit Paket C | keine Foundation-, Mastery-, Readiness-, Tagesziel-, XP- oder Battle-Mutation |
+
 # Vokabeltrainer – Test Matrix
 
 Stand: 27.09.2026

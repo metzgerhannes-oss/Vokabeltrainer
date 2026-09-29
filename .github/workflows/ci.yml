@@ -59,6 +59,9 @@ jobs:
       - name: Deutsch Paket C smoke
         run: node scripts/vokabeltrainer-deutsch-package-c-smoke.mjs
 
+      - name: B-018 free writing smoke
+        run: node scripts/vokabeltrainer-b018-free-writing-smoke.mjs
+
       - name: Deutsch Paket D smoke
         run: node scripts/vokabeltrainer-deutsch-package-d-smoke.mjs
 

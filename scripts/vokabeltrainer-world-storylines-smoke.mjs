@@ -2,6 +2,8 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 
 const source=fs.readFileSync('js/world-story.js','utf8');
+const core=fs.readFileSync('js/core.js','utf8');
+const version=(core.match(/const VERSION = '([^']+)'/)||[])[1]||'';
 const index=fs.readFileSync('index.html','utf8');
 const sw=fs.readFileSync('sw.js','utf8');
 const ui=fs.readFileSync('js/ui.js','utf8');
@@ -35,8 +37,8 @@ assert(api.get('english','battle').chapters.outpost.title.includes('Nebelvorpost
 assert(api.get('latin','adventure').title.includes('Iter Romanum'),'Latin adventure has its own travel arc');
 assert(api.get('french','battle').opening.includes('fiktional'),'French battle explicitly stays fictional');
 assert(!/mastery|spacing|testReadiness|gradeQuiz|refreshMastery|setMastery|literacySkills\s*=/.test(source),'story model writes no academic state');
-assert(index.includes('js/world-story.js?v=0.21.40'),'story model loads in app shell');
-assert(sw.includes("'./js/world-story.js?v=0.21.40'"),'story model is cached offline');
+assert(index.includes('js/world-story.js?v='+version),'story model loads in app shell');
+assert(sw.includes("'./js/world-story.js?v="+version+"'"),'story model is cached offline');
 assert(ui.includes("VTWorldStory?.chapter?.(state.activeSubject,'battle'"),'battle story reads canonical world story');
 assert(army.includes("VTWorldStory?.current?.(subject,'adventure'"),'adventure hub reads canonical world story');
 assert(map.includes("VTWorldStory?.chapter?.(st.subject,mode"),'campaign map reads canonical world story');

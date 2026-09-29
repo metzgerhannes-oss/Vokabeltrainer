@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 29.09.2026 · Basis: v0.21.40 · Release-Kandidat; Prüfschwerpunkt: Deutsch-Weltwahl, m/w/d, Vorlesen und unveränderte Lernlogik
+Stand: 29.09.2026 · Basis: v0.21.41 · Release-Kandidat; Prüfschwerpunkt: Deutsch Klasse 1, B-018 Freies Schreiben, Weltwahl, Vorlesen und unveränderte Lernlogik
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -9,6 +9,7 @@ Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
 
 ## Aktueller Praxisfortschritt
 
+- [ ] **B-018 Praxisabnahme:** Auf realem iPhone/iPad nur „m“, danach „M/m“ und danach „a, e, m, s“ auswählen; prüfen, dass ausschließlich diese Buchstaben geübt werden, Dach/Erdgeschoss/Keller beim Schreiben sichtbar bleiben, der Buchstabenlaut funktioniert und wiederholtes freies Schreiben keinen Mastery-/Testfortschritt erzeugt.
 - [x] Praxisblock 1 – Kind-End-to-End auf realem iPhone: Einstieg, Tageslernen, Fehler/Korrektur, Tagesabschluss, Testabschluss und Schlacht praktisch durchgeführt.
 - [x] Praxisblock 2 – Elternbereich: Test anlegen, bestehenden Test verschieben/bearbeiten, Vokabelumfang ändern und mehrere zukünftige Tests praktisch durchgeführt.
 - [ ] Praxisblock 3 – v0.21.30: dynamische Anfangsarmee nach sichtbarem Wachstumsfix, monotones Wachstum und datierbare Jahresfestung praktisch prüfen.

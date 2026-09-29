@@ -6,11 +6,11 @@ Stand: 29.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.40** (Release-Kandidat; produktiv v0.21.39)
-- aktueller Stand auf `main`: **v0.21.38 / Merge `37996e71dba4a1e432734d678a5843c3359ce22e` / PR #206**
+- App-Version: **v0.21.41** (Release-Kandidat; Live-Verifikation separat nach Merge)
+- aktueller Stand auf `main`: **v0.21.40 / Merge `1223512dc870184ada08ed6783258664c540c45b` / PR #210**
 - jüngster vollständig live-verifizierter Release vor dem laufenden Post-Merge-Check: **v0.21.37 / PR #204**
 - Produktionsnachweis v0.21.37: **PR-CI #1246 success · main-CI #1247 success · GitHub Pages #562 success**
-- aktueller Release-Kandidat: **v0.21.40 – Weltwahl Abenteuer/Kampf + vollständige Storylines für alle Fachwelten auf `feature/all-subject-world-choice-v02140`; PR #210 / CI-Verifikation läuft**
+- aktueller Release-Kandidat: **v0.21.41 – B-018 Freies Schreiben mit Grundschul-Lineatur und freier Buchstabenauswahl auf `feature/deutsch-b018-free-writing-v02141`; PR #212 / CI #1326 vollständig grün; praktische B-018-Abnahme offen**
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
