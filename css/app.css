@@ -4529,11 +4529,11 @@ html[data-subject="german"] #learnView .german-literacy-card .secondary{border-c
 
 /* v0.21.38 – sichtbare Vorlesefunktion für Deutsch / Klasse 1 */
 .read-aloud-btn{
-  display:inline-grid;place-items:center;flex:0 0 auto;width:38px;height:38px;min-width:38px;min-height:38px;padding:0;
+  display:inline-grid;place-items:center;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;
   border:2px solid #fff;border-radius:50%;background:linear-gradient(145deg,#8b5cf6,#6436b5);color:#fff;
   box-shadow:0 4px 10px rgba(88,55,150,.24);font-size:1rem;line-height:1
 }
-.read-aloud-btn.compact{width:32px;height:32px;min-width:32px;min-height:32px;font-size:.82rem}
+.read-aloud-btn.compact{width:44px;height:44px;min-width:44px;min-height:44px;font-size:.82rem}
 .read-aloud-btn:hover,.read-aloud-btn:focus-visible{filter:brightness(1.05);transform:translateY(-1px)}
 .read-aloud-speaking .read-aloud-btn{box-shadow:0 0 0 4px rgba(139,92,246,.18),0 4px 10px rgba(88,55,150,.24)}
 .german-page-read{
@@ -4549,4 +4549,16 @@ html[data-subject="german"] #learnView .german-literacy-card .secondary{border-c
 }
 @media(prefers-reduced-motion:reduce){
   .read-aloud-btn:hover,.read-aloud-btn:focus-visible{transform:none}
+}
+
+body[data-active-subject="german"] .topbar{
+  border-bottom:1px solid rgba(188,153,93,.28);
+  background:linear-gradient(180deg,rgba(255,253,247,.98),rgba(250,244,231,.94));
+}
+body[data-active-subject="german"] .topbar h1{
+  color:#252a43;font-family:Georgia,"Times New Roman",serif;letter-spacing:-.025em;
+}
+body[data-active-subject="german"] .profile-chip,
+body[data-active-subject="german"] .topbar .ghost{
+  border-color:#dcc89f;background:#fffaf0;color:#493a2c;
 }
