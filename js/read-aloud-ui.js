@@ -39,7 +39,7 @@
     speechSynthesis.cancel();
     const utterance=new SpeechSynthesisUtterance(value);
     utterance.lang=lang;
-    utterance.rate=rate??((typeof readingSupportEnabled==='function'&&readingSupportEnabled())?.82:.92);
+    utterance.rate=rate??((typeof readingSupportEnabled==='function'&&readingSupportEnabled()) ? .82 : .92);
     utterance.pitch=1;
     const voice=preferredVoice(lang);if(voice)utterance.voice=voice;
     utterance.onstart=()=>{if(myToken===token)setSpeaking(true)};
