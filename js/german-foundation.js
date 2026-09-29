@@ -11,7 +11,7 @@
   const LETTERS=[
     {letter:'M',lower:'m',sound:'mmmm',word:'Maus'},{letter:'A',lower:'a',sound:'aaaa',word:'Apfel'},{letter:'O',lower:'o',sound:'oooo',word:'Oma'},
     {letter:'L',lower:'l',sound:'llll',word:'Lampe'},{letter:'S',lower:'s',sound:'ssss',word:'Sonne'},{letter:'E',lower:'e',sound:'eeee',word:'Ente'},
-    {letter:'N',lower:'n',sound:'nnnn',word:'Nase'},{letter:'I',lower:'i',sound:'iiii',word:'Igel'},{letter:'R',lower:'r',sound:'rrrr',word:'Rose'},{letter:'T',lower:'t',sound:'t',word:'Tisch'}
+    {letter:'N',lower:'n',sound:'nnnn',word:'Nase'},{letter:'I',lower:'i',sound:'iiii',word:'Igel'},{letter:'R',lower:'r',sound:'rrrr',word:'Rose'},{letter:'T',lower:'t',sound:'ttt',word:'Tisch'}
   ];
   const WORDS=[
     {id:'oma',word:'Oma',icon:'👵',label:'Großmutter'},
@@ -54,7 +54,7 @@
   function available(){return state?.activeSubject==='german'}
   function mixOptions(values,key=''){
     const arr=[...values];if(arr.length<2)return arr;
-    const hash=[...String(key)].reduce((sum,ch)=>sum+ch.charCodeAt(0),0),offset=(hash%arr.length)||1;
+    const hash=[...String(key)].reduce((sum,ch)=>sum+ch.charCodeAt(0),0),offset=hash%arr.length;
     return arr.slice(offset).concat(arr.slice(0,offset));
   }
   function stageTasks(stage){
