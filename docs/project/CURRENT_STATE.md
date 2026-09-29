@@ -7,9 +7,9 @@ Stand: 29.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
 - App-Version: **v0.21.38** (Release-Kandidat; produktiv v0.21.37)
-- produktiver Stand auf `main`: **v0.21.36 / Merge-Commit `315dca65d873b5c5a498ca3e464cab185ff7b228` / PR #203**
+- produktiver Stand auf `main`: **v0.21.37 / Merge-Commit `eba06cc19802389941a7558b0d782df8010cb326` / PR #204**
 - jüngster produktiver Release: **PR #204 – v0.21.37 – Deutsch Paket E: Wortreich-Phaser-Belagerung**
-- Produktionsnachweis v0.21.36: **PR-CI #1239 success · main-CI #1240 success · GitHub Pages #561 success**
+- Produktionsnachweis v0.21.37: **PR-CI #1246 success · main-CI #1247 success · GitHub Pages #562 success**
 - aktueller Release-Kandidat: **v0.21.38 – freigegebenes Deutsch-/Wortreich-Startlayout + Vorlesefunktion auf `feat/deutsch-layout-v02138`; PR/Verifikation folgt**
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
