@@ -13,14 +13,16 @@
     const frame=document.querySelector('#projectMenuAvatarFrame');
     if(!img||!fallback||!frame||typeof state!=='object'||!state||!state.activeSubject)return;
     const level=Math.max(1,Math.min(6,Number(frame.dataset.avatarStage)||1));
-    const isGermanAdventure=state.activeSubject==='german'&&typeof learnerWorldMode==='function'&&learnerWorldMode('german')==='adventure';
+    const isGerman=state.activeSubject==='german',worldMode=typeof learnerWorldMode==='function'?learnerWorldMode(state.activeSubject):'battle',isGermanAdventure=isGerman&&worldMode==='adventure';
     const style=learner()?.avatarStyle==='female'?'female':'male';
     frame.classList.toggle('german-fox-avatar',isGermanAdventure);
-    const key=`${state.activeSubject}-${style}-stage-${level}`;
+    frame.classList.toggle('german-knight-avatar',isGerman&&!isGermanAdventure);
+    const key=`${state.activeSubject}-${worldMode}-${style}-stage-${level}`;
     frame.dataset.avatarStyle=style;
-    frame.dataset.worldMode=typeof learnerWorldMode==='function'?learnerWorldMode(state.activeSubject):'battle';
-    const finalUrl=isGermanAdventure?'':(window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'');
-    const armyUrl=isGermanAdventure?'':(window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'');
+    frame.dataset.worldMode=worldMode;
+    const finalUrl=isGerman?'':(window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'');
+    const armyUrl=isGerman?'':(window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'');
+    const shield=fallback.querySelector?.('.avatar-shield');if(shield)shield.textContent=isGerman&&!isGermanAdventure?'W':'V';
     const url=finalUrl||armyUrl;
     if(url){
       if(img.src!==url)img.src=url;
