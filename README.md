@@ -12,8 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.43**
+App-Version: **v0.21.44**
 
+- v0.21.44 (Release-Kandidat): Verbindlicher Qualitätsstandard für **alle Avatare** nach `VISUAL_DNA.md § 2.1`. Fachfremde Szenenbilder sind als Avatar-Ersatz verboten; insbesondere verwendet Latein nicht mehr das allgemeine englische Armee-Hero-Bild. Fehlende finale Avatarserien werden als P0 in B-019 nachgezogen; technische Fallbacks gelten ausdrücklich nicht als finales Design.
 - v0.21.43 (Release-Kandidat): Praxis-Hotfix für **B-018**. Die missverständlichen `l / m / g`-Erklärungskarten direkt unter dem Schreibbuchstaben sind entfernt. Buchstabenlaute verwenden nun 29 lokal ausgelieferte deutsche Laut-Audiodateien statt Browser-TTS; sie werden für Offline/PWA mitgecacht. Die normale Vorlesefunktion für Anweisungen, Wörter und Sätze bleibt unverändert. Praktische Wiederholungsabnahme auf dem realen iPhone bleibt offen.
 - v0.21.41: **B-018 Freies Schreiben** ergänzt Deutsch Klasse 1 um die Grundschul-Lineatur Dachgeschoss – Erdgeschoss – Keller, freie Auswahl einzelner Groß-/Kleinbuchstaben oder mehrerer Buchstaben, Buchstabenlaut und strikt fortschrittsneutrale Wiederholungen. Die Auswahl bleibt bis Änderung oder Reset erhalten; WebKit-iPhone- und statische CI-Checks sichern Auswahlmenge, Lineatur und fehlende Mastery-/Readiness-Mutation.
 - v0.21.40: Die Weltwahl **Abenteuer | Kampf** ist auf die gesamte Facharchitektur übertragen. Englisch erhält Expedition vs. Armee/Feldzug, Latein zivile mediterrane Entdeckungsreise vs. Legion/Kastelle, Deutsch Fuchs-Abenteuer vs. Wortreich und Französisch Voyage Français vs. vollständig fiktionale Gefährten-/Festungswelt. **Alle acht Welten besitzen Opening, sechs Storykapitel und ein eigenes Finale**; die Kapitel sind vorlesbar und verwenden denselben fachlichen Zustand und dieselbe kumulative Jahresstufe. Abenteuer öffnet keinen Battle-Screen. Französisch bleibt als Fach bis B-003 noch nicht freigeschaltet.
