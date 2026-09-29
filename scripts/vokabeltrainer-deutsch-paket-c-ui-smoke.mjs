@@ -101,7 +101,17 @@ try{
   const freeCanvasLabel=await page.locator('#foundationFreeCanvas').getAttribute('aria-label');
   assert(freeCanvasLabel.includes('Dachgeschoss')&&freeCanvasLabel.includes('Erdgeschoss')&&freeCanvasLabel.includes('Keller'),'writing canvas keeps the three school-lineature zones');
   const phonemePath=await page.evaluate(()=>window.VTGermanFoundation.phonemeAudioPath('M'));
-  assert(phonemePath==='assets/audio/phonemes/de/m.m4a','German letter sound resolves to local phoneme audio instead of TTS');
+  assert(phonemePath==='assets/audio/phonemes/de/mp3/m.mp3','German letter sound resolves to MP3 phoneme audio instead of TTS');
+  const decodedPhonemes=await page.evaluate(async()=>{
+    const letters=window.VTGermanFoundation.freeWritingLetters.map(x=>x.letter);
+    const result={};
+    for(const letter of letters)result[letter]=await window.VTGermanFoundation.probePhoneme(letter);
+    return result;
+  });
+  assert(Object.keys(decodedPhonemes).length===29&&Object.values(decodedPhonemes).every(Boolean),'WebKit actually decodes all 29 German phoneme MP3 files');
+  await page.click('#foundationFreeSoundBtn');
+  await page.waitForTimeout(180);
+  assert(await page.getByText('Der Buchstabenlaut konnte nicht abgespielt werden.').count()===0,'phoneme playback does not raise the real-device failure toast');
   const freeBox=await page.locator('#foundationFreeCanvas').boundingBox();
   assert(!!freeBox,'free-writing canvas is visible on iPhone viewport');
   await page.mouse.move(freeBox.x+60,freeBox.y+70);await page.mouse.down();await page.mouse.move(freeBox.x+180,freeBox.y+210,{steps:8});await page.mouse.up();
