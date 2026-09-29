@@ -319,6 +319,17 @@ body.lrs-mode .campaign-map-board{box-shadow:none}body.lrs-mode .campaign-map-st
   --world-ink:#273a3c;
   --world-muted:#607173;
 }
+.campaign-map-view[data-visual-theme="english-adventure"]{
+  --world-bg-top:#e4f0ec;
+  --world-bg-bottom:#cbded5;
+  --world-panel:#f8f7e9;
+  --world-panel-2:#e5eddc;
+  --world-border:#91aa9a;
+  --world-accent:#356774;
+  --world-accent-2:#6f966c;
+  --world-ink:#2b4446;
+  --world-muted:#627777;
+}
 .campaign-map-view[data-visual-theme="roman"]{
   --world-bg-top:#efe2c9;
   --world-bg-bottom:#d9c59f;
@@ -330,6 +341,17 @@ body.lrs-mode .campaign-map-board{box-shadow:none}body.lrs-mode .campaign-map-st
   --world-ink:#463226;
   --world-muted:#75604f;
 }
+.campaign-map-view[data-visual-theme="latin-adventure"]{
+  --world-bg-top:#f4e9ce;
+  --world-bg-bottom:#ded0a9;
+  --world-panel:#fff6df;
+  --world-panel-2:#eadfbd;
+  --world-border:#b79b67;
+  --world-accent:#8a5b34;
+  --world-accent-2:#81915e;
+  --world-ink:#4d3b28;
+  --world-muted:#756851;
+}
 .campaign-map-view[data-visual-theme="voyage"]{
   --world-bg-top:#e8efed;
   --world-bg-bottom:#d3dfdc;
@@ -340,6 +362,17 @@ body.lrs-mode .campaign-map-board{box-shadow:none}body.lrs-mode .campaign-map-st
   --world-accent-2:#7b9a8a;
   --world-ink:#2f4348;
   --world-muted:#667c7e;
+}
+.campaign-map-view[data-visual-theme="french-battle"]{
+  --world-bg-top:#e5e8eb;
+  --world-bg-bottom:#cdd4d8;
+  --world-panel:#f6f1e7;
+  --world-panel-2:#e4e1da;
+  --world-border:#9d98a7;
+  --world-accent:#4e6075;
+  --world-accent-2:#8e7085;
+  --world-ink:#303642;
+  --world-muted:#6b6e78;
 }
 
 .campaign-map-view[data-visual-theme]{
