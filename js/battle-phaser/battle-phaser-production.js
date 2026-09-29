@@ -1,7 +1,7 @@
 'use strict';
 
 import Phaser from '../vendor/phaser-4.2.1.esm.min.js?v=0.21.28';
-import { createBattleSceneClass } from './battle-phaser-scene.js?v=0.21.28';
+import { createBattleSceneClass } from './battle-phaser-scene.js?v=0.21.37';
 
 let activeGame = null;
 let activeMount = null;
