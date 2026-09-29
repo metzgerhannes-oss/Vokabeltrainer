@@ -408,3 +408,47 @@ Praktischer Befund auf v0.21.41:
 - alle Lautdateien werden für Offline/PWA im Service Worker vorgehalten
 - praktische Wiederholungsabnahme auf dem realen Gerät bleibt zwingend offen
 
+## B-019 – Finale Avatarserien in einheitlicher Referenzqualität
+**Status:** IN_IMPLEMENTATION  
+**Priorität:** P0 visuelle Produktqualität  
+**Decision:** D-20260929-006  
+**Betroffene Quellen:** `VISUAL_DNA.md § 2.1/§ 10/§ 13`, `docs/project/LATIN_FRENCH_VISUAL_LAYOUT.md`, `js/menu-avatar-art.js`, Start-/Fortschritts-/Weltrenderer
+
+Alle in der App sichtbaren Avatare werden auf die verbindliche malerisch-cinematische
+Referenzqualität gebracht. Technische CSS-/DOM-/einfache SVG-Fallbacks zählen nicht als
+fertige Gestaltung.
+
+Verbindliches Paket:
+
+- Englisch Kampf: bestehende hochwertige Stufenserie bleibt Referenz; fehlende tatsächlich
+  auswählbare Stilvarianten werden auf dasselbe Qualitätsniveau gebracht
+- Englisch Abenteuer: eigene gleichwertige Expeditions-/Entdecker-Serie
+- Latein Kampf: **Tiro → Legionär → Optio → Centurio → Tribun → Legat** als echte
+  malerische römische Figurenserie
+- Latein Abenteuer: gleichwertige zivile mediterrane Reise-/Entdeckerserie
+- Deutsch Abenteuer: Fuchsserie auf denselben malerischen Qualitätsstandard bringen
+- Deutsch Kampf/Wortreich: Ritter-/Fuchsfigur in derselben Qualitätsklasse
+- Französisch Abenteuer: hochwertige Reisefigur-Serie
+- Französisch Kampf: hochwertige fiktionale Gefährten-/Festungsfigur-Serie
+- Männlich / Weiblich / Neutral-Divers müssen für alle tatsächlich auswählbaren menschlichen
+  Avatarpfade qualitativ gleichwertig sein
+- sechs Stufen zeigen eine konsistente Figurenidentität und sichtbare, stufenweise Entwicklung
+- Start/Heute verwendet Avatarfiguren, keine breitformatigen Kampagnen-/Schlachtbilder
+- Asset-Ladefehler dürfen auf technische Fallbacks gehen; regulärer Betrieb nicht
+
+Sofort-Hotfix v0.21.44:
+- das allgemeine englisch/mittelalterliche `VTArmyArt.heroUrl` darf nur noch für Englisch-Kampf
+  als Alt-Fallback verwendet werden
+- Latein/Französisch können dadurch nicht mehr versehentlich ein fachfremdes komplettes
+  Kampagnenbild als Avatar anzeigen
+
+Abnahme:
+
+1. Jede aktive Fach-/Weltkombination zeigt eine fachlich passende Avatarfigur.
+2. Kein finaler Avatar wirkt wie CSS-Puppe, Clipart oder einfache Vektorskizze.
+3. Keine komplette Landschafts-/Schlachtillustration wird als Avatar missbraucht.
+4. Alle sechs Stufen bleiben als dieselbe Figurenidentität erkennbar.
+5. Alle auswählbaren Stilvarianten sind qualitativ gleichwertig.
+6. iPhone- und Desktop-Screenshots werden gegen die Referenzqualität aus `VISUAL_DNA.md § 2.1`
+   praktisch geprüft.
+
