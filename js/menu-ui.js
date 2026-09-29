@@ -28,7 +28,7 @@
     }
     window.VTWordrealmUi?.clearHome?.();
     const finalUrl=window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'';
-    const armyUrl=window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'';
+    const armyUrl=style==='male'&&window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'';
     const url=finalUrl||armyUrl;
     if(url){
       if(img.src!==url)img.src=url;
