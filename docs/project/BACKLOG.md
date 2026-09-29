@@ -321,7 +321,7 @@ Ein Backlog-Punkt wird nicht gelöscht, wenn er umgesetzt oder verworfen wird:
 - Ersatz → `SUPERSEDED` plus Verweis auf Nachfolger
 
 ## B-017 – Weltwahl Abenteuer oder Kampf pro Fach
-**Status:** IN_IMPLEMENTATION · Deutsch v0.21.39 implementiert, PR-/CI-Verifikation folgt; Englisch/Latein/Französisch folgen  
+**Status:** IN_IMPLEMENTATION · v0.21.40 fachübergreifend implementiert; Englisch/Latein aktiv, Französisch-Welten vorbereitet bis B-003-Fachfreischaltung; PR-/CI-Verifikation folgt  
 **Priorität:** P1 visuelle/Profile-UX vor finaler Fachwelten-Ausarbeitung  
 **Decision:** D-20260929-001 · D-20260929-002  
 **Betroffene Quellen:** `VISUAL_DNA.md`, `docs/project/LATIN_FRENCH_VISUAL_LAYOUT.md`, Profilmodell, Profilerstellung, Profileinstellungen, Spiel-/Fortschrittsrenderer
@@ -337,6 +337,9 @@ Umsetzungspaket:
 - Profilerstellung zeigt pro unterstütztem Fach die Auswahl **Abenteuer | Kampf**
 - Deutsch v0.21.39: Fuchs-Abenteuer vs. Wortreich/Kampf; bestehende Profile bleiben konservativ auf Kampf, neue Deutsch-Profile müssen bewusst wählen
 - Deutsch-Abenteuer besitzt eine eigene nicht-militärische Sechsstufen-Fuchsserie
+- Englisch v0.21.40: Expedition vs. Armee/Feldzug; Abenteuer bleibt kampffrei
+- Latein v0.21.40: zivile mediterrane Entdeckungsreise vs. Legion/Kastelle; Abenteuer bleibt kampffrei
+- Französisch v0.21.40: Voyage Français vs. fiktionale Gefährten-/Festungswelt technisch vorbereitet; Fachfreischaltung bleibt B-003
 - Avatar- und Deutsch-Weltwahl sind vorlesbar; m/w/d und Weltpräferenz werden gemeinsam über Family Sync übertragen
 - Profileinstellungen erlauben denselben Wechsel später
 - bestehende Profile behalten zunächst ihre bisherige Darstellung; keine überraschende Migration
