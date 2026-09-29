@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 29.09.2026 · Basis: v0.21.39 · Release-Kandidat; Prüfschwerpunkt: Deutsch-Weltwahl, m/w/d, Vorlesen und unveränderte Lernlogik
+Stand: 29.09.2026 · Basis: v0.21.40 · Release-Kandidat; Prüfschwerpunkt: Deutsch-Weltwahl, m/w/d, Vorlesen und unveränderte Lernlogik
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -498,3 +498,16 @@ Verständlichkeit auf echtem Gerät bleibt separat abzunehmen.
 - [ ] reale Kind-/Eltern-End-to-End-Abnahme für Deutsch durchgeführt
 
 **Release-Regel:** Die fachlichen Punkte aus G1/G2 sowie mindestens ein funktionsfähiger Wortreich-Kampf aus G3 sind vor v1.0 verpflichtend. Eine Rückwirkung der Spielwelt auf fachliche Lernwerte ist ein Release-Blocker.
+
+
+## H – Fachübergreifende Weltwahl Abenteuer / Kampf
+
+Automatisierter Implementierungsstand v0.21.40: Englisch, Latein und Deutsch können pro aktivem Fach zwischen Abenteuer und Kampf wechseln; die vorbereitete Französisch-Architektur besitzt Voyage Français und eine fiktionale Gefährten-/Festungswelt. Französisch bleibt bis B-003 fachlich gesperrt.
+
+- [ ] Englisch: Expedition und Kampf/Feldzug sind klar unterscheidbar
+- [ ] Latein: zivile Entdeckungsreise und Legion/Kastelle sind klar unterscheidbar
+- [ ] Französisch nach Fachfreischaltung: Voyage Français und fiktionale Kampfwelt sind klar unterscheidbar
+- [ ] neue Profile verlangen für jedes aktive Fach eine bewusste Weltwahl
+- [ ] Weltwechsel erhalten Mastery, Spacing, Testbereitschaft, Tagesziel und Jahresstufe
+- [ ] Abenteueraktionen öffnen keinen Battle-Screen und verbrauchen höchstens dieselbe eine Tagesaktion
+- [ ] Kampfvarianten verwenden nur fiktionale Gegner
