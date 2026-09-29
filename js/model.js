@@ -479,7 +479,9 @@ function resolveTestFortressAction(attack='charge',subject=state.activeSubject){
   return {entry,fortress:f,result:entry.result,damage:hit.damage,remaining:after,readiness:hit.readiness,readinessBonus:hit.bonus,tacticalBonus:hit.tacticalBonus,tacticalPower:hit.tacticalPower};
 }
 function rankFor(pct,subject=state.activeSubject){
-  const arr=subjectCampaign(subject).ranks||SUBJECT_META.english.campaign.ranks;const i=Math.min(arr.length-1,Math.floor(pct/20));return arr[i];
+  const arr=subjectCampaign(subject).ranks||SUBJECT_META.english.campaign.ranks;
+  if(subject==='german')return arr[Math.max(0,Math.min(arr.length-1,gearTier(pct)-1))];
+  const i=Math.min(arr.length-1,Math.floor(pct/20));return arr[i];
 }
 function gearTier(pct){return Math.min(6,1+Math.floor(clamp(Number(pct)||0,0,100)/18))}
 function gearFor(pct){return ['I','II','III','IV','V','VI'][gearTier(pct)-1]}
@@ -487,7 +489,8 @@ function gearLabelFor(pct,subject=state.activeSubject){
   const tier=gearTier(pct);
   const english=['Grundausrüstung','Verstärkte Schilde','Bogenschützen-Set','Belagerungsausrüstung','Reiter-Ausrüstung','Eliteausrüstung'];
   const latin=['Scutum & Pilum','Verstärktes Scutum','Sagittarii','Belagerungsgerät','Equites','Praetorianer-Ausrüstung'];
-  return (subject==='latin'?latin:english)[tier-1];
+  const german=['Grundausrüstung','Lederzeug','Ritterlehrling','Ritter','Kronritter','König'];
+  return (subject==='latin'?latin:subject==='german'?german:english)[tier-1];
 }
 const AVATAR_STAGE_THRESHOLDS=Object.freeze([0,18,36,54,72,90]);
 function avatarStageFor(pct,subject=state.activeSubject){
