@@ -6,11 +6,11 @@ Stand: 29.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.39** (Release-Kandidat; produktiv v0.21.38)
+- App-Version: **v0.21.40** (Release-Kandidat; produktiv v0.21.39)
 - aktueller Stand auf `main`: **v0.21.38 / Merge `37996e71dba4a1e432734d678a5843c3359ce22e` / PR #206**
 - jüngster vollständig live-verifizierter Release vor dem laufenden Post-Merge-Check: **v0.21.37 / PR #204**
 - Produktionsnachweis v0.21.37: **PR-CI #1246 success · main-CI #1247 success · GitHub Pages #562 success**
-- aktueller Release-Kandidat: **v0.21.39 – Deutsch Weltwahl Abenteuer/Kampf auf `feature/german-world-choice`; PR/CI folgt**
+- aktueller Release-Kandidat: **v0.21.40 – Weltwahl Abenteuer/Kampf für alle Fachwelten auf `feature/all-subject-world-choice-v02140`; PR/CI folgt**
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
@@ -57,7 +57,8 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Deutsch Paket D / Lernwörter & Rechtschreibung | PRODUCTION / LIVE VERIFIED v0.21.36 · PR #203 · CI #1240 · Pages #561 | `docs/project/DEUTSCH_WORTREICH_V1.md`, `DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`, B-001 |
 | Deutsch Paket E / Wortreich-Phaser-Belagerung | PRODUCTION / LIVE VERIFIED v0.21.37 · PR #204 · CI #1247 · Pages #562 | `docs/project/DEUTSCH_WORTREICH_V1.md`, D-20260928-008, D-20260928-004 |
 | Deutsch Startlayout / Stufen / Vorlesen / m/w/d | PRODUCTION / LIVE VERIFIED v0.21.38 | `docs/project/DEUTSCH_WORTREICH_LAYOUT_V1.md`, D-20260929-003, PR #206 |
-| Deutsch Weltwahl Abenteuer/Kampf | IMPLEMENTED im v0.21.39-Release-Kandidaten; PR-/CI-Verifikation folgt | D-20260929-002, B-017, `docs/project/DEUTSCH_WORTREICH_V1.md` |
+| Deutsch Weltwahl Abenteuer/Kampf | PRODUCTION / CI VERIFIED v0.21.39 | D-20260929-002, B-017, `docs/project/DEUTSCH_WORTREICH_V1.md` |
+| Fachübergreifende Weltwahl Abenteuer/Kampf | IMPLEMENTED im v0.21.40-Release-Kandidaten; Englisch/Latein aktiv, Französisch-Welten vorbereitet bis Fachfreischaltung B-003 | D-20260929-001, B-017, `docs/project/LATIN_FRENCH_VISUAL_LAYOUT.md` |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 
 ## Offene Verifikationsgrenzen
