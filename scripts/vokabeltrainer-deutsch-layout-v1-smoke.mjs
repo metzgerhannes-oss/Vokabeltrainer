@@ -45,7 +45,7 @@ assert(ui.includes('value="neutral"')&&ui.includes('Neutral / Divers'),'profile 
 assert(storage.includes("['male','female','neutral'].includes(l.avatarStyle)"),'persistence preserves male, female and neutral avatar styles');
 assert(menu.includes("['male','female','neutral'].includes(learner()?.avatarStyle)"),'home renderer preserves the selected m/w/d avatar style');
 assert(avatarArt.includes('neutral:Object.freeze([])')&&avatarArt.includes("const safeStyle=['male','female','neutral'].includes(style)?style:'male'"),'avatar art layer has a dedicated neutral slot instead of male coercion');
-assert(decisions.includes('D-20260929-001')&&layout.includes('Status: **VERBINDLICH FREIGEGEBEN**'),'approved visual/audio decision is canonical in the repository');
+assert(decisions.includes('D-20260929-003')&&layout.includes('Status: **VERBINDLICH FREIGEGEBEN**'),'approved visual/audio decision is canonical in the repository');
 assert(layout.includes('Ritterlehrling → Ritter → Kronritter → König'),'canonical layout records the approved upper-stage progression');
 assert(layout.includes('Audio darf **nicht** vor der Antwort angeboten werden'),'canonical layout preserves evidence-safe audio');
 assert(layout.includes('**Neutral / Divers**')&&layout.includes('nicht** still auf die männliche Bildserie'),'canonical layout records the m/w/d fallback rule');
