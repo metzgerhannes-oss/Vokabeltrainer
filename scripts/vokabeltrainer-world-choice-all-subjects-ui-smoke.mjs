@@ -42,12 +42,24 @@ try{
   assert(await page.evaluate(()=>learnerWorldMode('english')==='adventure'),'explicit English adventure choice is saved');
 
   await seedSubject('english','house','Haus');
-  const initialEnglish=await page.evaluate(()=>({mastery:subjectProgress('english').pct,growth:campaignGrowthState('english').pct}));
+  const initialEnglish=await page.evaluate(()=>{
+    renderAll();showView('homeView');window.VTMenuUi.render();
+    const frame=document.querySelector('#projectMenuAvatarFrame');
+    return {mastery:subjectProgress('english').pct,growth:campaignGrowthState('english').pct,avatarKey:frame?.dataset.avatarRenderKey||''};
+  });
+  assert(initialEnglish.avatarKey.includes('english-battle-'),'English battle has a battle-specific avatar render key');
   await page.evaluate(()=>openProfileEditor(learner().id));
   await page.waitForSelector('[data-profile-world-subject="english"]:not(.hidden)');
   await page.locator('input[name="profileWorldMode-english"][value="adventure"]').check();
   await page.locator('#saveProfile').click();
   await page.waitForFunction(()=>learnerWorldMode('english')==='adventure');
+  const englishAdventureAvatar=await page.evaluate(()=>{
+    renderAll();showView('homeView');window.VTMenuUi.render();
+    const frame=document.querySelector('#projectMenuAvatarFrame');
+    return {key:frame?.dataset.avatarRenderKey||'',mode:frame?.dataset.worldMode||'',imgHidden:document.querySelector('#projectMenuAvatarArt')?.classList.contains('hidden')};
+  });
+  assert(englishAdventureAvatar.mode==='adventure'&&englishAdventureAvatar.key.includes('english-adventure-'),'English adventure rebuilds the avatar under its own render key');
+  assert(englishAdventureAvatar.key!==initialEnglish.avatarKey&&englishAdventureAvatar.imgHidden,'English world switch cannot leave the battle art visible');
   await page.evaluate(()=>window.VTArmyUi.open());
   await page.waitForSelector('#armyView.active');
   let hub=await page.evaluate(()=>({mode:document.querySelector('#armyView')?.dataset.worldMode,title:document.querySelector('#armyViewTitle')?.textContent||'',route:document.querySelectorAll('.subject-adventure-route span').length,units:(document.querySelector('#armyUnitGrid')?.textContent||'').trim(),action:document.querySelector('#armyBattleBtn')?.textContent||'',story:document.querySelector('.subject-adventure-story strong')?.textContent||'',storyRead:document.querySelectorAll('.subject-adventure-story .read-aloud-btn').length}));
@@ -62,7 +74,15 @@ try{
   assert(mapState.story&&mapState.storyRead===1,'world map exposes the same readable story layer');
 
   await seedSubject('latin','porta','Tor');
-  await page.evaluate(()=>{setLearnerWorldMode(learner(),'latin','adventure');renderAll();window.VTArmyUi.open()});
+  const latinKeys=await page.evaluate(()=>{
+    renderAll();showView('homeView');window.VTMenuUi.render();
+    const frame=document.querySelector('#projectMenuAvatarFrame'),battle=frame?.dataset.avatarRenderKey||'';
+    setLearnerWorldMode(learner(),'latin','adventure');renderAll();window.VTMenuUi.render();
+    const adventure=frame?.dataset.avatarRenderKey||'';
+    return {battle,adventure,mode:frame?.dataset.worldMode||''};
+  });
+  assert(latinKeys.battle.includes('latin-battle-')&&latinKeys.adventure.includes('latin-adventure-')&&latinKeys.battle!==latinKeys.adventure,'Latin avatar renderer swaps cleanly between battle and adventure');
+  await page.evaluate(()=>window.VTArmyUi.open());
   await page.waitForSelector('#armyView.active');
   hub=await page.evaluate(()=>({theme:document.querySelector('#armyView')?.dataset.visualTheme,title:document.querySelector('#armyViewTitle')?.textContent||'',route:document.querySelectorAll('.subject-adventure-route span').length}));
   assert(hub.theme==='latin-adventure'&&hub.title==='Iter Romanum'&&hub.route===6,'Latin adventure has a distinct civilian discovery route');
