@@ -30,26 +30,40 @@ try{
 
   await page.click('#quickLearnHeroBtn');
   await page.waitForSelector('#learnView.active .german-foundation-task');
-  assert((await page.locator('#modePill').textContent())?.includes('Buchstaben'),'foundation session starts with letter recognition');
-  const target=await page.locator('#learnView .study-prompt strong').textContent();
-  await page.click('[data-foundation-answer="'+target+'"]');
-  await page.waitForTimeout(550);
-  const letterEvidence=await page.evaluate(()=>window.VTGermanFoundation.progress().letters);
-  assert(Object.values(letterEvidence).some(x=>(x.recognized||0)>0),'correct letter choice records letter evidence');
-
-  await page.evaluate(()=>window.VTGermanFoundation.open('handwriting'));
+  assert((await page.locator('#modePill').textContent())?.includes('Buchstaben schreiben'),'foundation session starts with handwriting as the first lesson');
   await page.waitForSelector('#foundationTraceCanvas');
-  const box=await page.locator('#foundationTraceCanvas').boundingBox();
+  let box=await page.locator('#foundationTraceCanvas').boundingBox();
   assert(!!box,'tracing canvas is visible');
+  assert(await page.locator('.foundation-letter-pair').count()===1,'guided phase visibly shows Groß- und Kleinbuchstaben');
   await page.mouse.move(box.x+70,box.y+90);
   await page.mouse.down();
   await page.mouse.move(box.x+250,box.y+220,{steps:8});
   await page.mouse.up();
-  assert(await page.locator('#foundationDrawDone').isEnabled(),'finger/stylus stroke enables completion');
+  assert(await page.locator('#foundationDrawDone').isEnabled(),'finger/stylus stroke enables tracing completion');
+  await page.click('#foundationDrawDone');
+  await page.waitForSelector('.german-foundation-task h3');
+  assert((await page.locator('.german-foundation-task h3').textContent())?.includes('Gedächtnis'),'after tracing the lesson switches to free writing');
+  assert(await page.locator('.foundation-letter-pair').count()===0,'free-writing phase hides the letter model');
+  assert((await page.locator('#germanFoundationFeedback').textContent())?.includes('Nur der Laut'),'free-writing phase uses an audio-only cue');
+  box=await page.locator('#foundationTraceCanvas').boundingBox();
+  assert(!!box,'free-writing canvas stays available');
+  await page.mouse.move(box.x+75,box.y+95);
+  await page.mouse.down();
+  await page.mouse.move(box.x+255,box.y+225,{steps:8});
+  await page.mouse.up();
+  assert(await page.locator('#foundationDrawDone').isEnabled(),'free-writing stroke enables completion');
   await page.click('#foundationDrawDone');
   await page.waitForTimeout(750);
-  const trace=await page.evaluate(()=>window.VTGermanFoundation.progress().letters.M?.traced||0);
-  assert(trace>0,'tracing practice is stored separately');
+  const handwritingEvidence=await page.evaluate(()=>window.VTGermanFoundation.progress().letters.M||{});
+  assert((handwritingEvidence.traced||0)>0&&(handwritingEvidence.freeProduction||0)>0,'tracing and free production are stored as separate evidence');
+
+  await page.evaluate(()=>window.VTGermanFoundation.open('letters'));
+  await page.waitForSelector('#learnView .study-prompt strong');
+  const target=await page.locator('#learnView .study-prompt strong').textContent();
+  await page.click('[data-foundation-answer="'+target+'"]');
+  await page.waitForTimeout(550);
+  const letterEvidence=await page.evaluate(()=>window.VTGermanFoundation.progress().letters);
+  assert(Object.values(letterEvidence).some(x=>(x.recognized||0)>0),'correct letter choice records recognition evidence');
 
   await page.evaluate(()=>window.VTGermanFoundation.open('sentences'));
   await page.waitForSelector('.german-sentence-prompt');
