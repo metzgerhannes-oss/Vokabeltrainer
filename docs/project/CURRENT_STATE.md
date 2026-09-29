@@ -6,11 +6,11 @@ Stand: 29.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.43** (Praxis-Hotfix als Release-Kandidat)
+- App-Version: **v0.21.44** (Avatar-Qualitäts-Hotfix als Release-Kandidat)
 - aktueller Stand auf `main`: **v0.21.43 / Merge `3266425cd28711736f8d522657099fbf14c0130c` / PR #214**
 - jüngster vollständig live-verifizierter Release: **v0.21.41 / PR #212**
 - Produktionsnachweis v0.21.41: **PR-CI #1330 success · main-CI #1331 success · GitHub Pages #568 inklusive Live-Verifikation success**
-- aktueller Release-Kandidat: **v0.21.43 – Deutsch-Fuchswelt-Layout-Hotfix / PR #214**; PR-CI vollständig grün, auf `main` gemergt; main-CI/Pages-Live-Verifikation noch offen
+- aktueller Release-Kandidat: **v0.21.44 – Avatar-Qualitätsgate / `fix/avatar-quality-gate-v02144`**; `VISUAL_DNA.md § 2.1` legt die freigegebene malerisch-cinematische Qualität als Mindeststandard für alle Avatare fest; Latein erhält keinen fachfremden englischen Armee-Hero-Fallback mehr; vollständige finale Avatarserien bleiben P0 in B-019; CI/Live-Verifikation noch offen
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
