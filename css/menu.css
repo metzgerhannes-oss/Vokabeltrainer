@@ -351,3 +351,197 @@
 #homeView .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card{
   border-color:#ddcbaa;background:linear-gradient(180deg,rgba(255,253,247,.96),rgba(248,241,228,.96))
 }
+
+
+/* v0.21.38 – freigegebenes Deutsch-Layout: Das Wortreich */
+.project-menu-stage:not([data-subject="german"]) .wordrealm-only{display:none!important}
+.project-menu-stage[data-visual-theme="wordrealm"]{
+  --menu-accent:#6d43b6;
+  --menu-accent-soft:rgba(112,73,178,.16);
+  --menu-accent-border:#d7c7ee;
+  --menu-evolution-bg:#fff7e7;
+  --menu-pip:#f0bd43;
+  --menu-ink:#253047;
+  border:2px solid #d9c08d;
+  background:#edf6ef;
+  box-shadow:0 20px 44px rgba(68,45,25,.16);
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-scenery::before,
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-scenery::after{display:none}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-scenery{opacity:1}
+.wordrealm-scenery-svg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.wordrealm-sun{position:absolute;right:26%;top:8%;width:74px;height:74px;border-radius:50%;background:radial-gradient(circle,#fff5bd 0 42%,rgba(255,231,137,.45) 43% 70%,transparent 72%)}
+.wordrealm-cloud{position:absolute;height:22px;width:110px;border-radius:999px;background:rgba(255,255,255,.56);filter:blur(.3px)}
+.wordrealm-cloud::before,.wordrealm-cloud::after{content:"";position:absolute;border-radius:50%;background:inherit}
+.wordrealm-cloud::before{width:44px;height:34px;left:18px;bottom:0}.wordrealm-cloud::after{width:38px;height:30px;right:17px;bottom:0}
+.wordrealm-cloud.cloud-one{left:8%;top:13%}.wordrealm-cloud.cloud-two{left:37%;top:20%;transform:scale(.72);opacity:.72}
+.wordrealm-home-brand{
+  position:absolute;z-index:8;left:50%;top:13px;transform:translateX(-50%);
+  display:grid;justify-items:center;pointer-events:none;
+  color:#fff;text-shadow:0 2px 0 rgba(46,26,78,.32);
+}
+.wordrealm-home-brand span{
+  min-width:170px;padding:7px 22px 9px;border-radius:8px 8px 16px 16px;
+  background:linear-gradient(180deg,#8755d1,#6331aa);border:2px solid #4b2388;
+  box-shadow:0 8px 18px rgba(71,37,112,.25);font-weight:950;font-size:1.05rem;text-align:center;
+}
+.wordrealm-home-brand small{
+  margin-top:-2px;padding:5px 12px;border-radius:0 0 12px 12px;background:rgba(255,248,226,.94);
+  color:#634c2a;text-shadow:none;font-size:.64rem;font-weight:850;border:1px solid #d7bf91;border-top:0;
+}
+.wordrealm-signpost{
+  position:absolute;z-index:7;left:1.5%;top:21%;display:grid;gap:5px;transform:rotate(-1deg)
+}
+.wordrealm-signpost::before{
+  content:"";position:absolute;left:17px;top:-12px;bottom:-42px;width:8px;border-radius:6px;background:#725032;z-index:-1
+}
+.wordrealm-signpost button{
+  min-height:34px;padding:5px 14px 6px;border:2px solid #744a28;border-radius:7px;
+  background:linear-gradient(180deg,#c99054,#a76e3c);color:#2f2116;
+  box-shadow:0 4px 8px rgba(58,36,18,.18);font-weight:900;font-size:.72rem;
+}
+.wordrealm-signpost button:nth-child(2){transform:translateX(7px)}.wordrealm-signpost button:nth-child(3){transform:translateX(-3px)}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-panel{z-index:5}
+.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered{align-items:flex-end}
+.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered::after{
+  left:24%;right:24%;bottom:4%;height:7%;background:rgba(73,48,24,.18);filter:blur(8px)
+}
+.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .project-menu-avatar-fallback{
+  width:min(72%,340px);height:82%;min-height:0;display:flex;align-items:flex-end;justify-content:center;
+  transform:none!important;
+}
+.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .wordrealm-fox-svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 13px 10px rgba(72,45,22,.17))}
+.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .avatar-head,
+.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .avatar-body,
+.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .avatar-shield{display:none}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution{
+  width:min(100%,500px);max-width:100%;padding:10px 11px 11px;border-radius:17px;
+  color:#332c24;background:linear-gradient(180deg,rgba(255,251,239,.97),rgba(247,232,199,.97));
+  border:2px solid #d2b375;box-shadow:0 10px 20px rgba(72,46,22,.19);backdrop-filter:blur(4px)
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution strong{font-size:.78rem}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution small{color:#6b5740;font-size:.62rem;font-weight:750}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-stage-pips{margin:5px auto 4px}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-stage-pips i{background:#bcb5a7;height:5px}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-stage-pips i.filled{background:#f1bf43}
+.wordrealm-stage-read{position:absolute;right:9px;top:8px}
+.wordrealm-stage-strip{
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin-top:8px;padding-top:8px;
+  border-top:1px solid rgba(118,83,39,.20)
+}
+.wordrealm-stage-tile{position:relative;min-width:0;display:grid;grid-template-rows:55px 16px auto;justify-items:center;align-items:end;padding:3px 2px 5px;border-radius:10px;color:#5b4b39}
+.wordrealm-stage-tile.active{background:#fff8de;box-shadow:inset 0 0 0 2px #e7b94d}
+.wordrealm-stage-tile.done{background:rgba(240,220,170,.35)}
+.wordrealm-stage-fox{width:54px;height:56px;overflow:hidden}
+.wordrealm-stage-fox .wordrealm-fox-svg{width:100%;height:100%;filter:none}
+.wordrealm-stage-tile b{
+  display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#fff1cb;border:1px solid #d3a64a;
+  font-size:.58rem;line-height:1
+}
+.wordrealm-stage-tile span{max-width:100%;font-size:.48rem;line-height:1.03;font-weight:900;text-align:center;overflow-wrap:anywhere}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-main{grid-template-rows:auto auto auto;gap:9px}
+.wordrealm-heading-row{display:flex;align-items:center;gap:8px}
+.wordrealm-heading-row h2{margin-right:auto}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-head{
+  align-items:center;padding:7px 10px;border-radius:16px;background:rgba(255,249,233,.82);
+  border:1px solid rgba(211,180,122,.72);backdrop-filter:blur(7px)
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-head h2{color:#292844}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-subject-context>.pill{
+  background:#fff9e9;color:#6c4d2e;border-color:#d9bd86;font-weight:900
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card{
+  position:relative;display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:12px;align-items:center;
+  padding:12px 13px;border:2px solid #dbc18c;border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,252,241,.98),rgba(250,240,214,.98));
+  box-shadow:0 8px 18px rgba(80,52,25,.13)
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card .today-main{min-width:0}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card .today-main .row{display:none}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card h2{margin:.05rem 0 .2rem;font-size:1.04rem;color:#242a43}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card .muted-line{margin:.12rem 0;color:#6f7580}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card #todayEstimate{display:none}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card .today-progress-row{margin-top:6px}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card .today-actions{display:grid;grid-template-columns:auto auto;gap:7px;align-items:center}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card .today-cta{grid-column:1/-1;min-width:112px;min-height:42px;padding:8px 12px;font-size:.86rem;background:#6c3cb4}
+.wordrealm-today-icon{position:relative;width:58px;height:56px}
+.wordrealm-today-icon i{
+  position:absolute;display:grid;place-items:center;width:31px;height:31px;border-radius:7px;border:2px solid rgba(74,48,24,.28);
+  box-shadow:0 4px 7px rgba(72,45,22,.12);font-style:normal;font-weight:950;color:#fff
+}
+.wordrealm-today-icon i:nth-child(1){left:14px;top:0;background:#d88a2d;color:#fff6d8}
+.wordrealm-today-icon i:nth-child(2){left:0;top:25px;background:#3d78bd}.wordrealm-today-icon i:nth-child(3){right:0;top:25px;background:#b74c7a}
+.wordrealm-home-actions{display:grid;gap:7px}
+.wordrealm-home-action{
+  display:grid;grid-template-columns:48px minmax(0,1fr) 38px 38px;gap:9px;align-items:center;
+  min-height:64px;padding:8px 10px;border:2px solid #dbc18c;border-radius:16px;
+  background:linear-gradient(180deg,rgba(255,252,241,.96),rgba(250,240,214,.96));
+  box-shadow:0 7px 15px rgba(80,52,25,.10)
+}
+.wordrealm-action-icon{
+  display:grid;place-items:center;width:46px;height:46px;border-radius:13px;border:1px solid #d4b679;
+  background:#fff8e7;color:#6b4a2c;font-size:1.05rem;font-weight:950
+}
+.wordrealm-action-icon.icon-words{background:linear-gradient(145deg,#fff4d1,#edd0a3);font-family:Georgia,serif}
+.wordrealm-action-icon.icon-castle{background:linear-gradient(145deg,#eee5ff,#d6c5f1);color:#6036a4;font-size:1.45rem}
+.wordrealm-action-copy{display:grid;min-width:0}.wordrealm-action-copy strong{font-size:.92rem;color:#252b43}.wordrealm-action-copy small{margin-top:2px;color:#717887;font-size:.68rem;line-height:1.15}
+.wordrealm-action-go{
+  width:38px;min-width:38px;height:38px;min-height:38px;padding:0;border-radius:50%;border:1px solid #d2aa68;background:#fffaf0;
+  color:#694925;font-size:1.6rem;line-height:1
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-test-progress{border-top-color:rgba(101,72,37,.20)}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-test-progress>span,
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-test-progress>small{color:#5b4c39!important}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-test-progress>span>strong{color:#7b4bc0}
+body[data-active-subject="german"] .version-badge{border-color:#d8c9f0;background:#f4effd;color:#6542aa}
+body[data-active-subject="german"] .bottom-nav .nav-btn.active{background:#6c3db3;color:#fff}
+body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:rgba(255,250,238,.96)}
+
+@media(max-width:1099px){
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-panel{width:42%}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-main{width:51%}
+  .wordrealm-signpost{display:none}
+}
+@media(max-width:760px){
+  .project-menu-stage[data-visual-theme="wordrealm"]{
+    padding:12px 10px 14px;background:#eef6ef;border-radius:24px;overflow:hidden
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-scenery{height:285px;bottom:auto}
+  .wordrealm-home-brand{top:9px}
+  .wordrealm-home-brand span{min-width:145px;font-size:.88rem;padding:5px 17px 7px}
+  .wordrealm-home-brand small{font-size:.55rem}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-panel{width:100%;padding-top:29px;margin-bottom:11px}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-frame{height:250px}
+  .project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .project-menu-avatar-fallback{width:min(65%,270px);height:232px}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution{width:100%;max-width:100%;margin-top:5px}
+  .wordrealm-stage-strip{gap:2px}
+  .wordrealm-stage-tile{grid-template-rows:47px 15px auto;padding:2px 1px 4px}
+  .wordrealm-stage-fox{width:46px;height:48px}
+  .wordrealm-stage-tile span{font-size:.44rem}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-main{width:100%;gap:9px}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-head{margin-top:0}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card{grid-template-columns:58px minmax(0,1fr) auto}
+  .wordrealm-home-actions{gap:8px}
+}
+@media(max-width:430px){
+  .project-menu-stage[data-visual-theme="wordrealm"]{padding:9px 8px 12px}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-scenery{height:258px}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-frame{height:224px}
+  .project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .project-menu-avatar-fallback{width:min(70%,245px);height:210px}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution{padding:9px 7px}
+  .wordrealm-stage-tile{grid-template-rows:43px 14px auto}
+  .wordrealm-stage-fox{width:42px;height:44px}
+  .wordrealm-stage-tile span{font-size:.4rem}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-head{padding:7px 8px;align-items:flex-start;flex-direction:row}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-head h2{font-size:1.35rem}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-subject-context{gap:4px}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card{
+    grid-template-columns:50px minmax(0,1fr);gap:8px;padding:10px
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card .today-actions{grid-column:1/-1;grid-template-columns:auto 1fr}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card .today-cta{grid-column:auto}
+  .wordrealm-today-icon{width:48px;height:48px}.wordrealm-today-icon i{width:27px;height:27px;font-size:.75rem}.wordrealm-today-icon i:nth-child(2),.wordrealm-today-icon i:nth-child(3){top:21px}
+  .wordrealm-home-action{grid-template-columns:42px minmax(0,1fr) 36px 36px;gap:7px;padding:8px}
+  .wordrealm-action-icon{width:40px;height:40px}
+  .wordrealm-action-copy strong{font-size:.85rem}.wordrealm-action-copy small{font-size:.62rem}
+}
