@@ -336,7 +336,7 @@
     root.dataset.worldMode=activeWorldMode();
     root.classList.toggle('adventure-mode',adventure);
     const next=nextUpgrade(c);
-    const subjectLine=`Spiel · ${subjectLabel(state.activeSubject)} · ${adventure?'Abenteuer':world.short||world.title}`;
+    const subjectLine=`Spiel · ${subjectLabel(state.activeSubject)} · ${adventure?(ADVENTURE_META[state.activeSubject]?.title||'Abenteuer'):world.title}`;
     const title=document.querySelector('#armyViewTitle'),toolbarCopy=document.querySelector('#armyView .army-toolbar-copy p'),mapButton=document.querySelector('#campaignMapBtn'),upgradeButton=document.querySelector('#armyUpgradeFocusBtn');
     if(title)title.textContent=adventure?(ADVENTURE_META[state.activeSubject]?.title||'Abenteuer'):world.title;
     if(toolbarCopy)toolbarCopy.textContent=adventure?'Entdecken, Etappen und sichtbarer Jahresfortschritt sind hier gebündelt und vom Lernen getrennt.':'Armee, Kampagne, Festungen und Duelle sind hier gebündelt und vom Lernen getrennt.';
