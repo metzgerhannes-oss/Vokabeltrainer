@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.21.34';
+const VERSION = '0.21.35';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';
@@ -30,6 +30,7 @@ const currentSchoolYear = () => {
 
 const defaultSkills = () => ({recognition:0,listening:0,retrieval:0,spelling:0,reading:0,context:0});
 const defaultLiteracySkills = () => ({recognized:0,decoded:0,fluency:0,meaning:0,phonologicalSpelling:0,orthographicSpelling:0,dictation:0,sentenceUse:0});
+const defaultGermanFoundation = () => ({version:1,letters:{},words:{},sentences:{},completedStages:{},updatedAt:null});
 const defaultDirectionalRecall = () => ({
   target:{successDays:[],lastCorrect:null,lastAt:null},
   source:{successDays:[],lastCorrect:null,lastAt:null}
@@ -283,7 +284,7 @@ function defaultState(){
   const s={
     version: VERSION,senseModelVersion:1,spellingLeakRepairVersion:1,pairAuditVersion:1,firstContactVersion:1,
     activeLearnerId: 'learner_demo',activeSubject: 'english',
-    learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',avatarStyle:'male',activeSubjects:['english'],xp:0,literacySupport:{reading:false,spelling:false},reducedLoad:false,lrsMode:false,fontSize:17,letterSpacing:0,flashSpeed:1600,autoSpeakCorrection:true,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),battleDays:{},testFortresses:{},yearFortresses:{},completedTests:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
+    learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',avatarStyle:'male',activeSubjects:['english'],xp:0,literacySupport:{reading:false,spelling:false},reducedLoad:false,lrsMode:false,germanFoundation:defaultGermanFoundation(),fontSize:17,letterSpacing:0,flashSpeed:1600,autoSpeakCorrection:true,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),battleDays:{},testFortresses:{},yearFortresses:{},completedTests:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
     books:[],learnerBooks:[],bookVocabulary:[],sets:[],vocabulary:[],setVocabulary:[],learnerVocabulary:[],grades:[],practiceTests:[],answerReviews:[],activity:[]
   };
   attachRuntimeWordApi(s);return s;
