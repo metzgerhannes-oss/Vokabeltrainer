@@ -4549,6 +4549,7 @@ html[data-subject="german"] #learnView .german-literacy-card .secondary{border-c
 .german-picture-options{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:22px auto}.german-picture-options button{display:grid;place-items:center;min-width:84px;min-height:84px;padding:12px;border:1px solid #d8c7a5;border-radius:18px;background:#fff;font-size:2.3rem}
 .foundation-trace-canvas{display:block;width:min(640px,100%);height:clamp(220px,42vw,320px);margin:18px auto;border:2px solid #d8c7a5;border-radius:20px;background:#fffdf8;touch-action:none}
 .foundation-memory-letter{font-size:clamp(72px,18vw,150px);font-weight:900;line-height:1;color:#75552f;transition:opacity .2s}.foundation-memory-letter.hidden-letter{opacity:.08}
+.foundation-letter-pair{margin:14px auto 6px;text-align:center;font-size:clamp(72px,18vw,150px);font-weight:850;line-height:1;color:#75552f;letter-spacing:.08em}
 .german-sentence-prompt{font-size:clamp(28px,7vw,52px)}
 @media(max-width:760px){.german-foundation-stages{grid-template-columns:1fr 1fr}.german-foundation-stage:last-child{grid-column:1/-1}}
 @media(max-width:520px){.german-foundation-head{grid-template-columns:1fr}.german-foundation-progress{grid-template-columns:auto auto;justify-content:start;gap:8px;width:max-content}.german-foundation-stages{grid-template-columns:1fr}.german-foundation-stage:last-child{grid-column:auto}.foundation-trace-canvas{height:240px}}
