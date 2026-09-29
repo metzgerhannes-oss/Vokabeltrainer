@@ -321,7 +321,7 @@ Ein Backlog-Punkt wird nicht gelöscht, wenn er umgesetzt oder verworfen wird:
 - Ersatz → `SUPERSEDED` plus Verweis auf Nachfolger
 
 ## B-017 – Weltwahl Abenteuer oder Kampf pro Fach
-**Status:** IN_IMPLEMENTATION · v0.21.40 fachübergreifend implementiert; Englisch/Latein aktiv, Französisch-Welten vorbereitet bis B-003-Fachfreischaltung; PR-/CI-Verifikation folgt  
+**Status:** IMPLEMENTED · v0.21.40 über PR #210 auf `main` gemergt; PR-CI #1321 vollständig grün; Französisch-Fachfreischaltung bleibt separat B-003  
 **Priorität:** P1 visuelle/Profile-UX vor finaler Fachwelten-Ausarbeitung  
 **Decision:** D-20260929-001 · D-20260929-002  
 **Betroffene Quellen:** `VISUAL_DNA.md`, `docs/project/LATIN_FRENCH_VISUAL_LAYOUT.md`, Profilmodell, Profilerstellung, Profileinstellungen, Spiel-/Fortschrittsrenderer
@@ -363,7 +363,7 @@ Abnahme:
 5. Bestehende Profile funktionieren ohne manuelle Migration weiter.
 
 ## B-018 – Freies Schreiben: Grundschul-Hilfslinien und freie Buchstabenauswahl
-**Status:** APPROVED_BACKLOG · Umsetzung unmittelbar nach Abschluss von v0.21.40  
+**Status:** IN_IMPLEMENTATION · v0.21.41 auf `feature/deutsch-free-writing-b018-v02141` implementiert; statischer + WebKit-CI-Gate integriert; PR-/CI-Verifikation ausstehend  
 **Priorität:** P0 für Deutsch Klasse 1 / praktische v1-Abnahme  
 **Bezug:** B-001, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`
 
