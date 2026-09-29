@@ -107,7 +107,7 @@ try{
     vectorFox:document.querySelectorAll('.subject-adventure-figure .wordrealm-fox-svg.adventure').length
   }));
   assert(adventure.mode==='adventure'&&adventure.className.includes('adventure-mode'),'adventure hub is active');
-  assert(adventure.title.includes('Fuchspfad'),'adventure hub uses Fuchspfad title');
+  assert(adventure.title==='Deine Wortreise','adventure hub uses the canonical German adventure title');
   assert(adventure.route===6,'adventure hub shows six visual stages');
   assert(adventure.vectorFox===1,'adventure hub renders the dedicated vector fox instead of an emoji placeholder');
   assert(adventure.actionHidden===false&&adventure.actionText.includes('Abenteuer fortsetzen'),'adventure exposes an equivalent non-combat daily action');
