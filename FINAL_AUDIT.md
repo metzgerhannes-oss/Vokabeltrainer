@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 29.09.2026 · App v0.21.43
+Stand: 29.09.2026 · App v0.21.44
 
 ## Ergebnis
+
+- v0.21.44 schärft die visuelle Freigabe: Die freigegebene malerisch-cinematische Referenzqualität ist nun verbindlicher Mindeststandard für jeden Avatar. Ein kompletter Kampagnen-/Schlachtscreen darf nicht als Ersatzfigur erscheinen. Der konkrete v0.21.43-Befund in Latein wird technisch gestoppt: `VTArmyArt.heroUrl` bleibt als Alt-Fallback auf Englisch-Kampf begrenzt. Fehlende finale Fach-/Welt-/Stilserien bleiben P0 in B-019 und dürfen nicht als durch einen technischen Fallback „erledigt“ gelten.
 
 - v0.21.43 korrigiert die reale Deutsch-Abenteuer-Startdarstellung nach iPhone-Befund: weichere Fuchsillustration, Fuchs links mit sichtbarem Buchstaben-/Wort-Lernpfad und nächster Lernstation rechts, helle Natur-/Papierwelt sowie eigene Abenteuer-Stufenbezeichnungen statt Kampf-Ausrüstungslabels. Die Änderung ist rein visuell/motivational und verändert keine Mastery-, Spacing-, Test- oder Bewertungslogik. CI- und Live-Verifikation sind vor Merge weiterhin erforderlich.
 
