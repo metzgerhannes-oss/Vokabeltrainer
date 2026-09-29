@@ -347,6 +347,25 @@ Bildmotive:
 - kleine Fuchs-/Holzschwert-Lernstationen für Hören, Erkennen und Schreiben
 - ruhige Pflanzen- und Naturelemente
 
+### Verbindliche Fuchs-Stufen und Startlayout
+
+Der Deutsch-Startscreen verwendet die am 29.09.2026 freigegebene Entwicklung:
+
+**Grundausrüstung → Lederzeug → Ritterlehrling → Ritter → Kronritter → König**
+
+Stufe 3–6 müssen als direkte, aufbauende Ritterlaufbahn erkennbar bleiben. Ausrüstung wird
+ergänzt; Grundfigur, Proportionen und Farbidentität bleiben konsistent. Die volle Krone ist
+der Endstufe **König** vorbehalten.
+
+Für Klasse 1 ist Vorlesen Teil der visuellen Bedienlogik. Sichtbare Audio-Buttons erscheinen
+bei Navigation, Überschriften, Karten und sicheren Anweisungen. Audio darf jedoch keine
+fachlich erwartete Antwort oder zu prüfende Leseleistung vorwegnehmen.
+
+Die Profilerstellung berücksichtigt **m/w/d** mit Männlich, Weiblich und Neutral/Divers.
+Fehlende finale Bildserien dürfen nicht still auf die männliche Darstellung zurückfallen.
+
+Details: `docs/project/DEUTSCH_WORTREICH_LAYOUT_V1.md`.
+
 ### Spielmodus – Das Wortreich
 
 Die Spielwelt zeigt den sichtbaren Aufbau eines eigenen Reichs:

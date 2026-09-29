@@ -11,7 +11,8 @@
         'assets/menu-avatar/english/stage-5.webp.b64',
         'assets/menu-avatar/english/stage-6.webp.b64'
       ]),
-      female:Object.freeze([])
+      female:Object.freeze([]),
+      neutral:Object.freeze([])
     })
   });
   const urls=[];
@@ -44,7 +45,8 @@
       readyStyles:Object.fromEntries(Object.entries(art).flatMap(([subject,styles])=>Object.entries(styles).map(([style,list])=>[`${subject}:${style}`,list?.length===6]))),
       get(subject,style,stage){
         if(typeof style==='number'){stage=style;style='male'}
-        const list=art[subject]?.[style==='female'?'female':'male'];
+        const safeStyle=['male','female','neutral'].includes(style)?style:'male';
+        const list=art[subject]?.[safeStyle];
         const index=Math.max(0,Math.min(5,(Number(stage)||1)-1));
         return Array.isArray(list)?list[index]||'':'';
       }

@@ -14,12 +14,21 @@
     if(!img||!fallback||!frame||typeof state!=='object'||!state||!state.activeSubject)return;
     const level=Math.max(1,Math.min(6,Number(frame.dataset.avatarStage)||1));
     const isGerman=state.activeSubject==='german';
-    const style=learner()?.avatarStyle==='female'?'female':'male';
+    const style=['male','female','neutral'].includes(learner()?.avatarStyle)?learner().avatarStyle:'male';
     frame.classList.toggle('german-fox-avatar',isGerman);
     const key=`${state.activeSubject}-${style}-stage-${level}`;
     frame.dataset.avatarStyle=style;
-    const finalUrl=isGerman?'':(window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'');
-    const armyUrl=isGerman?'':(window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'');
+    if(isGerman){
+      img.removeAttribute('data-avatar-final');
+      img.removeAttribute('data-avatar-art-key');
+      img.classList.add('hidden');
+      fallback.classList.remove('hidden');
+      window.VTWordrealmUi?.renderHome?.(level);
+      return;
+    }
+    window.VTWordrealmUi?.clearHome?.();
+    const finalUrl=window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'';
+    const armyUrl=style==='male'&&window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'';
     const url=finalUrl||armyUrl;
     if(url){
       if(img.src!==url)img.src=url;
@@ -43,7 +52,7 @@
     if(!frame||typeof avatarStageFor!=='function')return null;
     const stage=avatarStageFor(pct,state.activeSubject);
     frame.dataset.avatarStage=String(stage.level);
-    const style=learner()?.avatarStyle==='female'?'female':'male';
+    const style=['male','female','neutral'].includes(learner()?.avatarStyle)?learner().avatarStyle:'male';
     frame.dataset.avatarVisualKey=`${state.activeSubject}-${style}-stage-${stage.level}`;
     frame.dataset.avatarSubject=state.activeSubject;
     frame.dataset.avatarStyle=style;
@@ -85,6 +94,7 @@
       stageRoot.dataset.visualTheme=visualTheme;
       stageRoot.dataset.subject=state.activeSubject;
     }
+    document.body.dataset.activeSubject=state.activeSubject;
     if(subject)subject.textContent=subjectLabel(state.activeSubject);
     if(rank)rank.textContent=avatarStage?.rank||rankFor(growth.pct,state.activeSubject);
     if(learned)learned.textContent=String(p.mastered||0);
@@ -109,6 +119,7 @@
     }
     renderSubjectSwitcher();
     applyAvatarArt();
+    window.VTReadAloud?.syncPageButton?.();
   }
 
   function showProgressTarget(id){
@@ -133,6 +144,11 @@
     document.querySelector('#menuCardboxBtn')?.addEventListener('click',()=>showProgressTarget('cardboxOverviewCard'));
     document.querySelector('#menuAchievementsBtn')?.addEventListener('click',()=>showProgressTarget('progressOverviewCard'));
     document.querySelector('#progressMenuBtn')?.addEventListener('click',openHome);
+    document.querySelector('#wordrealmLearningWordsBtn')?.addEventListener('click',()=>typeof showView==='function'&&showView('practiceView'));
+    document.querySelector('#wordrealmEnterBtn')?.addEventListener('click',()=>window.VTArmyUi?.open?.());
+    document.querySelector('#wordrealmSignWords')?.addEventListener('click',()=>typeof showView==='function'&&showView('practiceView'));
+    document.querySelector('#wordrealmSignSentences')?.addEventListener('click',()=>window.VTGermanFoundation?.open?.('sentences'));
+    document.querySelector('#wordrealmSignAdventure')?.addEventListener('click',()=>window.VTArmyUi?.open?.());
     document.addEventListener('vt-army-art-ready',applyAvatarArt);
     document.addEventListener('vt-menu-avatar-art-ready',applyAvatarArt);
     render();

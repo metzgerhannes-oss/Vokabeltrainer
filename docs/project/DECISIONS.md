@@ -380,3 +380,20 @@ Für alle Kampfvarianten gilt: keine realen Länder, Völker, Religionen oder hi
 
 Deutsch ist von dieser Wahl ausgenommen. Für Deutsch gilt weiterhin D-20260928-008 mit dem festgelegten Wortreich.
 
+### D-20260929-003 – Wortreich-Startlayout, Stufenlaufbahn und Vorlesen sind verbindlich
+**Status:** LOCKED  
+**Quelle:** [DEUTSCH_WORTREICH_LAYOUT_V1.md](DEUTSCH_WORTREICH_LAYOUT_V1.md); [../../VISUAL_DNA.md](../../VISUAL_DNA.md) § 9; D-20260928-008; D-20260927-009
+
+Für Deutsch wird das am 29.09.2026 freigegebene Wortreich-Startlayout verbindlich. Die
+Fuchsentwicklung lautet: **Grundausrüstung → Lederzeug → Ritterlehrling → Ritter → Kronritter → König**.
+Die Stufen 3 bis 6 bilden eine direkte Ritterlaufbahn; der König ist die eindeutige Endstufe.
+
+Für Klasse 1 wird Vorlesen als grundlegende Bedienhilfe behandelt. Überschriften, Navigation,
+Aktionskarten und sichere Aufgabenanweisungen erhalten Audio. Audio bleibt vor einer Antwort
+gesperrt, wenn es die erwartete Lösung oder die zu messende Lesekompetenz vorwegnehmen würde.
+Die Vorlesefunktion verändert weder Mastery noch Spacing, Testbereitschaft oder fachliche Bewertung.
+
+Die Profilerstellung berücksichtigt **m/w/d**: Männlich, Weiblich und Neutral/Divers sind
+gleichwertige gespeicherte Avatarvarianten. Fehlende finale Bildassets dürfen nicht zu einem
+stillen Rückfall auf die männliche Serie führen.
+
