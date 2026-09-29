@@ -131,8 +131,9 @@ function battleStoryDateLabel(value){
 function battleStoryFor(f){
   const p=battlePresentation();
   if(!f)return {title:`Noch kein ${p.targetNoun}-Ziel`,text:`Sobald ein Test geplant ist, erscheint hier automatisch die passende ${p.targetNoun.toLowerCase()}-Etappe.`};
-  const stories=state.activeSubject==='latin'?BATTLE_STORY_LATIN:state.activeSubject==='french'?(typeof isAdventureWorld==='function'&&isAdventureWorld('french')?BATTLE_STORY_FRENCH:BATTLE_STORY_FRENCH_BATTLE):BATTLE_STORY;
-  const base=stories[f.id]||{title:battleTargetName(f),text:`${p.unitLabel} bereitet den nächsten Schritt vor.`};
+  const base=window.VTWorldStory?.chapter?.(state.activeSubject,'battle',f.id,{completed:!!f.capturedAt})
+    ||(state.activeSubject==='latin'?BATTLE_STORY_LATIN[f.id]:state.activeSubject==='french'?BATTLE_STORY_FRENCH_BATTLE[f.id]:state.activeSubject==='german'?null:BATTLE_STORY[f.id])
+    ||{title:battleTargetName(f),text:`${p.unitLabel} bereitet den nächsten Schritt vor.`};
   const wordCount=Math.max(0,Number(f.wordCount)||0),scope=battleStoryScopeLabel(f),date=battleStoryDateLabel(f.testDate);
   let objective=date?`Dein nächster Test ist am ${date}.`:'';
   if(wordCount&&scope)objective+=` Dafür bereitest du ${wordCount} ${wordCount===1?'Vokabel':'Vokabeln'} aus „${scope}“ vor.`;
