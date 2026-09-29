@@ -274,7 +274,7 @@ Fehlt einer der fachlichen Punkte 1–6 oder greift die Spielwelt in die fachlic
 - eigener Domain-Smoke plus echter iPhone-WebKit-Smoke prüft German/wordrealm-Renderer, Eroberung, Ticketverbrauch, XP und unveränderte Mastery
 
 ### Paket E2 – Weltwahl Deutsch
-**Status: umgesetzt im Release-Kandidaten v0.21.38; automatisierte Verifikation läuft.**
+**Status: umgesetzt im Release-Kandidaten v0.21.39; automatisierte Verifikation läuft.**
 - pro Profil `Abenteuer | Kampf`
 - bestehende Profile bleiben auf Wortreich/Kampf
 - Fuchs-Abenteuer mit eigenem Hub, sechs sichtbaren Etappen und Wortreise-Karte
