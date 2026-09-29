@@ -91,6 +91,8 @@ function destroyProductionBattle() {
     delete activeStage.dataset.phaserAttack;
     delete activeStage.dataset.phaserOutcome;
     delete activeStage.dataset.phaserProfile;
+    delete activeStage.dataset.phaserSubject;
+    delete activeStage.dataset.phaserTheme;
     delete activeStage.dataset.phaserReady;
     delete activeStage.dataset.phaserSound;
   }
@@ -110,6 +112,8 @@ export function playProductionBattle({
   attack = 'charge',
   captureOutcome = false,
   profileName = 'Mein Profil',
+  subject = 'english',
+  theme = 'campaign',
   initialDamagePct = 0,
   onReady,
   onPhase,
@@ -128,7 +132,9 @@ export function playProductionBattle({
   wrap?.classList.add('phaser-production-layout');
 
   const mount = document.createElement('div');
-  mount.className = 'battle-phaser-production';
+  const safeTheme = theme === 'wordrealm' ? 'wordrealm' : 'campaign';
+  const safeSubject = subject === 'german' ? 'german' : 'english';
+  mount.className = 'battle-phaser-production theme-' + safeTheme;
   mount.setAttribute('aria-hidden', 'true');
   stage.prepend(mount);
   stage.classList.add('phaser-production-active', 'phaser-production-running');
@@ -136,7 +142,9 @@ export function playProductionBattle({
   stage.dataset.phaserAttack = attack;
   stage.dataset.phaserOutcome = captureOutcome ? 'capture' : 'hit';
   stage.dataset.phaserProfile = initialsFor(profileName);
-  mount.dataset.version = 'v0.21.28 · Phaser Cinematic';
+  stage.dataset.phaserSubject = safeSubject;
+  stage.dataset.phaserTheme = safeTheme;
+  mount.dataset.version = safeTheme === 'wordrealm' ? 'v0.21.37 · Wortreich Phaser' : 'v0.21.28 · Phaser Cinematic';
   const audio = createBattleAudio();
   activeAudio = audio;
   stage.dataset.phaserSound = audio.available ? 'web-audio' : 'silent';
@@ -173,6 +181,8 @@ export function playProductionBattle({
     try {
       const Scene = createBattleSceneClass(Phaser, {
         profileInitials: initialsFor(profileName),
+        subject: safeSubject,
+        theme: safeTheme,
         initialDamagePct,
         onReady: detail => {
           const scene = game.scene.getScene('BattleSpike');
@@ -196,7 +206,7 @@ export function playProductionBattle({
           stage.classList.remove('phaser-production-running');
           stage.classList.add('phaser-production-complete');
           safeCall(onComplete);
-          resolve({ renderer: 'phaser4', attack, outcome: captureOutcome ? 'capture' : 'hit' });
+          resolve({ renderer: 'phaser4', attack, subject: safeSubject, theme: safeTheme, outcome: captureOutcome ? 'capture' : 'hit' });
         }
       });
 
@@ -235,6 +245,6 @@ if (typeof window !== 'undefined') {
   window.VTBattlePhaserProduction = {
     playProductionBattle,
     destroyProductionBattle,
-    version: '0.21.28-phaser-production.2'
+    version: '0.21.37-phaser-production.3'
   };
 }
