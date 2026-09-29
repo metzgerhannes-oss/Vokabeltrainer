@@ -141,6 +141,11 @@ function showPersistenceWarning(text){const el=document.querySelector('#storageS
 const safeText=(value,max=1000)=>String(value??'').replace(/\u0000/g,'').slice(0,max);
 const safeId=(value,prefix='id',used=null)=>{const raw=String(value||'');if(SAFE_ID_RE.test(raw)&&(!used||!used.has(raw))){used?.add(raw);return raw}let id=uid(prefix);while(used?.has(id))id=uid(prefix);used?.add(id);return id};
 const safeNumber=(value,min,max,fallback=0)=>{const n=Number(value);return Number.isFinite(n)?clamp(n,min,max):fallback};
+function safeLiteracyErrors(raw){
+  const source=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{},out=defaultLiteracyErrors();
+  for(const key of Object.keys(out))out[key]=Math.round(safeNumber(source[key],0,100,0));
+  return out;
+}
 function safeGermanFoundation(raw){
   const source=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{},metric=(v)=>safeNumber(v,0,4,0),clean=(input,keys,max=80)=>{
     const out={},rows=input&&typeof input==='object'&&!Array.isArray(input)?Object.entries(input).slice(0,max):[];
@@ -438,7 +443,7 @@ function hardenState(s){
   const progressUsed=new Set(),progressMap=new Map(),progressByCombo=new Map(),cleanProgress=[];
   for(const raw of (Array.isArray(s.learnerVocabulary)?s.learnerVocabulary:[]).slice(0,150000)){
     const p0=raw&&typeof raw==='object'?raw:{},old=String(p0.id||''),learnerId=mapLearner(p0.learnerId),vocabId=vocabMap.get(String(p0.vocabId||''))||String(p0.vocabId||'');if(!vocabIds.has(vocabId))continue;const v=s.vocabulary.find(z=>z.id===vocabId);let senseId=senseMap.get(String(p0.senseId||''))||String(p0.senseId||'');if(!senseById(v,senseId))senseId=primarySense(v)?.id||'';if(!senseId)continue;
-    const id=safeId(old,'w',progressUsed),p=makeLearnerVocabulary(learnerId,vocabId,senseId,{...p0,id,senseId}),combo=`${learnerId}\u0000${senseId}`,existing=progressByCombo.get(combo);
+    const id=safeId(old,'w',progressUsed),p=makeLearnerVocabulary(learnerId,vocabId,senseId,{...p0,id,senseId,literacyErrors:safeLiteracyErrors(p0.literacyErrors)}),combo=`${learnerId}\u0000${senseId}`,existing=progressByCombo.get(combo);
     if(existing){mergeProgress(existing,p);progressMap.set(old,existing.id)}else{cleanProgress.push(p);progressByCombo.set(combo,p);progressMap.set(old,p.id)}
   }
   s.learnerVocabulary=cleanProgress;const progressIds=new Set(cleanProgress.map(x=>x.id));
