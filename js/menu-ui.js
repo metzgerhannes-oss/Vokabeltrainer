@@ -20,6 +20,15 @@
     const key=`${state.activeSubject}-${worldMode}-${style}-stage-${level}`;
     frame.dataset.avatarStyle=style;
     frame.dataset.worldMode=worldMode;
+    if(isGerman&&!isGermanAdventure){
+      img.removeAttribute('data-avatar-final');
+      img.removeAttribute('data-avatar-art-key');
+      img.classList.add('hidden');
+      fallback.classList.remove('hidden');
+      window.VTWordrealmUi?.renderHome?.(level);
+      return;
+    }
+    window.VTWordrealmUi?.clearHome?.();
     const finalUrl=isGerman?'':(window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'');
     const armyUrl=isGerman?'':(window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'');
     const shield=fallback.querySelector?.('.avatar-shield');if(shield)shield.textContent=isGerman&&!isGermanAdventure?'W':'V';
@@ -89,6 +98,7 @@
       stageRoot.dataset.visualTheme=visualTheme;
       stageRoot.dataset.subject=state.activeSubject;
     }
+    document.body.dataset.activeSubject=state.activeSubject;
     if(subject)subject.textContent=subjectLabel(state.activeSubject);
     if(rank)rank.textContent=avatarStage?.rank||rankFor(growth.pct,state.activeSubject);
     if(learned)learned.textContent=String(p.mastered||0);
@@ -116,6 +126,7 @@
     }
     renderSubjectSwitcher();
     applyAvatarArt();
+    window.VTReadAloud?.syncPageButton?.();
   }
 
   function showProgressTarget(id){
@@ -140,6 +151,11 @@
     document.querySelector('#menuCardboxBtn')?.addEventListener('click',()=>showProgressTarget('cardboxOverviewCard'));
     document.querySelector('#menuAchievementsBtn')?.addEventListener('click',()=>showProgressTarget('progressOverviewCard'));
     document.querySelector('#progressMenuBtn')?.addEventListener('click',openHome);
+    document.querySelector('#wordrealmLearningWordsBtn')?.addEventListener('click',()=>typeof showView==='function'&&showView('practiceView'));
+    document.querySelector('#wordrealmEnterBtn')?.addEventListener('click',()=>window.VTArmyUi?.open?.());
+    document.querySelector('#wordrealmSignWords')?.addEventListener('click',()=>typeof showView==='function'&&showView('practiceView'));
+    document.querySelector('#wordrealmSignSentences')?.addEventListener('click',()=>window.VTGermanFoundation?.open?.('sentences'));
+    document.querySelector('#wordrealmSignAdventure')?.addEventListener('click',()=>window.VTArmyUi?.open?.());
     document.addEventListener('vt-army-art-ready',applyAvatarArt);
     document.addEventListener('vt-menu-avatar-art-ready',applyAvatarArt);
     render();
