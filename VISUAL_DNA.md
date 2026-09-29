@@ -111,10 +111,9 @@ Der Spielmodus darf:
 Er bleibt trotzdem ruhig und kontrolliert. Die Spielwelt dient der Motivation und darf
 niemals fachlichen Fortschritt vortäuschen oder ersetzen.
 
-### Weltwahl pro Fremdsprache
+### Weltwahl pro Fach
 
-Bei der Profilerstellung wählt das Kind für **Englisch, Latein und Französisch jeweils separat**
-zwischen zwei gleichwertigen Motivationswelten:
+Bei der Profilerstellung wählt das Kind für jedes entsprechend umgesetzte Fach separat zwischen zwei gleichwertigen Motivationswelten. Die technische Einführung startet mit **Deutsch**; Englisch, Latein und Französisch folgen auf derselben Architektur:
 
 - **Abenteuer** – Reise, Expedition, Entdeckung, Etappen und besondere Zielorte
 - **Kampf** – Armee/Gruppe, gegnerische fiktionale Festungen, Angriffe und Eroberungsinszenierung
@@ -140,10 +139,12 @@ Die fachliche Identität bleibt auch innerhalb beider Varianten erhalten:
 - **Latein Kampf:** römische Legion, Marschroute, Kastelle und fiktionale Gegner
 - **Französisch Abenteuer:** `Voyage Français` mit Orten, Reisewegen, Kultur und Regionen
 - **Französisch Kampf:** französisch inspirierte, klar fiktionale Festungs-/Gefährtenwelt ohne reale Kriegsgegner
+- **Deutsch Abenteuer:** Fuchs-Abenteuer mit Fuchspfad, Wortreise, Entdeckungsstationen und nicht-kämpferischer Tagesaktion
+- **Deutsch Kampf:** `Das Wortreich` mit Ritterheer, Burgen und Belagerungen
 
 Kampfvarianten dürfen niemals reale Länder, Völker, Religionen oder historische Konfliktparteien
-als Feindbild verwenden. Deutsch ist von dieser Wahl nicht erfasst; für Deutsch gilt weiterhin
-die eigene Festlegung aus § 9.
+als Feindbild verwenden. Für Deutsch konkretisiert D-20260929-002 die Weltwahl; die fachlichen
+Deutsch-Regeln aus § 9 bleiben unverändert.
 
 ## 6. Englisch – Campaign World
 
@@ -318,7 +319,9 @@ technisch weiterhin den vollständigen Aktivierungs-Check aus `SUBJECT_SYSTEM.md
 Deutsch besitzt zwei klar getrennte Ebenen:
 
 - **Lernmodus:** ruhiger, heller Deutsch-Lernraum; der vertraute Fuchs kann als kluger Lernbegleiter erhalten bleiben.
-- **Spielmodus:** **„Das Wortreich“**, eine mittelalterliche Burg-, Ritter- und Belagerungswelt mit eigener Armee.
+- **Spiel-/Motivationsmodus:** pro Profil wählbar zwischen **Fuchs-Abenteuer** und **„Das Wortreich“**.
+
+**Fuchs-Abenteuer** nutzt Entdeckungsweg, Wortreise, Etappen und eine tägliche nicht-kämpferische Aktion. **Das Wortreich** bleibt die mittelalterliche Burg-, Ritter- und Belagerungswelt mit eigener Armee. Beide Varianten verwenden denselben fachlichen Lernstand und dieselbe kumulative Jahresentwicklung.
 
 Damit wird Deutsch weder zu einer umgefärbten Englisch-Kampagne noch zu einer reinen Fuchswelt ohne Spielhandlung. Die fachliche Aufgabe bleibt im Lernmodus dominant; die vollständige Kampfinszenierung findet ausschließlich im eigenen Spielbereich statt.
 
@@ -521,9 +524,10 @@ Die freigegebene 2×2-Leitbildtafel definiert gemeinsam die vier Basis-Referenzw
 3. **Français – Le Voyage:** Reisefigur → Reiseweg → Zielort
 4. **Deutsch – Das Wortreich:** Lernmodus mit Fuchs; Spielmodus Ritterheer → Belagerungsweg → Burg/Festung
 
-Für Englisch, Latein und Französisch ist diese Basis seit D-20260929-001 jeweils um eine
-gleichwertige **Abenteuer-/Kampf-Partnerwelt** zu ergänzen. Die Partnerwelt übernimmt dieselbe
-räumliche Grammatik und dieselbe erreichte Jahresstufe, verändert aber die Inszenierung.
+Seit D-20260929-001/D-20260929-002 ist die Basis pro Fach um eine gleichwertige
+**Abenteuer-/Kampf-Partnerwelt** zu ergänzen. Deutsch setzt diese Wahl in v0.21.38 zuerst
+technisch um. Die Partnerwelt übernimmt dieselbe räumliche Grammatik und dieselbe erreichte
+Jahresstufe, verändert aber nur die Inszenierung.
 
 Diese vier Keyframes sind damit die visuelle Referenz für die nachfolgende Übertragung auf
 Start-, Karten-, Lern- und Testscreen. Einzelne spätere Illustrationen dürfen Details
