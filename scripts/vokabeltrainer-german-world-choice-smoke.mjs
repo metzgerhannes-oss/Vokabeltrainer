@@ -30,7 +30,7 @@ assert(menu.includes('function resetAvatarSurface(')&&menu.includes('frame.datas
 assert(menu.includes("fallback.classList.add('wordrealm-svg-avatar','adventure-svg-avatar')"),'German adventure gets its own renderer class instead of reusing the battle surface');
 assert(army.includes('function adventureHeroMarkup')&&army.includes("root.classList.toggle('adventure-mode',adventure)"),'German adventure uses the generic adventure hub');
 assert(wordrealm.includes('const ADVENTURE_STAGES=Object.freeze')&&wordrealm.includes('function adventureFoxSvg'),'German adventure has its own six-stage vector fox series');
-assert(wordrealm.includes("filter id=\"'+shadow+'")&&wordrealm.includes('Magister')===false&&wordrealm.includes('url(#'+gold+')'),'adventure fox uses layered gradients, shadow and premium explorer detailing');
+assert(wordrealm.includes("filter id=\"'+shadow+'")&&wordrealm.includes('Magister')===false&&wordrealm.includes("url(#'+gold+')"),'adventure fox uses layered gradients, shadow and premium explorer detailing');
 assert(wordrealm.includes('rect x="137" y="185"')&&wordrealm.includes('circle cx="119" cy="177"')&&wordrealm.includes('transform="translate(158 139)'),'fox progression visibly adds satchel, compass and map equipment');
 assert(army.includes('adventureFoxSvg')&&!army.includes('>🦊</div>'),'adventure hub uses the vector fox instead of an emoji placeholder');
 assert(map.includes("'german-adventure':Object.freeze")&&map.includes("viewTitle:'Meine Wortreise'"),'German adventure has a dedicated route theme');
