@@ -71,6 +71,9 @@ jobs:
       - name: Deutsch world choice smoke
         run: node scripts/vokabeltrainer-german-world-choice-smoke.mjs
 
+      - name: All-subject world choice smoke
+        run: node scripts/vokabeltrainer-world-choice-all-subjects-smoke.mjs
+
       - name: Library index smoke
         run: node scripts/vokabeltrainer-library-index-smoke.mjs
 
@@ -165,6 +168,9 @@ jobs:
 
       - name: WebKit Deutsch world choice
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-german-world-choice-ui-smoke.mjs
+
+      - name: WebKit all-subject world choice
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-world-choice-all-subjects-ui-smoke.mjs
 
       - name: WebKit dialog and keyboard accessibility
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-accessibility-ui-smoke.mjs
