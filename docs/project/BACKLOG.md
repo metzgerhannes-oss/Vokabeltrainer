@@ -362,3 +362,33 @@ Abnahme:
 4. Abenteuer und Kampf sind visuell eindeutig unterscheidbar, bleiben aber innerhalb derselben Fachidentität.
 5. Bestehende Profile funktionieren ohne manuelle Migration weiter.
 
+## B-018 – Freies Schreiben: Grundschul-Hilfslinien und freie Buchstabenauswahl
+**Status:** APPROVED_BACKLOG · Umsetzung unmittelbar nach Abschluss von v0.21.40  
+**Priorität:** P0 für Deutsch Klasse 1 / praktische v1-Abnahme  
+**Bezug:** B-001, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`
+
+Beim freien Schreiben in Deutsch Klasse 1 braucht die Schreibfläche eine kindgerechte
+Grundschul-Lineatur. Die Buchstaben sollen nicht frei in einem leeren Feld schweben, sondern
+räumlich in **Dachgeschoss – Erdgeschoss – Keller** eingeordnet werden können.
+
+Verbindliche Anforderungen:
+
+- freie Schreibfläche mit sichtbaren Hilfslinien für **Dach / Erdgeschoss / Keller**
+- Ober-, Mittel- und Unterlängen müssen an der Lineatur eindeutig erkennbar sein
+- Linien bleiben auch beim Finger-/Stift-Schreiben auf kleinen Displays gut sichtbar
+- Hilfslinien dürfen die geschriebene Spur nicht überdecken
+- im **freien Lernen** kann das Kind selbst bestimmen, welche Buchstaben geübt werden
+- Auswahl eines einzelnen Buchstabens oder mehrerer Buchstaben gleichzeitig
+- Groß- und Kleinbuchstaben müssen gezielt auswählbar sein
+- die manuelle Auswahl darf weder Mastery noch Testbereitschaft künstlich erhöhen; sie ist freie Übung
+- Vorlesen/Laut des ausgewählten Buchstabens bleibt verfügbar, sofern dadurch keine abgefragte Lösung verraten wird
+- Auswahl bleibt innerhalb der freien Übung erhalten, bis sie geändert oder zurückgesetzt wird
+
+Abnahme:
+
+1. Ein Kind kann z. B. nur **a**, nur **A/a** oder eine Gruppe wie **a, e, m, s** auswählen.
+2. Die freie Übung erzeugt ausschließlich Aufgaben aus der manuellen Auswahl.
+3. Beim Schreiben sind Dach-, Erdgeschoss- und Kellerbereich jederzeit sichtbar.
+4. Buchstaben mit Ober- und Unterlängen lassen sich eindeutig zur Lineatur einordnen.
+5. Freies Üben verändert keine fachliche Bewertung allein durch Anzahl der Wiederholungen.
+
