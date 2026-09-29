@@ -6,6 +6,9 @@ const {browser,page,assert,activate,reset,openBattle,waitForBattleResult,errors,
 try{
   await reset({revealed:true,ticket:true,subject:'german'});
   await page.evaluate(()=>{
+    const p=state.learnerVocabulary[0];
+    p.literacySkills={...defaultLiteracySkills(),recognized:4,decoded:4,meaning:4,phonologicalSpelling:4,orthographicSpelling:4,dictation:4,sentenceUse:1};
+    refreshMastery(p);
     const f=currentTestFortress();
     f.defense=100;f.maxDefense=100;
     window.__VT_BATTLE_TEST_MODE__=false;
