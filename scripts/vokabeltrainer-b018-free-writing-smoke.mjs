@@ -21,9 +21,10 @@ assert(module.includes('PHONEME_CLIPS')&&module.includes("'Ä':")&&module.includ
 const spriteDir='assets/audio/phonemes/de/sprite';
 const spriteFiles=fs.readdirSync(spriteDir).filter(x=>/^part-\d{2}\.b64$/.test(x)).sort();
 assert(spriteFiles.length===7,'phoneme MP3 sprite is stored in seven local parts');
-const encoded=spriteFiles.map(file=>read(spriteDir+'/'+file)).join('').replace(/\s+/g,'');
-const decoded=Buffer.from(encoded,'base64');
-assert(decoded.length>20000,'phoneme MP3 sprite has substantial audio payload');
+const decodedParts=spriteFiles.map(file=>Buffer.from(read(spriteDir+'/'+file).replace(/\s+/g,''),'base64'));
+assert(decodedParts.every(bytes=>bytes.length>0),'every phoneme sprite part decodes independently from base64');
+const decoded=Buffer.concat(decodedParts);
+assert(decoded.length>20000,'phoneme MP3 sprite has substantial audio payload after binary concatenation');
 assert(decoded.subarray(0,3).toString('ascii')==='ID3'||(decoded[0]===0xff&&(decoded[1]&0xe0)===0xe0),'phoneme sprite has an MP3 header/frame');
 for(const file of spriteFiles)assert(sw.includes("'./assets/audio/phonemes/de/sprite/"+file+"'"),'offline shell caches phoneme sprite '+file);
 assert(!module.includes("+'.m4a'")&&!sw.includes("'./assets/audio/phonemes/de/a.m4a'"),'broken M4A path is no longer used or shell-cached');
