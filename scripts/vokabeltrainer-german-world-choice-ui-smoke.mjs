@@ -48,12 +48,20 @@ try{
     showView('homeView');
   });
 
-  const initial=await page.evaluate(()=>({
-    mode:learnerWorldMode('german'),
-    mastery:subjectProgress('german').pct,
-    growth:campaignGrowthState('german').pct
-  }));
+  const initial=await page.evaluate(()=>{
+    renderAll();showView('homeView');window.VTMenuUi.render();
+    const frame=document.querySelector('#projectMenuAvatarFrame'),fallback=document.querySelector('#projectMenuAvatarFallback');
+    return {
+      mode:learnerWorldMode('german'),
+      mastery:subjectProgress('german').pct,
+      growth:campaignGrowthState('german').pct,
+      renderKey:frame?.dataset.avatarRenderKey||'',
+      battleFox:fallback?.querySelector('.wordrealm-fox-svg:not(.adventure)')?.getAttribute('aria-label')||'',
+      adventureFox:!!fallback?.querySelector('.wordrealm-fox-svg.adventure')
+    };
+  });
   assert(initial.mode==='battle','German legacy profile starts in battle mode');
+  assert(initial.renderKey.includes('german-battle-')&&initial.battleFox&&!initial.adventureFox,'battle mode renders a fresh Wortreich fox surface');
 
   await page.evaluate(()=>openProfileEditor(learner().id));
   await page.waitForSelector('[data-profile-world-subject="german"]:not(.hidden)');
@@ -67,10 +75,23 @@ try{
     renderAll();showView('homeView');window.VTMenuUi.render();
     const frame=document.querySelector('#projectMenuAvatarFrame');
     const nav=document.querySelector('.nav-btn[data-view="armyView"]');
-    return {mode:learnerWorldMode('german'),fox:frame?.classList.contains('german-fox-avatar'),nav:nav?.textContent?.trim()||'',mastery:subjectProgress('german').pct,growth:campaignGrowthState('german').pct};
+    const fallback=document.querySelector('#projectMenuAvatarFallback');
+    return {
+      mode:learnerWorldMode('german'),
+      fox:frame?.classList.contains('german-fox-avatar'),
+      nav:nav?.textContent?.trim()||'',
+      mastery:subjectProgress('german').pct,
+      growth:campaignGrowthState('german').pct,
+      renderKey:frame?.dataset.avatarRenderKey||'',
+      adventureFox:fallback?.querySelector('.wordrealm-fox-svg.adventure')?.getAttribute('aria-label')||'',
+      battleFox:!!fallback?.querySelector('.wordrealm-fox-svg:not(.adventure)'),
+      premium:!!fallback?.classList.contains('adventure-svg-avatar')
+    };
   });
   assert(home.mode==='adventure','profile saves adventure mode');
   assert(home.fox,'adventure mode uses the fox avatar');
+  assert(home.renderKey.includes('german-adventure-')&&home.renderKey!==initial.renderKey,'world switch creates a distinct adventure avatar render key');
+  assert(home.adventureFox&&!home.battleFox&&home.premium,'adventure switch replaces the Wortreich surface with the premium explorer fox');
   assert(home.nav.includes('Abenteuer'),'child navigation names the adventure world');
   assert(home.mastery===initial.mastery&&home.growth===initial.growth,'switching to adventure preserves academic and yearly progress');
 
@@ -121,11 +142,16 @@ try{
       growth:campaignGrowthState('german').pct,
       fox:document.querySelector('#projectMenuAvatarFrame')?.classList.contains('german-fox-avatar'),
       knight:document.querySelector('#projectMenuAvatarFrame')?.classList.contains('german-knight-avatar'),
-      nav:document.querySelector('.nav-btn[data-view="armyView"]')?.textContent?.trim()||''
+      nav:document.querySelector('.nav-btn[data-view="armyView"]')?.textContent?.trim()||'',
+      renderKey:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarRenderKey||'',
+      battleFox:document.querySelector('#projectMenuAvatarFallback .wordrealm-fox-svg:not(.adventure)')?.getAttribute('aria-label')||'',
+      adventureFox:!!document.querySelector('#projectMenuAvatarFallback .wordrealm-fox-svg.adventure')
     };
   });
   assert(after.mastery===route.mastery&&after.growth===route.growth,'switching back preserves the post-action academic and yearly state');
   assert(after.fox===false&&after.knight===true,'battle mode uses the Wordrealm avatar treatment');
+  assert(after.renderKey.includes('german-battle-')&&after.renderKey!==home.renderKey,'switching back rebuilds the battle avatar under a battle render key');
+  assert(after.battleFox&&!after.adventureFox,'switching back removes the explorer fox and restores the Wortreich fox');
   assert(after.nav.includes('Wortreich'),'battle mode restores Wortreich navigation');
 
   await page.evaluate(()=>window.VTArmyUi.open());
