@@ -58,7 +58,7 @@ try{
   await page.waitForSelector('#homeView.active');
   await page.click('#wordrealmEnterBtn');
   await page.waitForSelector('#armyView.active');
-  assert((await page.locator('#armySubjectLabel').textContent())?.includes('Wortreich')||await page.locator('#armyView').textContent().then(t=>t.includes('Wortreich')),'Wortreich action reaches German game area');
+  assert((await page.locator('#armyView').textContent())?.includes('Wortreich'),'Wortreich action reaches German game area');
 
   await page.evaluate(()=>{state.activeSubject='german';window.VTGermanFoundation.open('sentences')});
   await page.waitForSelector('#learnView.active .german-foundation-task');
