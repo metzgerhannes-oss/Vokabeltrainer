@@ -40,7 +40,7 @@
     'german-adventure':Object.freeze({
       places:['Fuchshain','Buchenfurt','Moosbrück','Wortwiese','Silbenwald','Lautertal','Bücherhain','Lesebrück','Eichenpfad','Satzgarten','Wörtersee','Kronenlichtung'],
       regions:{autumn:'Herbstpfad',winter:'Winterwald',spring:'Frühlingshain',summer:'Sommerwiese'},
-      viewTitle:'Fuchs-Abenteuer',routeLabel:'ENTDECKERPFAD',won:n=>`${n} Etappen geschafft`,next:'NÄCHSTE ETAPPE',
+      viewTitle:'Meine Wortreise',routeLabel:'ENTDECKERPFAD',won:n=>`${n} Etappen geschafft`,next:'NÄCHSTE ETAPPE',
       startKicker:'FUCHSBAU',startTitle:'Dein Fuchs-Abenteuer beginnt',unknownKicker:'HINTER DEM NÄCHSTEN PFAD',unknownTitle:'Neue Entdeckung',
       unknownText:'Neue Etappen erscheinen, sobald ein Test oder Lernziel geplant wird.',yearKicker:'FERNZIEL',yearTitle:'Große Wortreise',
       yearDone:'Abenteuerstufe vollständig entwickelt',yearOpen:p=>`${p}% Jahresreise`,detailProgress:'Wegfortschritt',
