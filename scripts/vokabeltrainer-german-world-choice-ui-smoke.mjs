@@ -20,6 +20,7 @@ try{
   await page.locator('#profileName').fill('Weltwahl Kind');
   await page.locator('[data-profile-subject="german"]').check();
   await page.locator('input[name="profileAvatarStyle"][value="neutral"]').check();
+  await page.locator('input[name="profileWorldMode-english"][value="battle"]').check();
   assert(await page.locator('[data-profile-world-subject="german"] .read-aloud-btn').count()>=1,'German world choice is readable in the profile dialog');
   assert(await page.locator('.profile-choice-legend .read-aloud-btn').count()>=2,'avatar and world choices both expose read-aloud controls');
   await page.locator('#saveProfile').click();
