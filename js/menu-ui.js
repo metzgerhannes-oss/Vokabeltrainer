@@ -14,7 +14,7 @@
     if(!img||!fallback||!frame||typeof state!=='object'||!state||!state.activeSubject)return;
     const level=Math.max(1,Math.min(6,Number(frame.dataset.avatarStage)||1));
     const isGerman=state.activeSubject==='german';
-    const style=learner()?.avatarStyle==='female'?'female':'male';
+    const style=['male','female','neutral'].includes(learner()?.avatarStyle)?learner().avatarStyle:'male';
     frame.classList.toggle('german-fox-avatar',isGerman);
     const key=`${state.activeSubject}-${style}-stage-${level}`;
     frame.dataset.avatarStyle=style;
@@ -52,7 +52,7 @@
     if(!frame||typeof avatarStageFor!=='function')return null;
     const stage=avatarStageFor(pct,state.activeSubject);
     frame.dataset.avatarStage=String(stage.level);
-    const style=learner()?.avatarStyle==='female'?'female':'male';
+    const style=['male','female','neutral'].includes(learner()?.avatarStyle)?learner().avatarStyle:'male';
     frame.dataset.avatarVisualKey=`${state.activeSubject}-${style}-stage-${stage.level}`;
     frame.dataset.avatarSubject=state.activeSubject;
     frame.dataset.avatarStyle=style;
