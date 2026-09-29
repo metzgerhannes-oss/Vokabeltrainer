@@ -432,3 +432,21 @@ Alle Storytexte müssen vorlesbar sein. Kampfwelten nutzen ausschließlich fikti
 reale Länder, Völker, Religionen oder historische Konfliktparteien dürfen nicht als Feindbilder auftreten.
 Die kanonischen Storydaten liegen in `js/world-story.js`.
 
+### D-20260929-005 – Deutsch Klasse 1 startet mit Schreiben: Groß/Klein, Laut, no-copy
+**Status:** LOCKED  
+**Quelle:** [DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md](DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md) § 6; [DEUTSCH_WORTREICH_V1.md](DEUTSCH_WORTREICH_V1.md) §§ 2–3; [../../PRODUCT_DNA.md](../../PRODUCT_DNA.md) Prinzipien zu produktivem Abruf/Abschreiben; B-001
+
+Der Klasse-1-Einstieg beginnt mit **Groß- und Kleinbuchstaben als zusammengehörigem Schreibpaar**. 
+Die erste Phase zeigt die Form zum Nachfahren. Danach verschwindet die Vorlage vollständig; das Kind hört
+den Buchstaben als **Laut/Phonemhinweis** und schreibt Groß- und Kleinbuchstaben selbst.
+
+Für produktive deutsche Schreibaufgaben gilt anschließend dieselbe No-copy-Regel: Vor der Antwort darf die
+Sollwortform nicht sichtbar sein. Das Lernwort wird per Audio angeboten; die geprüfte Schreibweise erscheint
+erst nach der Antwort zum Vergleich. Sichtbares Abschreiben bleibt eine freiwillige Lernübung und erzeugt
+keine Mastery- oder Rechtschreibevidenz. Erkennungs-/Leseaufgaben dürfen sichtbare Wörter enthalten, zählen
+dann aber nicht als produktiver Schreibabruf.
+
+Auswahlaufgaben müssen die Position der richtigen Antwort variieren. Eine systematisch erste richtige Option
+ist unzulässig. Browser-TTS für isolierte Phoneme wird auf realen Zielgeräten praktisch geprüft; bei
+unzureichender Lautqualität sind geprüfte Audioassets vorzuziehen.
+
