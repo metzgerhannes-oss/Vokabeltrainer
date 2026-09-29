@@ -142,6 +142,11 @@ Die fachliche Identität bleibt auch innerhalb beider Varianten erhalten:
 - **Deutsch Abenteuer:** Fuchs-Abenteuer mit Fuchspfad, Wortreise, Entdeckungsstationen und nicht-kämpferischer Tagesaktion
 - **Deutsch Kampf:** `Das Wortreich` mit Ritterheer, Burgen und Belagerungen
 
+Jede der acht Fachwelten besitzt zusätzlich einen vollständigen erzählerischen Bogen aus Opening,
+sechs aufeinander aufbauenden Kapiteln und Finale. Die Kapitel sind an dieselben sichtbaren
+Jahresstufen gekoppelt und beim Weltwechsel stufengleich. Story ist Präsentation, niemals fachlicher
+Zustand. Verbindliche Storyquelle: `docs/project/WORLD_STORYLINES_V1.md` / D-20260929-004.
+
 Kampfvarianten dürfen niemals reale Länder, Völker, Religionen oder historische Konfliktparteien
 als Feindbild verwenden. Für Deutsch konkretisiert D-20260929-002 die Weltwahl; die fachlichen
 Deutsch-Regeln aus § 9 bleiben unverändert.
