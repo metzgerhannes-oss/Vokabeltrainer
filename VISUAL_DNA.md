@@ -484,6 +484,12 @@ Diese vier Keyframes sind damit die visuelle Referenz für die nachfolgende Übe
 Start-, Karten-, Lern- und Testscreen. Einzelne spätere Illustrationen dürfen Details
 verfeinern, aber nicht die freigegebene Grundrichtung verlassen.
 
+Verbindliche editierbare Layoutreferenzen für die beiden noch nicht final bebilderten Fachwelten:
+
+- Latein: `assets/art-direction/latin/avatar-world-layout.svg`
+- Französisch: `assets/art-direction/french/avatar-world-layout.svg`
+- Konkretisierung: `docs/project/LATIN_FRENCH_VISUAL_LAYOUT.md`
+
 ## 15. Änderungsregel
 
 Neue Fachwelten oder deutliche Stiländerungen werden zuerst in diesem Dokument beschrieben
