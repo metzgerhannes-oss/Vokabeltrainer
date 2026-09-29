@@ -356,3 +356,17 @@ Die motivierende Spielwelt heißt **„Das Wortreich“**. Der aktive Lernmodus 
 Diese Entscheidung **ersetzt ausschließlich die frühere visuelle Einschränkung** aus B-001 / VISUAL_DNA § 9, wonach Deutsch ein reiner Fuchs-Lernbereich ohne Battle-Welt sein sollte. D-20260927-009 bleibt für das evidenzbasierte Kompetenzmodell vollständig gültig.
 
 Für v1.0 sind mindestens verpflichtend: auswählbares Fach Deutsch; Klasse-1-Einstieg mit Buchstaben/Lauten/ersten Wörtern; Lernwörter und einfache Sätze; deutsches Audio; deutschspezifische Bewertung; neutrale Systemfehler-/Überspringlogik; eigener Wortreich-Spielbereich und mindestens ein echter Belagerungskampf. Spielprogression darf Mastery, Spacing, Testbereitschaft oder fachliche Bewertung niemals verändern.
+
+
+### D-20260929-001 – Wortreich-Startlayout, Stufenlaufbahn und Vorlesen sind verbindlich
+
+**Quelle:** [DEUTSCH_WORTREICH_LAYOUT_V1.md](DEUTSCH_WORTREICH_LAYOUT_V1.md); [../../VISUAL_DNA.md](../../VISUAL_DNA.md) § 9; D-20260928-008; D-20260927-009
+
+Für Deutsch wird das am 29.09.2026 freigegebene Wortreich-Startlayout verbindlich. Die
+Fuchsentwicklung lautet: **Grundausrüstung → Lederzeug → Ritterlehrling → Ritter → Kronritter → König**.
+Die Stufen 3 bis 6 bilden eine direkte Ritterlaufbahn; der König ist die eindeutige Endstufe.
+
+Für Klasse 1 wird Vorlesen als grundlegende Bedienhilfe behandelt. Überschriften, Navigation,
+Aktionskarten und sichere Aufgabenanweisungen erhalten Audio. Audio bleibt vor einer Antwort
+gesperrt, wenn es die erwartete Lösung oder die zu messende Lesekompetenz vorwegnehmen würde.
+Die Vorlesefunktion verändert weder Mastery noch Spacing, Testbereitschaft oder fachliche Bewertung.
