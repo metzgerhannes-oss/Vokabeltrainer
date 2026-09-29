@@ -216,6 +216,7 @@ gradeText=function(w,answer,target,errorType,skill){
   if(session.locked)return;session.locked=true;
   const q=currentQuizQuestion(w,session.currentSubmode||skill),grade=gradeQuizQuestion(q,answer),ok=grade.correct,orthographyOk=grade.orthographyOk,reviewSnapshot=!ok?answerReviewAttemptSnapshot(w):null;
   recordNativeLiteracyEvidence(w,skill,ok,{orthographyOk,assisted:!!session.hintUsed});
+  recordNativeLiteracyError(w,answer,q,skill,ok);
   const softSpelling=ok&&q.trackOrthography&&!orthographyOk;
   const detail=softSpelling?(session.hintUsed?'Richtig erinnert mit Hinweis. Schreibweise beachten.':'Richtig erinnert. Schreibweise beachten.'):(ok?(session.hintUsed?'Richtig mit Hinweis.':'Richtig.'):'');
   focusedDisableAnswerControls();
