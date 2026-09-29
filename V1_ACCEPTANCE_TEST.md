@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 29.09.2026 · Basis: v0.21.42 · Release-Kandidat; Prüfschwerpunkt: B-018 Praxis-Hotfix für Lineaturdarstellung und echte Buchstabenlaute
+Stand: 29.09.2026 · Basis: v0.21.43 · Release-Kandidat; Prüfschwerpunkt: B-018 Geräteabnahme für Lineatur und tatsächlich abspielbare Buchstabenlaute
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -12,6 +12,8 @@ Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
 - [ ] **B-018 Praxisabnahme:** Auf realem iPhone/iPad nur „m“, danach „M/m“ und danach „a, e, m, s“ auswählen; prüfen, dass ausschließlich diese Buchstaben geübt werden, Dach/Erdgeschoss/Keller beim Schreiben sichtbar bleiben, der Buchstabenlaut funktioniert und wiederholtes freies Schreiben keinen Mastery-/Testfortschritt erzeugt.
 
 **Praktischer Befund v0.21.41 (nicht bestanden):** Unter dem eigentlichen Buchstabenpaar erschienen zusätzlich die Beispiele `l = Dach`, `m = Erdgeschoss`, `g = Keller`; dies wurde auf dem realen iPhone als zusätzlicher Lerninhalt missverstanden. Außerdem sprach die iOS-/Browser-Sprachausgabe die für Buchstabenlaute verwendeten Zeichenfolgen nicht zuverlässig als Laut. **Fix v0.21.42:** Die drei Beispielkarten entfallen vollständig; Dachgeschoss/Erdgeschoss/Keller bleiben direkt in der Schreiblineatur sichtbar. Die Laut-Taste verwendet lokale Laut-Audiodateien statt Speech-Synthesis. Reale Wiederholungsprüfung erforderlich.
+
+**Praktischer Befund v0.21.42 (nicht bestanden):** Auf dem realen iPhone erschien beim Tippen auf „Laut hören“ die Meldung „Der Buchstabenlaut konnte nicht abgespielt werden.“ Ursache: Die ausgelieferten M4A-Dateien waren formal beschädigt und wurden von iOS abgelehnt. **Fix v0.21.43:** Der M4A-Dateisatz ist entfernt; 29 direkte MP3-Lautdateien werden ausgeliefert und offline gecacht. WebKit muss alle 29 Dateien tatsächlich decodieren und die Laut-Taste ohne Fehler auslösen. Die reale Wiederholungsprüfung bleibt zwingend erforderlich.
 - [x] Praxisblock 1 – Kind-End-to-End auf realem iPhone: Einstieg, Tageslernen, Fehler/Korrektur, Tagesabschluss, Testabschluss und Schlacht praktisch durchgeführt.
 - [x] Praxisblock 2 – Elternbereich: Test anlegen, bestehenden Test verschieben/bearbeiten, Vokabelumfang ändern und mehrere zukünftige Tests praktisch durchgeführt.
 - [ ] Praxisblock 3 – v0.21.30: dynamische Anfangsarmee nach sichtbarem Wachstumsfix, monotones Wachstum und datierbare Jahresfestung praktisch prüfen.
