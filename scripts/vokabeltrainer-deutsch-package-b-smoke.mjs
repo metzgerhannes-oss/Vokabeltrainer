@@ -46,7 +46,7 @@ const staticChecks=[
   [html.includes('id="germanLearningPath"')&&html.includes('german-fox')&&html.includes('wood-sword'),'German learning hub has fox and wooden-sword motifs'],
   [css.includes('.german-learning-path')&&css.includes('.wood-sword'),'German learning visuals are styled without battle coupling'],
   [ui.includes("theme:'wordrealm'")&&ui.includes("unitLabel:'Ritterheer'")&&ui.includes("targetLabel:'BURG'"),'Wortreich keeps the knight/castle presentation'],
-  [ui.includes("germanAdventure?'Abenteuer':'Wortreich'"),'German game navigation follows the selected adventure or Wortreich world']
+  [ui.includes("subjectWorldPresentation")&&ui.includes("world.short||world.title||'Spiel'"),'German game navigation follows the generic selected world presentation']
 ];
 for(const [value,name] of staticChecks){if(!value)throw new Error('Deutsch Paket B smoke failed: '+name);checks.push(name)}
 console.log('Vokabeltrainer Deutsch Paket B smoke: '+checks.length+' checks passed');
