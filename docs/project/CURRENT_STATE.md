@@ -58,6 +58,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Deutsch Paket E / Wortreich-Phaser-Belagerung | PRODUCTION / LIVE VERIFIED v0.21.37 · PR #204 · CI #1247 · Pages #562 | `docs/project/DEUTSCH_WORTREICH_V1.md`, D-20260928-008, D-20260928-004 |
 | Deutsch Startlayout / Stufen / Vorlesen / m/w/d | PRODUCTION / LIVE VERIFIED v0.21.38 | `docs/project/DEUTSCH_WORTREICH_LAYOUT_V1.md`, D-20260929-003, PR #206 |
 | Deutsch Weltwahl Abenteuer/Kampf | PRODUCTION / CI VERIFIED v0.21.39 | D-20260929-002, B-017, `docs/project/DEUTSCH_WORTREICH_V1.md` |
+| Deutsch Klasse-1-Erstlektion: Groß/Klein nachfahren → nur nach Laut selbst schreiben | IMPLEMENTED im v0.21.40-Release-Kandidaten; Praxisabnahme Lautqualität bleibt offen | D-20260929-005, B-001, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md` § 6 |
 | Fachübergreifende Weltwahl Abenteuer/Kampf + 8 vollständige Storylines | IMPLEMENTED im v0.21.40-Release-Kandidaten; Englisch/Latein aktiv, Deutsch integriert, Französisch-Welten vorbereitet bis Fachfreischaltung B-003; CI läuft | D-20260929-001, D-20260929-004, B-017, `docs/project/WORLD_STORYLINES_V1.md` |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 
