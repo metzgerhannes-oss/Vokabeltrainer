@@ -38,18 +38,6 @@
       battleAction:'Zur Belagerung',securedAction:'Burg ansehen / sichern'
     }),
     'german-adventure':Object.freeze({
-      places:['Fuchshain','Buchenfurt','Moosbrück','Wortwiese','Silbenwald','Lautertal','Bücherhain','Lesebrück','Eichenpfad','Satzgarten','Wörtersee','Kronenlichtung'],
-      regions:{autumn:'Herbstpfad',winter:'Winterwald',spring:'Frühlingshain',summer:'Sommerwiese'},
-      viewTitle:'Meine Wortreise',routeLabel:'ENTDECKERPFAD',won:n=>`${n} Etappen geschafft`,next:'NÄCHSTE ETAPPE',
-      startKicker:'FUCHSBAU',startTitle:'Dein Fuchs-Abenteuer beginnt',unknownKicker:'HINTER DEM NÄCHSTEN PFAD',unknownTitle:'Neue Entdeckung',
-      unknownText:'Neue Etappen erscheinen, sobald ein Test oder Lernziel geplant wird.',yearKicker:'FERNZIEL',yearTitle:'Große Wortreise',
-      yearDone:'Abenteuerstufe vollständig entwickelt',yearOpen:p=>`${p}% Jahresreise`,detailProgress:'Wegfortschritt',
-      captured:'Etappenziel erreicht',secured:'Etappe gefestigt',securedDetail:n=>`${n} Festigungstage`,hold:'Bis zum Test weiter festigen',
-      active:'Aktuelles Abenteuerziel',planned:'Neue Etappe entdeckt',awaiting:'Ergebnis offen',plannedNoun:'Entdeckerziel',
-      targetNames:{outpost:'Lernlichtung',tower:'Wortpfad',wall:'Lesebrücke',citadel:'Satzgarten',capital:'Wissenshain',final:'Große Wortreise'},
-      battleAction:'Abenteuer fortsetzen',securedAction:'Etappe festigen'
-    }),
-    'german-adventure':Object.freeze({
       places:['Fuchshain','Buchstabenpfad','Wörterbrücke','Silbenwald','Lesegarten','Wortwiese','Bücherfurt','Reimtal','Lautquelle','Satzweg','Geschichtenhain','Wortschatz-Horizont'],
       regions:{autumn:'Herbstpfad',winter:'Winterwald',spring:'Frühlingshain',summer:'Sommerwiese'},
       viewTitle:'Meine Wortreise',routeLabel:'FUCHSPFAD DURCH DIE WORTWELT',won:n=>`${n} Etappen entdeckt`,next:'NÄCHSTE ENTDECKUNG',
