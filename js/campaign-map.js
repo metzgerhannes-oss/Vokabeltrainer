@@ -200,7 +200,7 @@
     document.querySelector('#campaignMapBtn')?.addEventListener('click',open);
     document.querySelector('#campaignMapBackBtn')?.addEventListener('click',()=>{const adventure=typeof isGermanAdventureWorld==='function'&&isGermanAdventureWorld();if(adventure){showView('homeView');return}window.VTArmyUi?.open?.()||showView('armyView')});
     document.querySelector('#campaignMapArmyBtn')?.addEventListener('click',()=>{if(typeof isGermanAdventureWorld==='function'&&isGermanAdventureWorld()){showView('homeView');return}window.VTArmyUi?.open?.()});
-    document.querySelector('#campaignMapBattleBtn')?.addEventListener('click',()=>{if(typeof isGermanAdventureWorld==='function'&&isGermanAdventureWorld()){openGermanAdventureAction?.();return}if(typeof openBattleView==='function')openBattleView()});
+    document.querySelector('#campaignMapBattleBtn')?.addEventListener('click',()=>{if(typeof isGermanAdventureWorld==='function'&&isGermanAdventureWorld()){if(typeof openGermanAdventureAction==='function')openGermanAdventureAction();return}if(typeof openBattleView==='function')openBattleView()});
     document.querySelector('#campaignMapBoard')?.addEventListener('click',e=>{const b=e.target.closest('[data-campaign-station]');if(b){select(b.dataset.campaignStation);return}if(selectedKey)clearSelection()});
     document.addEventListener('pointerdown',e=>{if(!selectedKey||!document.querySelector('#campaignMapView')?.classList.contains('active'))return;if(e.target.closest?.('[data-campaign-station],#campaignMapDetail,#campaignMapBattleBtn'))return;clearSelection()},true);
     document.addEventListener('keydown',e=>{if(e.key==='Escape'&&selectedKey&&document.querySelector('#campaignMapView')?.classList.contains('active')){e.preventDefault();clearSelection()}});
