@@ -19,7 +19,15 @@ try{
     state=defaultState();
     learner().activeSubjects=['german'];
     learner().worldModeBySubject=normalizeWorldModeBySubject({german:'battle'});
+    learner().gradeLevel='1';
     state.activeSubject='german';
+    const set={id:'world_choice_set',learnerId:learner().id,subject:'german',title:'Lernwörter',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(5),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'dictation',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+    state.sets.push(set);
+    attachVocabularyToSet(set.id,{term:'Haus',translation:'Gebäude',source:'world-choice-smoke',verified:true,firstContactCopiedAt:'x',firstContactRecalledAt:'x',firstContactCompletedAt:'x'});
+    set.pairVerifiedSignature=pairReviewSignatureForSet(set.id);
+    rebuildWordIndexes();
+    currentTestFortress('german');
+    unlockBattleToday('dailyGoal','german');
     renderAll();
     showView('homeView');
   });
@@ -48,6 +56,7 @@ try{
   assert(home.mode==='adventure','profile saves adventure mode');
   assert(home.fox,'adventure mode uses the fox avatar');
   assert(home.nav.includes('Abenteuer'),'child navigation names the adventure world');
+  assert(home.mastery===initial.mastery&&home.growth===initial.growth,'switching to adventure preserves academic and yearly progress');
 
   await page.evaluate(()=>window.VTArmyUi.open());
   await page.waitForSelector('#armyView.active');
@@ -56,24 +65,30 @@ try{
     className:document.querySelector('#armyView')?.className||'',
     title:document.querySelector('#armyViewTitle')?.textContent||'',
     route:document.querySelectorAll('.german-adventure-route span').length,
-    battleHidden:document.querySelector('#armyBattleBtn')?.classList.contains('hidden')
+    actionHidden:document.querySelector('#armyBattleBtn')?.classList.contains('hidden'),
+    actionText:document.querySelector('#armyBattleBtn')?.textContent||''
   }));
   assert(adventure.mode==='adventure'&&adventure.className.includes('german-adventure-mode'),'adventure hub is active');
   assert(adventure.title.includes('Fuchspfad'),'adventure hub uses Fuchspfad title');
   assert(adventure.route===6,'adventure hub shows six visual stages');
-  assert(adventure.battleHidden===true,'battle entry is hidden in adventure mode');
+  assert(adventure.actionHidden===false&&adventure.actionText.includes('Abenteuer fortsetzen'),'adventure exposes an equivalent non-combat daily action');
 
-  await page.evaluate(()=>window.VTCampaignMap.open());
+  await page.click('#armyBattleBtn');
   await page.waitForSelector('#campaignMapView.active');
   const route=await page.evaluate(()=>({
     theme:document.querySelector('#campaignMapView')?.dataset.visualTheme||'',
     mode:document.querySelector('#campaignMapView')?.dataset.worldMode||'',
     title:document.querySelector('#campaignMapViewTitle')?.textContent||'',
-    battleHidden:document.querySelector('#campaignMapBattleBtn')?.classList.contains('hidden')
+    battleHidden:document.querySelector('#campaignMapBattleBtn')?.classList.contains('hidden'),
+    battleViewActive:document.querySelector('#battleView')?.classList.contains('active'),
+    actionUsed:battleDayState('german',false)?.actionUsed===true,
+    mastery:subjectProgress('german').pct,
+    growth:campaignGrowthState('german').pct
   }));
   assert(route.theme==='german-adventure'&&route.mode==='adventure','map uses German adventure theme');
   assert(route.title==='Meine Wortreise','map becomes the word journey');
-  assert(route.battleHidden===true,'word journey exposes no battle action');
+  assert(route.battleHidden===true&&!route.battleViewActive,'adventure action never opens the battle screen');
+  assert(route.actionUsed===true,'adventure action consumes the same daily action entitlement');
 
   await page.evaluate(()=>openProfileEditor(learner().id));
   await page.waitForSelector('#profileGermanWorld:not(.hidden)');
@@ -87,11 +102,12 @@ try{
       mastery:subjectProgress('german').pct,
       growth:campaignGrowthState('german').pct,
       fox:document.querySelector('#projectMenuAvatarFrame')?.classList.contains('german-fox-avatar'),
+      knight:document.querySelector('#projectMenuAvatarFrame')?.classList.contains('german-knight-avatar'),
       nav:document.querySelector('.nav-btn[data-view="armyView"]')?.textContent?.trim()||''
     };
   });
-  assert(after.mastery===initial.mastery&&after.growth===initial.growth,'world switching preserves mastery and year growth');
-  assert(after.fox===false,'battle mode leaves the fox adventure avatar');
+  assert(after.mastery===route.mastery&&after.growth===route.growth,'switching back preserves the post-action academic and yearly state');
+  assert(after.fox===false&&after.knight===true,'battle mode uses the Wordrealm avatar treatment');
   assert(after.nav.includes('Wortreich'),'battle mode restores Wortreich navigation');
 
   await page.evaluate(()=>window.VTArmyUi.open());
@@ -100,11 +116,11 @@ try{
     mode:document.querySelector('#armyView')?.dataset.worldMode,
     title:document.querySelector('#armyViewTitle')?.textContent||'',
     adventureClass:document.querySelector('#armyView')?.classList.contains('german-adventure-mode'),
-    battleHidden:document.querySelector('#armyBattleBtn')?.classList.contains('hidden')
+    actionHidden:document.querySelector('#armyBattleBtn')?.classList.contains('hidden')
   }));
   assert(battle.mode==='battle'&&!battle.adventureClass,'battle hub is restored');
   assert(battle.title==='Das Wortreich','battle mode restores Das Wortreich');
-  assert(battle.battleHidden===false,'battle entry is visible again');
+  assert(battle.actionHidden===false,'battle entry is visible again');
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer German world choice UI smoke: passed');
