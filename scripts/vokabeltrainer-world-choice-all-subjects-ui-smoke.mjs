@@ -52,7 +52,7 @@ try{
   await page.waitForSelector('#armyView.active');
   let hub=await page.evaluate(()=>({mode:document.querySelector('#armyView')?.dataset.worldMode,title:document.querySelector('#armyViewTitle')?.textContent||'',route:document.querySelectorAll('.subject-adventure-route span').length,units:(document.querySelector('#armyUnitGrid')?.textContent||'').trim(),action:document.querySelector('#armyBattleBtn')?.textContent||''}));
   assert(hub.mode==='adventure'&&hub.title==='Deine Expedition'&&hub.route===6,'English adventure has its own six-stage expedition hub');
-  assert(!hub.units&&hub.action.includes('Abenteuer'),'English adventure hides combat units and exposes non-combat action');
+  assert(!hub.units&&hub.action.includes('fortsetzen'),'English adventure hides combat units and exposes non-combat action');
   await page.click('#armyBattleBtn');
   await page.waitForSelector('#campaignMapView.active');
   let mapState=await page.evaluate(()=>({theme:document.querySelector('#campaignMapView')?.dataset.visualTheme,mode:document.querySelector('#campaignMapView')?.dataset.worldMode,battle:document.querySelector('#battleView')?.classList.contains('active'),used:battleDayState('english',false)?.actionUsed===true,mastery:subjectProgress('english').pct,growth:campaignGrowthState('english').pct}));
