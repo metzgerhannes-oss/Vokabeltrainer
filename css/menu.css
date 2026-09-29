@@ -545,3 +545,28 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
   .wordrealm-action-icon{width:40px;height:40px}
   .wordrealm-action-copy strong{font-size:.85rem}.wordrealm-action-copy small{font-size:.62rem}
 }
+
+
+/* Profilavatar m/w/d – lokale Fallbackserien, wenn noch keine finale Bildserie vorliegt */
+.project-menu-avatar-frame[data-avatar-style="female"] .project-menu-avatar-fallback .avatar-head{
+  border-radius:48% 48% 46% 46%;background:#d5aa83;border-color:#465266;
+}
+.project-menu-avatar-frame[data-avatar-style="female"] .project-menu-avatar-fallback .avatar-body{
+  left:24%;right:20%;border-radius:42% 42% 18% 18%;background:linear-gradient(135deg,#53627a,#29364c);
+}
+.project-menu-avatar-frame[data-avatar-style="female"] .project-menu-avatar-fallback .avatar-shield{
+  background:linear-gradient(145deg,#d8bf73,#a18138);
+}
+.project-menu-avatar-frame[data-avatar-style="neutral"] .project-menu-avatar-fallback .avatar-head{
+  left:35%;width:30%;border-radius:44% 44% 48% 48%;background:#cda17a;border-color:#45584f;
+  box-shadow:inset 0 8px 0 rgba(255,255,255,.12),0 -8px 0 -2px #566b60;
+}
+.project-menu-avatar-frame[data-avatar-style="neutral"] .project-menu-avatar-fallback .avatar-body{
+  left:21%;right:19%;border-radius:34% 34% 18% 18%;background:linear-gradient(135deg,#50675d,#263a34);border-color:#20332d;
+}
+.project-menu-avatar-frame[data-avatar-style="neutral"] .project-menu-avatar-fallback .avatar-shield{
+  border-color:#6a633d;background:linear-gradient(145deg,#c9bc72,#7d7a48);color:#26352f;
+}
+.project-menu-avatar-frame[data-avatar-style="neutral"] .project-menu-avatar-crest{
+  border-color:#64745f;background:linear-gradient(145deg,#d7cf90,#849064);color:#30402f;
+}
