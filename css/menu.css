@@ -598,3 +598,38 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
 .project-menu-avatar-frame.world-adventure-avatar[data-avatar-subject="english"] .project-menu-avatar-fallback .avatar-body{background:linear-gradient(145deg,#56788a,#315263)}
 .project-menu-avatar-frame.world-adventure-avatar[data-avatar-subject="latin"] .project-menu-avatar-fallback .avatar-body{background:linear-gradient(145deg,#9a744b,#62503a)}
 .project-menu-avatar-frame.world-adventure-avatar[data-avatar-subject="french"] .project-menu-avatar-fallback .avatar-body{background:linear-gradient(145deg,#66847f,#3f6262)}
+
+/* v0.21.40 – hochwertiger Abenteuer-Fuchs; strikt getrennt vom Wortreich-Renderer */
+.project-menu-avatar-frame.german-fox-avatar .adventure-svg-avatar{
+  width:min(76%,360px);
+  height:86%;
+  min-height:0;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  overflow:visible;
+  transform:none!important;
+}
+.project-menu-avatar-frame.german-fox-avatar .adventure-svg-avatar .wordrealm-fox-svg.adventure{
+  display:block;
+  width:100%;
+  height:100%;
+  overflow:visible;
+  filter:drop-shadow(0 18px 18px rgba(49,58,39,.20)) saturate(1.04);
+}
+.project-menu-avatar-frame.german-fox-avatar.world-adventure-avatar::after{
+  left:20%;
+  right:20%;
+  bottom:4%;
+  height:8%;
+  background:rgba(61,78,49,.15);
+  filter:blur(10px);
+}
+.project-menu-avatar-frame[data-avatar-render-key*="-adventure-"] .project-menu-avatar-art,
+.project-menu-avatar-frame[data-avatar-render-key*="-battle-"] .adventure-svg-avatar:not(.wordrealm-svg-avatar){display:none}
+@media(max-width:760px){
+  .project-menu-avatar-frame.german-fox-avatar .adventure-svg-avatar{width:min(82%,300px);height:82%}
+}
+@media(max-width:430px){
+  .project-menu-avatar-frame.german-fox-avatar .adventure-svg-avatar{width:min(88%,270px);height:79%}
+}
