@@ -19,11 +19,13 @@ Die detaillierte praktische v1-Abnahme bleibt in [../../V1_ACCEPTANCE_TEST.md](.
 | Kindnavigation | D-0007 | nächster Schritt ohne Erklärung auffindbar; kein Sackgassenpfad | ja |
 | Fachtrennung | D-0006 | Fachwechsel verändert keine fachfremden Daten/Regeln | ja bei Daten-/Bewertungsfehler |
 | Deutsch v1 / Wortreich | D-20260927-009, D-20260928-008 | Deutsch auswählbar; Klasse-1-Kern, Lernwörter/Sätze, Audio und deutsche Bewertung funktionieren; Wortreich-Battle separat; Spiel verändert keine fachlichen Werte | ja – v1 darf ohne diesen Kern nicht freigegeben werden |
+| Deutsch Klasse 1 / B-018 Freies Schreiben | B-018 | Grundschul-Lineatur Dachgeschoss–Erdgeschoss–Keller; Auswahl einzelner Buchstaben, Groß/Klein-Paare und Gruppen; Aufgaben nur aus Auswahl; Laut verfügbar; freie Wiederholung ohne fachlichen Fortschritt; 390×844-WebKit ohne Overflow | ja – P0 vor praktischer v1-Abnahme |
 | Family Sync | Datenintegrität | Rechte, Konflikte, Revoke, Backup/Restore, Gerätewechsel | ja bei Datenverlust/Rechtebruch |
 | Accessibility | D-0007 + Grunddesign | Fokus, Dialoge, Touchflächen, Landscape, Screenreader-Semantik | nach Schweregrad; kritischer Pfad ja |
 | Battle/Game | D-0003, D-0005 | keine Rückwirkung auf Mastery; Tagesaktion nicht duplizierbar; Fokusmodus rückkehrbar | ja bei fachlicher Rückwirkung |
 | Praktische v1-Abnahme | gesamter Kernpfad | reales Gerät/Browser, Kind-/Elternwege ohne Entwicklerhilfe | vor v1 verpflichtend |
-| Dokumentationskohärenz | PROJECT_CONTROL / B-010 | aktuelle Fachquellen verwenden die aktuelle Navigation; kanonische Dokumente tragen einen fachlichen Prüfstatus; historische Release-Texte bleiben als Historie erkennbar | nein |\n| Project-Control-Konsistenz | D-20260927-001, D-20260927-003, D-20260927-009 | App-/SW-/UI-/README-/Current-State-/Acceptance-Version konsistent; kanonische Steuerdateien vorhanden; Decision-/Backlog-IDs eindeutig | ja für Release-/Statusdrift |
+| Dokumentationskohärenz | PROJECT_CONTROL / B-010 | aktuelle Fachquellen verwenden die aktuelle Navigation; kanonische Dokumente tragen einen fachlichen Prüfstatus; historische Release-Texte bleiben als Historie erkennbar | nein |
+| Project-Control-Konsistenz | D-20260927-001, D-20260927-003, D-20260927-009 | App-/SW-/UI-/README-/Current-State-/Acceptance-Version konsistent; kanonische Steuerdateien vorhanden; Decision-/Backlog-IDs eindeutig | ja für Release-/Statusdrift |
 
 ## Änderungsregel
 
