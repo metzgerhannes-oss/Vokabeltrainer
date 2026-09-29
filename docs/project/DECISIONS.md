@@ -370,3 +370,5 @@ Für Klasse 1 wird Vorlesen als grundlegende Bedienhilfe behandelt. Überschrift
 Aktionskarten und sichere Aufgabenanweisungen erhalten Audio. Audio bleibt vor einer Antwort
 gesperrt, wenn es die erwartete Lösung oder die zu messende Lesekompetenz vorwegnehmen würde.
 Die Vorlesefunktion verändert weder Mastery noch Spacing, Testbereitschaft oder fachliche Bewertung.
+
+Die Profilerstellung berücksichtigt **m/w/d**: Männlich, Weiblich und Neutral/Divers sind gleichwertige gespeicherte Avatarvarianten. Fehlende finale Bildassets dürfen nicht zu einem stillen Rückfall auf die männliche Serie führen.
