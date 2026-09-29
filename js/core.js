@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.21.38';
+const VERSION = '0.21.39';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';
@@ -68,7 +68,24 @@ const subjectImportProfile=id=>subjectMeta(id)?.importProfile||'modern';
 const subjectFunctionWords=id=>subjectMeta(id)?.functionWords||[];
 const subjectHasCapability=(id,cap)=>!!subjectMeta(id)?.capabilities?.[cap];
 const subjectCampaign=id=>subjectMeta(id)?.campaign||SUBJECT_META.english.campaign;
-const subjectVisualTheme=id=>subjectCampaign(id)?.visualTheme||'campaign';
+const WORLD_MODES=Object.freeze(['adventure','battle']);
+const defaultWorldModes=()=>({english:'battle',latin:'battle',german:'battle',french:'adventure'});
+function normalizeWorldModeBySubject(raw){
+  const src=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{},out=defaultWorldModes();
+  for(const subject of knownSubjectIds())if(WORLD_MODES.includes(src[subject]))out[subject]=src[subject];
+  return out;
+}
+function learnerWorldMode(subject=state?.activeSubject,l=state?.learners?.find(x=>x.id===state?.activeLearnerId)||state?.learners?.[0]){
+  const map=normalizeWorldModeBySubject(l?.worldModeBySubject);return map[normalizeSubjectId(subject)]||defaultWorldModes()[normalizeSubjectId(subject)]||'battle';
+}
+function setLearnerWorldMode(l,subject,mode){
+  if(!l||!isKnownSubject(subject)||!WORLD_MODES.includes(mode))return false;
+  l.worldModeBySubject=normalizeWorldModeBySubject(l.worldModeBySubject);l.worldModeBySubject[subject]=mode;return true;
+}
+const subjectVisualTheme=(id,l=state?.learners?.find(x=>x.id===state?.activeLearnerId)||state?.learners?.[0])=>{
+  if(id==='german'&&learnerWorldMode('german',l)==='adventure')return'german-adventure';
+  return subjectCampaign(id)?.visualTheme||'campaign';
+};
 const subjectMap=factory=>Object.fromEntries(knownSubjectIds().map(id=>[id,typeof factory==='function'?factory(id):deepClone(factory)]));
 const defaultGradeScales=()=>subjectMap(()=>defaultGradeScale());
 const defaultTestSeries=()=>subjectMap(()=>null);
@@ -285,7 +302,7 @@ function defaultState(){
   const s={
     version: VERSION,senseModelVersion:1,spellingLeakRepairVersion:1,pairAuditVersion:1,firstContactVersion:1,
     activeLearnerId: 'learner_demo',activeSubject: 'english',
-    learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',avatarStyle:'male',activeSubjects:['english'],xp:0,literacySupport:{reading:false,spelling:false},reducedLoad:false,lrsMode:false,germanFoundation:defaultGermanFoundation(),fontSize:17,letterSpacing:0,flashSpeed:1600,autoSpeakCorrection:true,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),battleDays:{},testFortresses:{},yearFortresses:{},completedTests:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
+    learners:[{id:'learner_demo',name:'Mein Profil',gradeLevel:'',avatarStyle:'male',activeSubjects:['english'],worldModeBySubject:defaultWorldModes(),xp:0,literacySupport:{reading:false,spelling:false},reducedLoad:false,lrsMode:false,germanFoundation:defaultGermanFoundation(),fontSize:17,letterSpacing:0,flashSpeed:1600,autoSpeakCorrection:true,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),battleDays:{},testFortresses:{},yearFortresses:{},completedTests:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()}],
     books:[],learnerBooks:[],bookVocabulary:[],sets:[],vocabulary:[],setVocabulary:[],learnerVocabulary:[],grades:[],practiceTests:[],answerReviews:[],activity:[]
   };
   attachRuntimeWordApi(s);return s;

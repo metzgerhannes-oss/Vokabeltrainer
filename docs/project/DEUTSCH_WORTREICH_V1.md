@@ -12,13 +12,14 @@
 
 Deutsch wird vor v1.0 als vollwertiger Fachbereich produktiv integriert. Der Bereich verbindet ein eigenständiges Grundschul-Kompetenzmodell mit einer klar getrennten motivierenden Spielwelt.
 
-Die Fachwelt heißt **„Das Wortreich“**.
+Deutsch besitzt zwei wählbare Motivationswelten. Die Kampfvariante heißt **„Das Wortreich“**, die Abenteuerwelt **„Fuchs-Abenteuer“**.
 
 Verbindliche Trennung:
 
-- **Lernmodus:** ruhig, lernzentriert, evidenzbasiert; der Fuchs kann als vertrauter Lernbegleiter erhalten bleiben.
-- **Spielmodus:** mittelalterliche Burg-, Ritter- und Belagerungswelt mit eigener Armee und echten Kampfszenen.
-- Die Spielwelt darf niemals fachliche Kompetenz erzeugen, verschlechtern oder vortäuschen.
+- **Lernmodus:** ruhig, lernzentriert, evidenzbasiert; der Fuchs bleibt vertrauter Lernbegleiter.
+- **Abenteuer:** Fuchspfad, Wortreise, Etappen und eine tägliche nicht-kämpferische Spielaktion.
+- **Kampf:** mittelalterliche Burg-, Ritter- und Belagerungswelt mit eigener Armee und echten Kampfszenen.
+- Beide Spielwelten dürfen niemals fachliche Kompetenz erzeugen, verschlechtern oder vortäuschen.
 
 Damit wird die bisherige Festlegung „Deutsch = Fuchswelt ohne Battle“ ersetzt. Der Fuchs bleibt als Lernbegleiter möglich, ist aber nicht mehr die vollständige Fachwelt.
 
@@ -65,7 +66,21 @@ Verbindlich:
 - Strittige Systembewertungen folgen D-20260928-006 und bleiben bis zur Elternentscheidung neutral.
 - „Vokabel überspringen“ folgt D-20260928-007 und verschiebt die Aufgabe nur ans Ende derselben Session.
 
-## 4. Weltidee: Das Wortreich
+## 4. Weltwahl: Fuchs-Abenteuer oder Das Wortreich
+
+Die Welt wird pro Profil gewählt und kann später ohne Lernstandsverlust gewechselt werden. Bestehende Profile bleiben aus Kompatibilitätsgründen auf **Kampf / Wortreich**.
+
+### Abenteuer – Fuchs-Abenteuer
+
+Das Kind folgt einem ruhigen Entdeckerpfad durch Fuchshain, Buchstabenpfad, Wörterbrücke, Silbenwald, Leseturm und weitere Wortreise-Etappen. Die tägliche Spielaktion nutzt dieselbe Freischaltung wie eine Kampfaktion, wird aber als **Abenteuer fortsetzen / Etappe festigen** ohne Battle-Screen dargestellt.
+
+Die sechs sichtbaren Abenteuer-Fuchsstufen sind nicht-militärisch und bilden dieselbe numerische Jahresentwicklung wie das Wortreich ab:
+
+**Wegstarter → Spurensucher → Pfadfinder → Wortentdecker → Wissensreisender → Meisterentdecker**
+
+Die Entwicklung ergänzt sichtbar Schal, Tasche, Kompass, Karte und Reiseausstattung. Waffen, Rüstung und Krone gehören ausschließlich zur Kampf-/Wortreich-Variante.
+
+### Kampf – Das Wortreich
 
 Das Kind baut ein eigenes mittelalterliches Reich auf. Aus einem kleinen Ausgangspunkt entsteht über den Lernfortschritt eine zunehmend starke Burganlage mit eigenem Heer.
 
@@ -155,7 +170,7 @@ Die Namen dürfen atmosphärisch sein, aber keine realen Völker, Länder, Relig
 
 ## 8. Fuchs als Lernbegleiter
 
-Der bereits definierte Fuchs bleibt als optionale, ruhige Leitfigur des **Lernmodus** erhalten.
+Der bereits definierte Fuchs bleibt als ruhige Leitfigur des **Lernmodus** erhalten und ist in der gewählten Abenteuerwelt zusätzlich die sichtbare Leitfigur des separaten Spiel-/Motivationsbereichs.
 
 Er kann:
 
@@ -186,6 +201,8 @@ Erforderlich:
 - Capability für native Schriftsprach-/Deutsch-Kompetenzen
 - eigene Aufgabentypen für Buchstaben, Laut–Schrift, Lesen, Schreiben und Sätze
 - eigene Kompetenz-/Mastery-Dimensionen gemäß Fachkonzept
+- fachbezogene Weltpräferenz im Profil (`worldModeBySubject`)
+- nicht-kämpferische Abenteueraktion mit derselben Tagesaktionsfreigabe
 - wiederverwendbare Battle-Schnittstelle für „Das Wortreich“
 - Battle-Renderer darf keine fachlichen Werte berechnen
 - Audio muss produktweit auch deutsche Wörter und deutsche Aufgabentexte unterstützen, sofern dadurch keine Lösung vorweggenommen wird
@@ -202,8 +219,8 @@ Vor v1.0 müssen mindestens praktisch und automatisiert nachgewiesen sein:
 4. Deutsch-Audio funktioniert in geeigneten Aufgaben.
 5. Deutschspezifische Bewertung ist implementiert.
 6. Strittige Bewertungen und Überspringen funktionieren auch in Deutsch neutral.
-7. Das Wortreich ist als eigener Spielbereich sichtbar.
-8. Mindestens ein echter Deutsch-Belagerungskampf ist spielbar.
+7. Die gewählte Deutsch-Welt ist als eigener Spielbereich sichtbar und kann im Profil gewechselt werden.
+8. Sowohl Fuchs-Abenteuer als auch mindestens ein echter Deutsch-Belagerungskampf sind funktional vorhanden.
 9. Kampf und Spielprogression verändern keine fachlichen Lernwerte.
 10. Kernpfad funktioniert im vorgesehenen iPhone-Viewport und Desktop.
 11. Offline-/PWA-Grundfunktion bleibt erhalten.
@@ -252,7 +269,7 @@ Fehlt einer der fachlichen Punkte 1–6 oder greift die Spielwelt in die fachlic
 - strittige Systembewertung rollt auch das Deutsch-Fehlerprofil vollständig auf neutral zurück
 
 ### Paket E – Wortreich
-**Status: produktiv verifiziert in v0.21.37 / PR #204; PR-CI #1246, main-CI #1247 und Pages #562 grün.**
+**Status: umgesetzt im Release-Kandidaten v0.21.37; automatisierte Verifikation läuft.**
 - eigener Spielbereich „Das Wortreich“ mit Ritterheer und Burgroute
 - echter Phaser-4-Produktionskampf auch für Deutsch; nicht nur Battle-Shell
 - eigene Wortreich-Optik im Renderer: warme Wald-/Pergamentpalette, grün-braunes Ritterheer, Holzramme, Banner, Burg- und Waldkulisse
@@ -262,12 +279,16 @@ Fehlt einer der fachlichen Punkte 1–6 oder greift die Spielwelt in die fachlic
 - fachliche Mastery/Testbereitschaft wird durch den Renderer nicht verändert
 - eigener Domain-Smoke plus echter iPhone-WebKit-Smoke prüft German/wordrealm-Renderer, Eroberung, Ticketverbrauch, XP und unveränderte Mastery
 
-### Layout-/Barrierefreiheits-Paket v0.21.38
-- freigegebenes Wortreich-Startlayout aus DEUTSCH_WORTREICH_LAYOUT_V1.md
-- konsistente Stufen: Grundausrüstung → Lederzeug → Ritterlehrling → Ritter → Kronritter → König
-- zentrale sichtbare Vorlesefunktion für Navigation und sichere Anweisungen
-- Audio bleibt dort gesperrt, wo es Lösung oder Leseevidenz vorwegnehmen würde
-- Wortreich-Startseite erhält Burgkulisse, SVG-Fuchsserie, Stufenleiste und direkte Deutsch-Aktionskarten
+### Paket E2 – Weltwahl Deutsch
+**Status: umgesetzt im Release-Kandidaten v0.21.39; automatisierte Verifikation läuft.**
+- pro Profil `Abenteuer | Kampf`; bei neuen Deutsch-Profilen ist eine bewusste Auswahl erforderlich
+- bestehende Profile bleiben auf Wortreich/Kampf
+- Fuchs-Abenteuer mit eigenem Hub, sechs sichtbaren Etappen und Wortreise-Karte
+- tägliche Abenteueraktion ohne Battle-Screen, aber mit derselben Tagesaktionsfreigabe
+- Wechsel ohne Veränderung von Literacy-Evidenz, Mastery oder Jahresentwicklung
+- Family Sync überträgt Weltpräferenz und m/w/d-Avatarstil
+- Avatar- und Weltwahl sind für Klasse 1 vorlesbar
+- Domain- und WebKit-Smoke schützen Migration, Wechsel und Fachneutralität
 
 ### Paket F – v1-Abnahme
 - automatisierte Fachtests

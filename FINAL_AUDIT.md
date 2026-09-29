@@ -1,10 +1,11 @@
 # Finales Audit
 
-Stand: 29.09.2026 · App v0.21.38
+Stand: 29.09.2026 · App v0.21.39
 
 ## Ergebnis
 
-- v0.21.38 ist der Release-Kandidat für das freigegebene **Deutsch-/Wortreich-Startlayout**: konsistente Fuchsentwicklung Grundausrüstung → Lederzeug → Ritterlehrling → Ritter → Kronritter → König, Wortreich-Landschaft, sichtbare Stufenleiste und Vorlesefunktion für sichere Klasse-1-Navigation und Anweisungen. Audio bleibt evidenzgeschützt.
+- v0.21.39 ist der Release-Kandidat für die **Deutsch-Weltwahl**: bewusstes Abenteuer/Kampf-Opt-in pro Profil, Wechsel ohne fachlichen Reset, eigene sechs-stufige nicht-militärische Abenteuer-Fuchsserie, kampffreie Abenteueraktion, m/w/d-Persistenz sowie vorlesbare Avatar-/Weltwahl. Family-Sync-Browsertest überträgt Neutral/Divers und Deutsch-Abenteuer zwischen zwei Geräten.
+- v0.21.38 ist auf `main` gemergt: freigegebenes **Deutsch-/Wortreich-Startlayout** mit Grundausrüstung → Lederzeug → Ritterlehrling → Ritter → Kronritter → König, evidenzgeschütztem Vorlesen und m/w/d-Avatarwahl. main-CI #36584417717 und Pages #36585012789 sind erfolgreich.
 - v0.21.37 / PR #204 ist produktiv und durch PR-CI #1246, main-CI #1247 sowie GitHub Pages #562 bestätigt: echter deutscher Wortreich-Phaser-Belagerungskampf.
 - v0.21.36 / PR #203 ist produktiv und durch PR-CI #1239, main-CI #1240 sowie GitHub Pages #561 bestätigt: Deutsch Paket D mit Lernwort-Strukturmetadaten und differenziertem Rechtschreibfehlerprofil.
 - v0.21.35 / PR #202 ist produktiv und durch PR-CI #1235, main-CI #1236 sowie GitHub Pages #560 bestätigt: Der Klasse-1-Kern ergänzt Buchstabenerkennung, Laut–Buchstaben-Zuordnung, Finger-/Stift-Nachspuren, reduzierte Führung, freie Buchstabenproduktion, erste Wörter und einfache Sätze. Handschriftspraxis wird ohne Handschrift-OCR bewusst nicht automatisch als richtig/falsch bewertet. Der Grundlagenfortschritt ist getrennt von XP, Battle-Tickets und Lernwort-Mastery und wird über Family Sync übertragen. Produktionsnachweis: PR #202, PR-CI #1235, main-CI #1236 und Pages #560 erfolgreich.

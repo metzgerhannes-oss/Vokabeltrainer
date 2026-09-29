@@ -18,6 +18,7 @@ try{
   await page.evaluate(()=>{
     state=defaultState();
     learner().activeSubjects=['english','german'];
+    learner().worldModeBySubject=normalizeWorldModeBySubject({german:'adventure'});
     learner().gradeLevel='1';
     state.activeSubject='german';
     const set={id:'de_b_set',learnerId:'learner_demo',subject:'german',title:'Lernwörter 1',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(5),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'dictation',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
@@ -29,11 +30,11 @@ try{
     showView('homeView');
   });
 
-  await page.waitForSelector('#homeView.active .project-menu-stage[data-visual-theme="wordrealm"]');
+  await page.waitForSelector('#homeView.active .project-menu-stage[data-visual-theme="german-adventure"]');
   assert(await page.locator('#projectMenuAvatarFrame').evaluate(el=>el.classList.contains('german-fox-avatar')),'German home uses the fox companion');
   assert(await page.locator('#projectMenuAvatarFallback').isVisible(),'fox fallback is visible on German home');
   assert(await page.locator('#projectMenuAvatarArt').isHidden(),'German home never reuses the English army avatar artwork');
-  assert((await page.locator('.nav-btn[data-view="armyView"]').textContent())?.includes('Wortreich'),'German child navigation names the game area Wortreich');
+  assert((await page.locator('.nav-btn[data-view="armyView"]').textContent())?.includes('Abenteuer'),'German child navigation names the selected adventure world');
 
   const mobileLayout=await page.evaluate(()=>{
     const fox=document.querySelector('#projectMenuAvatarFrame')?.getBoundingClientRect();
@@ -63,7 +64,7 @@ try{
   assert(question?.subject==='german'&&question?.caseSensitive===true,'German spelling question is case-sensitive');
   assert(question?.lang==='de-DE','German speech locale is de-DE');
 
-  await page.evaluate(()=>{session=null;showView('homeView');renderAll()});
+  await page.evaluate(()=>{session=null;setLearnerWorldMode(learner(),'german','battle');showView('homeView');renderAll()});
   await page.click('.nav-btn[data-view="armyView"]');
   await page.waitForSelector('#armyView.active[data-visual-theme="wordrealm"]');
   assert((await page.locator('#armySubjectLabel').textContent())?.includes('Das Wortreich'),'game hub identifies the Wortreich');
@@ -73,14 +74,14 @@ try{
   assert((await page.locator('#campaignMapViewTitle').textContent())?.includes('Wortreich'),'campaign map uses the Wortreich title');
 
   await page.setViewportSize({width:1200,height:800});
-  await page.evaluate(()=>{window.VTMenuUi.openHome();renderAll()});
-  await page.waitForSelector('#homeView.active .project-menu-stage[data-visual-theme="wordrealm"]');
+  await page.evaluate(()=>{setLearnerWorldMode(learner(),'german','adventure');window.VTMenuUi.openHome();renderAll()});
+  await page.waitForSelector('#homeView.active .project-menu-stage[data-visual-theme="german-adventure"]');
   const desktop=await page.evaluate(()=>({scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,foxVisible:!!document.querySelector('#projectMenuAvatarFallback')?.getBoundingClientRect().width}));
   assert(desktop.scrollWidth<=desktop.clientWidth+1&&desktop.foxVisible,'German home remains visible and overflow-free on desktop');
 
   assert(errors.length===0,'German UI produces no browser errors: '+errors.join(' | '));
   console.log('Vokabeltrainer Deutsch Paket B UI smoke: passed');
-  console.log('✓ Fuchs-Lernwelt and wooden-sword stations');
+  console.log('✓ Fuchs-Abenteuerwelt and wooden-sword learning stations');
   console.log('✓ de-DE audio and case-sensitive German spelling question');
   console.log('✓ Wortreich Ritterheer and Burg campaign shell');
   console.log('✓ iPhone and desktop layout remain overflow-free');

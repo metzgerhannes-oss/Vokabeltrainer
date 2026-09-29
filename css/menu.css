@@ -43,6 +43,11 @@
   --menu-accent:#6f4d2d;--menu-accent-soft:rgba(139,104,64,.18);--menu-accent-border:#d8c5a5;
   --menu-evolution-bg:rgba(67,54,39,.9);--menu-pip:#d7b56d;--menu-cta-shadow:rgba(111,77,45,.24);--menu-ink:#3f392f;
 }
+.project-menu-stage[data-visual-theme="german-adventure"]{
+  --menu-surface-1:#fbf8ed;--menu-surface-2:#edf1df;--menu-surface-3:#dfead8;
+  --menu-accent:#567044;--menu-accent-soft:rgba(119,147,84,.19);--menu-accent-border:#c7d4ad;
+  --menu-evolution-bg:rgba(58,73,47,.90);--menu-pip:#dfbd67;--menu-cta-shadow:rgba(86,112,68,.24);--menu-ink:#364332;
+}
 .project-menu-stage[data-visual-theme="voyage"]{
   --menu-surface-1:#faf9f5;--menu-surface-2:#edf2f1;--menu-surface-3:#e8ece8;
   --menu-accent:#315d73;--menu-accent-soft:rgba(107,145,142,.17);--menu-accent-border:#c8d8d5;
@@ -352,9 +357,17 @@
   border-color:#ddcbaa;background:linear-gradient(180deg,rgba(255,253,247,.96),rgba(248,241,228,.96))
 }
 
+/* Deutsch-Weltwahl v0.21.38 */
+#homeView .project-menu-stage[data-visual-theme="german-adventure"]{border-color:#c8d5ad}
+#homeView .project-menu-stage[data-visual-theme="german-adventure"] .project-menu-learning-card{
+  border-color:#cbd7b5;background:linear-gradient(180deg,rgba(255,254,248,.97),rgba(241,246,229,.96))
+}
+.project-menu-avatar-frame.german-knight-avatar .avatar-body{background:linear-gradient(160deg,#66734b,#4c5b3a)}
+.project-menu-avatar-frame.german-knight-avatar .avatar-head{background:linear-gradient(160deg,#b7a174,#816c45);border-color:#665433}
+.project-menu-avatar-frame.german-knight-avatar .avatar-shield{background:linear-gradient(145deg,#86633c,#5f472d);border-color:#4c3924;color:#f7e8bb}
 
 /* v0.21.38 – freigegebenes Deutsch-Layout: Das Wortreich */
-.project-menu-stage:not([data-subject="german"]) .wordrealm-only{display:none!important}
+.project-menu-stage:not([data-subject="german"]) .wordrealm-only{display:none!important}\n.project-menu-stage[data-visual-theme="german-adventure"] .wordrealm-only{display:none!important}
 .project-menu-stage[data-visual-theme="wordrealm"]{
   --menu-accent:#6d43b6;
   --menu-accent-soft:rgba(112,73,178,.16);
@@ -402,18 +415,18 @@
 }
 .wordrealm-signpost button:nth-child(2){transform:translateX(7px)}.wordrealm-signpost button:nth-child(3){transform:translateX(-3px)}
 .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-panel{z-index:5}
-.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered{align-items:flex-end}
-.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered::after{
+.project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered{align-items:flex-end}
+.project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered::after{
   left:24%;right:24%;bottom:4%;height:7%;background:rgba(73,48,24,.18);filter:blur(8px)
 }
-.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .project-menu-avatar-fallback{
+.project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered .project-menu-avatar-fallback{
   width:min(72%,340px);height:82%;min-height:0;display:flex;align-items:flex-end;justify-content:center;
   transform:none!important;
 }
-.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .wordrealm-fox-svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 13px 10px rgba(72,45,22,.17))}
-.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .avatar-head,
-.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .avatar-body,
-.project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .avatar-shield{display:none}
+.project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered .wordrealm-fox-svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 13px 10px rgba(72,45,22,.17))}
+.project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered .avatar-head,
+.project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered .avatar-body,
+.project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered .avatar-shield{display:none}
 .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution{
   width:min(100%,500px);max-width:100%;padding:10px 11px 11px;border-radius:17px;
   color:#332c24;background:linear-gradient(180deg,rgba(255,251,239,.97),rgba(247,232,199,.97));
@@ -512,7 +525,7 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
   .wordrealm-home-brand small{font-size:.55rem}
   .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-panel{width:100%;padding-top:29px;margin-bottom:11px}
   .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-frame{height:250px}
-  .project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .project-menu-avatar-fallback{width:min(65%,270px);height:232px}
+  .project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered .project-menu-avatar-fallback{width:min(65%,270px);height:232px}
   .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution{width:100%;max-width:100%;margin-top:5px}
   .wordrealm-stage-strip{gap:2px}
   .wordrealm-stage-tile{grid-template-rows:47px 15px auto;padding:2px 1px 4px}
@@ -527,7 +540,7 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
   .project-menu-stage[data-visual-theme="wordrealm"]{padding:9px 8px 12px}
   .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-scenery{height:258px}
   .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-frame{height:224px}
-  .project-menu-avatar-frame.german-fox-avatar.wordrealm-rendered .project-menu-avatar-fallback{width:min(70%,245px);height:210px}
+  .project-menu-avatar-frame.german-knight-avatar.wordrealm-rendered .project-menu-avatar-fallback{width:min(70%,245px);height:210px}
   .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution{padding:9px 7px}
   .wordrealm-stage-tile{grid-template-rows:43px 14px auto}
   .wordrealm-stage-fox{width:42px;height:44px}
@@ -546,16 +559,12 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
   .wordrealm-action-copy strong{font-size:.85rem}.wordrealm-action-copy small{font-size:.62rem}
 }
 
-
-/* Profilavatar m/w/d – lokale Fallbackserien, wenn noch keine finale Bildserie vorliegt */
+/* Profilavatar m/w/d – eigene Fallbacks statt stiller männlicher Rückfall */
 .project-menu-avatar-frame[data-avatar-style="female"] .project-menu-avatar-fallback .avatar-head{
   border-radius:48% 48% 46% 46%;background:#d5aa83;border-color:#465266;
 }
 .project-menu-avatar-frame[data-avatar-style="female"] .project-menu-avatar-fallback .avatar-body{
   left:24%;right:20%;border-radius:42% 42% 18% 18%;background:linear-gradient(135deg,#53627a,#29364c);
-}
-.project-menu-avatar-frame[data-avatar-style="female"] .project-menu-avatar-fallback .avatar-shield{
-  background:linear-gradient(145deg,#d8bf73,#a18138);
 }
 .project-menu-avatar-frame[data-avatar-style="neutral"] .project-menu-avatar-fallback .avatar-head{
   left:35%;width:30%;border-radius:44% 44% 48% 48%;background:#cda17a;border-color:#45584f;
@@ -566,7 +575,4 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
 }
 .project-menu-avatar-frame[data-avatar-style="neutral"] .project-menu-avatar-fallback .avatar-shield{
   border-color:#6a633d;background:linear-gradient(145deg,#c9bc72,#7d7a48);color:#26352f;
-}
-.project-menu-avatar-frame[data-avatar-style="neutral"] .project-menu-avatar-crest{
-  border-color:#64745f;background:linear-gradient(145deg,#d7cf90,#849064);color:#30402f;
 }

@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 28.09.2026 · Basis: v0.21.38 · Produktionsbasis; Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
+Stand: 29.09.2026 · Basis: v0.21.39 · Release-Kandidat; Prüfschwerpunkt: Deutsch-Weltwahl, m/w/d, Vorlesen und unveränderte Lernlogik
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -453,8 +453,6 @@ Automatisierter Implementierungsstand v0.21.36: Paket D ergänzt differenzierte 
 - [ ] Elternentscheidung kann Variante freigeben, Sollinhalt korrigieren oder Systembewertung bestätigen
 - [ ] „Vokabel überspringen“ verschiebt auch in Deutsch nur ans Ende derselben Session und bleibt neutral
 
-Automatisierter Layoutstand v0.21.38: Der Deutsch-Startscreen verwendet die freigegebene Stufenlaufbahn **Grundausrüstung → Lederzeug → Ritterlehrling → Ritter → Kronritter → König**. Sichtbare Vorlese-Controls decken Navigation und sichere Klasse-1-Anweisungen ab; Audio, das Lösung oder zu prüfende Leseevidenz vorwegnehmen würde, bleibt ausgeschlossen.
-
 ## G3 – Das Wortreich
 
 Automatisierter Implementierungsstand v0.21.37: Ein echter deutscher Phaser-4-Belagerungskampf ist implementiert. Der Test prüft `german / wordrealm`, iPhone-Darstellung, Eroberung, Ticketverbrauch, XP-Belohnung und unveränderte fachliche Mastery. Die praktische v1-Abnahme der Wirkung und Verständlichkeit bleibt offen.
@@ -471,6 +469,24 @@ Automatisierter Implementierungsstand v0.21.37: Ein echter deutscher Phaser-4-Be
 - [ ] Gegner sind fiktional und nicht realweltlich codiert
 - [ ] Kampfergebnis verändert Mastery, Spacing, Testbereitschaft und fachliche Bewertung nicht
 - [ ] freiwilliges Üben erzeugt keine zusätzliche Tages-Kampfaktion
+
+## G3b – Deutsch-Weltwahl Abenteuer / Kampf
+
+Automatisierter Implementierungsstand v0.21.39: Profilerstellung, Persistenz, m/w/d,
+Family Sync, Weltwechsel ohne fachlichen Reset, kampffreie Abenteueraktion und sechs
+nicht-militärische Abenteuer-Fuchsstufen werden in CI/WebKit geprüft. Die praktische
+Verständlichkeit auf echtem Gerät bleibt separat abzunehmen.
+
+- [ ] neues Deutsch-Profil verlangt bewusst **Abenteuer** oder **Kampf**
+- [ ] Wahl ist ohne Lesekompetenz über Vorlesen verständlich
+- [ ] Männlich / Weiblich / Neutral-Divers sind auswählbar und bleiben nach Neustart erhalten
+- [ ] bestehendes Deutsch-Profil bleibt nach Update auf Kampf / Wortreich
+- [ ] Weltwechsel erhält Lernstand, Mastery, Spacing, Testbereitschaft und Jahresstufe
+- [ ] Abenteuer zeigt sechs klar aufbauende, nicht-militärische Fuchsstufen
+- [ ] Abenteueraktion öffnet keinen Battle-Screen
+- [ ] Abenteuer und Kampf verbrauchen höchstens dieselbe eine Tages-Spielaktion
+- [ ] Family Sync überträgt Weltwahl und Neutral/Divers zwischen Eltern- und Kindergerät
+- [ ] Rückwechsel auf Wortreich stellt die Kampfpräsentation ohne Lernstandsverlust wieder her
 
 ## G4 – Plattform / Release
 

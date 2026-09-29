@@ -494,6 +494,41 @@ body.lrs-mode .campaign-map-board{box-shadow:none}body.lrs-mode .campaign-map-st
   background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(244,247,244,.7) 42%,rgba(244,247,244,.88));
 }
 
+.campaign-map-view[data-visual-theme="german-adventure"]{
+  --world-bg-top:#e7efda;
+  --world-bg-bottom:#cbdab8;
+  --world-panel:#fbf7e7;
+  --world-panel-2:#e5edcf;
+  --world-border:#9caf78;
+  --world-accent:#587442;
+  --world-accent-2:#b17a43;
+  --world-ink:#34402f;
+  --world-muted:#66705d;
+}
+.campaign-map-view[data-visual-theme="german-adventure"] .campaign-map-board{
+  background:
+    radial-gradient(circle at 14% 14%,rgba(121,157,82,.20),transparent 12rem),
+    radial-gradient(circle at 83% 30%,rgba(191,140,72,.13),transparent 15rem),
+    linear-gradient(180deg,#fbf7e8,#e4eccb);
+}
+.campaign-map-view[data-visual-theme="german-adventure"] .campaign-map-board::before{
+  opacity:.18;
+  background:
+    radial-gradient(circle at 12% 18%,#78975d 0 3px,transparent 4px),
+    radial-gradient(circle at 88% 27%,#879f67 0 3px,transparent 4px),
+    repeating-linear-gradient(112deg,transparent 0 36px,rgba(90,112,66,.05) 37px 39px,transparent 40px 76px);
+}
+.campaign-map-view[data-visual-theme="german-adventure"] .campaign-map-route::before{
+  background:repeating-linear-gradient(180deg,#a9804d 0 12px,#e3cfa5 12px 19px,#79935b 19px 25px);
+}
+.campaign-map-view[data-visual-theme="german-adventure"] .campaign-map-start>span,
+.campaign-map-view[data-visual-theme="german-adventure"] .status-active .campaign-map-route-node span{
+  background:#587442;border-color:#90a96d
+}
+.campaign-map-view[data-visual-theme="german-adventure"] .campaign-map-year-fortress{
+  background:linear-gradient(180deg,#f7edc9,#dce7b9);border-color:#7b9258
+}
+
 .campaign-map-view[data-visual-theme="wordrealm"]{
   --world-bg-top:#f1e8d5;
   --world-bg-bottom:#cfdabd;
