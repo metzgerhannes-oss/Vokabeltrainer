@@ -38,7 +38,20 @@ Die sechs Entwicklungsstufen sind verbindlich:
 - Ritterlehrling → Ritter → Kronritter → König muss als zusammenhängende Laufbahn lesbar sein
 - Stufe 5 trägt **keine volle Königskrone**; die Krone ist dem König vorbehalten
 
-## 3. Startscreen
+## 3. Profilavatar m/w/d
+
+Die Profilerstellung bietet drei gleichwertige Avatarvarianten:
+
+- **Männlich**
+- **Weiblich**
+- **Neutral / Divers**
+
+Die Auswahl wird als eigener Profilwert gespeichert und über Family Sync übertragen. Fehlt für
+eine Variante noch eine finale Bildserie, darf sie **nicht** still auf die männliche Bildserie
+zurückfallen; stattdessen wird eine eigene lokale Fallback-Darstellung verwendet. Der Fuchs im
+Deutsch-Lern-/Wortreich-Kontext bleibt davon unabhängig und geschlechtsneutral.
+
+## 4. Startscreen
 
 Die Startseite enthält für Deutsch:
 
@@ -52,7 +65,7 @@ Die Startseite enthält für Deutsch:
 - „Das Wortreich betreten“
 - Bottom-Navigation bleibt appweit grundsätzlich gleich
 
-## 4. Vorlesefunktion
+## 5. Vorlesefunktion
 
 Für Klasse 1 gilt: **Navigation und Anweisungen müssen ohne Lesekompetenz nutzbar sein.**
 
@@ -79,20 +92,22 @@ oder die zu messende Lesekompetenz verrät. Beispiele:
 Diese Regel konkretisiert DEUTSCH_WORTREICH_V1.md und PRODUCT_DNA.md; Vorlesehilfe darf
 keinen unassistierten Abruf vortäuschen.
 
-## 5. Technische Umsetzung
+## 6. Technische Umsetzung
 
 - js/wordrealm-ui.js: konsistente SVG-Fuchsserie und Wortreich-Szenerie
 - js/read-aloud-ui.js: zentrale, sichere Vorleseschicht
-- js/menu-ui.js: Startscreen-Verknüpfung und Wortreich-Aktionen
+- js/menu-ui.js: Startscreen-Verknüpfung, Wortreich-Aktionen und m/w/d-Avatarwahl
+- js/storage.js: persistente m/w/d-Härtung ohne Rückfall auf männlich
 - css/menu.css: Wortreich-Startlayout
 - css/app.css: gemeinsame Vorlese-Controls
 - js/german-foundation.js: Vorlesen für sichere Klasse-1-Anweisungen
 - js/model.js: verbindliche Stufenbezeichnungen und konsistente Rangableitung
 
-## 6. Abnahme
+## 7. Abnahme
 
 Ein Deutsch-Startscreen ist nur freigabefähig, wenn:
 
+- die Profilerstellung Männlich, Weiblich und Neutral/Divers dauerhaft speichert
 - alle sechs Stufen korrekt benannt sind
 - Stufe 3–6 visuell aufeinander aufbauen
 - König eindeutig die Endstufe ist
