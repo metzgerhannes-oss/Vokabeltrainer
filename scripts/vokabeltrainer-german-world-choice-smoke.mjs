@@ -16,7 +16,7 @@ const assert=(v,n)=>{if(!v)throw new Error('German world choice smoke failed: '+
 assert(core.includes("const WORLD_MODES=Object.freeze(['adventure','battle'])"),'world modes are allow-listed');
 assert(core.includes("defaultWorldModes=()=>({english:'battle',latin:'battle',german:'battle',french:'adventure'})"),'legacy-safe world defaults are defined');
 assert(core.includes("function learnerWorldMode(")&&core.includes("function setLearnerWorldMode("),'per-profile world mode helpers exist');
-assert(core.includes('function subjectWorldPresentation')&&core.includes('const isAdventureWorld='),'world presentation and adventure detection are generic');
+assert(core.includes('const subjectWorldPresentation=')&&core.includes('const isAdventureWorld='),'world presentation and adventure detection are generic');
 assert(ui.includes('name="profileWorldMode-${esc(meta.id)}"')&&ui.includes('data-profile-world-subject')&&ui.includes("german:{adventure:'Fuchspfad"),'profile editor exposes German through the generic adventure/battle choice');
 assert(ui.includes('const missingWorld=subjects.find')&&ui.includes('Bitte für ${subjectLabel(missingWorld)} Abenteuer oder Kampf auswählen.'),'new active subjects require an explicit world choice');
 assert(ui.includes('Neutral / Divers')&&ui.includes('profile-choice-read'),'profile editor combines m/w/d with readable choice controls');
