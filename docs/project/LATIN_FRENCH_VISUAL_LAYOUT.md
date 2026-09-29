@@ -148,6 +148,26 @@ Auch die Kampfvariante nutzt dieses Farbklima statt einer dunklen Kriegsästheti
 - keine realen Länder, Völker oder Religionen als Gegner
 - keine historische Kriegsrekonstruktion
 
+## Finale Runtime-Qualität
+
+Die Layout-SVGs in diesem Ordner definieren Komposition und Art Direction, **nicht** die
+zulässige Endqualität der Runtime-Avatare. Für finale Figuren gilt verbindlich
+`VISUAL_DNA.md § 2.1`.
+
+Insbesondere:
+
+- Latein-Kampf erhält eine echte malerische Legionär-Serie **Tiro → Legionär → Optio →
+  Centurio → Tribun → Legat**; keine generische mittelalterliche Armee und kein komplettes
+  Kampagnenbild im Avatar-Slot.
+- Latein-Abenteuer erhält eine gleichwertig malerische zivile römische Reise-/Entdeckerserie.
+- Französisch-Abenteuer und Französisch-Kampf erhalten jeweils eigene gleichwertige
+  Figurenserien in derselben Qualitätsklasse.
+- Für auswählbare Männlich-/Weiblich-/Neutral-Divers-Varianten gilt dieselbe Qualitätsstufe.
+- Ein CSS-/DOM-/einfacher SVG-Fallback darf nur bei Ladefehlern sichtbar werden und ist niemals
+  eine Freigabe als finales Design.
+- Die Figur muss als Avatar lesbar sein: klare Silhouette, Gesicht/Identität, Kleidung und
+  Requisiten; ein breitformatiges Welt-/Schlachtbild ist kein Avatar.
+
 ## Avatar in der App
 
 Der Avatar soll nicht jede Oberfläche dominieren.
