@@ -61,6 +61,42 @@
       targetNames:{outpost:'Buchstabenstation',tower:'Wörterbrücke',wall:'Silbenpfad',citadel:'Lesegarten',capital:'Geschichtenhaus',final:'Wortschatz-Horizont'},
       battleAction:'Etappe ansehen',securedAction:'Etappe ansehen'
     }),
+    'english-adventure':Object.freeze({
+      places:['Greenwood Camp','Riverbend','Oak Trail','Stone Bridge','Hillwatch','Falcon Meadow','North Path','Lake Crossing','Pine Ridge','Cloud Hill','Star Field','Golden Horizon'],
+      regions:{autumn:'Autumn Trail',winter:'Winter Route',spring:'Spring Path',summer:'Summer Heights'},
+      viewTitle:'Meine Expedition',routeLabel:'EXPEDITIONSPFAD',won:n=>`${n} Etappen entdeckt`,next:'NÄCHSTE ENTDECKUNG',
+      startKicker:'BASISLAGER',startTitle:'Die Expedition beginnt',unknownKicker:'NOCH UNERKUNDET',unknownTitle:'Nächster Wegpunkt',
+      unknownText:'Neue Wegpunkte erscheinen, sobald Tests geplant werden.',yearKicker:'FERNZIEL',yearTitle:'Goldener Horizont',
+      yearDone:'Expedition vollständig entwickelt',yearOpen:p=>`${p}% Jahresreise`,detailProgress:'Etappenfortschritt',
+      captured:'Etappe erreicht',secured:'Etappe gefestigt',securedDetail:n=>`${n} Festigungstage`,hold:'Bis zum Test weiter festigen',
+      active:'Aktuelles Expeditionsziel',planned:'Wegpunkt entdeckt',awaiting:'Ergebnis offen',plannedNoun:'Wegpunkt',
+      targetNames:{outpost:'Basislager',tower:'Aussichtspunkt',wall:'Flussquerung',citadel:'Höhenstation',capital:'Sternwarte',final:'Goldener Horizont'},
+      battleAction:'Expedition fortsetzen',securedAction:'Etappe festigen'
+    }),
+    'latin-adventure':Object.freeze({
+      places:['Via Serena','Forum Novum','Aqua Clara','Olivenhain','Porta Solis','Bibliotheca','Pontis Via','Villa Serena','Columna Alba','Hortus Magnus','Portus Lucis','Via Aurea'],
+      regions:{autumn:'Via Autumnalis',winter:'Iter Hibernum',spring:'Via Verna',summer:'Iter Aestivum'},
+      viewTitle:'Iter Romanum',routeLabel:'RÖMISCHE ENTDECKUNGSROUTE',won:n=>`${n} Orte entdeckt`,next:'NÄCHSTER ORT',
+      startKicker:'INITIUM',startTitle:'Die Entdeckungsreise beginnt',unknownKicker:'TERRA INCOGNITA',unknownTitle:'Nächster Fundort',
+      unknownText:'Neue Orte erscheinen entlang der Route, sobald Tests geplant werden.',yearKicker:'FERNZIEL',yearTitle:'Magna Via',
+      yearDone:'Entdeckungsroute vollständig entwickelt',yearOpen:p=>`${p}% Jahresreise`,detailProgress:'Reisefortschritt',
+      captured:'Ort erreicht',secured:'Wissen gefestigt',securedDetail:n=>`${n} Wiederholungstage`,hold:'Bis zur Prüfung weiter festigen',
+      active:'Aktuelles Reiseziel',planned:'Ort voraus',awaiting:'Ergebnis offen',plannedNoun:'Fundort',
+      targetNames:{outpost:'Via Prima',tower:'Forum',wall:'Aquädukt',citadel:'Bibliothek',capital:'Hafen',final:'Magna Via'},
+      battleAction:'Reise fortsetzen',securedAction:'Ort festigen'
+    }),
+    'french-battle':Object.freeze({
+      places:['Fort Clair','Bastion des Fleurs','Tour Lumière','Val du Lion','Pont d’Argent','Citadelle Verte','Bois Doré','Mont des Étoiles','Porte Bleue','Fort des Rives','Tour du Soleil','Bastion Royal'],
+      regions:{autumn:'Marche d’Automne',winter:'Marche d’Hiver',spring:'Marche de Printemps',summer:'Marche d’Été'},
+      viewTitle:'Gefährten & Festungen',routeLabel:'FIKTIONALER FESTUNGSPFAD',won:n=>`${n} Festungen gesichert`,next:'NÄCHSTE FESTUNG',
+      startKicker:'LAGER DER GEFÄHRTEN',startTitle:'Der Festungsweg beginnt',unknownKicker:'HINTER DEM NÄCHSTEN HÜGEL',unknownTitle:'Nächste Festung',
+      unknownText:'Neue fiktionale Festungen erscheinen, sobald Tests geplant werden.',yearKicker:'FERNZIEL',yearTitle:'Grande Forteresse',
+      yearDone:'Gefährten vollständig entwickelt',yearOpen:p=>`${p}% Jahresentwicklung`,detailProgress:'Festungsfortschritt',
+      captured:'Festung erobert',secured:'Festung gesichert',securedDetail:n=>`${n} Sicherungstage`,hold:'Bis zum Test halten',
+      active:'Aktuelle Festung',planned:'Festung entdeckt',awaiting:'Ergebnis offen',plannedNoun:'Festung',
+      targetNames:{outpost:'Fort Clair',tower:'Tour Lumière',wall:'Bastion des Fleurs',citadel:'Citadelle Verte',capital:'Fort du Soleil',final:'Grande Forteresse'},
+      battleAction:'Zur Schlacht',securedAction:'Festung ansehen / sichern'
+    }),
     voyage:Object.freeze({
       places:['Belle-Rive','Pont-Clair','Mont-Lumière','Val-Fleuri','Rive-Dorée','Belle-Place','Fontaine-Claire','Port-Lumière','Jardin-Neuf','Pont-des-Fleurs','Côte-Claire','Ville-Jolie'],
       regions:{autumn:'Herbstetappe',winter:'Winterreise',spring:'Frühlingsroute',summer:'Sommerroute'},
@@ -133,7 +169,7 @@
       return {key:`test:${subject}:${row.date}`,index,date:row.date,subject,region:reg,status:st,title:`${targetName} · ${where}`,statusLabel:m[0],statusDetail:m[1],scopeText:row.scopeText||row.fortress?.scopeText||'Testumfang noch nicht festgelegt',wordCount:row.wordCount||row.fortress?.wordCount||0,reviewOpen:!!row.reviewOpen,fortress:row.fortress,grade:row.grade,series:row.series,siegePct:row.fortress?Math.max(0,Math.min(100,Math.round((1-def/mx)*100))):0};
     });
   }
-  function icon(s){const adventure=s.subject==='german'&&typeof learnerWorldMode==='function'&&learnerWorldMode('german')==='adventure';if(s.status==='completed')return'✓';if(s.status==='secured'||s.status==='captured')return adventure?'★':'⚑';if(s.status==='active')return adventure?'●':'♜';if(s.status==='awaiting')return'!';return'◇'}
+  function icon(s){const adventure=typeof isAdventureWorld==='function'&&isAdventureWorld(s.subject);if(s.status==='completed')return'✓';if(s.status==='secured'||s.status==='captured')return adventure?'★':'⚑';if(s.status==='active')return adventure?'●':'♜';if(s.status==='awaiting')return'!';return'◇'}
   function stop(s){
     const side=s.index%2?'right':'left',order=s.index+1,t=themeFor(s.subject);
     return `<article class="campaign-map-stop region-${s.region} side-${side} status-${s.status}" data-map-order="${order}"><div class="campaign-map-route-node" aria-hidden="true"><span>${icon(s)}</span><b>${order}</b></div><button type="button" class="campaign-map-station" data-campaign-station="${safe(s.key)}"><small>Etappe ${order} · ${safe(t.regions[s.region])} · ${safe(dateLabel(s.date))}</small><strong>${safe(s.title)}</strong><span>${safe(s.statusLabel)} · ${safe(s.statusDetail)}</span>${s.fortress?`<progress max="100" value="${s.siegePct}" aria-label="${safe(t.detailProgress)}"></progress>`:''}${s.grade?`<b class="campaign-map-grade">Note ${safe(s.grade.grade)}</b>`:''}</button></article>`;
@@ -143,7 +179,7 @@
     const next=list.find(s=>s.status==='active')?.title||list.find(s=>s.date>=today())?.title||(yearGoal.date?`${t.yearTitle} · ${dateLabel(yearGoal.date)}`:t.yearTitle);
     const yearWhen=yearGoal.date?`Termin ${dateLabel(yearGoal.date)}`:'Datum noch offen';
     const yearState=pct>=100?t.yearDone:t.yearOpen(pct);
-    return `<div class="campaign-war-header"><div><small>${safe(t.routeLabel)}</small><strong>${safe(t.won(won))}</strong></div><div><small>${safe(t.next)}</small><strong>${safe(next)}</strong></div></div><div class="campaign-map-start"><span aria-hidden="true">⚑</span><div><small>${safe(t.startKicker)}</small><strong>${safe(t.startTitle)}</strong></div></div><div class="campaign-map-route">${list.map(stop).join('')}<article class="campaign-map-stop campaign-map-unknown"><div class="campaign-map-route-node" aria-hidden="true"><span>?</span></div><div class="campaign-map-fog-card"><small>${safe(t.unknownKicker)}</small><strong>${safe(t.unknownTitle)}</strong><span>${safe(t.unknownText)}</span></div></article><article class="campaign-map-stop campaign-map-year-goal ${pct>=100?'growth-max':''} ${yearGoal.date?'dated':'undated'}"><div class="campaign-map-route-node" aria-hidden="true"><span>${typeof subjectVisualTheme==='function'&&subjectVisualTheme(subject)==='german-adventure'?'★':'♛'}</span></div><button type="button" class="campaign-map-station campaign-map-year-fortress" data-campaign-station="year-goal"><small>${safe(t.yearKicker)} · ${safe(yearWhen)}</small><strong>${safe(t.yearTitle)}</strong><span>${safe(yearState)}</span><progress max="100" value="${pct}" aria-label="Jahresentwicklung"></progress></button></article></div>`;
+    return `<div class="campaign-war-header"><div><small>${safe(t.routeLabel)}</small><strong>${safe(t.won(won))}</strong></div><div><small>${safe(t.next)}</small><strong>${safe(next)}</strong></div></div><div class="campaign-map-start"><span aria-hidden="true">⚑</span><div><small>${safe(t.startKicker)}</small><strong>${safe(t.startTitle)}</strong></div></div><div class="campaign-map-route">${list.map(stop).join('')}<article class="campaign-map-stop campaign-map-unknown"><div class="campaign-map-route-node" aria-hidden="true"><span>?</span></div><div class="campaign-map-fog-card"><small>${safe(t.unknownKicker)}</small><strong>${safe(t.unknownTitle)}</strong><span>${safe(t.unknownText)}</span></div></article><article class="campaign-map-stop campaign-map-year-goal ${pct>=100?'growth-max':''} ${yearGoal.date?'dated':'undated'}"><div class="campaign-map-route-node" aria-hidden="true"><span>${typeof isAdventureWorld==='function'&&isAdventureWorld(subject)?'★':'♛'}</span></div><button type="button" class="campaign-map-station campaign-map-year-fortress" data-campaign-station="year-goal"><small>${safe(t.yearKicker)} · ${safe(yearWhen)}</small><strong>${safe(t.yearTitle)}</strong><span>${safe(yearState)}</span><progress max="100" value="${pct}" aria-label="Jahresentwicklung"></progress></button></article></div>`;
   }
   function detail(st){
     const root=document.querySelector('#campaignMapDetail'),battle=document.querySelector('#campaignMapBattleBtn');if(!root)return;
@@ -152,16 +188,16 @@
     const grade=st.grade?`<div><small>Testergebnis</small><strong>Note ${safe(st.grade.grade)}</strong></div>`:'';
     const t=themeFor(st.subject),defense=st.fortress?`<div><small>${safe(t.detailProgress)}</small><strong>${st.siegePct}%</strong><span>${Math.max(0,Number(st.fortress.defense)||0)} Zielstärke übrig</span></div>`:'';
     root.innerHTML=`<button type="button" class="campaign-map-detail-close" data-campaign-detail-close aria-label="Zielinfo schließen">×</button><div class="campaign-map-detail-head"><small>${safe(t.regions[st.region])}</small><h3>${safe(st.title)}</h3><p>${safe(st.statusLabel)} · ${safe(st.statusDetail)}</p></div><div class="campaign-map-detail-grid"><div><small>Test</small><strong>${safe(dateLabel(st.date))}</strong><span>${safe(st.scopeText)}</span></div><div><small>Umfang</small><strong>${st.wordCount?st.wordCount+' Vokabeln':'noch offen'}</strong><span>${st.series?'wiederkehrender Test':'geplanter Test'}</span></div>${defense}${grade}</div>${st.reviewOpen?'<div class="campaign-map-note">Die Vokabelpaare für dieses Ziel müssen im Elternbereich noch geprüft werden.</div>':''}`;
-    const current=typeof currentTestFortress==='function'?currentTestFortress(st.subject):null,can=current?.testDate===st.date,adventure=st.subject==='german'&&typeof learnerWorldMode==='function'&&learnerWorldMode('german')==='adventure';
+    const current=typeof currentTestFortress==='function'?currentTestFortress(st.subject):null,can=current?.testDate===st.date,adventure=typeof isAdventureWorld==='function'&&isAdventureWorld(st.subject);
     if(battle){battle.classList.toggle('hidden',!can||adventure);battle.disabled=!can||adventure;battle.textContent=st.fortress?.capturedAt?t.securedAction:t.battleAction}
   }
   function yearDetail(growth,yearGoal){
     const root=document.querySelector('#campaignMapDetail');if(!root)return;
-    const t=themeFor(state.activeSubject),pct=growth.pct,adventure=typeof subjectVisualTheme==='function'&&subjectVisualTheme(state.activeSubject)==='german-adventure';
+    const t=themeFor(state.activeSubject),pct=growth.pct,adventure=typeof isAdventureWorld==='function'&&isAdventureWorld(state.activeSubject);
     root.hidden=false;
     const dateCopy=yearGoal.date?`<strong>${safe(dateLabel(yearGoal.date))}</strong><span>Der reale Termin ist bekannt und kann im Elternbereich angepasst werden.</span>`:'<strong>Noch offen</strong><span>Das Jahresziel bleibt am Horizont, bis ein realer Termin bekannt ist.</span>';
-    const intro=adventure?(pct>=100?'Deine Fuchs-Abenteuerstufe hat das Jahresziel erreicht.':'Diese große Wortreise wächst über das ganze Schuljahr und setzt keine feste Zahl zukünftiger Tests voraus.'):(pct>=100?'Deine Armee hat die höchste Jahresstufe erreicht.':'Dieses Ziel wächst über das ganze Schuljahr und setzt keine feste Zahl zukünftiger Tests voraus.');
-    const progressCopy=adventure?`${growth.masteredEver} Lernwörter jemals nachhaltig gemeistert · ${growth.completedTests} Tests abgeschlossen · ${growth.capturedFortresses} Etappenziele erreicht`:`${growth.masteredEver} Vokabeln jemals nachhaltig gemeistert · ${growth.completedTests} Tests abgeschlossen · ${growth.capturedFortresses} Testfestungen erobert`;
+    const intro=adventure?(pct>=100?'Deine Abenteuerreise hat das Jahresziel erreicht.':'Diese Reise wächst über das ganze Schuljahr und setzt keine feste Zahl zukünftiger Tests voraus.'):(pct>=100?'Deine Kampfentwicklung hat die höchste Jahresstufe erreicht.':'Dieses Ziel wächst über das ganze Schuljahr und setzt keine feste Zahl zukünftiger Tests voraus.');
+    const progressCopy=adventure?`${growth.masteredEver} Lerninhalte jemals nachhaltig gemeistert · ${growth.completedTests} Tests abgeschlossen · ${growth.capturedFortresses} Etappenziele erreicht`:`${growth.masteredEver} Lerninhalte jemals nachhaltig gemeistert · ${growth.completedTests} Tests abgeschlossen · ${growth.capturedFortresses} Testziele erobert`;
     root.innerHTML=`<button type="button" class="campaign-map-detail-close" data-campaign-detail-close aria-label="Zielinfo schließen">×</button><div class="campaign-map-detail-head"><small>${safe(t.yearKicker)}</small><h3>${safe(t.yearTitle)}</h3><p>${safe(intro)}</p></div><div class="campaign-map-detail-grid"><div><small>Jahresentwicklung</small><strong>${pct}%</strong><span>${safe(progressCopy)}</span></div><div><small>Termin</small>${dateCopy}</div><div><small>Prinzip</small><strong>Nur vorwärts</strong><span>Neue Lernwörter oder Tests setzen die erreichte Entwicklungsstufe nicht zurück.</span></div><div><small>${adventure?'Abenteuer':'Feldzug'}</small><strong>Dynamischer Weg</strong><span>Neue Testziele werden vor dem Jahresziel ergänzt.</span></div></div>`;
     document.querySelector('#campaignMapBattleBtn')?.classList.add('hidden');
   }
@@ -183,11 +219,11 @@
   function render(){
     const board=document.querySelector('#campaignMapBoard');if(!board||!state||typeof learner!=='function'||!learner())return;
     const subject=state.activeSubject,year=currentSchoolYear(),list=stations(subject,year),growth=campaignGrowthState(subject,year),yearGoal=yearFortressState(subject,year);
-    const t=themeFor(subject),view=document.querySelector('#campaignMapView'),title=document.querySelector('#campaignMapViewTitle'),adventure=subject==='german'&&typeof learnerWorldMode==='function'&&learnerWorldMode('german')==='adventure';
+    const t=themeFor(subject),view=document.querySelector('#campaignMapView'),title=document.querySelector('#campaignMapViewTitle'),adventure=typeof isAdventureWorld==='function'&&isAdventureWorld(subject);
     if(view){view.dataset.visualTheme=typeof subjectVisualTheme==='function'?subjectVisualTheme(subject):'campaign';view.dataset.worldMode=adventure?'adventure':'battle';}
     const back=document.querySelector('#campaignMapBackBtn'),armyButton=document.querySelector('#campaignMapArmyBtn');
-    if(back)back.textContent=adventure?'← Abenteuer':'← Armee';
-    if(armyButton)armyButton.textContent=adventure?'Fuchspfad':'Meine Armee';
+    if(back)back.textContent=adventure?'← Abenteuer':'← Kampfbereich';
+    if(armyButton)armyButton.textContent=adventure?'Abenteuerübersicht':'Meine Armee';
     if(title)title.textContent=t.viewTitle;
     const label=document.querySelector('#campaignMapSubjectLabel');if(label)label.textContent=`${subjectLabel(subject)} · ${adventure?'Abenteuer · ':''}${year}`;
     const sum=document.querySelector('#campaignMapSummary');if(sum){const done=list.filter(s=>s.status==='completed').length,won=list.filter(s=>['captured','secured','completed'].includes(s.status)).length;sum.textContent=list.length?`${done} Tests abgeschlossen · ${won} Ziele ${adventure?'erreicht':'erobert'} · weitere Ziele erscheinen automatisch`:'Noch kein Test geplant · die Karte wächst mit deinem Schuljahr'}
@@ -198,9 +234,9 @@
   function open(){if(typeof isParentMode==='function'&&isParentMode())return;selectedKey='';selectionDismissed=false;render();if(typeof showView==='function')showView('campaignMapView')}
   function bind(){
     document.querySelector('#campaignMapBtn')?.addEventListener('click',open);
-    document.querySelector('#campaignMapBackBtn')?.addEventListener('click',()=>{const adventure=typeof isGermanAdventureWorld==='function'&&isGermanAdventureWorld();if(adventure){showView('homeView');return}window.VTArmyUi?.open?.()||showView('armyView')});
-    document.querySelector('#campaignMapArmyBtn')?.addEventListener('click',()=>{if(typeof isGermanAdventureWorld==='function'&&isGermanAdventureWorld()){showView('homeView');return}window.VTArmyUi?.open?.()});
-    document.querySelector('#campaignMapBattleBtn')?.addEventListener('click',()=>{if(typeof isGermanAdventureWorld==='function'&&isGermanAdventureWorld()){if(typeof openGermanAdventureAction==='function')openGermanAdventureAction();return}if(typeof openBattleView==='function')openBattleView()});
+    document.querySelector('#campaignMapBackBtn')?.addEventListener('click',()=>window.VTArmyUi?.open?.()||showView('armyView'));
+    document.querySelector('#campaignMapArmyBtn')?.addEventListener('click',()=>window.VTArmyUi?.open?.());
+    document.querySelector('#campaignMapBattleBtn')?.addEventListener('click',()=>{if(typeof isAdventureWorld==='function'&&isAdventureWorld()){if(typeof openAdventureAction==='function')openAdventureAction();return}if(typeof openBattleView==='function')openBattleView()});
     document.querySelector('#campaignMapBoard')?.addEventListener('click',e=>{const b=e.target.closest('[data-campaign-station]');if(b){select(b.dataset.campaignStation);return}if(selectedKey)clearSelection()});
     document.addEventListener('pointerdown',e=>{if(!selectedKey||!document.querySelector('#campaignMapView')?.classList.contains('active'))return;if(e.target.closest?.('[data-campaign-station],#campaignMapDetail,#campaignMapBattleBtn'))return;clearSelection()},true);
     document.addEventListener('keydown',e=>{if(e.key==='Escape'&&selectedKey&&document.querySelector('#campaignMapView')?.classList.contains('active')){e.preventDefault();clearSelection()}});
