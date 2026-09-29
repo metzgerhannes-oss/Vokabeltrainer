@@ -56,7 +56,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Deutsch Paket C / Klasse-1-Kern | PRODUCTION / LIVE VERIFIED v0.21.35 · PR #202 · CI #1236 · Pages #560 | `docs/project/DEUTSCH_WORTREICH_V1.md`, `DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`, B-001 |
 | Deutsch Paket D / Lernwörter & Rechtschreibung | PRODUCTION / LIVE VERIFIED v0.21.36 · PR #203 · CI #1240 · Pages #561 | `docs/project/DEUTSCH_WORTREICH_V1.md`, `DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`, B-001 |
 | Deutsch Paket E / Wortreich-Phaser-Belagerung | PRODUCTION / LIVE VERIFIED v0.21.37 · PR #204 · CI #1247 · Pages #562 | `docs/project/DEUTSCH_WORTREICH_V1.md`, D-20260928-008, D-20260928-004 |
-| Deutsch Startlayout / Stufen / Vorlesen | IMPLEMENTED im v0.21.38-Release-Kandidaten; Verifikation läuft | `docs/project/DEUTSCH_WORTREICH_LAYOUT_V1.md`, D-20260929-001 |
+| Deutsch Startlayout / Stufen / Vorlesen | IMPLEMENTED im v0.21.38-Release-Kandidaten; Verifikation läuft | `docs/project/DEUTSCH_WORTREICH_LAYOUT_V1.md`, D-20260929-003 |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 
 ## Offene Verifikationsgrenzen
