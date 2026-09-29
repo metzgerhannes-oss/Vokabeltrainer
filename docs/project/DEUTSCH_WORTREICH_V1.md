@@ -74,6 +74,12 @@ Die Welt wird pro Profil gewählt und kann später ohne Lernstandsverlust gewech
 
 Das Kind folgt einem ruhigen Entdeckerpfad durch Fuchshain, Buchstabenpfad, Wörterbrücke, Silbenwald, Leseturm und weitere Wortreise-Etappen. Die tägliche Spielaktion nutzt dieselbe Freischaltung wie eine Kampfaktion, wird aber als **Abenteuer fortsetzen / Etappe festigen** ohne Battle-Screen dargestellt.
 
+Die sechs sichtbaren Abenteuer-Fuchsstufen sind nicht-militärisch und bilden dieselbe numerische Jahresentwicklung wie das Wortreich ab:
+
+**Wegstarter → Spurensucher → Pfadfinder → Wortentdecker → Wissensreisender → Meisterentdecker**
+
+Die Entwicklung ergänzt sichtbar Schal, Tasche, Kompass, Karte und Reiseausstattung. Waffen, Rüstung und Krone gehören ausschließlich zur Kampf-/Wortreich-Variante.
+
 ### Kampf – Das Wortreich
 
 Das Kind baut ein eigenes mittelalterliches Reich auf. Aus einem kleinen Ausgangspunkt entsteht über den Lernfortschritt eine zunehmend starke Burganlage mit eigenem Heer.
@@ -275,12 +281,13 @@ Fehlt einer der fachlichen Punkte 1–6 oder greift die Spielwelt in die fachlic
 
 ### Paket E2 – Weltwahl Deutsch
 **Status: umgesetzt im Release-Kandidaten v0.21.39; automatisierte Verifikation läuft.**
-- pro Profil `Abenteuer | Kampf`
+- pro Profil `Abenteuer | Kampf`; bei neuen Deutsch-Profilen ist eine bewusste Auswahl erforderlich
 - bestehende Profile bleiben auf Wortreich/Kampf
 - Fuchs-Abenteuer mit eigenem Hub, sechs sichtbaren Etappen und Wortreise-Karte
 - tägliche Abenteueraktion ohne Battle-Screen, aber mit derselben Tagesaktionsfreigabe
 - Wechsel ohne Veränderung von Literacy-Evidenz, Mastery oder Jahresentwicklung
-- Family Sync überträgt die Weltpräferenz
+- Family Sync überträgt Weltpräferenz und m/w/d-Avatarstil
+- Avatar- und Weltwahl sind für Klasse 1 vorlesbar
 - Domain- und WebKit-Smoke schützen Migration, Wechsel und Fachneutralität
 
 ### Paket F – v1-Abnahme
