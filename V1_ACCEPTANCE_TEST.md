@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 29.09.2026 · Basis: v0.21.43 · Release-Kandidat; Prüfschwerpunkt: B-018 Praxis-Hotfix für Lineaturdarstellung und echte Buchstabenlaute
+Stand: 29.09.2026 · Basis: v0.21.44 · Release-Kandidat; Prüfschwerpunkte: B-018 Praxis-Hotfix und B-019 Avatar-Qualitätsstandard
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -8,6 +8,8 @@ Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
 
 
 ## Aktueller Praxisfortschritt
+
+- [ ] **B-019 Avatar-Praxisabnahme:** Auf iPhone und Desktop alle aktiven Fach-/Weltkombinationen durchschalten. Jeder Avatar muss fachlich passend und als eigene Figur erkennbar sein; kein breitformatiges Kampagnen-/Schlachtbild darf im Avatar-Slot erscheinen. Finale Avatare müssen die malerische Referenzqualität aus `VISUAL_DNA.md § 2.1` erreichen; technische CSS-/DOM-/einfache SVG-Fallbacks zählen nicht als bestanden.
 
 - [ ] **B-018 Praxisabnahme:** Auf realem iPhone/iPad nur „m“, danach „M/m“ und danach „a, e, m, s“ auswählen; prüfen, dass ausschließlich diese Buchstaben geübt werden, Dach/Erdgeschoss/Keller beim Schreiben sichtbar bleiben, der Buchstabenlaut funktioniert und wiederholtes freies Schreiben keinen Mastery-/Testfortschritt erzeugt.
 
