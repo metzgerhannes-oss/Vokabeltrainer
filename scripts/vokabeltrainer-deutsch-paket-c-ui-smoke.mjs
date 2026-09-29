@@ -102,8 +102,12 @@ try{
   assert(freeCanvasLabel.includes('Dachgeschoss')&&freeCanvasLabel.includes('Erdgeschoss')&&freeCanvasLabel.includes('Keller'),'writing canvas keeps the three school-lineature zones');
   const phonemeClip=await page.evaluate(()=>window.VTGermanFoundation.phonemeClip('M'));
   assert(Array.isArray(phonemeClip)&&phonemeClip.length===2&&phonemeClip[1]>0,'German M sound resolves to a timed MP3-sprite clip');
-  const phonemePlayed=await page.evaluate(()=>window.VTGermanFoundation.playPhoneme('M'));
-  assert(phonemePlayed===true,'WebKit decodes and starts the German phoneme MP3 sprite');
+  const decodedPhoneme=await page.evaluate(()=>window.VTGermanFoundation.decodePhonemeSprite());
+  assert(decodedPhoneme.ok===true&&decodedPhoneme.duration>30&&decodedPhoneme.channels>0,'WebKit decodeAudioData decodes the German phoneme MP3 sprite: '+JSON.stringify(decodedPhoneme));
+  await page.click('#foundationFreeSoundBtn');
+  await page.waitForFunction(()=>['started','error'].includes(window.VTGermanFoundation.phonemeStatus().state));
+  const phonemeStatus=await page.evaluate(()=>window.VTGermanFoundation.phonemeStatus());
+  assert(phonemeStatus.state==='started','trusted WebKit button click starts the German M phoneme: '+JSON.stringify(phonemeStatus));
   const freeBox=await page.locator('#foundationFreeCanvas').boundingBox();
   assert(!!freeBox,'free-writing canvas is visible on iPhone viewport');
   await page.mouse.move(freeBox.x+60,freeBox.y+70);await page.mouse.down();await page.mouse.move(freeBox.x+180,freeBox.y+210,{steps:8});await page.mouse.up();
