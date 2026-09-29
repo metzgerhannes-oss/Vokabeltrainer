@@ -363,7 +363,7 @@ Abnahme:
 5. Bestehende Profile funktionieren ohne manuelle Migration weiter.
 
 ## B-018 – Freies Schreiben: Grundschul-Hilfslinien und freie Buchstabenauswahl
-**Status:** VERIFIED · v0.21.41 automatisiert; v0.21.42 Praxis-Hotfix IN_IMPLEMENTATION nach realem iPhone-Befund  
+**Status:** VERIFIED · v0.21.42 Praxis-Hotfix PR #213 · funktionaler PR-CI #1332 vollständig grün · reale Wiederholungsabnahme offen  
 **Priorität:** P0 für Deutsch Klasse 1 / praktische v1-Abnahme  
 **Bezug:** B-001, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`
 
