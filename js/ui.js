@@ -886,7 +886,7 @@ function renderToday(){
     {icon:'⚡',title:'Wortblitz',sub:readingSupportEnabled(l)?'ruhiges Tempo · Lesen üben · ohne Mastery-Wertung':'Leseflüssigkeit ohne Mastery-Wertung',mode:'flash'},
     {icon:'🔊',title:'Vokabeldusche',sub:'mit Denkpause oder passiv anhören',mode:'shower'}
   ];
-  if(chunkWords.length)recs.splice(2,0,{icon:'🧩',title:'Wortbausteine',sub:`${chunkWords.length} Rechtschreib-Lernwörter · keine ganzen Sätze`,mode:'chunks'});
+  if(chunkWords.length){const native=subjectHasCapability(state.activeSubject,'nativeLiteracy'),structured=chunkWords.filter(w=>(w.literacyErrors?.wordStructure||0)>0).length;recs.splice(2,0,{icon:'🧩',title:native?'Silben & Wortstruktur':'Wortbausteine',sub:native?(structured?`${structured} Lernwörter mit offenem Strukturfehler`:`${chunkWords.length} Lernwörter strukturiert üben`):`${chunkWords.length} Rechtschreib-Lernwörter · keine ganzen Sätze`,mode:'chunks'});}
   if(subjectHasCapability(state.activeSubject,'latinGrammar'))recs.push({icon:'Ⅳ',title:'Latein Formen',sub:'Genitiv · Genus · Stammformen · Anwendung',mode:'latinGrammar'});
   $('#recommendations').innerHTML=recs.map(r=>`<button class="recommend" data-mode="${r.mode}" ${r.disabled?'disabled':''}><span class="icon">${r.icon}</span><strong>${r.title}</strong><small>${r.sub}</small></button>`).join('');
   document.querySelectorAll('#recommendations [data-mode]').forEach(b=>b.onclick=()=>{const mode=b.dataset.mode;if(mode==='copy')startCopyPractice();else if(mode==='context')startSession('context',null,contextWords.map(w=>w.id));else startSession(mode)});
