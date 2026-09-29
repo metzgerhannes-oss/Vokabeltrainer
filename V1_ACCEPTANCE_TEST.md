@@ -420,7 +420,7 @@ Offene Restpunkte:
 
 # G. Deutsch-v1-Freigabe
 
-**Kanonische Quellen:** `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`, `docs/project/DEUTSCH_WORTREICH_V1.md`, D-20260928-008.
+**Kanonische Quellen:** `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`, `docs/project/DEUTSCH_WORTREICH_V1.md`, D-20260928-008, D-20260929-005.
 
 Diese Sektion ist vor v1.0 verpflichtend. Ein deaktivierter Platzhalter oder reine Dokumentation genügt nicht.
 
@@ -430,13 +430,16 @@ Automatisierter Implementierungsstand v0.21.35: Paket C deckt die untenstehenden
 
 - [x] Deutsch ist als eigenes Fach auswählbar
 - [x] Fachwechsel vermischt keine Lernstände mit Englisch/Latein
+- [ ] erste Klasse-1-Lektion startet mit Groß-/Kleinbuchstaben-Paaren und nicht mit einer Auswahlabfrage
+- [ ] sichtbares Nachfahren geht beim selben Buchstabenpaar in freies Schreiben ohne sichtbare Vorlage über
+- [ ] Groß-/Kleinbuchstaben werden dabei mit einem Laut/Phonemhinweis angeboten; auf iPhone und Android klingt der Laut tatsächlich kindgerecht und nicht wie ein bloßer Buchstabenname
 - [ ] Buchstaben-/Graphemaufgabe funktioniert
-- [ ] Laut–Buchstaben-Zuordnung funktioniert
-- [ ] Nachspuren bzw. geführter Buchstabeneinstieg besitzt einen Übergang zu eigenständiger Produktion
+- [ ] Laut–Buchstaben-Zuordnung funktioniert und die richtige Auswahl steht nicht systematisch an derselben Position
 - [ ] erste Wörter können gelesen/geübt werden
-- [ ] erste Wörter können produktiv geschrieben werden
+- [ ] erste Wörter können produktiv geschrieben werden; vor der Antwort ist die Sollwortform verborgen und nur Audio bietet das Lernwort an
 - [ ] einfache Sätze können geübt werden
 - [ ] deutsche Aufgabentexte und Wörter können dort vorgelesen werden, wo Audio die Lösung nicht vorwegnimmt
+- [ ] sichtbares Abschreiben bleibt klar als freiwillige Übung getrennt und erzeugt keine Rechtschreib-/Mastery-Evidenz
 
 ## G2 – Deutsche Bewertung
 
