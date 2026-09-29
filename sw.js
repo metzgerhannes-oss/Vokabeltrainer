@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='0.21.42';
+const APP_VERSION='0.21.43';
 const RESOURCE_REVISION='1';
 const SHELL_CACHE=`vokabeltrainer-shell-v${APP_VERSION}`;
 const RESOURCE_CACHE=`vokabeltrainer-resources-v${RESOURCE_REVISION}`;
@@ -10,10 +10,10 @@ const LEGACY_CACHE_PREFIX='vokabeltrainer-v';
 const LEGACY_APP_BASES=['/JohannasGartenwelt/vokabeltrainer/'];
 
 const ASSETS=[
-  './','./index.html','./css/app.css?v=0.21.42','./css/menu.css?v=0.21.42','./css/army.css?v=0.21.42','./css/campaign-map.css?v=0.21.42','./css/battle-art.css?v=0.21.42','./css/battle-fortress.css?v=0.21.42','./css/battle-result.css?v=0.21.42','./css/campaign-target.css?v=0.21.42','./js/core.js?v=0.21.42','./js/help.js?v=0.21.42','./js/library.js?v=0.21.42','./js/storage.js?v=0.21.42',
-  './js/builtin-library.js?v=0.21.42','./js/model.js?v=0.21.42','./js/quiz-engine.js?v=0.21.42','./js/learning.js?v=0.21.42','./js/read-aloud-ui.js?v=0.21.42','./js/world-story.js?v=0.21.42','./js/translation.js?v=0.21.42',
-  './js/io.js?v=0.21.42','./js/family-sync.js?v=0.21.42','./js/vendor/qrcode.js?v=0.21.42','./js/qr-ui.js?v=0.21.42',
-  './js/device-pairing.js?v=0.21.42','./js/ui.js?v=0.21.42','./js/german-foundation.js?v=0.21.42','./js/wordrealm-ui.js?v=0.21.42','./js/battle-phaser/battle-phaser-production.js?v=0.21.42','./js/battle-phaser/battle-phaser-scene.js?v=0.21.42','./js/vendor/phaser-4.2.1.esm.min.js?v=0.21.42','./js/menu-ui.js?v=0.21.42','./js/menu-avatar-art.js?v=0.21.42','./js/army-art.js?v=0.21.42','./js/battle-art.js?v=0.21.42','./js/battle-art-ui.js?v=0.21.42','./js/battle-result-ui.js?v=0.21.42','./js/army-ui.js?v=0.21.42','./js/campaign-map.js?v=0.21.42','./js/library-ui.js?v=0.21.42','./js/focus-ui.js?v=0.21.42','./js/parent-docs.js?v=0.21.42','./js/app.js?v=0.21.42','./manifest.webmanifest','./docs/ELTERN_ANLEITUNG.md','./docs/PAEDAGOGISCHE_DOKUMENTATION.md',
+  './','./index.html','./css/app.css?v=0.21.43','./css/menu.css?v=0.21.43','./css/army.css?v=0.21.43','./css/campaign-map.css?v=0.21.43','./css/battle-art.css?v=0.21.43','./css/battle-fortress.css?v=0.21.43','./css/battle-result.css?v=0.21.43','./css/campaign-target.css?v=0.21.43','./js/core.js?v=0.21.43','./js/help.js?v=0.21.43','./js/library.js?v=0.21.43','./js/storage.js?v=0.21.43',
+  './js/builtin-library.js?v=0.21.43','./js/model.js?v=0.21.43','./js/quiz-engine.js?v=0.21.43','./js/learning.js?v=0.21.43','./js/read-aloud-ui.js?v=0.21.43','./js/world-story.js?v=0.21.43','./js/translation.js?v=0.21.43',
+  './js/io.js?v=0.21.43','./js/family-sync.js?v=0.21.43','./js/vendor/qrcode.js?v=0.21.43','./js/qr-ui.js?v=0.21.43',
+  './js/device-pairing.js?v=0.21.43','./js/ui.js?v=0.21.43','./js/german-foundation.js?v=0.21.43','./js/wordrealm-ui.js?v=0.21.43','./js/battle-phaser/battle-phaser-production.js?v=0.21.43','./js/battle-phaser/battle-phaser-scene.js?v=0.21.43','./js/vendor/phaser-4.2.1.esm.min.js?v=0.21.43','./js/menu-ui.js?v=0.21.43','./js/menu-avatar-art.js?v=0.21.43','./js/army-art.js?v=0.21.43','./js/battle-art.js?v=0.21.43','./js/battle-art-ui.js?v=0.21.43','./js/battle-result-ui.js?v=0.21.43','./js/army-ui.js?v=0.21.43','./js/campaign-map.js?v=0.21.43','./js/library-ui.js?v=0.21.43','./js/focus-ui.js?v=0.21.43','./js/parent-docs.js?v=0.21.43','./js/app.js?v=0.21.43','./manifest.webmanifest','./docs/ELTERN_ANLEITUNG.md','./docs/PAEDAGOGISCHE_DOKUMENTATION.md',
   './data/camden-town-1-welcome.tsv','./data/camden-town-1-theme1.tsv',
   './assets/icons/icon-180.png','./assets/icons/icon-192.png','./assets/icons/icon-512.png',
   './assets/audio/phonemes/de/a.m4a','./assets/audio/phonemes/de/b.m4a','./assets/audio/phonemes/de/c.m4a','./assets/audio/phonemes/de/d.m4a','./assets/audio/phonemes/de/e.m4a','./assets/audio/phonemes/de/f.m4a','./assets/audio/phonemes/de/g.m4a','./assets/audio/phonemes/de/h.m4a','./assets/audio/phonemes/de/i.m4a','./assets/audio/phonemes/de/j.m4a','./assets/audio/phonemes/de/k.m4a','./assets/audio/phonemes/de/l.m4a','./assets/audio/phonemes/de/m.m4a','./assets/audio/phonemes/de/n.m4a','./assets/audio/phonemes/de/o.m4a','./assets/audio/phonemes/de/p.m4a','./assets/audio/phonemes/de/q.m4a','./assets/audio/phonemes/de/r.m4a','./assets/audio/phonemes/de/s.m4a','./assets/audio/phonemes/de/t.m4a','./assets/audio/phonemes/de/u.m4a','./assets/audio/phonemes/de/v.m4a','./assets/audio/phonemes/de/w.m4a','./assets/audio/phonemes/de/x.m4a','./assets/audio/phonemes/de/y.m4a','./assets/audio/phonemes/de/z.m4a','./assets/audio/phonemes/de/ae.m4a','./assets/audio/phonemes/de/oe.m4a','./assets/audio/phonemes/de/ue.m4a',
