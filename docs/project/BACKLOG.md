@@ -350,6 +350,8 @@ Umsetzungspaket:
 - Latein erhält zusätzlich zur Legions-/Kampfserie eine zivile mediterrane Abenteuer-/Entdecker-Serie
 - Französisch erhält zusätzlich zu `Voyage Français` eine fiktionale Kampf-/Festungsserie
 - alle Kampfwelten verwenden ausschließlich fiktionale Gegner; keine realen Länder, Völker, Religionen oder historischen Konfliktparteien
+- jede der acht Fachwelten besitzt Opening, sechs aufeinander aufbauende Storykapitel und ein eigenes Jahresfinale; kanonisch in `docs/project/WORLD_STORYLINES_V1.md` / D-20260929-004
+- Storykapitel sind im Abenteuer-Hub, auf der Karte und im Kampfkontext vorlesbar und schreiben keinerlei fachlichen Zustand
 - Browser-/Persistenz-/Family-Sync-Tests sichern Weltwahl, Wechsel ohne Reset und fachliche Neutralität
 
 Abnahme:
