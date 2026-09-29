@@ -9,6 +9,10 @@ const readAloud=read('js/read-aloud-ui.js');
 const foundation=read('js/german-foundation.js');
 const menuCss=read('css/menu.css');
 const appCss=read('css/app.css');
+const ui=read('js/ui.js');
+const storage=read('js/storage.js');
+const menu=read('js/menu-ui.js');
+const avatarArt=read('js/menu-avatar-art.js');
 const decisions=read('docs/project/DECISIONS.md');
 const layout=read('docs/project/DEUTSCH_WORTREICH_LAYOUT_V1.md');
 
@@ -37,9 +41,14 @@ assert(foundation.includes("readButton('Welches Bild passt zum ganzen Satz? Lies
 assert(!foundation.includes("readButton(t.sentence"),'tested sentence is never passed to pre-answer instruction read-aloud');
 assert(menuCss.includes('.wordrealm-stage-strip')&&menuCss.includes('.wordrealm-home-action')&&menuCss.includes('.wordrealm-scenery-svg'),'approved Wortreich home hierarchy is styled');
 assert(appCss.includes('width:44px;height:44px;min-width:44px;min-height:44px'),'read-aloud controls keep 44px touch targets');
-assert(decisions.includes('D-20260929-001')&&layout.includes('Status: **VERBINDLICH FREIGEGEBEN**'),'approved visual/audio decision is canonical in the repository');
+assert(ui.includes('value="neutral"')&&ui.includes('Neutral / Divers'),'profile editor exposes the third m/w/d avatar choice');
+assert(storage.includes("['male','female','neutral'].includes(l.avatarStyle)"),'persistence preserves male, female and neutral avatar styles');
+assert(menu.includes("['male','female','neutral'].includes(learner()?.avatarStyle)"),'home renderer preserves the selected m/w/d avatar style');
+assert(avatarArt.includes('neutral:Object.freeze([])')&&avatarArt.includes("const safeStyle=['male','female','neutral'].includes(style)?style:'male'"),'avatar art layer has a dedicated neutral slot instead of male coercion');
+assert(decisions.includes('D-20260929-003')&&layout.includes('Status: **VERBINDLICH FREIGEGEBEN**'),'approved visual/audio decision is canonical in the repository');
 assert(layout.includes('Ritterlehrling → Ritter → Kronritter → König'),'canonical layout records the approved upper-stage progression');
 assert(layout.includes('Audio darf **nicht** vor der Antwort angeboten werden'),'canonical layout preserves evidence-safe audio');
+assert(layout.includes('**Neutral / Divers**')&&layout.includes('nicht** still auf die männliche Bildserie'),'canonical layout records the m/w/d fallback rule');
 
 console.log('Vokabeltrainer Deutsch Wortreich layout smoke: '+ok.length+' checks passed');
 for(const name of ok)console.log('✓ '+name);

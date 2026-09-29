@@ -47,6 +47,20 @@ try{
   assert(home.speakers>=5&&home.pageReadVisible,'first-grade home exposes visible read-aloud controls');
   assert(home.scrollWidth<=home.clientWidth+1,'approved German home has no horizontal iPhone overflow');
 
+  await page.evaluate(()=>openProfileEditor(learner().id));
+  await page.waitForSelector('input[name="profileAvatarStyle"][value="neutral"]');
+  assert(await page.locator('input[name="profileAvatarStyle"][value="neutral"]').count()===1,'profile editor exposes Neutral / Divers');
+  await page.locator('input[name="profileAvatarStyle"][value="neutral"]').check();
+  await page.locator('#saveProfile').click();
+  await page.waitForFunction(()=>learner()?.avatarStyle==='neutral');
+  await page.evaluate(()=>{renderAll();showView('homeView');window.VTMenuUi?.render?.()});
+  assert(await page.locator('#projectMenuAvatarFrame').getAttribute('data-avatar-style')==='neutral','home keeps the neutral avatar style');
+  await page.evaluate(()=>openProfileEditor(learner().id));
+  await page.waitForSelector('input[name="profileAvatarStyle"][value="neutral"]');
+  assert(await page.locator('input[name="profileAvatarStyle"][value="neutral"]').isChecked(),'neutral avatar choice survives save and reopen');
+  await page.locator('#modal button[value="cancel"]').click();
+  await page.waitForFunction(()=>!document.querySelector('#modal')?.open);
+
   const targets=await page.locator('#homeView .read-aloud-btn:visible').evaluateAll(nodes=>nodes.map(n=>({w:n.getBoundingClientRect().width,h:n.getBoundingClientRect().height})));
   assert(targets.every(x=>x.w>=43&&x.h>=43),'visible read-aloud controls keep touch-safe dimensions');
 

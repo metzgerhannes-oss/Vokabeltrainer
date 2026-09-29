@@ -391,25 +391,24 @@ Die Weltwahl aus D-20260929-001 wird auf **Deutsch** erweitert und technisch zue
 
 Beide Varianten verwenden denselben fachlichen Deutsch-Lernstand und dieselbe kumulative Jahresentwicklung. Die Auswahl verändert weder Literacy-Evidenz, Lernwort-Mastery, Spacing, Testbereitschaft, Tagesziel, Bewertung noch die Zahl der aus einem Tagesziel entstehenden Spielaktionen. Die tägliche Abenteueraktion nutzt deshalb dieselbe Aktionsfreigabe und denselben zugrunde liegenden Fortschrittszustand wie die Kampfaktion, wird aber ohne Battle-Screen und ohne Kampfchoreografie dargestellt.
 
-Ein Wechsel ist in den Profileinstellungen ohne Reset möglich. Bereits erreichte Jahresstufen und Etappenzustände bleiben erhalten. **Bestehende Profile migrieren konservativ zu Kampf/Wortreich**, damit die bisherige Darstellung nicht überraschend verändert wird; bei neu angelegten Profilen wird die Welt ausdrücklich im Profildialog angeboten.
+Ein Wechsel ist in den Profileinstellungen ohne Reset möglich. Bereits erreichte Jahresstufen und Etappenzustände bleiben erhalten. **Bestehende Profile migrieren konservativ zu Kampf/Wortreich**, damit die bisherige Darstellung nicht überraschend verändert wird. Bei neu angelegten Deutsch-Profilen ist eine **bewusste Auswahl** zwischen Abenteuer und Kampf erforderlich.
 
-Der Fuchs bleibt im Lernmodus weiterhin ruhiger Lernbegleiter. In der Abenteuerwelt darf er zusätzlich die sichtbare Spielfigur des separaten Motivationsbereichs sein.
+Der Fuchs bleibt im Lernmodus weiterhin ruhiger Lernbegleiter. In der Abenteuerwelt ist er zusätzlich die sichtbare Spielfigur des separaten Motivationsbereichs.
 
 ### D-20260929-003 – Wortreich-Startlayout, Stufenlaufbahn und Vorlesen sind verbindlich
 **Status:** LOCKED  
-**Quelle:** [DEUTSCH_WORTREICH_LAYOUT_V1.md](DEUTSCH_WORTREICH_LAYOUT_V1.md); [../../VISUAL_DNA.md](../../VISUAL_DNA.md) § 9; D-20260928-008; D-20260929-002
+**Quelle:** [DEUTSCH_WORTREICH_LAYOUT_V1.md](DEUTSCH_WORTREICH_LAYOUT_V1.md); [../../VISUAL_DNA.md](../../VISUAL_DNA.md) § 9; D-20260928-008; D-20260929-002; D-20260927-009
 
-Für die **Kampf-/Wortreich-Variante** von Deutsch wird das am 29.09.2026 freigegebene
-Startlayout verbindlich. Die Fuchsentwicklung lautet:
-**Grundausrüstung → Lederzeug → Ritterlehrling → Ritter → Kronritter → König**.
+Für Deutsch wird das am 29.09.2026 freigegebene Wortreich-Startlayout verbindlich. Die
+Fuchsentwicklung lautet: **Grundausrüstung → Lederzeug → Ritterlehrling → Ritter → Kronritter → König**.
 Die Stufen 3 bis 6 bilden eine direkte Ritterlaufbahn; der König ist die eindeutige Endstufe.
-
-Die Abenteuerwelt übernimmt dieselbe numerische kumulative Jahresstufe, übersetzt sie aber in
-nicht-militärische Fuchspfad-/Entdeckungsetappen. Ein Wechsel der Welt verändert daher keinen
-fachlichen oder langfristigen Fortschritt.
 
 Für Klasse 1 wird Vorlesen als grundlegende Bedienhilfe behandelt. Überschriften, Navigation,
 Aktionskarten und sichere Aufgabenanweisungen erhalten Audio. Audio bleibt vor einer Antwort
 gesperrt, wenn es die erwartete Lösung oder die zu messende Lesekompetenz vorwegnehmen würde.
 Die Vorlesefunktion verändert weder Mastery noch Spacing, Testbereitschaft oder fachliche Bewertung.
+
+Die Profilerstellung berücksichtigt **m/w/d**: Männlich, Weiblich und Neutral/Divers sind
+gleichwertige gespeicherte Avatarvarianten. Fehlende finale Bildassets dürfen nicht zu einem
+stillen Rückfall auf die männliche Serie führen.
 
