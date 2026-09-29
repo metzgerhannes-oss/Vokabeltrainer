@@ -14,7 +14,7 @@
     if(!img||!fallback||!frame||typeof state!=='object'||!state||!state.activeSubject)return;
     const level=Math.max(1,Math.min(6,Number(frame.dataset.avatarStage)||1));
     const isGerman=state.activeSubject==='german',worldMode=typeof learnerWorldMode==='function'?learnerWorldMode(state.activeSubject):'battle',isGermanAdventure=isGerman&&worldMode==='adventure';
-    const style=learner()?.avatarStyle==='female'?'female':'male';
+    const style=['male','female','neutral'].includes(learner()?.avatarStyle)?learner().avatarStyle:'male';
     frame.classList.toggle('german-fox-avatar',isGermanAdventure);
     frame.classList.toggle('german-knight-avatar',isGerman&&!isGermanAdventure);
     const key=`${state.activeSubject}-${worldMode}-${style}-stage-${level}`;
@@ -30,7 +30,7 @@
     }
     window.VTWordrealmUi?.clearHome?.();
     const finalUrl=isGerman?'':(window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'');
-    const armyUrl=isGerman?'':(window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'');
+    const armyUrl=isGerman||style!=='male'?'':(window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'');
     const shield=fallback.querySelector?.('.avatar-shield');if(shield)shield.textContent=isGerman&&!isGermanAdventure?'W':'V';
     const url=finalUrl||armyUrl;
     if(url){
@@ -55,7 +55,7 @@
     if(!frame||typeof avatarStageFor!=='function')return null;
     const stage=avatarStageFor(pct,state.activeSubject);
     frame.dataset.avatarStage=String(stage.level);
-    const style=learner()?.avatarStyle==='female'?'female':'male',worldMode=learnerWorldMode(state.activeSubject);
+    const style=['male','female','neutral'].includes(learner()?.avatarStyle)?learner().avatarStyle:'male',worldMode=learnerWorldMode(state.activeSubject);
     frame.dataset.avatarVisualKey=`${state.activeSubject}-${worldMode}-${style}-stage-${stage.level}`;
     frame.dataset.avatarSubject=state.activeSubject;
     frame.dataset.avatarStyle=style;
