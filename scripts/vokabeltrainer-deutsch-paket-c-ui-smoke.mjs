@@ -80,6 +80,36 @@ try{
   await page.evaluate(()=>{showView('practiceView');renderAll()});
   await page.waitForSelector('#germanFoundationCard:not(.hidden)');
   assert(await page.locator('[data-german-stage]').count()===5,'learning hub exposes all five Klasse-1 stations');
+
+  const freeBefore=await page.evaluate(()=>({foundation:JSON.stringify(window.VTGermanFoundation.progress()),xp:learner().xp,tickets:JSON.stringify(learner().battleTickets),readiness:JSON.stringify(learner().readiness||{}),completed:JSON.stringify(learner().completedKeys||[])}));
+  await page.click('#germanFreeWritingBtn');
+  await page.waitForSelector('.free-writing-selector');
+  await page.click('#freeWritingReset');
+  await page.click('[data-free-form="m"]');
+  assert((await page.locator('#freeWritingSelectionSummary').textContent())==='m','single lowercase letter can be selected');
+  await page.click('[data-free-form="M"]');
+  assert((await page.locator('[data-free-form][aria-pressed="true"]').count())===2,'uppercase and lowercase can be selected together');
+  await page.click('[data-free-form="M"]');
+  for(const form of ['a','e','s'])await page.click('[data-free-form="'+form+'"]');
+  assert((await page.locator('#freeWritingSelectionSummary').textContent())==='a, e, m, s','multiple chosen lowercase letters form the free-practice set');
+  await page.click('#freeWritingStart');
+  await page.waitForSelector('#foundationFreeCanvas');
+  const chosen=await page.evaluate(()=>window.VTGermanFoundation.freeWritingState());
+  assert(JSON.stringify(chosen.forms)===JSON.stringify(['a','e','m','s']),'free-writing tasks contain only the manual selection');
+  const lineatureText=await page.locator('.foundation-lineature-legend').textContent();
+  assert(lineatureText.includes('Dach')&&lineatureText.includes('Erdgeschoss')&&lineatureText.includes('Keller'),'Dach/Erdgeschoss/Keller lineature is explained visibly');
+  const freeBox=await page.locator('#foundationFreeCanvas').boundingBox();
+  assert(!!freeBox,'free-writing canvas is visible on iPhone viewport');
+  await page.mouse.move(freeBox.x+60,freeBox.y+70);await page.mouse.down();await page.mouse.move(freeBox.x+180,freeBox.y+210,{steps:8});await page.mouse.up();
+  assert(await page.locator('#foundationFreeNext').isEnabled(),'finger/stylus stroke enables the next selected letter');
+  await page.click('#foundationFreeNext');
+  const nextChosen=await page.evaluate(()=>window.VTGermanFoundation.freeWritingState());
+  assert(['a','e','m','s'].includes(nextChosen.forms[nextChosen.index%nextChosen.forms.length]),'next free-writing task stays inside selection');
+  await page.click('#foundationFreeSelection');
+  assert((await page.locator('#freeWritingSelectionSummary').textContent())==='a, e, m, s','manual selection stays until changed or reset');
+  const freeAfter=await page.evaluate(()=>({foundation:JSON.stringify(window.VTGermanFoundation.progress()),xp:learner().xp,tickets:JSON.stringify(learner().battleTickets),readiness:JSON.stringify(learner().readiness||{}),completed:JSON.stringify(learner().completedKeys||[]),scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth}));
+  assert(freeBefore.foundation===freeAfter.foundation&&freeBefore.xp===freeAfter.xp&&freeBefore.tickets===freeAfter.tickets&&freeBefore.readiness===freeAfter.readiness&&freeBefore.completed===freeAfter.completed,'free writing creates no mastery, readiness, daily-goal, XP, ticket, or foundation evidence');
+  assert(freeAfter.scrollWidth<=freeAfter.clientWidth+1,'B-018 stays overflow-free on iPhone viewport');
   assert(errors.length===0,'Paket C UI produces no browser errors: '+errors.join(' | '));
   console.log('Vokabeltrainer Deutsch Paket C UI smoke: passed');
 }finally{
