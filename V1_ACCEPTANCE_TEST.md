@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 28.09.2026 · Basis: v0.21.34 · Produktionsbasis; Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
+Stand: 28.09.2026 · Basis: v0.21.35 · Produktionsbasis; Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -425,6 +425,8 @@ Offene Restpunkte:
 Diese Sektion ist vor v1.0 verpflichtend. Ein deaktivierter Platzhalter oder reine Dokumentation genügt nicht.
 
 ## G1 – Fach und Klasse-1-Einstieg
+
+Automatisierter Implementierungsstand v0.21.35: Paket C deckt die untenstehenden Klasse-1-Kernpfade technisch ab; die Checkboxen bleiben bis zur praktischen End-to-End-Abnahme auf realem Gerät bewusst offen.
 
 - [x] Deutsch ist als eigenes Fach auswählbar
 - [x] Fachwechsel vermischt keine Lernstände mit Englisch/Latein
