@@ -65,11 +65,12 @@
   function adventureHeroMarkup(c){
     const stage=typeof avatarStageFor==='function'?avatarStageFor(c.growth.pct,'german'):{level:1,maxLevel:6};
     const stops=['Fuchshain','Buchstabenpfad','Wörterbrücke','Silbenwald','Leseturm','Wortschatz-Horizont'];
-    const stageName=stops[Math.max(0,Math.min(stops.length-1,(Number(stage.level)||1)-1))];
+    const stageNames=window.VTWordrealmUi?.ADVENTURE_STAGES||[],stageName=stageNames[Math.max(0,Math.min(5,(Number(stage.level)||1)-1))]?.label||stops[Math.max(0,Math.min(stops.length-1,(Number(stage.level)||1)-1))];
+    const fox=window.VTWordrealmUi?.adventureFoxSvg?.(stage.level)||'';
     return `<div class="german-adventure-scene">
       <div class="german-adventure-sky" aria-hidden="true"></div>
       <div class="german-adventure-land" aria-hidden="true"></div>
-      <div class="german-adventure-fox" aria-hidden="true">🦊</div>
+      <div class="german-adventure-fox" aria-hidden="true">${fox}</div>
       <div class="german-adventure-copy"><span class="army-kicker">Deutsch · Abenteuer</span><strong>Deine Wortreise</strong><small>Fuchs-Stufe ${safe(stage.level)}/${safe(stage.maxLevel)} · ${safe(stageName)}</small></div>
       <div class="german-adventure-route" aria-label="Fortschritt der Wortreise">${stops.map((name,i)=>`<span class="${i<stage.level?'done':i===stage.level?'next':''}"><b>${i<stage.level?'✓':i+1}</b><small>${safe(name)}</small></span>`).join('')}</div>
     </div>`;
