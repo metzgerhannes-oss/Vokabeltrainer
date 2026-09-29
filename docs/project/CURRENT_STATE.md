@@ -6,11 +6,11 @@ Stand: 29.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.40** (Release-Kandidat; produktiv v0.21.39)
-- aktueller Stand auf `main`: **v0.21.38 / Merge `37996e71dba4a1e432734d678a5843c3359ce22e` / PR #206**
-- jüngster vollständig live-verifizierter Release vor dem laufenden Post-Merge-Check: **v0.21.37 / PR #204**
-- Produktionsnachweis v0.21.37: **PR-CI #1246 success · main-CI #1247 success · GitHub Pages #562 success**
-- aktueller Release-Kandidat: **v0.21.40 – Weltwahl Abenteuer/Kampf + vollständige Storylines für alle Fachwelten auf `feature/all-subject-world-choice-v02140`; PR #210 / CI-Verifikation läuft**
+- App-Version: **v0.21.41** (Release-Kandidat; `main` steht auf v0.21.40)
+- aktueller Stand auf `main`: **v0.21.40 / Merge `1223512dc870184ada08ed6783258664c540c45b` / PR #210**
+- jüngster hier dokumentierte vollständig live-verifizierte Release: **v0.21.39 / PR #208**
+- Produktionsnachweis v0.21.39: **main-CI #36587039257 success · GitHub Pages #36587638196 success**
+- aktueller Release-Kandidat: **v0.21.41 – B-018 Freies Schreiben mit Grundschul-Lineatur und freier Buchstabenauswahl auf `feature/deutsch-free-writing-b018-v02141`; CI-/PR-Verifikation folgt**
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
@@ -58,8 +58,9 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Deutsch Paket E / Wortreich-Phaser-Belagerung | PRODUCTION / LIVE VERIFIED v0.21.37 · PR #204 · CI #1247 · Pages #562 | `docs/project/DEUTSCH_WORTREICH_V1.md`, D-20260928-008, D-20260928-004 |
 | Deutsch Startlayout / Stufen / Vorlesen / m/w/d | PRODUCTION / LIVE VERIFIED v0.21.38 | `docs/project/DEUTSCH_WORTREICH_LAYOUT_V1.md`, D-20260929-003, PR #206 |
 | Deutsch Weltwahl Abenteuer/Kampf | PRODUCTION / CI VERIFIED v0.21.39 | D-20260929-002, B-017, `docs/project/DEUTSCH_WORTREICH_V1.md` |
-| Deutsch Klasse-1-Erstlektion: Groß/Klein nachfahren → nur nach Laut selbst schreiben | IMPLEMENTED im v0.21.40-Release-Kandidaten; Praxisabnahme Lautqualität bleibt offen | D-20260929-005, B-001, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md` § 6 |
-| Fachübergreifende Weltwahl Abenteuer/Kampf + 8 vollständige Storylines | IMPLEMENTED im v0.21.40-Release-Kandidaten; Englisch/Latein aktiv, Deutsch integriert, Französisch-Welten vorbereitet bis Fachfreischaltung B-003; CI läuft | D-20260929-001, D-20260929-004, B-017, `docs/project/WORLD_STORYLINES_V1.md` |
+| Deutsch Klasse-1-Erstlektion: Groß/Klein nachfahren → nur nach Laut selbst schreiben | MERGED / PR-CI VERIFIED v0.21.40 · PR #210 · CI #1321; Praxisabnahme Lautqualität bleibt offen | D-20260929-005, B-001, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md` § 6 |
+| Fachübergreifende Weltwahl Abenteuer/Kampf + 8 vollständige Storylines | MERGED / PR-CI VERIFIED v0.21.40 · PR #210 · CI #1321; Englisch/Latein aktiv, Deutsch integriert, Französisch-Welten vorbereitet bis Fachfreischaltung B-003 | D-20260929-001, D-20260929-004, B-017, `docs/project/WORLD_STORYLINES_V1.md` |
+| B-018 Freies Schreiben / Grundschul-Lineatur / freie Buchstabenauswahl | IMPLEMENTED v0.21.41 auf Feature-Branch; statischer + WebKit-CI-Gate integriert, Verifikation ausstehend | B-018, `V1_ACCEPTANCE_TEST.md` |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 
 ## Offene Verifikationsgrenzen
