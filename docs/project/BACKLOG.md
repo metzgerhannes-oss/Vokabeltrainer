@@ -29,8 +29,9 @@ Verbindliche Leitlinien:
 
 **Paket A – Produkt-/Architekturverankerung:** IMPLEMENTED.  
 **Paket B – Fachgrundgerüst:** PRODUCTION / CI VERIFIED v0.21.34 (PR #201, main-CI #1233, Pages #559).  
-**Paket C – Klasse-1-Kern:** IMPLEMENTED im Release-Kandidaten v0.21.35; CI-/Browser-Verifikation läuft.  
-**Pakete D–F:** Lernwörter/Rechtschreibung, vollständiger Wortreich-Battle und v1-Abnahme folgen.
+**Paket C – Klasse-1-Kern:** PRODUCTION / LIVE VERIFIED v0.21.35 (PR #202, PR-CI #1235, main-CI #1236, Pages #560).  
+**Paket D – Lernwörter/Rechtschreibung:** IMPLEMENTED im Release-Kandidaten v0.21.36; CI-/Browser-Verifikation läuft.  
+**Pakete E–F:** vollständiger Wortreich-Battle und v1-Abnahme folgen.
 
 ## B-002 – Eigene finale Latein-Grafikserie
 **Status:** APPROVED_BACKLOG  
