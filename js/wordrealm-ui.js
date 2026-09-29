@@ -10,6 +10,15 @@
     {level:6,label:'König'}
   ]);
 
+  const ADVENTURE_STAGES=Object.freeze([
+    {level:1,label:'Wegstarter'},
+    {level:2,label:'Spurensucher'},
+    {level:3,label:'Pfadfinder'},
+    {level:4,label:'Wortentdecker'},
+    {level:5,label:'Wissensreisender'},
+    {level:6,label:'Meisterentdecker'}
+  ]);
+
   function foxSvg(stage=1,opts={}){
     const level=Math.max(1,Math.min(6,Number(stage)||1));
     const mini=!!opts.mini;
@@ -53,6 +62,29 @@
     if(king){
       parts.push('<g transform="translate(0 -4)"><path d="M84 39l11 11 13-21 14 21 12-11 6 30H78z" fill="#f6c84b" stroke="#8a5b16" stroke-width="3"/><circle cx="95" cy="49" r="3" fill="#8b5cf6"/><circle cx="121" cy="49" r="3" fill="#c43f5e"/></g>');
     }
+    parts.push('</svg>');
+    return parts.join('');
+  }
+
+  function adventureFoxSvg(stage=1,opts={}){
+    const level=Math.max(1,Math.min(6,Number(stage)||1)),mini=!!opts.mini,parts=[];
+    const fur='url(#adv-fur-'+level+')',cream='url(#adv-cream-'+level+')';
+    parts.push('<svg class="wordrealm-fox-svg adventure '+(mini?'mini':'')+'" viewBox="0 0 220 255" role="img" aria-label="'+ADVENTURE_STAGES[level-1].label+'">');
+    parts.push('<defs><linearGradient id="adv-fur-'+level+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f58a2e"/><stop offset="1" stop-color="#c95722"/></linearGradient><linearGradient id="adv-cream-'+level+'" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff1cf"/><stop offset="1" stop-color="#e8cfa3"/></linearGradient></defs>');
+    parts.push('<ellipse cx="109" cy="231" rx="66" ry="13" fill="rgba(56,67,38,.15)"/>');
+    if(level>=5)parts.push('<path d="M68 126q-18 36-20 88 29 17 47-2l3-73z" fill="'+(level>=6?'#355f46':'#597953')+'" stroke="#314b36" stroke-width="4"/>');
+    parts.push('<path d="M72 190q-37 5-47-28 14-21 38-5 18 12 24 31z" fill="'+fur+'" stroke="#9c3f1d" stroke-width="4"/><path d="M31 163q13-11 31-3-8 13-24 18z" fill="'+cream+'"/>');
+    parts.push('<path d="M78 181q-7 31 4 48h22l5-43zM137 181q7 31-4 48h-22l-5-43z" fill="#68432e" stroke="#493024" stroke-width="4"/>');
+    parts.push('<path d="M76 113q31-22 63 0l2 78q-30 24-67 0z" fill="'+fur+'" stroke="#a13f1b" stroke-width="4"/>');
+    parts.push('<path d="M72 118q35 17 70 0" fill="none" stroke="'+(level>=5?'#3f704e':'#a41f29')+'" stroke-width="14" stroke-linecap="round"/><path d="M77 119q-10 12-16 30" fill="none" stroke="'+(level>=5?'#5d8b61':'#d33a46')+'" stroke-width="11" stroke-linecap="round"/>');
+    parts.push('<path d="M64 73L80 33l22 31zM118 64l22-31 13 42z" fill="'+fur+'" stroke="#9c3f1d" stroke-width="4"/><path d="M74 64l8-20 12 17zM126 59l13-17 7 23z" fill="#f5c7a2"/>');
+    parts.push('<path d="M67 69q42-31 84 2l-5 50q-38 31-77 0z" fill="'+fur+'" stroke="#9c3f1d" stroke-width="4"/>');
+    parts.push('<path d="M76 98q13-21 31-4 16-17 32 4-2 27-31 31-29-4-32-31z" fill="'+cream+'"/><ellipse cx="92" cy="87" rx="8" ry="11" fill="#281d18"/><ellipse cx="125" cy="87" rx="8" ry="11" fill="#281d18"/><circle cx="95" cy="83" r="2.7" fill="#fff"/><circle cx="128" cy="83" r="2.7" fill="#fff"/><path d="M102 101q7-7 14 0-2 8-7 8t-7-8z" fill="#33231b"/><path d="M97 112q12 12 24 0" fill="none" stroke="#6f3827" stroke-width="3" stroke-linecap="round"/>');
+    if(level>=2)parts.push('<path d="M80 129q31 25 58 56" fill="none" stroke="#765238" stroke-width="8" stroke-linecap="round"/><rect x="125" y="167" width="35" height="31" rx="7" fill="#9b7047" stroke="#65462f" stroke-width="4"/><path d="M131 174h23" stroke="#d3b07b" stroke-width="4"/>');
+    if(level>=3)parts.push('<circle cx="107" cy="147" r="13" fill="#e0b84d" stroke="#795c24" stroke-width="4"/><path d="M107 137l4 9-4 10-4-10z" fill="#355f46"/><circle cx="107" cy="147" r="3" fill="#fff0b0"/>');
+    if(level>=4)parts.push('<g transform="translate(145 130) rotate(8)"><rect width="34" height="55" rx="5" fill="#f2dfad" stroke="#8d7048" stroke-width="4"/><path d="M8 13h19M8 22h15M8 31h18M8 40h12" stroke="#7a9b66" stroke-width="3"/><circle cx="27" cy="7" r="5" fill="#c87946"/></g>');
+    if(level>=5)parts.push('<path d="M70 132q-12 29-7 62" fill="none" stroke="#355f46" stroke-width="7"/><path d="M143 132q12 29 7 62" fill="none" stroke="#355f46" stroke-width="7"/>');
+    if(level>=6)parts.push('<g transform="translate(105 58)"><circle cx="0" cy="0" r="16" fill="#f1c34e" stroke="#77591b" stroke-width="4"/><path d="M0-10l4 7 8 2-6 6 1 8-7-4-7 4 1-8-6-6 8-2z" fill="#fff1b5"/></g><path d="M84 121q23-16 47 0" fill="none" stroke="#e6bf55" stroke-width="5"/>');
     parts.push('</svg>');
     return parts.join('');
   }
@@ -103,5 +135,5 @@
     brand?.classList.add('hidden');
   }
 
-  window.VTWordrealmUi={STAGES,foxSvg,castleSvg,stageStrip,renderHome,clearHome};
+  window.VTWordrealmUi={STAGES,ADVENTURE_STAGES,foxSvg,adventureFoxSvg,castleSvg,stageStrip,renderHome,clearHome};
 })();
