@@ -85,13 +85,17 @@ try{
       renderKey:frame?.dataset.avatarRenderKey||'',
       adventureFox:fallback?.querySelector('.wordrealm-fox-svg.adventure')?.getAttribute('aria-label')||'',
       battleFox:!!fallback?.querySelector('.wordrealm-fox-svg:not(.adventure)'),
-      premium:!!fallback?.classList.contains('adventure-svg-avatar')
+      premium:!!fallback?.classList.contains('adventure-svg-avatar'),
+      scenery:document.querySelectorAll('#projectMenuScenery .german-adventure-scenery-svg').length,
+      stageLabel:document.querySelector('#menuAvatarNextStage')?.textContent||''
     };
   });
   assert(home.mode==='adventure','profile saves adventure mode');
   assert(home.fox,'adventure mode uses the fox avatar');
   assert(home.renderKey.includes('german-adventure-')&&home.renderKey!==initial.renderKey,'world switch creates a distinct adventure avatar render key');
   assert(home.adventureFox&&!home.battleFox&&home.premium,'adventure switch replaces the Wortreich surface with the premium explorer fox');
+  assert(home.scenery===1,'German adventure home renders the dedicated Fuchswelt learning-path scenery');
+  assert(home.stageLabel.includes('Wegstarter'),'German adventure home uses the adventure progression label instead of battle equipment');
   assert(home.nav.includes('Abenteuer'),'child navigation names the adventure world');
   assert(home.mastery===initial.mastery&&home.growth===initial.growth,'switching to adventure preserves academic and yearly progress');
 
