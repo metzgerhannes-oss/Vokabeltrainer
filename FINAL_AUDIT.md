@@ -1,10 +1,11 @@
 # Finales Audit
 
-Stand: 29.09.2026 · App v0.21.35
+Stand: 29.09.2026 · App v0.21.36
 
 ## Ergebnis
 
-- v0.21.35 ist der Release-Kandidat für **Deutsch Paket C**: Der Klasse-1-Kern ergänzt Buchstabenerkennung, Laut–Buchstaben-Zuordnung, Finger-/Stift-Nachspuren, reduzierte Führung, freie Buchstabenproduktion, erste Wörter und einfache Sätze. Handschriftspraxis wird ohne Handschrift-OCR bewusst nicht automatisch als richtig/falsch bewertet. Der Grundlagenfortschritt ist getrennt von XP, Battle-Tickets und Lernwort-Mastery und wird über Family Sync übertragen. Produktionsnachweis folgt erst nach Merge und Live-Verifikation.
+- v0.21.36 ist der Release-Kandidat für **Deutsch Paket D**: Lernwörter erhalten optional Silben, Wortstamm, Wortfamilie und Rechtschreibfokus. Das Deutsch-Fehlerprofil trennt Groß-/Kleinschreibung, Buchstabenfolge, Wortstruktur und Satzkontext und steuert gezielte Folgeübungen. Die Einordnung bleibt nicht-diagnostisch; Elternprüfung neutralisiert auch dieses Profil. Produktionsnachweis folgt erst nach Merge und Live-Verifikation.
+- v0.21.35 / PR #202 ist produktiv und durch PR-CI #1235, main-CI #1236 sowie GitHub Pages #560 bestätigt: Der Klasse-1-Kern ergänzt Buchstabenerkennung, Laut–Buchstaben-Zuordnung, Finger-/Stift-Nachspuren, reduzierte Führung, freie Buchstabenproduktion, erste Wörter und einfache Sätze. Handschriftspraxis wird ohne Handschrift-OCR bewusst nicht automatisch als richtig/falsch bewertet. Der Grundlagenfortschritt ist getrennt von XP, Battle-Tickets und Lernwort-Mastery und wird über Family Sync übertragen. Produktionsnachweis: PR #202, PR-CI #1235, main-CI #1236 und Pages #560 erfolgreich.
 - v0.21.34 / PR #201 ist produktiv und durch PR-CI #1232, main-CI #1233 sowie GitHub Pages #559 bestätigt: Deutsch-Fachgrundgerüst, Fuchs-Lernwelt und Wortreich-Grundgerüst.
 - v0.21.33 ergänzt das neutrale Verschieben einer Vokabel ans Ende derselben laufenden Abfrage. Der Skip erzeugt keinerlei fachliche oder spielerische Wertung. Zusätzlich werden strittige Tagesversuche so gehärtet, dass ein offener Elternprüffall das Tagesziel nicht blockiert, ohne vorzeitig fachliche Evidenz zu erzeugen. Produktionsnachweis: PR #194 gemergt, main-CI #1193 grün, GitHub Pages #554 inklusive Live-Verifikation erfolgreich.
 - v0.21.31 führt einen fachlichen Einspruchsweg für möglicherweise systemseitig falsche Bewertungen ein. Gemeldete Versuche werden bis zur Elternentscheidung vollständig neutralisiert; Eltern können lokale Antwortvarianten freigeben, die Vokabel korrigieren oder die Systembewertung bestätigen. Offene Prüffälle werden über Family Sync übertragen. Produktionsnachweis: PR #192 gemergt, main-CI #1185 grün, GitHub Pages #553 inklusive Live-Verifikation erfolgreich.
