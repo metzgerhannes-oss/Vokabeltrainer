@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 28.09.2026 · Basis: v0.21.37 · Produktionsbasis; Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
+Stand: 28.09.2026 · Basis: v0.21.38 · Produktionsbasis; Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -452,6 +452,8 @@ Automatisierter Implementierungsstand v0.21.36: Paket D ergänzt differenzierte 
 - [ ] „Bewertung prüfen lassen“ neutralisiert einen strittigen Versuch auch in Deutsch
 - [ ] Elternentscheidung kann Variante freigeben, Sollinhalt korrigieren oder Systembewertung bestätigen
 - [ ] „Vokabel überspringen“ verschiebt auch in Deutsch nur ans Ende derselben Session und bleibt neutral
+
+Automatisierter Layoutstand v0.21.38: Der Deutsch-Startscreen verwendet die freigegebene Stufenlaufbahn **Grundausrüstung → Lederzeug → Ritterlehrling → Ritter → Kronritter → König**. Sichtbare Vorlese-Controls decken Navigation und sichere Klasse-1-Anweisungen ab; Audio, das Lösung oder zu prüfende Leseevidenz vorwegnehmen würde, bleibt ausgeschlossen.
 
 ## G3 – Das Wortreich
 
