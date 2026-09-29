@@ -4525,3 +4525,28 @@ html[data-subject="german"] #learnView .german-literacy-card .secondary{border-c
 .german-sentence-prompt{font-size:clamp(28px,7vw,52px)}
 @media(max-width:760px){.german-foundation-stages{grid-template-columns:1fr 1fr}.german-foundation-stage:last-child{grid-column:1/-1}}
 @media(max-width:520px){.german-foundation-head{grid-template-columns:1fr}.german-foundation-progress{grid-template-columns:auto auto;justify-content:start;gap:8px;width:max-content}.german-foundation-stages{grid-template-columns:1fr}.german-foundation-stage:last-child{grid-column:auto}.foundation-trace-canvas{height:240px}}
+
+
+/* v0.21.38 – sichtbare Vorlesefunktion für Deutsch / Klasse 1 */
+.read-aloud-btn{
+  display:inline-grid;place-items:center;flex:0 0 auto;width:38px;height:38px;min-width:38px;min-height:38px;padding:0;
+  border:2px solid #fff;border-radius:50%;background:linear-gradient(145deg,#8b5cf6,#6436b5);color:#fff;
+  box-shadow:0 4px 10px rgba(88,55,150,.24);font-size:1rem;line-height:1
+}
+.read-aloud-btn.compact{width:32px;height:32px;min-width:32px;min-height:32px;font-size:.82rem}
+.read-aloud-btn:hover,.read-aloud-btn:focus-visible{filter:brightness(1.05);transform:translateY(-1px)}
+.read-aloud-speaking .read-aloud-btn{box-shadow:0 0 0 4px rgba(139,92,246,.18),0 4px 10px rgba(88,55,150,.24)}
+.german-page-read{
+  position:fixed;right:max(14px,env(safe-area-inset-right));bottom:92px;z-index:48;
+  display:flex;align-items:center;gap:7px;min-height:46px;padding:8px 13px;border:2px solid #fff;border-radius:999px;
+  background:linear-gradient(145deg,#8250d2,#5d2faa);color:#fff;box-shadow:0 9px 22px rgba(70,39,123,.30);font-weight:900
+}
+.german-page-read span{font-size:1.05rem}.german-page-read b{font-size:.78rem}
+.german-page-read.hidden{display:none!important}
+@media(max-width:620px){
+  .german-page-read{right:12px;bottom:82px;padding:8px 10px}
+  .german-page-read b{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .read-aloud-btn:hover,.read-aloud-btn:focus-visible{transform:none}
+}
