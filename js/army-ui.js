@@ -369,9 +369,11 @@
     }
     const battle=document.querySelector('#armyBattleBtn');
     if(battle){
-      battle.classList.toggle('hidden',germanAdventure);
-      battle.disabled=germanAdventure||!c.mission;
-      battle.textContent=!c.mission?'Kein Test geplant':c.tickets>0?(c.mission.capturedAt?'Sicherung bereit':state.activeSubject==='german'?'Belagerung bereit':'Angriff bereit'):(c.mission.capturedAt?state.activeSubject==='german'?'Eroberte Burg ansehen':'Eroberte Festung ansehen':state.activeSubject==='german'?'Burg ansehen':'Festung ansehen');
+      battle.classList.remove('hidden');
+      battle.disabled=!c.mission;
+      battle.textContent=germanAdventure
+        ?(!c.mission?'Kein Lernziel geplant':c.tickets>0?(c.mission.capturedAt?'Etappe festigen':'Abenteuer fortsetzen'):(c.mission.capturedAt?'Etappe ansehen':'Nach Tagesziel verfügbar'))
+        :(!c.mission?'Kein Test geplant':c.tickets>0?(c.mission.capturedAt?'Sicherung bereit':state.activeSubject==='german'?'Belagerung bereit':'Angriff bereit'):(c.mission.capturedAt?state.activeSubject==='german'?'Eroberte Burg ansehen':'Eroberte Festung ansehen':state.activeSubject==='german'?'Burg ansehen':'Festung ansehen'));
     }
     applyArmyArt();
   }
@@ -413,7 +415,7 @@
   function bind(){
     document.querySelector('#armyBtn')?.addEventListener('click',open);
     document.querySelector('#armyBackBtn')?.addEventListener('click',()=>{if(window.VTMenuUi?.openHome)window.VTMenuUi.openHome();else showView('homeView')});
-    document.querySelector('#armyBattleBtn')?.addEventListener('click',()=>{if(typeof openBattleView==='function')openBattleView()});
+    document.querySelector('#armyBattleBtn')?.addEventListener('click',()=>{if(isGermanAdventure()&&typeof openGermanAdventureAction==='function'){openGermanAdventureAction();return}if(typeof openBattleView==='function')openBattleView()});
     document.querySelector('#armyUnitBattleBtn')?.addEventListener('click',()=>{if(typeof openBattleView==='function')openBattleView()});
     document.querySelector('#armyUnitBackBtn')?.addEventListener('click',()=>{render();showView('armyView')});
     document.querySelector('#armyUpgradeFocusBtn')?.addEventListener('click',focusNextUpgrade);
