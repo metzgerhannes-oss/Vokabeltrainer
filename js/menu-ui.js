@@ -9,7 +9,7 @@
 
   function resetAvatarSurface(img,fallback,frame){
     window.VTWordrealmUi?.clearHome?.();
-    frame.classList.remove('wordrealm-rendered','german-fox-avatar','german-knight-avatar','world-adventure-avatar','world-battle-avatar');
+    frame.classList.remove('wordrealm-rendered','adventure-rendered','german-fox-avatar','german-knight-avatar','world-adventure-avatar','world-battle-avatar');
     frame.removeAttribute('data-avatar-render-key');
     img.removeAttribute('src');
     img.removeAttribute('data-avatar-final');
@@ -44,6 +44,7 @@
     if(isGerman&&adventure){
       fallback.innerHTML=window.VTWordrealmUi?.adventureFoxSvg?.(level)||'<span class="avatar-head"></span><span class="avatar-body"></span><span class="avatar-shield">⌖</span>';
       fallback.classList.add('wordrealm-svg-avatar','adventure-svg-avatar');
+      window.VTWordrealmUi?.renderAdventureHome?.(level);
       frame.dataset.avatarRenderKey=key;
     }
     const finalUrl=adventure||isGerman?'':(window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'');
@@ -70,9 +71,14 @@
     const pips=document.querySelector('#menuAvatarStagePips');
     const next=document.querySelector('#menuAvatarNextStage');
     if(!frame||typeof avatarStageFor!=='function')return null;
-    const stage=avatarStageFor(pct,state.activeSubject);
+    let stage=avatarStageFor(pct,state.activeSubject);
+    const worldMode=learnerWorldMode(state.activeSubject);
+    if(state.activeSubject==='german'&&worldMode==='adventure'){
+      const adventureStage=window.VTWordrealmUi?.ADVENTURE_STAGES?.[Math.max(0,(Number(stage.level)||1)-1)];
+      if(adventureStage)stage={...stage,label:adventureStage.label,rank:adventureStage.label};
+    }
     frame.dataset.avatarStage=String(stage.level);
-    const style=['male','female','neutral'].includes(learner()?.avatarStyle)?learner().avatarStyle:'male',worldMode=learnerWorldMode(state.activeSubject);
+    const style=['male','female','neutral'].includes(learner()?.avatarStyle)?learner().avatarStyle:'male';
     frame.dataset.avatarVisualKey=`${state.activeSubject}-${worldMode}-${style}-stage-${stage.level}`;
     frame.dataset.avatarSubject=state.activeSubject;
     frame.dataset.avatarStyle=style;
