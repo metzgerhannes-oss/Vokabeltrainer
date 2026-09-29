@@ -35,6 +35,7 @@ try{
   let box=await page.locator('#foundationTraceCanvas').boundingBox();
   assert(!!box,'tracing canvas is visible');
   assert(await page.locator('.foundation-letter-pair').count()===1,'guided phase visibly shows Groß- und Kleinbuchstaben');
+  assert(await page.locator('.foundation-lineature-legend').count()===0,'guided handwriting has no extra l/m/g legend cards');
   await page.mouse.move(box.x+70,box.y+90);
   await page.mouse.down();
   await page.mouse.move(box.x+250,box.y+220,{steps:8});
@@ -96,8 +97,11 @@ try{
   await page.waitForSelector('#foundationFreeCanvas');
   const chosen=await page.evaluate(()=>window.VTGermanFoundation.freeWritingState());
   assert(JSON.stringify(chosen.forms)===JSON.stringify(['a','e','m','s']),'free-writing tasks contain only the manual selection');
-  const lineatureText=await page.locator('.foundation-lineature-legend').textContent();
-  assert(lineatureText.includes('Dach')&&lineatureText.includes('Erdgeschoss')&&lineatureText.includes('Keller'),'Dach/Erdgeschoss/Keller lineature is explained visibly');
+  assert(await page.locator('.foundation-lineature-legend').count()===0,'no misleading l/m/g explanation cards appear below the selected letter');
+  const freeCanvasLabel=await page.locator('#foundationFreeCanvas').getAttribute('aria-label');
+  assert(freeCanvasLabel.includes('Dachgeschoss')&&freeCanvasLabel.includes('Erdgeschoss')&&freeCanvasLabel.includes('Keller'),'writing canvas keeps the three school-lineature zones');
+  const phonemePath=await page.evaluate(()=>window.VTGermanFoundation.phonemeAudioPath('M'));
+  assert(phonemePath==='assets/audio/phonemes/de/m.m4a','German letter sound resolves to local phoneme audio instead of TTS');
   const freeBox=await page.locator('#foundationFreeCanvas').boundingBox();
   assert(!!freeBox,'free-writing canvas is visible on iPhone viewport');
   await page.mouse.move(freeBox.x+60,freeBox.y+70);await page.mouse.down();await page.mouse.move(freeBox.x+180,freeBox.y+210,{steps:8});await page.mouse.up();
