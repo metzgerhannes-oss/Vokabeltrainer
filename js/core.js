@@ -344,7 +344,7 @@ function wordViewForLink(link,s=state){
     if(PROGRESS_FIELDS.has(prop)||prop in p){p[prop]=value;return true;}
     if(prop==='term'){link.termOverride=String(value||'');return true;}if(prop==='translation'){link.translationOverride=String(value||'');return true;}if(prop==='extra'){link.extraOverride=String(value||'');return true;}if(prop==='example'){link.exampleOverride=String(value||'');return true;}
     if(prop==='mnemonic'){v.mnemonic=String(value||'');return true;}if(prop==='chunks'){v.chunks=Array.isArray(value)?value:[];return true;}if(prop==='syllables'){v.syllables=Array.isArray(value)?value:[];return true;}if(prop==='wordStem'){v.wordStem=String(value||'');return true;}if(prop==='wordFamily'){v.wordFamily=Array.isArray(value)?value:[];return true;}if(prop==='orthographyHint'){v.orthographyHint=String(value||'');return true;}return false;
-  },ownKeys:()=>[...new Set(['id','setId','setLinkId','vocabId','senseId','learnerId','subject','term','translation','extra','example','mnemonic','chunks','acceptedTerms','acceptedTranslations',...Object.keys(p),...Object.keys(link),...Object.keys(sense),...Object.keys(v)])],getOwnPropertyDescriptor:()=>({enumerable:true,configurable:true})});
+  },ownKeys:()=>[...new Set(['id','setId','setLinkId','vocabId','senseId','learnerId','subject','term','translation','extra','example','mnemonic','chunks','syllables','wordStem','wordFamily','orthographyHint','acceptedTerms','acceptedTranslations',...Object.keys(p),...Object.keys(link),...Object.keys(sense),...Object.keys(v)])],getOwnPropertyDescriptor:()=>({enumerable:true,configurable:true})});
 }
 function attachRuntimeWordApi(s){
   rebuildWordIndexes(s);
