@@ -48,7 +48,7 @@
       frame.dataset.avatarRenderKey=key;
     }
     const finalUrl=adventure||isGerman?'':(window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'');
-    const armyUrl=adventure||isGerman||style!=='male'?'':(window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'');
+    const armyUrl=adventure||isGerman||state.activeSubject!=='english'||style!=='male'?'':(window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'');
     const shield=fallback.querySelector?.('.avatar-shield');if(shield)shield.textContent=adventure?'⌖':isGerman?'W':'V';
     const url=finalUrl||armyUrl;
     if(url){
