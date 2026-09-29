@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 29.09.2026 · Basis: v0.21.39 · Release-Kandidat; Prüfschwerpunkt: Deutsch-Weltwahl, m/w/d, Vorlesen und unveränderte Lernlogik
+Stand: 29.09.2026 · Basis: v0.21.40 · Release-Kandidat; Prüfschwerpunkt: Deutsch-Weltwahl, m/w/d, Vorlesen und unveränderte Lernlogik
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -420,7 +420,7 @@ Offene Restpunkte:
 
 # G. Deutsch-v1-Freigabe
 
-**Kanonische Quellen:** `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`, `docs/project/DEUTSCH_WORTREICH_V1.md`, D-20260928-008.
+**Kanonische Quellen:** `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`, `docs/project/DEUTSCH_WORTREICH_V1.md`, D-20260928-008, D-20260929-005.
 
 Diese Sektion ist vor v1.0 verpflichtend. Ein deaktivierter Platzhalter oder reine Dokumentation genügt nicht.
 
@@ -430,13 +430,16 @@ Automatisierter Implementierungsstand v0.21.35: Paket C deckt die untenstehenden
 
 - [x] Deutsch ist als eigenes Fach auswählbar
 - [x] Fachwechsel vermischt keine Lernstände mit Englisch/Latein
+- [ ] erste Klasse-1-Lektion startet mit Groß-/Kleinbuchstaben-Paaren und nicht mit einer Auswahlabfrage
+- [ ] sichtbares Nachfahren geht beim selben Buchstabenpaar in freies Schreiben ohne sichtbare Vorlage über
+- [ ] Groß-/Kleinbuchstaben werden dabei mit einem Laut/Phonemhinweis angeboten; auf iPhone und Android klingt der Laut tatsächlich kindgerecht und nicht wie ein bloßer Buchstabenname
 - [ ] Buchstaben-/Graphemaufgabe funktioniert
-- [ ] Laut–Buchstaben-Zuordnung funktioniert
-- [ ] Nachspuren bzw. geführter Buchstabeneinstieg besitzt einen Übergang zu eigenständiger Produktion
+- [ ] Laut–Buchstaben-Zuordnung funktioniert und die richtige Auswahl steht nicht systematisch an derselben Position
 - [ ] erste Wörter können gelesen/geübt werden
-- [ ] erste Wörter können produktiv geschrieben werden
+- [ ] erste Wörter können produktiv geschrieben werden; vor der Antwort ist die Sollwortform verborgen und nur Audio bietet das Lernwort an
 - [ ] einfache Sätze können geübt werden
 - [ ] deutsche Aufgabentexte und Wörter können dort vorgelesen werden, wo Audio die Lösung nicht vorwegnimmt
+- [ ] sichtbares Abschreiben bleibt klar als freiwillige Übung getrennt und erzeugt keine Rechtschreib-/Mastery-Evidenz
 
 ## G2 – Deutsche Bewertung
 
@@ -487,6 +490,11 @@ Verständlichkeit auf echtem Gerät bleibt separat abzunehmen.
 - [ ] Abenteuer und Kampf verbrauchen höchstens dieselbe eine Tages-Spielaktion
 - [ ] Family Sync überträgt Weltwahl und Neutral/Divers zwischen Eltern- und Kindergerät
 - [ ] Rückwechsel auf Wortreich stellt die Kampfpräsentation ohne Lernstandsverlust wieder her
+- [ ] jede gewählte Welt zeigt eine nachvollziehbare Story vom Opening über sechs Kapitel bis zum Finale
+- [ ] Storykapitel auf Hub/Karte/Kampf stimmen mit derselben Welt und Stufe überein
+- [ ] Storytexte sind vorlesbar
+- [ ] Weltwechsel bildet dieselbe Stufe auf das entsprechende Kapitel der Partnerwelt ab
+- [ ] keine Kampfstory verwendet reale Länder, Völker, Religionen oder historische Konfliktparteien als Gegner
 
 ## G4 – Plattform / Release
 
@@ -498,3 +506,16 @@ Verständlichkeit auf echtem Gerät bleibt separat abzunehmen.
 - [ ] reale Kind-/Eltern-End-to-End-Abnahme für Deutsch durchgeführt
 
 **Release-Regel:** Die fachlichen Punkte aus G1/G2 sowie mindestens ein funktionsfähiger Wortreich-Kampf aus G3 sind vor v1.0 verpflichtend. Eine Rückwirkung der Spielwelt auf fachliche Lernwerte ist ein Release-Blocker.
+
+
+## H – Fachübergreifende Weltwahl Abenteuer / Kampf
+
+Automatisierter Implementierungsstand v0.21.40: Englisch, Latein und Deutsch können pro aktivem Fach zwischen Abenteuer und Kampf wechseln; die vorbereitete Französisch-Architektur besitzt Voyage Français und eine fiktionale Gefährten-/Festungswelt. Französisch bleibt bis B-003 fachlich gesperrt.
+
+- [ ] Englisch: Expedition und Kampf/Feldzug sind klar unterscheidbar
+- [ ] Latein: zivile Entdeckungsreise und Legion/Kastelle sind klar unterscheidbar
+- [ ] Französisch nach Fachfreischaltung: Voyage Français und fiktionale Kampfwelt sind klar unterscheidbar
+- [ ] neue Profile verlangen für jedes aktive Fach eine bewusste Weltwahl
+- [ ] Weltwechsel erhalten Mastery, Spacing, Testbereitschaft, Tagesziel und Jahresstufe
+- [ ] Abenteueraktionen öffnen keinen Battle-Screen und verbrauchen höchstens dieselbe eine Tagesaktion
+- [ ] Kampfvarianten verwenden nur fiktionale Gegner

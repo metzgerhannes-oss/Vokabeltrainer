@@ -41,12 +41,17 @@ const checks=vm.runInContext(`
 })()
 `,context,{filename:'deutsch-package-b-smoke'});
 
-const html=fs.readFileSync('index.html','utf8'),css=fs.readFileSync('css/app.css','utf8'),ui=fs.readFileSync('js/ui.js','utf8');
+const html=fs.readFileSync('index.html','utf8'),css=fs.readFileSync('css/app.css','utf8'),ui=fs.readFileSync('js/ui.js','utf8'),foundation=fs.readFileSync('js/german-foundation.js','utf8'),learning=fs.readFileSync('js/learning.js','utf8');
 const staticChecks=[
   [html.includes('id="germanLearningPath"')&&html.includes('german-fox')&&html.includes('wood-sword'),'German learning hub has fox and wooden-sword motifs'],
   [css.includes('.german-learning-path')&&css.includes('.wood-sword'),'German learning visuals are styled without battle coupling'],
   [ui.includes("theme:'wordrealm'")&&ui.includes("unitLabel:'Ritterheer'")&&ui.includes("targetLabel:'BURG'"),'Wortreich keeps the knight/castle presentation'],
-  [ui.includes("germanAdventure?'Abenteuer':'Wortreich'"),'German game navigation follows the selected adventure or Wortreich world']
+  [ui.includes("subjectWorldPresentation")&&ui.includes("world.short||world.title||'Spiel'"),'German game navigation follows the generic selected world presentation'],
+  [foundation.indexOf("{id:'handwriting'")<foundation.indexOf("{id:'letters'"),'German first lesson starts with uppercase/lowercase handwriting'],
+  [foundation.includes("kind:'drawPair'")&&foundation.includes("lower:'m'")&&foundation.includes("sound:'mmmm'"),'letter handwriting couples uppercase/lowercase forms with phoneme audio'],
+  [foundation.includes("Die Lösung bleibt jetzt verborgen. Nur der Laut hilft dir."),'free letter writing hides the visual answer and keeps only the phoneme cue'],
+  [foundation.includes('function mixOptions(values')&&!foundation.includes("options:[x.letter,LETTERS[(i+2)"),'foundation multiple-choice answers are no longer hard-coded with the correct answer first'],
+  [learning.includes("native?'Die Wortform bleibt verborgen. Höre das Lernwort und schreibe es aus dem Gedächtnis.'"),'German free handwriting uses audio without a visible word solution']
 ];
 for(const [value,name] of staticChecks){if(!value)throw new Error('Deutsch Paket B smoke failed: '+name);checks.push(name)}
 console.log('Vokabeltrainer Deutsch Paket B smoke: '+checks.length+' checks passed');

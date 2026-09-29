@@ -321,7 +321,7 @@ Ein Backlog-Punkt wird nicht gelöscht, wenn er umgesetzt oder verworfen wird:
 - Ersatz → `SUPERSEDED` plus Verweis auf Nachfolger
 
 ## B-017 – Weltwahl Abenteuer oder Kampf pro Fach
-**Status:** IN_IMPLEMENTATION · Deutsch v0.21.39 implementiert, PR-/CI-Verifikation folgt; Englisch/Latein/Französisch folgen  
+**Status:** IN_IMPLEMENTATION · v0.21.40 fachübergreifend implementiert; Englisch/Latein aktiv, Französisch-Welten vorbereitet bis B-003-Fachfreischaltung; PR-/CI-Verifikation folgt  
 **Priorität:** P1 visuelle/Profile-UX vor finaler Fachwelten-Ausarbeitung  
 **Decision:** D-20260929-001 · D-20260929-002  
 **Betroffene Quellen:** `VISUAL_DNA.md`, `docs/project/LATIN_FRENCH_VISUAL_LAYOUT.md`, Profilmodell, Profilerstellung, Profileinstellungen, Spiel-/Fortschrittsrenderer
@@ -337,6 +337,9 @@ Umsetzungspaket:
 - Profilerstellung zeigt pro unterstütztem Fach die Auswahl **Abenteuer | Kampf**
 - Deutsch v0.21.39: Fuchs-Abenteuer vs. Wortreich/Kampf; bestehende Profile bleiben konservativ auf Kampf, neue Deutsch-Profile müssen bewusst wählen
 - Deutsch-Abenteuer besitzt eine eigene nicht-militärische Sechsstufen-Fuchsserie
+- Englisch v0.21.40: Expedition vs. Armee/Feldzug; Abenteuer bleibt kampffrei
+- Latein v0.21.40: zivile mediterrane Entdeckungsreise vs. Legion/Kastelle; Abenteuer bleibt kampffrei
+- Französisch v0.21.40: Voyage Français vs. fiktionale Gefährten-/Festungswelt technisch vorbereitet; Fachfreischaltung bleibt B-003
 - Avatar- und Deutsch-Weltwahl sind vorlesbar; m/w/d und Weltpräferenz werden gemeinsam über Family Sync übertragen
 - Profileinstellungen erlauben denselben Wechsel später
 - bestehende Profile behalten zunächst ihre bisherige Darstellung; keine überraschende Migration
@@ -347,13 +350,45 @@ Umsetzungspaket:
 - Latein erhält zusätzlich zur Legions-/Kampfserie eine zivile mediterrane Abenteuer-/Entdecker-Serie
 - Französisch erhält zusätzlich zu `Voyage Français` eine fiktionale Kampf-/Festungsserie
 - alle Kampfwelten verwenden ausschließlich fiktionale Gegner; keine realen Länder, Völker, Religionen oder historischen Konfliktparteien
+- jede der acht Fachwelten besitzt Opening, sechs aufeinander aufbauende Storykapitel und ein eigenes Jahresfinale; kanonisch in `docs/project/WORLD_STORYLINES_V1.md` / D-20260929-004
+- Storykapitel sind im Abenteuer-Hub, auf der Karte und im Kampfkontext vorlesbar und schreiben keinerlei fachlichen Zustand
 - Browser-/Persistenz-/Family-Sync-Tests sichern Weltwahl, Wechsel ohne Reset und fachliche Neutralität
 
 Abnahme:
 
-1. Ein neues Profil kann für jedes bereits umgesetzte Fach unabhängig eine Welt wählen; v0.21.39 beginnt mit Deutsch.
+1. Ein neues Profil kann für jedes aktive Fach unabhängig eine Welt wählen; Deutsch bildet seit v0.21.39 die Referenz, v0.21.40 generalisiert die Architektur.
 2. Ein späterer Wechsel verändert keinen fachlichen Lernwert.
 3. Die sichtbare Jahresstufe bleibt vor und nach dem Wechsel gleichwertig.
 4. Abenteuer und Kampf sind visuell eindeutig unterscheidbar, bleiben aber innerhalb derselben Fachidentität.
 5. Bestehende Profile funktionieren ohne manuelle Migration weiter.
+
+## B-018 – Freies Schreiben: Grundschul-Hilfslinien und freie Buchstabenauswahl
+**Status:** APPROVED_BACKLOG · Umsetzung unmittelbar nach Abschluss von v0.21.40  
+**Priorität:** P0 für Deutsch Klasse 1 / praktische v1-Abnahme  
+**Bezug:** B-001, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`
+
+Beim freien Schreiben in Deutsch Klasse 1 braucht die Schreibfläche eine kindgerechte
+Grundschul-Lineatur. Die Buchstaben sollen nicht frei in einem leeren Feld schweben, sondern
+räumlich in **Dachgeschoss – Erdgeschoss – Keller** eingeordnet werden können.
+
+Verbindliche Anforderungen:
+
+- freie Schreibfläche mit sichtbaren Hilfslinien für **Dach / Erdgeschoss / Keller**
+- Ober-, Mittel- und Unterlängen müssen an der Lineatur eindeutig erkennbar sein
+- Linien bleiben auch beim Finger-/Stift-Schreiben auf kleinen Displays gut sichtbar
+- Hilfslinien dürfen die geschriebene Spur nicht überdecken
+- im **freien Lernen** kann das Kind selbst bestimmen, welche Buchstaben geübt werden
+- Auswahl eines einzelnen Buchstabens oder mehrerer Buchstaben gleichzeitig
+- Groß- und Kleinbuchstaben müssen gezielt auswählbar sein
+- die manuelle Auswahl darf weder Mastery noch Testbereitschaft künstlich erhöhen; sie ist freie Übung
+- Vorlesen/Laut des ausgewählten Buchstabens bleibt verfügbar, sofern dadurch keine abgefragte Lösung verraten wird
+- Auswahl bleibt innerhalb der freien Übung erhalten, bis sie geändert oder zurückgesetzt wird
+
+Abnahme:
+
+1. Ein Kind kann z. B. nur **a**, nur **A/a** oder eine Gruppe wie **a, e, m, s** auswählen.
+2. Die freie Übung erzeugt ausschließlich Aufgaben aus der manuellen Auswahl.
+3. Beim Schreiben sind Dach-, Erdgeschoss- und Kellerbereich jederzeit sichtbar.
+4. Buchstaben mit Ober- und Unterlängen lassen sich eindeutig zur Lineatur einordnen.
+5. Freies Üben verändert keine fachliche Bewertung allein durch Anzahl der Wiederholungen.
 

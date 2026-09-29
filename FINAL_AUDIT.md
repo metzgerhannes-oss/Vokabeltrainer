@@ -1,10 +1,11 @@
 # Finales Audit
 
-Stand: 29.09.2026 · App v0.21.39
+Stand: 29.09.2026 · App v0.21.40
 
 ## Ergebnis
 
-- v0.21.39 ist der Release-Kandidat für die **Deutsch-Weltwahl**: bewusstes Abenteuer/Kampf-Opt-in pro Profil, Wechsel ohne fachlichen Reset, eigene sechs-stufige nicht-militärische Abenteuer-Fuchsserie, kampffreie Abenteueraktion, m/w/d-Persistenz sowie vorlesbare Avatar-/Weltwahl. Family-Sync-Browsertest überträgt Neutral/Divers und Deutsch-Abenteuer zwischen zwei Geräten.
+- v0.21.40 ist der Release-Kandidat für die **fachübergreifende Weltwahl mit vollständiger Storyarchitektur**: Englisch, Latein, Deutsch und die vorbereitete Französisch-Welt besitzen äquivalente Abenteuer-/Kampfpräsentationen sowie jeweils Opening, sechs aufeinander aufbauende Kapitel und ein eigenes Finale. Storykapitel erscheinen im Abenteuer-Hub, auf der Karte und in Kampfwelten, sind vorlesbar und verändern keine fachlichen Werte. Abenteueraktionen nutzen dieselbe einmalige Tagesfreigabe ohne Battle-Screen. Französisch bleibt fachlich bis B-003 gesperrt.
+- v0.21.39 / PR #208 ist produktiv und durch main-CI #36587039257 sowie GitHub Pages #36587638196 bestätigt: bewusstes Abenteuer/Kampf-Opt-in für Deutsch, Wechsel ohne fachlichen Reset, sechs-stufige Abenteuer-Fuchsserie, kampffreie Abenteueraktion, m/w/d-Persistenz und vorlesbare Avatar-/Weltwahl.
 - v0.21.38 ist auf `main` gemergt: freigegebenes **Deutsch-/Wortreich-Startlayout** mit Grundausrüstung → Lederzeug → Ritterlehrling → Ritter → Kronritter → König, evidenzgeschütztem Vorlesen und m/w/d-Avatarwahl. main-CI #36584417717 und Pages #36585012789 sind erfolgreich.
 - v0.21.37 / PR #204 ist produktiv und durch PR-CI #1246, main-CI #1247 sowie GitHub Pages #562 bestätigt: echter deutscher Wortreich-Phaser-Belagerungskampf.
 - v0.21.36 / PR #203 ist produktiv und durch PR-CI #1239, main-CI #1240 sowie GitHub Pages #561 bestätigt: Deutsch Paket D mit Lernwort-Strukturmetadaten und differenziertem Rechtschreibfehlerprofil.

@@ -31,10 +31,11 @@ Für v1.0 muss mindestens ein funktionierender Einstieg für Klasse 1 sowie ein 
 
 ### Mindestumfang Klasse 1
 
-- Buchstaben erkennen und benennen
-- Laut–Buchstaben-Zuordnung
-- Buchstaben nachspuren
-- Übergang von Nachspuren zu freier Buchstabenproduktion
+- **erste Lektion:** Groß- und Kleinbuchstaben gemeinsam nachfahren und anschließend selbst schreiben
+- Buchstaben dabei akustisch als **Laut/Phonemhinweis** anbieten, nicht als bloßen Buchstabennamen
+- beim freien Buchstabenschreiben die sichtbare Vorlage entfernen; nur Audio bleibt als Hinweis
+- danach Buchstaben erkennen und Laut–Buchstaben-Zuordnung festigen
+- Übergang von sichtbarem Nachfahren zu echter freier Buchstabenproduktion
 - erste Silben und Wörter lesen
 - erste Wörter schreiben
 - einfache Sätze lesen und bilden
@@ -63,6 +64,9 @@ Verbindlich:
 - Rechtschreibaufgaben verlangen die definierte Sollschreibung.
 - Lese-/Erkennungsaufgaben dürfen nicht künstlich zu Rechtschreibtests werden.
 - Audio, Hinweise und Scaffolding dürfen keinen unassistierten Abruf vortäuschen.
+- Produktive deutsche Schreibabfragen sind vor der Antwort grundsätzlich **no-copy**: Die Sollwortform bleibt verborgen; das Lernwort wird ausschließlich per Audio angeboten. Erst nach der Antwort darf die geprüfte Wortform zum Vergleich erscheinen.
+- Sichtbares Nachfahren/Abschreiben ist davon getrennt: Beim Nachfahren muss die Form sichtbar sein; freiwilliges Abschreiben bleibt eine Lernhilfe ohne Mastery-Evidenz.
+- Auswahlantworten werden positionsvariabel angeordnet; eine feste „richtige Antwort immer zuerst“-Logik ist unzulässig.
 - Strittige Systembewertungen folgen D-20260928-006 und bleiben bis zur Elternentscheidung neutral.
 - „Vokabel überspringen“ folgt D-20260928-007 und verschiebt die Aufgabe nur ans Ende derselben Session.
 
@@ -250,9 +254,9 @@ Fehlt einer der fachlichen Punkte 1–6 oder greift die Spielwelt in die fachlic
 
 ### Paket C – Klasse-1-Kern
 **Status: produktiv verifiziert in v0.21.35 / PR #202; PR-CI #1235, main-CI #1236 und Pages #560 grün.**
-- Buchstaben erkennen
-- Laut–Buchstaben-Zuordnung mit deutschem Audio
-- Finger-/Stift-Nachspuren mit Übergang über reduzierte Führung zur freien Produktion
+- erste Klasse-1-Lektion startet mit Groß-/Kleinbuchstaben-Paaren: sichtbares Finger-/Stift-Nachfahren → Vorlage weg → freies Schreiben nur nach Laut
+- Laut–Buchstaben-Zuordnung mit deutschem Audio/Phonemhinweis
+- anschließend Buchstaben erkennen; Auswahlpositionen sind nicht vorhersagbar
 - Schreibpraxis ohne unzulässige automatische Handschriftbewertung
 - erste Wörter lesen und schreiben
 - einfache Sätze verstehen und bilden

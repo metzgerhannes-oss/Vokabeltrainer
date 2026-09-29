@@ -3225,6 +3225,20 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
   border-color:rgba(218,176,93,.54);background:rgba(72,43,30,.84);
 }
 
+.battle-view[data-visual-theme="french-battle"] .battle-kicker{color:#586b82}
+.battle-view[data-visual-theme="french-battle"] .battle-ticket-pill{border-color:#9e94aa;background:#f4f1f5;color:#4a4f61}
+.battle-view[data-visual-theme="french-battle"] .battle-primary{background:linear-gradient(135deg,#4d6178,#6f5872);box-shadow:0 10px 28px rgba(77,97,120,.24)}
+.battle-view[data-visual-theme="french-battle"] .battle-story{border-color:#d0c7d2;background:linear-gradient(180deg,#fbf8f2,#eee9e8)}
+.battle-view[data-visual-theme="french-battle"] .battle-story-chapter{color:#586b82}
+.battle-view[data-visual-theme="french-battle"] .battle-tactics{border-color:#d0c7d2;background:#f6f2ee}
+.battle-stage.subject-french .battle-sky{background:linear-gradient(#9db9c4,#d9ddd8 62%,transparent 63%)}
+.battle-stage.subject-french .battle-sun{background:#edcc83;box-shadow:0 0 45px rgba(237,204,131,.5)}
+.battle-stage.subject-french .battle-hills{background:radial-gradient(ellipse at 18% 100%,#718674 0 26%,transparent 27%),radial-gradient(ellipse at 55% 100%,#879687 0 33%,transparent 34%),radial-gradient(ellipse at 88% 100%,#667a70 0 26%,transparent 27%)}
+.battle-stage.subject-french .battle-ground{background:linear-gradient(#9a9a75,#74775d)}
+.battle-stage.subject-french .battle-unit .body{background:linear-gradient(100deg,#4e6178,#6e7487 48%,#485267);border-color:#3e4859}
+.battle-stage.subject-french .battle-unit .shield{background:linear-gradient(135deg,#65798f,#4b596d 58%,#384456);border-color:#c3a864}
+.battle-stage.subject-french .battle-standard i{background:linear-gradient(135deg,#586c82,#7b6279 58%,#48586c);border-color:rgba(219,195,133,.55)}
+
 
 /* Visual DNA – focused learning stays neutral; subject identity is only a quiet accent */
 #learnView{
@@ -3234,14 +3248,16 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
   --study-focus:#8aa7bb;
   --study-primary:#31566e;
 }
-#learnView[data-visual-theme="roman"]{
+#learnView[data-visual-theme="roman"],
+#learnView[data-visual-theme="latin-adventure"]{
   --study-accent:#82483b;
   --study-accent-soft:#faf4e9;
   --study-accent-border:#decbb0;
   --study-focus:#b7896d;
   --study-primary:#7a4035;
 }
-#learnView[data-visual-theme="voyage"]{
+#learnView[data-visual-theme="voyage"],
+#learnView[data-visual-theme="french-battle"]{
   --study-accent:#456b72;
   --study-accent-soft:#f0f6f4;
   --study-accent-border:#cadbd6;
@@ -4533,6 +4549,7 @@ html[data-subject="german"] #learnView .german-literacy-card .secondary{border-c
 .german-picture-options{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:22px auto}.german-picture-options button{display:grid;place-items:center;min-width:84px;min-height:84px;padding:12px;border:1px solid #d8c7a5;border-radius:18px;background:#fff;font-size:2.3rem}
 .foundation-trace-canvas{display:block;width:min(640px,100%);height:clamp(220px,42vw,320px);margin:18px auto;border:2px solid #d8c7a5;border-radius:20px;background:#fffdf8;touch-action:none}
 .foundation-memory-letter{font-size:clamp(72px,18vw,150px);font-weight:900;line-height:1;color:#75552f;transition:opacity .2s}.foundation-memory-letter.hidden-letter{opacity:.08}
+.foundation-letter-pair{margin:14px auto 6px;text-align:center;font-size:clamp(72px,18vw,150px);font-weight:850;line-height:1;color:#75552f;letter-spacing:.08em}
 .german-sentence-prompt{font-size:clamp(28px,7vw,52px)}
 @media(max-width:760px){.german-foundation-stages{grid-template-columns:1fr 1fr}.german-foundation-stage:last-child{grid-column:1/-1}}
 @media(max-width:520px){.german-foundation-head{grid-template-columns:1fr}.german-foundation-progress{grid-template-columns:auto auto;justify-content:start;gap:8px;width:max-content}.german-foundation-stages{grid-template-columns:1fr}.german-foundation-stage:last-child{grid-column:auto}.foundation-trace-canvas{height:240px}}

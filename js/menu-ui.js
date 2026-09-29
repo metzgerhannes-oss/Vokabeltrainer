@@ -7,31 +7,48 @@
     return forts.filter(f=>f&&f.subject===state.activeSubject&&f.capturedAt).length;
   }
 
+  function resetAvatarSurface(img,fallback,frame){
+    window.VTWordrealmUi?.clearHome?.();
+    frame.classList.remove('wordrealm-rendered','german-fox-avatar','german-knight-avatar','world-adventure-avatar','world-battle-avatar');
+    frame.removeAttribute('data-avatar-render-key');
+    img.removeAttribute('src');
+    img.removeAttribute('data-avatar-final');
+    img.removeAttribute('data-avatar-art-key');
+    img.classList.add('hidden');
+    fallback.classList.remove('hidden','wordrealm-svg-avatar','adventure-svg-avatar');
+    fallback.innerHTML='<span class="avatar-head"></span><span class="avatar-body"></span><span class="avatar-shield">V</span>';
+  }
+
   function applyAvatarArt(){
     const img=document.querySelector('#projectMenuAvatarArt');
     const fallback=document.querySelector('#projectMenuAvatarFallback');
     const frame=document.querySelector('#projectMenuAvatarFrame');
     if(!img||!fallback||!frame||typeof state!=='object'||!state||!state.activeSubject)return;
     const level=Math.max(1,Math.min(6,Number(frame.dataset.avatarStage)||1));
-    const isGerman=state.activeSubject==='german',worldMode=typeof learnerWorldMode==='function'?learnerWorldMode(state.activeSubject):'battle',isGermanAdventure=isGerman&&worldMode==='adventure';
+    const isGerman=state.activeSubject==='german',worldMode=typeof learnerWorldMode==='function'?learnerWorldMode(state.activeSubject):'battle',adventure=worldMode==='adventure';
     const style=['male','female','neutral'].includes(learner()?.avatarStyle)?learner().avatarStyle:'male';
-    frame.classList.toggle('german-fox-avatar',isGermanAdventure);
-    frame.classList.toggle('german-knight-avatar',isGerman&&!isGermanAdventure);
-    const key=isGerman?`german-${worldMode}-${style}-stage-${level}`:`${state.activeSubject}-${style}-stage-${level}`;
+    const key=`${state.activeSubject}-${worldMode}-${style}-stage-${level}`;
+    resetAvatarSurface(img,fallback,frame);
+    frame.dataset.avatarRenderKey=key;
+    frame.classList.toggle('german-fox-avatar',isGerman&&adventure);
+    frame.classList.toggle('german-knight-avatar',isGerman&&!adventure);
+    frame.classList.toggle('world-adventure-avatar',adventure);
+    frame.classList.toggle('world-battle-avatar',!adventure);
     frame.dataset.avatarStyle=style;
     frame.dataset.worldMode=worldMode;
-    if(isGerman&&!isGermanAdventure){
-      img.removeAttribute('data-avatar-final');
-      img.removeAttribute('data-avatar-art-key');
-      img.classList.add('hidden');
-      fallback.classList.remove('hidden');
+    if(isGerman&&!adventure){
       window.VTWordrealmUi?.renderHome?.(level);
+      frame.dataset.avatarRenderKey=key;
       return;
     }
-    window.VTWordrealmUi?.clearHome?.();
-    const finalUrl=isGerman?'':(window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'');
-    const armyUrl=isGerman||style!=='male'?'':(window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'');
-    const shield=fallback.querySelector?.('.avatar-shield');if(shield)shield.textContent=isGerman&&!isGermanAdventure?'W':'V';
+    if(isGerman&&adventure){
+      fallback.innerHTML=window.VTWordrealmUi?.adventureFoxSvg?.(level)||'<span class="avatar-head"></span><span class="avatar-body"></span><span class="avatar-shield">⌖</span>';
+      fallback.classList.add('wordrealm-svg-avatar','adventure-svg-avatar');
+      frame.dataset.avatarRenderKey=key;
+    }
+    const finalUrl=adventure||isGerman?'':(window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'');
+    const armyUrl=adventure||isGerman||style!=='male'?'':(window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'');
+    const shield=fallback.querySelector?.('.avatar-shield');if(shield)shield.textContent=adventure?'⌖':isGerman?'W':'V';
     const url=finalUrl||armyUrl;
     if(url){
       if(img.src!==url)img.src=url;
@@ -56,7 +73,7 @@
     const stage=avatarStageFor(pct,state.activeSubject);
     frame.dataset.avatarStage=String(stage.level);
     const style=['male','female','neutral'].includes(learner()?.avatarStyle)?learner().avatarStyle:'male',worldMode=learnerWorldMode(state.activeSubject);
-    frame.dataset.avatarVisualKey=state.activeSubject==='german'?`german-${worldMode}-${style}-stage-${stage.level}`:`${state.activeSubject}-${style}-stage-${stage.level}`;
+    frame.dataset.avatarVisualKey=`${state.activeSubject}-${worldMode}-${style}-stage-${stage.level}`;
     frame.dataset.avatarSubject=state.activeSubject;
     frame.dataset.avatarStyle=style;
     frame.dataset.worldMode=worldMode;
@@ -104,8 +121,8 @@
     if(learned)learned.textContent=String(p.mastered||0);
     if(castles)castles.textContent=String(currentCapturedFortresses());
     const navGame=document.querySelector('.nav-btn[data-view="armyView"]');
-    const germanAdventure=state.activeSubject==='german'&&typeof learnerWorldMode==='function'&&learnerWorldMode('german')==='adventure';
-    if(navGame)navGame.innerHTML=germanAdventure?'<span aria-hidden="true">🦊</span>Abenteuer':state.activeSubject==='german'?'<span aria-hidden="true">⚔</span>Wortreich':'<span aria-hidden="true">⚔</span>Armee';
+    const world=typeof subjectWorldPresentation==='function'?subjectWorldPresentation(state.activeSubject):{icon:'⚔',short:'Armee'};
+    if(navGame)navGame.innerHTML=`<span aria-hidden="true">${esc(world.icon||'⚔')}</span>${esc(world.short||world.title||'Spiel')}`;
     const testRoot=document.querySelector('#menuNextTestProgress');
     const testPct=document.querySelector('#menuNextTestPct');
     const testDetail=document.querySelector('#menuNextTestDetail');

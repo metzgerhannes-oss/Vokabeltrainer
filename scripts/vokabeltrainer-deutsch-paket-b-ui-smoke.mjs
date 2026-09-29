@@ -52,6 +52,24 @@ try{
   assert((await page.locator('#germanLearningPath').textContent())?.includes('Laute'),'German path exposes sound-letter work');
   assert((await page.locator('#germanLearningPath').textContent())?.includes('Schreiben'),'German path exposes writing');
 
+  const foundationModel=await page.evaluate(()=>({
+    first:window.VTGermanFoundation.course[0]?.id,
+    firstTask:window.VTGermanFoundation.stageTasks('handwriting')[0],
+    letterPositions:window.VTGermanFoundation.stageTasks('letters').map(t=>t.options.indexOf(t.target))
+  }));
+  assert(foundationModel.first==='handwriting','first German foundation stage is handwriting');
+  assert(foundationModel.firstTask?.upper==='M'&&foundationModel.firstTask?.lower==='m'&&foundationModel.firstTask?.sound==='mmmm','first handwriting task teaches uppercase, lowercase and phoneme together');
+  assert(new Set(foundationModel.letterPositions).size>1,'foundation answer position varies instead of always being first');
+
+  await page.evaluate(()=>window.VTGermanFoundation.open('handwriting'));
+  await page.waitForSelector('#learnView.active #foundationTraceCanvas');
+  assert((await page.locator('.foundation-letter-pair').textContent())?.includes('M m'),'trace phase visibly shows uppercase and lowercase pair');
+  assert(await page.locator('#foundationLetterSoundBtn').count()===1,'trace phase has a phoneme audio button');
+  await page.evaluate(()=>{const b=document.querySelector('#foundationDrawDone');b.disabled=false;b.click()});
+  await page.waitForFunction(()=>document.querySelector('#germanFoundationFeedback')?.textContent?.includes('Nur der Laut'));
+  assert(await page.locator('.foundation-letter-pair').count()===0,'free-writing phase removes the visible letter pair');
+  assert(!(await page.locator('#studyArea').textContent()).includes('M m'),'free-writing phase cannot be copied from a visible solution');
+
   await page.evaluate(()=>{
     const w=setWords('de_b_set')[0];
     session={mode:'spelling',setId:'de_b_set',queue:[quizQueueRef(w)],index:0,correct:0,answered:0,currentSubmode:'spelling',locked:false,retryCounts:{},followupCounts:{},hintUsed:false,isDaily:false,scaffoldedWords:{},activeAttemptedWords:{},results:[],currentQuestion:null,currentQuestionIssues:[]};
@@ -63,6 +81,13 @@ try{
   const question=await page.evaluate(()=>session.currentQuestion&&({subject:session.currentQuestion.subject,caseSensitive:session.currentQuestion.caseSensitiveOrthography,prompt:session.currentQuestion.prompt,lang:subjectSpeechLang(state.activeSubject)}));
   assert(question?.subject==='german'&&question?.caseSensitive===true,'German spelling question is case-sensitive');
   assert(question?.lang==='de-DE','German speech locale is de-DE');
+
+  assert(!(await page.locator('#studyArea').textContent()).includes('Haus'),'German spelling assessment does not expose the target word before the answer');
+
+  await page.evaluate(()=>{session=null;startSession('handwriting','de_b_set',null,false);session.handwritingPhase='memory';renderStudy()});
+  await page.waitForSelector('#learnView.active .handwriting-card');
+  assert(!(await page.locator('#studyArea').textContent()).includes('Haus'),'German free handwriting hides the target word');
+  assert((await page.locator('#studyArea').textContent()).includes('Lernwort hören'),'German free handwriting offers audio instead of a visible solution');
 
   await page.evaluate(()=>{session=null;setLearnerWorldMode(learner(),'german','battle');showView('homeView');renderAll()});
   await page.click('.nav-btn[data-view="armyView"]');

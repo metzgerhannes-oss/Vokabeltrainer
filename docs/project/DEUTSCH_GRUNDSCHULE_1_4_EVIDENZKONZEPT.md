@@ -166,6 +166,16 @@ Das bisherige Konzept „Buchstaben kennenlernen und mit dem Finger nachzeichnen
 - In der frühen Alphabetisierung bleibt Handschrift ein eigenständiger Lernkanal und wird nicht vollständig durch Tippen ersetzt.
 - Die App soll Papier und Stift bewusst einbeziehen können.
 
+Für die Produktreihenfolge wird daraus verbindlich:
+
+- Die **erste digitale Klasse-1-Lektion beginnt deshalb mit Groß- und Kleinbuchstaben als Schreibpaar** (z. B. `M m`), nicht mit einer Multiple-Choice-Abfrage.
+- Phase 1 zeigt die Form zum **Nachfahren**. Das ist bewusstes Modelllernen und kein Leistungsnachweis.
+- Phase 2 entfernt die sichtbare Form vollständig. Das Kind hört den **Laut/Phonemhinweis** und schreibt Groß- und Kleinbuchstaben aus dem Gedächtnis.
+- Ein Buchstabe wird akustisch als Laut angebahnt, nicht als bloßer Buchstabenname. Browser-TTS muss hierfür auf realen Zielgeräten praktisch geprüft werden; falls ein isolierter Laut nicht sauber wiedergegeben wird, ist ein geprüftes Audioasset dem Buchstabennamen vorzuziehen.
+- Bei produktiven deutschen Schreibabfragen darf die Sollwortform **vor der Antwort nicht sichtbar** sein. Audio darf das Lernwort vorsprechen, weil genau dessen Schreibung geprüft wird.
+- Sichtbares Abschreiben bleibt eine freiwillige Übungsform und erzeugt keine Schreib-/Mastery-Evidenz. Erkennungsaufgaben dürfen Zielwörter sichtbar anbieten, zählen dann aber ausschließlich als Erkennungs-/Leseevidenz.
+- Antwortpositionen bei Auswahlaufgaben werden variiert; die richtige Antwort darf nicht systematisch an derselben Position stehen.
+
 Aktuelle experimentelle Forschung zeigt Vorteile von Handschrift/Nachspuren gegenüber reinem Tippen beim Lernen neuer Buchstaben und Wörter. Eine deutschsprachige Längsschnittstudie zeigt zugleich enge Zusammenhänge von Lesbarkeit, Schreibtempo und Rechtschreibung am Beginn der ersten Klasse.
 
 **Barrierefreiheit:** Bei ausgeprägten feinmotorischen Schwierigkeiten darf die App Handschrift nicht erzwingen. Experimentelle Befunde zeigen, dass Tippen unter motorischer Beeinträchtigung die bessere Zugangsform sein kann. Die Lernziel- und Unterstützungslogik muss deshalb Graphomotorik von sprachlicher Kompetenz trennen.

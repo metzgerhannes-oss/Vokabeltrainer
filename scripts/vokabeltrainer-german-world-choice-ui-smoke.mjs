@@ -20,11 +20,12 @@ try{
   await page.locator('#profileName').fill('Weltwahl Kind');
   await page.locator('[data-profile-subject="german"]').check();
   await page.locator('input[name="profileAvatarStyle"][value="neutral"]').check();
-  assert(await page.locator('#profileGermanWorld .read-aloud-btn').count()>=1,'German world choice is readable in the profile dialog');
+  await page.locator('input[name="profileWorldMode-english"][value="battle"]').check();
+  assert(await page.locator('[data-profile-world-subject="german"] .read-aloud-btn').count()>=1,'German world choice is readable in the profile dialog');
   assert(await page.locator('.profile-choice-legend .read-aloud-btn').count()>=2,'avatar and world choices both expose read-aloud controls');
   await page.locator('#saveProfile').click();
   assert((await page.locator('#profileError').textContent())?.includes('Abenteuer oder Kampf'),'new German profile cannot silently accept a default world');
-  await page.locator('input[name="profileGermanWorldMode"][value="adventure"]').check();
+  await page.locator('input[name="profileWorldMode-german"][value="adventure"]').check();
   await page.locator('#saveProfile').click();
   await page.waitForFunction(()=>learner()?.name==='Weltwahl Kind');
   const created=await page.evaluate(()=>({avatar:learner().avatarStyle,mode:learnerWorldMode('german'),subjects:[...learner().activeSubjects]}));
@@ -47,18 +48,26 @@ try{
     showView('homeView');
   });
 
-  const initial=await page.evaluate(()=>({
-    mode:learnerWorldMode('german'),
-    mastery:subjectProgress('german').pct,
-    growth:campaignGrowthState('german').pct
-  }));
+  const initial=await page.evaluate(()=>{
+    renderAll();showView('homeView');window.VTMenuUi.render();
+    const frame=document.querySelector('#projectMenuAvatarFrame'),fallback=document.querySelector('#projectMenuAvatarFallback');
+    return {
+      mode:learnerWorldMode('german'),
+      mastery:subjectProgress('german').pct,
+      growth:campaignGrowthState('german').pct,
+      renderKey:frame?.dataset.avatarRenderKey||'',
+      battleFox:fallback?.querySelector('.wordrealm-fox-svg:not(.adventure)')?.getAttribute('aria-label')||'',
+      adventureFox:!!fallback?.querySelector('.wordrealm-fox-svg.adventure')
+    };
+  });
   assert(initial.mode==='battle','German legacy profile starts in battle mode');
+  assert(initial.renderKey.includes('german-battle-')&&initial.battleFox&&!initial.adventureFox,'battle mode renders a fresh Wortreich fox surface');
 
   await page.evaluate(()=>openProfileEditor(learner().id));
-  await page.waitForSelector('#profileGermanWorld:not(.hidden)');
-  assert(await page.locator('input[name="profileGermanWorldMode"][value="battle"]').isChecked(),'battle choice is selected');
-  assert(await page.locator('input[name="profileGermanWorldMode"][value="adventure"]').count()===1,'adventure choice exists');
-  await page.locator('input[name="profileGermanWorldMode"][value="adventure"]').check();
+  await page.waitForSelector('[data-profile-world-subject="german"]:not(.hidden)');
+  assert(await page.locator('input[name="profileWorldMode-german"][value="battle"]').isChecked(),'battle choice is selected');
+  assert(await page.locator('input[name="profileWorldMode-german"][value="adventure"]').count()===1,'adventure choice exists');
+  await page.locator('input[name="profileWorldMode-german"][value="adventure"]').check();
   await page.locator('#saveProfile').click();
   await page.waitForFunction(()=>learnerWorldMode('german')==='adventure');
 
@@ -66,10 +75,23 @@ try{
     renderAll();showView('homeView');window.VTMenuUi.render();
     const frame=document.querySelector('#projectMenuAvatarFrame');
     const nav=document.querySelector('.nav-btn[data-view="armyView"]');
-    return {mode:learnerWorldMode('german'),fox:frame?.classList.contains('german-fox-avatar'),nav:nav?.textContent?.trim()||'',mastery:subjectProgress('german').pct,growth:campaignGrowthState('german').pct};
+    const fallback=document.querySelector('#projectMenuAvatarFallback');
+    return {
+      mode:learnerWorldMode('german'),
+      fox:frame?.classList.contains('german-fox-avatar'),
+      nav:nav?.textContent?.trim()||'',
+      mastery:subjectProgress('german').pct,
+      growth:campaignGrowthState('german').pct,
+      renderKey:frame?.dataset.avatarRenderKey||'',
+      adventureFox:fallback?.querySelector('.wordrealm-fox-svg.adventure')?.getAttribute('aria-label')||'',
+      battleFox:!!fallback?.querySelector('.wordrealm-fox-svg:not(.adventure)'),
+      premium:!!fallback?.classList.contains('adventure-svg-avatar')
+    };
   });
   assert(home.mode==='adventure','profile saves adventure mode');
   assert(home.fox,'adventure mode uses the fox avatar');
+  assert(home.renderKey.includes('german-adventure-')&&home.renderKey!==initial.renderKey,'world switch creates a distinct adventure avatar render key');
+  assert(home.adventureFox&&!home.battleFox&&home.premium,'adventure switch replaces the Wortreich surface with the premium explorer fox');
   assert(home.nav.includes('Abenteuer'),'child navigation names the adventure world');
   assert(home.mastery===initial.mastery&&home.growth===initial.growth,'switching to adventure preserves academic and yearly progress');
 
@@ -79,13 +101,13 @@ try{
     mode:document.querySelector('#armyView')?.dataset.worldMode,
     className:document.querySelector('#armyView')?.className||'',
     title:document.querySelector('#armyViewTitle')?.textContent||'',
-    route:document.querySelectorAll('.german-adventure-route span').length,
+    route:document.querySelectorAll('.subject-adventure-route span').length,
     actionHidden:document.querySelector('#armyBattleBtn')?.classList.contains('hidden'),
     actionText:document.querySelector('#armyBattleBtn')?.textContent||'',
-    vectorFox:document.querySelectorAll('.german-adventure-fox .wordrealm-fox-svg.adventure').length
+    vectorFox:document.querySelectorAll('.subject-adventure-figure .wordrealm-fox-svg.adventure').length
   }));
-  assert(adventure.mode==='adventure'&&adventure.className.includes('german-adventure-mode'),'adventure hub is active');
-  assert(adventure.title.includes('Fuchspfad'),'adventure hub uses Fuchspfad title');
+  assert(adventure.mode==='adventure'&&adventure.className.includes('adventure-mode'),'adventure hub is active');
+  assert(adventure.title==='Fuchspfad & Wortreise','adventure hub uses the approved Fuchspfad title');
   assert(adventure.route===6,'adventure hub shows six visual stages');
   assert(adventure.vectorFox===1,'adventure hub renders the dedicated vector fox instead of an emoji placeholder');
   assert(adventure.actionHidden===false&&adventure.actionText.includes('Abenteuer fortsetzen'),'adventure exposes an equivalent non-combat daily action');
@@ -108,8 +130,8 @@ try{
   assert(route.actionUsed===true,'adventure action consumes the same daily action entitlement');
 
   await page.evaluate(()=>openProfileEditor(learner().id));
-  await page.waitForSelector('#profileGermanWorld:not(.hidden)');
-  await page.locator('input[name="profileGermanWorldMode"][value="battle"]').check();
+  await page.waitForSelector('[data-profile-world-subject="german"]:not(.hidden)');
+  await page.locator('input[name="profileWorldMode-german"][value="battle"]').check();
   await page.locator('#saveProfile').click();
   await page.waitForFunction(()=>learnerWorldMode('german')==='battle');
 
@@ -120,11 +142,16 @@ try{
       growth:campaignGrowthState('german').pct,
       fox:document.querySelector('#projectMenuAvatarFrame')?.classList.contains('german-fox-avatar'),
       knight:document.querySelector('#projectMenuAvatarFrame')?.classList.contains('german-knight-avatar'),
-      nav:document.querySelector('.nav-btn[data-view="armyView"]')?.textContent?.trim()||''
+      nav:document.querySelector('.nav-btn[data-view="armyView"]')?.textContent?.trim()||'',
+      renderKey:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarRenderKey||'',
+      battleFox:document.querySelector('#projectMenuAvatarFallback .wordrealm-fox-svg:not(.adventure)')?.getAttribute('aria-label')||'',
+      adventureFox:!!document.querySelector('#projectMenuAvatarFallback .wordrealm-fox-svg.adventure')
     };
   });
   assert(after.mastery===route.mastery&&after.growth===route.growth,'switching back preserves the post-action academic and yearly state');
   assert(after.fox===false&&after.knight===true,'battle mode uses the Wordrealm avatar treatment');
+  assert(after.renderKey.includes('german-battle-')&&after.renderKey!==home.renderKey,'switching back rebuilds the battle avatar under a battle render key');
+  assert(after.battleFox&&!after.adventureFox,'switching back removes the explorer fox and restores the Wortreich fox');
   assert(after.nav.includes('Wortreich'),'battle mode restores Wortreich navigation');
 
   await page.evaluate(()=>window.VTArmyUi.open());
@@ -132,7 +159,7 @@ try{
   const battle=await page.evaluate(()=>({
     mode:document.querySelector('#armyView')?.dataset.worldMode,
     title:document.querySelector('#armyViewTitle')?.textContent||'',
-    adventureClass:document.querySelector('#armyView')?.classList.contains('german-adventure-mode'),
+    adventureClass:document.querySelector('#armyView')?.classList.contains('adventure-mode'),
     actionHidden:document.querySelector('#armyBattleBtn')?.classList.contains('hidden')
   }));
   assert(battle.mode==='battle'&&!battle.adventureClass,'battle hub is restored');

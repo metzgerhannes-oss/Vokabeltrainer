@@ -55,6 +55,14 @@ const BATTLE_STORY_FRENCH={
   capital:{title:'Die große Reiseetappe',text:'Viele gelernte Wörter führen jetzt zu einem wichtigen Ziel deiner Sprachreise.'},
   final:{title:'Das Jahresziel',text:'Die große Abschlussstation steht für deinen langfristigen Lernfortschritt über das Schuljahr.'}
 };
+const BATTLE_STORY_FRENCH_BATTLE={
+  outpost:{title:'Fort Clair',text:'Die Gefährten erreichen ihre erste vollständig fiktionale Festung. Jeder sichere Lerntag öffnet einen neuen Weg.'},
+  tower:{title:'Tour Lumière',text:'Der Turm markiert die nächste Testetappe. Deine Gruppe rückt nur mit tatsächlich erreichtem Lernfortschritt weiter.'},
+  wall:{title:'Bastion des Fleurs',text:'Die Bastion versperrt den Weg zur nächsten Etappe. Neue sichtbare Stärke entsteht ausschließlich aus realem Lernfortschritt.'},
+  citadel:{title:'Citadelle Verte',text:'Vor der grünen Zitadelle wartet eine fiktionale Wache. Die Szene bleibt Spielinszenierung und verändert keine Fachwerte.'},
+  capital:{title:'Fort du Soleil',text:'Die Gefährten stehen vor einer großen Festung. Dein bisheriger Lernweg bestimmt ausschließlich die sichtbare Entwicklung.'},
+  final:{title:'Grande Forteresse',text:'Das Jahresziel bündelt die langfristige Entwicklung. Gegner und Orte bleiben vollständig fiktional.'}
+};
 function battlePresentation(subject=state.activeSubject){
   if(subject==='german')return {
     theme:'wordrealm',kicker:'Das Wortreich',unitLabel:'Ritterheer',ownLabel:'DEIN RITTERHEER',targetLabel:'BURG',moveLabel:'ZUR BURG',
@@ -68,11 +76,17 @@ function battlePresentation(subject=state.activeSubject){
     revealKicker:'NEUES KASTELL ENTDECKT',noTarget:'Für die nächste Prüfungsetappe muss zuerst ein Test geplant sein.',
     targetNames:{outpost:'Marschlager',tower:'Wachturm',wall:'Grenzkastell',citadel:'Bergkastell',capital:'Provinzkastell',final:'Großes Kastell'}
   };
-  if(subject==='french')return {
+  if(subject==='french'&&typeof isAdventureWorld==='function'&&isAdventureWorld('french'))return {
     theme:'voyage',kicker:'Sprachmission',unitLabel:'Reise',ownLabel:'DEINE REISE',targetLabel:'ZIELORT',moveLabel:'WEITER',
     targetNoun:'Etappe',capturedLabel:'Erreicht',securedLabel:'Gefestigt',mapBack:'← Sprachreise',mapBottom:'Zurück zur Sprachreise',
     revealKicker:'NEUES REISEZIEL ENTDECKT',noTarget:'Für die nächste Sprachmission muss zuerst ein Test geplant sein.',
     targetNames:{outpost:'Erste Station',tower:'Stadtetappe',wall:'Brückenetappe',citadel:'Kulturstation',capital:'Große Etappe',final:'Abschlussetappe'}
+  };
+  if(subject==='french')return {
+    theme:'french-battle',kicker:'Gefährten & Festungen',unitLabel:'Gefährten',ownLabel:'DEINE GEFÄHRTEN',targetLabel:'FESTUNG',moveLabel:'VORRÜCKEN',
+    targetNoun:'Festung',capturedLabel:'Erobert',securedLabel:'Gesichert',mapBack:'← Festungsweg',mapBottom:'Zurück zum Festungsweg',
+    revealKicker:'NEUE FIKTIONALE FESTUNG',noTarget:'Für die nächste Festung muss zuerst ein Test geplant sein.',
+    targetNames:{outpost:'Fort Clair',tower:'Tour Lumière',wall:'Bastion des Fleurs',citadel:'Citadelle Verte',capital:'Fort du Soleil',final:'Grande Forteresse'}
   };
   return {
     theme:'campaign',kicker:'Schlacht',unitLabel:'Armee',ownLabel:'DEINE ARMEE',targetLabel:'ZIEL',moveLabel:'VORRÜCKEN',
@@ -117,8 +131,9 @@ function battleStoryDateLabel(value){
 function battleStoryFor(f){
   const p=battlePresentation();
   if(!f)return {title:`Noch kein ${p.targetNoun}-Ziel`,text:`Sobald ein Test geplant ist, erscheint hier automatisch die passende ${p.targetNoun.toLowerCase()}-Etappe.`};
-  const stories=state.activeSubject==='latin'?BATTLE_STORY_LATIN:state.activeSubject==='french'?BATTLE_STORY_FRENCH:BATTLE_STORY;
-  const base=stories[f.id]||{title:battleTargetName(f),text:`${p.unitLabel} bereitet den nächsten Schritt vor.`};
+  const base=window.VTWorldStory?.chapter?.(state.activeSubject,'battle',f.id,{completed:!!f.capturedAt})
+    ||(state.activeSubject==='latin'?BATTLE_STORY_LATIN[f.id]:state.activeSubject==='french'?BATTLE_STORY_FRENCH_BATTLE[f.id]:state.activeSubject==='german'?null:BATTLE_STORY[f.id])
+    ||{title:battleTargetName(f),text:`${p.unitLabel} bereitet den nächsten Schritt vor.`};
   const wordCount=Math.max(0,Number(f.wordCount)||0),scope=battleStoryScopeLabel(f),date=battleStoryDateLabel(f.testDate);
   let objective=date?`Dein nächster Test ist am ${date}.`:'';
   if(wordCount&&scope)objective+=` Dafür bereitest du ${wordCount} ${wordCount===1?'Vokabel':'Vokabeln'} aus „${scope}“ vor.`;
@@ -332,7 +347,7 @@ function renderBattleView(){
   window.VTBattlePhaserProduction?.destroyProductionBattle?.();
   const stage=$('#battleStage');if(!stage)return;
   const p=subjectProgress(),f=currentTestFortress(),tickets=battleTickets(),count=Math.min(18,Math.max(7,soldiersFor(p.pct)+4)),sea=seasonInfo(),revealActive=battleFortressRevealActive(f);
-  const campaign=subjectCampaign(state.activeSubject),present=battlePresentation(),isRoman=state.activeSubject==='latin',isGerman=state.activeSubject==='german',isVoyage=state.activeSubject==='french';
+  const campaign=subjectCampaign(state.activeSubject),present=battlePresentation(),isRoman=state.activeSubject==='latin',isGerman=state.activeSubject==='german',isVoyage=state.activeSubject==='french'&&typeof isAdventureWorld==='function'&&isAdventureWorld('french');
   const rank=rankFor(p.pct,state.activeSubject),gear=gearLabelFor(p.pct,state.activeSubject),secure=!!f?.capturedAt,boss=!secure&&!isVoyage?battleBossFor(f):null,story=battleStoryFor(f),attack=battleAttackMeta(battleAttackMode),targetName=battleTargetName(f),ownBanner=learner()?.name||campaign.unitLabel,targetBanner=testFortressLabel(f);
   const damagePct=f?clamp(Math.round((1-(Number(f.defense)||0)/Math.max(1,Number(f.maxDefense)||1))*100),0,100):0,fortressVisual=battleFortressVisualState(f);
   const usedToday=!!battleDayState(state.activeSubject,false)?.actionUsed;
@@ -418,6 +433,7 @@ function setBattlePreviewMode(on){
 function returnFromBattle(){if(battleStoryNarrating)stopBattleStoryNarration();window.VTBattlePhaserProduction?.destroyProductionBattle?.();setBattlePreviewMode(false);showView(BATTLE_RETURN_META[battleReturnView]?battleReturnView:'armyView')}
 function openBattleView(){
   if(isParentMode())return;
+  if(typeof isAdventureWorld==='function'&&isAdventureWorld()){window.VTCampaignMap?.open?.();return}
   const f=currentTestFortress(),present=battlePresentation();
   if(!f){toast(present.noTarget,'subtle');return}
   captureBattleReturnView();
@@ -724,16 +740,16 @@ function renderCardboxOverview(){
 
 function renderAll(){
   const l=learner(); if(!l) return; ensureActiveSubject();applyPreferences();
-  const nativeGerman=state.activeSubject==='german',germanAdventure=nativeGerman&&learnerWorldMode('german')==='adventure';document.documentElement.dataset.subject=state.activeSubject;document.documentElement.dataset.worldMode=learnerWorldMode(state.activeSubject);
+  const nativeGerman=state.activeSubject==='german',world=typeof subjectWorldPresentation==='function'?subjectWorldPresentation(state.activeSubject):{icon:'⚔',short:'Armee'};document.documentElement.dataset.subject=state.activeSubject;document.documentElement.dataset.worldMode=learnerWorldMode(state.activeSubject);
   $('#germanLearningPath')?.classList.toggle('hidden',!nativeGerman);
   window.VTGermanFoundation?.renderHub?.();
-  const gameNav=document.querySelector('.bottom-nav [data-view="armyView"]');if(gameNav)gameNav.innerHTML=`<span aria-hidden="true">${germanAdventure?'⌖':'⚔'}</span>${nativeGerman?(germanAdventure?'Abenteuer':'Wortreich'):'Armee'}`;
+  const gameNav=document.querySelector('.bottom-nav [data-view="armyView"]');if(gameNav)gameNav.innerHTML=`<span aria-hidden="true">${esc(world.icon||'⚔')}</span>${esc(world.short||world.title||'Spiel')}`;
   const profileBtn=$('#profileBtn'),lockedChild=isPairedChildDevice();profileBtn.textContent=l.name;profileBtn.disabled=lockedChild;profileBtn.classList.toggle('profile-locked',lockedChild);profileBtn.setAttribute('aria-label',lockedChild?`Kinderprofil: ${l.name}. Dieses Gerät ist fest zugeordnet.`:`Lernprofil wechseln. Aktiv: ${l.name}`);profileBtn.title=lockedChild?`Dieses Kindergerät ist fest mit ${l.name} verbunden`:'Profil wechseln'; $('#lrsBadge').classList.toggle('hidden',!literacySupportActive(l)); applyRoleUi();
   const activeSubjects=learnerActiveSubjects(l),switcher=$('#subjectSwitcher');
   if(switcher){switcher.innerHTML=activeSubjects.map(subject=>`<button data-subject="${esc(subject)}" class="subject-btn ${subject===state.activeSubject?'active':''}" aria-pressed="${subject===state.activeSubject?'true':'false'}">${esc(subjectShort(subject))}</button>`).join('');switcher.classList.toggle('hidden',activeSubjects.length<=1);$$('.subject-btn').forEach(b=>b.onclick=()=>{if(!isSubjectActive(b.dataset.subject))return;state.activeSubject=b.dataset.subject;save()})}
   $('#subjectLabel').textContent=subjectLabel(state.activeSubject);
   const p=subjectProgress(); $('#masteryPct').textContent=`${p.pct}%`; $('#masteryProgress').value=p.pct; $('#masteryProgress').setAttribute('aria-valuetext',nativeGerman?`${p.pct} Prozent sichere Lernwörter`:`${p.pct} Prozent nachhaltig gemeistert`); $('#masteryWords').textContent=nativeGerman?`${p.mastered} / ${p.total} Lernwörter sicher`:`${p.mastered} / ${p.total} gemeistert`; $('#schoolYearPill').textContent=p.schoolYear; $('#dueCount').textContent=dueWords().length; $('#streakCount').textContent=streak(); $('#xpCount').textContent=l.xp; $('#stableCount').textContent=p.stable;
-  const campaign=subjectCampaign(state.activeSubject);$('#campaignTitle').textContent=campaign.title;$('#campaignEyebrow').textContent=campaign.eyebrow; $('#armyRank').textContent=rankFor(p.pct,state.activeSubject); $('#armyStrength').textContent=armyStrength(); $('#gearLevel').textContent=gearFor(p.pct);
+  const campaign=subjectCampaign(state.activeSubject);$('#campaignTitle').textContent=world.title||campaign.title;$('#campaignEyebrow').textContent=world.label||campaign.eyebrow; $('#armyRank').textContent=rankFor(p.pct,state.activeSubject); $('#armyStrength').textContent=armyStrength(); $('#gearLevel').textContent=gearFor(p.pct);
   const nf=currentTestFortress(),tickets=battleTickets(),usedToday=!!battleDayState(state.activeSubject,false)?.actionUsed,secured=!!nf?.capturedAt;
   $('#fortressRequirement').textContent=!nf?'Kein Test geplant':secured?`Erobert · Test ${formatDateShort(nf.testDate)}`:`${nf.defense} Verteidigung · Test ${formatDateShort(nf.testDate)}`;
   const ticketEl=$('#gameTicketCount');if(ticketEl)ticketEl.textContent=!nf?'–':tickets?`${tickets} bereit`:usedToday?'genutzt':'gesperrt';
@@ -1087,7 +1103,7 @@ function openLibraryAssignDialog(){openLearningContentPlanner()}
 
 function topError(w){if(subjectHasCapability(w?.subject||state.activeSubject,'nativeLiteracy')){const entries=Object.entries({...defaultLiteracyErrors(),...(w.literacyErrors||{})}).sort((a,b)=>b[1]-a[1]),labels={capitalization:'Groß-/Kleinschreibung',letterSequence:'Buchstabenfolge',wordStructure:'Wortstruktur',sentenceContext:'Satzkontext'};if(entries[0]?.[1])return labels[entries[0][0]]||'Rechtschreibung'}const entries=Object.entries(w.errorProfile||{}).sort((a,b)=>b[1]-a[1]);return entries[0]?.[1]?({meaning:'Bedeutung',retrieval:'Abruf',spelling:'Schreibung',listening:'Hören',context:'Kontext',grammar:'Latein-Formen'}[entries[0][0]]):'–'}
 function renderProfiles(){
-  const meta=l=>{const activeSubjects=learnerActiveSubjects(l),active=activeSubjects.map(subjectShort).join(' · '),parts=[],support=literacySupportFor(l);if(l.gradeLevel)parts.push(`Klasse ${l.gradeLevel}`);parts.push(`Avatar ${l.avatarStyle==='female'?'weiblich':l.avatarStyle==='neutral'?'neutral/divers':'männlich'}`);if(activeSubjects.includes('german'))parts.push(`Deutsch-Welt: ${learnerWorldMode('german',l)==='adventure'?'Abenteuer':'Kampf'}`);if(support.reading&&support.spelling)parts.push('LRS Lesen + Schreiben');else if(support.reading)parts.push('LRS Lesen');else if(support.spelling)parts.push('LRS Schreiben');if(support.reducedLoad)parts.push('kurze Einheiten');if(active)parts.push(active);parts.push(`${l.xp} XP`);return parts.join(' · ')};
+  const meta=l=>{const activeSubjects=learnerActiveSubjects(l),active=activeSubjects.map(subjectShort).join(' · '),parts=[],support=literacySupportFor(l);if(l.gradeLevel)parts.push(`Klasse ${l.gradeLevel}`);parts.push(`Avatar ${l.avatarStyle==='female'?'weiblich':l.avatarStyle==='neutral'?'neutral/divers':'männlich'}`);activeSubjects.forEach(subject=>parts.push(`${subjectLabel(subject)}-Welt: ${learnerWorldMode(subject,l)==='adventure'?'Abenteuer':'Kampf'}`));if(support.reading&&support.spelling)parts.push('LRS Lesen + Schreiben');else if(support.reading)parts.push('LRS Lesen');else if(support.spelling)parts.push('LRS Schreiben');if(support.reducedLoad)parts.push('kurze Einheiten');if(active)parts.push(active);parts.push(`${l.xp} XP`);return parts.join(' · ')};
   const books=l=>learnerActiveSubjects(l).map(subject=>{const b=currentBook(l.id,subject);return `<span class="profile-book-chip">${subjectShort(subject)} · ${b?esc(b.title||formatIsbn(b.isbn13)):'kein Lehrwerk'}</span>`}).join('');
   $('#profileList').innerHTML=state.learners.map(l=>`<div class="profile-row profile-row-rich"><div class="profile-main"><strong>${esc(l.name)}</strong><small class="profile-meta">${esc(meta(l))}</small><div class="profile-books">${books(l)}</div></div><div class="profile-actions"><button class="ghost" data-profile-use="${l.id}">${l.id===state.activeLearnerId?'Aktiv':'Wählen'}</button><button class="ghost" data-profile-edit="${l.id}">Bearbeiten</button><button class="ghost" data-profile-books="${l.id}">Lehrwerke</button><button class="ghost" data-profile-clear="${l.id}">Lernstoff löschen</button>${state.learners.length>1?`<button class="ghost" data-profile-del="${l.id}" aria-label="Profil ${esc(l.name)} löschen" title="Profil löschen">×</button>`:''}</div></div>`).join('');
   $$('[data-profile-use]').forEach(b=>b.onclick=()=>{state.activeLearnerId=b.dataset.profileUse;ensureActiveSubject();save()});
@@ -1097,19 +1113,28 @@ function renderProfiles(){
   $$('[data-profile-del]').forEach(b=>b.onclick=()=>deleteProfile(b.dataset.profileDel));
 }
 function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function attackFortress(){isGermanAdventureWorld()?openGermanAdventureAction():openBattleView()}
-function isGermanAdventureWorld(subject=state.activeSubject,l=learner()){return subject==='german'&&learnerWorldMode('german',l)==='adventure'}
-function openGermanAdventureAction(){
-  if(!isGermanAdventureWorld()){openBattleView();return}
-  const f=currentTestFortress('german');
-  if(!f){toast('Plane zuerst einen Test oder ein Lernziel – dann erscheint die nächste Abenteueretappe.','subtle');window.VTCampaignMap?.open?.();return}
-  if(!spendBattleTicket('german')){toast('Die heutige Abenteueraktion wird nach dem Tagesziel freigeschaltet.','subtle');window.VTCampaignMap?.open?.();return}
-  const secureBefore=!!f.capturedAt,result=resolveTestFortressAction(secureBefore?'secure':'charge','german');
-  persistOnly();renderAll();window.VTCampaignMap?.open?.();
-  if(result?.result==='secure')toast('Etappe gefestigt – dein Fuchs-Abenteuer bleibt bis zum Test gut vorbereitet.','good');
-  else if(result?.result==='win')toast('Ziel erreicht! +20 XP · Die nächste Etappe kann folgen.','good');
-  else toast(`Abenteuer fortgesetzt · +${result?.damage||0} Wegfortschritt · noch ${result?.remaining||0} bis zum Ziel.`,'good');
+function attackFortress(){isAdventureWorld()?openAdventureAction():openBattleView()}
+function isGermanAdventureWorld(subject=state.activeSubject,l=learner()){return subject==='german'&&isAdventureWorld(subject,l)}
+function adventureActionCopy(subject=state.activeSubject){
+  return {
+    english:{noTarget:'Plane zuerst einen Test – dann erscheint die nächste Expedition.',locked:'Die heutige Expeditionsaktion wird nach dem Tagesziel freigeschaltet.',secure:'Etappe gesichert – deine Expedition bleibt bis zum Test gut vorbereitet.',win:'Expeditionsziel erreicht! +20 XP · Die nächste Etappe kann folgen.',progress:'Expedition fortgesetzt'},
+    latin:{noTarget:'Plane zuerst einen Test – dann erscheint die nächste Entdeckung auf deiner Route.',locked:'Die heutige Entdeckungsaktion wird nach dem Tagesziel freigeschaltet.',secure:'Etappe gefestigt – deine Entdeckungsreise bleibt bis zum Test gut vorbereitet.',win:'Entdeckungsziel erreicht! +20 XP · Die nächste Etappe kann folgen.',progress:'Entdeckungsreise fortgesetzt'},
+    german:{noTarget:'Plane zuerst einen Test oder ein Lernziel – dann erscheint die nächste Abenteueretappe.',locked:'Die heutige Abenteueraktion wird nach dem Tagesziel freigeschaltet.',secure:'Etappe gefestigt – dein Fuchs-Abenteuer bleibt bis zum Test gut vorbereitet.',win:'Ziel erreicht! +20 XP · Die nächste Etappe kann folgen.',progress:'Abenteuer fortgesetzt'},
+    french:{noTarget:'Plane zuerst einen Test – dann erscheint der nächste Ort deiner Sprachreise.',locked:'Die heutige Reiseaktion wird nach dem Tagesziel freigeschaltet.',secure:'Etappe gefestigt – deine Sprachreise bleibt bis zum Test gut vorbereitet.',win:'Reiseziel erreicht! +20 XP · Die nächste Etappe kann folgen.',progress:'Sprachreise fortgesetzt'}
+  }[subject]||{noTarget:'Plane zuerst einen Test.',locked:'Die heutige Abenteueraktion wird nach dem Tagesziel freigeschaltet.',secure:'Etappe gefestigt.',win:'Ziel erreicht! +20 XP',progress:'Abenteuer fortgesetzt'};
 }
+function openAdventureAction(subject=state.activeSubject){
+  if(!isAdventureWorld(subject)){openBattleView();return}
+  const copy=adventureActionCopy(subject),f=currentTestFortress(subject);
+  if(!f){toast(copy.noTarget,'subtle');window.VTCampaignMap?.open?.();return}
+  if(!spendBattleTicket(subject)){toast(copy.locked,'subtle');window.VTCampaignMap?.open?.();return}
+  const secureBefore=!!f.capturedAt,result=resolveTestFortressAction(secureBefore?'secure':'charge',subject);
+  persistOnly();renderAll();window.VTCampaignMap?.open?.();
+  if(result?.result==='secure')toast(copy.secure,'good');
+  else if(result?.result==='win')toast(copy.win,'good');
+  else toast(`${copy.progress} · +${result?.damage||0} Fortschritt · noch ${result?.remaining||0} bis zum Ziel.`,'good');
+}
+function openGermanAdventureAction(){return openAdventureAction('german')}
 function duelPayload(){const p=subjectProgress();return {v:3,name:subjectCampaign(state.activeSubject).unitLabel,subject:state.activeSubject,schoolYear:p.schoolYear,progress:p.pct,stability:p.total?Math.round(p.stable/p.total*1000):0,ts:Date.now()}}
 function encodeDuel(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
 function duelInviteLink(code){
@@ -1374,14 +1399,40 @@ function openProfileSwitcher(){
 function addProfile(){openProfileEditor()}
 function openProfileEditor(id=null){
   const existing=id?state.learners.find(x=>x.id===id):null,active=normalizeLearnerSubjects(existing||{},existing?[]:[availableSubjectIds()[0]||'english']),avatarStyle=['male','female','neutral'].includes(existing?.avatarStyle)?existing.avatarStyle:'male',support=literacySupportFor(existing||{});
-  const germanWorldMode=existing?learnerWorldMode('german',existing):'';
   const readBtn=(text,label='Vorlesen')=>window.VTReadAloud?.button?.(text,label,'profile-choice-read')||'';
   const gradeOptions=['','1','2','3','4','5','6','7','8','9','10','11','12','13'].map(x=>`<option value="${x}" ${String(existing?.gradeLevel||'')===x?'selected':''}>${x?`Klasse ${x}`:'Klasse wählen'}</option>`).join('');
   const subjectRows=Object.values(SUBJECT_META).map((meta,index)=>`<label class="switch-row ${meta.available?'':'disabled-row'}"><span><strong>${esc(meta.label)}</strong><small>${meta.available?(index===0?'nur aktivierte Fächer werden in der App angezeigt':'aktivierbar'):'vorbereitet · noch nicht freigeschaltet'}</small></span><input data-profile-subject="${esc(meta.id)}" type="checkbox" ${active.includes(meta.id)?'checked':''} ${meta.available?'':'disabled'}></label>`).join('');
-  modal(`<div class="eyebrow">Profil</div><h2>${existing?'Profil bearbeiten':'Neues Lernprofil'}</h2><label>Name<input id="profileName" value="${esc(existing?.name||'')}"></label><label>Klasse<select id="profileGrade">${gradeOptions}</select></label><fieldset class="subject-fieldset"><legend><span class="profile-choice-legend">Avatar ${readBtn('Wähle deinen Avatar. Du kannst männlich, weiblich oder neutral divers wählen. Die Auswahl verändert deinen Lernfortschritt nicht.','Avatarwahl vorlesen')}</span></legend><div class="avatar-style-choice"><label><input type="radio" name="profileAvatarStyle" value="male" ${avatarStyle==='male'?'checked':''}><span><strong>Männlich</strong><small>männliche Avatarserie</small></span></label><label><input type="radio" name="profileAvatarStyle" value="female" ${avatarStyle==='female'?'checked':''}><span><strong>Weiblich</strong><small>weibliche Avatarserie</small></span></label><label><input type="radio" name="profileAvatarStyle" value="neutral" ${avatarStyle==='neutral'?'checked':''}><span><strong>Neutral / Divers</strong><small>geschlechtsneutrale Avatarserie</small></span></label></div></fieldset><fieldset class="subject-fieldset"><legend><span class="label-with-help">LRS-/Lernunterstützung ${helpIcon('lrs')}</span></legend><p class="muted-line">Keine Diagnose durch die App. Aktiviere nur die Bereiche, in denen das Kind Unterstützung braucht.</p><label class="switch-row"><span><strong>Lesen</strong><small>mehr Laut-Schrift-Verknüpfung, ruhiger Wortblitz und langsamere Audioführung</small></span><input id="profileLrsReading" type="checkbox" ${support.reading?'checked':''}></label><label class="switch-row"><span><strong>Rechtschreiben</strong><small>Schreibabruf, Diktat und Wortbausteine werden im Lernpfad stärker priorisiert</small></span><input id="profileLrsSpelling" type="checkbox" ${support.spelling?'checked':''}></label></fieldset><label class="switch-row"><span><strong>Kurze Einheiten</strong><small>weniger Aufgaben pro Einheit und höchstens zwei freiwillige Nachrücker · unabhängig von LRS</small></span><input id="profileReducedLoad" type="checkbox" ${support.reducedLoad?'checked':''}></label><fieldset class="subject-fieldset"><legend>Fächer</legend>${subjectRows}</fieldset><fieldset id="profileGermanWorld" class="subject-fieldset ${active.includes('german')?'':'hidden'}"><legend><span class="profile-choice-legend">Deutsch · Spielwelt ${readBtn('Wähle deine Deutsch-Spielwelt. Abenteuer bedeutet Fuchspfad, Entdeckungen und Etappen ohne Kämpfe. Kampf bedeutet Das Wortreich mit Ritterheer, Burgen und Belagerungen. Dein Lernstand bleibt in beiden Welten gleich.','Deutsch-Spielwelt vorlesen')}</span></legend><p class="muted-line">Bitte bewusst auswählen. Nur die Spielwelt ändert sich; Lernstand, Tagesziel und Bewertung bleiben gleich.</p><div class="world-mode-choice"><label><input type="radio" name="profileGermanWorldMode" value="adventure" ${germanWorldMode==='adventure'?'checked':''}><span class="world-mode-icon" aria-hidden="true">🦊</span><span><strong>Abenteuer</strong><small>Fuchspfad, Entdeckungen und Etappen – ohne Kämpfe</small></span></label><label><input type="radio" name="profileGermanWorldMode" value="battle" ${germanWorldMode==='battle'?'checked':''}><span class="world-mode-icon" aria-hidden="true">⚔</span><span><strong>Kampf</strong><small>Das Wortreich mit Ritterheer, Burgen und Belagerungen</small></span></label></div></fieldset><div id="profileError" class="notice subtle">Mindestens ein aktives Fach auswählen.</div><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="saveProfile" class="primary">${existing?'Speichern':'Anlegen'}</button></div>`);
-  const syncGermanWorldChoice=()=>{$('#profileGermanWorld')?.classList.toggle('hidden',!$('[data-profile-subject="german"]')?.checked)};
-  $$('[data-profile-subject]').forEach(input=>input.addEventListener('change',syncGermanWorldChoice));syncGermanWorldChoice();
-  $('#saveProfile').onclick=()=>{const name=$('#profileName').value.trim(),subjects=$$('[data-profile-subject]').filter(x=>x.checked&&!x.disabled).map(x=>x.dataset.profileSubject),selectedAvatar=$('input[name="profileAvatarStyle"]:checked')?.value,avatarStyle=['male','female','neutral'].includes(selectedAvatar)?selectedAvatar:'male',worldMode=$('input[name="profileGermanWorldMode"]:checked')?.value||'';if(!name){$('#profileError').className='notice warn';$('#profileError').textContent='Bitte einen Namen eingeben.';return}if(!subjects.length){$('#profileError').className='notice warn';$('#profileError').textContent='Mindestens ein aktives Fach auswählen.';return}if(subjects.includes('german')&&!WORLD_MODES.includes(worldMode)){$('#profileError').className='notice warn';$('#profileError').textContent='Bitte für Deutsch Abenteuer oder Kampf auswählen.';$('#profileGermanWorld')?.scrollIntoView({block:'center',behavior:'smooth'});return}const gradeLevel=$('#profileGrade').value,literacySupport={reading:$('#profileLrsReading').checked,spelling:$('#profileLrsSpelling').checked},reducedLoad=$('#profileReducedLoad').checked,lrsMode=literacySupport.reading||literacySupport.spelling;if(existing){existing.name=name;existing.gradeLevel=gradeLevel;existing.avatarStyle=avatarStyle;existing.literacySupport=literacySupport;existing.reducedLoad=reducedLoad;existing.lrsMode=lrsMode;existing.activeSubjects=subjects;if(subjects.includes('german'))setLearnerWorldMode(existing,'german',worldMode);normalizeLiteracySupport(existing)}else{const learnerId=uid('learner'),worldModeBySubject=defaultWorldModes();if(subjects.includes('german'))worldModeBySubject.german=worldMode;state.learners.push({id:learnerId,name,gradeLevel,avatarStyle,activeSubjects:subjects,worldModeBySubject,xp:0,literacySupport,reducedLoad,lrsMode,germanFoundation:defaultGermanFoundation(),fontSize:17,letterSpacing:0,flashSpeed:1600,autoSpeakCorrection:true,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),battleDays:{},testFortresses:{},yearFortresses:{},completedTests:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()});state.activeLearnerId=learnerId}ensureActiveSubject();closeModal();save()};
+  const choiceCopy={
+    english:{adventure:'Expeditionen, Wege, Außenposten und Zielorte – ohne Kämpfe',battle:'Armee, Feldzug und fiktionale Festungen'},
+    latin:{adventure:'Mediterrane Entdeckungsreise mit Straßen, Städten und Aquädukten',battle:'Römische Legion, Marschroute, Kastelle und fiktionale Gegner'},
+    german:{adventure:'Fuchspfad, Entdeckungen und Etappen – ohne Kämpfe',battle:'Das Wortreich mit Ritterheer, Burgen und Belagerungen'},
+    french:{adventure:'Voyage Français mit Orten, Reisewegen, Kultur und Regionen',battle:'Fiktionale Gefährten, Banner und Festungen ohne reale Kriegsgegner'}
+  };
+  const worldFields=Object.values(SUBJECT_META).map(meta=>{
+    const selected=existing?learnerWorldMode(meta.id,existing):'';
+    const spoken=`Wähle die Spielwelt für ${meta.label}. Abenteuer: ${choiceCopy[meta.id].adventure}. Kampf: ${choiceCopy[meta.id].battle}. Dein Lernstand bleibt in beiden Welten gleich.`;
+    return `<fieldset data-profile-world-subject="${esc(meta.id)}" class="subject-fieldset world-subject-choice ${active.includes(meta.id)&&meta.available?'':'hidden'}"><legend><span class="profile-choice-legend">${esc(meta.label)} · Spielwelt ${readBtn(spoken,meta.label+' Spielwelt vorlesen')}</span></legend><p class="muted-line">${existing?'Die Welt kann ohne Fortschrittsverlust gewechselt werden.':'Bitte bewusst auswählen.'} Nur die Darstellung ändert sich; Lernstand, Tagesziel und Bewertung bleiben gleich.</p><div class="world-mode-choice"><label><input type="radio" name="profileWorldMode-${esc(meta.id)}" value="adventure" ${selected==='adventure'?'checked':''}><span class="world-mode-icon" aria-hidden="true">⌖</span><span><strong>Abenteuer</strong><small>${esc(choiceCopy[meta.id].adventure)}</small></span></label><label><input type="radio" name="profileWorldMode-${esc(meta.id)}" value="battle" ${selected==='battle'?'checked':''}><span class="world-mode-icon" aria-hidden="true">⚔</span><span><strong>Kampf</strong><small>${esc(choiceCopy[meta.id].battle)}</small></span></label></div></fieldset>`;
+  }).join('');
+  modal(`<div class="eyebrow">Profil</div><h2>${existing?'Profil bearbeiten':'Neues Lernprofil'}</h2><label>Name<input id="profileName" value="${esc(existing?.name||'')}"></label><label>Klasse<select id="profileGrade">${gradeOptions}</select></label><fieldset class="subject-fieldset"><legend><span class="profile-choice-legend">Avatar ${readBtn('Wähle deinen Avatar. Du kannst männlich, weiblich oder neutral divers wählen. Die Auswahl verändert deinen Lernfortschritt nicht.','Avatarwahl vorlesen')}</span></legend><div class="avatar-style-choice"><label><input type="radio" name="profileAvatarStyle" value="male" ${avatarStyle==='male'?'checked':''}><span><strong>Männlich</strong><small>männliche Avatarserie</small></span></label><label><input type="radio" name="profileAvatarStyle" value="female" ${avatarStyle==='female'?'checked':''}><span><strong>Weiblich</strong><small>weibliche Avatarserie</small></span></label><label><input type="radio" name="profileAvatarStyle" value="neutral" ${avatarStyle==='neutral'?'checked':''}><span><strong>Neutral / Divers</strong><small>geschlechtsneutrale Avatarserie</small></span></label></div></fieldset><fieldset class="subject-fieldset"><legend><span class="label-with-help">LRS-/Lernunterstützung ${helpIcon('lrs')}</span></legend><p class="muted-line">Keine Diagnose durch die App. Aktiviere nur die Bereiche, in denen das Kind Unterstützung braucht.</p><label class="switch-row"><span><strong>Lesen</strong><small>mehr Laut-Schrift-Verknüpfung, ruhiger Wortblitz und langsamere Audioführung</small></span><input id="profileLrsReading" type="checkbox" ${support.reading?'checked':''}></label><label class="switch-row"><span><strong>Rechtschreiben</strong><small>Schreibabruf, Diktat und Wortbausteine werden im Lernpfad stärker priorisiert</small></span><input id="profileLrsSpelling" type="checkbox" ${support.spelling?'checked':''}></label></fieldset><label class="switch-row"><span><strong>Kurze Einheiten</strong><small>weniger Aufgaben pro Einheit und höchstens zwei freiwillige Nachrücker · unabhängig von LRS</small></span><input id="profileReducedLoad" type="checkbox" ${support.reducedLoad?'checked':''}></label><fieldset class="subject-fieldset"><legend>Fächer</legend>${subjectRows}</fieldset>${worldFields}<div id="profileError" class="notice subtle">Mindestens ein aktives Fach auswählen.</div><div class="modal-actions"><button value="cancel" class="ghost">Abbrechen</button><button type="button" id="saveProfile" class="primary">${existing?'Speichern':'Anlegen'}</button></div>`);
+  const syncWorldChoices=()=>{$$('[data-profile-world-subject]').forEach(field=>{const subject=field.dataset.profileWorldSubject,input=$(`[data-profile-subject="${subject}"]`);field.classList.toggle('hidden',!input?.checked||input.disabled)})};
+  $$('[data-profile-subject]').forEach(input=>input.addEventListener('change',syncWorldChoices));syncWorldChoices();
+  $('#saveProfile').onclick=()=>{
+    const name=$('#profileName').value.trim(),subjects=$$('[data-profile-subject]').filter(x=>x.checked&&!x.disabled).map(x=>x.dataset.profileSubject),selectedAvatar=$('input[name="profileAvatarStyle"]:checked')?.value,avatarStyle=['male','female','neutral'].includes(selectedAvatar)?selectedAvatar:'male';
+    const worldModes=Object.fromEntries(subjects.map(subject=>[subject,$(`input[name="profileWorldMode-${subject}"]:checked`)?.value||'']));
+    if(!name){$('#profileError').className='notice warn';$('#profileError').textContent='Bitte einen Namen eingeben.';return}
+    if(!subjects.length){$('#profileError').className='notice warn';$('#profileError').textContent='Mindestens ein aktives Fach auswählen.';return}
+    const missingWorld=subjects.find(subject=>!WORLD_MODES.includes(worldModes[subject]));
+    if(missingWorld){$('#profileError').className='notice warn';$('#profileError').textContent=`Bitte für ${subjectLabel(missingWorld)} Abenteuer oder Kampf auswählen.`;$('[data-profile-world-subject="'+missingWorld+'"]')?.scrollIntoView({block:'center',behavior:'smooth'});return}
+    const gradeLevel=$('#profileGrade').value,literacySupport={reading:$('#profileLrsReading').checked,spelling:$('#profileLrsSpelling').checked},reducedLoad=$('#profileReducedLoad').checked,lrsMode=literacySupport.reading||literacySupport.spelling;
+    if(existing){
+      existing.name=name;existing.gradeLevel=gradeLevel;existing.avatarStyle=avatarStyle;existing.literacySupport=literacySupport;existing.reducedLoad=reducedLoad;existing.lrsMode=lrsMode;existing.activeSubjects=subjects;
+      subjects.forEach(subject=>setLearnerWorldMode(existing,subject,worldModes[subject]));normalizeLiteracySupport(existing);
+    }else{
+      const learnerId=uid('learner'),worldModeBySubject=defaultWorldModes();subjects.forEach(subject=>{worldModeBySubject[subject]=worldModes[subject]});
+      state.learners.push({id:learnerId,name,gradeLevel,avatarStyle,activeSubjects:subjects,worldModeBySubject,xp:0,literacySupport,reducedLoad,lrsMode,germanFoundation:defaultGermanFoundation(),fontSize:17,letterSpacing:0,flashSpeed:1600,autoSpeakCorrection:true,streakDays:[],milestones:{},fortressWins:defaultSubjectArrays(),fortressWinsByYear:{},battleTickets:defaultSubjectNumbers(),battleDays:{},testFortresses:{},yearFortresses:{},completedTests:{},campaignLog:[],dailyPlans:{},testSeries:defaultTestSeries(),gradeScales:defaultGradeScales(),createdAt:new Date().toISOString()});state.activeLearnerId=learnerId;
+    }
+    ensureActiveSubject();closeModal();save();
+  };
 }
 function openBookManager(learnerId=state.activeLearnerId){
   const l=state.learners.find(x=>x.id===learnerId);if(!l)return;const subjects=learnerActiveSubjects(l);

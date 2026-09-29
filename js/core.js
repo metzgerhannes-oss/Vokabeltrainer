@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.21.39';
+const VERSION = '0.21.40';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';
@@ -69,6 +69,24 @@ const subjectFunctionWords=id=>subjectMeta(id)?.functionWords||[];
 const subjectHasCapability=(id,cap)=>!!subjectMeta(id)?.capabilities?.[cap];
 const subjectCampaign=id=>subjectMeta(id)?.campaign||SUBJECT_META.english.campaign;
 const WORLD_MODES=Object.freeze(['adventure','battle']);
+const WORLD_PRESENTATION=Object.freeze({
+  english:Object.freeze({
+    adventure:Object.freeze({theme:'english-adventure',label:'Abenteuer',title:'Expedition',short:'Abenteuer',icon:'⌖'}),
+    battle:Object.freeze({theme:'campaign',label:'Kampf',title:'Armee & Feldzug',short:'Armee',icon:'⚔'})
+  }),
+  latin:Object.freeze({
+    adventure:Object.freeze({theme:'latin-adventure',label:'Abenteuer',title:'Entdeckungsreise',short:'Reise',icon:'⌖'}),
+    battle:Object.freeze({theme:'roman',label:'Kampf',title:'Legion & Marschroute',short:'Legion',icon:'⚔'})
+  }),
+  german:Object.freeze({
+    adventure:Object.freeze({theme:'german-adventure',label:'Abenteuer',title:'Fuchspfad & Wortreise',short:'Abenteuer',icon:'⌖'}),
+    battle:Object.freeze({theme:'wordrealm',label:'Kampf',title:'Das Wortreich',short:'Wortreich',icon:'⚔'})
+  }),
+  french:Object.freeze({
+    adventure:Object.freeze({theme:'voyage',label:'Abenteuer',title:'Voyage Français',short:'Voyage',icon:'⌖'}),
+    battle:Object.freeze({theme:'french-battle',label:'Kampf',title:'Gefährten & Festungen',short:'Festungen',icon:'⚔'})
+  })
+});
 const defaultWorldModes=()=>({english:'battle',latin:'battle',german:'battle',french:'adventure'});
 function normalizeWorldModeBySubject(raw){
   const src=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{},out=defaultWorldModes();
@@ -82,10 +100,12 @@ function setLearnerWorldMode(l,subject,mode){
   if(!l||!isKnownSubject(subject)||!WORLD_MODES.includes(mode))return false;
   l.worldModeBySubject=normalizeWorldModeBySubject(l.worldModeBySubject);l.worldModeBySubject[subject]=mode;return true;
 }
-const subjectVisualTheme=(id,l=state?.learners?.find(x=>x.id===state?.activeLearnerId)||state?.learners?.[0])=>{
-  if(id==='german'&&learnerWorldMode('german',l)==='adventure')return'german-adventure';
-  return subjectCampaign(id)?.visualTheme||'campaign';
+const subjectWorldPresentation=(id,l=state?.learners?.find(x=>x.id===state?.activeLearnerId)||state?.learners?.[0])=>{
+  const subject=normalizeSubjectId(id),mode=learnerWorldMode(subject,l);
+  return WORLD_PRESENTATION[subject]?.[mode]||WORLD_PRESENTATION.english.battle;
 };
+const isAdventureWorld=(subject=state?.activeSubject,l=state?.learners?.find(x=>x.id===state?.activeLearnerId)||state?.learners?.[0])=>learnerWorldMode(subject,l)==='adventure';
+const subjectVisualTheme=(id,l=state?.learners?.find(x=>x.id===state?.activeLearnerId)||state?.learners?.[0])=>subjectWorldPresentation(id,l).theme;
 const subjectMap=factory=>Object.fromEntries(knownSubjectIds().map(id=>[id,typeof factory==='function'?factory(id):deepClone(factory)]));
 const defaultGradeScales=()=>subjectMap(()=>defaultGradeScale());
 const defaultTestSeries=()=>subjectMap(()=>null);

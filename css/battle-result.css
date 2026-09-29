@@ -232,3 +232,11 @@ html:has(body.battle-result-open){overflow-x:hidden}
 }
 .battle-result-overlay[data-visual-theme="voyage"] .battle-result-kicker,
 .battle-result-overlay[data-visual-theme="voyage"] .battle-result-reward>span{color:#c9dbcf}
+
+.battle-result-overlay[data-visual-theme="french-battle"] .battle-result-card{
+  background:linear-gradient(180deg,rgba(51,62,78,.98),rgba(31,38,51,.98));
+  border-color:rgba(205,181,126,.48);
+}
+.battle-result-overlay[data-visual-theme="french-battle"] .battle-result-kicker,
+.battle-result-overlay[data-visual-theme="french-battle"] .battle-result-reward>span{color:#e1c98f}
+.battle-result-overlay[data-visual-theme="french-battle"] .battle-result-primary{background:linear-gradient(135deg,#596d84,#76617a)}
