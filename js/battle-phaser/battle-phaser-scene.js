@@ -37,28 +37,64 @@ const C = {
   smoke: 0x4d4a45
 };
 
+const WORDREALM = {
+  skyTop: 0xb7c9b0,
+  skyBottom: 0xe8d8b8,
+  haze: 0xf6e7c8,
+  mountainFar: 0x7f8b72,
+  mountainNear: 0x5d6d55,
+  grassFar: 0x77845a,
+  grassNear: 0x4d613f,
+  earth: 0x866747,
+  path: 0xc3a777,
+  stone: 0x8f8877,
+  stoneDark: 0x625c50,
+  stoneLight: 0xc1b69e,
+  wood: 0x6f482b,
+  woodDark: 0x432d1f,
+  blue: 0x5d6f3e,
+  blueLight: 0x81965a,
+  gold: 0xc89b48,
+  goldLight: 0xf0d38a,
+  red: 0x8c3f35,
+  redDark: 0x603028,
+  steel: 0x78827e,
+  steelLight: 0xbac2bb,
+  leather: 0x654733,
+  skin: 0xd6a67c,
+  horse: 0x8a7763,
+  horseDark: 0x58483a,
+  dust: 0xc8a879,
+  fire: 0xde6729,
+  fireLight: 0xffd36a,
+  ember: 0xffa13a,
+  smoke: 0x4d4943
+};
+
+function pc(scene,key){return scene?.__theme==='wordrealm'?(WORDREALM[key]??C[key]):C[key]}
+
 function g(scene) {
   return scene.add.graphics();
 }
 
 function drawBackdrop(scene) {
   const sky = g(scene).setScrollFactor(0);
-  sky.fillStyle(C.skyTop, 1).fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
-  sky.fillStyle(C.skyBottom, 0.45).fillRect(0, 210, WORLD_WIDTH, 250);
+  sky.fillStyle(pc(scene,'skyTop'), 1).fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+  sky.fillStyle(pc(scene,'skyBottom'), 0.45).fillRect(0, 210, WORLD_WIDTH, 250);
   sky.setDepth(-100);
 
   const sun = scene.add.circle(1110, 122, 70, 0xffe4a1, 0.34).setScrollFactor(0.08).setDepth(-96);
   const sunCore = scene.add.circle(1110, 122, 34, 0xffefba, 0.55).setScrollFactor(0.08).setDepth(-95);
 
   const far = g(scene).setScrollFactor(0.12).setDepth(-90);
-  far.fillStyle(C.mountainFar, 0.52);
+  far.fillStyle(pc(scene,'mountainFar'), 0.52);
   far.fillTriangle(-80, 420, 240, 150, 520, 420);
   far.fillTriangle(260, 420, 620, 190, 900, 420);
   far.fillTriangle(760, 420, 1120, 170, 1510, 420);
-  far.fillStyle(C.haze, 0.18).fillRect(0, 350, WORLD_WIDTH, 90);
+  far.fillStyle(pc(scene,'haze'), 0.18).fillRect(0, 350, WORLD_WIDTH, 90);
 
   const near = g(scene).setScrollFactor(0.32).setDepth(-80);
-  near.fillStyle(C.mountainNear, 0.78);
+  near.fillStyle(pc(scene,'mountainNear'), 0.78);
   near.beginPath();
   near.moveTo(0, 450);
   near.lineTo(0, 348);
@@ -76,7 +112,7 @@ function drawBackdrop(scene) {
   near.fillPath();
 
   const mid = g(scene).setScrollFactor(0.62).setDepth(-70);
-  mid.fillStyle(C.grassFar, 1);
+  mid.fillStyle(pc(scene,'grassFar'), 1);
   mid.beginPath();
   mid.moveTo(0, 430);
   mid.lineTo(0, 380);
@@ -94,8 +130,8 @@ function drawBackdrop(scene) {
   mid.fillPath();
 
   const ground = g(scene).setDepth(-60);
-  ground.fillStyle(C.grassNear, 1).fillRect(0, 465, WORLD_WIDTH, 255);
-  ground.fillStyle(C.earth, 0.5);
+  ground.fillStyle(pc(scene,'grassNear'), 1).fillRect(0, 465, WORLD_WIDTH, 255);
+  ground.fillStyle(pc(scene,'earth'), 0.5);
   ground.beginPath();
   ground.moveTo(0, 650);
   ground.lineTo(350, 600);
@@ -108,7 +144,7 @@ function drawBackdrop(scene) {
   ground.fillPath();
 
   const path = g(scene).setDepth(-58);
-  path.fillStyle(C.path, 0.9);
+  path.fillStyle(pc(scene,'path'), 0.9);
   path.beginPath();
   path.moveTo(0, 675);
   path.lineTo(300, 618);
@@ -128,19 +164,30 @@ function drawBackdrop(scene) {
     const x = 18 + ((i * 97) % 1420);
     const y = 474 + ((i * 43) % 205);
     const h = 5 + (i % 4) * 2;
-    detail.lineStyle(1 + (i % 2), 0x91a16c, 0.5);
+    detail.lineStyle(1 + (i % 2), scene?.__theme==='wordrealm'?0x829064:0x91a16c, 0.5);
     detail.lineBetween(x, y, x - 2, y - h);
     detail.lineBetween(x + 2, y, x + 4, y - h + 1);
   }
 
+  if(scene?.__theme==='wordrealm'){
+    const forest=g(scene).setDepth(-54);
+    for(let i=0;i<18;i+=1){
+      const x=28+i*82+(i%3)*11,y=455+(i%4)*9,h=38+(i%5)*9;
+      forest.fillStyle(0x3f5035,0.92).fillTriangle(x-16,y,x,y-h,x+16,y);
+      forest.fillStyle(0x506242,0.86).fillTriangle(x-13,y-13,x,y-h-18,x+13,y-13);
+      forest.fillStyle(pc(scene,'woodDark'),0.9).fillRect(x-2,y-3,4,22);
+    }
+    const marker=scene.add.text(892,428,'DAS WORTREICH',{fontFamily:'Georgia, serif',fontSize:'25px',fontStyle:'bold',color:'#5b4328',stroke:'#f1dfba',strokeThickness:5}).setRotation(-0.035).setDepth(-53);
+    marker.setAlpha(0.78);
+  }
   return { sky, sun, sunCore, far, near, mid, ground, path, detail };
 }
 
 function createBanner(scene, x, y, color, crest = true) {
   const c = scene.add.container(x, y);
   const pole = g(scene);
-  pole.fillStyle(C.woodDark, 1).fillRect(-3, -58, 6, 116);
-  pole.fillStyle(C.gold, 1).fillCircle(0, -62, 6);
+  pole.fillStyle(pc(scene,'woodDark'), 1).fillRect(-3, -58, 6, 116);
+  pole.fillStyle(pc(scene,'gold'), 1).fillCircle(0, -62, 6);
   const cloth = g(scene);
   cloth.fillStyle(color, 1);
   cloth.beginPath();
@@ -151,8 +198,8 @@ function createBanner(scene, x, y, color, crest = true) {
   cloth.closePath();
   cloth.fillPath();
   if (crest) {
-    cloth.fillStyle(C.goldLight, 0.95).fillCircle(26, -34, 8);
-    cloth.fillStyle(C.gold, 1).fillTriangle(19, -29, 33, -29, 26, -16);
+    cloth.fillStyle(pc(scene,'goldLight'), 0.95).fillCircle(26, -34, 8);
+    cloth.fillStyle(pc(scene,'gold'), 1).fillTriangle(19, -29, 33, -29, 26, -16);
   }
   c.add([pole, cloth]);
   c.setDepth(5);
@@ -168,38 +215,38 @@ function createSoldier(scene, x, y, opts = {}) {
   const body = g(scene);
 
   if (cavalry) {
-    body.fillStyle(C.horseDark, 1).fillEllipse(-3, 8, 66, 30);
-    body.fillStyle(C.horse, 1).fillEllipse(24, -2, 25, 31);
-    body.fillStyle(C.horseDark, 1).fillTriangle(31, -18, 39, -32, 43, -13);
-    body.fillStyle(C.horseDark, 1).fillRect(-24, 18, 6, 26);
+    body.fillStyle(pc(scene,'horseDark'), 1).fillEllipse(-3, 8, 66, 30);
+    body.fillStyle(pc(scene,'horse'), 1).fillEllipse(24, -2, 25, 31);
+    body.fillStyle(pc(scene,'horseDark'), 1).fillTriangle(31, -18, 39, -32, 43, -13);
+    body.fillStyle(pc(scene,'horseDark'), 1).fillRect(-24, 18, 6, 26);
     body.fillRect(8, 18, 6, 26);
-    body.fillStyle(C.blue, 1).fillRoundedRect(-14, -30, 26, 42, 7);
-    body.fillStyle(C.steel, 1).fillCircle(-2, -40, 12);
-    body.fillStyle(C.skin, 1).fillCircle(-2, -36, 9);
-    body.fillStyle(C.steel, 1).fillRect(-14, -42, 24, 5);
-    body.lineStyle(3, C.steelLight, 1).lineBetween(7, -24, 28, -54);
-    body.fillStyle(C.blueLight, 1).fillTriangle(-18, -18, -37, 10, -7, 7);
+    body.fillStyle(pc(scene,'blue'), 1).fillRoundedRect(-14, -30, 26, 42, 7);
+    body.fillStyle(pc(scene,'steel'), 1).fillCircle(-2, -40, 12);
+    body.fillStyle(pc(scene,'skin'), 1).fillCircle(-2, -36, 9);
+    body.fillStyle(pc(scene,'steel'), 1).fillRect(-14, -42, 24, 5);
+    body.lineStyle(3, pc(scene,'steelLight'), 1).lineBetween(7, -24, 28, -54);
+    body.fillStyle(pc(scene,'blueLight'), 1).fillTriangle(-18, -18, -37, 10, -7, 7);
   } else {
-    body.fillStyle(elite ? C.blueLight : C.blue, 1).fillRoundedRect(-13, -18, 26, 42, 7);
-    body.fillStyle(C.leather, 0.9).fillRect(-11, 8, 22, 5);
-    body.fillStyle(C.steel, 1).fillCircle(0, -30, 12);
-    body.fillStyle(C.skin, 1).fillCircle(0, -26, 9);
-    body.fillStyle(C.steel, 1).fillRect(-12, -32, 24, 5);
-    body.lineStyle(2, C.steelLight, 0.8).lineBetween(-11, -31, 11, -31);
-    body.fillStyle(C.steelLight, 1).fillRect(-11, 23, 8, 19);
+    body.fillStyle(elite ? pc(scene,'blueLight') : pc(scene,'blue'), 1).fillRoundedRect(-13, -18, 26, 42, 7);
+    body.fillStyle(pc(scene,'leather'), 0.9).fillRect(-11, 8, 22, 5);
+    body.fillStyle(pc(scene,'steel'), 1).fillCircle(0, -30, 12);
+    body.fillStyle(pc(scene,'skin'), 1).fillCircle(0, -26, 9);
+    body.fillStyle(pc(scene,'steel'), 1).fillRect(-12, -32, 24, 5);
+    body.lineStyle(2, pc(scene,'steelLight'), 0.8).lineBetween(-11, -31, 11, -31);
+    body.fillStyle(pc(scene,'steelLight'), 1).fillRect(-11, 23, 8, 19);
     body.fillRect(3, 23, 8, 19);
 
     if (archer) {
-      body.lineStyle(3, C.wood, 1);
+      body.lineStyle(3, pc(scene,'wood'), 1);
       body.beginPath();
       body.arc(18, -4, 16, -1.15, 1.15, false);
       body.strokePath();
-      body.lineStyle(1, C.goldLight, 0.9).lineBetween(24, -19, 24, 11);
+      body.lineStyle(1, pc(scene,'goldLight'), 0.9).lineBetween(24, -19, 24, 11);
     } else {
-      body.fillStyle(elite ? C.goldLight : C.steel, 1).fillCircle(-18, 1, 14);
-      body.lineStyle(2, C.gold, 0.9).strokeCircle(-18, 1, 14);
-      body.lineStyle(3, C.steelLight, 1).lineBetween(13, -10, 37, -42);
-      body.fillStyle(C.steelLight, 1).fillTriangle(34, -40, 42, -50, 39, -35);
+      body.fillStyle(elite ? pc(scene,'goldLight') : pc(scene,'steel'), 1).fillCircle(-18, 1, 14);
+      body.lineStyle(2, pc(scene,'gold'), 0.9).strokeCircle(-18, 1, 14);
+      body.lineStyle(3, pc(scene,'steelLight'), 1).lineBetween(13, -10, 37, -42);
+      body.fillStyle(pc(scene,'steelLight'), 1).fillTriangle(34, -40, 42, -50, 39, -35);
     }
   }
 
@@ -220,14 +267,14 @@ function createRam(scene, x, y) {
   const c = scene.add.container(x, y).setDepth(25);
   const shadow = scene.add.ellipse(0, 29, 110, 18, 0x000000, 0.22);
   const body = g(scene);
-  body.fillStyle(C.woodDark, 1).fillRoundedRect(-54, -28, 108, 42, 10);
-  body.fillStyle(C.blue, 1).fillTriangle(-56, -25, 0, -55, 56, -25);
-  body.lineStyle(3, C.gold, 0.9).lineBetween(-47, -25, 47, -25);
-  body.fillStyle(C.wood, 1).fillRoundedRect(-74, -2, 128, 12, 6);
-  body.fillStyle(C.steelLight, 1).fillTriangle(54, -8, 79, 4, 54, 16);
-  body.fillStyle(C.gold, 1).fillCircle(-34, 24, 15);
+  body.fillStyle(pc(scene,'woodDark'), 1).fillRoundedRect(-54, -28, 108, 42, 10);
+  body.fillStyle(pc(scene,'blue'), 1).fillTriangle(-56, -25, 0, -55, 56, -25);
+  body.lineStyle(3, pc(scene,'gold'), 0.9).lineBetween(-47, -25, 47, -25);
+  body.fillStyle(pc(scene,'wood'), 1).fillRoundedRect(-74, -2, 128, 12, 6);
+  body.fillStyle(pc(scene,'steelLight'), 1).fillTriangle(54, -8, 79, 4, 54, 16);
+  body.fillStyle(pc(scene,'gold'), 1).fillCircle(-34, 24, 15);
   body.fillCircle(31, 24, 15);
-  body.fillStyle(C.woodDark, 1).fillCircle(-34, 24, 8);
+  body.fillStyle(pc(scene,'woodDark'), 1).fillCircle(-34, 24, 8);
   body.fillCircle(31, 24, 8);
   c.add([shadow, body]);
   c.__baseY = y;
@@ -306,11 +353,11 @@ function createFortress(scene, x, y, profileInitials = 'P') {
   for (let xx = -22; xx <= 22; xx += 22) gate.lineBetween(xx, -58, xx, 20);
   gate.lineStyle(3, C.steel, 0.8).lineBetween(-31, -4, 31, -4);
 
-  const enemyBanner = createBanner(scene, 0, -278, C.red, false);
+  const enemyBanner = createBanner(scene, 0, -278, pc(scene,'red'), false);
   enemyBanner.setScale(0.96).setDepth(4);
-  enemyBanner.__cloth.fillStyle(C.goldLight, 1).fillCircle(26, -34, 6);
+  enemyBanner.__cloth.fillStyle(pc(scene,'goldLight'), 1).fillCircle(26, -34, 6);
 
-  const ownBanner = createBanner(scene, 0, -245, C.blue, false);
+  const ownBanner = createBanner(scene, 0, -245, pc(scene,'blue'), false);
   const profileMark = scene.add.text(27, -34, String(profileInitials || 'P').slice(0, 2).toUpperCase(), {
     fontFamily: 'Arial, sans-serif',
     fontSize: '21px',
@@ -392,7 +439,7 @@ function createFortress(scene, x, y, profileInitials = 'P') {
 }
 
 function createCampProps(scene) {
-  const flag = createBanner(scene, 92, 480, C.blue, true);
+  const flag = createBanner(scene, 92, 480, pc(scene,'blue'), true);
   flag.setDepth(4);
   const stakes = g(scene).setDepth(8);
   stakes.lineStyle(5, C.woodDark, 0.85);
@@ -722,11 +769,13 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       this.__phase = 'ready';
       this.__friendlyLosses = 0;
       this.__onBeat = hooks.onBeat || null;
+      this.__subject = hooks.subject === 'german' ? 'german' : 'english';
+      this.__theme = hooks.theme === 'wordrealm' ? 'wordrealm' : 'campaign';
     }
 
     create() {
       this.cameras.main.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
-      this.cameras.main.setBackgroundColor('#263944');
+      this.cameras.main.setBackgroundColor(this.__theme==='wordrealm'?'#394735':'#263944');
       this.__reduced = !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
       drawBackdrop(this);
       this.__props = createCampProps(this);
@@ -781,7 +830,7 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
 
       this.__saveInitial();
       this.__setPhase('ready');
-      hooks.onReady?.({ reducedMotion: this.__reduced });
+      hooks.onReady?.({ reducedMotion: this.__reduced, subject:this.__subject, theme:this.__theme });
     }
 
     __saveInitial() {

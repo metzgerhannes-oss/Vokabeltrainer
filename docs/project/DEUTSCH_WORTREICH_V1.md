@@ -242,7 +242,7 @@ Fehlt einer der fachlichen Punkte 1–6 oder greift die Spielwelt in die fachlic
 - eigener, Family-Sync-fähiger Grundlagenfortschritt ohne XP-, Battle- oder Lernwort-Mastery-Wirkung
 
 ### Paket D – Lernwörter/Rechtschreibung
-**Status: umgesetzt im Release-Kandidaten v0.21.36; automatisierte Verifikation läuft.**
+**Status: produktiv verifiziert in v0.21.36 / PR #203; PR-CI #1239, main-CI #1240 und Pages #561 grün.**
 - Lernwortlisten und produktiver Schreibabruf auf Basis der bestehenden Lernset-Infrastruktur
 - Diktat-/Audioanschluss über `de-DE`
 - Satzkontext als eigener Evidenzpfad
@@ -252,12 +252,15 @@ Fehlt einer der fachlichen Punkte 1–6 oder greift die Spielwelt in die fachlic
 - strittige Systembewertung rollt auch das Deutsch-Fehlerprofil vollständig auf neutral zurück
 
 ### Paket E – Wortreich
-- visuelles Theme
-- Burg-/Armeeprogression
-- eigene Einheiten
-- Belagerungsszene
-- Phaser-Anbindung
-- Gegenwehr und Ergebniszustände
+**Status: umgesetzt im Release-Kandidaten v0.21.37; automatisierte Verifikation läuft.**
+- eigener Spielbereich „Das Wortreich“ mit Ritterheer und Burgroute
+- echter Phaser-4-Produktionskampf auch für Deutsch; nicht nur Battle-Shell
+- eigene Wortreich-Optik im Renderer: warme Wald-/Pergamentpalette, grün-braunes Ritterheer, Holzramme, Banner, Burg- und Waldkulisse
+- deutsche Kampf- und Ergebnisbegriffe: Burg, Belagerung, Ritterheer, Burgschützen, Ritterreiter und Heeresstärke
+- vorhandene Kampfmechanik wird wiederverwendet; Phaser erhält nur Attacke, Capture-Zustand, Profilinitialen, Fach und Theme
+- Schaden, Ticketverbrauch, Kampflog und Eroberung bleiben vollständig in der bestehenden App-Logik
+- fachliche Mastery/Testbereitschaft wird durch den Renderer nicht verändert
+- eigener Domain-Smoke plus echter iPhone-WebKit-Smoke prüft German/wordrealm-Renderer, Eroberung, Ticketverbrauch, XP und unveränderte Mastery
 
 ### Paket F – v1-Abnahme
 - automatisierte Fachtests

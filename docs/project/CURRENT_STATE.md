@@ -6,11 +6,11 @@ Stand: 29.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.36** (Release-Kandidat; produktiv v0.21.35)
-- produktiver Stand auf `main`: **v0.21.35 / Merge-Commit `f28d68f62e19d0dac9e74fe2aa4625ea23f2823c` / PR #202**
-- jüngster produktiver Release: **PR #202 – v0.21.35 – Deutsch Paket C: Klasse-1-Kern**
-- Produktionsnachweis v0.21.35: **PR-CI #1235 success · main-CI #1236 success · GitHub Pages #560 success**
-- aktueller Release-Kandidat: **v0.21.36 – Deutsch Paket D / Lernwörter & Rechtschreibung auf `feat/deutsch-paket-d-v02136`; PR/Verifikation folgt**
+- App-Version: **v0.21.37** (Release-Kandidat; produktiv v0.21.36)
+- produktiver Stand auf `main`: **v0.21.36 / Merge-Commit `315dca65d873b5c5a498ca3e464cab185ff7b228` / PR #203**
+- jüngster produktiver Release: **PR #203 – v0.21.36 – Deutsch Paket D: Lernwörter & Rechtschreibung**
+- Produktionsnachweis v0.21.36: **PR-CI #1239 success · main-CI #1240 success · GitHub Pages #561 success**
+- aktueller Release-Kandidat: **v0.21.37 – Deutsch Paket E / Wortreich-Phaser-Belagerung auf `feat/deutsch-paket-e-v02137`; PR/Verifikation folgt**
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
@@ -54,7 +54,8 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Family Sync | PRODUCTION / Beta-Grenze | `SYNC_ARCHITECTURE.md`, `FINAL_AUDIT.md` |
 | Deutsch Paket B / Fachgrundgerüst | PRODUCTION / CI VERIFIED v0.21.34 | `docs/project/DEUTSCH_WORTREICH_V1.md`, B-001, D-20260928-008, PR #201 |
 | Deutsch Paket C / Klasse-1-Kern | PRODUCTION / LIVE VERIFIED v0.21.35 · PR #202 · CI #1236 · Pages #560 | `docs/project/DEUTSCH_WORTREICH_V1.md`, `DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`, B-001 |
-| Deutsch Paket D / Lernwörter & Rechtschreibung | IMPLEMENTED im v0.21.36-Release-Kandidaten; Verifikation läuft | `docs/project/DEUTSCH_WORTREICH_V1.md`, `DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`, B-001 |
+| Deutsch Paket D / Lernwörter & Rechtschreibung | PRODUCTION / LIVE VERIFIED v0.21.36 · PR #203 · CI #1240 · Pages #561 | `docs/project/DEUTSCH_WORTREICH_V1.md`, `DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`, B-001 |
+| Deutsch Paket E / Wortreich-Phaser-Belagerung | IMPLEMENTED im v0.21.37-Release-Kandidaten; Verifikation läuft | `docs/project/DEUTSCH_WORTREICH_V1.md`, D-20260928-008, D-20260928-004 |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 
 ## Offene Verifikationsgrenzen
@@ -162,5 +163,5 @@ Versions- und Governance-Konsistenz wird durch `scripts/vokabeltrainer-project-c
 - Eigene Literacy-Evidenz ist vom Fremdsprachen-Mastery getrennt.
 - Erste Aufgaben: Hören/Erkennen und Lernwort-Schreiben mit relevanter Groß-/Kleinschreibung.
 - Lernlayout: ruhiger Fuchspfad mit Holzschwert-Übungsstationen.
-- Spiel-Shell: `Das Wortreich` mit Ritterheer/Burg; vollständiger Wortreich-Battle-Ausbau bleibt Paket E.
+- Spiel-Shell: `Das Wortreich` mit Ritterheer/Burg; Wortreich-Battle-Ausbau ist im v0.21.37-Release-Kandidaten als echter Phaser-Belagerungskampf umgesetzt; Produktionsverifikation läuft.
 

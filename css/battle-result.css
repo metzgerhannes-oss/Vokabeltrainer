@@ -149,7 +149,10 @@
 }
 .battle-result-overlay.is-hold .battle-result-kicker{color:#e8b17b}
 .battle-result-overlay.is-hold .battle-result-primary{border-color:#d0a16a;background:linear-gradient(180deg,#8a5527,#5b351d);box-shadow:none}
-body.battle-result-open{overflow:hidden}
+body.battle-result-open{overflow:hidden;overflow-x:hidden}
+html:has(body.battle-result-open){overflow-x:hidden}
+.battle-result-overlay,.battle-result-card,.battle-result-content,.battle-result-rewards,.battle-result-reward,.battle-result-actions{box-sizing:border-box;min-width:0}
+.battle-result-content h2,.battle-result-content>p,.battle-result-reward strong,.battle-result-reward small{max-width:100%;overflow-wrap:anywhere;word-break:normal}
 @media(max-width:720px){
   .battle-result-overlay{place-items:end center;padding:8px}
   .battle-result-card{min-height:min(690px,calc(100vh - 16px));border-radius:20px}
@@ -195,6 +198,35 @@ body.battle-result-open{overflow:hidden}
 .battle-result-overlay[data-visual-theme="roman"] .battle-result-secondary{
   border-color:rgba(205,167,101,.42);background:rgba(53,37,27,.86);color:#efd69f;
 }
+
+.battle-result-overlay[data-visual-theme="wordrealm"] .battle-result-card{
+  border-color:#c7aa70;
+  background:
+    radial-gradient(circle at 50% 18%,rgba(176,150,91,.18),transparent 35%),
+    linear-gradient(180deg,#334333,#1f2d23 62%,#18231c);
+}
+.battle-result-overlay[data-visual-theme="wordrealm"] .battle-result-shade{
+  background:
+    radial-gradient(circle at 50% 23%,rgba(238,211,151,.13),transparent 36%),
+    linear-gradient(180deg,rgba(48,65,47,.05),rgba(27,40,29,.58) 64%,rgba(18,28,21,.96));
+}
+.battle-result-overlay[data-visual-theme="wordrealm"] .battle-result-kicker,
+.battle-result-overlay[data-visual-theme="wordrealm"] .battle-result-reward>span{color:#efd18a}
+.battle-result-overlay[data-visual-theme="wordrealm"] .battle-result-reward{
+  border-color:rgba(204,177,113,.34);
+  background:linear-gradient(180deg,rgba(61,76,52,.91),rgba(34,49,37,.95));
+}
+.battle-result-overlay[data-visual-theme="wordrealm"] .battle-result-primary{
+  border-color:#bda05d;
+  background:linear-gradient(180deg,#71834d,#4b5d35);
+  box-shadow:0 10px 30px rgba(50,68,40,.32);
+}
+.battle-result-overlay[data-visual-theme="wordrealm"] .battle-result-secondary{
+  border-color:rgba(218,190,124,.45);
+  background:rgba(38,54,39,.88);
+  color:#f0dca7;
+}
+
 .battle-result-overlay[data-visual-theme="voyage"] .battle-result-card{
   border-color:#9eb7b1;background:linear-gradient(180deg,#243b43,#172a30);
 }

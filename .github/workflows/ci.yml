@@ -62,6 +62,9 @@ jobs:
       - name: Deutsch Paket D smoke
         run: node scripts/vokabeltrainer-deutsch-package-d-smoke.mjs
 
+      - name: Deutsch Paket E smoke
+        run: node scripts/vokabeltrainer-deutsch-package-e-smoke.mjs
+
       - name: Library index smoke
         run: node scripts/vokabeltrainer-library-index-smoke.mjs
 
@@ -275,6 +278,9 @@ jobs:
 
       - name: WebKit production Phaser battle
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-production-phaser-battle-ui-smoke.mjs
+
+      - name: WebKit Deutsch Paket E Wortreich
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-deutsch-paket-e-ui-smoke.mjs
 
       - name: WebKit My Army overview
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-army-ui-smoke.mjs

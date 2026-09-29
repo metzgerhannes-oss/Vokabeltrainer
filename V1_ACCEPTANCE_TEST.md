@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 28.09.2026 · Basis: v0.21.36 · Produktionsbasis; Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
+Stand: 28.09.2026 · Basis: v0.21.37 · Produktionsbasis; Prüfschwerpunkt: dauerhafte Jahresentwicklung + datierbare Jahresfestung
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -454,6 +454,9 @@ Automatisierter Implementierungsstand v0.21.36: Paket D ergänzt differenzierte 
 - [ ] „Vokabel überspringen“ verschiebt auch in Deutsch nur ans Ende derselben Session und bleibt neutral
 
 ## G3 – Das Wortreich
+
+Automatisierter Implementierungsstand v0.21.37: Ein echter deutscher Phaser-4-Belagerungskampf ist implementiert. Der Test prüft `german / wordrealm`, iPhone-Darstellung, Eroberung, Ticketverbrauch, XP-Belohnung und unveränderte fachliche Mastery. Die praktische v1-Abnahme der Wirkung und Verständlichkeit bleibt offen.
+
 
 - [x] eigener Deutsch-Spielbereich ist sichtbar
 - [x] Lernmodus bleibt frei von Battle-Animation
