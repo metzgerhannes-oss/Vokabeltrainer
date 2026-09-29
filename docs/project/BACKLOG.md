@@ -35,7 +35,7 @@ Verbindliche Leitlinien:
 **Paket F:** praktische v1-Abnahme folgt.
 
 ## B-002 – Eigene finale Latein-Grafikserie
-**Status:** APPROVED_BACKLOG  
+**Status:** IN_IMPLEMENTATION · Deutsch umgesetzt in v0.21.38; Englisch/Latein/Französisch folgen  
 **Priorität:** nach Kernstabilität / im Rahmen der visuellen Ausarbeitung  
 **Betroffene Quelle:** `VISUAL_DNA.md`
 
@@ -320,20 +320,22 @@ Ein Backlog-Punkt wird nicht gelöscht, wenn er umgesetzt oder verworfen wird:
 - Verwerfung → Status auf `REJECTED` plus Decision-ID/Begründung
 - Ersatz → `SUPERSEDED` plus Verweis auf Nachfolger
 
-## B-017 – Weltwahl Abenteuer oder Kampf pro Fremdsprache
+## B-017 – Weltwahl Abenteuer oder Kampf pro Fach
 **Status:** APPROVED_BACKLOG  
 **Priorität:** P1 visuelle/Profile-UX vor finaler Fachwelten-Ausarbeitung  
-**Decision:** D-20260929-001  
+**Decision:** D-20260929-001 · D-20260929-002  
 **Betroffene Quellen:** `VISUAL_DNA.md`, `docs/project/LATIN_FRENCH_VISUAL_LAYOUT.md`, Profilmodell, Profilerstellung, Profileinstellungen, Spiel-/Fortschrittsrenderer
 
-Bei der Profilerstellung soll für **Englisch, Latein und Französisch separat** zwischen
-**Abenteuer** und **Kampf** gewählt werden können. Die Auswahl ist später ohne Fortschrittsverlust
-änderbar.
+Bei der Profilerstellung soll pro unterstütztem Fach separat zwischen **Abenteuer** und **Kampf**
+gewählt werden können. Die Auswahl ist später ohne Fortschrittsverlust änderbar. Die technische
+Einführung startet mit **Deutsch**; Englisch, Latein und Französisch folgen auf derselben
+Profil-/Persistenzarchitektur.
 
 Umsetzungspaket:
 
 - Profilmodell erhält eine fachbezogene Weltpräferenz, z. B. `worldModeBySubject`
-- Profilerstellung zeigt pro aktiviertem Fremdsprachenfach die Auswahl **Abenteuer | Kampf**
+- Profilerstellung zeigt pro unterstütztem Fach die Auswahl **Abenteuer | Kampf**
+- Deutsch v0.21.38: Fuchs-Abenteuer vs. Wortreich/Kampf; bestehende Profile bleiben konservativ auf Kampf
 - Profileinstellungen erlauben denselben Wechsel später
 - bestehende Profile behalten zunächst ihre bisherige Darstellung; keine überraschende Migration
 - kumulative Jahresstufe aus D-20260928-005 wird beim Wechsel 1:1 auf die andere Welt übertragen
@@ -347,7 +349,7 @@ Umsetzungspaket:
 
 Abnahme:
 
-1. Ein neues Profil kann für jedes verfügbare Fremdsprachenfach unabhängig eine Welt wählen.
+1. Ein neues Profil kann für jedes bereits umgesetzte Fach unabhängig eine Welt wählen; v0.21.38 beginnt mit Deutsch.
 2. Ein späterer Wechsel verändert keinen fachlichen Lernwert.
 3. Die sichtbare Jahresstufe bleibt vor und nach dem Wechsel gleichwertig.
 4. Abenteuer und Kampf sind visuell eindeutig unterscheidbar, bleiben aber innerhalb derselben Fachidentität.
