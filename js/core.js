@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.21.35';
+const VERSION = '0.21.36';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';
@@ -30,6 +30,7 @@ const currentSchoolYear = () => {
 
 const defaultSkills = () => ({recognition:0,listening:0,retrieval:0,spelling:0,reading:0,context:0});
 const defaultLiteracySkills = () => ({recognized:0,decoded:0,fluency:0,meaning:0,phonologicalSpelling:0,orthographicSpelling:0,dictation:0,sentenceUse:0});
+const defaultLiteracyErrors = () => ({capitalization:0,letterSequence:0,wordStructure:0,sentenceContext:0});
 const defaultGermanFoundation = () => ({version:1,letters:{},words:{},sentences:{},completedStages:{},updatedAt:null});
 const defaultDirectionalRecall = () => ({
   target:{successDays:[],lastCorrect:null,lastAt:null},
@@ -103,7 +104,7 @@ function literacySupportActive(l){const x=literacySupportFor(l);return x.reading
 const PROGRESS_FIELDS = new Set([
   'skills','literacySkills','level','repetitions','successes','independentSuccesses','assistedSuccesses','failures','intervalDays','dueDate',
   'lastReviewedAt','lastSuccessAt','lastActiveSuccessAt','activeSuccessDays','activePracticeDays','maxActiveGapDays','coldRecallDays',
-  'coldRecallSuccesses','spellingSuccessDays','recentActiveResults','practiceDays','modesSeen','directionalRecall','grammarSkills','grammarSuccessDays','errorProfile',
+  'coldRecallSuccesses','spellingSuccessDays','recentActiveResults','practiceDays','modesSeen','directionalRecall','grammarSkills','grammarSuccessDays','errorProfile','literacyErrors',
   'masteredAt','lastMasteredAt','confusionWith','leitnerBox','leitnerUpdatedAt'
 ]);
 
@@ -120,7 +121,7 @@ function makeLearnerVocabulary(learnerId,vocabId,senseIdOrOpts='',opts={}){
     coldRecallDays:Array.isArray(opts.coldRecallDays)?opts.coldRecallDays:[],coldRecallSuccesses:Number(opts.coldRecallSuccesses)||0,spellingSuccessDays:Array.isArray(opts.spellingSuccessDays)?opts.spellingSuccessDays:[],recentActiveResults:Array.isArray(opts.recentActiveResults)?opts.recentActiveResults.slice(-8):[],
     practiceDays:Array.isArray(opts.practiceDays)?opts.practiceDays:[],modesSeen:Array.isArray(opts.modesSeen)?opts.modesSeen:[],directionalRecall:normalizeDirectionalRecall(opts.directionalRecall),
     grammarSkills:{genitive:0,gender:0,principalParts:0,form:0,...(opts.grammarSkills||{})},grammarSuccessDays:Array.isArray(opts.grammarSuccessDays)?opts.grammarSuccessDays:[],
-    errorProfile:{meaning:0,retrieval:0,spelling:0,listening:0,context:0,grammar:0,...(opts.errorProfile||{})},
+    errorProfile:{meaning:0,retrieval:0,spelling:0,listening:0,context:0,grammar:0,...(opts.errorProfile||{})},literacyErrors:{...defaultLiteracyErrors(),...(opts.literacyErrors||{})},
     masteredAt:opts.masteredAt||null,lastMasteredAt:opts.lastMasteredAt||null,confusionWith:Array.isArray(opts.confusionWith)?opts.confusionWith:[],leitnerBox:clamp(Math.round(Number(opts.leitnerBox)||0),0,5),leitnerUpdatedAt:opts.leitnerUpdatedAt||null
   };
 }
@@ -154,7 +155,7 @@ function attachVocabularySenseApi(v){
 }
 function makeVocabulary(subject,term,translation,opts={}){
   const now=new Date().toISOString(),senses=Array.isArray(opts.senses)&&opts.senses.length?opts.senses.map(s=>makeVocabularySense(s.translation,{...s,id:s.id||uid('sense')})):[makeVocabularySense(translation,{translations:opts.translations||[],examples:opts.examples||[]})];
-  const v={id:opts.id||uid('v'),subject:normalizeSubjectId(subject),term:String(term||'').trim(),termVariants:Array.isArray(opts.termVariants)?[...new Set(opts.termVariants.filter(Boolean))]:[],extra:opts.extra||'',mnemonic:opts.mnemonic||'',chunks:Array.isArray(opts.chunks)?opts.chunks.filter(Boolean):[],sources:Array.isArray(opts.sources)?opts.sources:[],verifiedAt:opts.verifiedAt||null,createdAt:opts.createdAt||now,updatedAt:opts.updatedAt||now,senses};
+  const v={id:opts.id||uid('v'),subject:normalizeSubjectId(subject),term:String(term||'').trim(),termVariants:Array.isArray(opts.termVariants)?[...new Set(opts.termVariants.filter(Boolean))]:[],extra:opts.extra||'',mnemonic:opts.mnemonic||'',chunks:Array.isArray(opts.chunks)?opts.chunks.filter(Boolean):[],syllables:Array.isArray(opts.syllables)?opts.syllables.filter(Boolean):[],wordStem:String(opts.wordStem||'').trim(),wordFamily:Array.isArray(opts.wordFamily)?[...new Set(opts.wordFamily.map(x=>String(x||'').trim()).filter(Boolean))].slice(0,20):[],orthographyHint:String(opts.orthographyHint||'').trim(),sources:Array.isArray(opts.sources)?opts.sources:[],verifiedAt:opts.verifiedAt||null,createdAt:opts.createdAt||now,updatedAt:opts.updatedAt||now,senses};
   return attachVocabularySenseApi(v);
 }
 function makeSetVocabulary(setId,vocabId,senseIdOrOpts='',opts={}){
@@ -332,17 +333,17 @@ function wordViewForLink(link,s=state){
   const getValue=prop=>{
     if(prop==='id')return p.id;if(prop==='setId')return link.setId;if(prop==='setLinkId')return link.id;if(prop==='vocabId')return v.id;if(prop==='senseId')return sense.id;if(prop==='learnerId')return p.learnerId;if(prop==='subject')return v.subject;
     if(prop==='term')return link.termOverride||v.term;if(prop==='translation')return link.translationOverride||sense.translation;if(prop==='extra')return link.extraOverride||v.extra||'';if(prop==='example')return link.exampleOverride||(sense.examples||[])[0]||'';
-    if(prop==='mnemonic')return v.mnemonic||'';if(prop==='chunks')return v.chunks||[];if(prop==='termVariants')return v.termVariants||[];if(prop==='translations')return sense.translations||[];
+    if(prop==='mnemonic')return v.mnemonic||'';if(prop==='chunks')return v.chunks||[];if(prop==='syllables')return v.syllables||[];if(prop==='wordStem')return v.wordStem||'';if(prop==='wordFamily')return v.wordFamily||[];if(prop==='orthographyHint')return v.orthographyHint||'';if(prop==='termVariants')return v.termVariants||[];if(prop==='translations')return sense.translations||[];
     if(prop==='acceptedTerms')return [...new Set([link.termOverride,v.term,...(v.termVariants||[]),...(link.acceptedTermOverrides||[])].filter(Boolean))];
     if(prop==='acceptedTranslations')return [...new Set([link.translationOverride,sense.translation,...(sense.translations||[]),...(link.acceptedTranslationOverrides||[])].filter(Boolean))];
     if(prop==='source')return link.source||'';
-    if(prop==='toJSON')return ()=>{const o={};for(const k of ['id','setId','setLinkId','vocabId','senseId','learnerId','subject','term','translation','extra','example','mnemonic','chunks','acceptedTerms','acceptedTranslations'])o[k]=getValue(k);Object.assign(o,p);return o;};
+    if(prop==='toJSON')return ()=>{const o={};for(const k of ['id','setId','setLinkId','vocabId','senseId','learnerId','subject','term','translation','extra','example','mnemonic','chunks','syllables','wordStem','wordFamily','orthographyHint','acceptedTerms','acceptedTranslations'])o[k]=getValue(k);Object.assign(o,p);return o;};
     if(prop in p)return p[prop];if(prop in link)return link[prop];if(prop in sense)return sense[prop];if(prop in v)return v[prop];return undefined;
   };
   return new Proxy({}, {get:(_t,prop)=>getValue(prop),set:(_t,prop,value)=>{
     if(PROGRESS_FIELDS.has(prop)||prop in p){p[prop]=value;return true;}
     if(prop==='term'){link.termOverride=String(value||'');return true;}if(prop==='translation'){link.translationOverride=String(value||'');return true;}if(prop==='extra'){link.extraOverride=String(value||'');return true;}if(prop==='example'){link.exampleOverride=String(value||'');return true;}
-    if(prop==='mnemonic'){v.mnemonic=String(value||'');return true;}if(prop==='chunks'){v.chunks=Array.isArray(value)?value:[];return true;}return false;
+    if(prop==='mnemonic'){v.mnemonic=String(value||'');return true;}if(prop==='chunks'){v.chunks=Array.isArray(value)?value:[];return true;}if(prop==='syllables'){v.syllables=Array.isArray(value)?value:[];return true;}if(prop==='wordStem'){v.wordStem=String(value||'');return true;}if(prop==='wordFamily'){v.wordFamily=Array.isArray(value)?value:[];return true;}if(prop==='orthographyHint'){v.orthographyHint=String(value||'');return true;}return false;
   },ownKeys:()=>[...new Set(['id','setId','setLinkId','vocabId','senseId','learnerId','subject','term','translation','extra','example','mnemonic','chunks','acceptedTerms','acceptedTranslations',...Object.keys(p),...Object.keys(link),...Object.keys(sense),...Object.keys(v)])],getOwnPropertyDescriptor:()=>({enumerable:true,configurable:true})});
 }
 function attachRuntimeWordApi(s){
@@ -361,8 +362,8 @@ function addVocabularySource(v,source,setId=''){
 }
 function upsertVocabulary(subject,term,translation,opts={}){
   const cleanTerm=String(term||'').trim(),cleanTr=String(translation||'').trim();let v=typeof indexedVocabularyMatch==='function'?indexedVocabularyMatch(subject,cleanTerm,opts.extra||''):vocabularyMatch(subject,cleanTerm,opts.extra||''),created=false;
-  if(!v){v=makeVocabulary(subject,cleanTerm,cleanTr,{extra:opts.extra||'',mnemonic:opts.mnemonic||'',chunks:opts.chunks||[],verifiedAt:opts.verified?new Date().toISOString():null});state.vocabulary.push(v);created=true;}
-  else{attachVocabularySenseApi(v);if(cleanTerm&&cleanTerm!==v.term&&!(v.termVariants||[]).includes(cleanTerm))v.termVariants=[...(v.termVariants||[]),cleanTerm];if(opts.extra&&!v.extra)v.extra=opts.extra;if(opts.mnemonic&&!v.mnemonic)v.mnemonic=opts.mnemonic;if(opts.chunks?.length&&!v.chunks?.length)v.chunks=[...opts.chunks];if(opts.verified&&!v.verifiedAt)v.verifiedAt=new Date().toISOString();v.updatedAt=new Date().toISOString();}
+  if(!v){v=makeVocabulary(subject,cleanTerm,cleanTr,{extra:opts.extra||'',mnemonic:opts.mnemonic||'',chunks:opts.chunks||[],syllables:opts.syllables||[],wordStem:opts.wordStem||'',wordFamily:opts.wordFamily||[],orthographyHint:opts.orthographyHint||'',verifiedAt:opts.verified?new Date().toISOString():null});state.vocabulary.push(v);created=true;}
+  else{attachVocabularySenseApi(v);if(cleanTerm&&cleanTerm!==v.term&&!(v.termVariants||[]).includes(cleanTerm))v.termVariants=[...(v.termVariants||[]),cleanTerm];if(opts.extra&&!v.extra)v.extra=opts.extra;if(opts.mnemonic&&!v.mnemonic)v.mnemonic=opts.mnemonic;if(opts.chunks?.length&&!v.chunks?.length)v.chunks=[...opts.chunks];if(opts.syllables?.length&&!v.syllables?.length)v.syllables=[...opts.syllables];if(opts.wordStem&&!v.wordStem)v.wordStem=String(opts.wordStem).trim();if(opts.wordFamily?.length&&!v.wordFamily?.length)v.wordFamily=[...opts.wordFamily];if(opts.orthographyHint&&!v.orthographyHint)v.orthographyHint=String(opts.orthographyHint).trim();if(opts.verified&&!v.verifiedAt)v.verifiedAt=new Date().toISOString();v.updatedAt=new Date().toISOString();}
   const aliases=Array.isArray(opts.senseAliases)?opts.senseAliases:(Array.isArray(opts.translations)?opts.translations:(!opts.senseId&&Array.isArray(opts.acceptedTranslations)?opts.acceptedTranslations:[]));
   const ensured=ensureVocabularySense(v,cleanTr,{senseId:opts.senseId||'',translations:aliases,example:opts.example||'',partOfSpeech:opts.partOfSpeech||''});const sense=ensured.sense;
   addVocabularySource(v,opts.source||'manual',opts.setId||'');rebuildWordIndexes();return {vocab:v,sense,created,senseCreated:ensured.created,translationAdded:ensured.created};
