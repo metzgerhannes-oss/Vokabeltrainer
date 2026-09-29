@@ -395,3 +395,21 @@ Ein Wechsel ist in den Profileinstellungen ohne Reset möglich. Bereits erreicht
 
 Der Fuchs bleibt im Lernmodus weiterhin ruhiger Lernbegleiter. In der Abenteuerwelt darf er zusätzlich die sichtbare Spielfigur des separaten Motivationsbereichs sein.
 
+### D-20260929-003 – Wortreich-Startlayout, Stufenlaufbahn und Vorlesen sind verbindlich
+**Status:** LOCKED  
+**Quelle:** [DEUTSCH_WORTREICH_LAYOUT_V1.md](DEUTSCH_WORTREICH_LAYOUT_V1.md); [../../VISUAL_DNA.md](../../VISUAL_DNA.md) § 9; D-20260928-008; D-20260929-002
+
+Für die **Kampf-/Wortreich-Variante** von Deutsch wird das am 29.09.2026 freigegebene
+Startlayout verbindlich. Die Fuchsentwicklung lautet:
+**Grundausrüstung → Lederzeug → Ritterlehrling → Ritter → Kronritter → König**.
+Die Stufen 3 bis 6 bilden eine direkte Ritterlaufbahn; der König ist die eindeutige Endstufe.
+
+Die Abenteuerwelt übernimmt dieselbe numerische kumulative Jahresstufe, übersetzt sie aber in
+nicht-militärische Fuchspfad-/Entdeckungsetappen. Ein Wechsel der Welt verändert daher keinen
+fachlichen oder langfristigen Fortschritt.
+
+Für Klasse 1 wird Vorlesen als grundlegende Bedienhilfe behandelt. Überschriften, Navigation,
+Aktionskarten und sichere Aufgabenanweisungen erhalten Audio. Audio bleibt vor einer Antwort
+gesperrt, wenn es die erwartete Lösung oder die zu messende Lesekompetenz vorwegnehmen würde.
+Die Vorlesefunktion verändert weder Mastery noch Spacing, Testbereitschaft oder fachliche Bewertung.
+
