@@ -596,3 +596,7 @@ body.lrs-mode .campaign-map-board{box-shadow:none}body.lrs-mode .campaign-map-st
 .campaign-map-view[data-visual-theme="wordrealm"] .campaign-map-year-fortress{
   background:linear-gradient(180deg,#f3dfae,#d4b77e);border-color:#806038
 }
+
+.campaign-map-story{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;margin:13px 0 4px;padding:12px;border:1px solid var(--world-border,rgba(220,197,139,.25));border-radius:12px;background:rgba(255,255,255,.52)}
+.campaign-map-story>div{min-width:0}.campaign-map-story small{display:block;color:var(--world-accent,#d2bd86);font-size:.6rem;font-weight:950;letter-spacing:.09em}.campaign-map-story strong{display:block;margin-top:2px;color:var(--world-ink,#fff);font:800 .98rem/1.2 Georgia,'Times New Roman',serif}.campaign-map-story p{margin:5px 0 0;color:var(--world-muted,#aebdca);font-size:.73rem;line-height:1.42}.campaign-map-story .read-aloud-btn{min-width:44px;min-height:44px}
+@media(max-width:430px){.campaign-map-story{grid-template-columns:1fr}.campaign-map-story .read-aloud-btn{justify-self:start}}
