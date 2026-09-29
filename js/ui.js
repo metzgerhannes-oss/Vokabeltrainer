@@ -293,9 +293,9 @@ function renderBattleAttackChoices(pct=subjectProgress().pct){
 function selectBattleAttack(mode){
   const p=subjectProgress().pct;if(!attackUnlocked(mode,p))return;
   battleAttackMode=mode;renderBattleAttackChoices(p);
-  const a=battleAttackMeta(mode),tactical=battleAttackTacticalMeta(mode);
-  $('#battleMessage').className='battle-message';$('#battleMessage').textContent=`${a.label} gewählt. ${a.message} ${tactical.role}: +${tactical.bonus} Taktikschaden.`;
-  if($('#battleAttackBtn'))$('#battleAttackBtn').textContent=`${a.short}: Angriff starten`;
+  const a=battleAttackMeta(mode),tactical=battleAttackTacticalMeta(mode),isGerman=state.activeSubject==='german';
+  $('#battleMessage').className='battle-message';$('#battleMessage').textContent=isGerman?`${a.label} gewählt. ${a.message} ${tactical.role}: +${tactical.bonus} Belagerungswirkung.`:`${a.label} gewählt. ${a.message} ${tactical.role}: +${tactical.bonus} Taktikschaden.`;
+  if($('#battleAttackBtn'))$('#battleAttackBtn').textContent=`${a.short}: ${isGerman?'Belagerung starten':'Angriff starten'}`;
 }
 let battleFortressRevealTimer=null;
 let battleFortressRevealKey='';
