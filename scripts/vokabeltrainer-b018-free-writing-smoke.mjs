@@ -11,7 +11,7 @@ assert(module.includes('FREE_WRITING_LETTERS')&&module.includes("letter:'G',lowe
 assert(module.includes('freeWritingSelection=new Set()')&&module.includes('data-free-form=')&&module.includes('selectedFreeWritingForms'),'manual single, pair, and multiple-letter selection exists');
 assert(module.includes('Dachgeschoss')&&module.includes('Erdgeschoss')&&module.includes('Keller')&&module.includes('drawSchoolLineature'),'school lineature has roof, middle, and cellar zones');
 assert(module.includes('foundationFreeSoundBtn')&&module.includes('playPhoneme(meta.letter)')&&module.includes('playPhoneme(t.id)'),'letter sound buttons use the dedicated phoneme channel');
-const phonemeStart=module.indexOf('function playPhoneme(letter)');
+const phonemeStart=module.indexOf('function audioContext()');
 const phonemeEnd=module.indexOf('function mixOptions',phonemeStart);
 const phonemeBlock=module.slice(phonemeStart,phonemeEnd);
 assert(phonemeStart>=0&&phonemeEnd>phonemeStart&&phonemeBlock.includes('decodeAudioData')&&phonemeBlock.includes('createBufferSource'),'phoneme channel decodes and plays a local audio sprite');
