@@ -111,6 +111,40 @@ Der Spielmodus darf:
 Er bleibt trotzdem ruhig und kontrolliert. Die Spielwelt dient der Motivation und darf
 niemals fachlichen Fortschritt vortäuschen oder ersetzen.
 
+### Weltwahl pro Fremdsprache
+
+Bei der Profilerstellung wählt das Kind für **Englisch, Latein und Französisch jeweils separat**
+zwischen zwei gleichwertigen Motivationswelten:
+
+- **Abenteuer** – Reise, Expedition, Entdeckung, Etappen und besondere Zielorte
+- **Kampf** – Armee/Gruppe, gegnerische fiktionale Festungen, Angriffe und Eroberungsinszenierung
+
+Die Auswahl ist eine reine Darstellungs- und Motivationsentscheidung. Sie verändert **nicht**
+Vokabelbestand, Mastery, Spacing, Testbereitschaft, Bewertungslogik, Tagesziel oder fachliche
+Schwellen. Beide Varianten erhalten aus demselben realen Lernfortschritt dieselbe Zahl und
+Wertigkeit an Fortschrittsereignissen.
+
+Die Auswahl wird **pro Profil und pro Fach** gespeichert und kann später in den
+Profileinstellungen ohne Fortschrittsverlust geändert werden. Ein Wechsel bildet die bereits
+erreichte kumulative Jahresstufe aus D-20260928-005 auf die entsprechende Stufe der anderen
+Welt ab; Rang/Avatar wird visuell übersetzt, nicht fachlich neu berechnet.
+
+Für bestehende Profile wird keine laufende Welt zwangsweise umgestellt. Die bisherige
+Darstellung bleibt bestehen, bis bewusst eine Variante gewählt oder geändert wird.
+
+Die fachliche Identität bleibt auch innerhalb beider Varianten erhalten:
+
+- **Englisch Abenteuer:** Expedition, Wege, Außenposten, Landschaft und Zielorte
+- **Englisch Kampf:** Kampagne, Armee und fiktionale Festungen
+- **Latein Abenteuer:** mediterrane Entdeckungsreise durch Straßen, Städte, Foren, Aquädukte und Provinzen
+- **Latein Kampf:** römische Legion, Marschroute, Kastelle und fiktionale Gegner
+- **Französisch Abenteuer:** `Voyage Français` mit Orten, Reisewegen, Kultur und Regionen
+- **Französisch Kampf:** französisch inspirierte, klar fiktionale Festungs-/Gefährtenwelt ohne reale Kriegsgegner
+
+Kampfvarianten dürfen niemals reale Länder, Völker, Religionen oder historische Konfliktparteien
+als Feindbild verwenden. Deutsch ist von dieser Wahl nicht erfasst; für Deutsch gilt weiterhin
+die eigene Festlegung aus § 9.
+
 ## 6. Englisch – Campaign World
 
 ### Leitidee
@@ -219,9 +253,14 @@ Identität.
 
 ### Leitidee
 
-Eine elegante Sprach- und Entdeckungsreise durch eine französisch inspirierte Welt.
+Französisch besitzt zwei wählbare Motivationswelten auf derselben fachlichen Grundlage.
 
-Französisch bekommt bewusst **keine zweite Kampfkampagne**.
+- **Abenteuer:** die elegante Sprach- und Entdeckungsreise `Voyage Français`
+- **Kampf:** eine französisch inspirierte, aber vollständig fiktionale Festungs-/Gefährtenwelt
+
+Die nachfolgenden Motive beschreiben die **Abenteuer-Referenz**. Für die Kampfvariante gelten
+dieselbe Farb- und Qualitätswelt sowie die allgemeinen Kampfregeln aus § 5; reale französische
+Kriege, Nationen oder historische Feindbilder werden nicht nachgestellt.
 
 ### Charakter
 
@@ -266,6 +305,8 @@ Paris darf eine besondere Etappe sein, aber nicht die gesamte visuelle Welt best
 - kein Rosa-Code
 - keine Mode-App-Anmutung
 - keine billige Reisepostkarten-Ästhetik
+- auch in der Kampfvariante keine realen Länder/Völker als Gegner
+- keine historische Frankreich-Kriegsrekonstruktion als Grundwelt
 
 Hinweis: Französisch ist visuell bereits definiert, auch wenn die fachliche Freischaltung
 technisch weiterhin den vollständigen Aktivierungs-Check aus `SUBJECT_SYSTEM.md` erfüllen muss.
@@ -473,12 +514,16 @@ beantwortet wird:
 
 **Status: visuelle Grundrichtung am 26.09.2026 freigegeben.**
 
-Die freigegebene 2×2-Leitbildtafel definiert gemeinsam die vier Referenzwelten:
+Die freigegebene 2×2-Leitbildtafel definiert gemeinsam die vier Basis-Referenzwelten:
 
 1. **English – The Campaign:** Gruppe → Landschaft/Weg → Festung
 2. **Latin – The Legion:** Legion → Römerstraße → Kastell
 3. **Français – Le Voyage:** Reisefigur → Reiseweg → Zielort
 4. **Deutsch – Das Wortreich:** Lernmodus mit Fuchs; Spielmodus Ritterheer → Belagerungsweg → Burg/Festung
+
+Für Englisch, Latein und Französisch ist diese Basis seit D-20260929-001 jeweils um eine
+gleichwertige **Abenteuer-/Kampf-Partnerwelt** zu ergänzen. Die Partnerwelt übernimmt dieselbe
+räumliche Grammatik und dieselbe erreichte Jahresstufe, verändert aber die Inszenierung.
 
 Diese vier Keyframes sind damit die visuelle Referenz für die nachfolgende Übertragung auf
 Start-, Karten-, Lern- und Testscreen. Einzelne spätere Illustrationen dürfen Details

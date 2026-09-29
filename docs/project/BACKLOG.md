@@ -319,3 +319,37 @@ Ein Backlog-Punkt wird nicht gelöscht, wenn er umgesetzt oder verworfen wird:
 - Umsetzung → Status auf `IMPLEMENTED`, anschließend `VERIFIED` / `PRODUCTION`
 - Verwerfung → Status auf `REJECTED` plus Decision-ID/Begründung
 - Ersatz → `SUPERSEDED` plus Verweis auf Nachfolger
+
+## B-017 – Weltwahl Abenteuer oder Kampf pro Fremdsprache
+**Status:** APPROVED_BACKLOG  
+**Priorität:** P1 visuelle/Profile-UX vor finaler Fachwelten-Ausarbeitung  
+**Decision:** D-20260929-001  
+**Betroffene Quellen:** `VISUAL_DNA.md`, `docs/project/LATIN_FRENCH_VISUAL_LAYOUT.md`, Profilmodell, Profilerstellung, Profileinstellungen, Spiel-/Fortschrittsrenderer
+
+Bei der Profilerstellung soll für **Englisch, Latein und Französisch separat** zwischen
+**Abenteuer** und **Kampf** gewählt werden können. Die Auswahl ist später ohne Fortschrittsverlust
+änderbar.
+
+Umsetzungspaket:
+
+- Profilmodell erhält eine fachbezogene Weltpräferenz, z. B. `worldModeBySubject`
+- Profilerstellung zeigt pro aktiviertem Fremdsprachenfach die Auswahl **Abenteuer | Kampf**
+- Profileinstellungen erlauben denselben Wechsel später
+- bestehende Profile behalten zunächst ihre bisherige Darstellung; keine überraschende Migration
+- kumulative Jahresstufe aus D-20260928-005 wird beim Wechsel 1:1 auf die andere Welt übertragen
+- Lernstand, Mastery, Spacing, Testbereitschaft, Tagesziel und Bewertung bleiben unverändert
+- äquivalente Fortschrittsereignisse verhindern unterschiedliche Belohnungsgeschwindigkeit
+- Englisch erhält eine klar unterscheidbare Abenteuer- und Kampfpräsentation
+- Latein erhält zusätzlich zur Legions-/Kampfserie eine zivile mediterrane Abenteuer-/Entdecker-Serie
+- Französisch erhält zusätzlich zu `Voyage Français` eine fiktionale Kampf-/Festungsserie
+- alle Kampfwelten verwenden ausschließlich fiktionale Gegner; keine realen Länder, Völker, Religionen oder historischen Konfliktparteien
+- Browser-/Persistenz-/Family-Sync-Tests sichern Weltwahl, Wechsel ohne Reset und fachliche Neutralität
+
+Abnahme:
+
+1. Ein neues Profil kann für jedes verfügbare Fremdsprachenfach unabhängig eine Welt wählen.
+2. Ein späterer Wechsel verändert keinen fachlichen Lernwert.
+3. Die sichtbare Jahresstufe bleibt vor und nach dem Wechsel gleichwertig.
+4. Abenteuer und Kampf sind visuell eindeutig unterscheidbar, bleiben aber innerhalb derselben Fachidentität.
+5. Bestehende Profile funktionieren ohne manuelle Migration weiter.
+

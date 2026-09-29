@@ -19,13 +19,17 @@ Beide Fachwelten benutzen dieselbe visuelle Grammatik:
 
 **Avatar / eigener Ausgangspunkt links → Weg / Handlung in der Mitte → nächster Meilenstein rechts**
 
+Für Englisch, Latein und Französisch wählt das Profil je Fach zwischen **Abenteuer** und **Kampf**. Beide Varianten nutzen denselben fachlichen Lernstand und dieselbe kumulative Jahresstufe; ein Wechsel verändert ausschließlich Avatar, Welt, Story und Fortschrittsinszenierung.
+
 Der Lernmodus bleibt heller und reduziert. Die hier beschriebenen Welten gehören primär zu Fortschritt, Karte und Spiel-/Motivationsbereich. Während einer aktiven Abfrage konkurriert keine Weltanimation mit der Lernaufgabe.
 
-## Latein – Die römische Expedition
+## Latein
 
-### Avatar
+Die vorhandene SVG-Referenz zeigt primär die **Kampfvariante** „Die römische Legion“. Für die Abenteuervariante wird dieselbe mediterrane Bildsprache mit zivilerer Entdecker-/Reisefigur verwendet.
 
-Der Latein-Avatar ist ein junger, stilisierter Legionär in hochwertiger malerischer Darstellung.
+### Kampf-Avatar
+
+Der Latein-Kampfavatar ist ein junger, stilisierter Legionär in hochwertiger malerischer Darstellung.
 
 Verbindlich:
 
@@ -36,7 +40,7 @@ Verbindlich:
 - keine Asterix-/Karikatur-Anmutung
 - mediterranes warmes Licht
 
-### Entwicklungsstufen
+### Kampf-Entwicklungsstufen
 
 1. **Tiro** – erste Ausrüstung, einfacher Schild
 2. **Legionär** – vollständige Grundausstattung
@@ -45,11 +49,15 @@ Verbindlich:
 5. **Tribun** – hochwertiger Mantel, feinere Details
 6. **Legat** – höchste Jahresstufe; würdevoll, nicht herrscherhaft
 
+### Abenteuer-Entwicklung
+
+Die Abenteuerwelt verwendet sechs äquivalente Stufen mit Reise-, Karten-, Wissens- und Entdeckungsmotiven statt militärischer Rangabzeichen. Beim Wechsel wird Stufe N direkt auf Stufe N der anderen Welt abgebildet.
+
 Die Entwicklung zeigt Fortschritt ausschließlich motivierend. Sie verändert weder Mastery noch Spacing noch Testbereitschaft.
 
 ### Welt
 
-Die Lateinwelt ist eine mediterrane Provinzroute:
+Die gemeinsame Latein-Basis ist eine mediterrane Provinzroute:
 
 **Marschlager → Via / Römerstraße → Forum → Provinz → Kastell → Kapitol / Jahresziel**
 
@@ -73,25 +81,13 @@ Farbwelt:
 - Bronze
 - gedecktes Rot
 
-## Französisch – Voyage Français
+## Französisch
 
-### Grundsatz
+Die vorhandene SVG-Referenz zeigt die **Abenteuervariante** `Voyage Français`. Zusätzlich erhält Französisch eine optionale Kampfvariante mit französisch inspirierter Atmosphäre und vollständig fiktionalen Gegnern.
 
-Französisch ist ausdrücklich **keine zweite Kampfkampagne**.
+### Abenteuer-Avatar
 
-Unzulässig sind deshalb als Fachidentität:
-
-- Militär- oder Musketierprogression
-- Waffen als Avatarmerkmal
-- König/Königin als höchste Lernstufe
-- Kampf-, Belagerungs- oder Eroberungslogik
-- eine reine Paris-/Eiffelturm-Postkarte
-- Baskenmütze, Ringelshirt oder Flagge als notwendige Erkennungsmerkmale
-- Mode-App- oder Rosa-Code
-
-### Avatar
-
-Der Französisch-Avatar ist ein ziviler junger Sprachreisender.
+Der Französisch-Abenteueravatar ist ein ziviler junger Sprachreisender.
 
 Verbindliche Motive:
 
@@ -103,7 +99,7 @@ Verbindliche Motive:
 - freundlich, neugierig, kultiviert
 - französische Identität entsteht vor allem durch **Welt, Orte und Atmosphäre**, nicht durch Kostümklischees
 
-### Entwicklungsstufen
+### Abenteuer-Entwicklungsstufen
 
 1. **Entdecker**
 2. **Reisender**
@@ -112,11 +108,15 @@ Verbindliche Motive:
 5. **Kulturkenner**
 6. **Grand Voyageur**
 
-Die sichtbare Entwicklung erfolgt über hochwertigere Reiseausstattung, ein vollständigeres Reisetagebuch und mehr sichtbare Erinnerungsstücke – nicht über Waffen, Adelstitel oder militärische Ränge.
+Die sichtbare Abenteuer-Entwicklung erfolgt über hochwertigere Reiseausstattung, ein vollständigeres Reisetagebuch und mehr sichtbare Erinnerungsstücke.
 
-### Welt
+### Kampfvariante
 
-Die französische Welt ist eine zusammenhängende Entdeckungsreise:
+Die Kampfvariante darf Rüstung, Gefährten, Banner und Festungen nutzen, bleibt aber klar fiktional. Unzulässig sind reale Kriegsgegner, reale historische Konflikte, nationale Feindbilder oder eine direkte Nachstellung französischer Militärgeschichte. Auch hier gelten sechs visuell äquivalente Stufen; ein Weltwechsel erhält die Stufennummer.
+
+### Abenteuerwelt
+
+Die französische Abenteuerwelt ist eine zusammenhängende Entdeckungsreise:
 
 **Village → Marché / Stadtplatz → Gare / Bahnhof → Rivière / Flussufer → Côte / Küste → Grande Étape**
 
@@ -138,6 +138,16 @@ Farbwelt:
 - Terrakotta
 - warme Abendtöne
 
+Auch die Kampfvariante nutzt dieses Farbklima statt einer dunklen Kriegsästhetik.
+
+### Gemeinsame Ausschlüsse Französisch
+
+- keine reine Paris-/Eiffelturm-Postkarte
+- Baskenmütze, Ringelshirt oder Flagge nicht als notwendiges Erkennungsmerkmal
+- kein Rosa-Code und keine Mode-App-Anmutung
+- keine realen Länder, Völker oder Religionen als Gegner
+- keine historische Kriegsrekonstruktion
+
 ## Avatar in der App
 
 Der Avatar soll nicht jede Oberfläche dominieren.
@@ -149,6 +159,8 @@ Der Avatar soll nicht jede Oberfläche dominieren.
 - **Audio/Vorlesen:** unabhängig von der Weltlogik verfügbar, sofern dadurch keine erwartete Lösung vorweggenommen wird
 
 ## Abgrenzung der Referenzgrafiken
+
+Die vorhandenen SVGs definieren jeweils eine Basisreferenz: Latein derzeit stärker für **Kampf**, Französisch derzeit für **Abenteuer**. Die jeweiligen Partnerwelten sind gemäß D-20260929-001 als zusätzliche Art-Direction-Assets auszuarbeiten.
 
 Die SVGs definieren:
 

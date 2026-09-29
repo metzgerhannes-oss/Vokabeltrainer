@@ -356,3 +356,27 @@ Die motivierende Spielwelt heißt **„Das Wortreich“**. Der aktive Lernmodus 
 Diese Entscheidung **ersetzt ausschließlich die frühere visuelle Einschränkung** aus B-001 / VISUAL_DNA § 9, wonach Deutsch ein reiner Fuchs-Lernbereich ohne Battle-Welt sein sollte. D-20260927-009 bleibt für das evidenzbasierte Kompetenzmodell vollständig gültig.
 
 Für v1.0 sind mindestens verpflichtend: auswählbares Fach Deutsch; Klasse-1-Einstieg mit Buchstaben/Lauten/ersten Wörtern; Lernwörter und einfache Sätze; deutsches Audio; deutschspezifische Bewertung; neutrale Systemfehler-/Überspringlogik; eigener Wortreich-Spielbereich und mindestens ein echter Belagerungskampf. Spielprogression darf Mastery, Spacing, Testbereitschaft oder fachliche Bewertung niemals verändern.
+
+### D-20260929-001 – Fremdsprachenprofile wählen zwischen Abenteuer- und Kampfwelt
+**Status:** LOCKED  
+**Quelle:** [../../VISUAL_DNA.md](../../VISUAL_DNA.md) § 5; [LATIN_FRENCH_VISUAL_LAYOUT.md](LATIN_FRENCH_VISUAL_LAYOUT.md); B-017
+
+Für **Englisch, Latein und Französisch** wird die motivierende Spielwelt pro Profil und pro Fach wählbar. Bei der Profilerstellung entscheidet das Kind für jedes dieser Fächer zwischen **Abenteuer** und **Kampf**.
+
+Die Wahl betrifft ausschließlich Darstellung und Motivationsinszenierung: Avatar, Karte, Story, Animationen, Etappen, Gefährten, Armee/Festungen und visuelle Belohnungen. Sie verändert niemals Vokabelbestand, fachliche Bewertung, Mastery, Spacing, Testbereitschaft, Tagesziel oder sonstige Lernschwellen.
+
+Beide Weltvarianten erhalten aus demselben realen Lernfortschritt äquivalente Fortschrittsereignisse. Eine Variante darf deshalb weder schneller noch leichter zu sichtbaren Belohnungen führen. Ein Weltwechsel in den Profileinstellungen ist jederzeit ohne Fortschrittsverlust möglich. Die kumulative Jahresstufe aus D-20260928-005 bleibt erhalten und wird 1:1 auf die entsprechende visuelle Stufe der anderen Welt abgebildet.
+
+Fachidentität der Varianten:
+
+- **Englisch Abenteuer:** Expeditionen, Wege, Außenposten und Zielorte.
+- **Englisch Kampf:** Armee, Kampagne und fiktionale Festungen.
+- **Latein Abenteuer:** mediterrane Entdeckungsreise durch Straßen, Städte, Foren, Aquädukte und Provinzen.
+- **Latein Kampf:** römische Legion, Marschrouten, Kastelle und fiktionale Gegner.
+- **Französisch Abenteuer:** `Voyage Français` mit Reisewegen, Orten, Kultur und Regionen.
+- **Französisch Kampf:** französisch inspirierte fiktionale Gefährten-/Festungswelt.
+
+Für alle Kampfvarianten gilt: keine realen Länder, Völker, Religionen oder historischen Konfliktparteien als Feindbilder. Bestehende Profile werden nicht automatisch auf eine andere Welt umgestellt; ihre bisherige Darstellung bleibt bestehen, bis bewusst eine Auswahl geändert wird.
+
+Deutsch ist von dieser Wahl ausgenommen. Für Deutsch gilt weiterhin D-20260928-008 mit dem festgelegten Wortreich.
+
