@@ -17,7 +17,7 @@
     const style=['male','female','neutral'].includes(learner()?.avatarStyle)?learner().avatarStyle:'male';
     frame.classList.toggle('german-fox-avatar',isGermanAdventure);
     frame.classList.toggle('german-knight-avatar',isGerman&&!isGermanAdventure);
-    const key=`${state.activeSubject}-${worldMode}-${style}-stage-${level}`;
+    const key=isGerman?`german-${worldMode}-${style}-stage-${level}`:`${state.activeSubject}-${style}-stage-${level}`;
     frame.dataset.avatarStyle=style;
     frame.dataset.worldMode=worldMode;
     if(isGerman&&!isGermanAdventure){
@@ -56,7 +56,7 @@
     const stage=avatarStageFor(pct,state.activeSubject);
     frame.dataset.avatarStage=String(stage.level);
     const style=['male','female','neutral'].includes(learner()?.avatarStyle)?learner().avatarStyle:'male',worldMode=learnerWorldMode(state.activeSubject);
-    frame.dataset.avatarVisualKey=`${state.activeSubject}-${worldMode}-${style}-stage-${stage.level}`;
+    frame.dataset.avatarVisualKey=state.activeSubject==='german'?`german-${worldMode}-${style}-stage-${stage.level}`:`${state.activeSubject}-${style}-stage-${stage.level}`;
     frame.dataset.avatarSubject=state.activeSubject;
     frame.dataset.avatarStyle=style;
     frame.dataset.worldMode=worldMode;
