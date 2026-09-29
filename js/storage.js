@@ -141,6 +141,20 @@ function showPersistenceWarning(text){const el=document.querySelector('#storageS
 const safeText=(value,max=1000)=>String(value??'').replace(/\u0000/g,'').slice(0,max);
 const safeId=(value,prefix='id',used=null)=>{const raw=String(value||'');if(SAFE_ID_RE.test(raw)&&(!used||!used.has(raw))){used?.add(raw);return raw}let id=uid(prefix);while(used?.has(id))id=uid(prefix);used?.add(id);return id};
 const safeNumber=(value,min,max,fallback=0)=>{const n=Number(value);return Number.isFinite(n)?clamp(n,min,max):fallback};
+function safeGermanFoundation(raw){
+  const source=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{},metric=(v)=>safeNumber(v,0,4,0),clean=(input,keys,max=80)=>{
+    const out={},rows=input&&typeof input==='object'&&!Array.isArray(input)?Object.entries(input).slice(0,max):[];
+    for(const [rawId,rawRow] of rows){
+      const id=safeText(rawId,80),row=rawRow&&typeof rawRow==='object'&&!Array.isArray(rawRow)?rawRow:{};
+      if(!id)continue;out[id]={};for(const key of keys)if(row[key]!==undefined)out[id][key]=metric(row[key]);
+    }
+    return out;
+  },done={};
+  for(const [key,value] of Object.entries(source.completedStages&&typeof source.completedStages==='object'?source.completedStages:{}).slice(0,12)){
+    if(['letters','sounds','handwriting','words','sentences'].includes(key)&&value)done[key]=safeText(value,40);
+  }
+  return {version:1,letters:clean(source.letters,['recognized','phonemeGrapheme','traced','guided','freeProduction'],40),words:clean(source.words,['decoded','meaning','written'],80),sentences:clean(source.sentences,['comprehension','formation'],40),completedStages:done,updatedAt:source.updatedAt?safeText(source.updatedAt,40):null};
+}
 function safeYearFortresses(raw){
   const source=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{},out={};
   for(const [rawKey,rawRow] of Object.entries(source).slice(-80)){
@@ -400,7 +414,7 @@ function hardenState(s){
   for(const x of rawSetsForHints){const lid=String(x?.learnerId||'');if(!subjectHints.has(lid))subjectHints.set(lid,[]);const sub=normalizeSubjectId(x?.subject);subjectHints.get(lid).push(sub)}
   if(s.activeLearnerId){const lid=String(s.activeLearnerId);if(!subjectHints.has(lid))subjectHints.set(lid,[]);subjectHints.get(lid).push(normalizeSubjectId(s.activeSubject))}
   const learnerUsed=new Set(),learnerMap=new Map();
-  s.learners=learnersIn.map((raw,i)=>{const l=raw&&typeof raw==='object'?raw:{};const old=String(l.id||'');const id=safeId(old,'learner',learnerUsed);if(!learnerMap.has(old))learnerMap.set(old,id);const battleTickets={...defaultSubjectNumbers(),...(l.battleTickets||{})};for(const subject of knownSubjectIds())battleTickets[subject]=Math.round(safeNumber(battleTickets[subject],0,3,0));return {...l,id,name:safeText(l.name||`Profil ${i+1}`,80),gradeLevel:/^(?:[1-9]|1[0-3])$/.test(String(l.gradeLevel||''))?String(l.gradeLevel):'',avatarStyle:l.avatarStyle==='female'?'female':'male',activeSubjects:normalizeLearnerSubjects(l,subjectHints.get(old)||[]),literacySupport:{reading:l.literacySupport?.reading===undefined?!!l.lrsMode:!!l.literacySupport.reading,spelling:l.literacySupport?.spelling===undefined?!!l.lrsMode:!!l.literacySupport.spelling},reducedLoad:l.reducedLoad===undefined?!!l.lrsMode:!!l.reducedLoad,lrsMode:(l.literacySupport?.reading===undefined?!!l.lrsMode:!!l.literacySupport.reading)||(l.literacySupport?.spelling===undefined?!!l.lrsMode:!!l.literacySupport.spelling),xp:Math.round(safeNumber(l.xp,0,100000000,0)),fontSize:safeNumber(l.fontSize,16,24,17),letterSpacing:safeNumber(l.letterSpacing,0,3,0),flashSpeed:Math.round(safeNumber(l.flashSpeed,800,4000,1600)),autoSpeakCorrection:l.autoSpeakCorrection!==false,battleTickets}});
+  s.learners=learnersIn.map((raw,i)=>{const l=raw&&typeof raw==='object'?raw:{};const old=String(l.id||'');const id=safeId(old,'learner',learnerUsed);if(!learnerMap.has(old))learnerMap.set(old,id);const battleTickets={...defaultSubjectNumbers(),...(l.battleTickets||{})};for(const subject of knownSubjectIds())battleTickets[subject]=Math.round(safeNumber(battleTickets[subject],0,3,0));return {...l,id,name:safeText(l.name||`Profil ${i+1}`,80),gradeLevel:/^(?:[1-9]|1[0-3])$/.test(String(l.gradeLevel||''))?String(l.gradeLevel):'',avatarStyle:l.avatarStyle==='female'?'female':'male',activeSubjects:normalizeLearnerSubjects(l,subjectHints.get(old)||[]),literacySupport:{reading:l.literacySupport?.reading===undefined?!!l.lrsMode:!!l.literacySupport.reading,spelling:l.literacySupport?.spelling===undefined?!!l.lrsMode:!!l.literacySupport.spelling},reducedLoad:l.reducedLoad===undefined?!!l.lrsMode:!!l.reducedLoad,lrsMode:(l.literacySupport?.reading===undefined?!!l.lrsMode:!!l.literacySupport.reading)||(l.literacySupport?.spelling===undefined?!!l.lrsMode:!!l.literacySupport.spelling),xp:Math.round(safeNumber(l.xp,0,100000000,0)),fontSize:safeNumber(l.fontSize,16,24,17),letterSpacing:safeNumber(l.letterSpacing,0,3,0),flashSpeed:Math.round(safeNumber(l.flashSpeed,800,4000,1600)),autoSpeakCorrection:l.autoSpeakCorrection!==false,battleTickets,germanFoundation:safeGermanFoundation(l.germanFoundation)}});
   const learnerIds=new Set(s.learners.map(l=>l.id)),firstLearner=s.learners[0].id,mapLearner=id=>learnerMap.get(String(id||''))||(learnerIds.has(String(id||''))?String(id):firstLearner);
   const bookUsed=new Set(),bookMap=new Map();
   s.books=(Array.isArray(s.books)?s.books:[]).slice(0,5000).map(raw=>{const b=raw&&typeof raw==='object'?raw:{};const isbn13=normalizeIsbn(b.isbn13||b.isbn||'');if(!isbn13)return null;const old=String(b.id||''),id=safeId(old,'book',bookUsed);if(!bookMap.has(old))bookMap.set(old,id);return {...b,id,isbn13,subject:normalizeSubjectId(b.subject),title:safeText(b.title,200),publisher:safeText(b.publisher,160),edition:safeText(b.edition,120),createdAt:safeText(b.createdAt||new Date().toISOString(),40),updatedAt:safeText(b.updatedAt||b.createdAt||new Date().toISOString(),40)}}).filter(Boolean);
