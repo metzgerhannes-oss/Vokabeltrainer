@@ -6,7 +6,7 @@ const storage=fs.readFileSync('js/storage.js','utf8');
 const module=fs.readFileSync('js/german-foundation.js','utf8');
 const family=fs.readFileSync('js/family-sync.js','utf8');
 const html=fs.readFileSync('index.html','utf8');
-const core=fs.readFileSync('js/core.js','utf8'),version=(core.match(/const VERSION = '([^']+)'/)||[])[1]||'';
+const version=(core.match(/const VERSION = '([^']+)'/)||[])[1]||'';
 
 assert(core.includes('const defaultGermanFoundation = () => ({version:1,letters:{},words:{},sentences:{},completedStages:{},updatedAt:null});'),'separate German foundation state exists');
 assert(core.includes('germanFoundation:defaultGermanFoundation()'),'new profiles receive foundation state');
