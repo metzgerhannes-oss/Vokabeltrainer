@@ -148,7 +148,9 @@ try{
   await page.waitForFunction(()=>state.activeSubject==='latin');
   assert((await page.locator('#menuSubjectLabel').textContent())==='Latein','subject switch updates menu context');
   assert((await page.locator('#projectMenuAvatarFrame').getAttribute('data-avatar-visual-key'))==='latin-battle-male-stage-1','avatar artwork key follows subject, profile style and its own academic progress');
-  assert((await page.locator('#projectMenuAvatarArt').getAttribute('data-avatar-final'))==='false','Latin intentionally keeps the shared fallback until its own six final artworks are added');
+  assert((await page.locator('#projectMenuAvatarArt').getAttribute('data-avatar-final'))===null,'Latin has no final artwork yet and never labels a generic fallback as final');
+  assert(await page.locator('#projectMenuAvatarArt').isHidden(),'Latin must never reuse the English full campaign/army scene as an avatar');
+  assert(await page.locator('#projectMenuAvatarFallback').isVisible(),'Latin uses only the explicit technical figure fallback until its dedicated painterly series exists');
   assert(await page.locator('#menuNextTestProgress').isHidden(),'test progress hides when the active subject has no upcoming test');
   assert(await page.evaluate(()=>subjectProgress('english').pct)===beforeSwitch,'rendering and switching avatar context never changes academic mastery');
 
