@@ -2960,6 +2960,17 @@ dialog::backdrop{background:rgba(20,28,43,.46);backdrop-filter:blur(7px)}
 .avatar-style-choice strong{font-size:.95rem}.avatar-style-choice small{color:#667085;font-size:.75rem}
 @media(max-width:520px){.avatar-style-choice{grid-template-columns:1fr}}
 
+/* Per-profile world choice */
+.world-mode-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.world-mode-choice label{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:10px;padding:12px;border:1px solid var(--line,#d0d5dd);border-radius:15px;background:#fff;cursor:pointer}
+.world-mode-choice label:has(input:checked){border-color:#8fa96e;background:#f5f9eb;box-shadow:0 0 0 2px rgba(111,137,79,.10)}
+.world-mode-choice input{width:18px!important;height:18px!important;margin:0!important}
+.world-mode-choice .world-mode-icon{font-size:1.45rem;line-height:1}
+.world-mode-choice label>span:last-child{display:flex;flex-direction:column;gap:2px}
+.world-mode-choice strong{font-size:.95rem}.world-mode-choice small{color:#667085;font-size:.76rem;line-height:1.25}
+@media(max-width:520px){.world-mode-choice{grid-template-columns:1fr}}
+
+
 
 /* v0.19.6 – consistent child-world return path */
 .child-progress-toolbar{
