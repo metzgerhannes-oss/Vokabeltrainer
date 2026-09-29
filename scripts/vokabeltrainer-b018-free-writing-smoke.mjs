@@ -19,6 +19,10 @@ assert(!phonemeBlock.includes('speechSynthesis')&&!phonemeBlock.includes('speak(
 assert(!module.includes('function lineatureLegend()')&&!css.includes('.foundation-lineature-legend'),'misleading l/m/g legend cards are removed');
 const phonemeFiles=fs.readdirSync('assets/audio/phonemes/de').filter(x=>x.endsWith('.m4a'));
 assert(phonemeFiles.length===29,'all 29 selectable German letter sounds have local audio');
+for(const file of phonemeFiles){
+  const bytes=fs.readFileSync('assets/audio/phonemes/de/'+file);
+  assert(bytes.length>700&&bytes.subarray(0,32).includes(Buffer.from('ftypM4A'))&&bytes.includes(Buffer.from('mdat')),'phoneme '+file+' is a non-empty M4A audio container');
+}
 for(const file of phonemeFiles)assert(sw.includes("'./assets/audio/phonemes/de/"+file+"'"),'offline shell caches phoneme '+file);
 assert(module.includes("run={stage:'freeWriting',freePractice:true")&&module.includes('forms:[...forms]'),'free-writing queue is built only from chosen forms');
 const freeStart=module.indexOf('function openFreeWriting()');
