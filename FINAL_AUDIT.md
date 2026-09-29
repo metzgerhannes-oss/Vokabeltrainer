@@ -1,10 +1,11 @@
 # Finales Audit
 
-Stand: 29.09.2026 · App v0.21.37
+Stand: 29.09.2026 · App v0.21.38
 
 ## Ergebnis
 
-- v0.21.37 ist der Release-Kandidat für **Deutsch Paket E**: Das Wortreich erhält einen echten Phaser-4-Belagerungskampf mit eigener Wald-/Pergamentpalette und deutscher Ritter-/Burgsprache. Phaser bleibt reine Darstellung; fachliche Mastery und Testbereitschaft werden nicht verändert. Produktionsnachweis folgt erst nach Merge und Live-Verifikation.
+- v0.21.38 ist der Release-Kandidat für das freigegebene **Deutsch-/Wortreich-Startlayout**: konsistente Fuchsentwicklung Grundausrüstung → Lederzeug → Ritterlehrling → Ritter → Kronritter → König, Wortreich-Landschaft, sichtbare Stufenleiste und Vorlesefunktion für sichere Klasse-1-Navigation und Anweisungen. Audio bleibt evidenzgeschützt.
+- v0.21.37 / PR #204 ist produktiv und durch PR-CI #1246, main-CI #1247 sowie GitHub Pages #562 bestätigt: echter deutscher Wortreich-Phaser-Belagerungskampf.
 - v0.21.36 / PR #203 ist produktiv und durch PR-CI #1239, main-CI #1240 sowie GitHub Pages #561 bestätigt: Deutsch Paket D mit Lernwort-Strukturmetadaten und differenziertem Rechtschreibfehlerprofil.
 - v0.21.35 / PR #202 ist produktiv und durch PR-CI #1235, main-CI #1236 sowie GitHub Pages #560 bestätigt: Der Klasse-1-Kern ergänzt Buchstabenerkennung, Laut–Buchstaben-Zuordnung, Finger-/Stift-Nachspuren, reduzierte Führung, freie Buchstabenproduktion, erste Wörter und einfache Sätze. Handschriftspraxis wird ohne Handschrift-OCR bewusst nicht automatisch als richtig/falsch bewertet. Der Grundlagenfortschritt ist getrennt von XP, Battle-Tickets und Lernwort-Mastery und wird über Family Sync übertragen. Produktionsnachweis: PR #202, PR-CI #1235, main-CI #1236 und Pages #560 erfolgreich.
 - v0.21.34 / PR #201 ist produktiv und durch PR-CI #1232, main-CI #1233 sowie GitHub Pages #559 bestätigt: Deutsch-Fachgrundgerüst, Fuchs-Lernwelt und Wortreich-Grundgerüst.
