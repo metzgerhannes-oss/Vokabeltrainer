@@ -12,9 +12,11 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.43**
+App-Version: **v0.21.44**
 
-- v0.21.43 (Release-Kandidat): Praxis-Hotfix für **B-018**. Die missverständlichen `l / m / g`-Erklärungskarten direkt unter dem Schreibbuchstaben sind entfernt. Buchstabenlaute verwenden nun 29 lokal ausgelieferte deutsche Laut-Audiodateien statt Browser-TTS; sie werden für Offline/PWA mitgecacht. Die normale Vorlesefunktion für Anweisungen, Wörter und Sätze bleibt unverändert. Praktische Wiederholungsabnahme auf dem realen iPhone bleibt offen.
+- v0.21.44 (Release-Kandidat): **B-018 Audio-Hotfix nach realem iPhone-Fehler.** Die in v0.21.42 eingeführten M4A-Einzeldateien waren auf dem Zielgerät nicht decodierbar. Buchstabenlaute werden jetzt aus einem lokalen MP3-Audiosprite per Web Audio API decodiert und als zeitlich definierte Clips für A–Z sowie Ä/Ö/Ü abgespielt. CI muss die MP3-Nutzdaten statisch und zusätzlich durch echtes WebKit-`decodeAudioData` prüfen. Kein TTS-Fallback; praktische iPhone-Wiederholungsabnahme bleibt Pflicht.
+- v0.21.43: Deutsch-Fuchswelt-Layout-Hotfix aus PR #214; rein visuelle/motivationale Anpassung ohne Änderung der Lernlogik.
+- v0.21.42: B-018-Lineatur-Hotfix: die missverständlichen `l / m / g`-Erklärungskarten wurden entfernt. Der damalige M4A-Audioweg bestand die automatischen Strukturtests, scheiterte aber anschließend auf dem realen iPhone und gilt deshalb für Buchstabenlaut als praktisch nicht abgenommen.
 - v0.21.41: **B-018 Freies Schreiben** ergänzt Deutsch Klasse 1 um die Grundschul-Lineatur Dachgeschoss – Erdgeschoss – Keller, freie Auswahl einzelner Groß-/Kleinbuchstaben oder mehrerer Buchstaben, Buchstabenlaut und strikt fortschrittsneutrale Wiederholungen. Die Auswahl bleibt bis Änderung oder Reset erhalten; WebKit-iPhone- und statische CI-Checks sichern Auswahlmenge, Lineatur und fehlende Mastery-/Readiness-Mutation.
 - v0.21.40: Die Weltwahl **Abenteuer | Kampf** ist auf die gesamte Facharchitektur übertragen. Englisch erhält Expedition vs. Armee/Feldzug, Latein zivile mediterrane Entdeckungsreise vs. Legion/Kastelle, Deutsch Fuchs-Abenteuer vs. Wortreich und Französisch Voyage Français vs. vollständig fiktionale Gefährten-/Festungswelt. **Alle acht Welten besitzen Opening, sechs Storykapitel und ein eigenes Finale**; die Kapitel sind vorlesbar und verwenden denselben fachlichen Zustand und dieselbe kumulative Jahresstufe. Abenteuer öffnet keinen Battle-Screen. Französisch bleibt als Fach bis B-003 noch nicht freigeschaltet.
 
