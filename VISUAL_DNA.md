@@ -323,6 +323,8 @@ Deutsch besitzt zwei klar getrennte Ebenen:
 
 **Fuchs-Abenteuer** nutzt Entdeckungsweg, Wortreise, Etappen und eine tägliche nicht-kämpferische Aktion. **Das Wortreich** bleibt die mittelalterliche Burg-, Ritter- und Belagerungswelt mit eigener Armee. Beide Varianten verwenden denselben fachlichen Lernstand und dieselbe kumulative Jahresentwicklung.
 
+Die Abenteuer-Fuchsserie entwickelt sich verbindlich **Wegstarter → Spurensucher → Pfadfinder → Wortentdecker → Wissensreisender → Meisterentdecker**. Sie nutzt Reise-/Entdeckerausrüstung statt Waffen, Rüstung oder Krone.
+
 Damit wird Deutsch weder zu einer umgefärbten Englisch-Kampagne noch zu einer reinen Fuchswelt ohne Spielhandlung. Die fachliche Aufgabe bleibt im Lernmodus dominant; die vollständige Kampfinszenierung findet ausschließlich im eigenen Spielbereich statt.
 
 ### Lernmodus
@@ -525,7 +527,7 @@ Die freigegebene 2×2-Leitbildtafel definiert gemeinsam die vier Basis-Referenzw
 4. **Deutsch – Das Wortreich:** Lernmodus mit Fuchs; Spielmodus Ritterheer → Belagerungsweg → Burg/Festung
 
 Seit D-20260929-001/D-20260929-002 ist die Basis pro Fach um eine gleichwertige
-**Abenteuer-/Kampf-Partnerwelt** zu ergänzen. Deutsch setzt diese Wahl in v0.21.38 zuerst
+**Abenteuer-/Kampf-Partnerwelt** zu ergänzen. Deutsch setzt diese Wahl in v0.21.39 zuerst
 technisch um. Die Partnerwelt übernimmt dieselbe räumliche Grammatik und dieselbe erreichte
 Jahresstufe, verändert aber nur die Inszenierung.
 
