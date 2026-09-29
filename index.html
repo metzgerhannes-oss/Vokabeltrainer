@@ -61,6 +61,19 @@
           <button id="iosStandaloneSyncBtn" class="secondary" type="button">Kindergerät verbinden</button>
         </article>
         <section class="project-menu-stage" aria-labelledby="projectMenuTitle">
+          <div id="projectMenuScenery" class="project-menu-scenery" aria-hidden="true">
+            <span class="project-menu-cloud cloud-a"></span>
+            <span class="project-menu-cloud cloud-b"></span>
+            <span class="project-menu-castle"><i></i><i></i><i></i></span>
+          </div>
+          <div id="wordrealmHomeBrand" class="wordrealm-home-brand wordrealm-only hidden" aria-hidden="true">
+            <span>Das Wortreich</span><small>Wörter entdecken · bis zum König wachsen</small>
+          </div>
+          <div class="wordrealm-signpost wordrealm-only" aria-label="Wortreich-Bereiche">
+            <button id="wordrealmSignWords" type="button">Wörter</button>
+            <button id="wordrealmSignSentences" type="button">Sätze</button>
+            <button id="wordrealmSignAdventure" type="button">Abenteuer</button>
+          </div>
           <aside class="project-menu-avatar-panel" aria-label="Dein Lernavatar">
             <div id="projectMenuAvatarFrame" class="project-menu-avatar-frame" data-avatar-stage="1" data-avatar-visual-key="english-stage-1" aria-hidden="true">
               <span class="project-menu-avatar-aura"></span>
@@ -72,9 +85,11 @@
               </div>
             </div>
             <div class="project-menu-avatar-evolution">
+              <button type="button" class="read-aloud-btn wordrealm-stage-read wordrealm-only" data-read-targets="menuAvatarStageLabel,menuAvatarNextStage" aria-label="Stufe vorlesen">🔊</button>
               <strong id="menuAvatarStageLabel">Avatar · Stufe 1/6</strong>
               <span id="menuAvatarStagePips" class="project-menu-avatar-stage-pips" aria-hidden="true"></span>
               <small id="menuAvatarNextStage">Nächste Stufe bei 18%</small>
+              <div id="wordrealmStageStrip" class="wordrealm-stage-strip wordrealm-only hidden" aria-label="Entwicklung im Wortreich"></div>
               <div id="menuNextTestProgress" class="project-menu-test-progress hidden" aria-live="polite">
                 <span><b>Nächster Test</b><strong id="menuNextTestPct">0%</strong></span>
                 <small id="menuNextTestDetail">0 von 0 Vokabeln sicher</small>
@@ -84,14 +99,18 @@
 
           <div class="project-menu-main">
             <div class="project-menu-head">
-              <div>
+              <div data-page-read="Was steht heute an?">
                 <div class="eyebrow">Heute</div>
-                <h2 id="projectMenuTitle">Was steht heute an?</h2>
+                <div class="wordrealm-heading-row">
+                  <h2 id="projectMenuTitle">Was steht heute an?</h2>
+                  <button type="button" class="read-aloud-btn wordrealm-only" data-read-target="projectMenuTitle" aria-label="Überschrift vorlesen">🔊</button>
+                </div>
               </div>
-              <div class="project-menu-subject-context"><span id="menuSubjectLabel" class="pill">Englisch</span><div id="menuSubjectSwitcher" class="project-menu-subjects" aria-label="Fach wählen"></div></div>
+              <div class="project-menu-subject-context"><span id="menuSubjectLabel" class="pill">Englisch</span><button type="button" class="read-aloud-btn wordrealm-only compact" data-read-target="menuSubjectLabel" aria-label="Fach vorlesen">🔊</button><div id="menuSubjectSwitcher" class="project-menu-subjects" aria-label="Fach wählen"></div></div>
             </div>
 
-            <article class="card today-focus project-menu-learning-card">
+            <article class="card today-focus project-menu-learning-card" data-page-read="Heutige Lernaufgabe">
+              <div id="wordrealmTodayIcon" class="wordrealm-today-icon wordrealm-only" aria-hidden="true"><i>A</i><i>B</i><i>C</i></div>
               <div class="today-main">
                 <div class="row gap align-center"><div class="eyebrow">Heute</div><span id="todayTestPill" class="pill hidden"></span></div>
                 <h2 id="todaySummary">Deine nächste Lerneinheit</h2>
@@ -103,10 +122,26 @@
                 <p id="todayEstimate" class="muted-line"></p>
               </div>
               <div class="today-actions">
+                <button type="button" class="read-aloud-btn wordrealm-only card-read" data-read-targets="todaySummary,todayContext,todayEstimate" aria-label="Lernaufgabe vorlesen">🔊</button>
                 <button id="quickLearnHeroBtn" class="primary today-cta">Jetzt lernen</button>
                 <button id="todayTestBtn" class="ghost hidden">Testdatum setzen</button>
               </div>
             </article>
+
+            <div id="wordrealmHomeActions" class="wordrealm-home-actions wordrealm-only">
+              <article class="wordrealm-home-action" data-page-read="Lernwörter üben. Deine aktuellen Lernwörter spielerisch wiederholen.">
+                <span class="wordrealm-action-icon icon-words" aria-hidden="true">Aa</span>
+                <span class="wordrealm-action-copy"><strong>Lernwörter üben</strong><small>Deine aktuellen Lernwörter spielerisch wiederholen</small></span>
+                <button type="button" class="read-aloud-btn" data-read-text="Lernwörter üben. Deine aktuellen Lernwörter spielerisch wiederholen." aria-label="Lernwörter vorlesen">🔊</button>
+                <button id="wordrealmLearningWordsBtn" class="wordrealm-action-go" type="button" aria-label="Lernwörter öffnen">›</button>
+              </article>
+              <article class="wordrealm-home-action" data-page-read="Das Wortreich betreten. Spannende Aufgaben und Abenteuer erwarten dich.">
+                <span class="wordrealm-action-icon icon-castle" aria-hidden="true">♜</span>
+                <span class="wordrealm-action-copy"><strong>Das Wortreich betreten</strong><small>Spannende Aufgaben und Abenteuer erwarten dich</small></span>
+                <button type="button" class="read-aloud-btn" data-read-text="Das Wortreich betreten. Spannende Aufgaben und Abenteuer erwarten dich." aria-label="Wortreich vorlesen">🔊</button>
+                <button id="wordrealmEnterBtn" class="wordrealm-action-go" type="button" aria-label="Das Wortreich öffnen">›</button>
+              </article>
+            </div>
 
           </div>
         </section>
@@ -611,6 +646,8 @@
       </section>
     </main>
 
+    <button id="germanPageReadBtn" class="german-page-read hidden" type="button" aria-label="Diese Seite vorlesen"><span aria-hidden="true">🔊</span><b>Vorlesen</b></button>
+
     <nav class="bottom-nav" aria-label="Hauptbereiche">
       <button data-view="homeView" class="nav-btn active" aria-current="page"><span aria-hidden="true">⌂</span>Heute</button>
       <button data-view="practiceView" class="nav-btn"><span aria-hidden="true">▥</span>Lernen</button>
@@ -634,6 +671,7 @@
   <script src="js/family-sync.js?v=0.21.38" defer></script>
   <script src="js/quiz-engine.js?v=0.21.38" defer></script>
   <script src="js/learning.js?v=0.21.38" defer></script>
+  <script src="js/read-aloud-ui.js?v=0.21.38" defer></script>
   <script src="js/translation.js?v=0.21.38" defer></script>
   <script src="js/io.js?v=0.21.38" defer></script>
   <script src="js/vendor/qrcode.js?v=0.21.38" defer></script>
@@ -644,6 +682,7 @@
   <script src="js/battle-art.js?v=0.21.38" defer></script>
   <script src="js/battle-art-ui.js?v=0.21.38" defer></script>
   <script src="js/menu-avatar-art.js?v=0.21.38" defer></script>
+  <script src="js/wordrealm-ui.js?v=0.21.38" defer></script>
   <script src="js/battle-result-ui.js?v=0.21.38" defer></script>
   <script src="js/army-ui.js?v=0.21.38" defer></script>
   <script src="js/campaign-map.js?v=0.21.38" defer></script>
