@@ -38,6 +38,18 @@
       battleAction:'Zur Belagerung',securedAction:'Burg ansehen / sichern'
     }),
     'german-adventure':Object.freeze({
+      places:['Fuchshain','Buchenfurt','Moosbrück','Wortwiese','Silbenwald','Lautertal','Bücherhain','Lesebrück','Eichenpfad','Satzgarten','Wörtersee','Kronenlichtung'],
+      regions:{autumn:'Herbstpfad',winter:'Winterwald',spring:'Frühlingshain',summer:'Sommerwiese'},
+      viewTitle:'Fuchs-Abenteuer',routeLabel:'ENTDECKERPFAD',won:n=>`${n} Etappen geschafft`,next:'NÄCHSTE ETAPPE',
+      startKicker:'FUCHSBAU',startTitle:'Dein Fuchs-Abenteuer beginnt',unknownKicker:'HINTER DEM NÄCHSTEN PFAD',unknownTitle:'Neue Entdeckung',
+      unknownText:'Neue Etappen erscheinen, sobald ein Test oder Lernziel geplant wird.',yearKicker:'FERNZIEL',yearTitle:'Große Wortreise',
+      yearDone:'Abenteuerstufe vollständig entwickelt',yearOpen:p=>`${p}% Jahresreise`,detailProgress:'Wegfortschritt',
+      captured:'Etappenziel erreicht',secured:'Etappe gefestigt',securedDetail:n=>`${n} Festigungstage`,hold:'Bis zum Test weiter festigen',
+      active:'Aktuelles Abenteuerziel',planned:'Neue Etappe entdeckt',awaiting:'Ergebnis offen',plannedNoun:'Entdeckerziel',
+      targetNames:{outpost:'Lernlichtung',tower:'Wortpfad',wall:'Lesebrücke',citadel:'Satzgarten',capital:'Wissenshain',final:'Große Wortreise'},
+      battleAction:'Abenteuer fortsetzen',securedAction:'Etappe festigen'
+    }),
+    'german-adventure':Object.freeze({
       places:['Fuchshain','Buchstabenpfad','Wörterbrücke','Silbenwald','Lesegarten','Wortwiese','Bücherfurt','Reimtal','Lautquelle','Satzweg','Geschichtenhain','Wortschatz-Horizont'],
       regions:{autumn:'Herbstpfad',winter:'Winterwald',spring:'Frühlingshain',summer:'Sommerwiese'},
       viewTitle:'Meine Wortreise',routeLabel:'FUCHSPFAD DURCH DIE WORTWELT',won:n=>`${n} Etappen entdeckt`,next:'NÄCHSTE ENTDECKUNG',
@@ -131,7 +143,7 @@
     const next=list.find(s=>s.status==='active')?.title||list.find(s=>s.date>=today())?.title||(yearGoal.date?`${t.yearTitle} · ${dateLabel(yearGoal.date)}`:t.yearTitle);
     const yearWhen=yearGoal.date?`Termin ${dateLabel(yearGoal.date)}`:'Datum noch offen';
     const yearState=pct>=100?t.yearDone:t.yearOpen(pct);
-    return `<div class="campaign-war-header"><div><small>${safe(t.routeLabel)}</small><strong>${safe(t.won(won))}</strong></div><div><small>${safe(t.next)}</small><strong>${safe(next)}</strong></div></div><div class="campaign-map-start"><span aria-hidden="true">⚑</span><div><small>${safe(t.startKicker)}</small><strong>${safe(t.startTitle)}</strong></div></div><div class="campaign-map-route">${list.map(stop).join('')}<article class="campaign-map-stop campaign-map-unknown"><div class="campaign-map-route-node" aria-hidden="true"><span>?</span></div><div class="campaign-map-fog-card"><small>${safe(t.unknownKicker)}</small><strong>${safe(t.unknownTitle)}</strong><span>${safe(t.unknownText)}</span></div></article><article class="campaign-map-stop campaign-map-year-goal ${pct>=100?'growth-max':''} ${yearGoal.date?'dated':'undated'}"><div class="campaign-map-route-node" aria-hidden="true"><span>♛</span></div><button type="button" class="campaign-map-station campaign-map-year-fortress" data-campaign-station="year-goal"><small>${safe(t.yearKicker)} · ${safe(yearWhen)}</small><strong>${safe(t.yearTitle)}</strong><span>${safe(yearState)}</span><progress max="100" value="${pct}" aria-label="Jahresentwicklung"></progress></button></article></div>`;
+    return `<div class="campaign-war-header"><div><small>${safe(t.routeLabel)}</small><strong>${safe(t.won(won))}</strong></div><div><small>${safe(t.next)}</small><strong>${safe(next)}</strong></div></div><div class="campaign-map-start"><span aria-hidden="true">⚑</span><div><small>${safe(t.startKicker)}</small><strong>${safe(t.startTitle)}</strong></div></div><div class="campaign-map-route">${list.map(stop).join('')}<article class="campaign-map-stop campaign-map-unknown"><div class="campaign-map-route-node" aria-hidden="true"><span>?</span></div><div class="campaign-map-fog-card"><small>${safe(t.unknownKicker)}</small><strong>${safe(t.unknownTitle)}</strong><span>${safe(t.unknownText)}</span></div></article><article class="campaign-map-stop campaign-map-year-goal ${pct>=100?'growth-max':''} ${yearGoal.date?'dated':'undated'}"><div class="campaign-map-route-node" aria-hidden="true"><span>${typeof subjectVisualTheme==='function'&&subjectVisualTheme(subject)==='german-adventure'?'★':'♛'}</span></div><button type="button" class="campaign-map-station campaign-map-year-fortress" data-campaign-station="year-goal"><small>${safe(t.yearKicker)} · ${safe(yearWhen)}</small><strong>${safe(t.yearTitle)}</strong><span>${safe(yearState)}</span><progress max="100" value="${pct}" aria-label="Jahresentwicklung"></progress></button></article></div>`;
   }
   function detail(st){
     const root=document.querySelector('#campaignMapDetail'),battle=document.querySelector('#campaignMapBattleBtn');if(!root)return;
@@ -145,11 +157,12 @@
   }
   function yearDetail(growth,yearGoal){
     const root=document.querySelector('#campaignMapDetail');if(!root)return;
-    const t=themeFor(state.activeSubject),pct=growth.pct;
+    const t=themeFor(state.activeSubject),pct=growth.pct,adventure=typeof subjectVisualTheme==='function'&&subjectVisualTheme(state.activeSubject)==='german-adventure';
     root.hidden=false;
-    const dateCopy=yearGoal.date?`<strong>${safe(dateLabel(yearGoal.date))}</strong><span>Der reale Termin ist bekannt und kann im Elternbereich angepasst werden.</span>`:'<strong>Noch offen</strong><span>Die Jahresfestung bleibt am Horizont, bis ein realer Termin bekannt ist.</span>';
-    const adventure=state.activeSubject==='german'&&typeof learnerWorldMode==='function'&&learnerWorldMode('german')==='adventure';
-    root.innerHTML=`<button type="button" class="campaign-map-detail-close" data-campaign-detail-close aria-label="Zielinfo schließen">×</button><div class="campaign-map-detail-head"><small>${safe(t.yearKicker)}</small><h3>${safe(t.yearTitle)}</h3><p>${pct>=100?(adventure?'Dein Fuchspfad hat die höchste Jahresstufe erreicht.':'Deine Armee hat die höchste Jahresstufe erreicht.'):'Dieses Ziel wächst über das ganze Schuljahr und setzt keine feste Zahl zukünftiger Tests voraus.'}</p></div><div class="campaign-map-detail-grid"><div><small>Jahresentwicklung</small><strong>${pct}%</strong><span>${growth.masteredEver} Vokabeln jemals nachhaltig gemeistert · ${growth.completedTests} Tests abgeschlossen · ${growth.capturedFortresses} ${adventure?'Etappen erreicht':'Testfestungen erobert'}</span></div><div><small>Termin</small>${dateCopy}</div><div><small>Prinzip</small><strong>Nur vorwärts</strong><span>Neue Vokabeln oder Tests setzen ${adventure?'Fuchspfad und Avatar':'Armee und Avatar'} nicht zurück.</span></div><div><small>${adventure?'Wortreise':'Feldzug'}</small><strong>Dynamischer Weg</strong><span>Neue Testziele werden vor dem Jahresziel ergänzt.</span></div></div>`;
+    const dateCopy=yearGoal.date?`<strong>${safe(dateLabel(yearGoal.date))}</strong><span>Der reale Termin ist bekannt und kann im Elternbereich angepasst werden.</span>`:'<strong>Noch offen</strong><span>Das Jahresziel bleibt am Horizont, bis ein realer Termin bekannt ist.</span>';
+    const intro=adventure?(pct>=100?'Deine Fuchs-Abenteuerstufe hat das Jahresziel erreicht.':'Diese große Wortreise wächst über das ganze Schuljahr und setzt keine feste Zahl zukünftiger Tests voraus.'):(pct>=100?'Deine Armee hat die höchste Jahresstufe erreicht.':'Dieses Ziel wächst über das ganze Schuljahr und setzt keine feste Zahl zukünftiger Tests voraus.');
+    const progressCopy=adventure?`${growth.masteredEver} Lernwörter jemals nachhaltig gemeistert · ${growth.completedTests} Tests abgeschlossen · ${growth.capturedFortresses} Etappenziele erreicht`:`${growth.masteredEver} Vokabeln jemals nachhaltig gemeistert · ${growth.completedTests} Tests abgeschlossen · ${growth.capturedFortresses} Testfestungen erobert`;
+    root.innerHTML=`<button type="button" class="campaign-map-detail-close" data-campaign-detail-close aria-label="Zielinfo schließen">×</button><div class="campaign-map-detail-head"><small>${safe(t.yearKicker)}</small><h3>${safe(t.yearTitle)}</h3><p>${safe(intro)}</p></div><div class="campaign-map-detail-grid"><div><small>Jahresentwicklung</small><strong>${pct}%</strong><span>${safe(progressCopy)}</span></div><div><small>Termin</small>${dateCopy}</div><div><small>Prinzip</small><strong>Nur vorwärts</strong><span>Neue Lernwörter oder Tests setzen die erreichte Entwicklungsstufe nicht zurück.</span></div><div><small>${adventure?'Abenteuer':'Feldzug'}</small><strong>Dynamischer Weg</strong><span>Neue Testziele werden vor dem Jahresziel ergänzt.</span></div></div>`;
     document.querySelector('#campaignMapBattleBtn')?.classList.add('hidden');
   }
   function clearSelection(){
@@ -176,7 +189,7 @@
     if(back)back.textContent=adventure?'← Abenteuer':'← Armee';
     if(armyButton)armyButton.textContent=adventure?'Fuchspfad':'Meine Armee';
     if(title)title.textContent=t.viewTitle;
-    const label=document.querySelector('#campaignMapSubjectLabel');if(label)label.textContent=`${subjectLabel(subject)} · ${year}`;
+    const label=document.querySelector('#campaignMapSubjectLabel');if(label)label.textContent=`${subjectLabel(subject)} · ${adventure?'Abenteuer · ':''}${year}`;
     const sum=document.querySelector('#campaignMapSummary');if(sum){const done=list.filter(s=>s.status==='completed').length,won=list.filter(s=>['captured','secured','completed'].includes(s.status)).length;sum.textContent=list.length?`${done} Tests abgeschlossen · ${won} Ziele ${adventure?'erreicht':'erobert'} · weitere Ziele erscheinen automatisch`:'Noch kein Test geplant · die Karte wächst mit deinem Schuljahr'}
     board.innerHTML=markup(list,growth,yearGoal,subject);
     if(selectionDismissed){document.querySelectorAll('[data-campaign-station]').forEach(b=>b.classList.remove('selected'));detail(null);return}
@@ -185,9 +198,9 @@
   function open(){if(typeof isParentMode==='function'&&isParentMode())return;selectedKey='';selectionDismissed=false;render();if(typeof showView==='function')showView('campaignMapView')}
   function bind(){
     document.querySelector('#campaignMapBtn')?.addEventListener('click',open);
-    document.querySelector('#campaignMapBackBtn')?.addEventListener('click',()=>{window.VTArmyUi?.open?.()||showView('armyView')});
-    document.querySelector('#campaignMapArmyBtn')?.addEventListener('click',()=>window.VTArmyUi?.open?.());
-    document.querySelector('#campaignMapBattleBtn')?.addEventListener('click',()=>{if(typeof openBattleView==='function')openBattleView()});
+    document.querySelector('#campaignMapBackBtn')?.addEventListener('click',()=>{const adventure=typeof isGermanAdventureWorld==='function'&&isGermanAdventureWorld();if(adventure){showView('homeView');return}window.VTArmyUi?.open?.()||showView('armyView')});
+    document.querySelector('#campaignMapArmyBtn')?.addEventListener('click',()=>{if(typeof isGermanAdventureWorld==='function'&&isGermanAdventureWorld()){showView('homeView');return}window.VTArmyUi?.open?.()});
+    document.querySelector('#campaignMapBattleBtn')?.addEventListener('click',()=>{if(typeof isGermanAdventureWorld==='function'&&isGermanAdventureWorld()){openGermanAdventureAction?.();return}if(typeof openBattleView==='function')openBattleView()});
     document.querySelector('#campaignMapBoard')?.addEventListener('click',e=>{const b=e.target.closest('[data-campaign-station]');if(b){select(b.dataset.campaignStation);return}if(selectedKey)clearSelection()});
     document.addEventListener('pointerdown',e=>{if(!selectedKey||!document.querySelector('#campaignMapView')?.classList.contains('active'))return;if(e.target.closest?.('[data-campaign-station],#campaignMapDetail,#campaignMapBattleBtn'))return;clearSelection()},true);
     document.addEventListener('keydown',e=>{if(e.key==='Escape'&&selectedKey&&document.querySelector('#campaignMapView')?.classList.contains('active')){e.preventDefault();clearSelection()}});
