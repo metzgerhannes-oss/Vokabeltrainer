@@ -9,6 +9,7 @@ const menu=read('js/menu-ui.js');
 const cssArmy=read('css/army.css');
 const cssMenu=read('css/menu.css');
 const cssMap=read('css/campaign-map.css');
+const visualDna=read('VISUAL_DNA.md');
 
 const assert=(v,n)=>{if(!v)throw new Error('All-subject world choice smoke failed: '+n);console.log('✓ '+n)};
 
@@ -30,6 +31,8 @@ assert(army.includes("ADVENTURE_META")&&army.includes("english:Object.freeze")&&
 assert(army.includes("root.classList.toggle('adventure-mode',adventure)"),'combat hub switches to generic adventure mode');
 assert(cssArmy.includes('#armyView.adventure-mode .army-game-hub')&&cssArmy.includes('.subject-adventure-route'),'adventure mode hides combat sections and renders route');
 assert(menu.includes("world-adventure-avatar")&&menu.includes("subjectWorldPresentation"),'home shell distinguishes adventure and battle');
+assert(menu.includes("state.activeSubject!=='english'"),'non-English subjects cannot reuse the English full-scene army hero as an avatar');
+assert(visualDna.includes('Verbindlicher Qualitätsstandard für alle Avatare')&&visualDna.includes('eine komplette')&&visualDna.includes('CSS-/DOM-/einfache SVG-Figuren'),'visual DNA locks painterly avatar quality and rejects technical fallbacks as final art');
 assert(cssMenu.includes('data-visual-theme="english-adventure"')&&cssMenu.includes('data-visual-theme="latin-adventure"')&&cssMenu.includes('data-visual-theme="french-battle"'),'home palettes cover new variants');
 assert(cssMap.includes('data-visual-theme="english-adventure"')&&cssMap.includes('data-visual-theme="latin-adventure"')&&cssMap.includes('data-visual-theme="french-battle"'),'map palettes cover new variants');
 assert(!army.includes('refreshMastery(')&&!map.includes('refreshMastery('),'world renderers remain read-only for academic mastery');
