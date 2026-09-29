@@ -49,10 +49,18 @@
         if(!response.ok)throw new Error('phoneme sprite part '+response.status);
         return response.text();
       }));
-      const encoded=chunks.join('').replace(/\s+/g,'');
-      if(!encoded)throw new Error('empty phoneme sprite');
-      const raw=atob(encoded),bytes=new Uint8Array(raw.length);
-      for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);
+      const decodedParts=chunks.map((chunk,index)=>{
+        const encoded=String(chunk||'').replace(/\s+/g,'');
+        if(!encoded)throw new Error('empty phoneme sprite part '+(index+1));
+        const raw=atob(encoded),bytes=new Uint8Array(raw.length);
+        for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);
+        return bytes;
+      });
+      const total=decodedParts.reduce((sum,bytes)=>sum+bytes.byteLength,0);
+      if(!total)throw new Error('empty phoneme sprite');
+      const bytes=new Uint8Array(total);
+      let offset=0;
+      for(const part of decodedParts){bytes.set(part,offset);offset+=part.byteLength}
       const buffer=await ctx.decodeAudioData(bytes.buffer.slice(0));
       if(!buffer||!Number.isFinite(buffer.duration)||buffer.duration<30)throw new Error('phoneme sprite decode too short');
       return buffer;
