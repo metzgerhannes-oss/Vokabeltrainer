@@ -14,16 +14,19 @@ assert(module.includes('foundationFreeSoundBtn')&&module.includes('playPhoneme(m
 const phonemeStart=module.indexOf('function playPhoneme(letter)');
 const phonemeEnd=module.indexOf('function mixOptions',phonemeStart);
 const phonemeBlock=module.slice(phonemeStart,phonemeEnd);
-assert(phonemeStart>=0&&phonemeEnd>phonemeStart&&phonemeBlock.includes('new Audio(path)'),'phoneme channel uses local audio files');
-assert(!phonemeBlock.includes('speechSynthesis')&&!phonemeBlock.includes('speak('),'phoneme channel never falls back to browser TTS');
+assert(phonemeStart>=0&&phonemeEnd>phonemeStart&&phonemeBlock.includes('decodeAudioData')&&phonemeBlock.includes('createBufferSource'),'phoneme channel decodes and plays a local audio sprite');
+assert(!phonemeBlock.includes('speechSynthesis')&&!phonemeBlock.includes('speak(')&&!phonemeBlock.includes('new Audio('),'phoneme channel never falls back to browser TTS or broken M4A element playback');
 assert(!module.includes('function lineatureLegend()')&&!css.includes('.foundation-lineature-legend'),'misleading l/m/g legend cards are removed');
-const phonemeFiles=fs.readdirSync('assets/audio/phonemes/de').filter(x=>x.endsWith('.m4a'));
-assert(phonemeFiles.length===29,'all 29 selectable German letter sounds have local audio');
-for(const file of phonemeFiles){
-  const bytes=fs.readFileSync('assets/audio/phonemes/de/'+file);
-  assert(bytes.length>700&&bytes.subarray(0,32).includes(Buffer.from('ftypM4A'))&&bytes.includes(Buffer.from('mdat')),'phoneme '+file+' is a non-empty M4A audio container');
-}
-for(const file of phonemeFiles)assert(sw.includes("'./assets/audio/phonemes/de/"+file+"'"),'offline shell caches phoneme '+file);
+assert(module.includes('PHONEME_CLIPS')&&module.includes("'Ä':")&&module.includes("'Ö':")&&module.includes("'Ü':"),'phoneme sprite defines all German alphabet variants');
+const spriteDir='assets/audio/phonemes/de/sprite';
+const spriteFiles=fs.readdirSync(spriteDir).filter(x=>/^part-\d{2}\.b64$/.test(x)).sort();
+assert(spriteFiles.length===7,'phoneme MP3 sprite is stored in seven local parts');
+const encoded=spriteFiles.map(file=>read(spriteDir+'/'+file)).join('').replace(/\s+/g,'');
+const decoded=Buffer.from(encoded,'base64');
+assert(decoded.length>20000,'phoneme MP3 sprite has substantial audio payload');
+assert(decoded.subarray(0,3).toString('ascii')==='ID3'||(decoded[0]===0xff&&(decoded[1]&0xe0)===0xe0),'phoneme sprite has an MP3 header/frame');
+for(const file of spriteFiles)assert(sw.includes("'./assets/audio/phonemes/de/sprite/"+file+"'"),'offline shell caches phoneme sprite '+file);
+assert(!module.includes("+'.m4a'")&&!sw.includes("'./assets/audio/phonemes/de/a.m4a'"),'broken M4A path is no longer used or shell-cached');
 assert(module.includes("run={stage:'freeWriting',freePractice:true")&&module.includes('forms:[...forms]'),'free-writing queue is built only from chosen forms');
 const freeStart=module.indexOf('function openFreeWriting()');
 const freeEnd=module.indexOf('function task(){',freeStart);
