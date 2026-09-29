@@ -15,6 +15,21 @@ try{
   assert(response?.ok(),'app loads');
   await page.waitForFunction(()=>window.__VT_APP_READY__===true&&!!window.VTMenuUi&&!!window.VTArmyUi&&!!window.VTCampaignMap);
 
+  await page.evaluate(()=>{state=defaultState();renderAll();showView('homeView');openProfileEditor()});
+  await page.waitForSelector('#modal[open] #saveProfile');
+  await page.locator('#profileName').fill('Weltwahl Kind');
+  await page.locator('[data-profile-subject="german"]').check();
+  await page.locator('input[name="profileAvatarStyle"][value="neutral"]').check();
+  assert(await page.locator('#profileGermanWorld .read-aloud-btn').count()>=1,'German world choice is readable in the profile dialog');
+  assert(await page.locator('.profile-choice-legend .read-aloud-btn').count()>=2,'avatar and world choices both expose read-aloud controls');
+  await page.locator('#saveProfile').click();
+  assert((await page.locator('#profileError').textContent())?.includes('Abenteuer oder Kampf'),'new German profile cannot silently accept a default world');
+  await page.locator('input[name="profileGermanWorldMode"][value="adventure"]').check();
+  await page.locator('#saveProfile').click();
+  await page.waitForFunction(()=>learner()?.name==='Weltwahl Kind');
+  const created=await page.evaluate(()=>({avatar:learner().avatarStyle,mode:learnerWorldMode('german'),subjects:[...learner().activeSubjects]}));
+  assert(created.avatar==='neutral'&&created.mode==='adventure'&&created.subjects.includes('german'),'new profile persists neutral avatar and explicit adventure choice');
+
   await page.evaluate(()=>{
     state=defaultState();
     learner().activeSubjects=['german'];
@@ -66,11 +81,13 @@ try{
     title:document.querySelector('#armyViewTitle')?.textContent||'',
     route:document.querySelectorAll('.german-adventure-route span').length,
     actionHidden:document.querySelector('#armyBattleBtn')?.classList.contains('hidden'),
-    actionText:document.querySelector('#armyBattleBtn')?.textContent||''
+    actionText:document.querySelector('#armyBattleBtn')?.textContent||'',
+    vectorFox:document.querySelectorAll('.german-adventure-fox .wordrealm-fox-svg.adventure').length
   }));
   assert(adventure.mode==='adventure'&&adventure.className.includes('german-adventure-mode'),'adventure hub is active');
   assert(adventure.title.includes('Fuchspfad'),'adventure hub uses Fuchspfad title');
   assert(adventure.route===6,'adventure hub shows six visual stages');
+  assert(adventure.vectorFox===1,'adventure hub renders the dedicated vector fox instead of an emoji placeholder');
   assert(adventure.actionHidden===false&&adventure.actionText.includes('Abenteuer fortsetzen'),'adventure exposes an equivalent non-combat daily action');
 
   await page.click('#armyBattleBtn');
