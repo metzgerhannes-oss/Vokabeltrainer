@@ -63,10 +63,10 @@
   function activeWorldMode(){return typeof learnerWorldMode==='function'?learnerWorldMode(state?.activeSubject):'battle'}
   function isAdventure(){return activeWorldMode()==='adventure'}
   const ADVENTURE_META=Object.freeze({
-    english:Object.freeze({kicker:'Englisch · Abenteuer',title:'Deine Expedition',stageLabel:'Entdeckerstufe',stages:['Aufbruch','Spurensucher','Pfadfinder','Expeditionsteam','Wegkundig','Horizontmeister'],stops:['Basislager','Waldpfad','Flussfurt','Höhenweg','Sternwarte','Horizont'],symbol:'⌖'}),
-    latin:Object.freeze({kicker:'Latein · Abenteuer',title:'Iter Romanum',stageLabel:'Reisestufe',stages:['Aufbruch','Viator','Explorator','Wegkundig','Kartograph','Magister Itineris'],stops:['Via Prima','Forum','Aquädukt','Bibliothek','Hafen','Horizont'],symbol:'◫'}),
-    german:Object.freeze({kicker:'Deutsch · Abenteuer',title:'Deine Wortreise',stageLabel:'Fuchs-Stufe',stages:['Wegstarter','Spurensucher','Pfadfinder','Wortentdecker','Wissensreisender','Meisterentdecker'],stops:['Fuchshain','Buchstabenpfad','Wörterbrücke','Silbenwald','Leseturm','Wortschatz-Horizont'],symbol:'⌖'}),
-    french:Object.freeze({kicker:'Französisch · Abenteuer',title:'Voyage Français',stageLabel:'Reisestufe',stages:['Départ','Curieux','Explorateur','Voyageur','Connaisseur','Grand Voyageur'],stops:['Gare Claire','Pont des Mots','Belle Place','Jardin des Sons','Rive des Histoires','Horizon Français'],symbol:'◇'})
+    english:Object.freeze({kicker:'Englisch · Abenteuer',title:'Deine Expedition',stageLabel:'Entdeckerstufe',action:'Expedition fortsetzen',map:'Expeditionskarte öffnen',stages:['Aufbruch','Spurensucher','Pfadfinder','Expeditionsteam','Wegkundig','Horizontmeister'],stops:['Basislager','Waldpfad','Flussfurt','Höhenweg','Sternwarte','Horizont'],symbol:'⌖'}),
+    latin:Object.freeze({kicker:'Latein · Abenteuer',title:'Iter Romanum',stageLabel:'Reisestufe',action:'Entdeckungsreise fortsetzen',map:'Entdeckungsroute öffnen',stages:['Aufbruch','Viator','Explorator','Wegkundig','Kartograph','Magister Itineris'],stops:['Via Prima','Forum','Aquädukt','Bibliothek','Hafen','Horizont'],symbol:'◫'}),
+    german:Object.freeze({kicker:'Deutsch · Abenteuer',title:'Deine Wortreise',stageLabel:'Fuchs-Stufe',action:'Abenteuer fortsetzen',map:'Wortreise öffnen',stages:['Wegstarter','Spurensucher','Pfadfinder','Wortentdecker','Wissensreisender','Meisterentdecker'],stops:['Fuchshain','Buchstabenpfad','Wörterbrücke','Silbenwald','Leseturm','Wortschatz-Horizont'],symbol:'⌖'}),
+    french:Object.freeze({kicker:'Französisch · Abenteuer',title:'Voyage Français',stageLabel:'Reisestufe',action:'Voyage fortsetzen',map:'Reisekarte öffnen',stages:['Départ','Curieux','Explorateur','Voyageur','Connaisseur','Grand Voyageur'],stops:['Gare Claire','Pont des Mots','Belle Place','Jardin des Sons','Rive des Histoires','Horizon Français'],symbol:'◇'})
   });
   function adventureHeroMarkup(c){
     const subject=state?.activeSubject||'english',meta=ADVENTURE_META[subject]||ADVENTURE_META.english;
@@ -335,7 +335,7 @@
     const title=document.querySelector('#armyViewTitle'),toolbarCopy=document.querySelector('#armyView .army-toolbar-copy p'),mapButton=document.querySelector('#campaignMapBtn'),upgradeButton=document.querySelector('#armyUpgradeFocusBtn');
     if(title)title.textContent=adventure?(ADVENTURE_META[state.activeSubject]?.title||'Abenteuer'):world.title;
     if(toolbarCopy)toolbarCopy.textContent=adventure?'Entdecken, Etappen und sichtbarer Jahresfortschritt sind hier gebündelt und vom Lernen getrennt.':'Armee, Kampagne, Festungen und Duelle sind hier gebündelt und vom Lernen getrennt.';
-    if(mapButton)mapButton.textContent=adventure?'Reisekarte öffnen':'Feldzug';
+    if(mapButton)mapButton.textContent=adventure?(ADVENTURE_META[state.activeSubject]?.map||'Reisekarte öffnen'):'Feldzug';
     if(upgradeButton)upgradeButton.textContent=adventure?'Reise ansehen':'Nächstes Upgrade ansehen';
 
     const hero=document.querySelector('#armyHero');
@@ -380,7 +380,7 @@
       battle.classList.remove('hidden');
       battle.disabled=!c.mission;
       battle.textContent=adventure
-        ?(!c.mission?'Kein Lernziel geplant':c.tickets>0?(c.mission.capturedAt?'Etappe festigen':'Abenteuer fortsetzen'):(c.mission.capturedAt?'Etappe ansehen':'Nach Tagesziel verfügbar'))
+        ?(!c.mission?'Kein Lernziel geplant':c.tickets>0?(c.mission.capturedAt?'Etappe festigen':ADVENTURE_META[state.activeSubject]?.action||'Abenteuer fortsetzen'):(c.mission.capturedAt?'Etappe ansehen':'Nach Tagesziel verfügbar'))
         :(!c.mission?'Kein Test geplant':c.tickets>0?(c.mission.capturedAt?'Sicherung bereit':state.activeSubject==='german'?'Belagerung bereit':'Angriff bereit'):(c.mission.capturedAt?state.activeSubject==='german'?'Eroberte Burg ansehen':'Eroberte Festung ansehen':state.activeSubject==='german'?'Burg ansehen':'Festung ansehen'));
     }
     applyArmyArt();
