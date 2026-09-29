@@ -55,6 +55,14 @@ const BATTLE_STORY_FRENCH={
   capital:{title:'Die große Reiseetappe',text:'Viele gelernte Wörter führen jetzt zu einem wichtigen Ziel deiner Sprachreise.'},
   final:{title:'Das Jahresziel',text:'Die große Abschlussstation steht für deinen langfristigen Lernfortschritt über das Schuljahr.'}
 };
+const BATTLE_STORY_FRENCH_BATTLE={
+  outpost:{title:'Fort Clair',text:'Die Gefährten erreichen ihre erste vollständig fiktionale Festung. Jeder sichere Lerntag öffnet einen neuen Weg.'},
+  tower:{title:'Tour Lumière',text:'Der Turm markiert die nächste Testetappe. Deine Gruppe rückt nur mit tatsächlich erreichtem Lernfortschritt weiter.'},
+  wall:{title:'Bastion des Fleurs',text:'Die Bastion versperrt den Weg zur nächsten Etappe. Neue sichtbare Stärke entsteht ausschließlich aus realem Lernfortschritt.'},
+  citadel:{title:'Citadelle Verte',text:'Vor der grünen Zitadelle wartet eine fiktionale Wache. Die Szene bleibt Spielinszenierung und verändert keine Fachwerte.'},
+  capital:{title:'Fort du Soleil',text:'Die Gefährten stehen vor einer großen Festung. Dein bisheriger Lernweg bestimmt ausschließlich die sichtbare Entwicklung.'},
+  final:{title:'Grande Forteresse',text:'Das Jahresziel bündelt die langfristige Entwicklung. Gegner und Orte bleiben vollständig fiktional.'}
+};
 function battlePresentation(subject=state.activeSubject){
   if(subject==='german')return {
     theme:'wordrealm',kicker:'Das Wortreich',unitLabel:'Ritterheer',ownLabel:'DEIN RITTERHEER',targetLabel:'BURG',moveLabel:'ZUR BURG',
@@ -68,11 +76,17 @@ function battlePresentation(subject=state.activeSubject){
     revealKicker:'NEUES KASTELL ENTDECKT',noTarget:'Für die nächste Prüfungsetappe muss zuerst ein Test geplant sein.',
     targetNames:{outpost:'Marschlager',tower:'Wachturm',wall:'Grenzkastell',citadel:'Bergkastell',capital:'Provinzkastell',final:'Großes Kastell'}
   };
-  if(subject==='french')return {
+  if(subject==='french'&&typeof isAdventureWorld==='function'&&isAdventureWorld('french'))return {
     theme:'voyage',kicker:'Sprachmission',unitLabel:'Reise',ownLabel:'DEINE REISE',targetLabel:'ZIELORT',moveLabel:'WEITER',
     targetNoun:'Etappe',capturedLabel:'Erreicht',securedLabel:'Gefestigt',mapBack:'← Sprachreise',mapBottom:'Zurück zur Sprachreise',
     revealKicker:'NEUES REISEZIEL ENTDECKT',noTarget:'Für die nächste Sprachmission muss zuerst ein Test geplant sein.',
     targetNames:{outpost:'Erste Station',tower:'Stadtetappe',wall:'Brückenetappe',citadel:'Kulturstation',capital:'Große Etappe',final:'Abschlussetappe'}
+  };
+  if(subject==='french')return {
+    theme:'french-battle',kicker:'Gefährten & Festungen',unitLabel:'Gefährten',ownLabel:'DEINE GEFÄHRTEN',targetLabel:'FESTUNG',moveLabel:'VORRÜCKEN',
+    targetNoun:'Festung',capturedLabel:'Erobert',securedLabel:'Gesichert',mapBack:'← Festungsweg',mapBottom:'Zurück zum Festungsweg',
+    revealKicker:'NEUE FIKTIONALE FESTUNG',noTarget:'Für die nächste Festung muss zuerst ein Test geplant sein.',
+    targetNames:{outpost:'Fort Clair',tower:'Tour Lumière',wall:'Bastion des Fleurs',citadel:'Citadelle Verte',capital:'Fort du Soleil',final:'Grande Forteresse'}
   };
   return {
     theme:'campaign',kicker:'Schlacht',unitLabel:'Armee',ownLabel:'DEINE ARMEE',targetLabel:'ZIEL',moveLabel:'VORRÜCKEN',
@@ -117,7 +131,7 @@ function battleStoryDateLabel(value){
 function battleStoryFor(f){
   const p=battlePresentation();
   if(!f)return {title:`Noch kein ${p.targetNoun}-Ziel`,text:`Sobald ein Test geplant ist, erscheint hier automatisch die passende ${p.targetNoun.toLowerCase()}-Etappe.`};
-  const stories=state.activeSubject==='latin'?BATTLE_STORY_LATIN:state.activeSubject==='french'?BATTLE_STORY_FRENCH:BATTLE_STORY;
+  const stories=state.activeSubject==='latin'?BATTLE_STORY_LATIN:state.activeSubject==='french'?(typeof isAdventureWorld==='function'&&isAdventureWorld('french')?BATTLE_STORY_FRENCH:BATTLE_STORY_FRENCH_BATTLE):BATTLE_STORY;
   const base=stories[f.id]||{title:battleTargetName(f),text:`${p.unitLabel} bereitet den nächsten Schritt vor.`};
   const wordCount=Math.max(0,Number(f.wordCount)||0),scope=battleStoryScopeLabel(f),date=battleStoryDateLabel(f.testDate);
   let objective=date?`Dein nächster Test ist am ${date}.`:'';
@@ -332,7 +346,7 @@ function renderBattleView(){
   window.VTBattlePhaserProduction?.destroyProductionBattle?.();
   const stage=$('#battleStage');if(!stage)return;
   const p=subjectProgress(),f=currentTestFortress(),tickets=battleTickets(),count=Math.min(18,Math.max(7,soldiersFor(p.pct)+4)),sea=seasonInfo(),revealActive=battleFortressRevealActive(f);
-  const campaign=subjectCampaign(state.activeSubject),present=battlePresentation(),isRoman=state.activeSubject==='latin',isGerman=state.activeSubject==='german',isVoyage=state.activeSubject==='french';
+  const campaign=subjectCampaign(state.activeSubject),present=battlePresentation(),isRoman=state.activeSubject==='latin',isGerman=state.activeSubject==='german',isVoyage=state.activeSubject==='french'&&typeof isAdventureWorld==='function'&&isAdventureWorld('french');
   const rank=rankFor(p.pct,state.activeSubject),gear=gearLabelFor(p.pct,state.activeSubject),secure=!!f?.capturedAt,boss=!secure&&!isVoyage?battleBossFor(f):null,story=battleStoryFor(f),attack=battleAttackMeta(battleAttackMode),targetName=battleTargetName(f),ownBanner=learner()?.name||campaign.unitLabel,targetBanner=testFortressLabel(f);
   const damagePct=f?clamp(Math.round((1-(Number(f.defense)||0)/Math.max(1,Number(f.maxDefense)||1))*100),0,100):0,fortressVisual=battleFortressVisualState(f);
   const usedToday=!!battleDayState(state.activeSubject,false)?.actionUsed;
@@ -418,6 +432,7 @@ function setBattlePreviewMode(on){
 function returnFromBattle(){if(battleStoryNarrating)stopBattleStoryNarration();window.VTBattlePhaserProduction?.destroyProductionBattle?.();setBattlePreviewMode(false);showView(BATTLE_RETURN_META[battleReturnView]?battleReturnView:'armyView')}
 function openBattleView(){
   if(isParentMode())return;
+  if(typeof isAdventureWorld==='function'&&isAdventureWorld()){window.VTCampaignMap?.open?.();return}
   const f=currentTestFortress(),present=battlePresentation();
   if(!f){toast(present.noTarget,'subtle');return}
   captureBattleReturnView();
@@ -724,16 +739,16 @@ function renderCardboxOverview(){
 
 function renderAll(){
   const l=learner(); if(!l) return; ensureActiveSubject();applyPreferences();
-  const nativeGerman=state.activeSubject==='german',germanAdventure=nativeGerman&&learnerWorldMode('german')==='adventure';document.documentElement.dataset.subject=state.activeSubject;document.documentElement.dataset.worldMode=learnerWorldMode(state.activeSubject);
+  const nativeGerman=state.activeSubject==='german',world=typeof subjectWorldPresentation==='function'?subjectWorldPresentation(state.activeSubject):{icon:'⚔',short:'Armee'};document.documentElement.dataset.subject=state.activeSubject;document.documentElement.dataset.worldMode=learnerWorldMode(state.activeSubject);
   $('#germanLearningPath')?.classList.toggle('hidden',!nativeGerman);
   window.VTGermanFoundation?.renderHub?.();
-  const gameNav=document.querySelector('.bottom-nav [data-view="armyView"]');if(gameNav)gameNav.innerHTML=`<span aria-hidden="true">${germanAdventure?'⌖':'⚔'}</span>${nativeGerman?(germanAdventure?'Abenteuer':'Wortreich'):'Armee'}`;
+  const gameNav=document.querySelector('.bottom-nav [data-view="armyView"]');if(gameNav)gameNav.innerHTML=`<span aria-hidden="true">${esc(world.icon||'⚔')}</span>${esc(world.short||world.title||'Spiel')}`;
   const profileBtn=$('#profileBtn'),lockedChild=isPairedChildDevice();profileBtn.textContent=l.name;profileBtn.disabled=lockedChild;profileBtn.classList.toggle('profile-locked',lockedChild);profileBtn.setAttribute('aria-label',lockedChild?`Kinderprofil: ${l.name}. Dieses Gerät ist fest zugeordnet.`:`Lernprofil wechseln. Aktiv: ${l.name}`);profileBtn.title=lockedChild?`Dieses Kindergerät ist fest mit ${l.name} verbunden`:'Profil wechseln'; $('#lrsBadge').classList.toggle('hidden',!literacySupportActive(l)); applyRoleUi();
   const activeSubjects=learnerActiveSubjects(l),switcher=$('#subjectSwitcher');
   if(switcher){switcher.innerHTML=activeSubjects.map(subject=>`<button data-subject="${esc(subject)}" class="subject-btn ${subject===state.activeSubject?'active':''}" aria-pressed="${subject===state.activeSubject?'true':'false'}">${esc(subjectShort(subject))}</button>`).join('');switcher.classList.toggle('hidden',activeSubjects.length<=1);$$('.subject-btn').forEach(b=>b.onclick=()=>{if(!isSubjectActive(b.dataset.subject))return;state.activeSubject=b.dataset.subject;save()})}
   $('#subjectLabel').textContent=subjectLabel(state.activeSubject);
   const p=subjectProgress(); $('#masteryPct').textContent=`${p.pct}%`; $('#masteryProgress').value=p.pct; $('#masteryProgress').setAttribute('aria-valuetext',nativeGerman?`${p.pct} Prozent sichere Lernwörter`:`${p.pct} Prozent nachhaltig gemeistert`); $('#masteryWords').textContent=nativeGerman?`${p.mastered} / ${p.total} Lernwörter sicher`:`${p.mastered} / ${p.total} gemeistert`; $('#schoolYearPill').textContent=p.schoolYear; $('#dueCount').textContent=dueWords().length; $('#streakCount').textContent=streak(); $('#xpCount').textContent=l.xp; $('#stableCount').textContent=p.stable;
-  const campaign=subjectCampaign(state.activeSubject);$('#campaignTitle').textContent=campaign.title;$('#campaignEyebrow').textContent=campaign.eyebrow; $('#armyRank').textContent=rankFor(p.pct,state.activeSubject); $('#armyStrength').textContent=armyStrength(); $('#gearLevel').textContent=gearFor(p.pct);
+  const campaign=subjectCampaign(state.activeSubject);$('#campaignTitle').textContent=world.title||campaign.title;$('#campaignEyebrow').textContent=world.label||campaign.eyebrow; $('#armyRank').textContent=rankFor(p.pct,state.activeSubject); $('#armyStrength').textContent=armyStrength(); $('#gearLevel').textContent=gearFor(p.pct);
   const nf=currentTestFortress(),tickets=battleTickets(),usedToday=!!battleDayState(state.activeSubject,false)?.actionUsed,secured=!!nf?.capturedAt;
   $('#fortressRequirement').textContent=!nf?'Kein Test geplant':secured?`Erobert · Test ${formatDateShort(nf.testDate)}`:`${nf.defense} Verteidigung · Test ${formatDateShort(nf.testDate)}`;
   const ticketEl=$('#gameTicketCount');if(ticketEl)ticketEl.textContent=!nf?'–':tickets?`${tickets} bereit`:usedToday?'genutzt':'gesperrt';
