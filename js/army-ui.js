@@ -331,7 +331,7 @@
     root.dataset.worldMode=activeWorldMode();
     root.classList.toggle('adventure-mode',adventure);
     const next=nextUpgrade(c);
-    const subjectLabel=`Spiel · ${subjectLabel(state.activeSubject)} · ${adventure?'Abenteuer':world.short||world.title}`;
+    const subjectLine=`Spiel · ${subjectLabel(state.activeSubject)} · ${adventure?'Abenteuer':world.short||world.title}`;
     const title=document.querySelector('#armyViewTitle'),toolbarCopy=document.querySelector('#armyView .army-toolbar-copy p'),mapButton=document.querySelector('#campaignMapBtn'),upgradeButton=document.querySelector('#armyUpgradeFocusBtn');
     if(title)title.textContent=adventure?(ADVENTURE_META[state.activeSubject]?.title||'Abenteuer'):world.title;
     if(toolbarCopy)toolbarCopy.textContent=adventure?'Entdecken, Etappen und sichtbarer Jahresfortschritt sind hier gebündelt und vom Lernen getrennt.':'Armee, Kampagne, Festungen und Duelle sind hier gebündelt und vom Lernen getrennt.';
@@ -341,7 +341,7 @@
     const hero=document.querySelector('#armyHero');
     if(hero){hero.dataset.growthStage=String(c.growth.level);hero.innerHTML=adventure?adventureHeroMarkup(c):heroMarkup(c)}
     const subject=document.querySelector('#armySubjectLabel');
-    if(subject)subject.textContent=subjectLabel;
+    if(subject)subject.textContent=subjectLine;
     const rank=document.querySelector('#armyRankLabel');
     if(rank)rank.textContent=c.rank;
     const summary=document.querySelector('#armySummary');
@@ -370,7 +370,7 @@
     const goal=document.querySelector('#armyNextGoal');
     if(goal){
       goal.innerHTML=adventure
-        ?`<span>Nächste Etappe</span><strong>Weiter auf dem Fuchspfad</strong><small>Die Wortreise wächst mit derselben Jahresstufe wie das Wortreich.</small>`
+        ?`<span>Nächste Etappe</span><strong>${safe(ADVENTURE_META[state.activeSubject]?.title||'Abenteuerreise')}</strong><small>Die Abenteuerreise wächst mit derselben kumulativen Jahresstufe wie die Kampfvariante.</small>`
         :next
           ?`<span>Nächstes Upgrade</span><strong>${safe(subjectName(next.def))}</strong><small>${safe(nextText(next.def,next.s))}</small>`
           :`<span>${safe(state.activeSubject==='german'?'Ritterheer':'Armee')}</span><strong>Maximal ausgebaut</strong><small>Alle sichtbaren Aufwertungen sind erreicht.</small>`;
