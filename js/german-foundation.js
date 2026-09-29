@@ -13,6 +13,17 @@
     {letter:'L',lower:'l',sound:'llll',word:'Lampe'},{letter:'S',lower:'s',sound:'ssss',word:'Sonne'},{letter:'E',lower:'e',sound:'eeee',word:'Ente'},
     {letter:'N',lower:'n',sound:'nnnn',word:'Nase'},{letter:'I',lower:'i',sound:'iiii',word:'Igel'},{letter:'R',lower:'r',sound:'rrrr',word:'Rose'},{letter:'T',lower:'t',sound:'ttt',word:'Tisch'}
   ];
+  const FREE_WRITING_LETTERS=[
+    {upper:'A',lower:'a',sound:'aaaa'},{upper:'B',lower:'b',sound:'b'},{upper:'C',lower:'c',sound:'k'},{upper:'D',lower:'d',sound:'d'},
+    {upper:'E',lower:'e',sound:'eeee'},{upper:'F',lower:'f',sound:'ffff'},{upper:'G',lower:'g',sound:'g'},{upper:'H',lower:'h',sound:'h'},
+    {upper:'I',lower:'i',sound:'iiii'},{upper:'J',lower:'j',sound:'j'},{upper:'K',lower:'k',sound:'k'},{upper:'L',lower:'l',sound:'llll'},
+    {upper:'M',lower:'m',sound:'mmmm'},{upper:'N',lower:'n',sound:'nnnn'},{upper:'O',lower:'o',sound:'oooo'},{upper:'P',lower:'p',sound:'p'},
+    {upper:'Q',lower:'q',sound:'k'},{upper:'R',lower:'r',sound:'rrrr'},{upper:'S',lower:'s',sound:'ssss'},{upper:'T',lower:'t',sound:'ttt'},
+    {upper:'U',lower:'u',sound:'uuuu'},{upper:'V',lower:'v',sound:'ffff'},{upper:'W',lower:'w',sound:'w'},{upper:'X',lower:'x',sound:'ks'},
+    {upper:'Y',lower:'y',sound:'ü'},{upper:'Z',lower:'z',sound:'ts'},{upper:'Ä',lower:'ä',sound:'ääää'},{upper:'Ö',lower:'ö',sound:'öööö'},
+    {upper:'Ü',lower:'ü',sound:'üüüü'}
+  ];
+  let freeWritingSelection=new Set(),freeWritingCase='lower';
   const WORDS=[
     {id:'oma',word:'Oma',icon:'👵',label:'Großmutter'},
     {id:'nase',word:'Nase',icon:'👃',label:'Nase'},
@@ -57,6 +68,27 @@
     const hash=[...String(key)].reduce((sum,ch)=>sum+ch.charCodeAt(0),0),offset=hash%arr.length;
     return arr.slice(offset).concat(arr.slice(0,offset));
   }
+  function freeWritingCatalog(){return FREE_WRITING_LETTERS.map(x=>({...x}))}
+  function normalizeFreeWritingSelection(values=[]){
+    const allowed=new Set(FREE_WRITING_LETTERS.map(x=>x.upper));
+    return [...new Set((Array.isArray(values)?values:[]).map(v=>String(v||'').trim().toUpperCase()).filter(v=>allowed.has(v)))];
+  }
+  function freeWritingTasks(selection=[...freeWritingSelection],caseMode=freeWritingCase){
+    const selected=new Set(normalizeFreeWritingSelection(selection));
+    const mode=['lower','upper','pair'].includes(caseMode)?caseMode:'lower';
+    const tasks=[];
+    FREE_WRITING_LETTERS.filter(x=>selected.has(x.upper)).forEach(x=>{
+      if(mode==='upper'||mode==='pair')tasks.push({kind:'freeLetterWrite',id:'free-'+x.upper+'-upper',base:x.upper,glyph:x.upper,sound:x.sound,caseMode:'upper'});
+      if(mode==='lower'||mode==='pair')tasks.push({kind:'freeLetterWrite',id:'free-'+x.upper+'-lower',base:x.upper,glyph:x.lower,sound:x.sound,caseMode:'lower'});
+    });
+    return tasks;
+  }
+  function freeWritingSelectionText(){
+    const selected=FREE_WRITING_LETTERS.filter(x=>freeWritingSelection.has(x.upper));
+    if(!selected.length)return 'Noch keine Buchstaben ausgewählt.';
+    const values=selected.flatMap(x=>freeWritingCase==='pair'?[x.upper,x.lower]:[freeWritingCase==='upper'?x.upper:x.lower]);
+    return 'Ausgewählt: '+values.join(', ');
+  }
   function stageTasks(stage){
     if(stage==='handwriting')return LETTERS.map(x=>({kind:'drawPair',id:x.letter,upper:x.letter,lower:x.lower,sound:x.sound,word:x.word}));
     if(stage==='letters')return LETTERS.map((x,i)=>{
@@ -86,9 +118,35 @@
       const done=stageDone(s.id),current=s.id===c.next;
       return '<button type="button" class="german-foundation-stage '+(done?'done ':'')+(current?'current':'')+'" data-german-stage="'+s.id+'"><span>'+(done?'✓':(i+1))+'</span><strong>'+s.label+'</strong><small>'+s.short+'</small></button>';
     }).join('');
-    root.innerHTML='<div class="german-foundation-head"><div><div class="eyebrow">Klasse 1 · Grundlagen</div><div class="row gap align-center"><h3>Buchstaben, Laute und erste Sätze</h3>'+readButton('Buchstaben, Laute und erste Sätze. Ruhig lernen, ohne Battle-Wertung.','Grundlagen vorlesen')+'</div><p>Ruhig lernen – ohne Battle-Wertung. Schreibübungen werden nicht automatisch als richtig oder falsch beurteilt.</p></div><div class="german-foundation-progress"><strong>'+c.done+' / '+c.total+'</strong><span>Stationen</span></div></div><progress max="'+c.total+'" value="'+c.done+'" aria-label="'+c.done+' von '+c.total+' Grundlagenstationen abgeschlossen"></progress><div class="german-foundation-stages">'+stageHtml+'</div><div class="row end top-space"><button id="germanFoundationStartBtn" type="button" class="primary">'+(c.done?'Weiterlernen':'Grundlagen starten')+'</button></div>';
+    root.innerHTML='<div class="german-foundation-head"><div><div class="eyebrow">Klasse 1 · Grundlagen</div><div class="row gap align-center"><h3>Buchstaben, Laute und erste Sätze</h3>'+readButton('Buchstaben, Laute und erste Sätze. Ruhig lernen, ohne Battle-Wertung.','Grundlagen vorlesen')+'</div><p>Ruhig lernen – ohne Battle-Wertung. Schreibübungen werden nicht automatisch als richtig oder falsch beurteilt.</p></div><div class="german-foundation-progress"><strong>'+c.done+' / '+c.total+'</strong><span>Stationen</span></div></div><progress max="'+c.total+'" value="'+c.done+'" aria-label="'+c.done+' von '+c.total+' Grundlagenstationen abgeschlossen"></progress><div class="german-foundation-stages">'+stageHtml+'</div><div class="german-free-writing-entry"><div><strong>Freies Schreiben</strong><small>Wähle selbst einen oder mehrere Buchstaben und übe ohne Punkte- oder Testfortschritt.</small></div>'+readButton('Freies Schreiben. Wähle selbst einen oder mehrere Buchstaben. Diese freiwillige Übung verändert deinen Lernfortschritt nicht.','Freies Schreiben vorlesen')+'<button id="germanFoundationFreeWritingBtn" type="button" class="secondary">Buchstaben auswählen</button></div><div class="row end top-space"><button id="germanFoundationStartBtn" type="button" class="primary">'+(c.done?'Weiterlernen':'Grundlagen starten')+'</button></div>';
     root.querySelectorAll('[data-german-stage]').forEach(b=>b.addEventListener('click',()=>open(b.dataset.germanStage)));
+    root.querySelector('#germanFoundationFreeWritingBtn')?.addEventListener('click',openFreeWriting);
     root.querySelector('#germanFoundationStartBtn')?.addEventListener('click',()=>open(c.next));
+  }
+  function renderFreeWritingSelector(){
+    const area=document.querySelector('#studyArea');if(!area)return;
+    const letterButtons=FREE_WRITING_LETTERS.map(x=>'<button type="button" class="foundation-free-letter" data-free-letter="'+x.upper+'" aria-pressed="'+String(freeWritingSelection.has(x.upper))+'" aria-label="'+x.upper+' '+x.lower+' auswählen">'+x.upper+'<small>'+x.lower+'</small></button>').join('');
+    const caseButton=(id,label)=>'<button type="button" class="foundation-free-case-btn" data-free-case="'+id+'" aria-pressed="'+String(freeWritingCase===id)+'">'+label+'</button>';
+    area.innerHTML='<div class="study-card german-literacy-card german-foundation-task foundation-free-selector"><div class="eyebrow">Deutsch · Klasse 1 · freie Übung</div><div class="row gap align-center"><h3>Welche Buchstaben möchtest du schreiben?</h3>'+readButton('Wähle zuerst Buchstaben aus. Danach wählst du klein, groß oder groß und klein. Du darfst so oft üben, wie du möchtest.','Auswahl vorlesen')+'</div><div class="foundation-free-case-row" role="group" aria-label="Groß- oder Kleinschreibung">'+caseButton('lower','klein')+caseButton('upper','GROSS')+caseButton('pair','Groß + klein')+'</div><div class="foundation-free-letter-grid" aria-label="Buchstaben auswählen">'+letterButtons+'</div><div id="freeWritingSelectionSummary" class="foundation-free-summary" aria-live="polite">'+freeWritingSelectionText()+'</div><div class="row gap center-actions top-space"><button id="freeWritingReset" class="ghost" type="button">Auswahl löschen</button><button id="freeWritingStart" class="primary" type="button" '+(freeWritingSelection.size?'':'disabled')+'>Auswahl üben</button></div><div class="notice subtle"><strong>Freie Wiederholung:</strong> Diese Übungen verändern weder Mastery noch Testbereitschaft oder Tagesfortschritt.</div></div>';
+    area.querySelectorAll('[data-free-case]').forEach(b=>b.onclick=()=>{freeWritingCase=b.dataset.freeCase;renderFreeWritingSelector()});
+    area.querySelectorAll('[data-free-letter]').forEach(b=>b.onclick=()=>{const key=b.dataset.freeLetter;if(freeWritingSelection.has(key))freeWritingSelection.delete(key);else freeWritingSelection.add(key);renderFreeWritingSelector()});
+    area.querySelector('#freeWritingReset').onclick=()=>{freeWritingSelection.clear();renderFreeWritingSelector()};
+    area.querySelector('#freeWritingStart').onclick=startFreeWriting;
+  }
+  function openFreeWriting(){
+    if(!available())return;
+    if(typeof session!=='undefined')session=null;
+    run=null;showView('learnView');
+    document.querySelector('#modePill').textContent='Deutsch · Freies Schreiben';
+    document.querySelector('#sessionPill').textContent='freie Übung';
+    renderFreeWritingSelector();
+  }
+  function startFreeWriting(){
+    const tasks=freeWritingTasks();
+    if(!tasks.length){renderFreeWritingSelector();return}
+    run={stage:'freeWriting',freePractice:true,index:0,tasks,wrong:0,assembled:[],drawPhase:'free'};
+    document.querySelector('#modePill').textContent='Deutsch · Freies Schreiben';
+    renderTask();
   }
   function open(stage=''){
     if(!available())return;
@@ -106,6 +164,7 @@
   function advance(){
     if(!run)return;run.index++;run.drawPhase='trace';
     if(run.index>=run.tasks.length){
+      if(run.freePractice){renderFreeWritingFinish();return}
       progress().completedStages[run.stage]=new Date().toISOString();saveProgress();renderFinish();return;
     }
     renderTask();
@@ -123,6 +182,7 @@
     clearTimeout(previewTimer);drawState=null;
     const t=task(),area=document.querySelector('#studyArea');if(!t||!area)return;
     document.querySelector('#sessionPill').textContent=(run.index+1)+' / '+run.tasks.length;
+    if(t.kind==='freeLetterWrite'){renderFreeWritingDraw(t);return}
     if(t.kind==='letterChoice'){
       area.innerHTML='<div class="study-card german-literacy-card german-foundation-task"><div class="eyebrow">Buchstaben erkennen</div><div class="study-prompt">Finde den Buchstaben <strong>'+t.target+'</strong>.</div>'+readButton('Finde den Buchstaben '+t.target+'.')+choiceButtons(t.options,t.target,'letters',t.id,'recognized')+'<div id="germanFoundationFeedback" class="notice subtle">Schau genau auf die Form.</div></div>';
       area.querySelectorAll('[data-foundation-answer]').forEach(b=>b.onclick=()=>b.dataset.foundationAnswer===t.target?correct('letters',t.id,'recognized'):wrong());return;
@@ -155,28 +215,64 @@
       area.querySelector('#foundationSentenceCheck').onclick=()=>{const answer=run.assembled.map(x=>x.value).join(' ').replace(/\s+([.!?])/g,'$1');answer===t.sentence?correct('sentences',t.id,'formation'):wrong()};return;
     }
   }
+  function lineatureLegend(){
+    return '<div class="foundation-lineature-legend" aria-label="Schreiblineatur mit Dachgeschoss, Erdgeschoss und Keller"><span>Dachgeschoss</span><span>Erdgeschoss</span><span>Keller</span></div>';
+  }
+  function drawPrimarySchoolLineature(ctx,width,height){
+    const top=Math.round(height*.12),middle=Math.round(height*.38),base=Math.round(height*.64),bottom=Math.round(height*.90);
+    ctx.save();
+    ctx.fillStyle='#fffdf8';ctx.fillRect(0,0,width,height);
+    ctx.fillStyle='rgba(244,224,169,.16)';ctx.fillRect(0,top,width,middle-top);
+    ctx.fillStyle='rgba(221,236,208,.12)';ctx.fillRect(0,middle,width,base-middle);
+    ctx.fillStyle='rgba(200,222,242,.13)';ctx.fillRect(0,base,width,bottom-base);
+    ctx.setLineDash([]);ctx.lineWidth=2.5;ctx.strokeStyle='rgba(104,91,68,.52)';
+    [top,middle,base,bottom].forEach(y=>{ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(width,y);ctx.stroke()});
+    ctx.lineWidth=1.5;ctx.strokeStyle='rgba(104,91,68,.20)';ctx.setLineDash([8,8]);
+    [Math.round((top+middle)/2),Math.round((middle+base)/2),Math.round((base+bottom)/2)].forEach(y=>{ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(width,y);ctx.stroke()});
+    ctx.restore();
+    return {top,middle,base,bottom};
+  }
+  function bindWritingCanvas(canvas,doneButton,clearButton,background){
+    const ctx=canvas.getContext('2d');drawState={drawing:false,last:null,length:0};background(ctx);
+    const point=e=>{const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}};
+    canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture?.(e.pointerId);drawState.drawing=true;drawState.last=point(e)});
+    canvas.addEventListener('pointermove',e=>{if(!drawState?.drawing)return;const p=point(e),q=drawState.last;ctx.beginPath();ctx.moveTo(q.x,q.y);ctx.lineTo(p.x,p.y);ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#384735';ctx.lineWidth=12;ctx.stroke();drawState.length+=Math.hypot(p.x-q.x,p.y-q.y);drawState.last=p;if(drawState.length>120)doneButton.disabled=false});
+    const stop=()=>{if(drawState){drawState.drawing=false;drawState.last=null}};canvas.addEventListener('pointerup',stop);canvas.addEventListener('pointercancel',stop);
+    clearButton.onclick=()=>{drawState={drawing:false,last:null,length:0};doneButton.disabled=true;background(ctx)};
+  }
+  function renderFreeWritingDraw(t){
+    const area=document.querySelector('#studyArea');if(!area)return;
+    const instruction='Schreibe den Buchstaben '+t.glyph+' auf die Hilfslinien. Du kannst den Laut jederzeit anhören.';
+    area.innerHTML='<div class="study-card german-literacy-card german-foundation-task"><div class="eyebrow">Freies Schreiben · eigene Auswahl</div><div class="row gap align-center"><h3>Schreibe diesen Buchstaben</h3>'+readButton(instruction,'Aufgabe vorlesen')+'</div><div class="foundation-free-glyph" aria-label="Buchstabe '+t.glyph+'">'+t.glyph+'</div><button id="foundationLetterSoundBtn" class="secondary" type="button">🔊 Laut hören</button><div class="study-sub">Dachgeschoss – Erdgeschoss – Keller helfen dir bei Ober-, Mittel- und Unterlängen.</div>'+lineatureLegend()+'<canvas id="foundationTraceCanvas" class="foundation-trace-canvas foundation-lineature-canvas" width="640" height="320" aria-label="Freie Schreibfläche für '+t.glyph+' mit Grundschul-Hilfslinien"></canvas><div class="row gap center-actions top-space"><button id="foundationClearCanvas" class="ghost" type="button">Neu schreiben</button><button id="foundationDrawDone" class="primary" type="button" disabled>Fertig</button></div><div id="germanFoundationFeedback" class="notice subtle">Freie Wiederholung: Diese Aufgabe erzeugt keinen Mastery- oder Testfortschritt.</div></div>';
+    const canvas=area.querySelector('#foundationTraceCanvas'),done=area.querySelector('#foundationDrawDone'),clear=area.querySelector('#foundationClearCanvas');
+    bindWritingCanvas(canvas,done,clear,ctx=>drawPrimarySchoolLineature(ctx,canvas.width,canvas.height));
+    area.querySelector('#foundationLetterSoundBtn').onclick=()=>speak(t.sound);
+    done.onclick=()=>{setFeedback('<strong>Gut geübt.</strong> Diese Wiederholung bleibt absichtlich ohne Lernfortschritt.','good');setTimeout(advance,450)};
+  }
   function renderDraw(t){
     const area=document.querySelector('#studyArea'),phase=run?.drawPhase==='free'?'free':'trace',free=phase==='free',pair=t.upper+' '+t.lower;
     const instruction=free?'Höre den Laut. Schreibe danach den Groß- und Kleinbuchstaben selbst.':'Höre den Laut. Fahre danach Groß- und Kleinbuchstaben mit dem Finger oder Stift nach.';
-    area.innerHTML='<div class="study-card german-literacy-card german-foundation-task"><div class="eyebrow">Buchstaben schreiben · '+(free?'selbst schreiben':'nachfahren')+'</div><h3>'+(free?'Jetzt aus dem Gedächtnis':'Groß und klein zusammen lernen')+'</h3>'+readButton(instruction)+(free?'':'<div class="foundation-letter-pair" aria-hidden="true">'+t.upper+' '+t.lower+'</div>')+'<button id="foundationLetterSoundBtn" class="secondary" type="button">🔊 Laut hören</button><div class="study-sub">'+instruction+'</div><canvas id="foundationTraceCanvas" class="foundation-trace-canvas" width="640" height="320" aria-label="'+(free?'Schreibfläche für Groß- und Kleinbuchstaben':'Nachfahrfläche für '+pair)+'"></canvas><div class="row gap center-actions top-space"><button id="foundationClearCanvas" class="ghost" type="button">Neu zeichnen</button><button id="foundationDrawDone" class="primary" type="button" disabled>'+(free?'Fertig geschrieben':'Nachfahren fertig')+'</button></div><div id="germanFoundationFeedback" class="notice subtle">'+(free?'Die Lösung bleibt jetzt verborgen. Nur der Laut hilft dir.':'Beim Nachfahren ist die Form absichtlich sichtbar. Danach verschwindet sie beim freien Schreiben.')+'</div></div>';
+    area.innerHTML='<div class="study-card german-literacy-card german-foundation-task"><div class="eyebrow">Buchstaben schreiben · '+(free?'selbst schreiben':'nachfahren')+'</div><h3>'+(free?'Jetzt aus dem Gedächtnis':'Groß und klein zusammen lernen')+'</h3>'+readButton(instruction)+(free?'':'<div class="foundation-letter-pair" aria-hidden="true">'+t.upper+' '+t.lower+'</div>')+'<button id="foundationLetterSoundBtn" class="secondary" type="button">🔊 Laut hören</button><div class="study-sub">'+instruction+'</div>'+lineatureLegend()+'<canvas id="foundationTraceCanvas" class="foundation-trace-canvas foundation-lineature-canvas" width="640" height="320" aria-label="'+(free?'Schreibfläche für Groß- und Kleinbuchstaben mit Grundschul-Hilfslinien':'Nachfahrfläche für '+pair+' mit Grundschul-Hilfslinien')+'"></canvas><div class="row gap center-actions top-space"><button id="foundationClearCanvas" class="ghost" type="button">Neu zeichnen</button><button id="foundationDrawDone" class="primary" type="button" disabled>'+(free?'Fertig geschrieben':'Nachfahren fertig')+'</button></div><div id="germanFoundationFeedback" class="notice subtle">'+(free?'Die Lösung bleibt jetzt verborgen. Nur der Laut hilft dir.':'Beim Nachfahren ist die Form absichtlich sichtbar. Danach verschwindet sie beim freien Schreiben.')+'</div></div>';
     const canvas=area.querySelector('#foundationTraceCanvas'),ctx=canvas.getContext('2d');
-    drawState={drawing:false,last:null,length:0};
-    const background=()=>{
-      ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#fffdf8';ctx.fillRect(0,0,canvas.width,canvas.height);
-      if(!free){ctx.save();ctx.font='190px system-ui, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=8;ctx.strokeStyle='rgba(117,85,47,.25)';ctx.setLineDash([14,12]);ctx.strokeText(pair,canvas.width/2,canvas.height/2+8);ctx.restore()}
+    const done=area.querySelector('#foundationDrawDone'),clear=area.querySelector('#foundationClearCanvas');
+    const background=ctx=>{
+      const lines=drawPrimarySchoolLineature(ctx,canvas.width,canvas.height);
+      if(!free){ctx.save();ctx.font='160px "Arial Rounded MT Bold",system-ui,sans-serif';ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.lineWidth=7;ctx.strokeStyle='rgba(117,85,47,.25)';ctx.setLineDash([14,12]);ctx.strokeText(pair,canvas.width/2,lines.base);ctx.restore()}
     };
-    background();
-    const point=e=>{const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}};
-    canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture?.(e.pointerId);drawState.drawing=true;drawState.last=point(e)});
-    canvas.addEventListener('pointermove',e=>{if(!drawState?.drawing)return;const p=point(e),q=drawState.last;ctx.beginPath();ctx.moveTo(q.x,q.y);ctx.lineTo(p.x,p.y);ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#4f5d3a';ctx.lineWidth=12;ctx.stroke();drawState.length+=Math.hypot(p.x-q.x,p.y-q.y);drawState.last=p;if(drawState.length>120)area.querySelector('#foundationDrawDone').disabled=false});
-    const stop=()=>{if(drawState){drawState.drawing=false;drawState.last=null}};canvas.addEventListener('pointerup',stop);canvas.addEventListener('pointercancel',stop);
-    area.querySelector('#foundationClearCanvas').onclick=()=>{drawState={drawing:false,last:null,length:0};area.querySelector('#foundationDrawDone').disabled=true;background()};
+    bindWritingCanvas(canvas,done,clear,background);
     area.querySelector('#foundationLetterSoundBtn').onclick=()=>speak(t.sound);
     area.querySelector('#foundationDrawDone').onclick=()=>{
       if(!free){bump('letters',t.id,'traced');saveProgress();run.drawPhase='free';renderDraw(t);setTimeout(()=>speak(t.sound),120);return}
       bump('letters',t.id,'freeProduction');saveProgress();setFeedback('<strong>Schreibübung gespeichert.</strong> Die Handschrift wird bewusst nicht automatisch benotet.','good');setTimeout(advance,650)
     };
     setTimeout(()=>speak(t.sound),120);
+  }
+  function renderFreeWritingFinish(){
+    clearTimeout(previewTimer);const area=document.querySelector('#studyArea');if(!area)return;
+    document.querySelector('#sessionPill').textContent='freie Übung';
+    area.innerHTML='<div class="study-card german-literacy-card german-foundation-task"><div class="eyebrow">Freies Schreiben</div><div class="study-prompt">Runde beendet</div>'+readButton('Runde beendet. Du kannst dieselbe Auswahl wiederholen oder andere Buchstaben wählen. Die freie Übung verändert deinen Lernfortschritt nicht.','Abschluss vorlesen')+'<p>'+freeWritingSelectionText()+'</p><div class="notice subtle"><strong>Wichtig:</strong> Auch viele Wiederholungen erhöhen weder Mastery noch Testbereitschaft.</div><div class="row gap center-actions top-space"><button id="freeWritingChoose" class="ghost" type="button">Auswahl ändern</button><button id="freeWritingRepeat" class="primary" type="button">Gleiche Auswahl noch einmal</button></div></div>';
+    area.querySelector('#freeWritingChoose').onclick=openFreeWriting;
+    area.querySelector('#freeWritingRepeat').onclick=startFreeWriting;
   }
   function renderFinish(){
     clearTimeout(previewTimer);const area=document.querySelector('#studyArea'),meta=COURSE.find(x=>x.id===run?.stage);document.querySelector('#sessionPill').textContent='Fertig';
@@ -185,5 +281,5 @@
     area.querySelector('#foundationNext').onclick=()=>open(completion().next);
   }
 
-  window.VTGermanFoundation={available,progress,completion,renderHub,open,course:COURSE,stageTasks};
+  window.VTGermanFoundation={available,progress,completion,renderHub,open,openFreeWriting,course:COURSE,stageTasks,freeWritingCatalog,freeWritingTasks,freeWritingState:()=>({selection:[...freeWritingSelection],caseMode:freeWritingCase})};
 })();
