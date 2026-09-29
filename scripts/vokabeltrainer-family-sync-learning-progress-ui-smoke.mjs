@@ -99,14 +99,15 @@ try{
   }
 
   await pageA.evaluate(async()=>{
-    learner().literacySupport={reading:false,spelling:true};learner().reducedLoad=false;normalizeLiteracySupport(learner());
+    learner().literacySupport={reading:false,spelling:true};learner().reducedLoad=false;learner().avatarStyle='neutral';setLearnerWorldMode(learner(),'german','adventure');normalizeLiteracySupport(learner());
     await persistState();VTFamilySync.markLocalChange();
   });
   assert((await pageA.evaluate(()=>VTFamilySync.status().dirty))===1,'parent setup change marks one setup document dirty');
   await pageA.evaluate(()=>VTFamilySync.syncNow(true));
   await pageB.evaluate(()=>VTFamilySync.syncNow(true));
-  const supportOnB=await pageB.evaluate(()=>({support:literacySupportFor(learner()),legacy:learner().lrsMode}));
+  const supportOnB=await pageB.evaluate(()=>({support:literacySupportFor(learner()),legacy:learner().lrsMode,avatar:learner().avatarStyle,world:learnerWorldMode('german')}));
   assert(!supportOnB.support.reading&&supportOnB.support.spelling&&!supportOnB.support.reducedLoad&&supportOnB.legacy,'reading/spelling/reduced-load profile settings sync from parent to child while legacy LRS alias stays compatible');
+  assert(supportOnB.avatar==='neutral'&&supportOnB.world==='adventure','m/w/d avatar and German world choice sync from parent to child');
   await pageA.evaluate(async()=>{
     learner().literacySupport={reading:false,spelling:false};learner().reducedLoad=false;normalizeLiteracySupport(learner());
     await persistState();VTFamilySync.markLocalChange();
@@ -206,6 +207,7 @@ try{
 
   console.log('Vokabeltrainer family sync learning-progress UI smoke: passed');
   console.log('✓ differentiated reading/spelling/reduced-load setup synced from parent to child');
+  console.log('✓ m/w/d avatar and German world choice synced from parent to child');
   console.log('✓ completed daily-plan state synced from device A to device B');
   console.log('✓ today-safe evidence and optional adaptive refill sync across devices');
   console.log('✓ vocabulary progress, activity and XP synced with the completion');
