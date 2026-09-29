@@ -27,7 +27,7 @@ async function seedSubject(subject,term,translation){
 try{
   const response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'app loads');
-  await page.waitForFunction(()=>window.__VT_APP_READY__===true&&!!window.VTArmyUi&&!!window.VTCampaignMap);
+  await page.waitForFunction(()=>window.__VT_APP_READY__===true&&!!window.VTArmyUi&&!!window.VTCampaignMap&&!!window.VTWorldStory);
 
   await page.evaluate(()=>{state=defaultState();renderAll();showView('homeView');openProfileEditor()});
   await page.waitForSelector('#modal[open] #saveProfile');
@@ -50,14 +50,16 @@ try{
   await page.waitForFunction(()=>learnerWorldMode('english')==='adventure');
   await page.evaluate(()=>window.VTArmyUi.open());
   await page.waitForSelector('#armyView.active');
-  let hub=await page.evaluate(()=>({mode:document.querySelector('#armyView')?.dataset.worldMode,title:document.querySelector('#armyViewTitle')?.textContent||'',route:document.querySelectorAll('.subject-adventure-route span').length,units:(document.querySelector('#armyUnitGrid')?.textContent||'').trim(),action:document.querySelector('#armyBattleBtn')?.textContent||''}));
+  let hub=await page.evaluate(()=>({mode:document.querySelector('#armyView')?.dataset.worldMode,title:document.querySelector('#armyViewTitle')?.textContent||'',route:document.querySelectorAll('.subject-adventure-route span').length,units:(document.querySelector('#armyUnitGrid')?.textContent||'').trim(),action:document.querySelector('#armyBattleBtn')?.textContent||'',story:document.querySelector('.subject-adventure-story strong')?.textContent||'',storyRead:document.querySelectorAll('.subject-adventure-story .read-aloud-btn').length}));
   assert(hub.mode==='adventure'&&hub.title==='Deine Expedition'&&hub.route===6,'English adventure has its own six-stage expedition hub');
   assert(!hub.units&&hub.action.includes('fortsetzen'),'English adventure hides combat units and exposes non-combat action');
+  assert(hub.story.includes('Kapitel')&&hub.storyRead===1,'English adventure shows a readable canonical story chapter');
   await page.click('#armyBattleBtn');
   await page.waitForSelector('#campaignMapView.active');
-  let mapState=await page.evaluate(()=>({theme:document.querySelector('#campaignMapView')?.dataset.visualTheme,mode:document.querySelector('#campaignMapView')?.dataset.worldMode,battle:document.querySelector('#battleView')?.classList.contains('active'),used:battleDayState('english',false)?.actionUsed===true,mastery:subjectProgress('english').pct,growth:campaignGrowthState('english').pct}));
+  let mapState=await page.evaluate(()=>({theme:document.querySelector('#campaignMapView')?.dataset.visualTheme,mode:document.querySelector('#campaignMapView')?.dataset.worldMode,battle:document.querySelector('#battleView')?.classList.contains('active'),used:battleDayState('english',false)?.actionUsed===true,mastery:subjectProgress('english').pct,growth:campaignGrowthState('english').pct,story:document.querySelector('.campaign-map-story strong')?.textContent||'',storyRead:document.querySelectorAll('.campaign-map-story .read-aloud-btn').length}));
   assert(mapState.theme==='english-adventure'&&mapState.mode==='adventure'&&!mapState.battle,'English adventure stays outside battle screen');
   assert(mapState.used&&mapState.mastery===initialEnglish.mastery,'English adventure consumes same action without changing mastery');
+  assert(mapState.story&&mapState.storyRead===1,'world map exposes the same readable story layer');
 
   await seedSubject('latin','porta','Tor');
   await page.evaluate(()=>{setLearnerWorldMode(learner(),'latin','adventure');renderAll();window.VTArmyUi.open()});
@@ -78,6 +80,17 @@ try{
   });
   assert(french.adventureTheme==='voyage'&&french.adventurePresentation==='voyage','French adventure keeps Voyage Français');
   assert(french.battleTheme==='french-battle'&&french.battlePresentationTheme==='french-battle','French battle is a separate fictional fortress world');
+
+  const stories=await page.evaluate(()=>({
+    germanBattle:VTWorldStory.chapter('german','battle','outpost').title,
+    englishBattle:VTWorldStory.chapter('english','battle','outpost').title,
+    latinAdventure:VTWorldStory.get('latin','adventure').title,
+    frenchBattleFinale:VTWorldStory.chapter('french','battle','final',{completed:true}).text
+  }));
+  assert(stories.germanBattle.includes('Holztor')&&!stories.germanBattle.includes('Nebelvorposten'),'German Wortreich never falls back to English battle story');
+  assert(stories.englishBattle.includes('Nebelvorposten'),'English battle keeps Northstar story');
+  assert(stories.latinAdventure.includes('Iter Romanum'),'Latin adventure exposes its own full story arc');
+  assert(stories.frenchBattleFinale.includes('Lichtzeichen'),'French battle exposes its own finale');
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer all-subject world choice UI smoke: passed');
