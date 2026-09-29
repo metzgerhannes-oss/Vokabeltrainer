@@ -38,6 +38,40 @@ Alle Fachwelten verwenden dieselbe illustrativ-visuelle Familie:
 Neue Grafiken müssen sich an bereits freigegebenen Referenzbildern orientieren, nicht nur
 an allgemeinen Genrebegriffen.
 
+
+### 2.1 Verbindlicher Qualitätsstandard für alle Avatare
+
+Die freigegebene **hochwertige, malerisch-cinematische Figuren- und Kampagnenillustration** ist
+der Mindeststandard für **jeden sichtbar eingesetzten Avatar** – unabhängig von Fach, Welt,
+Geschlecht/Neutral-Divers-Variante oder Entwicklungsstufe. Ein Avatar darf nicht deshalb
+einfacher, flacher oder cartoonhafter werden, weil für die betreffende Variante noch kein
+finales Asset vorliegt.
+
+Verbindlich für finale Avatar-Assets:
+
+- weiche, malerische digitale Illustration mit glaubwürdigen Materialien und Licht
+- erkennbare Tiefenwirkung, Volumen und räumliche Einbettung statt flacher Symbolgrafik
+- natürliche, ruhige Proportionen und Mimik; kindgerecht, aber nicht verniedlicht
+- keine harten Comic-Outlines, keine Clipart-, Emoji-, CSS-Puppen- oder einfache SVG-Anmutung
+- keine bloße Farbvariante einer fachfremden Figur
+- jede Fachwelt erhält eine **eigene, fachlich erkennbare Figurensprache**
+- sechs Entwicklungsstufen zeigen **dieselbe Figur / Figurenidentität** mit nachvollziehbar
+  wachsender Ausrüstung, Kleidung, Requisiten oder Verantwortung
+- Männlich, Weiblich und Neutral/Divers sind – wo menschliche Avatare verwendet werden –
+  **qualitativ gleichwertige finale Bildserien**; ein fehlendes Asset darf nicht still auf eine
+  andere Variante zurückfallen
+- Abenteuer- und Kampfvariante dürfen dieselbe Person weiterentwickeln, müssen ihre jeweilige
+  Welt aber über Kleidung, Requisiten und Atmosphäre eindeutig zeigen
+- Start/Heute verwendet eine freigestellte oder sauber komponierte Avatarfigur; **eine komplette
+  Schlacht-/Landschaftsszene darf niemals als Ersatz-Avatar in den Figurenplatz eingesetzt werden**
+- CSS-/DOM-/einfache SVG-Figuren sind ausschließlich technischer Lade-/Fehler-Fallback und
+  gelten **nicht** als visuell fertig
+
+Referenzniveau ist die bereits freigegebene malerische Kampagnen-/Ritterdarstellung: detaillierte
+Figur, hochwertige Stoff-/Metall-/Lederwirkung, weiches atmosphärisches Licht und eine
+zusammenhängende Illustration ohne künstliche UI-/Clipart-Anmutung. Neue Avatarserien dürfen
+diesen Qualitätsgrad stilistisch an das jeweilige Fach anpassen, aber nicht unterschreiten.
+
 ## 3. Gemeinsame UI-Grammatik
 
 Die Fachwelt ändert die Atmosphäre, nicht die grundlegende Bedienlogik.
@@ -434,6 +468,9 @@ Die Fachwelten müssen nicht dieselbe Figurenlogik verwenden.
 - **Französisch:** Reisefigur oder stilvoller Entdecker
 - **Deutsch 1–4:** Fuchs als ruhiger Lernbegleiter im Lernmodus; Ritterheer und Burg als Leitmotive des Wortreich-Spielmodus
 
+Für **alle** hier genannten Leitfiguren gilt der Qualitätsstandard aus § 2.1. Unterschiedliche
+Fachwelten dürfen unterschiedliche Motive haben, aber keine unterschiedliche Qualitätsklasse.
+
 Figuren tragen den Lernprozess, dominieren ihn aber nicht.
 
 ## 11. Übertragung auf zentrale Screens
@@ -519,6 +556,9 @@ beantwortet wird:
 8. Lassen sich alle temporären UI-Elemente wieder schließen?
 9. Gibt es einen eindeutigen Rückweg?
 10. Bleibt die fachliche Aufgabe auch bei deaktivierter Spielinszenierung vollständig verständlich?
+11. Erreicht jeder sichtbare Avatar die malerische Referenzqualität aus § 2.1?
+12. Wird kein fachfremdes Bild oder komplettes Szenenbild als Avatar-Platzhalter missbraucht?
+13. Sind alle tatsächlich auswählbaren Avatarvarianten visuell gleichwertig statt nur technisch vorhanden?
 
 ## 14. Vier Master-Keyframes für Phase 2
 
