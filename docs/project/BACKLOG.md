@@ -354,7 +354,7 @@ Umsetzungspaket:
 
 Abnahme:
 
-1. Ein neues Profil kann für jedes bereits umgesetzte Fach unabhängig eine Welt wählen; v0.21.39 beginnt mit Deutsch.
+1. Ein neues Profil kann für jedes aktive Fach unabhängig eine Welt wählen; Deutsch bildet seit v0.21.39 die Referenz, v0.21.40 generalisiert die Architektur.
 2. Ein späterer Wechsel verändert keinen fachlichen Lernwert.
 3. Die sichtbare Jahresstufe bleibt vor und nach dem Wechsel gleichwertig.
 4. Abenteuer und Kampf sind visuell eindeutig unterscheidbar, bleiben aber innerhalb derselben Fachidentität.
