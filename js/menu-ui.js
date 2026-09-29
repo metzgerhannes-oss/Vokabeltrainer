@@ -13,13 +13,14 @@
     const frame=document.querySelector('#projectMenuAvatarFrame');
     if(!img||!fallback||!frame||typeof state!=='object'||!state||!state.activeSubject)return;
     const level=Math.max(1,Math.min(6,Number(frame.dataset.avatarStage)||1));
-    const isGerman=state.activeSubject==='german';
+    const isGermanAdventure=state.activeSubject==='german'&&typeof learnerWorldMode==='function'&&learnerWorldMode('german')==='adventure';
     const style=learner()?.avatarStyle==='female'?'female':'male';
-    frame.classList.toggle('german-fox-avatar',isGerman);
+    frame.classList.toggle('german-fox-avatar',isGermanAdventure);
     const key=`${state.activeSubject}-${style}-stage-${level}`;
     frame.dataset.avatarStyle=style;
-    const finalUrl=isGerman?'':(window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'');
-    const armyUrl=isGerman?'':(window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'');
+    frame.dataset.worldMode=typeof learnerWorldMode==='function'?learnerWorldMode(state.activeSubject):'battle';
+    const finalUrl=isGermanAdventure?'':(window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'');
+    const armyUrl=isGermanAdventure?'':(window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'');
     const url=finalUrl||armyUrl;
     if(url){
       if(img.src!==url)img.src=url;
@@ -89,6 +90,9 @@
     if(rank)rank.textContent=avatarStage?.rank||rankFor(growth.pct,state.activeSubject);
     if(learned)learned.textContent=String(p.mastered||0);
     if(castles)castles.textContent=String(currentCapturedFortresses());
+    const navGame=document.querySelector('.nav-btn[data-view="armyView"]');
+    const germanAdventure=state.activeSubject==='german'&&typeof learnerWorldMode==='function'&&learnerWorldMode('german')==='adventure';
+    if(navGame)navGame.innerHTML=germanAdventure?'<span aria-hidden="true">🦊</span>Abenteuer':state.activeSubject==='german'?'<span aria-hidden="true">⚔</span>Wortreich':'<span aria-hidden="true">⚔</span>Armee';
     const testRoot=document.querySelector('#menuNextTestProgress');
     const testPct=document.querySelector('#menuNextTestPct');
     const testDetail=document.querySelector('#menuNextTestDetail');
