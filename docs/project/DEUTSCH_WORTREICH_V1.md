@@ -232,7 +232,7 @@ Fehlt einer der fachlichen Punkte 1–6 oder greift die Spielwelt in die fachlic
 - automatisierter Paket-B-Smoke-Test als CI-Gate
 
 ### Paket C – Klasse-1-Kern
-**Status: umgesetzt im Release-Kandidaten v0.21.35; automatisierte Verifikation läuft.**
+**Status: produktiv verifiziert in v0.21.35 / PR #202; PR-CI #1235, main-CI #1236 und Pages #560 grün.**
 - Buchstaben erkennen
 - Laut–Buchstaben-Zuordnung mit deutschem Audio
 - Finger-/Stift-Nachspuren mit Übergang über reduzierte Führung zur freien Produktion
@@ -242,11 +242,14 @@ Fehlt einer der fachlichen Punkte 1–6 oder greift die Spielwelt in die fachlic
 - eigener, Family-Sync-fähiger Grundlagenfortschritt ohne XP-, Battle- oder Lernwort-Mastery-Wirkung
 
 ### Paket D – Lernwörter/Rechtschreibung
-- Lernwortlisten
-- Schreiben
-- Diktat-/Audioanschluss
-- Satzkontext
-- Fehlerprofile
+**Status: umgesetzt im Release-Kandidaten v0.21.36; automatisierte Verifikation läuft.**
+- Lernwortlisten und produktiver Schreibabruf auf Basis der bestehenden Lernset-Infrastruktur
+- Diktat-/Audioanschluss über `de-DE`
+- Satzkontext als eigener Evidenzpfad
+- optionale redaktionelle Strukturmerkmale pro Lernwort: Silben, Wortstamm, Wortfamilie und Rechtschreibfokus
+- differenziertes, nicht-diagnostisches Fehlerprofil: Groß-/Kleinschreibung, Buchstabenfolge, Wortstruktur und Satzkontext
+- adaptive Folgeübung nutzt bei dokumentierter Wortstruktur gezielt Silben/Wortbausteine
+- strittige Systembewertung rollt auch das Deutsch-Fehlerprofil vollständig auf neutral zurück
 
 ### Paket E – Wortreich
 - visuelles Theme
