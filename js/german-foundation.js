@@ -25,13 +25,12 @@
   ];
   const PHONEME_SPRITE_PARTS=Array.from({length:7},(_,i)=>'assets/audio/phonemes/de/sprite/part-'+String(i+1).padStart(2,'0')+'.b64');
   const PHONEME_CLIPS={
-    A:[0.25,0.95337],B:[1.45337,0.72944],C:[2.43281,0.69075],D:[3.37356,0.69094],E:[4.3145,0.964],F:[5.5285,0.74238],
-    G:[6.52087,0.69075],H:[7.46162,0.68744],I:[8.39906,0.933],J:[9.58206,0.65175],K:[10.48381,0.69075],L:[11.42456,0.63769],
-    M:[12.31225,0.60981],N:[13.17206,0.60981],O:[14.03187,0.98481],P:[15.26669,0.72944],Q:[16.24612,0.83406],R:[17.33019,0.62369],
-    S:[18.20388,0.88269],T:[19.33656,0.69094],U:[20.2775,0.95344],V:[21.48094,0.74238],W:[22.47331,0.74238],X:[23.46569,0.83256],
-    Y:[24.54825,0.97419],Z:[25.77244,0.7445],'Ä':[26.76694,0.964],'Ö':[27.98094,0.93294],'Ü':[29.16387,0.97419]
-  };
-  let phonemeContext=null,phonemeBufferPromise=null,phonemeSource=null;
+    A:[0.22,0.70993],B:[1.14993,0.56816],C:[1.9381,0.53039],D:[2.68848,0.53061],E:[3.43909,0.73057],F:[4.38966,0.67088],
+    G:[5.28054,0.53039],H:[6.03093,0.60984],I:[6.86077,0.70971],J:[7.79048,0.50068],K:[8.51116,0.53039],L:[9.26154,0.55297],
+    M:[10.03451,0.57138],N:[10.8259,0.47261],O:[11.5185,0.74095],P:[12.47946,0.56816],Q:[13.26762,0.6527],R:[14.14032,0.52467],
+    S:[14.88499,0.66603],T:[15.77102,0.53061],U:[16.52163,0.72023],V:[17.46186,0.67088],W:[18.35274,0.67088],X:[19.24363,0.65138],
+    Y:[20.11501,0.73057],Z:[21.06558,0.5829],'Ä':[21.86848,0.73057],'Ö':[22.81905,0.70966],'Ü':[23.74871,0.73057]
+  };  let phonemeContext=null,phonemeBufferPromise=null,phonemeSource=null;
   let phonemeLast={state:'idle',letter:null,error:null,duration:0};
   function phonemeClip(letter){return PHONEME_CLIPS[String(letter||'').trim().toUpperCase()]||null}
   function phonemeStatus(){return {...phonemeLast}}
@@ -62,7 +61,7 @@
       let offset=0;
       for(const part of decodedParts){bytes.set(part,offset);offset+=part.byteLength}
       const buffer=await ctx.decodeAudioData(bytes.buffer.slice(0));
-      if(!buffer||!Number.isFinite(buffer.duration)||buffer.duration<30)throw new Error('phoneme sprite decode too short');
+      if(!buffer||!Number.isFinite(buffer.duration)||buffer.duration<24)throw new Error('phoneme sprite decode too short');
       return buffer;
     })().catch(error=>{phonemeBufferPromise=null;throw error});
     return phonemeBufferPromise;
