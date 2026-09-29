@@ -30,7 +30,7 @@ assert(wordrealm.includes("if(crownKnight)")&&wordrealm.includes("if(king)")&&wo
 assert(html.includes('id="wordrealmStageStrip"')&&html.includes('id="wordrealmLearningWordsBtn"')&&html.includes('id="wordrealmEnterBtn"'),'German home exposes stage strip and the two approved quick actions');
 assert(html.includes('js/read-aloud-ui.js?v=0.21.38')&&html.includes('js/wordrealm-ui.js?v=0.21.38'),'approved layout modules load in the v0.21.38 shell');
 assert(readAloud.includes("view.id!=='learnView'"),'global page read-aloud stays out of focused learning');
-assert(readAloud.includes("data-read-targets")&&readAloud.includes("speechSynthesis"),'read-aloud layer supports target-based German narration');
+assert(readAloud.includes("button.dataset.readTargets")&&readAloud.includes("speechSynthesis")&&html.includes("data-read-targets="),'read-aloud layer supports target-based German narration');
 assert(foundation.includes("Audio gibt es nach der Lösung."),'word-reading evidence still withholds target-word audio until after the answer');
 assert(foundation.includes("readButton('Welches Bild passt zum Wort? Lies das Wort erst selbst.')"),'word-picture instruction can be read without reading the tested word');
 assert(foundation.includes("readButton('Welches Bild passt zum ganzen Satz? Lies den Satz ohne Zeitdruck.')"),'sentence-picture instruction can be read without reading the tested sentence');
