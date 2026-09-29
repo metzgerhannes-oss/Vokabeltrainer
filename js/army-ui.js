@@ -60,6 +60,19 @@
     if(typeof esc==='function')return esc(text);
     return text.replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   }
+  function activeWorldMode(){return typeof learnerWorldMode==='function'?learnerWorldMode(state?.activeSubject):'battle'}
+  function isGermanAdventure(){return state?.activeSubject==='german'&&activeWorldMode()==='adventure'}
+  function adventureHeroMarkup(c){
+    const stage=typeof avatarStageFor==='function'?avatarStageFor(c.growth.pct,'german'):{level:1,maxLevel:6,label:'Fuchspfad'};
+    const stops=['Fuchshain','Buchstabenpfad','Wörterbrücke','Silbenwald','Leseturm','Wortschatz-Horizont'];
+    return `<div class="german-adventure-scene">
+      <div class="german-adventure-sky" aria-hidden="true"></div>
+      <div class="german-adventure-land" aria-hidden="true"></div>
+      <div class="german-adventure-fox" aria-hidden="true">🦊</div>
+      <div class="german-adventure-copy"><span class="army-kicker">Deutsch · Abenteuer</span><strong>Deine Wortreise</strong><small>Fuchs-Stufe ${safe(stage.level)}/${safe(stage.maxLevel)} · ${safe(stage.label)}</small></div>
+      <div class="german-adventure-route" aria-label="Fortschritt der Wortreise">${stops.map((name,i)=>`<span class="${i<stage.level?'done':i===stage.level?'next':''}"><b>${i<stage.level?'✓':i+1}</b><small>${safe(name)}</small></span>`).join('')}</div>
+    </div>`;
+  }
   function subjectName(def){
     return def.names?.[state?.activeSubject]||def.names?.english||def.id;
   }
@@ -305,21 +318,33 @@
   function render(){
     const root=document.querySelector('#armyView');
     if(!root||!state||typeof learner!=='function'||!learner())return;
-    const c=context();
+    const c=context(),germanAdventure=isGermanAdventure();
     root.dataset.visualTheme=typeof subjectVisualTheme==='function'?subjectVisualTheme(state.activeSubject):'campaign';
+    root.dataset.worldMode=activeWorldMode();
+    root.classList.toggle('german-adventure-mode',germanAdventure);
     const next=nextUpgrade(c);
-    const subjectLabel=state.activeSubject==='german'?'Spiel · Deutsch · Das Wortreich':state.activeSubject==='latin'?'Spiel · Latein · Legion':'Spiel · Englisch · Armee';
+    const subjectLabel=germanAdventure?'Spiel · Deutsch · Fuchspfad':state.activeSubject==='german'?'Spiel · Deutsch · Das Wortreich':state.activeSubject==='latin'?'Spiel · Latein · Legion':'Spiel · Englisch · Armee';
+    const title=document.querySelector('#armyViewTitle'),toolbarCopy=document.querySelector('#armyView .army-toolbar-copy p'),mapButton=document.querySelector('#campaignMapBtn'),upgradeButton=document.querySelector('#armyUpgradeFocusBtn');
+    if(title)title.textContent=germanAdventure?'Fuchspfad & Wortreise':state.activeSubject==='german'?'Das Wortreich':'Armee & Feldzug';
+    if(toolbarCopy)toolbarCopy.textContent=germanAdventure?'Entdecken, Etappen und sichtbarer Jahresfortschritt sind hier gebündelt und vom Lernen getrennt.':'Armee, Kampagne, Festungen und Duelle sind hier gebündelt und vom Lernen getrennt.';
+    if(mapButton)mapButton.textContent=germanAdventure?'Wortreise öffnen':'Feldzug';
+    if(upgradeButton)upgradeButton.textContent=germanAdventure?'Reise ansehen':'Nächstes Upgrade ansehen';
 
     const hero=document.querySelector('#armyHero');
-    if(hero){hero.dataset.growthStage=String(c.growth.level);hero.innerHTML=heroMarkup(c)}
+    if(hero){hero.dataset.growthStage=String(c.growth.level);hero.innerHTML=germanAdventure?adventureHeroMarkup(c):heroMarkup(c)}
     const subject=document.querySelector('#armySubjectLabel');
     if(subject)subject.textContent=subjectLabel;
     const rank=document.querySelector('#armyRankLabel');
     if(rank)rank.textContent=c.rank;
     const summary=document.querySelector('#armySummary');
     if(summary){
-      const morale=moraleMeta(c);
-      summary.innerHTML=`
+      const morale=moraleMeta(c),stage=typeof avatarStageFor==='function'?avatarStageFor(c.growth.pct,state.activeSubject):{level:1,maxLevel:6};
+      summary.innerHTML=germanAdventure?`
+        <div><small>Jahresentwicklung</small><strong>${safe(c.growth.pct)}%</strong></div>
+        <div><small>Fuchs-Stufe</small><strong>${safe(stage.level)}/${safe(stage.maxLevel)}</strong></div>
+        <div><small>erreichte Etappen</small><strong>${safe(c.captured.length)}</strong></div>
+        <div><small>Prüfungsabzeichen</small><strong>${safe(c.testBadges)}</strong></div>
+      `:`
         <div><small>Jahresentwicklung</small><strong>${safe(c.growth.pct)}%</strong></div>
         <div><small>Moral</small><strong>${safe(morale.label)}</strong></div>
         <div><small>${safe(state.activeSubject==='german'?'Burgen':'Testfestungen')}</small><strong>${safe(c.captured.length)}</strong></div>
@@ -327,22 +352,25 @@
       `;
     }
     const formation=document.querySelector('#armyFormationField');
-    if(formation)formation.innerHTML=formationMarkup(c);
+    if(formation)formation.innerHTML=germanAdventure?'':formationMarkup(c);
     const roles=document.querySelector('#armyRoleGrid');
-    if(roles)roles.innerHTML=roleStrengthMarkup(c);
+    if(roles)roles.innerHTML=germanAdventure?'':roleStrengthMarkup(c);
     const bonus=document.querySelector('#armyBonusGrid');
-    if(bonus)bonus.innerHTML=bonusMarkup(c);
+    if(bonus)bonus.innerHTML=germanAdventure?'':bonusMarkup(c);
     const grid=document.querySelector('#armyUnitGrid');
-    if(grid)grid.innerHTML=UNIT_DEFS.map(d=>unitCardMarkup(d,c)).join('');
+    if(grid)grid.innerHTML=germanAdventure?'':UNIT_DEFS.map(d=>unitCardMarkup(d,c)).join('');
     const goal=document.querySelector('#armyNextGoal');
     if(goal){
-      goal.innerHTML=next
-        ?`<span>Nächstes Upgrade</span><strong>${safe(subjectName(next.def))}</strong><small>${safe(nextText(next.def,next.s))}</small>`
-        :`<span>${safe(state.activeSubject==='german'?'Ritterheer':'Armee')}</span><strong>Maximal ausgebaut</strong><small>Alle sichtbaren Aufwertungen sind erreicht.</small>`;
+      goal.innerHTML=germanAdventure
+        ?`<span>Nächste Etappe</span><strong>Weiter auf dem Fuchspfad</strong><small>Die Wortreise wächst mit derselben Jahresstufe wie das Wortreich.</small>`
+        :next
+          ?`<span>Nächstes Upgrade</span><strong>${safe(subjectName(next.def))}</strong><small>${safe(nextText(next.def,next.s))}</small>`
+          :`<span>${safe(state.activeSubject==='german'?'Ritterheer':'Armee')}</span><strong>Maximal ausgebaut</strong><small>Alle sichtbaren Aufwertungen sind erreicht.</small>`;
     }
     const battle=document.querySelector('#armyBattleBtn');
     if(battle){
-      battle.disabled=!c.mission;
+      battle.classList.toggle('hidden',germanAdventure);
+      battle.disabled=germanAdventure||!c.mission;
       battle.textContent=!c.mission?'Kein Test geplant':c.tickets>0?(c.mission.capturedAt?'Sicherung bereit':state.activeSubject==='german'?'Belagerung bereit':'Angriff bereit'):(c.mission.capturedAt?state.activeSubject==='german'?'Eroberte Burg ansehen':'Eroberte Festung ansehen':state.activeSubject==='german'?'Burg ansehen':'Festung ansehen');
     }
     applyArmyArt();
@@ -378,6 +406,7 @@
   }
   function select(id){openDetail(id)}
   function focusNextUpgrade(){
+    if(isGermanAdventure()){window.VTCampaignMap?.open?.();return}
     const c=context(),next=nextUpgrade(c);
     if(next)openDetail(next.def.id);
   }
