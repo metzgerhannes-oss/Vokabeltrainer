@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='0.21.38';
+const APP_VERSION='0.21.39';
 const RESOURCE_REVISION='1';
 const SHELL_CACHE=`vokabeltrainer-shell-v${APP_VERSION}`;
 const RESOURCE_CACHE=`vokabeltrainer-resources-v${RESOURCE_REVISION}`;
@@ -10,10 +10,10 @@ const LEGACY_CACHE_PREFIX='vokabeltrainer-v';
 const LEGACY_APP_BASES=['/JohannasGartenwelt/vokabeltrainer/'];
 
 const ASSETS=[
-  './','./index.html','./css/app.css?v=0.21.38','./css/menu.css?v=0.21.38','./css/army.css?v=0.21.38','./css/campaign-map.css?v=0.21.38','./css/battle-art.css?v=0.21.38','./css/battle-fortress.css?v=0.21.38','./css/battle-result.css?v=0.21.38','./css/campaign-target.css?v=0.21.38','./js/core.js?v=0.21.38','./js/help.js?v=0.21.38','./js/library.js?v=0.21.38','./js/storage.js?v=0.21.38',
-  './js/builtin-library.js?v=0.21.38','./js/model.js?v=0.21.38','./js/quiz-engine.js?v=0.21.38','./js/learning.js?v=0.21.38','./js/read-aloud-ui.js?v=0.21.38','./js/translation.js?v=0.21.38',
-  './js/io.js?v=0.21.38','./js/family-sync.js?v=0.21.38','./js/vendor/qrcode.js?v=0.21.38','./js/qr-ui.js?v=0.21.38',
-  './js/device-pairing.js?v=0.21.38','./js/ui.js?v=0.21.38','./js/german-foundation.js?v=0.21.38','./js/wordrealm-ui.js?v=0.21.38','./js/battle-phaser/battle-phaser-production.js?v=0.21.38','./js/battle-phaser/battle-phaser-scene.js?v=0.21.38','./js/vendor/phaser-4.2.1.esm.min.js?v=0.21.38','./js/menu-ui.js?v=0.21.38','./js/menu-avatar-art.js?v=0.21.38','./js/army-art.js?v=0.21.38','./js/battle-art.js?v=0.21.38','./js/battle-art-ui.js?v=0.21.38','./js/battle-result-ui.js?v=0.21.38','./js/army-ui.js?v=0.21.38','./js/campaign-map.js?v=0.21.38','./js/library-ui.js?v=0.21.38','./js/focus-ui.js?v=0.21.38','./js/parent-docs.js?v=0.21.38','./js/app.js?v=0.21.38','./manifest.webmanifest','./docs/ELTERN_ANLEITUNG.md','./docs/PAEDAGOGISCHE_DOKUMENTATION.md',
+  './','./index.html','./css/app.css?v=0.21.39','./css/menu.css?v=0.21.39','./css/army.css?v=0.21.39','./css/campaign-map.css?v=0.21.39','./css/battle-art.css?v=0.21.39','./css/battle-fortress.css?v=0.21.39','./css/battle-result.css?v=0.21.39','./css/campaign-target.css?v=0.21.39','./js/core.js?v=0.21.39','./js/help.js?v=0.21.39','./js/library.js?v=0.21.39','./js/storage.js?v=0.21.39',
+  './js/builtin-library.js?v=0.21.39','./js/model.js?v=0.21.39','./js/quiz-engine.js?v=0.21.39','./js/learning.js?v=0.21.39','./js/read-aloud-ui.js?v=0.21.39','./js/translation.js?v=0.21.39',
+  './js/io.js?v=0.21.39','./js/family-sync.js?v=0.21.39','./js/vendor/qrcode.js?v=0.21.39','./js/qr-ui.js?v=0.21.39',
+  './js/device-pairing.js?v=0.21.39','./js/ui.js?v=0.21.39','./js/german-foundation.js?v=0.21.39','./js/wordrealm-ui.js?v=0.21.39','./js/battle-phaser/battle-phaser-production.js?v=0.21.39','./js/battle-phaser/battle-phaser-scene.js?v=0.21.39','./js/vendor/phaser-4.2.1.esm.min.js?v=0.21.39','./js/menu-ui.js?v=0.21.39','./js/menu-avatar-art.js?v=0.21.39','./js/army-art.js?v=0.21.39','./js/battle-art.js?v=0.21.39','./js/battle-art-ui.js?v=0.21.39','./js/battle-result-ui.js?v=0.21.39','./js/army-ui.js?v=0.21.39','./js/campaign-map.js?v=0.21.39','./js/library-ui.js?v=0.21.39','./js/focus-ui.js?v=0.21.39','./js/parent-docs.js?v=0.21.39','./js/app.js?v=0.21.39','./manifest.webmanifest','./docs/ELTERN_ANLEITUNG.md','./docs/PAEDAGOGISCHE_DOKUMENTATION.md',
   './data/camden-town-1-welcome.tsv','./data/camden-town-1-theme1.tsv',
   './assets/icons/icon-180.png','./assets/icons/icon-192.png','./assets/icons/icon-512.png',
   './assets/army/hero/part-01.b64','./assets/army/hero/part-02.b64','./assets/army/hero/part-03.b64','./assets/army/hero/part-04.b64','./assets/army/hero/part-05.b64','./assets/army/hero/part-06.b64',
