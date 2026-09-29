@@ -90,7 +90,7 @@
   }
   function applySetup(key,payload){
     const id=docProfileId(key),incoming=payload?.learner||{};if(!id)return;
-    const l=ensureLearner(id,incoming);PROFILE_SETUP_FIELDS.forEach(k=>{if(incoming[k]!==undefined)l[k]=clone(incoming[k])});l.worldModeBySubject=normalizeWorldModeBySubject(l.worldModeBySubject);normalizeLiteracySupport(l);l.id=id;
+    const l=ensureLearner(id,incoming);PROFILE_SETUP_FIELDS.forEach(k=>{if(incoming[k]!==undefined)l[k]=clone(incoming[k])});l.avatarStyle=['male','female','neutral'].includes(l.avatarStyle)?l.avatarStyle:'male';l.worldModeBySubject=normalizeWorldModeBySubject(l.worldModeBySubject);normalizeLiteracySupport(l);l.id=id;
     const oldSetIds=new Set((state.sets||[]).filter(x=>x.learnerId===id).map(x=>x.id));
     state.setVocabulary=(state.setVocabulary||[]).filter(x=>!oldSetIds.has(x.setId));
     state.sets=(state.sets||[]).filter(x=>x.learnerId!==id).concat(clone(payload?.sets||[]));
