@@ -487,6 +487,11 @@ Verständlichkeit auf echtem Gerät bleibt separat abzunehmen.
 - [ ] Abenteuer und Kampf verbrauchen höchstens dieselbe eine Tages-Spielaktion
 - [ ] Family Sync überträgt Weltwahl und Neutral/Divers zwischen Eltern- und Kindergerät
 - [ ] Rückwechsel auf Wortreich stellt die Kampfpräsentation ohne Lernstandsverlust wieder her
+- [ ] jede gewählte Welt zeigt eine nachvollziehbare Story vom Opening über sechs Kapitel bis zum Finale
+- [ ] Storykapitel auf Hub/Karte/Kampf stimmen mit derselben Welt und Stufe überein
+- [ ] Storytexte sind vorlesbar
+- [ ] Weltwechsel bildet dieselbe Stufe auf das entsprechende Kapitel der Partnerwelt ab
+- [ ] keine Kampfstory verwendet reale Länder, Völker, Religionen oder historische Konfliktparteien als Gegner
 
 ## G4 – Plattform / Release
 
