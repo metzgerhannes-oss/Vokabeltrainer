@@ -17,5 +17,5 @@ const freeBlock=module.slice(freeStart,freeEnd);
 assert(freeStart>=0&&freeEnd>freeStart,'free-writing implementation block is detectable');
 assert(!freeBlock.includes('bump(')&&!freeBlock.includes('saveProgress(')&&!freeBlock.includes('recordResult(')&&!freeBlock.includes('grantBattleTicket'),'free repetition has no academic or game progress mutation');
 assert(css.includes('.free-letter-grid')&&css.includes('.foundation-lineature-legend')&&css.includes('@media(max-width:520px)'),'selection and lineature are responsive for small displays');
-assert(backlog.includes('## B-018 – Freies Schreiben')&&backlog.includes('**Status:** IMPLEMENTED'),'B-018 backlog status records implementation');
+assert(backlog.includes('## B-018 – Freies Schreiben')&&/\*\*Status:\*\* (?:IMPLEMENTED|VERIFIED|PRODUCTION)/.test(backlog),'B-018 backlog status records implementation or later verification');
 console.log('Vokabeltrainer B-018 free writing smoke: passed');
