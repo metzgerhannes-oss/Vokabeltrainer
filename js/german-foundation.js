@@ -2,16 +2,16 @@
 
 (function(){
   const COURSE=[
-    {id:'letters',label:'Buchstaben',short:'Buchstaben erkennen'},
+    {id:'handwriting',label:'Buchstaben schreiben',short:'groß und klein: nachfahren, hören, selbst schreiben'},
+    {id:'letters',label:'Buchstaben erkennen',short:'Groß- und Kleinbuchstaben sicher unterscheiden'},
     {id:'sounds',label:'Laute',short:'Laut und Buchstabe verbinden'},
-    {id:'handwriting',label:'Nachspuren',short:'vom Nachspuren zum freien Schreiben'},
-    {id:'words',label:'Erste Wörter',short:'lesen und schreiben'},
+    {id:'words',label:'Erste Wörter',short:'lesen und aus dem Hören schreiben'},
     {id:'sentences',label:'Einfache Sätze',short:'verstehen und bilden'}
   ];
   const LETTERS=[
-    {letter:'M',word:'Maus'},{letter:'A',word:'Apfel'},{letter:'O',word:'Oma'},
-    {letter:'L',word:'Lampe'},{letter:'S',word:'Sonne'},{letter:'E',word:'Ente'},
-    {letter:'N',word:'Nase'},{letter:'I',word:'Igel'},{letter:'R',word:'Rose'},{letter:'T',word:'Tisch'}
+    {letter:'M',lower:'m',sound:'mmmm',word:'Maus'},{letter:'A',lower:'a',sound:'aaaa',word:'Apfel'},{letter:'O',lower:'o',sound:'oooo',word:'Oma'},
+    {letter:'L',lower:'l',sound:'llll',word:'Lampe'},{letter:'S',lower:'s',sound:'ssss',word:'Sonne'},{letter:'E',lower:'e',sound:'eeee',word:'Ente'},
+    {letter:'N',lower:'n',sound:'nnnn',word:'Nase'},{letter:'I',lower:'i',sound:'iiii',word:'Igel'},{letter:'R',lower:'r',sound:'rrrr',word:'Rose'},{letter:'T',lower:'t',sound:'t',word:'Tisch'}
   ];
   const WORDS=[
     {id:'oma',word:'Oma',icon:'👵',label:'Großmutter'},
@@ -52,21 +52,29 @@
     return {done,total:COURSE.length,pct:Math.round(done/COURSE.length*100),next:(COURSE.find(x=>!stageDone(x.id))||COURSE[0]).id};
   }
   function available(){return state?.activeSubject==='german'}
+  function mixOptions(values,key=''){
+    const arr=[...values];if(arr.length<2)return arr;
+    const hash=[...String(key)].reduce((sum,ch)=>sum+ch.charCodeAt(0),0),offset=(hash%arr.length)||1;
+    return arr.slice(offset).concat(arr.slice(0,offset));
+  }
   function stageTasks(stage){
-    if(stage==='letters')return LETTERS.map((x,i)=>({kind:'letterChoice',id:x.letter,target:x.letter,options:[x.letter,LETTERS[(i+2)%LETTERS.length].letter,LETTERS[(i+5)%LETTERS.length].letter]}));
-    if(stage==='sounds')return LETTERS.slice(0,6).map((x,i)=>({kind:'soundChoice',id:x.letter,target:x.letter,word:x.word,options:[x.letter,LETTERS[(i+3)%LETTERS.length].letter,LETTERS[(i+6)%LETTERS.length].letter]}));
-    if(stage==='handwriting')return [
-      {kind:'draw',id:'M',target:'M',guide:'full',skill:'traced',title:'Bewegungsrichtung sehen und nachspuren'},
-      {kind:'draw',id:'A',target:'A',guide:'faded',skill:'guided',title:'Mit weniger Führung schreiben'},
-      {kind:'draw',id:'O',target:'O',guide:'none',skill:'freeProduction',title:'Aus dem Gedächtnis schreiben'}
-    ];
+    if(stage==='handwriting')return LETTERS.map(x=>({kind:'drawPair',id:x.letter,upper:x.letter,lower:x.lower,sound:x.sound,word:x.word}));
+    if(stage==='letters')return LETTERS.map((x,i)=>{
+      const lower=(i%2)===1,target=lower?x.lower:x.letter;
+      const raw=[target,lower?LETTERS[(i+2)%LETTERS.length].lower:LETTERS[(i+2)%LETTERS.length].letter,lower?LETTERS[(i+5)%LETTERS.length].lower:LETTERS[(i+5)%LETTERS.length].letter];
+      return {kind:'letterChoice',id:x.letter,target,options:mixOptions(raw,'letter-'+x.letter)};
+    });
+    if(stage==='sounds')return LETTERS.slice(0,6).map((x,i)=>{
+      const pair=v=>v.letter+' '+v.lower,target=pair(x),raw=[target,pair(LETTERS[(i+3)%LETTERS.length]),pair(LETTERS[(i+6)%LETTERS.length])];
+      return {kind:'soundChoice',id:x.letter,target,sound:x.sound,word:x.word,options:mixOptions(raw,'sound-'+x.letter)};
+    });
     if(stage==='words')return [
-      {kind:'wordPicture',id:'oma',word:'Oma',icon:'👵',options:WORDS},
-      {kind:'wordPicture',id:'nase',word:'Nase',icon:'👃',options:WORDS},
+      {kind:'wordPicture',id:'oma',word:'Oma',icon:'👵',options:mixOptions(WORDS,'word-oma')},
+      {kind:'wordPicture',id:'nase',word:'Nase',icon:'👃',options:mixOptions(WORDS,'word-nase')},
       {kind:'wordWrite',id:'rose',word:'Rose'}
     ];
     if(stage==='sentences')return [
-      {kind:'sentencePicture',id:'oma_malt',sentence:'Oma malt.',icon:'👵🎨',options:['👵🎨','👃🌹','🦙🍎']},
+      {kind:'sentencePicture',id:'oma_malt',sentence:'Oma malt.',icon:'👵🎨',options:mixOptions(['👵🎨','👃🌹','🦙🍎'],'sentence-oma-malt')},
       {kind:'sentenceBuild',id:'mama_malt',sentence:'Mama malt.',tokens:['malt','Mama','.']}
     ];
     return [];
@@ -85,7 +93,7 @@
   function open(stage=''){
     if(!available())return;
     const selected=COURSE.some(x=>x.id===stage)?stage:completion().next;
-    run={stage:selected,index:0,tasks:stageTasks(selected),wrong:0,assembled:[]};
+    run={stage:selected,index:0,tasks:stageTasks(selected),wrong:0,assembled:[],drawPhase:'trace'};
     if(typeof session!=='undefined')session=null;
     showView('learnView');
     const meta=COURSE.find(x=>x.id===selected);document.querySelector('#modePill').textContent='Deutsch · '+meta.label;
@@ -96,7 +104,7 @@
     const el=document.querySelector('#germanFoundationFeedback');if(!el)return;el.className='notice '+kind;el.innerHTML=html;
   }
   function advance(){
-    if(!run)return;run.index++;
+    if(!run)return;run.index++;run.drawPhase='trace';
     if(run.index>=run.tasks.length){
       progress().completedStages[run.stage]=new Date().toISOString();saveProgress();renderFinish();return;
     }
@@ -120,11 +128,11 @@
       area.querySelectorAll('[data-foundation-answer]').forEach(b=>b.onclick=()=>b.dataset.foundationAnswer===t.target?correct('letters',t.id,'recognized'):wrong());return;
     }
     if(t.kind==='soundChoice'){
-      area.innerHTML='<div class="study-card german-literacy-card german-foundation-task"><div class="eyebrow">Laut ↔ Buchstabe</div><div class="study-prompt">Welcher Buchstabe steht am Anfang?</div>'+readButton('Welcher Buchstabe steht am Anfang? Höre auf den ersten Laut.')+'<button id="foundationSpeakBtn" class="secondary" type="button">🔊 '+t.word+' hören</button><div class="study-sub">Höre auf den ersten Laut.</div>'+choiceButtons(t.options,t.target,'letters',t.id,'phonemeGrapheme')+'<div id="germanFoundationFeedback" class="notice subtle">Du kannst das Wort so oft anhören, wie du möchtest.</div></div>';
-      area.querySelector('#foundationSpeakBtn').onclick=()=>speak(t.word);
-      area.querySelectorAll('[data-foundation-answer]').forEach(b=>b.onclick=()=>b.dataset.foundationAnswer===t.target?correct('letters',t.id,'phonemeGrapheme'):wrong());return;
+      area.innerHTML='<div class="study-card german-literacy-card german-foundation-task"><div class="eyebrow">Laut ↔ Buchstabe</div><div class="study-prompt">Welcher Groß- und Kleinbuchstabe passt zu diesem Laut?</div>'+readButton('Höre den Laut. Wähle danach den passenden Groß- und Kleinbuchstaben.')+'<button id="foundationSpeakBtn" class="secondary" type="button">🔊 Laut hören</button><div class="study-sub">Höre auf den Laut, nicht auf den Buchstabennamen.</div>'+choiceButtons(t.options,t.target,'letters',t.id,'phonemeGrapheme')+'<div id="germanFoundationFeedback" class="notice subtle">Du kannst den Laut so oft anhören, wie du möchtest.</div></div>';
+      area.querySelector('#foundationSpeakBtn').onclick=()=>speak(t.sound);
+      area.querySelectorAll('[data-foundation-answer]').forEach(b=>b.onclick=()=>b.dataset.foundationAnswer===t.target?correct('letters',t.id,'phonemeGrapheme'):wrong());setTimeout(()=>speak(t.sound),120);return;
     }
-    if(t.kind==='draw'){renderDraw(t);return}
+    if(t.kind==='drawPair'){renderDraw(t);return}
     if(t.kind==='wordPicture'){
       area.innerHTML='<div class="study-card german-literacy-card german-foundation-task"><div class="eyebrow">Erstes Wort lesen</div><div class="study-prompt">'+t.word+'</div>'+readButton('Welches Bild passt zum Wort? Lies das Wort erst selbst.')+'<div class="study-sub">Welches Bild passt zum Wort?</div><div class="german-picture-options">'+t.options.map(x=>'<button type="button" data-word-picture="'+x.id+'" aria-label="'+x.label+'">'+x.icon+'</button>').join('')+'</div><div id="germanFoundationFeedback" class="notice subtle">Lies das Wort erst selbst. Audio gibt es nach der Lösung.</div></div>';
       area.querySelectorAll('[data-word-picture]').forEach(b=>b.onclick=()=>{if(b.dataset.wordPicture!==t.id)return wrong();bump('words',t.id,'decoded');bump('words',t.id,'meaning');saveProgress();setFeedback('<strong>Richtig.</strong> '+t.word+' '+t.icon+' <button type="button" id="foundationAfterSpeak" class="ghost">🔊 Wort hören</button>','good');area.querySelector('#foundationAfterSpeak').onclick=()=>speak(t.word);setTimeout(advance,800)});return;
@@ -148,13 +156,14 @@
     }
   }
   function renderDraw(t){
-    const area=document.querySelector('#studyArea'),memory=t.guide==='none';
-    area.innerHTML='<div class="study-card german-literacy-card german-foundation-task"><div class="eyebrow">Handschrift · Schreibpraxis</div><h3>'+t.title+'</h3>'+readButton(t.title+'. '+(memory?'Merke dir den Buchstaben. Er verschwindet gleich.':'Fahre die helle Form mit dem Finger oder Stift nach.'))+(memory?'<div id="foundationMemoryLetter" class="foundation-memory-letter">'+t.target+'</div><div class="study-sub">Merke dir den Buchstaben. Er verschwindet gleich.</div>':'<div class="study-sub">Fahre die helle Form mit dem Finger oder Stift nach.</div>')+'<canvas id="foundationTraceCanvas" class="foundation-trace-canvas" width="640" height="320" aria-label="Schreibfläche für Buchstabe '+t.target+'"></canvas><div class="row gap center-actions top-space"><button id="foundationClearCanvas" class="ghost" type="button">Neu zeichnen</button><button id="foundationDrawDone" class="primary" type="button" disabled>Schreibübung abschließen</button></div><div id="germanFoundationFeedback" class="notice subtle">Die App bewertet deine Handschrift hier bewusst nicht automatisch als richtig oder falsch.</div></div>';
+    const area=document.querySelector('#studyArea'),phase=run?.drawPhase==='free'?'free':'trace',free=phase==='free',pair=t.upper+' '+t.lower;
+    const instruction=free?'Höre den Laut. Schreibe danach den Groß- und Kleinbuchstaben selbst.':'Höre den Laut. Fahre danach Groß- und Kleinbuchstaben mit dem Finger oder Stift nach.';
+    area.innerHTML='<div class="study-card german-literacy-card german-foundation-task"><div class="eyebrow">Buchstaben schreiben · '+(free?'selbst schreiben':'nachfahren')+'</div><h3>'+(free?'Jetzt aus dem Gedächtnis':'Groß und klein zusammen lernen')+'</h3>'+readButton(instruction)+(free?'':'<div class="foundation-letter-pair" aria-hidden="true">'+t.upper+' '+t.lower+'</div>')+'<button id="foundationLetterSoundBtn" class="secondary" type="button">🔊 Laut hören</button><div class="study-sub">'+instruction+'</div><canvas id="foundationTraceCanvas" class="foundation-trace-canvas" width="640" height="320" aria-label="'+(free?'Schreibfläche für Groß- und Kleinbuchstaben':'Nachfahrfläche für '+pair)+'"></canvas><div class="row gap center-actions top-space"><button id="foundationClearCanvas" class="ghost" type="button">Neu zeichnen</button><button id="foundationDrawDone" class="primary" type="button" disabled>'+(free?'Fertig geschrieben':'Nachfahren fertig')+'</button></div><div id="germanFoundationFeedback" class="notice subtle">'+(free?'Die Lösung bleibt jetzt verborgen. Nur der Laut hilft dir.':'Beim Nachfahren ist die Form absichtlich sichtbar. Danach verschwindet sie beim freien Schreiben.')+'</div></div>';
     const canvas=area.querySelector('#foundationTraceCanvas'),ctx=canvas.getContext('2d');
     drawState={drawing:false,last:null,length:0};
     const background=()=>{
       ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#fffdf8';ctx.fillRect(0,0,canvas.width,canvas.height);
-      if(t.guide!=='none'){ctx.save();ctx.font='220px system-ui, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=t.guide==='full'?10:5;ctx.strokeStyle=t.guide==='full'?'rgba(117,85,47,.28)':'rgba(117,85,47,.14)';ctx.setLineDash(t.guide==='full'?[14,12]:[8,18]);ctx.strokeText(t.target,canvas.width/2,canvas.height/2+8);ctx.restore()}
+      if(!free){ctx.save();ctx.font='190px system-ui, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=8;ctx.strokeStyle='rgba(117,85,47,.25)';ctx.setLineDash([14,12]);ctx.strokeText(pair,canvas.width/2,canvas.height/2+8);ctx.restore()}
     };
     background();
     const point=e=>{const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}};
@@ -162,12 +171,16 @@
     canvas.addEventListener('pointermove',e=>{if(!drawState?.drawing)return;const p=point(e),q=drawState.last;ctx.beginPath();ctx.moveTo(q.x,q.y);ctx.lineTo(p.x,p.y);ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#4f5d3a';ctx.lineWidth=12;ctx.stroke();drawState.length+=Math.hypot(p.x-q.x,p.y-q.y);drawState.last=p;if(drawState.length>120)area.querySelector('#foundationDrawDone').disabled=false});
     const stop=()=>{if(drawState){drawState.drawing=false;drawState.last=null}};canvas.addEventListener('pointerup',stop);canvas.addEventListener('pointercancel',stop);
     area.querySelector('#foundationClearCanvas').onclick=()=>{drawState={drawing:false,last:null,length:0};area.querySelector('#foundationDrawDone').disabled=true;background()};
-    area.querySelector('#foundationDrawDone').onclick=()=>{bump('letters',t.id,t.skill);saveProgress();setFeedback('<strong>Schreibübung gespeichert.</strong> Die Form wurde nicht automatisch benotet.','good');setTimeout(advance,650)};
-    if(memory)previewTimer=setTimeout(()=>{const el=area.querySelector('#foundationMemoryLetter');if(el){el.textContent='?';el.classList.add('hidden-letter')}},1800);
+    area.querySelector('#foundationLetterSoundBtn').onclick=()=>speak(t.sound);
+    area.querySelector('#foundationDrawDone').onclick=()=>{
+      if(!free){bump('letters',t.id,'traced');saveProgress();run.drawPhase='free';renderDraw(t);setTimeout(()=>speak(t.sound),120);return}
+      bump('letters',t.id,'freeProduction');saveProgress();setFeedback('<strong>Schreibübung gespeichert.</strong> Die Handschrift wird bewusst nicht automatisch benotet.','good');setTimeout(advance,650)
+    };
+    setTimeout(()=>speak(t.sound),120);
   }
   function renderFinish(){
     clearTimeout(previewTimer);const area=document.querySelector('#studyArea'),meta=COURSE.find(x=>x.id===run?.stage);document.querySelector('#sessionPill').textContent='Fertig';
-    area.innerHTML='<div class="study-card german-literacy-card german-foundation-task"><div class="eyebrow">Deutsch · Klasse 1</div><div class="study-prompt">Station geschafft</div>'+readButton('Station geschafft. '+meta.label+' wurde für diesen Lernweg abgeschlossen.')+'<p>'+meta.label+' wurde für diesen Lernweg abgeschlossen.</p>'+(run.stage==='handwriting'?'<div class="notice subtle"><strong>Jetzt auf Papier:</strong> Schreibe M, A und O je einmal mit einem Stift. Diese Papierübung wird nicht automatisch bewertet.</div>':'')+'<div class="row gap center-actions top-space"><button id="foundationRepeat" class="ghost" type="button">Noch einmal</button><button id="foundationNext" class="primary" type="button">Nächste Station</button></div></div>';
+    area.innerHTML='<div class="study-card german-literacy-card german-foundation-task"><div class="eyebrow">Deutsch · Klasse 1</div><div class="study-prompt">Station geschafft</div>'+readButton('Station geschafft. '+meta.label+' wurde für diesen Lernweg abgeschlossen.')+'<p>'+meta.label+' wurde für diesen Lernweg abgeschlossen.</p>'+(run.stage==='handwriting'?'<div class="notice subtle"><strong>Auch auf Papier üben:</strong> Groß- und Kleinbuchstaben dürfen zusätzlich mit einem Stift wiederholt werden. Diese Papierübung wird nicht automatisch bewertet.</div>':'')+'<div class="row gap center-actions top-space"><button id="foundationRepeat" class="ghost" type="button">Noch einmal</button><button id="foundationNext" class="primary" type="button">Nächste Station</button></div></div>';
     area.querySelector('#foundationRepeat').onclick=()=>open(run.stage);
     area.querySelector('#foundationNext').onclick=()=>open(completion().next);
   }
