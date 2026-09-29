@@ -414,3 +414,21 @@ Die Profilerstellung berücksichtigt **m/w/d**: Männlich, Weiblich und Neutral/
 gleichwertige gespeicherte Avatarvarianten. Fehlende finale Bildassets dürfen nicht zu einem
 stillen Rückfall auf die männliche Serie führen.
 
+### D-20260929-004 – Jede Fachwelt besitzt eine vollständige Storyline
+**Status:** LOCKED  
+**Quelle:** [WORLD_STORYLINES_V1.md](WORLD_STORYLINES_V1.md); [../../VISUAL_DNA.md](../../VISUAL_DNA.md) §§ 5–9; D-20260929-001; D-20260929-002; B-017
+
+Alle acht Kombinationen aus Englisch, Latein, Deutsch und Französisch mit **Abenteuer** bzw.
+**Kampf** erhalten einen vollständigen erzählerischen Bogen: Opening, sechs aufeinander
+aufbauende Kapitel und ein eigenes Finale.
+
+Die Story ist ausschließlich Präsentation und Motivation. Kapitelwahl und sichtbarer Storyfortschritt
+werden aus demselben bestehenden Jahres-/Testfortschritt abgeleitet und dürfen Mastery, Spacing,
+Testbereitschaft, Bewertung, Tagesziel, fachliche Evidenz oder Zahl der Tagesaktionen niemals verändern.
+Beim Weltwechsel bleibt dieselbe fachliche Stufe erhalten und wird auf das entsprechende Kapitel der
+Partnerwelt abgebildet.
+
+Alle Storytexte müssen vorlesbar sein. Kampfwelten nutzen ausschließlich fiktionale Gegner und Konflikte;
+reale Länder, Völker, Religionen oder historische Konfliktparteien dürfen nicht als Feindbilder auftreten.
+Die kanonischen Storydaten liegen in `js/world-story.js`.
+
