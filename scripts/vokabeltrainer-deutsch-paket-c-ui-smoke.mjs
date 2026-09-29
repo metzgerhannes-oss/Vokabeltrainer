@@ -67,7 +67,9 @@ try{
 
   await page.evaluate(()=>window.VTGermanFoundation.open('sentences'));
   await page.waitForSelector('.german-sentence-prompt');
-  await page.click('[data-sentence-picture="0"]');
+  const sentencePictureIndex=await page.evaluate(()=>window.VTGermanFoundation.stageTasks('sentences')[0].options.indexOf('👵🎨'));
+  assert(sentencePictureIndex>=0,'correct sentence picture exists in the varied option order');
+  await page.click('[data-sentence-picture="'+sentencePictureIndex+'"]');
   await page.waitForTimeout(550);
   assert(await page.locator('[data-sentence-token]').count()===3,'sentence-building task follows sentence comprehension');
 
