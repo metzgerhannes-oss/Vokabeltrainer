@@ -23,76 +23,80 @@
     {letter:'Y',lower:'y',sound:'üüü'},{letter:'Z',lower:'z',sound:'tsss'},{letter:'Ä',lower:'ä',sound:'ääää'},{letter:'Ö',lower:'ö',sound:'öööö'},
     {letter:'Ü',lower:'ü',sound:'üüüü'}
   ];
-  const PHONEME_SPRITE_PARTS=Array.from({length:7},(_,i)=>'assets/audio/phonemes/de/sprite/part-'+String(i+1).padStart(2,'0')+'.b64');
-  const PHONEME_CLIPS={
-    A:[0.22,0.70993],B:[1.14993,0.56816],C:[1.9381,0.53039],D:[2.68848,0.53061],E:[3.43909,0.73057],F:[4.38966,0.67088],
-    G:[5.28054,0.53039],H:[6.03093,0.60984],I:[6.86077,0.70971],J:[7.79048,0.50068],K:[8.51116,0.53039],L:[9.26154,0.55297],
-    M:[10.03451,0.57138],N:[10.8259,0.47261],O:[11.5185,0.74095],P:[12.47946,0.56816],Q:[13.26762,0.6527],R:[14.14032,0.52467],
-    S:[14.88499,0.66603],T:[15.77102,0.53061],U:[16.52163,0.72023],V:[17.46186,0.67088],W:[18.35274,0.67088],X:[19.24363,0.65138],
-    Y:[20.11501,0.73057],Z:[21.06558,0.5829],'Ä':[21.86848,0.73057],'Ö':[22.81905,0.70966],'Ü':[23.74871,0.73057]
-  };  let phonemeContext=null,phonemeBufferPromise=null,phonemeSource=null;
+  const PHONEME_AUDIO_PATH='assets/audio/phonemes/de/generated/phonemes.wav';
+  const PHONEME_MANIFEST_PATH='assets/audio/phonemes/de/generated/phonemes.json';
+  let phonemeContext=null,phonemeBufferPromise=null,phonemeManifestPromise=null,phonemeManifest=null,phonemeSource=null;
   let phonemeLast={state:'idle',letter:null,error:null,duration:0};
-  function phonemeClip(letter){return PHONEME_CLIPS[String(letter||'').trim().toUpperCase()]||null}
   function phonemeStatus(){return {...phonemeLast}}
+  function phonemeClip(letter){
+    const key=String(letter||'').trim().toUpperCase();
+    return phonemeManifest?.clips?.[key]||null;
+  }
   function audioContext(){
     const AudioContextClass=window.AudioContext||window.webkitAudioContext;
     if(!AudioContextClass)return null;
     phonemeContext=phonemeContext||new AudioContextClass();
     return phonemeContext;
   }
+  async function loadPhonemeManifest(){
+    if(phonemeManifest)return phonemeManifest;
+    if(phonemeManifestPromise)return phonemeManifestPromise;
+    phonemeManifestPromise=(async()=>{
+      const response=await fetch(PHONEME_MANIFEST_PATH,{cache:'force-cache'});
+      if(!response.ok)throw new Error('phoneme manifest '+response.status);
+      const manifest=await response.json();
+      if(!manifest||manifest.version!==1||manifest.format!=='audio/wav'||!manifest.clips)throw new Error('invalid phoneme manifest');
+      const required='ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ';
+      for(const letter of required){
+        const clip=manifest.clips[letter];
+        if(!Array.isArray(clip)||clip.length!==2||!Number.isFinite(clip[0])||!Number.isFinite(clip[1])||clip[1]<=0)throw new Error('invalid phoneme clip '+letter);
+      }
+      phonemeManifest=manifest;
+      return manifest;
+    })().catch(error=>{phonemeManifestPromise=null;throw error});
+    return phonemeManifestPromise;
+  }
   async function loadPhonemeBuffer(ctx){
     if(phonemeBufferPromise)return phonemeBufferPromise;
     phonemeBufferPromise=(async()=>{
-      const chunks=await Promise.all(PHONEME_SPRITE_PARTS.map(async path=>{
-        const response=await fetch(path,{cache:'force-cache'});
-        if(!response.ok)throw new Error('phoneme sprite part '+response.status);
-        return response.text();
-      }));
-      const decodedParts=chunks.map((chunk,index)=>{
-        const encoded=String(chunk||'').replace(/\s+/g,'');
-        if(!encoded)throw new Error('empty phoneme sprite part '+(index+1));
-        const raw=atob(encoded),bytes=new Uint8Array(raw.length);
-        for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);
-        return bytes;
-      });
-      const total=decodedParts.reduce((sum,bytes)=>sum+bytes.byteLength,0);
-      if(!total)throw new Error('empty phoneme sprite');
-      const bytes=new Uint8Array(total);
-      let offset=0;
-      for(const part of decodedParts){bytes.set(part,offset);offset+=part.byteLength}
-      const buffer=await ctx.decodeAudioData(bytes.buffer.slice(0));
-      if(!buffer||!Number.isFinite(buffer.duration)||buffer.duration<24)throw new Error('phoneme sprite decode too short');
+      const [manifest,response]=await Promise.all([
+        loadPhonemeManifest(),
+        fetch(PHONEME_AUDIO_PATH,{cache:'force-cache'})
+      ]);
+      if(!response.ok)throw new Error('phoneme audio '+response.status);
+      const data=await response.arrayBuffer();
+      if(data.byteLength<500000)throw new Error('phoneme WAV payload too small');
+      const buffer=await ctx.decodeAudioData(data.slice(0));
+      if(!buffer||!Number.isFinite(buffer.duration)||buffer.duration<18)throw new Error('phoneme WAV decode too short');
+      if(Number.isFinite(manifest.duration)&&Math.abs(buffer.duration-manifest.duration)>0.15)throw new Error('phoneme WAV/manifest duration mismatch');
       return buffer;
     })().catch(error=>{phonemeBufferPromise=null;throw error});
     return phonemeBufferPromise;
   }
-  async function decodePhonemeSprite(){
+  async function decodePhonemeAudio(){
     const ctx=audioContext();
     if(!ctx)return {ok:false,error:'AudioContext unavailable'};
     try{
-      const buffer=await loadPhonemeBuffer(ctx);
-      return {ok:true,duration:buffer.duration,channels:buffer.numberOfChannels,sampleRate:buffer.sampleRate};
+      const [manifest,buffer]=await Promise.all([loadPhonemeManifest(),loadPhonemeBuffer(ctx)]);
+      return {ok:true,duration:buffer.duration,channels:buffer.numberOfChannels,sampleRate:buffer.sampleRate,clips:Object.keys(manifest.clips).length};
     }catch(error){
       return {ok:false,error:String(error?.message||error)};
     }
   }
   async function playPhoneme(letter){
-    const key=String(letter||'').trim().toUpperCase(),clip=phonemeClip(key),ctx=audioContext();
+    const key=String(letter||'').trim().toUpperCase(),ctx=audioContext();
     phonemeLast={state:'loading',letter:key||null,error:null,duration:0};
-    if(!clip){
-      phonemeLast={state:'error',letter:key||null,error:'missing phoneme clip',duration:0};
-      if(typeof toast==='function')toast('Für diesen Buchstaben ist noch kein Laut hinterlegt.','subtle');
-      return false
-    }
     if(!ctx){
       phonemeLast={state:'error',letter:key,error:'AudioContext unavailable',duration:0};
       if(typeof toast==='function')toast('Buchstabenlaute werden auf diesem Gerät nicht unterstützt.','bad');
-      return false
+      return false;
     }
     try{
       if(ctx.state==='suspended')await ctx.resume();
-      const buffer=await loadPhonemeBuffer(ctx);
-      if(clip[0]+clip[1]>buffer.duration+0.05)throw new Error('phoneme clip outside decoded sprite');
+      const [manifest,buffer]=await Promise.all([loadPhonemeManifest(),loadPhonemeBuffer(ctx)]);
+      const clip=manifest.clips[key];
+      if(!clip)throw new Error('missing phoneme clip '+key);
+      if(clip[0]+clip[1]>buffer.duration+0.05)throw new Error('phoneme clip outside decoded WAV');
       if(ctx.state==='suspended')await ctx.resume();
       try{phonemeSource?.stop?.()}catch(_e){}
       const source=ctx.createBufferSource();
@@ -370,5 +374,5 @@
     area.querySelector('#foundationNext').onclick=()=>open(completion().next);
   }
 
-  window.VTGermanFoundation={available,progress,completion,renderHub,open,openFreeWriting,freeWritingState,playPhoneme,phonemeClip,phonemeStatus,decodePhonemeSprite,phonemeSpriteParts:[...PHONEME_SPRITE_PARTS],course:COURSE,stageTasks,freeWritingLetters:FREE_WRITING_LETTERS};
+  window.VTGermanFoundation={available,progress,completion,renderHub,open,openFreeWriting,freeWritingState,playPhoneme,phonemeClip,phonemeStatus,decodePhonemeAudio,phonemeAudioPaths:{audio:PHONEME_AUDIO_PATH,manifest:PHONEME_MANIFEST_PATH},course:COURSE,stageTasks,freeWritingLetters:FREE_WRITING_LETTERS};
 })();
