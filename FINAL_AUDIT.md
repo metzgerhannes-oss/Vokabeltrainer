@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 29.09.2026 · App v0.21.42
+Stand: 29.09.2026 · App v0.21.43
 
 ## Ergebnis
+
+- v0.21.43 korrigiert die reale Deutsch-Abenteuer-Startdarstellung nach iPhone-Befund: weichere Fuchsillustration, Fuchs links mit sichtbarem Buchstaben-/Wort-Lernpfad und nächster Lernstation rechts, helle Natur-/Papierwelt sowie eigene Abenteuer-Stufenbezeichnungen statt Kampf-Ausrüstungslabels. Die Änderung ist rein visuell/motivational und verändert keine Mastery-, Spacing-, Test- oder Bewertungslogik. CI- und Live-Verifikation sind vor Merge weiterhin erforderlich.
 
 - v0.21.42 ist der Praxis-Hotfix nach dem realen B-018-iPhone-Befund: Die zusätzlichen `l / m / g`-Karten unter dem eigentlichen Buchstaben waren missverständlich und wurden entfernt. Der bisherige Buchstabenlaut über Browser-Speech-Synthesis war auf iOS nicht zuverlässig phonetisch; die Laut-Tasten verwenden deshalb lokale, offline gecachte Laut-Audiodateien für alle 29 auswählbaren Buchstabenformen. PR-CI #1332 ist vollständig grün, einschließlich M4A-Struktur-/Offline-Gates und WebKit-iPhone-Regression. **Die praktische Wiederholungsabnahme ist trotzdem noch offen und darf nicht durch CI ersetzt werden.**
 - v0.21.41 ist der Release-Kandidat für **B-018 Freies Schreiben**: Deutsch Klasse 1 besitzt eine frei wählbare Buchstabenübung mit Dachgeschoss-/Erdgeschoss-/Keller-Lineatur, Einzel-/Groß-Klein-/Mehrfachauswahl und Buchstabenlaut. Freie Wiederholungen erzeugen bewusst keinerlei fachliche oder spielerische Fortschrittsevidenz. Die automatische Verifikation ist mit PR-CI #1326 vollständig grün, einschließlich statischem B-018-Gate und WebKit-iPhone-Test; die praktische Abschlussabnahme bleibt separat offen.
