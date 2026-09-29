@@ -358,7 +358,7 @@ Diese Entscheidung **ersetzt ausschließlich die frühere visuelle Einschränkun
 Für v1.0 sind mindestens verpflichtend: auswählbares Fach Deutsch; Klasse-1-Einstieg mit Buchstaben/Lauten/ersten Wörtern; Lernwörter und einfache Sätze; deutsches Audio; deutschspezifische Bewertung; neutrale Systemfehler-/Überspringlogik; eigener Wortreich-Spielbereich und mindestens ein echter Belagerungskampf. Spielprogression darf Mastery, Spacing, Testbereitschaft oder fachliche Bewertung niemals verändern.
 
 
-### D-20260929-001 – Wortreich-Startlayout, Stufenlaufbahn und Vorlesen sind verbindlich
+### D-20260929-003 – Wortreich-Startlayout, Stufenlaufbahn und Vorlesen sind verbindlich
 
 **Quelle:** [DEUTSCH_WORTREICH_LAYOUT_V1.md](DEUTSCH_WORTREICH_LAYOUT_V1.md); [../../VISUAL_DNA.md](../../VISUAL_DNA.md) § 9; D-20260928-008; D-20260927-009
 
