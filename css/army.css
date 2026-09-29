@@ -1612,8 +1612,7 @@ body.lrs-mode .army-unit-card,body.lrs-mode .army-command,body.lrs-mode .army-un
 
 /* German adventure world */
 #armyView.german-adventure-mode .army-game-hub,
-#armyView.german-adventure-mode .army-section,
-#armyView.german-adventure-mode .army-battle-btn{display:none}
+#armyView.german-adventure-mode .army-section{display:none}
 #armyView.german-adventure-mode .army-command{
   border-color:#c9b98a;
   background:linear-gradient(180deg,#f9f1db 0%,#e7efd9 100%);
