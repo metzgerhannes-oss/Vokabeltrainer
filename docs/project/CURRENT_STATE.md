@@ -6,11 +6,11 @@ Stand: 29.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.42** (Praxis-Hotfix als Release-Kandidat)
-- aktueller Stand auf `main`: **v0.21.41 / Merge `79753823a40664583d5b88635605a3e474db8d4d` / PR #212**
+- App-Version: **v0.21.43** (Praxis-Hotfix als Release-Kandidat)
+- aktueller Stand auf `main`: **v0.21.42 / Merge `9daffb3f3c0b4f22d8be71e77a0e1996f599a1b6` / PR #213**
 - jüngster vollständig live-verifizierter Release: **v0.21.41 / PR #212**
 - Produktionsnachweis v0.21.41: **PR-CI #1330 success · main-CI #1331 success · GitHub Pages #568 inklusive Live-Verifikation success**
-- aktueller Release-Kandidat: **v0.21.42 – Praxis-Hotfix für B-018 auf `fix/deutsch-phoneme-lineature-v02142` / PR #213**; missverständliche l/m/g-Legende entfernt, Buchstabenlaut-TTS durch lokale/offline Laut-Audiodateien ersetzt; funktionaler PR-CI #1332 vollständig grün, Merge/Live-Verifikation und reale Wiederholungsabnahme noch offen
+- aktueller Release-Kandidat: **v0.21.43 – Praxis-Hotfix für die freigegebene Deutsch-Fuchswelt auf `fix/deutsch-fuchswelt-layout-v02143`**; Fuchs, mobile Komposition, eigener Lernpfad und Abenteuer-Stufenlabel werden wieder an `VISUAL_DNA.md` § 9 und die freigegebene Fuchswelt angeglichen; CI/Live-Verifikation noch offenneme-lineature-v02142` / PR #213**; missverständliche l/m/g-Legende entfernt, Buchstabenlaut-TTS durch lokale/offline Laut-Audiodateien ersetzt; funktionaler PR-CI #1332 vollständig grün, Merge/Live-Verifikation und reale Wiederholungsabnahme noch offen
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
