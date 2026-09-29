@@ -363,7 +363,7 @@ Abnahme:
 5. Bestehende Profile funktionieren ohne manuelle Migration weiter.
 
 ## B-018 – Freies Schreiben: Grundschul-Hilfslinien und freie Buchstabenauswahl
-**Status:** VERIFIED · v0.21.41 · PR #212 · CI #1326 vollständig grün · Praxisabnahme offen  
+**Status:** VERIFIED · v0.21.42 Praxis-Hotfix PR #213 · funktionaler PR-CI #1332 vollständig grün · reale Wiederholungsabnahme offen  
 **Priorität:** P0 für Deutsch Klasse 1 / praktische v1-Abnahme  
 **Bezug:** B-001, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`
 
@@ -400,4 +400,11 @@ Umsetzung v0.21.41:
 - Buchstabenlaut bleibt verfügbar
 - freie Wiederholung schreibt keinerlei Foundation-, Mastery-, Readiness-, Tagesziel-, XP- oder Battle-Evidenz
 - statischer B-018-Smoke und WebKit-iPhone-Regressionsprüfung ergänzen die CI
+
+Praktischer Befund auf v0.21.41:
+- die zusätzlichen Karten `l = Dach`, `m = Erdgeschoss`, `g = Keller` direkt unter dem Übungsbuchstaben waren missverständlich und werden in v0.21.42 entfernt
+- Browser-/iOS-TTS sprach die bisherigen Laut-Hilfsstrings nicht zuverlässig als Buchstabenlaut; v0.21.42 verwendet deshalb lokale Laut-Audiodateien für alle 29 auswählbaren Buchstabenformen
+- Buchstabenlaute haben bewusst **keinen Speech-Synthesis-Fallback**; normale Anweisungen/Wörter/Sätze behalten die Vorlesefunktion
+- alle Lautdateien werden für Offline/PWA im Service Worker vorgehalten
+- praktische Wiederholungsabnahme auf dem realen Gerät bleibt zwingend offen
 

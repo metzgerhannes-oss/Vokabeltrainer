@@ -1,9 +1,10 @@
 # Finales Audit
 
-Stand: 29.09.2026 · App v0.21.41
+Stand: 29.09.2026 · App v0.21.42
 
 ## Ergebnis
 
+- v0.21.42 ist der Praxis-Hotfix nach dem realen B-018-iPhone-Befund: Die zusätzlichen `l / m / g`-Karten unter dem eigentlichen Buchstaben waren missverständlich und wurden entfernt. Der bisherige Buchstabenlaut über Browser-Speech-Synthesis war auf iOS nicht zuverlässig phonetisch; die Laut-Tasten verwenden deshalb lokale, offline gecachte Laut-Audiodateien für alle 29 auswählbaren Buchstabenformen. PR-CI #1332 ist vollständig grün, einschließlich M4A-Struktur-/Offline-Gates und WebKit-iPhone-Regression. **Die praktische Wiederholungsabnahme ist trotzdem noch offen und darf nicht durch CI ersetzt werden.**
 - v0.21.41 ist der Release-Kandidat für **B-018 Freies Schreiben**: Deutsch Klasse 1 besitzt eine frei wählbare Buchstabenübung mit Dachgeschoss-/Erdgeschoss-/Keller-Lineatur, Einzel-/Groß-Klein-/Mehrfachauswahl und Buchstabenlaut. Freie Wiederholungen erzeugen bewusst keinerlei fachliche oder spielerische Fortschrittsevidenz. Die automatische Verifikation ist mit PR-CI #1326 vollständig grün, einschließlich statischem B-018-Gate und WebKit-iPhone-Test; die praktische Abschlussabnahme bleibt separat offen.
 - v0.21.40 ist der Release-Kandidat für die **fachübergreifende Weltwahl mit vollständiger Storyarchitektur**: Englisch, Latein, Deutsch und die vorbereitete Französisch-Welt besitzen äquivalente Abenteuer-/Kampfpräsentationen sowie jeweils Opening, sechs aufeinander aufbauende Kapitel und ein eigenes Finale. Storykapitel erscheinen im Abenteuer-Hub, auf der Karte und in Kampfwelten, sind vorlesbar und verändern keine fachlichen Werte. Abenteueraktionen nutzen dieselbe einmalige Tagesfreigabe ohne Battle-Screen. Französisch bleibt fachlich bis B-003 gesperrt.
 - v0.21.39 / PR #208 ist produktiv und durch main-CI #36587039257 sowie GitHub Pages #36587638196 bestätigt: bewusstes Abenteuer/Kampf-Opt-in für Deutsch, Wechsel ohne fachlichen Reset, sechs-stufige Abenteuer-Fuchsserie, kampffreie Abenteueraktion, m/w/d-Persistenz und vorlesbare Avatar-/Weltwahl.
