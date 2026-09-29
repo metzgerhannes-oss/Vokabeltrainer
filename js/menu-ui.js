@@ -44,10 +44,11 @@
     if(!frame||typeof avatarStageFor!=='function')return null;
     const stage=avatarStageFor(pct,state.activeSubject);
     frame.dataset.avatarStage=String(stage.level);
-    const style=learner()?.avatarStyle==='female'?'female':'male';
-    frame.dataset.avatarVisualKey=`${state.activeSubject}-${style}-stage-${stage.level}`;
+    const style=learner()?.avatarStyle==='female'?'female':'male',worldMode=learnerWorldMode(state.activeSubject);
+    frame.dataset.avatarVisualKey=`${state.activeSubject}-${worldMode}-${style}-stage-${stage.level}`;
     frame.dataset.avatarSubject=state.activeSubject;
     frame.dataset.avatarStyle=style;
+    frame.dataset.worldMode=worldMode;
     const profileName=String(learner()?.name||'Profil').trim()||'Profil';
     if(label)label.textContent=`${profileName} · Stufe ${stage.level}/${stage.maxLevel}`;
     if(pips)pips.innerHTML=Array.from({length:stage.maxLevel},(_,i)=>`<i class="${i<stage.level?'filled':''}"></i>`).join('');
