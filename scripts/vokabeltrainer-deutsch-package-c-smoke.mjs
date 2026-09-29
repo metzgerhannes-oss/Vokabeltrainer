@@ -12,7 +12,7 @@ assert(core.includes('const defaultGermanFoundation = () => ({version:1,letters:
 assert(core.includes('germanFoundation:defaultGermanFoundation()'),'new profiles receive foundation state');
 assert(storage.includes('function safeGermanFoundation(raw)')&&storage.includes("['letters','sounds','handwriting','words','sentences']"),'foundation progress is hardened and stage allow-listed');
 assert(module.includes("id:'letters'")&&module.includes("id:'sounds'")&&module.includes("id:'handwriting'")&&module.includes("id:'words'")&&module.includes("id:'sentences'"),'five Paket-C stages exist');
-assert(module.includes('foundation-trace-canvas')&&module.includes("skill:'freeProduction'"),'guided tracing transitions to free production');
+assert(module.includes('foundation-trace-canvas')&&module.includes("run.drawPhase='free'")&&module.includes("bump('letters',t.id,'freeProduction')"),'guided tracing transitions to audio-only free production');
 assert(module.includes('Die App bewertet deine Handschrift hier bewusst nicht automatisch als richtig oder falsch.'),'handwriting is not falsely auto-graded');
 assert(module.includes("a===t.word?correct('words',t.id,'written'):wrong()"),'first-word writing is deterministically graded');
 assert(module.includes("answer===t.sentence?correct('sentences',t.id,'formation'):wrong()"),'simple sentence formation is deterministically graded');
