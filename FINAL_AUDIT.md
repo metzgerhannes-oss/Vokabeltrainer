@@ -1,9 +1,10 @@
 # Finales Audit
 
-Stand: 30.09.2026 · App v0.21.49
+Stand: 30.09.2026 · App v0.21.50
 
 ## Ergebnis
 
+- v0.21.50 schließt den verbliebenen Post-Test-Fehler: Nach „Test abschließen“ darf ohne aktiven nächsten Test kein allgemeiner Jahreswortschatz als Pflichtlernen zurückkehren. Alte Testvokabeln bleiben ausschließlich freiwillig verfügbar; sobald der nächste Test geplant ist, wird nur dessen Umfang verpflichtend gelernt. Regression deckt Abschluss → Leerlauf → nächster Test ab.
 - v0.21.49 trennt den verpflichtenden Englisch-Testumfang von älteren fälligen Vokabeln und verhindert die Vereinigung eines expliziten Testumfangs mit einer überlappenden Wochenserie. Alte Lernhistorie bleibt erhalten und optionale Wiederholung bleibt verfügbar.
 - v0.21.48 ersetzt nach erneut negativem realem iPhone-Befund die Overlay-Technik vollständig durch eine normale HTML-Kontrollkarte. Diese Karte liegt im Dokumentfluss direkt über der Schreibfläche, enthält einen großen Sollbuchstaben auf eigener Grundschul-Lineatur und wird nach dem Kontrollklick automatisch ins sichtbare Viewport gescrollt. Der WebKit-Test muss Sichtbarkeit, Mindestgröße und Viewport-Lage der Karte nachweisen. Reale Geräteabnahme bleibt zwingend.
 
