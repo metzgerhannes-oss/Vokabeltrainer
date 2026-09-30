@@ -26,10 +26,10 @@ for(const slug of slugs)assert(sw.includes("'./assets/audio/phonemes/de/generate
 assert(sw.includes("'./assets/audio/phonemes/de/generated/phonemes.json'"),'offline shell caches phoneme manifest');
 assert(!module.includes('.m4a')&&!module.includes('PHONEME_AUDIO_PATH')&&!module.includes('decodePhonemeAudio'),'broken M4A and Web-Audio sprite paths are no longer active');
 assert(module.includes("run={stage:'freeWriting',freePractice:true")&&module.includes('forms:[...forms]'),'free-writing queue is built only from chosen forms');
-assert(module.includes('freeWritingReferenceSvg')&&module.includes('foundationFreeReference')&&module.includes('foundationFreeCheckStatus')&&module.includes('Kontrollieren'),'free-writing self-check uses a separate visible SVG overlay');
+assert(module.includes('foundationFreeCheckCard')&&module.includes('free-writing-check-lineature')&&module.includes('Kontrollieren'),'free-writing self-check uses a dedicated visible HTML comparison card');
 assert(module.includes('foundationFreeRetry')&&module.includes('Nochmal schreiben')&&module.includes('foundationFreeAccept')&&module.includes('Passt für mich'),'self-check offers retry and neutral acceptance');
-assert(module.includes('Vergleiche selbst.')&&module.includes('Sollform')&&module.includes('Kontrolle aktiv'),'self-check uses neutral comparison language and an explicit visible control state');
-assert(css.includes('.free-writing-reference-layer')&&css.includes('.free-writing-reference-svg')&&css.includes('.free-writing-check-status'),'self-check overlay has dedicated visible layout CSS');
+assert(module.includes('Vergleiche selbst.')&&module.includes('So soll')&&module.includes('scrollIntoView'),'self-check uses neutral comparison language and scrolls its visible card into view');
+assert(css.includes('.free-writing-check-card')&&css.includes('.free-writing-check-lineature')&&css.includes('.free-writing-check-glyph'),'self-check card has dedicated visible layout CSS');
 
 const freeStart=module.indexOf('function openFreeWriting()');
 const freeEnd=module.indexOf('function task(){',freeStart);
@@ -37,5 +37,5 @@ const freeBlock=module.slice(freeStart,freeEnd);
 assert(freeStart>=0&&freeEnd>freeStart,'free-writing implementation block is detectable');
 assert(!freeBlock.includes('bump(')&&!freeBlock.includes('saveProgress(')&&!freeBlock.includes('recordResult(')&&!freeBlock.includes('grantBattleTicket'),'free repetition and self-check have no academic or game progress mutation');
 assert(css.includes('.free-letter-grid')&&css.includes('@media(max-width:520px)'),'selection and lineature are responsive for small displays');
-assert(backlog.includes('## B-018 – Freies Schreiben')&&backlog.includes('v0.21.47')&&backlog.includes('SVG-Overlay'),'B-018 backlog records the current v0.21.47 visible self-check fix');
+assert(backlog.includes('## B-018 – Freies Schreiben')&&backlog.includes('v0.21.48')&&backlog.includes('Kontrollkarte'),'B-018 backlog records the current v0.21.48 comparison-card fix');
 console.log('Vokabeltrainer B-018 free writing smoke: passed');
