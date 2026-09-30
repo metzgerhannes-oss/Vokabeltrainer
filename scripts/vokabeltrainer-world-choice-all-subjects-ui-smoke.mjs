@@ -27,7 +27,7 @@ async function seedSubject(subject,term,translation){
 try{
   const response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'app loads');
-  await page.waitForFunction(()=>window.__VT_APP_READY__===true&&!!window.VTArmyUi&&!!window.VTCampaignMap&&!!window.VTWorldStory);
+  await page.waitForFunction(()=>window.__VT_APP_READY__===true&&!!window.VTArmyUi&&!!window.VTCampaignMap&&!!window.VTWorldStory&&window.VTMenuAvatarArt?.atlasReady===true);
 
   const avatarMatrix=await page.evaluate(()=>{
     state=defaultState();showView('homeView');
@@ -36,11 +36,12 @@ try{
       state.activeSubject=subject;
       setLearnerWorldMode(l,subject,'battle');
       window.VTMenuUi.renderAvatarStage(38);window.VTMenuUi.applyAvatarArt();
-      const battle=document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarRenderKey||'';
+      const frame=document.querySelector('#projectMenuAvatarFrame');
+      const battle=frame?.dataset.avatarRenderKey||'',battleSource=frame?.dataset.avatarArtSource||'';
       setLearnerWorldMode(l,subject,'adventure');
       window.VTMenuUi.renderAvatarStage(38);window.VTMenuUi.applyAvatarArt();
-      const adventure=document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarRenderKey||'';
-      out[subject]={battle,adventure};
+      const adventure=frame?.dataset.avatarRenderKey||'',adventureSource=frame?.dataset.avatarArtSource||'';
+      out[subject]={battle,adventure,battleSource,adventureSource};
     }
     return out;
   });
@@ -48,6 +49,11 @@ try{
     assert(avatarMatrix[subject].battle.includes(subject+'-battle-'),subject+' battle avatar key is world-specific');
     assert(avatarMatrix[subject].adventure.includes(subject+'-adventure-'),subject+' adventure avatar key is world-specific');
     assert(avatarMatrix[subject].battle!==avatarMatrix[subject].adventure,subject+' avatar is rebuilt when the story world changes');
+    if(subject==='english'){
+      assert(avatarMatrix[subject].battleSource==='final'&&avatarMatrix[subject].adventureSource==='final','English male keeps the existing final six-stage portrait series in both worlds');
+    }else{
+      assert(avatarMatrix[subject].battleSource==='approved-atlas'&&avatarMatrix[subject].adventureSource==='approved-atlas',subject+' uses approved painterly atlas artwork in both worlds');
+    }
   }
 
   await page.evaluate(()=>{state=defaultState();renderAll();showView('homeView');openProfileEditor()});
@@ -77,10 +83,10 @@ try{
   const englishAdventureAvatar=await page.evaluate(()=>{
     renderAll();showView('homeView');window.VTMenuUi.render();
     const frame=document.querySelector('#projectMenuAvatarFrame');
-    return {key:frame?.dataset.avatarRenderKey||'',mode:frame?.dataset.worldMode||'',imgHidden:document.querySelector('#projectMenuAvatarArt')?.classList.contains('hidden')};
+    return {key:frame?.dataset.avatarRenderKey||'',mode:frame?.dataset.worldMode||'',imgHidden:document.querySelector('#projectMenuAvatarArt')?.classList.contains('hidden'),source:frame?.dataset.avatarArtSource||''};
   });
   assert(englishAdventureAvatar.mode==='adventure'&&englishAdventureAvatar.key.includes('english-adventure-'),'English adventure rebuilds the avatar under its own render key');
-  assert(englishAdventureAvatar.key!==initialEnglish.avatarKey&&englishAdventureAvatar.imgHidden,'English world switch cannot leave the battle art visible');
+  assert(englishAdventureAvatar.key!==initialEnglish.avatarKey&&!englishAdventureAvatar.imgHidden&&englishAdventureAvatar.source==='final','English world switch keeps the approved final portrait while rebuilding world context');
   await page.evaluate(()=>window.VTArmyUi.open());
   await page.waitForSelector('#armyView.active');
   let hub=await page.evaluate(()=>({mode:document.querySelector('#armyView')?.dataset.worldMode,title:document.querySelector('#armyViewTitle')?.textContent||'',route:document.querySelectorAll('.subject-adventure-route span').length,units:(document.querySelector('#armyUnitGrid')?.textContent||'').trim(),action:document.querySelector('#armyBattleBtn')?.textContent||'',story:document.querySelector('.subject-adventure-story strong')?.textContent||'',storyRead:document.querySelectorAll('.subject-adventure-story .read-aloud-btn').length}));
@@ -97,12 +103,13 @@ try{
   await seedSubject('latin','porta','Tor');
   const latinKeys=await page.evaluate(()=>{
     renderAll();showView('homeView');window.VTMenuUi.render();
-    const frame=document.querySelector('#projectMenuAvatarFrame'),battle=frame?.dataset.avatarRenderKey||'';
+    const frame=document.querySelector('#projectMenuAvatarFrame'),battle=frame?.dataset.avatarRenderKey||'',battleSource=frame?.dataset.avatarArtSource||'';
     setLearnerWorldMode(learner(),'latin','adventure');renderAll();window.VTMenuUi.render();
-    const adventure=frame?.dataset.avatarRenderKey||'';
-    return {battle,adventure,mode:frame?.dataset.worldMode||''};
+    const adventure=frame?.dataset.avatarRenderKey||'',adventureSource=frame?.dataset.avatarArtSource||'';
+    return {battle,adventure,battleSource,adventureSource,mode:frame?.dataset.worldMode||''};
   });
   assert(latinKeys.battle.includes('latin-battle-')&&latinKeys.adventure.includes('latin-adventure-')&&latinKeys.battle!==latinKeys.adventure,'Latin avatar renderer swaps cleanly between battle and adventure');
+  assert(latinKeys.battleSource==='approved-atlas'&&latinKeys.adventureSource==='approved-atlas','Latin never falls back to the English army scene');
   await page.evaluate(()=>window.VTArmyUi.open());
   await page.waitForSelector('#armyView.active');
   hub=await page.evaluate(()=>({theme:document.querySelector('#armyView')?.dataset.visualTheme,title:document.querySelector('#armyViewTitle')?.textContent||'',route:document.querySelectorAll('.subject-adventure-route span').length}));
@@ -110,6 +117,18 @@ try{
   await page.evaluate(()=>window.VTCampaignMap.open());
   await page.waitForSelector('#campaignMapView.active');
   assert(await page.evaluate(()=>document.querySelector('#campaignMapView')?.dataset.visualTheme)==='latin-adventure','Latin map uses adventure theme');
+
+  const germanAvatar=await page.evaluate(()=>{
+    state=defaultState();state.activeSubject='german';learner().activeSubjects=['german'];learner().avatarStyle='neutral';
+    setLearnerWorldMode(learner(),'german','battle');window.VTMenuUi.renderAvatarStage(55);window.VTMenuUi.applyAvatarArt();
+    const frame=document.querySelector('#projectMenuAvatarFrame');
+    const battle={source:frame?.dataset.avatarArtSource||'',fox:frame?.classList.contains('german-fox-avatar'),knight:frame?.classList.contains('german-knight-avatar')};
+    setLearnerWorldMode(learner(),'german','adventure');window.VTMenuUi.renderAvatarStage(55);window.VTMenuUi.applyAvatarArt();
+    const adventure={source:frame?.dataset.avatarArtSource||'',fox:frame?.classList.contains('german-fox-avatar'),knight:frame?.classList.contains('german-knight-avatar')};
+    return {battle,adventure};
+  });
+  assert(germanAvatar.battle.source==='approved-atlas'&&germanAvatar.adventure.source==='approved-atlas','German uses approved fox artwork in battle and adventure worlds');
+  assert(germanAvatar.battle.fox&&germanAvatar.adventure.fox&&!germanAvatar.battle.knight&&!germanAvatar.adventure.knight,'German primary-school home avatar stays a fox in every world mode');
 
   const french=await page.evaluate(()=>{
     const l=learner();
