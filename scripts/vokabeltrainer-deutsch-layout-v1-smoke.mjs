@@ -15,6 +15,7 @@ const menu=read('js/menu-ui.js');
 const avatarArt=read('js/menu-avatar-art.js');
 const decisions=read('docs/project/DECISIONS.md');
 const layout=read('docs/project/DEUTSCH_WORTREICH_LAYOUT_V1.md');
+const visual=read('VISUAL_DNA.md');
 const version=core.match(/const VERSION\s*=\s*'([^']+)'/)?.[1]||'';
 
 const ok=[];
@@ -51,6 +52,7 @@ assert(decisions.includes('D-20260929-003')&&layout.includes('Status: **VERBINDL
 assert(layout.includes('Ritterlehrling → Ritter → Kronritter → König'),'canonical layout records the approved upper-stage progression');
 assert(layout.includes('Audio darf **nicht** vor der Antwort angeboten werden'),'canonical layout preserves evidence-safe audio');
 assert(layout.includes('**Neutral / Divers**')&&layout.includes('nicht** still auf die männliche Bildserie'),'canonical layout records the m/w/d fallback rule');
+assert(visual.includes('assets/wordrealm/home-approved-v1.webp')&&visual.includes('Eine separate Avatar-Kachel'),'Visual DNA locks the approved integrated Wortreich scene and forbids the old avatar tile');
 
 console.log('Vokabeltrainer Deutsch Wortreich layout smoke: '+ok.length+' checks passed');
 for(const name of ok)console.log('✓ '+name);
