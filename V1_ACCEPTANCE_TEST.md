@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 30.09.2026 · Basis: v0.21.47 · Release-Kandidat; Prüfschwerpunkt: B-018 sichtbare Schreibkontrolle auf realem iPhone
+Stand: 30.09.2026 · Basis: v0.21.48 · Release-Kandidat; Prüfschwerpunkt: B-018 robuste Schreibkontrolle auf realem iPhone
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -10,7 +10,9 @@ Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
 ## Aktueller Praxisfortschritt
 
 - [ ] **B-018 Praxisabnahme:** Auf realem iPhone/iPad nur „m“, danach „M/m“ und danach „a, e, m, s“ auswählen; prüfen, dass ausschließlich diese Buchstaben geübt werden, Dach/Erdgeschoss/Keller beim Schreiben sichtbar bleiben, der Buchstabenlaut funktioniert und wiederholtes freies Schreiben keinen Mastery-/Testfortschritt erzeugt.
-- [ ] **B-018 Selbstkontrolle v0.21.47:** Buchstaben schreiben → „Kontrollieren“ → sichtbar muss „Kontrolle aktiv“ erscheinen und die blaue gestrichelte Sollform muss direkt über der eigenen Spur auf derselben Lineatur liegen → „Nochmal schreiben“ löscht die Übung → erneut schreiben/kontrollieren → „Passt für mich“ wechselt zum nächsten ausgewählten Buchstaben. Keine Richtig/Falsch-Wertung und kein Lern-/Spielprogress.
+- [ ] **B-018 Selbstkontrolle v0.21.48:** Buchstaben schreiben → „Kontrollieren“ → direkt oberhalb der eigenen Schreibfläche muss eine sichtbare Kontrollkarte „So soll … aussehen“ mit großem blauem Sollbuchstaben auf eigener Dach-/Erdgeschoss-/Keller-Lineatur erscheinen und automatisch ins Sichtfeld scrollen → „Nochmal schreiben“ löscht die Übung → erneut schreiben/kontrollieren → „Passt für mich“ wechselt weiter. Keine Richtig/Falsch-Wertung und kein Lern-/Spielprogress.
+
+**Praktischer Befund v0.21.47 (nicht bestanden):** Trotz grünem WebKit-Sichtbarkeitstest erschien auf dem realen iPhone weiterhin keine erkennbare Kontrolle. **Fix v0.21.48:** keine Overlay-Technik mehr; normale HTML-Kontrollkarte im Dokumentfluss mit Auto-Scroll.
 
 **Praktischer Befund v0.21.46 (nicht bestanden):** Kontrollmodus/Buttons wechselten, aber auf dem realen iPhone wurde keine Sollform sichtbar angezeigt. **Fix v0.21.47:** separate SVG-Overlay-Ebene statt Zeichnung im selben Canvas; sichtbarer Kontrollstatus.
 
