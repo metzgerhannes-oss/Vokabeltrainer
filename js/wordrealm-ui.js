@@ -206,8 +206,8 @@
     const strip=document.querySelector('#wordrealmStageStrip');
     const brand=document.querySelector('#wordrealmHomeBrand');
     if(frame&&fallback){
-      fallback.innerHTML=foxSvg(level);
-      fallback.classList.add('wordrealm-svg-avatar');
+      fallback.innerHTML='';
+      fallback.classList.remove('wordrealm-svg-avatar','avatar-atlas-avatar');
       frame.classList.add('wordrealm-rendered','wordrealm-approved-scene');
     }
     if(scenery){
