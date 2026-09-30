@@ -35,7 +35,7 @@ Verbindliche Leitlinien:
 **Paket F:** praktische v1-Abnahme folgt.
 
 ## B-002 – Eigene finale Latein-Grafikserie
-**Status:** APPROVED_BACKLOG  
+**Status:** SUPERSEDED durch B-019 / v0.21.50  
 **Priorität:** nach Kernstabilität / im Rahmen der visuellen Ausarbeitung  
 **Betroffene Quelle:** `VISUAL_DNA.md`
 
@@ -443,4 +443,31 @@ Erweiterung v0.21.46:
 - die eigene Spur bleibt sichtbar; die Sollform wird halbtransparent/gestrichelt direkt auf derselben Dach–Erdgeschoss–Keller-Lineatur eingeblendet
 - danach ausschließlich **„Nochmal schreiben“** oder **„Passt für mich“**
 - keine automatische Handschriftbewertung, kein Richtig/Falsch und keine fachliche oder spielerische Fortschrittsevidenz
+
+## B-019 – Finale Avatarserien in einheitlicher Referenzqualität
+**Status:** IMPLEMENTED v0.21.50 / CI- UND PRAXISABNAHME OFFEN  
+**Priorität:** P0 visuelle Produktqualität  
+**Decision:** D-20260930-001  
+**Betroffene Quellen:** `VISUAL_DNA.md § 2.1/§ 10/§ 13`, `docs/project/LATIN_FRENCH_VISUAL_LAYOUT.md`, `js/menu-avatar-art.js`
+
+Verbindlicher Umfang:
+
+- Englisch männlich: bestehende finale 6-Stufen-Serie
+- Englisch weiblich / neutral: freigegebene malerische Atlas-Serie
+- Latein männlich / weiblich / neutral: eigene römische Avatarserie; männlich als Ganzkörperfolge
+- Französisch männlich / weiblich / neutral: eigene malerische Fachserie
+- Deutsch Grundschule: Fuchs als persönlicher Avatar in Abenteuer **und** Wortreich/Kampf
+- sechs Stufen müssen sichtbar mit der Jahresentwicklung wechseln
+- fachfremde Armee-/Szenenbilder dürfen nie als Avatar erscheinen
+- CSS-/DOM-/SVG-Figuren bleiben nur technischer Ladefehler-Fallback
+- Atlas wird offline/PWA mit ausgeliefert
+
+Abnahme:
+
+1. iPhone und Desktop zeigen für jeden aktiven Fach-/Stilpfad ein echtes Bildasset.
+2. Latein verwendet nie das englische Armee-Hero-Bild.
+3. Deutsch zeigt auf Start/Heute immer den Fuchs; die Ritterarmee bleibt im Spielbereich.
+4. Stufe 1–6 wechselt reproduzierbar auf das zugehörige Artwork.
+5. Weltwechsel verändert keinen fachlichen Lernstand.
+6. Keine regulär erreichbare Profilvariante fällt auf die technische CSS-/SVG-Figur zurück.
 
