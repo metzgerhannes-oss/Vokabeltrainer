@@ -5,7 +5,7 @@
 | Dachgeschoss – Erdgeschoss – Keller | `vokabeltrainer-b018-free-writing-smoke.mjs` + WebKit Paket C | drei klar benannte Schreibzonen direkt in der Schreibfläche, Hilfslinien unter der Spur; keine zusätzliche l/m/g-Legendenkarte |
 | freie Buchstabenauswahl | WebKit Paket C | nur `m`, `M/m` und Mehrfachauswahl möglich; Aufgaben bleiben in der Auswahl |
 | Buchstabenlaut | Generator-Gate + statischer B-018-Smoke + WebKit Paket C + Pages-Liveprüfung + Praxisabnahme | 29 einzelne PCM-WAV-Dateien für A–Z + Ä/Ö/Ü; Generator prüft Dauer/RMS/Peak; Laut-Taste startet per nativer HTML-`Audio.play()` im echten Klick; WebKit muss `playing` erreichen; Pages prüft `m.wav` auf hörbare PCM-Nutzdaten; reales iPhone bleibt Pflicht |
-| Selbstkontrolle | statischer B-018-Smoke + WebKit Paket C + Praxisabnahme | separate SVG-Overlay-Ebene wird nach „Kontrollieren“ sichtbar; gerenderte Soll-Glyphe besitzt messbare Größe und Overlay liegt deckungsgleich über dem Schreib-Canvas; sichtbarer Status „Kontrolle aktiv“; danach „Nochmal schreiben“ oder „Passt für mich“; kein automatisches Richtig/Falsch |
+| Selbstkontrolle | statischer B-018-Smoke + WebKit Paket C + Praxisabnahme | eigenständige HTML-Kontrollkarte wird nach „Kontrollieren“ sichtbar; großer Sollbuchstabe auf eigener Dach-/Erdgeschoss-/Keller-Lineatur; Karte besitzt Mindestgröße und wird automatisch in den sichtbaren iPhone-Viewport gescrollt; danach „Nochmal schreiben“ oder „Passt für mich“; kein automatisches Richtig/Falsch |
 | Fortschrittsneutralität | statischer B-018-Smoke + WebKit Paket C | keine Foundation-, Mastery-, Readiness-, Tagesziel-, XP- oder Battle-Mutation |
 
 # Vokabeltrainer – Test Matrix

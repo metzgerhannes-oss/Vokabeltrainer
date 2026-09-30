@@ -6,11 +6,11 @@ Stand: 30.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.47** (B-018 sichtbare Selbstkontrolle als Release-Kandidat)
-- aktueller Stand auf `main`: **v0.21.46 / Merge `58a71506fe7053343b4604f054e4c8688dd0b41e` / PR #220**
-- jüngster vollständig live-verifizierter Release: **v0.21.46 / PR #220**
-- Produktionsnachweis v0.21.46: **PR-CI #1361 success · main-CI #1362 success · GitHub Pages #574 success; reale iPhone-Selbstkontrolle anschließend wegen unsichtbarer Sollform praktisch nicht bestanden**
-- aktueller Release-Kandidat: **v0.21.47 – B-018 sichtbare Selbstkontrolle auf `fix/deutsch-writing-check-overlay-v02147`**; separate SVG-Overlay-Ebene exakt über dem Canvas, sichtbarer Kontrollstatus, weiterhin ohne automatische Bewertung oder Fortschrittsmutation; PR/CI/Live-Verifikation und reale iPhone-Abnahme offen
+- App-Version: **v0.21.48** (B-018 robuste Kontrollkarte als Release-Kandidat)
+- aktueller Stand auf `main`: **v0.21.47 / Merge `c614d640b9fb734ee92b7a31be0118a75110547f` / PR #221**
+- jüngster vollständig live-verifizierter Release: **v0.21.47 / PR #221**
+- Produktionsnachweis v0.21.47: **PR-CI #1364 success · main-CI #1365 success · GitHub Pages #575 success; reale iPhone-Selbstkontrolle dennoch erneut ohne erkennbare Anzeige und damit praktisch nicht bestanden**
+- aktueller Release-Kandidat: **v0.21.48 – B-018 robuste Kontrollkarte auf `fix/deutsch-writing-check-card-v02148`**; normale HTML-Kontrollkarte im Dokumentfluss mit eigener Lineatur und Auto-Scroll ins Sichtfeld, weiterhin ohne automatische Bewertung oder Fortschrittsmutation; PR/CI/Live-Verifikation und reale iPhone-Abnahme offen
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv

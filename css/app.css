@@ -4562,12 +4562,18 @@ html[data-subject="german"] #learnView .german-literacy-card .secondary{border-c
 .foundation-school-lineature.self-check{box-shadow:inset 0 0 0 3px rgba(26,115,166,.26)}
 .free-writing-canvas-stack{position:relative;width:100%;margin:0 auto}
 .free-writing-canvas-stack .foundation-trace-canvas{display:block;width:100%}
-.free-writing-reference-layer{position:absolute;inset:0;z-index:3;pointer-events:none;display:block}
-.free-writing-reference-layer.hidden{display:none!important}
-.free-writing-reference-svg{display:block;width:100%;height:100%;overflow:visible}
-.free-writing-reference-svg text{filter:drop-shadow(0 1px 0 rgba(255,255,255,.96))}
-.free-writing-check-status{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:9px auto 0;padding:8px 12px;border:2px solid rgba(26,115,166,.42);border-radius:12px;background:rgba(228,244,252,.92);color:#185a7c;font-size:.86rem}
-.free-writing-check-status strong{font-size:.92rem}.free-writing-check-status span{font-weight:700}
+.free-writing-check-card{display:grid;gap:8px;margin:12px 0 14px;padding:14px;border:3px solid #1a73a6;border-radius:18px;background:#eef8fd;box-shadow:0 8px 22px rgba(26,115,166,.16);outline:none}
+.free-writing-check-card:focus{box-shadow:0 0 0 4px rgba(26,115,166,.16),0 8px 22px rgba(26,115,166,.16)}
+.free-writing-check-kicker{font-size:.78rem;font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:#1a73a6}
+.free-writing-check-title{font-size:clamp(1.2rem,5vw,1.65rem);color:#174f70}
+.free-writing-check-title span{font-size:1.15em}
+.free-writing-check-lineature{position:relative;height:190px;overflow:hidden;border:2px solid rgba(26,115,166,.28);border-radius:14px;background:
+  linear-gradient(to bottom,transparent 0 24%,rgba(117,85,47,.30) 24% 25%,transparent 25% 49%,rgba(117,85,47,.30) 49% 50%,transparent 50% 74%,rgba(117,85,47,.30) 74% 75%,transparent 75% 100%),
+  linear-gradient(180deg,#f7fbff,#fffdf8)}
+.free-writing-check-lineature .zone{position:absolute;right:8px;font-size:.66rem;font-weight:800;color:rgba(83,68,48,.62);z-index:2}
+.free-writing-check-lineature .roof{top:6px}.free-writing-check-lineature .middle{top:68px}.free-writing-check-lineature .cellar{bottom:6px}
+.free-writing-check-glyph{position:absolute;inset:0;display:grid;place-items:center;padding-top:4px;color:#1a73a6;font-family:"Arial Rounded MT Bold","Trebuchet MS",Arial,sans-serif;font-size:clamp(110px,32vw,160px);line-height:1;font-weight:800;text-shadow:0 2px 0 #fff}
+.free-writing-check-card p{margin:0;color:#31566d;font-weight:700;line-height:1.35}
 .free-writing-compare-legend{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin:8px 0 0;font-size:.82rem;color:var(--muted)}
 .free-writing-compare-legend span{display:inline-flex;align-items:center;gap:7px;font-weight:750}
 .free-writing-compare-legend span::before{content:"";width:18px;height:4px;border-radius:99px;display:inline-block}

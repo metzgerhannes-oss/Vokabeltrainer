@@ -363,7 +363,7 @@ Abnahme:
 5. Bestehende Profile funktionieren ohne manuelle Migration weiter.
 
 ## B-018 – Freies Schreiben: Grundschul-Hilfslinien und freie Buchstabenauswahl
-**Status:** v0.21.46 Selbstkontrolle praktisch NICHT BESTANDEN · v0.21.47 SVG-Overlay IN_IMPLEMENTATION · reale Schreibkontrolle offen  
+**Status:** v0.21.47 Selbstkontrolle praktisch NICHT BESTANDEN · v0.21.48 Kontrollkarte IN_IMPLEMENTATION · reale Schreibkontrolle offen  
 **Priorität:** P0 für Deutsch Klasse 1 / praktische v1-Abnahme  
 **Bezug:** B-001, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`
 
@@ -422,6 +422,14 @@ Praktischer Befund auf v0.21.44:
 - v0.21.45 verwendet 29 einzelne PCM-WAV-Dateien und startet sie direkt über das native HTML-`Audio`-Element innerhalb des echten Tastendrucks
 - der Generator blockiert zu kurze, stille oder zu leise Laute anhand von Dauer, RMS und Peak
 - WebKit prüft den nativen `playing`-Status; Pages prüft live die PCM-Nutzdaten von `m.wav`
+
+Praktischer Befund auf v0.21.47:
+- verschärfter WebKit-Test bestätigte eine sichtbare SVG-Overlay-Ebene
+- auf dem realen iPhone war dennoch keine erkennbare Kontrolle sichtbar
+- v0.21.48 verwirft deshalb Overlay-Technik vollständig
+- stattdessen erscheint eine normale **HTML-Kontrollkarte** im Dokumentfluss mit „So soll … aussehen“, großem Sollbuchstaben und eigener Dach-/Erdgeschoss-/Keller-Lineatur
+- nach Kontrollklick wird die Karte automatisch ins sichtbare iPhone-Fenster gescrollt
+- WebKit prüft Sichtbarkeit, Mindestgröße und tatsächliche Lage im Viewport
 
 Praktischer Befund auf v0.21.46:
 - Kontrollmodus und Folgebuttons wurden aktiv, aber auf dem realen iPhone war keine Sollform sichtbar
