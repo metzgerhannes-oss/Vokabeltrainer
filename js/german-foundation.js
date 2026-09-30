@@ -156,10 +156,6 @@
     ctx.fillText('Keller',canvas.width-12,244);
     ctx.restore();
   }
-  function freeWritingReferenceSvg(form){
-    const raw=String(form||''),safe=raw.replace(/[<>&"']/g,''),upper=raw===raw.toUpperCase()&&raw!==raw.toLowerCase(),size=upper?245:190;
-    return '<svg class="free-writing-reference-svg" viewBox="0 0 640 320" preserveAspectRatio="none" focusable="false" aria-hidden="true"><text x="320" y="214" text-anchor="middle" font-family="Arial Rounded MT Bold,Arial,sans-serif" font-size="'+size+'" font-weight="700" fill="rgba(26,115,166,.16)" stroke="#1a73a6" stroke-width="5" stroke-dasharray="12 8" paint-order="stroke fill" vector-effect="non-scaling-stroke">'+safe+'</text></svg>';
-  }
   function mixOptions(values,key=''){
     const arr=[...values];if(arr.length<2)return arr;
     const hash=[...String(key)].reduce((sum,ch)=>sum+ch.charCodeAt(0),0),offset=hash%arr.length;
@@ -258,14 +254,14 @@
     document.querySelector('#sessionPill').textContent=((Number(run.index)||0)%forms.length+1)+' / '+forms.length+' · frei';
     const instruction='Schreibe den ausgewählten Buchstaben in die Lineatur. Du kannst den Laut so oft anhören, wie du möchtest.';
     const neutralFeedback='Deine Wiederholung wird nicht als Test- oder Mastery-Fortschritt gespeichert.';
-    area.innerHTML='<div class="study-card german-literacy-card german-foundation-task free-writing-task"><div class="eyebrow">Freies Schreiben · ohne Bewertung</div><div class="free-writing-target"><span>Dein Buchstabe</span><strong>'+form+'</strong></div>'+readButton(instruction)+'<button id="foundationFreeSoundBtn" class="secondary" type="button">🔊 Laut hören</button><div class="study-sub">'+instruction+'</div><div class="free-writing-canvas-stack"><canvas id="foundationFreeCanvas" class="foundation-trace-canvas foundation-school-lineature" width="640" height="320" aria-label="Freie Schreibfläche mit Dachgeschoss, Erdgeschoss und Keller für '+form+'"></canvas><div id="foundationFreeReference" class="free-writing-reference-layer hidden" aria-hidden="true">'+freeWritingReferenceSvg(form)+'</div></div><div id="foundationFreeCheckStatus" class="free-writing-check-status hidden" role="status"><strong>Kontrolle aktiv</strong><span>Blau gestrichelt = Sollform</span></div><div id="foundationFreeCompareLegend" class="free-writing-compare-legend hidden" aria-hidden="true"><span class="own">Deine Spur</span><span class="model">Sollform</span></div><div id="foundationFreeWriteActions" class="row gap wrap center-actions top-space"><button id="foundationFreeClear" class="ghost" type="button">Neu schreiben</button><button id="foundationFreeSelection" class="ghost" type="button">Auswahl ändern</button><button id="foundationFreeCheck" class="primary" type="button" disabled>Kontrollieren</button></div><div id="foundationFreeReviewActions" class="row gap wrap center-actions top-space hidden"><button id="foundationFreeRetry" class="ghost" type="button">Nochmal schreiben</button><button id="foundationFreeAccept" class="primary" type="button">Passt für mich</button></div><div id="germanFoundationFeedback" class="notice subtle">'+neutralFeedback+'</div></div>';
+    area.innerHTML='<div class="study-card german-literacy-card german-foundation-task free-writing-task"><div class="eyebrow">Freies Schreiben · ohne Bewertung</div><div class="free-writing-target"><span>Dein Buchstabe</span><strong>'+form+'</strong></div>'+readButton(instruction)+'<button id="foundationFreeSoundBtn" class="secondary" type="button">🔊 Laut hören</button><div class="study-sub">'+instruction+'</div><section id="foundationFreeCheckCard" class="free-writing-check-card hidden" tabindex="-1" aria-live="polite"><div class="free-writing-check-kicker">Kontrolle</div><strong class="free-writing-check-title">So soll <span>'+form+'</span> aussehen</strong><div class="free-writing-check-lineature" aria-label="Sollform '+form+' auf Dachgeschoss, Erdgeschoss und Keller"><span class="zone roof">Dachgeschoss</span><span class="zone middle">Erdgeschoss</span><span class="zone cellar">Keller</span><b class="free-writing-check-glyph">'+form+'</b></div><p>Vergleiche jetzt Form, Höhe und Lage mit deiner eigenen Spur direkt darunter.</p></section><div class="free-writing-canvas-stack"><canvas id="foundationFreeCanvas" class="foundation-trace-canvas foundation-school-lineature" width="640" height="320" aria-label="Freie Schreibfläche mit Dachgeschoss, Erdgeschoss und Keller für '+form+'"></canvas></div><div id="foundationFreeCompareLegend" class="free-writing-compare-legend hidden" aria-hidden="true"><span class="own">Deine Spur</span><span class="model">Sollform</span></div><div id="foundationFreeWriteActions" class="row gap wrap center-actions top-space"><button id="foundationFreeClear" class="ghost" type="button">Neu schreiben</button><button id="foundationFreeSelection" class="ghost" type="button">Auswahl ändern</button><button id="foundationFreeCheck" class="primary" type="button" disabled>Kontrollieren</button></div><div id="foundationFreeReviewActions" class="row gap wrap center-actions top-space hidden"><button id="foundationFreeRetry" class="ghost" type="button">Nochmal schreiben</button><button id="foundationFreeAccept" class="primary" type="button">Passt für mich</button></div><div id="germanFoundationFeedback" class="notice subtle">'+neutralFeedback+'</div></div>';
     const canvas=area.querySelector('#foundationFreeCanvas'),check=area.querySelector('#foundationFreeCheck');
-    const reference=area.querySelector('#foundationFreeReference'),checkStatus=area.querySelector('#foundationFreeCheckStatus');
+    const checkCard=area.querySelector('#foundationFreeCheckCard');
     const writeActions=area.querySelector('#foundationFreeWriteActions'),reviewActions=area.querySelector('#foundationFreeReviewActions'),legend=area.querySelector('#foundationFreeCompareLegend'),feedback=area.querySelector('#germanFoundationFeedback');
     const clear=bindWritingCanvas(canvas,{onReady:()=>{check.disabled=false}});
     const resetWriting=()=>{
       clear();check.disabled=true;canvas.style.pointerEvents='';canvas.classList.remove('self-check');
-      reference.classList.add('hidden');reference.setAttribute('aria-hidden','true');checkStatus.classList.add('hidden');
+      checkCard.classList.add('hidden');
       writeActions.classList.remove('hidden');reviewActions.classList.add('hidden');legend.classList.add('hidden');legend.setAttribute('aria-hidden','true');
       canvas.setAttribute('aria-label','Freie Schreibfläche mit Dachgeschoss, Erdgeschoss und Keller für '+form);
       feedback.className='notice subtle';feedback.textContent=neutralFeedback;
@@ -275,10 +271,14 @@
     area.querySelector('#foundationFreeSelection').onclick=renderFreeWritingSelector;
     check.onclick=()=>{
       canvas.style.pointerEvents='none';canvas.classList.add('self-check');
-      reference.classList.remove('hidden');reference.setAttribute('aria-hidden','false');checkStatus.classList.remove('hidden');
+      checkCard.classList.remove('hidden');
       writeActions.classList.add('hidden');reviewActions.classList.remove('hidden');legend.classList.remove('hidden');legend.setAttribute('aria-hidden','false');
-      canvas.setAttribute('aria-label','Selbstkontrolle für '+form+': eigene Schreibspur mit sichtbarer blauer Sollform');
-      feedback.className='notice subtle';feedback.innerHTML='<strong>Vergleiche selbst.</strong> Die deutlich blaue gestrichelte Form ist die Sollform. Stimmen Form, Höhe und Dach/Erdgeschoss/Keller ungefähr?';
+      canvas.setAttribute('aria-label','Selbstkontrolle für '+form+': eigene Schreibspur unter sichtbarer Sollform');
+      feedback.className='notice subtle';feedback.innerHTML='<strong>Vergleiche selbst.</strong> Oben siehst du die Sollform. Deine eigene Spur bleibt direkt darunter stehen.';
+      requestAnimationFrame(()=>{
+        try{checkCard.scrollIntoView({block:'center',behavior:'smooth'})}catch(_e){checkCard.scrollIntoView()}
+        try{checkCard.focus({preventScroll:true})}catch(_e){checkCard.focus()}
+      });
     };
     area.querySelector('#foundationFreeRetry').onclick=resetWriting;
     area.querySelector('#foundationFreeAccept').onclick=()=>{run.index=(Number(run.index)||0)+1;renderFreeWritingTask()};
@@ -369,5 +369,5 @@
     area.querySelector('#foundationNext').onclick=()=>open(completion().next);
   }
 
-  window.VTGermanFoundation={available,progress,completion,renderHub,open,openFreeWriting,freeWritingState,playPhoneme,phonemeStatus,phonemeAudioPath,freeWritingReferenceSvg,course:COURSE,stageTasks,freeWritingLetters:FREE_WRITING_LETTERS};
+  window.VTGermanFoundation={available,progress,completion,renderHub,open,openFreeWriting,freeWritingState,playPhoneme,phonemeStatus,phonemeAudioPath,course:COURSE,stageTasks,freeWritingLetters:FREE_WRITING_LETTERS};
 })();
