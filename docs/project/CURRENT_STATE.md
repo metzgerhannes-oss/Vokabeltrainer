@@ -6,11 +6,11 @@ Stand: 30.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.50** (Avatar-Art-Integration als Release-Kandidat)
-- aktueller Stand auf `main`: **v0.21.48 / Commit `95e77c0554114fd448e5c95f8c17c72182adc16e`**
+- App-Version: **v0.21.51** (Post-Test-Pflichtlogik als Release-Kandidat)
+- aktueller Stand auf `main`: **v0.21.50 / Commit `3a2f16c2cadb1e825252fe1a76c4616badc16ef1` / PR #224**
 - jüngster vollständig live-verifizierter Release: **v0.21.47 / PR #221**
 - Produktionsnachweis v0.21.47: **PR-CI #1364 success · main-CI #1365 success · GitHub Pages #575 success; reale iPhone-Selbstkontrolle dennoch erneut ohne erkennbare Anzeige und damit praktisch nicht bestanden**
-- aktueller Release-Kandidat: **v0.21.50 – freigegebene Avatar-Art auf `feat/avatar-art-atlas-v02150`**; Bildatlas für Englisch w/n, Latein m/w/n, Französisch m/w/n und Deutsch-Fuchs; Latein männlich als eigene Ganzkörper-Serie; CI/Live-Verifikation noch offen
+- aktueller Release-Kandidat: **v0.21.51 – Post-Test-Pflichtlogik auf `fix/post-test-old-vocab-v02150` / PR #225**; nach Testabschluss bleibt der Pflichtpfad ohne nächsten aktiven Test leer; mit neu geplantem Test enthält er ausschließlich dessen Testumfang. Avatar-Art v0.21.50 aus PR #224 bleibt vollständig erhalten
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
