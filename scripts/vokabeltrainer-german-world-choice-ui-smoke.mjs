@@ -150,14 +150,15 @@ try{
       knight:document.querySelector('#projectMenuAvatarFrame')?.classList.contains('german-knight-avatar'),
       nav:document.querySelector('.nav-btn[data-view="armyView"]')?.textContent?.trim()||'',
       renderKey:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarRenderKey||'',
-      battleFox:document.querySelector('#projectMenuAvatarFallback .wordrealm-fox-svg:not(.adventure)')?.getAttribute('aria-label')||'',
-      adventureFox:!!document.querySelector('#projectMenuAvatarFallback .wordrealm-fox-svg.adventure')
+      source:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarArtSource||'',
+      atlas:document.querySelectorAll('#projectMenuAvatarFallback .avatar-atlas-art').length,
+      vectorFox:document.querySelectorAll('#projectMenuAvatarFallback .wordrealm-fox-svg').length
     };
   });
   assert(after.mastery===route.mastery&&after.growth===route.growth,'switching back preserves the post-action academic and yearly state');
-  assert(after.fox===false&&after.knight===true,'battle mode uses the Wordrealm avatar treatment');
+  assert(after.fox===true&&after.knight===false,'battle mode keeps the German primary-school fox identity on Start/Heute');
   assert(after.renderKey.includes('german-battle-')&&after.renderKey!==home.renderKey,'switching back rebuilds the battle avatar under a battle render key');
-  assert(after.battleFox&&!after.adventureFox,'switching back removes the explorer fox and restores the Wortreich fox');
+  assert(after.source==='approved-atlas'&&after.atlas===1&&after.vectorFox===0,'switching back keeps the approved painterly fox atlas instead of restoring a technical vector fox');
   assert(after.nav.includes('Wortreich'),'battle mode restores Wortreich navigation');
 
   await page.evaluate(()=>window.VTArmyUi.open());
