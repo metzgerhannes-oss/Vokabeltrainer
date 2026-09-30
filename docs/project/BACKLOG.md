@@ -363,7 +363,7 @@ Abnahme:
 5. Bestehende Profile funktionieren ohne manuelle Migration weiter.
 
 ## B-018 – Freies Schreiben: Grundschul-Hilfslinien und freie Buchstabenauswahl
-**Status:** v0.21.44 praktisch NICHT BESTANDEN · v0.21.45 Native-Audio-Hotfix IN_IMPLEMENTATION · reale Wiederholungsabnahme offen  
+**Status:** v0.21.45 Audio praktisch BESTANDEN · v0.21.46 Selbstkontrolle IN_IMPLEMENTATION · reale Schreibkontrolle offen  
 **Priorität:** P0 für Deutsch Klasse 1 / praktische v1-Abnahme  
 **Bezug:** B-001, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`
 
@@ -422,4 +422,10 @@ Praktischer Befund auf v0.21.44:
 - v0.21.45 verwendet 29 einzelne PCM-WAV-Dateien und startet sie direkt über das native HTML-`Audio`-Element innerhalb des echten Tastendrucks
 - der Generator blockiert zu kurze, stille oder zu leise Laute anhand von Dauer, RMS und Peak
 - WebKit prüft den nativen `playing`-Status; Pages prüft live die PCM-Nutzdaten von `m.wav`
+
+Erweiterung v0.21.46:
+- nach eigener Schreibspur erscheint erst auf Wunsch die Aktion **„Kontrollieren“**
+- die eigene Spur bleibt sichtbar; die Sollform wird halbtransparent/gestrichelt direkt auf derselben Dach–Erdgeschoss–Keller-Lineatur eingeblendet
+- danach ausschließlich **„Nochmal schreiben“** oder **„Passt für mich“**
+- keine automatische Handschriftbewertung, kein Richtig/Falsch und keine fachliche oder spielerische Fortschrittsevidenz
 

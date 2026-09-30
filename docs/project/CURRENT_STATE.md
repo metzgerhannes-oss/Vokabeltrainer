@@ -1,16 +1,16 @@
 # Vokabeltrainer – Current State
 
-Stand: 29.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
+Stand: 30.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 ## Produktionsbaseline
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.45** (B-018 Native-Audio-Hotfix als Release-Kandidat)
-- aktueller Stand auf `main`: **v0.21.44 / Merge `eb3aa3c623a4d046b07f2076b60aed0e1e117331` / PR #216**
-- jüngster vollständig live-verifizierter Release: **v0.21.44 / PR #216**
-- Produktionsnachweis v0.21.44: **main-CI #1356 success · GitHub Pages #572 inklusive WAV-/Manifest-Live-Verifikation success; reale iPhone-Audioabnahme dennoch nicht bestanden**
-- aktueller Release-Kandidat: **v0.21.45 – B-018 Native-Audio-Hotfix auf `fix/deutsch-native-audio-v02145`**; 29 einzeln validierte PCM-WAV-Dateien, nativer HTML-Audio-Start im echten Tastendruck, RMS-/Peak-Gate; PR/CI/Live-Verifikation und reale iPhone-Wiederholungsabnahme offen
+- App-Version: **v0.21.46** (B-018 Selbstkontrolle als Release-Kandidat)
+- aktueller Stand auf `main`: **v0.21.45 / Merge `d162cfa9c73eeb30f82b0c4f203720e100a61a3a` / PR #219**
+- jüngster vollständig live-verifizierter Release: **v0.21.45 / PR #219**
+- Produktionsnachweis v0.21.45: **PR-CI #1358 success · main-CI #1359 success · GitHub Pages #573 success; realer iPhone-Buchstabenlaut anschließend praktisch bestätigt**
+- aktueller Release-Kandidat: **v0.21.46 – B-018 Selbstkontrolle auf `feature/deutsch-writing-self-check-v02146`**; Sollform-Overlay auf derselben Lineatur, „Nochmal schreiben“ / „Passt für mich“, strikt ohne automatische Bewertung oder Fortschrittsmutation; PR/CI/Live-Verifikation und reale Geräteabnahme offen
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv

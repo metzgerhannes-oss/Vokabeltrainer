@@ -12,8 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.45**
+App-Version: **v0.21.46**
 
+- v0.21.46 (Release-Kandidat): **B-018 Selbstkontrolle beim freien Schreiben.** Nach eigener Schreibspur kann das Kind „Kontrollieren“ wählen; die Sollform wird halbtransparent/gestrichelt direkt auf derselben Dach–Erdgeschoss–Keller-Lineatur eingeblendet. Danach nur „Nochmal schreiben“ oder „Passt für mich“ – keine automatische Handschriftbewertung, kein Richtig/Falsch und keinerlei Mastery-/Test-/XP-/Battle-Fortschritt.
 - v0.21.45 (Release-Kandidat): **B-018 nativer iPhone-Audio-Hotfix.** v0.21.44 decodierte und startete im WebKit-CI, blieb auf dem realen iPhone aber stumm. Deshalb verwendet die Laut-Taste jetzt keinen Web-Audio-Puffer mehr, sondern 29 einzeln erzeugte PCM-WAV-Dateien, die direkt im echten Tastendruck über das native HTML-`Audio`-Element abgespielt werden. Der Generator prüft zusätzlich Mindestdauer, RMS und Peak jeder Datei; der Live-Deploy prüft `m.wav` nochmals auf hörbare PCM-Nutzdaten. Reale iPhone-Abnahme bleibt Pflicht.
 - v0.21.44: erster WAV/Web-Audio-Ansatz; technisch grün und live verifiziert, auf dem realen iPhone jedoch ohne hörbaren Ton und damit praktisch nicht bestanden.
 - v0.21.43: Deutsch-Fuchswelt-Layout-Hotfix aus PR #214; rein visuelle/motivationale Anpassung ohne Änderung der Lernlogik.
