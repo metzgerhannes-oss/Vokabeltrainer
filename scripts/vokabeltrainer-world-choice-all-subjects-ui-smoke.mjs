@@ -51,6 +51,8 @@ try{
     assert(avatarMatrix[subject].battle!==avatarMatrix[subject].adventure,subject+' avatar is rebuilt when the story world changes');
     if(subject==='english'){
       assert(avatarMatrix[subject].battleSource==='final'&&avatarMatrix[subject].adventureSource==='final','English male keeps the existing final six-stage portrait series in both worlds');
+    }else if(subject==='german'){
+      assert(avatarMatrix[subject].battleSource==='wordrealm-approved-scene'&&avatarMatrix[subject].adventureSource==='approved-atlas','German Wortreich uses the exact approved home scene while Fuchspfad keeps its approved avatar artwork');
     }else{
       assert(avatarMatrix[subject].battleSource==='approved-atlas'&&avatarMatrix[subject].adventureSource==='approved-atlas',subject+' uses approved painterly atlas artwork in both worlds');
     }
@@ -127,7 +129,7 @@ try{
     const adventure={source:frame?.dataset.avatarArtSource||'',fox:frame?.classList.contains('german-fox-avatar'),knight:frame?.classList.contains('german-knight-avatar')};
     return {battle,adventure};
   });
-  assert(germanAvatar.battle.source==='approved-atlas'&&germanAvatar.adventure.source==='approved-atlas','German uses approved fox artwork in battle and adventure worlds');
+  assert(germanAvatar.battle.source==='wordrealm-approved-scene'&&germanAvatar.adventure.source==='approved-atlas','German Wortreich uses the exact approved scene while adventure keeps approved fox artwork');
   assert(germanAvatar.battle.fox&&germanAvatar.adventure.fox&&!germanAvatar.battle.knight&&!germanAvatar.adventure.knight,'German primary-school home avatar stays a fox in every world mode');
 
   const french=await page.evaluate(()=>{
