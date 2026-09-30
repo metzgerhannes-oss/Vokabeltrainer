@@ -25,9 +25,9 @@ assert(storage.includes('l.worldModeBySubject=normalizeWorldModeBySubject(l.worl
 assert(storage.includes("['male','female','neutral'].includes(l.avatarStyle)"),'storage preserves the neutral/diverse avatar value');
 assert(sync.includes("'worldModeBySubject'")&&sync.includes('normalizeWorldModeBySubject(l.worldModeBySubject)'),'family sync carries and normalizes world mode');
 assert(sync.includes("['male','female','neutral'].includes(l.avatarStyle)"),'family sync accepts m/w/d setup values');
-assert(menu.includes("german-fox-avatar',isGerman&&adventure")&&menu.includes("german-knight-avatar',isGerman&&!adventure"),'project menu follows German world choice');
+assert(menu.includes("german-fox-avatar',isGerman")&&menu.includes("world-adventure-avatar',adventure")&&menu.includes("world-battle-avatar',!adventure"),'project menu keeps the German fox identity while still following the selected world presentation');
 assert(menu.includes('function resetAvatarSurface(')&&menu.includes('frame.dataset.avatarRenderKey=key'),'avatar surface is hard-reset and namespaced per world');
-assert(menu.includes("fallback.classList.add('wordrealm-svg-avatar','adventure-svg-avatar')"),'German adventure gets its own renderer class instead of reusing the battle surface');
+assert(menu.includes("getSprite?.(state.activeSubject,style,level)")&&menu.includes("avatarArtSource='approved-atlas'"),'German start avatar uses the approved image atlas instead of the technical vector surface when artwork is available');
 assert(army.includes('function adventureHeroMarkup')&&army.includes("root.classList.toggle('adventure-mode',adventure)"),'German adventure uses the generic adventure hub');
 assert(wordrealm.includes('const ADVENTURE_STAGES=Object.freeze')&&wordrealm.includes('function adventureFoxSvg'),'German adventure has its own six-stage vector fox series');
 assert(wordrealm.includes("filter id=\"'+shadow+'")&&wordrealm.includes('Magister')===false&&wordrealm.includes("url(#'+gold+')"),'adventure fox uses layered gradients, soft shadow and premium explorer detailing');

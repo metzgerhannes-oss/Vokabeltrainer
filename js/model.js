@@ -488,7 +488,7 @@ function gearFor(pct){return ['I','II','III','IV','V','VI'][gearTier(pct)-1]}
 function gearLabelFor(pct,subject=state.activeSubject){
   const tier=gearTier(pct);
   const english=['Grundausrüstung','Verstärkte Schilde','Bogenschützen-Set','Belagerungsausrüstung','Reiter-Ausrüstung','Eliteausrüstung'];
-  const latin=['Scutum & Pilum','Verstärktes Scutum','Sagittarii','Belagerungsgerät','Equites','Praetorianer-Ausrüstung'];
+  const latin=['Tiro','Legionär','Optio','Centurio','Tribun','Legat'];
   const german=['Grundausrüstung','Lederzeug','Ritterlehrling','Ritter','Kronritter','König'];
   return (subject==='latin'?latin:subject==='german'?german:english)[tier-1];
 }
@@ -619,7 +619,6 @@ function isExplicitTestSetCompletedForLearner(l,set,subject=state.activeSubject)
 function isTestCompleted(date,subject=state.activeSubject){return isTestCompletedForLearner(learner(),date,subject)}
 function completedTestsForSubject(subject=state.activeSubject){return Object.values(testCompletions()).filter(x=>x?.subject===subject&&x?.date).sort((a,b)=>String(a.date).localeCompare(String(b.date)))}
 function latestTestCompletion(subject=state.activeSubject){const rows=completedTestsForSubject(subject);return rows[rows.length-1]||null}
-function mandatoryDailyPool(subject=state.activeSubject,ctx=null){if(ctx)return ctx.words||[];return latestTestCompletion(subject)?[]:schoolYearVerifiedWords(subject)}
 function seriesOccurrenceDate(subject=state.activeSubject){
   const cfg=activeSeries(subject);if(!cfg)return '';
   const scoped=String(cfg.scopeDate||'');
@@ -711,9 +710,9 @@ function completeTestContext(ctx=upcomingTestContext(),subject=state.activeSubje
 }
 function uniqueById(list){const seen=new Set();return list.filter(x=>x&&!seen.has(x.id)&&seen.add(x.id))}
 function testContextLabel(ctx,subject=state.activeSubject){if(!ctx)return '';const subjectName=subjectLabel(subject);const when=ctx.days===0?'heute':ctx.days===1?'morgen':ctx.days<0?`vor ${Math.abs(ctx.days)} Tag${Math.abs(ctx.days)===1?'':'en'}`:`in ${ctx.days} Tagen`;const recurrence=ctx.source==='series'||ctx.source==='mixed'?` · wöchentlich ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]}`:'';return `${subjectName}-Test ${when}${recurrence} · ${ctx.scopeText||ctx.sets.map(s=>s.title).join(' + ')}`}
-const DAILY_PLAN_SCHEMA='daily4';
+const DAILY_PLAN_SCHEMA='daily3';
 function dailyPlanSignature(ctx,subject,sessionSize){
-  const words=mandatoryDailyPool(subject,ctx).map(w=>w.id).sort().join(',');
+  const words=(ctx?ctx.words:schoolYearVerifiedWords(subject)).map(w=>w.id).sort().join(',');
   return `${DAILY_PLAN_SCHEMA}:${ctx?`test:${ctx.source||'single'}:${ctx.date}:${ctx.sets.map(s=>s.id).sort().join(',')}`:`general:${currentSchoolYear()}`}:${sessionSize}:${words}`;
 }
 function dailyPlanSignatureCompatible(stored,current){
@@ -805,7 +804,7 @@ function buildDailyPlan(subject=state.activeSubject){
   }
 
   if(existing){normalizeDailyAdaptivePlan(existing,l);recoverLegacyDailyPlanCompletion(existing,l)}
-  const pool=mandatoryDailyPool(subject,ctx),poolIds=new Set(pool.map(w=>w.id));
+  const pool=ctx?ctx.words:schoolYearVerifiedWords(subject),poolIds=new Set(pool.map(w=>w.id));
   const previousCompleted=new Set(Array.isArray(existing?.completedKeys)?existing.completedKeys:[]);
   const preservedDoneWords=existing?dailyPlanRefs(existing,false)
     .filter(ref=>previousCompleted.has(dailyPlanRefKey(ref)))
@@ -821,7 +820,7 @@ function buildDailyPlan(subject=state.activeSubject){
   const seenWeak=ready.filter(w=>!isTestReady(w,testFormat)).sort((a,b)=>testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b));
   let selected=uniqueWords([...preservedDoneWords,...due,...seenWeak,...ready]).slice(0,reviewTarget),maintenanceCount=0;
 
-  if(!ctx&&!latestTestCompletion(subject)&&selected.length<reviewTarget){
+  if(!ctx&&selected.length<reviewTarget){
     const maintenance=dueWords(subject).filter(w=>!poolIds.has(w.id)).slice(0,reviewTarget-selected.length);
     const before=selected.length;selected=uniqueWords([...selected,...maintenance]).slice(0,reviewTarget);maintenanceCount=selected.length-before;
   }

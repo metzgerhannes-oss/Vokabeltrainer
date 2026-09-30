@@ -9,13 +9,15 @@
 
   function resetAvatarSurface(img,fallback,frame){
     window.VTWordrealmUi?.clearHome?.();
-    frame.classList.remove('wordrealm-rendered','adventure-rendered','german-fox-avatar','german-knight-avatar','world-adventure-avatar','world-battle-avatar');
+    frame.classList.remove('wordrealm-rendered','adventure-rendered','german-fox-avatar','german-knight-avatar','world-adventure-avatar','world-battle-avatar','avatar-atlas-rendered');
     frame.removeAttribute('data-avatar-render-key');
+    frame.removeAttribute('data-avatar-art-source');
     img.removeAttribute('src');
     img.removeAttribute('data-avatar-final');
     img.removeAttribute('data-avatar-art-key');
     img.classList.add('hidden');
-    fallback.classList.remove('hidden','wordrealm-svg-avatar','adventure-svg-avatar');
+    fallback.classList.remove('hidden','wordrealm-svg-avatar','adventure-svg-avatar','avatar-atlas-avatar');
+    fallback.removeAttribute('data-avatar-art-key');
     fallback.innerHTML='<span class="avatar-head"></span><span class="avatar-body"></span><span class="avatar-shield">V</span>';
   }
 
@@ -30,26 +32,21 @@
     const key=`${state.activeSubject}-${worldMode}-${style}-stage-${level}`;
     resetAvatarSurface(img,fallback,frame);
     frame.dataset.avatarRenderKey=key;
-    frame.classList.toggle('german-fox-avatar',isGerman&&adventure);
-    frame.classList.toggle('german-knight-avatar',isGerman&&!adventure);
+    frame.classList.toggle('german-fox-avatar',isGerman);
+    frame.classList.toggle('german-knight-avatar',false);
     frame.classList.toggle('world-adventure-avatar',adventure);
     frame.classList.toggle('world-battle-avatar',!adventure);
     frame.dataset.avatarStyle=style;
     frame.dataset.worldMode=worldMode;
-    if(isGerman&&!adventure){
-      window.VTWordrealmUi?.renderHome?.(level);
-      frame.dataset.avatarRenderKey=key;
-      return;
-    }
-    if(isGerman&&adventure){
-      fallback.innerHTML=window.VTWordrealmUi?.adventureFoxSvg?.(level)||'<span class="avatar-head"></span><span class="avatar-body"></span><span class="avatar-shield">⌖</span>';
-      fallback.classList.add('wordrealm-svg-avatar','adventure-svg-avatar');
-      window.VTWordrealmUi?.renderAdventureHome?.(level);
+    if(isGerman){
+      if(adventure)window.VTWordrealmUi?.renderAdventureHome?.(level);
+      else window.VTWordrealmUi?.renderHome?.(level);
       frame.dataset.avatarRenderKey=key;
     }
-    const finalUrl=adventure||isGerman?'':(window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'');
-    const armyUrl=adventure||isGerman||style!=='male'?'':(window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'');
-    const shield=fallback.querySelector?.('.avatar-shield');if(shield)shield.textContent=adventure?'⌖':isGerman?'W':'V';
+
+    const finalUrl=window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'';
+    const sprite=window.VTMenuAvatarArt?.getSprite?.(state.activeSubject,style,level)||null;
+    const armyUrl=!finalUrl&&!sprite&&!adventure&&!isGerman&&state.activeSubject==='english'&&style==='male'&&window.VTArmyArt?.ready?window.VTArmyArt.heroUrl:'';
     const url=finalUrl||armyUrl;
     if(url){
       if(img.src!==url)img.src=url;
@@ -57,11 +54,33 @@
       img.dataset.avatarArtKey=finalUrl?key:'fallback';
       img.classList.remove('hidden');
       fallback.classList.add('hidden');
+      fallback.removeAttribute('data-avatar-art-key');
+      frame.dataset.avatarArtSource=finalUrl?'final':'army-fallback';
+    }else if(sprite){
+      img.removeAttribute('data-avatar-final');
+      img.removeAttribute('data-avatar-art-key');
+      img.classList.add('hidden');
+      fallback.classList.remove('hidden','wordrealm-svg-avatar','adventure-svg-avatar');
+      fallback.classList.add('avatar-atlas-avatar');
+      fallback.dataset.avatarArtKey=key;
+      const x=sprite.cols<=1?0:(sprite.col/(sprite.cols-1))*100;
+      const y=sprite.rows<=1?0:(sprite.row/(sprite.rows-1))*100;
+      fallback.innerHTML='<span class="avatar-atlas-art" aria-hidden="true"></span>';
+      const atlas=fallback.querySelector('.avatar-atlas-art');
+      if(atlas){
+        atlas.style.backgroundImage=`url("${sprite.url}")`;
+        atlas.style.backgroundSize=`${sprite.cols*100}% ${sprite.rows*100}%`;
+        atlas.style.backgroundPosition=`${x}% ${y}%`;
+      }
+      frame.classList.add('avatar-atlas-rendered');
+      frame.dataset.avatarArtSource='approved-atlas';
     }else{
       img.removeAttribute('data-avatar-final');
       img.removeAttribute('data-avatar-art-key');
       img.classList.add('hidden');
       fallback.classList.remove('hidden');
+      frame.dataset.avatarArtSource='technical-fallback';
+      const shield=fallback.querySelector?.('.avatar-shield');if(shield)shield.textContent=adventure?'⌖':isGerman?'W':'V';
     }
   }
 

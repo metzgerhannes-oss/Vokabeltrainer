@@ -13,7 +13,7 @@ const assert=(v,m)=>{if(!v)throw new Error('German world choice UI smoke failed:
 try{
   const response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'app loads');
-  await page.waitForFunction(()=>window.__VT_APP_READY__===true&&!!window.VTMenuUi&&!!window.VTArmyUi&&!!window.VTCampaignMap);
+  await page.waitForFunction(()=>window.__VT_APP_READY__===true&&!!window.VTMenuUi&&!!window.VTArmyUi&&!!window.VTCampaignMap&&window.VTMenuAvatarArt?.atlasReady===true);
 
   await page.evaluate(()=>{state=defaultState();renderAll();showView('homeView');openProfileEditor()});
   await page.waitForSelector('#modal[open] #saveProfile');
@@ -56,12 +56,14 @@ try{
       mastery:subjectProgress('german').pct,
       growth:campaignGrowthState('german').pct,
       renderKey:frame?.dataset.avatarRenderKey||'',
-      battleFox:fallback?.querySelector('.wordrealm-fox-svg:not(.adventure)')?.getAttribute('aria-label')||'',
-      adventureFox:!!fallback?.querySelector('.wordrealm-fox-svg.adventure')
+      source:frame?.dataset.avatarArtSource||'',
+      fox:frame?.classList.contains('german-fox-avatar'),
+      knight:frame?.classList.contains('german-knight-avatar'),
+      atlas:fallback?.querySelectorAll('.avatar-atlas-art').length||0
     };
   });
   assert(initial.mode==='battle','German legacy profile starts in battle mode');
-  assert(initial.renderKey.includes('german-battle-')&&initial.battleFox&&!initial.adventureFox,'battle mode renders a fresh Wortreich fox surface');
+  assert(initial.renderKey.includes('german-battle-')&&initial.source==='approved-atlas'&&initial.fox&&!initial.knight&&initial.atlas===1,'battle mode keeps the German fox identity and renders the approved painterly fox atlas artwork');
 
   await page.evaluate(()=>openProfileEditor(learner().id));
   await page.waitForSelector('[data-profile-world-subject="german"]:not(.hidden)');
@@ -83,9 +85,9 @@ try{
       mastery:subjectProgress('german').pct,
       growth:campaignGrowthState('german').pct,
       renderKey:frame?.dataset.avatarRenderKey||'',
-      adventureFox:fallback?.querySelector('.wordrealm-fox-svg.adventure')?.getAttribute('aria-label')||'',
-      battleFox:!!fallback?.querySelector('.wordrealm-fox-svg:not(.adventure)'),
-      premium:!!fallback?.classList.contains('adventure-svg-avatar'),
+      source:frame?.dataset.avatarArtSource||'',
+      atlas:fallback?.querySelectorAll('.avatar-atlas-art').length||0,
+      knight:frame?.classList.contains('german-knight-avatar'),
       scenery:document.querySelectorAll('#projectMenuScenery .german-adventure-scenery-svg').length,
       stageLabel:document.querySelector('#menuAvatarNextStage')?.textContent||''
     };
@@ -93,7 +95,7 @@ try{
   assert(home.mode==='adventure','profile saves adventure mode');
   assert(home.fox,'adventure mode uses the fox avatar');
   assert(home.renderKey.includes('german-adventure-')&&home.renderKey!==initial.renderKey,'world switch creates a distinct adventure avatar render key');
-  assert(home.adventureFox&&!home.battleFox&&home.premium,'adventure switch replaces the Wortreich surface with the premium explorer fox');
+  assert(home.source==='approved-atlas'&&home.atlas===1&&!home.knight,'adventure switch keeps the approved painterly fox avatar instead of falling back to a vector or knight');
   assert(home.scenery===1,'German adventure home renders the dedicated Fuchswelt learning-path scenery');
   assert(home.stageLabel.includes('Wegstarter'),'German adventure home uses the adventure progression label instead of battle equipment');
   assert(home.nav.includes('Abenteuer'),'child navigation names the adventure world');
@@ -148,14 +150,15 @@ try{
       knight:document.querySelector('#projectMenuAvatarFrame')?.classList.contains('german-knight-avatar'),
       nav:document.querySelector('.nav-btn[data-view="armyView"]')?.textContent?.trim()||'',
       renderKey:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarRenderKey||'',
-      battleFox:document.querySelector('#projectMenuAvatarFallback .wordrealm-fox-svg:not(.adventure)')?.getAttribute('aria-label')||'',
-      adventureFox:!!document.querySelector('#projectMenuAvatarFallback .wordrealm-fox-svg.adventure')
+      source:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarArtSource||'',
+      atlas:document.querySelectorAll('#projectMenuAvatarFallback .avatar-atlas-art').length,
+      vectorFox:document.querySelectorAll('#projectMenuAvatarFallback .wordrealm-fox-svg').length
     };
   });
   assert(after.mastery===route.mastery&&after.growth===route.growth,'switching back preserves the post-action academic and yearly state');
-  assert(after.fox===false&&after.knight===true,'battle mode uses the Wordrealm avatar treatment');
+  assert(after.fox===true&&after.knight===false,'battle mode keeps the German primary-school fox identity on Start/Heute');
   assert(after.renderKey.includes('german-battle-')&&after.renderKey!==home.renderKey,'switching back rebuilds the battle avatar under a battle render key');
-  assert(after.battleFox&&!after.adventureFox,'switching back removes the explorer fox and restores the Wortreich fox');
+  assert(after.source==='approved-atlas'&&after.atlas===1&&after.vectorFox===0,'switching back keeps the approved painterly fox atlas instead of restoring a technical vector fox');
   assert(after.nav.includes('Wortreich'),'battle mode restores Wortreich navigation');
 
   await page.evaluate(()=>window.VTArmyUi.open());

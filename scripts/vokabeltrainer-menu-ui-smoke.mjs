@@ -14,7 +14,7 @@ try{
   const response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'app loads');
   await page.waitForFunction(()=>window.__VT_APP_READY__===true&&!!window.VTMenuUi);
-  await page.waitForFunction(()=>window.VTMenuAvatarArt?.readySubjects?.english===true);
+  await page.waitForFunction(()=>window.VTMenuAvatarArt?.readySubjects?.english===true&&window.VTMenuAvatarArt?.atlasReady===true);
   await page.waitForFunction(()=>window.VTArmyArt?.ready===true);
 
   await page.evaluate(()=>{
@@ -103,7 +103,9 @@ try{
     const female={
       style:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarStyle,
       key:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarVisualKey,
-      final:document.querySelector('#projectMenuAvatarArt')?.dataset.avatarFinal||''
+      source:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarArtSource||'',
+      atlasKey:document.querySelector('#projectMenuAvatarFallback')?.dataset.avatarArtKey||'',
+      atlas:document.querySelectorAll('#projectMenuAvatarFallback .avatar-atlas-art').length
     };
     const after=subjectProgress('english').pct;
     learner().avatarStyle='male';
@@ -112,7 +114,8 @@ try{
   });
   assert(styleIsolation.female.style==='female','learner profile can select the female avatar track');
   assert(styleIsolation.female.key==='english-battle-female-stage-1','female profile keeps the same year-development stage with its own artwork namespace');
-  assert(styleIsolation.female.final!=='true','female track uses fallback until its dedicated artwork files are added');
+  assert(styleIsolation.female.source==='approved-atlas'&&styleIsolation.female.atlas===1,'English female track uses the approved painterly atlas instead of a technical fallback');
+  assert(styleIsolation.female.atlasKey==='english-battle-female-stage-1','English female atlas follows subject, world, style and stage');
   assert(styleIsolation.before===styleIsolation.after,'avatar profile style never changes academic mastery');
   const boundaries=await page.evaluate(()=>[0,17,18,35,36,53,54,71,72,89,90,100].map(p=>[p,avatarStageFor(p,'english').level]));
   assert(JSON.stringify(boundaries)===JSON.stringify([[0,1],[17,1],[18,2],[35,2],[36,3],[53,3],[54,4],[71,4],[72,5],[89,5],[90,6],[100,6]]),'avatar stage thresholds stay deterministic');
@@ -148,7 +151,9 @@ try{
   await page.waitForFunction(()=>state.activeSubject==='latin');
   assert((await page.locator('#menuSubjectLabel').textContent())==='Latein','subject switch updates menu context');
   assert((await page.locator('#projectMenuAvatarFrame').getAttribute('data-avatar-visual-key'))==='latin-battle-male-stage-1','avatar artwork key follows subject, profile style and its own academic progress');
-  assert((await page.locator('#projectMenuAvatarArt').getAttribute('data-avatar-final'))==='false','Latin intentionally keeps the shared fallback until its own six final artworks are added');
+  assert((await page.locator('#projectMenuAvatarFrame').getAttribute('data-avatar-art-source'))==='approved-atlas','Latin uses its own approved avatar artwork instead of the English army fallback');
+  assert(await page.locator('#projectMenuAvatarFallback .avatar-atlas-art').count()===1,'Latin start avatar is rendered from the approved stage atlas');
+  assert((await page.locator('#menuAvatarNextStage').textContent())?.includes('Tiro'),'Latin stage label follows the approved Tiro-to-Legat progression');
   assert(await page.locator('#menuNextTestProgress').isHidden(),'test progress hides when the active subject has no upcoming test');
   assert(await page.evaluate(()=>subjectProgress('english').pct)===beforeSwitch,'rendering and switching avatar context never changes academic mastery');
 
@@ -192,6 +197,7 @@ try{
   console.log('✓ six avatar stages are deterministic and learning-derived');
   console.log('✓ male/female avatar style is learner-profile-specific and mastery-neutral');
   console.log('✓ English male uses matching full-body offline artwork for its computed stage');
+  console.log('✓ English female and Latin avatars use approved painterly artwork rather than technical/cross-subject fallbacks');
   console.log('✓ subject switching stays synchronized without changing mastery');
 }finally{
   await browser.close();
