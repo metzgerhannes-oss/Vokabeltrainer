@@ -4,7 +4,7 @@
 |---|---|---|
 | Dachgeschoss – Erdgeschoss – Keller | `vokabeltrainer-b018-free-writing-smoke.mjs` + WebKit Paket C | drei klar benannte Schreibzonen direkt in der Schreibfläche, Hilfslinien unter der Spur; keine zusätzliche l/m/g-Legendenkarte |
 | freie Buchstabenauswahl | WebKit Paket C | nur `m`, `M/m` und Mehrfachauswahl möglich; Aufgaben bleiben in der Auswahl |
-| Buchstabenlaut | statischer B-018-Smoke + WebKit + Praxisabnahme | lokales Laut-Audio für alle 29 auswählbaren Buchstaben; kein Speech-Synthesis-Fallback; Zielgerätqualität praktisch prüfen |
+| Buchstabenlaut | statischer B-018-Smoke + WebKit Paket C + Praxisabnahme | MP3-Audiosprite deckt A–Z + Ä/Ö/Ü ab; kein Speech-Synthesis-/M4A-Fallback; WebKit muss `decodeAudioData` und `playPhoneme('M')` erfolgreich ausführen; reales iPhone bleibt Pflicht |
 | Fortschrittsneutralität | statischer B-018-Smoke + WebKit Paket C | keine Foundation-, Mastery-, Readiness-, Tagesziel-, XP- oder Battle-Mutation |
 
 # Vokabeltrainer – Test Matrix

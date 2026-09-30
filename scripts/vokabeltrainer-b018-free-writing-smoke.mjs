@@ -11,19 +11,18 @@ assert(module.includes('FREE_WRITING_LETTERS')&&module.includes("letter:'G',lowe
 assert(module.includes('freeWritingSelection=new Set()')&&module.includes('data-free-form=')&&module.includes('selectedFreeWritingForms'),'manual single, pair, and multiple-letter selection exists');
 assert(module.includes('Dachgeschoss')&&module.includes('Erdgeschoss')&&module.includes('Keller')&&module.includes('drawSchoolLineature'),'school lineature has roof, middle, and cellar zones');
 assert(module.includes('foundationFreeSoundBtn')&&module.includes('playPhoneme(meta.letter)')&&module.includes('playPhoneme(t.id)'),'letter sound buttons use the dedicated phoneme channel');
-const phonemeStart=module.indexOf('function playPhoneme(letter)');
+const phonemeStart=module.indexOf('function audioContext()');
 const phonemeEnd=module.indexOf('function mixOptions',phonemeStart);
 const phonemeBlock=module.slice(phonemeStart,phonemeEnd);
-assert(phonemeStart>=0&&phonemeEnd>phonemeStart&&phonemeBlock.includes('new Audio(path)'),'phoneme channel uses local audio files');
-assert(!phonemeBlock.includes('speechSynthesis')&&!phonemeBlock.includes('speak('),'phoneme channel never falls back to browser TTS');
+assert(phonemeStart>=0&&phonemeEnd>phonemeStart&&phonemeBlock.includes('decodeAudioData')&&phonemeBlock.includes('createBufferSource'),'phoneme channel decodes and plays generated PCM audio');
+assert(!phonemeBlock.includes('speechSynthesis')&&!phonemeBlock.includes('speak(')&&!phonemeBlock.includes('new Audio(')&&!phonemeBlock.includes('atob('),'phoneme channel has no TTS, media-element, M4A, or base64 fallback');
 assert(!module.includes('function lineatureLegend()')&&!css.includes('.foundation-lineature-legend'),'misleading l/m/g legend cards are removed');
-const phonemeFiles=fs.readdirSync('assets/audio/phonemes/de').filter(x=>x.endsWith('.m4a'));
-assert(phonemeFiles.length===29,'all 29 selectable German letter sounds have local audio');
-for(const file of phonemeFiles){
-  const bytes=fs.readFileSync('assets/audio/phonemes/de/'+file);
-  assert(bytes.length>700&&bytes.subarray(0,32).includes(Buffer.from('ftypM4A'))&&bytes.includes(Buffer.from('mdat')),'phoneme '+file+' is a non-empty M4A audio container');
-}
-for(const file of phonemeFiles)assert(sw.includes("'./assets/audio/phonemes/de/"+file+"'"),'offline shell caches phoneme '+file);
+const generator=read('scripts/generate-german-phonemes.py');
+assert(generator.includes("('A','a','a:')")&&generator.includes("('Ü','ue','y:')")&&generator.includes("len(manifest['clips']) != 29"),'generator defines and validates all 29 German letter sounds');
+assert(generator.includes("shutil.which('espeak')")&&generator.includes("wave.open"),'phoneme audio is generated as validated PCM WAV');
+assert(module.includes("PHONEME_AUDIO_PATH='assets/audio/phonemes/de/generated/phonemes.wav'")&&module.includes("PHONEME_MANIFEST_PATH='assets/audio/phonemes/de/generated/phonemes.json'"),'runtime uses generated WAV and manifest');
+assert(sw.includes("'./assets/audio/phonemes/de/generated/phonemes.wav'")&&sw.includes("'./assets/audio/phonemes/de/generated/phonemes.json'"),'offline shell caches generated phoneme WAV and manifest');
+assert(!module.includes(".m4a")&&!sw.includes("/sprite/part-")&&!sw.includes("/phonemes/de/a.m4a"),'broken M4A and base64-sprite paths are no longer active');
 assert(module.includes("run={stage:'freeWriting',freePractice:true")&&module.includes('forms:[...forms]'),'free-writing queue is built only from chosen forms');
 const freeStart=module.indexOf('function openFreeWriting()');
 const freeEnd=module.indexOf('function task(){',freeStart);
@@ -31,5 +30,5 @@ const freeBlock=module.slice(freeStart,freeEnd);
 assert(freeStart>=0&&freeEnd>freeStart,'free-writing implementation block is detectable');
 assert(!freeBlock.includes('bump(')&&!freeBlock.includes('saveProgress(')&&!freeBlock.includes('recordResult(')&&!freeBlock.includes('grantBattleTicket'),'free repetition has no academic or game progress mutation');
 assert(css.includes('.free-letter-grid')&&css.includes('@media(max-width:520px)'),'selection and lineature are responsive for small displays');
-assert(backlog.includes('## B-018 – Freies Schreiben')&&/\*\*Status:\*\* (?:IMPLEMENTED|VERIFIED|PRODUCTION)/.test(backlog),'B-018 backlog status records implementation or later verification');
+assert(backlog.includes('## B-018 – Freies Schreiben')&&backlog.includes('v0.21.44 Audio-Hotfix'),'B-018 backlog records the current v0.21.44 practical audio hotfix');
 console.log('Vokabeltrainer B-018 free writing smoke: passed');

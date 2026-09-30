@@ -363,7 +363,7 @@ Abnahme:
 5. Bestehende Profile funktionieren ohne manuelle Migration weiter.
 
 ## B-018 – Freies Schreiben: Grundschul-Hilfslinien und freie Buchstabenauswahl
-**Status:** VERIFIED · v0.21.42 Praxis-Hotfix PR #213 · funktionaler PR-CI #1332 vollständig grün · reale Wiederholungsabnahme offen  
+**Status:** v0.21.42 praktisch NICHT BESTANDEN · v0.21.44 Audio-Hotfix IN_IMPLEMENTATION · reale Wiederholungsabnahme offen  
 **Priorität:** P0 für Deutsch Klasse 1 / praktische v1-Abnahme  
 **Bezug:** B-001, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`
 
@@ -407,4 +407,11 @@ Praktischer Befund auf v0.21.41:
 - Buchstabenlaute haben bewusst **keinen Speech-Synthesis-Fallback**; normale Anweisungen/Wörter/Sätze behalten die Vorlesefunktion
 - alle Lautdateien werden für Offline/PWA im Service Worker vorgehalten
 - praktische Wiederholungsabnahme auf dem realen Gerät bleibt zwingend offen
+
+Praktischer Befund auf v0.21.42:
+- auf dem realen iPhone erschien trotz grünem CI die Meldung „Der Buchstabenlaut konnte nicht abgespielt werden.“
+- Ursache: Die M4A-Dateien erfüllten die damaligen Strukturprüfungen, waren auf iOS jedoch nicht zuverlässig decodierbar
+- v0.21.44 ersetzt die M4A-Einzelcontainer durch einen lokalen MP3-Audiosprite mit Zeitclips für A–Z und Ä/Ö/Ü
+- neues Release-Gate: WebKit muss den Sprite mit `decodeAudioData` tatsächlich decodieren und einen Lautclip starten; Dateisignatur/Dateigröße allein genügt nicht
+- defekte M4A-Dateien bleiben unreferenziert und werden nicht mehr im Offline-Shell gecacht
 

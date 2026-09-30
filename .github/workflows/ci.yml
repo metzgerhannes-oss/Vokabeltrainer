@@ -125,6 +125,14 @@ jobs:
           npm ci --ignore-scripts
           npx playwright install --with-deps webkit
 
+      - name: Generate German phoneme audio
+        run: |
+          if ! command -v espeak >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y espeak
+          fi
+          python3 scripts/generate-german-phonemes.py
+
       - name: Start local server
         run: |
           python3 -m http.server 4173 >/tmp/vokabeltrainer-http.log 2>&1 &
@@ -205,6 +213,14 @@ jobs:
           npm ci --ignore-scripts
           npx playwright install --with-deps webkit chromium
 
+      - name: Generate German phoneme audio
+        run: |
+          if ! command -v espeak >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y espeak
+          fi
+          python3 scripts/generate-german-phonemes.py
+
       - name: Start local server
         run: |
           python3 -m http.server 4173 >/tmp/vokabeltrainer-http.log 2>&1 &
@@ -275,6 +291,14 @@ jobs:
           cp ci/browser/package-lock.json package-lock.json
           npm ci --ignore-scripts
           npx playwright install --with-deps webkit
+
+      - name: Generate German phoneme audio
+        run: |
+          if ! command -v espeak >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y espeak
+          fi
+          python3 scripts/generate-german-phonemes.py
 
       - name: Start local server
         run: |

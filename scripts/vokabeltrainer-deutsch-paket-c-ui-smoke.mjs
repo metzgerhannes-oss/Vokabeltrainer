@@ -100,8 +100,14 @@ try{
   assert(await page.locator('.foundation-lineature-legend').count()===0,'no misleading l/m/g explanation cards appear below the selected letter');
   const freeCanvasLabel=await page.locator('#foundationFreeCanvas').getAttribute('aria-label');
   assert(freeCanvasLabel.includes('Dachgeschoss')&&freeCanvasLabel.includes('Erdgeschoss')&&freeCanvasLabel.includes('Keller'),'writing canvas keeps the three school-lineature zones');
-  const phonemePath=await page.evaluate(()=>window.VTGermanFoundation.phonemeAudioPath('M'));
-  assert(phonemePath==='assets/audio/phonemes/de/m.m4a','German letter sound resolves to local phoneme audio instead of TTS');
+  const decodedPhoneme=await page.evaluate(()=>window.VTGermanFoundation.decodePhonemeAudio());
+  assert(decodedPhoneme.ok===true&&decodedPhoneme.duration>18&&decodedPhoneme.channels===1&&decodedPhoneme.clips===29,'WebKit decodeAudioData decodes the generated German phoneme WAV: '+JSON.stringify(decodedPhoneme));
+  const phonemeClip=await page.evaluate(()=>window.VTGermanFoundation.phonemeClip('M'));
+  assert(Array.isArray(phonemeClip)&&phonemeClip.length===2&&phonemeClip[1]>0,'German M sound resolves from the generated manifest');
+  await page.click('#foundationFreeSoundBtn');
+  await page.waitForFunction(()=>['started','error'].includes(window.VTGermanFoundation.phonemeStatus().state));
+  const phonemeStatus=await page.evaluate(()=>window.VTGermanFoundation.phonemeStatus());
+  assert(phonemeStatus.state==='started','trusted WebKit button click starts the generated German M phoneme: '+JSON.stringify(phonemeStatus));
   const freeBox=await page.locator('#foundationFreeCanvas').boundingBox();
   assert(!!freeBox,'free-writing canvas is visible on iPhone viewport');
   await page.mouse.move(freeBox.x+60,freeBox.y+70);await page.mouse.down();await page.mouse.move(freeBox.x+180,freeBox.y+210,{steps:8});await page.mouse.up();

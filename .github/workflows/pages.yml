@@ -28,6 +28,14 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
 
+      - name: Generate German phoneme audio
+        run: |
+          if ! command -v espeak >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y espeak
+          fi
+          python3 scripts/generate-german-phonemes.py
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
 
@@ -69,5 +77,19 @@ jobs:
             echo "Live deployment did not expose expected version $EXPECTED_VERSION for commit $EXPECTED_SHA."
             exit 1
           fi
+
+          curl -fsSL --max-time 20 "$BASE/assets/audio/phonemes/de/generated/phonemes.json?release=$EXPECTED_SHA" -o /tmp/phonemes.json
+          curl -fsSL --max-time 30 "$BASE/assets/audio/phonemes/de/generated/phonemes.wav?release=$EXPECTED_SHA" -o /tmp/phonemes.wav
+          python3 - <<'PY'
+          import json, wave
+          from pathlib import Path
+          manifest=json.loads(Path('/tmp/phonemes.json').read_text(encoding='utf-8'))
+          assert len(manifest.get('clips',{}))==29
+          assert 'M' in manifest['clips']
+          with wave.open('/tmp/phonemes.wav','rb') as w:
+              duration=w.getnframes()/w.getframerate()
+              assert w.getnchannels()==1 and w.getsampwidth()==2 and duration>18
+          print('Live German phoneme WAV verified:', duration, 'seconds')
+          PY
 
           echo "Live GitHub Pages deployment verified at version $EXPECTED_VERSION."
