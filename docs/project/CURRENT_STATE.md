@@ -6,11 +6,11 @@ Stand: 30.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.46** (B-018 Selbstkontrolle als Release-Kandidat)
-- aktueller Stand auf `main`: **v0.21.45 / Merge `d162cfa9c73eeb30f82b0c4f203720e100a61a3a` / PR #219**
-- jüngster vollständig live-verifizierter Release: **v0.21.45 / PR #219**
-- Produktionsnachweis v0.21.45: **PR-CI #1358 success · main-CI #1359 success · GitHub Pages #573 success; realer iPhone-Buchstabenlaut anschließend praktisch bestätigt**
-- aktueller Release-Kandidat: **v0.21.46 – B-018 Selbstkontrolle auf `feature/deutsch-writing-self-check-v02146`**; Sollform-Overlay auf derselben Lineatur, „Nochmal schreiben“ / „Passt für mich“, strikt ohne automatische Bewertung oder Fortschrittsmutation; PR/CI/Live-Verifikation und reale Geräteabnahme offen
+- App-Version: **v0.21.47** (B-018 sichtbare Selbstkontrolle als Release-Kandidat)
+- aktueller Stand auf `main`: **v0.21.46 / Merge `58a71506fe7053343b4604f054e4c8688dd0b41e` / PR #220**
+- jüngster vollständig live-verifizierter Release: **v0.21.46 / PR #220**
+- Produktionsnachweis v0.21.46: **PR-CI #1361 success · main-CI #1362 success · GitHub Pages #574 success; reale iPhone-Selbstkontrolle anschließend wegen unsichtbarer Sollform praktisch nicht bestanden**
+- aktueller Release-Kandidat: **v0.21.47 – B-018 sichtbare Selbstkontrolle auf `fix/deutsch-writing-check-overlay-v02147`**; separate SVG-Overlay-Ebene exakt über dem Canvas, sichtbarer Kontrollstatus, weiterhin ohne automatische Bewertung oder Fortschrittsmutation; PR/CI/Live-Verifikation und reale iPhone-Abnahme offen
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv

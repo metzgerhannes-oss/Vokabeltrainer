@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 30.09.2026 · App v0.21.46
+Stand: 30.09.2026 · App v0.21.47
 
 ## Ergebnis
+
+- v0.21.47 ist der Praxisfix für die auf dem realen iPhone unsichtbare v0.21.46-Selbstkontrolle. Die Sollform wird nicht mehr in denselben Canvas gezeichnet, sondern als eigene SVG-Ebene über der Schreibfläche gerendert. Ein sichtbarer Kontrollstatus kennzeichnet den Modus. WebKit muss die Overlay-Ebene, die tatsächliche Glyphengröße und die deckungsgleiche Lage über dem Canvas nachweisen. Die reale iPhone-Abnahme bleibt separat erforderlich.
 
 - v0.21.46 ergänzt B-018 um eine ausdrücklich **nicht benotende Selbstkontrolle**: eigene Schreibspur bleibt sichtbar, die Sollform wird auf derselben Lineatur eingeblendet, anschließend entscheidet das Kind zwischen „Nochmal schreiben“ und „Passt für mich“. Der Kontrollschritt schreibt keine fachliche oder spielerische Evidenz.
 
