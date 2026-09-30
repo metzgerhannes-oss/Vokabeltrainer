@@ -153,13 +153,14 @@ try{
       renderKey:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarRenderKey||'',
       source:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarArtSource||'',
       atlas:document.querySelectorAll('#projectMenuAvatarFallback .avatar-atlas-art').length,
-      vectorFox:document.querySelectorAll('#projectMenuAvatarFallback .wordrealm-fox-svg').length
+      vectorFox:document.querySelectorAll('#projectMenuAvatarFallback .wordrealm-fox-svg').length,
+      approvedScene:document.querySelectorAll('#projectMenuScenery .wordrealm-approved-home-scene').length
     };
   });
   assert(after.mastery===route.mastery&&after.growth===route.growth,'switching back preserves the post-action academic and yearly state');
   assert(after.fox===true&&after.knight===false,'battle mode keeps the German primary-school fox identity on Start/Heute');
   assert(after.renderKey.includes('german-battle-')&&after.renderKey!==home.renderKey,'switching back rebuilds the battle avatar under a battle render key');
-  assert(after.source==='approved-atlas'&&after.atlas===1&&after.vectorFox===0,'switching back keeps the approved painterly fox atlas instead of restoring a technical vector fox');
+  assert(after.source==='wordrealm-approved-scene'&&after.approvedScene===1&&after.atlas===0&&after.vectorFox===0,'switching back restores the exact approved Wortreich scene without atlas tile or hidden technical fox surface');
   assert(after.nav.includes('Wortreich'),'battle mode restores Wortreich navigation');
 
   await page.evaluate(()=>window.VTArmyUi.open());
