@@ -55,15 +55,20 @@ Deutsch-Lern-/Wortreich-Kontext bleibt davon unabhängig und geschlechtsneutral.
 
 Die Startseite enthält für Deutsch:
 
-- Wortreich-Landschaft mit Burgkulisse
-- Fuchs groß als aktueller Entwicklungsstand
-- Name + „Stufe X/6“
-- sechs Stufen als sichtbare Entwicklungskette
-- „Heute / Was steht heute an?“
+- **eine zusammenhängende malerische Wortreich-Landschaft** mit großem Fuchs, Burg, Brücke, Bergen und Weg
+- der freigegebene Lernweg ist im Motiv sichtbar: **A → M → Aa → Wörter**
+- der Fuchs steht **frei in der Landschaft**; keine separate Avatar-Kachel, keine Blur-Balken und kein eingebranntes Karten-Fenster um die Figur
+- Name + „Stufe X/6“ liegt als dynamische Pergament-UI unterhalb der Szene
+- die sechs Entwicklungsstufen bleiben fachlich und technisch erhalten; die Startansicht zeigt ihre kompakte Fortschrittsleiste
+- „Heute / Was steht heute an?“ als helle Pergament-/Papierkarte
 - aktuelle Lernaufgabe als dominante Karte
 - „Lernwörter üben“
 - „Das Wortreich betreten“
 - Bottom-Navigation bleibt appweit grundsätzlich gleich
+
+### Verbindliche visuelle Referenz
+
+Die in v0.21.52 hinterlegte Szene `assets/wordrealm/home-approved-v1.webp` ist die verbindliche Startscreen-Referenz. Eine spätere Optimierung darf Motiv, Bildaufbau oder die freie Integration des Fuchses nicht wieder durch eine Atlas-/Avatar-Kachel ersetzen.
 
 ## 5. Vorlesefunktion
 
@@ -94,7 +99,8 @@ keinen unassistierten Abruf vortäuschen.
 
 ## 6. Technische Umsetzung
 
-- js/wordrealm-ui.js: konsistente SVG-Fuchsserie und Wortreich-Szenerie
+- assets/wordrealm/home-approved-v1.webp: freigegebene integrierte Wortreich-Startszene
+- js/wordrealm-ui.js: bindet die freigegebene Startszene ein; SVG-Fuchsserie bleibt für Stufen-/Fallbackdarstellungen
 - js/read-aloud-ui.js: zentrale, sichere Vorleseschicht
 - js/menu-ui.js: Startscreen-Verknüpfung, Wortreich-Aktionen und m/w/d-Avatarwahl
 - js/storage.js: persistente m/w/d-Härtung ohne Rückfall auf männlich
@@ -109,6 +115,7 @@ Ein Deutsch-Startscreen ist nur freigabefähig, wenn:
 
 - die Profilerstellung Männlich, Weiblich und Neutral/Divers dauerhaft speichert
 - alle sechs Stufen korrekt benannt sind
+- die freigegebene Startszene ohne Avatar-Kachel/Blur-Balken erscheint
 - Stufe 3–6 visuell aufeinander aufbauen
 - König eindeutig die Endstufe ist
 - auf iPhone-Breite kein horizontaler Seitenüberlauf entsteht
