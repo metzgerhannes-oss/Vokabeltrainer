@@ -79,17 +79,25 @@ jobs:
           fi
 
           curl -fsSL --max-time 20 "$BASE/assets/audio/phonemes/de/generated/phonemes.json?release=$EXPECTED_SHA" -o /tmp/phonemes.json
-          curl -fsSL --max-time 30 "$BASE/assets/audio/phonemes/de/generated/phonemes.wav?release=$EXPECTED_SHA" -o /tmp/phonemes.wav
+          curl -fsSL --max-time 20 "$BASE/assets/audio/phonemes/de/generated/m.wav?release=$EXPECTED_SHA" -o /tmp/m.wav
           python3 - <<'PY'
-          import json, wave
+          import json, math, struct, wave
           from pathlib import Path
           manifest=json.loads(Path('/tmp/phonemes.json').read_text(encoding='utf-8'))
-          assert len(manifest.get('clips',{}))==29
-          assert 'M' in manifest['clips']
-          with wave.open('/tmp/phonemes.wav','rb') as w:
-              duration=w.getnframes()/w.getframerate()
-              assert w.getnchannels()==1 and w.getsampwidth()==2 and duration>18
-          print('Live German phoneme WAV verified:', duration, 'seconds')
+          assert manifest.get('version')==2
+          assert len(manifest.get('files',{}))==29
+          assert manifest['files']['M']['file']=='m.wav'
+          with wave.open('/tmp/m.wav','rb') as w:
+              frames=w.getnframes()
+              rate=w.getframerate()
+              data=w.readframes(frames)
+              duration=frames/rate
+              assert w.getnchannels()==1 and w.getsampwidth()==2 and duration>0.3
+          values=struct.unpack('<'+'h'*(len(data)//2),data)
+          peak=max(abs(v) for v in values)
+          rms=math.sqrt(sum(v*v for v in values)/len(values))
+          assert peak>1000 and rms>150
+          print('Live native M phoneme WAV verified:', duration, 'seconds rms=', round(rms,1), 'peak=', peak)
           PY
 
           echo "Live GitHub Pages deployment verified at version $EXPECTED_VERSION."
