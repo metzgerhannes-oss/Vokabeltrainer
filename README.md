@@ -12,8 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.47**
+App-Version: **v0.21.48**
 
+- v0.21.48 (Release-Kandidat): **B-018 robuste Kontrollkarte.** v0.21.47 bestand den WebKit-Sichtbarkeitstest, blieb auf dem realen iPhone jedoch weiterhin ohne sichtbare Kontrolle. Die Selbstkontrolle wird deshalb nicht mehr als Canvas/SVG-Overlay umgesetzt, sondern als eigenständige HTML-Kontrollkarte direkt über der Schreibfläche: „So soll … aussehen“ mit großem blauem Sollbuchstaben auf eigener Dach-/Erdgeschoss-/Keller-Lineatur. Nach „Kontrollieren“ scrollt die App diese Karte automatisch ins sichtbare iPhone-Fenster.
 - v0.21.47 (Release-Kandidat): **B-018 sichtbare Selbstkontrolle auf iPhone.** v0.21.46 schaltete den Kontrollmodus intern um, die Sollform war auf dem realen iPhone jedoch nicht sichtbar. v0.21.47 rendert die Sollform auf einer separaten SVG-Overlay-Ebene exakt über der Schreibfläche und zeigt zusätzlich deutlich „Kontrolle aktiv · Blau gestrichelt = Sollform“. WebKit prüft nun Sichtbarkeit, gerenderte Glyphengröße und deckungsgleiche Overlay-Position.
 - v0.21.46 (Release-Kandidat): **B-018 Selbstkontrolle beim freien Schreiben.** Nach eigener Schreibspur kann das Kind „Kontrollieren“ wählen; die Sollform wird halbtransparent/gestrichelt direkt auf derselben Dach–Erdgeschoss–Keller-Lineatur eingeblendet. Danach nur „Nochmal schreiben“ oder „Passt für mich“ – keine automatische Handschriftbewertung, kein Richtig/Falsch und keinerlei Mastery-/Test-/XP-/Battle-Fortschritt.
 - v0.21.45 (Release-Kandidat): **B-018 nativer iPhone-Audio-Hotfix.** v0.21.44 decodierte und startete im WebKit-CI, blieb auf dem realen iPhone aber stumm. Deshalb verwendet die Laut-Taste jetzt keinen Web-Audio-Puffer mehr, sondern 29 einzeln erzeugte PCM-WAV-Dateien, die direkt im echten Tastendruck über das native HTML-`Audio`-Element abgespielt werden. Der Generator prüft zusätzlich Mindestdauer, RMS und Peak jeder Datei; der Live-Deploy prüft `m.wav` nochmals auf hörbare PCM-Nutzdaten. Reale iPhone-Abnahme bleibt Pflicht.
