@@ -148,6 +148,20 @@ Auch die Kampfvariante nutzt dieses Farbklima statt einer dunklen Kriegsästheti
 - keine realen Länder, Völker oder Religionen als Gegner
 - keine historische Kriegsrekonstruktion
 
+## Finale Runtime-Qualität
+
+Die Layout-SVGs definieren Komposition und Art Direction, nicht die zulässige Endqualität.
+Finale Runtime-Avatare müssen `VISUAL_DNA.md § 2.1` erfüllen.
+
+- Latein: malerische Serie **Tiro → Legionär → Optio → Centurio → Tribun → Legat**
+- Französisch: gleichwertige malerische Reisefigur-/Gefährtenserie
+- Männlich / Weiblich / Neutral-Divers sind qualitativ gleichwertig
+- ein komplettes Kampagnen-/Schlachtbild ist kein Avatar
+- technische CSS-/DOM-/SVG-Figuren bleiben ausschließlich Fallback
+
+v0.21.50 überträgt die freigegebene Avatar-Art in den produktiven Startscreen; die reale
+iPhone-Abnahme bleibt Bestandteil des Qualitätsgates.
+
 ## Avatar in der App
 
 Der Avatar soll nicht jede Oberfläche dominieren.
