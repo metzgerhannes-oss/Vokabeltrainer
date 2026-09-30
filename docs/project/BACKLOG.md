@@ -363,7 +363,7 @@ Abnahme:
 5. Bestehende Profile funktionieren ohne manuelle Migration weiter.
 
 ## B-018 – Freies Schreiben: Grundschul-Hilfslinien und freie Buchstabenauswahl
-**Status:** v0.21.42 praktisch NICHT BESTANDEN · v0.21.44 Audio-Hotfix IN_IMPLEMENTATION · reale Wiederholungsabnahme offen  
+**Status:** v0.21.44 praktisch NICHT BESTANDEN · v0.21.45 Native-Audio-Hotfix IN_IMPLEMENTATION · reale Wiederholungsabnahme offen  
 **Priorität:** P0 für Deutsch Klasse 1 / praktische v1-Abnahme  
 **Bezug:** B-001, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`
 
@@ -414,4 +414,12 @@ Praktischer Befund auf v0.21.42:
 - v0.21.44 ersetzt die M4A-Einzelcontainer durch einen lokalen MP3-Audiosprite mit Zeitclips für A–Z und Ä/Ö/Ü
 - neues Release-Gate: WebKit muss den Sprite mit `decodeAudioData` tatsächlich decodieren und einen Lautclip starten; Dateisignatur/Dateigröße allein genügt nicht
 - defekte M4A-Dateien bleiben unreferenziert und werden nicht mehr im Offline-Shell gecacht
+
+Praktischer Befund auf v0.21.44:
+- WebKit-CI decodierte und startete das generierte WAV erfolgreich; der Live-Deploy validierte die Datei ebenfalls
+- auf dem realen iPhone blieb die Laut-Taste trotzdem vollständig stumm
+- lokale Analyse bestätigt, dass der erzeugte M-Laut selbst nicht stumm ist; der Fehler liegt damit im Web-Audio-Ausgabepfad auf dem Zielgerät
+- v0.21.45 verwendet 29 einzelne PCM-WAV-Dateien und startet sie direkt über das native HTML-`Audio`-Element innerhalb des echten Tastendrucks
+- der Generator blockiert zu kurze, stille oder zu leise Laute anhand von Dauer, RMS und Peak
+- WebKit prüft den nativen `playing`-Status; Pages prüft live die PCM-Nutzdaten von `m.wav`
 
