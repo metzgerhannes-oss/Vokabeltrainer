@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 29.09.2026 · App v0.21.44
+Stand: 30.09.2026 · App v0.21.45
 
 ## Ergebnis
+
+- v0.21.45 reagiert auf den realen iPhone-Befund „kein Ton“ trotz grünem v0.21.44-WebKit-Test. Der Buchstabenlaut verlässt deshalb Web Audio vollständig: jeder der 29 Laute wird als eigene validierte PCM-WAV-Datei erzeugt und beim echten Tastendruck direkt über HTML-`Audio.play()` gestartet. Der Generator blockiert stille/zu leise Dateien per RMS-/Peak-Grenze; Pages prüft live exemplarisch `m.wav` auf hörbare PCM-Nutzdaten. Die reale Geräteabnahme bleibt der letzte Nachweis.
 
 - v0.21.44 behebt den realen iPhone-Audiofehler von B-018: Statt der auf dem Zielgerät nicht decodierbaren M4A-Einzelcontainer wird ein lokaler MP3-Audiosprite per Web Audio API decodiert. A–Z sowie Ä/Ö/Ü besitzen definierte Zeitclips. Der Release ist erst technisch verifiziert, wenn WebKit den Sprite mit `decodeAudioData` tatsächlich decodiert und `playPhoneme('M')` erfolgreich startet; Dateisignaturen allein reichen ausdrücklich nicht mehr. Praktische Wiederholungsabnahme auf dem realen iPhone bleibt zwingend.
 
