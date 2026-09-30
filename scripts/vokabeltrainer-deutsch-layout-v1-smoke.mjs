@@ -33,6 +33,7 @@ assert(model.includes("if(subject==='german')return arr[Math.max(0,Math.min(arr.
 assert(wordrealm.includes("function foxSvg(stage=1")&&wordrealm.includes("function castleSvg()")&&wordrealm.includes("function stageStrip(activeLevel=1)"),'Wortreich UI owns real fox, scenery and progression renderers');
 assert(wordrealm.includes("if(crownKnight)")&&wordrealm.includes("if(king)")&&wordrealm.includes("fill=\"#f6c84b\""),'upper stages build incrementally and reserve crown rendering for the king branch');
 assert(html.includes('id="wordrealmStageStrip"')&&html.includes('id="wordrealmLearningWordsBtn"')&&html.includes('id="wordrealmEnterBtn"'),'German home exposes stage strip and the two approved quick actions');
+assert(wordrealm.includes('assets/wordrealm/home-approved-v1.webp')&&menu.includes("avatarArtSource='wordrealm-approved-scene'"),'Wortreich home renders the exact approved scene and bypasses the atlas tile');
 assert(html.includes('js/read-aloud-ui.js?v='+version)&&html.includes('js/wordrealm-ui.js?v='+version),'approved layout modules load in the current versioned shell');
 assert(readAloud.includes("view.id!=='learnView'"),'global page read-aloud stays out of focused learning');
 assert(readAloud.includes("button.dataset.readTargets")&&readAloud.includes("speechSynthesis")&&html.includes("data-read-targets="),'read-aloud layer supports target-based German narration');
@@ -40,7 +41,7 @@ assert(foundation.includes("Audio gibt es nach der Lösung."),'word-reading evid
 assert(foundation.includes("readButton('Welches Bild passt zum Wort? Lies das Wort erst selbst.')"),'word-picture instruction can be read without reading the tested word');
 assert(foundation.includes("readButton('Welches Bild passt zum ganzen Satz? Lies den Satz ohne Zeitdruck.')"),'sentence-picture instruction can be read without reading the tested sentence');
 assert(!foundation.includes("readButton(t.sentence"),'tested sentence is never passed to pre-answer instruction read-aloud');
-assert(menuCss.includes('.wordrealm-stage-strip')&&menuCss.includes('.wordrealm-home-action')&&menuCss.includes('.wordrealm-scenery-svg'),'approved Wortreich home hierarchy is styled');
+assert(menuCss.includes('.wordrealm-stage-strip')&&menuCss.includes('.wordrealm-home-action')&&menuCss.includes('.wordrealm-approved-home-scene'),'approved Wortreich home hierarchy and exact scene asset are styled');
 assert(appCss.includes('width:44px;height:44px;min-width:44px;min-height:44px'),'read-aloud controls keep 44px touch targets');
 assert(ui.includes('value="neutral"')&&ui.includes('Neutral / Divers'),'profile editor exposes the third m/w/d avatar choice');
 assert(storage.includes("['male','female','neutral'].includes(l.avatarStyle)"),'persistence preserves male, female and neutral avatar styles');
