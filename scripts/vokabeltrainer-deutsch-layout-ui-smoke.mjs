@@ -13,7 +13,7 @@ const assert=(v,m)=>{if(!v)throw new Error('Deutsch Wortreich layout UI smoke fa
 try{
   const response=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded',timeout:15000});
   assert(response?.ok(),'app loads');
-  await page.waitForFunction(()=>window.__VT_APP_READY__===true&&window.VTWordrealmUi&&window.VTReadAloud);
+  await page.waitForFunction(()=>window.__VT_APP_READY__===true&&window.VTWordrealmUi&&window.VTReadAloud&&window.VTMenuAvatarArt?.atlasReady===true);
   await page.evaluate(()=>{
     state=defaultState();
     learner().name='Olli';
@@ -25,14 +25,15 @@ try{
     window.VTMenuUi?.render?.();
   });
   await page.waitForSelector('#homeView.active .project-menu-stage[data-subject="german"][data-visual-theme="wordrealm"]');
-  await page.waitForSelector('#projectMenuAvatarFallback .wordrealm-fox-svg');
+  await page.waitForSelector('#projectMenuAvatarFallback .avatar-atlas-art');
 
   const home=await page.evaluate(()=>({
     label:document.querySelector('#menuAvatarStageLabel')?.textContent||'',
     next:document.querySelector('#menuAvatarNextStage')?.textContent||'',
     stages:[...document.querySelectorAll('#wordrealmStageStrip .wordrealm-stage-tile span')].map(x=>x.textContent),
     foxes:document.querySelectorAll('#wordrealmStageStrip .wordrealm-fox-svg').length,
-    hero:document.querySelectorAll('#projectMenuAvatarFallback .wordrealm-fox-svg').length,
+    hero:document.querySelectorAll('#projectMenuAvatarFallback .avatar-atlas-art').length,
+    heroSource:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarArtSource||'',
     quickActions:document.querySelectorAll('#wordrealmHomeActions .wordrealm-home-action').length,
     speakers:[...document.querySelectorAll('#homeView .read-aloud-btn')].filter(el=>getComputedStyle(el).display!=='none').length,
     pageReadVisible:getComputedStyle(document.querySelector('#germanPageReadBtn')).display!=='none',
@@ -42,7 +43,8 @@ try{
   assert(home.label==='Olli · Stufe 1/6','profile name and current stage are visible');
   assert(home.next.includes('Grundausrüstung')&&home.next.includes('18%'),'current stage and next threshold are visible');
   assert(JSON.stringify(home.stages)===JSON.stringify(['Grundausrüstung','Lederzeug','Ritterlehrling','Ritter','Kronritter','König']),'all six approved stages render in order');
-  assert(home.foxes===6&&home.hero===1,'same SVG fox system renders hero and all stage previews');
+  assert(home.foxes===6,'stage strip keeps all six approved fox progression previews');
+  assert(home.hero===1&&home.heroSource==='approved-atlas','home hero uses the approved painterly fox artwork instead of the technical SVG hero');
   assert(home.quickActions===2,'approved Lernwörter and Wortreich quick actions are visible');
   assert(home.speakers>=5&&home.pageReadVisible,'first-grade home exposes visible read-aloud controls');
   assert(home.scrollWidth<=home.clientWidth+1,'approved German home has no horizontal iPhone overflow');
