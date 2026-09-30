@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 30.09.2026 · Basis: v0.21.48 · Release-Kandidat; Prüfschwerpunkt: B-018 robuste Schreibkontrolle auf realem iPhone
+Stand: 30.09.2026 · Basis: v0.21.49 · Release-Kandidat; Prüfschwerpunkt: B-018 robuste Schreibkontrolle auf realem iPhone
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
