@@ -693,7 +693,7 @@ function upcomingTestContext(subject=state.activeSubject){
   }
   const cfg=activeSeries(subject); let recurring=null;
   if(cfg){const date=seriesOccurrenceDate(subject),set=state.sets.find(s=>s.id===cfg.setId&&s.learnerId===state.activeLearnerId&&s.subject===subject),words=scopedWordsForSeries(cfg,subject);if(date&&cfg.scopeDate===date&&!isTestCompleted(date,subject)&&set&&words.length)recurring={date,days:daysUntil(date),sets:[set],words,source:'series',planId:`series:${set.id}:${date}`,series:cfg,testFormat:cfg.testFormat||'target',scopeText:seriesScopeText(cfg)}}
-  if(single&&recurring&&single.date===recurring.date&&single.sets.some(s=>s.id===recurring.sets[0]?.id))return {...single,series:cfg}}
+  if(single&&recurring&&single.date===recurring.date&&single.sets.some(s=>s.id===recurring.sets[0]?.id))return {...single,series:cfg};
   return testContextPriority(single,recurring);
 }
 function completeTestContext(ctx=upcomingTestContext(),subject=state.activeSubject){
