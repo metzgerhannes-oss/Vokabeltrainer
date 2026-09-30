@@ -6,11 +6,11 @@ Stand: 30.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.49** (Englisch-Testumfang getrennt als Release-Kandidat)
-- aktueller Stand auf `main`: **v0.21.48 / Commit `95e77c0554114fd448e5c95f8c17c72182adc16e`**
+- App-Version: **v0.21.50** (Post-Test-Pflichtlogik als Release-Kandidat)
+- aktueller Stand auf `main`: **v0.21.49 / Commit `6368b3f46981316d02ff0292eaa8582ab0750102` / PR #223**
 - jüngster vollständig live-verifizierter Release: **v0.21.47 / PR #221**
 - Produktionsnachweis v0.21.47: **PR-CI #1364 success · main-CI #1365 success · GitHub Pages #575 success; reale iPhone-Selbstkontrolle dennoch erneut ohne erkennbare Anzeige und damit praktisch nicht bestanden**
-- aktueller Release-Kandidat: **v0.21.49 – Englisch-Testumfang auf `fix/english-test-scope-v02149` / PR #223**; Pflichtlernen bleibt auf den explizit gewählten aktuellen Testumfang begrenzt, ältere fällige Wörter werden nicht zum Auffüllen eingemischt, und eine überlappende Wochenserie erweitert den expliziten Testumfang nicht; CI/Live-Verifikation offen
+- aktueller Release-Kandidat: **v0.21.50 – Post-Test-Pflichtlogik auf `fix/post-test-old-vocab-v02150`**; nach Abschluss eines Tests fällt das Pflichtlernen ohne nächsten aktiven Test nicht mehr auf den Jahreswortschatz zurück. Alte Vokabeln bleiben freiwillig verfügbar; nach Planung des nächsten Tests wird ausschließlich dessen Umfang verpflichtend. Schema `daily4` erzwingt den Neuaufbau alter Tagespläne; PR/CI/Live-Verifikation offen
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
