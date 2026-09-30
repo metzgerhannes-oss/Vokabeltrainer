@@ -1,9 +1,10 @@
 # Finales Audit
 
-Stand: 30.09.2026 · App v0.21.48
+Stand: 30.09.2026 · App v0.21.49
 
 ## Ergebnis
 
+- v0.21.49 trennt den verpflichtenden Englisch-Testumfang von älteren fälligen Vokabeln und verhindert die Vereinigung eines expliziten Testumfangs mit einer überlappenden Wochenserie. Alte Lernhistorie bleibt erhalten und optionale Wiederholung bleibt verfügbar.
 - v0.21.48 ersetzt nach erneut negativem realem iPhone-Befund die Overlay-Technik vollständig durch eine normale HTML-Kontrollkarte. Diese Karte liegt im Dokumentfluss direkt über der Schreibfläche, enthält einen großen Sollbuchstaben auf eigener Grundschul-Lineatur und wird nach dem Kontrollklick automatisch ins sichtbare Viewport gescrollt. Der WebKit-Test muss Sichtbarkeit, Mindestgröße und Viewport-Lage der Karte nachweisen. Reale Geräteabnahme bleibt zwingend.
 
 - v0.21.47 ist der Praxisfix für die auf dem realen iPhone unsichtbare v0.21.46-Selbstkontrolle. Die Sollform wird nicht mehr in denselben Canvas gezeichnet, sondern als eigene SVG-Ebene über der Schreibfläche gerendert. Ein sichtbarer Kontrollstatus kennzeichnet den Modus. WebKit muss die Overlay-Ebene, die tatsächliche Glyphengröße und die deckungsgleiche Lage über dem Canvas nachweisen. Die reale iPhone-Abnahme bleibt separat erforderlich.
