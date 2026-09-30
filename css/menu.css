@@ -719,3 +719,65 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
     width:98%;max-width:98%;padding:9px 10px
   }
 }
+
+
+/* v0.21.50 – freigegebene malerische Avatarserie fachübergreifend */
+.project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-standard,
+.project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-crest,
+.project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-aura{display:none!important}
+.project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-fallback.avatar-atlas-avatar{
+  position:relative;
+  width:auto!important;
+  height:90%!important;
+  min-height:0!important;
+  aspect-ratio:11/15;
+  display:block!important;
+  align-self:flex-end;
+  overflow:hidden;
+  border-radius:24px;
+  background:rgba(255,252,244,.72);
+  border:1px solid rgba(116,91,58,.18);
+  box-shadow:0 18px 28px rgba(45,39,30,.17);
+  transform:none!important;
+}
+.project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-fallback.avatar-atlas-avatar .avatar-head,
+.project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-fallback.avatar-atlas-avatar .avatar-body,
+.project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-fallback.avatar-atlas-avatar .avatar-shield{display:none!important}
+.project-menu-avatar-frame.avatar-atlas-rendered .avatar-atlas-art{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  border-radius:inherit;
+  background-repeat:no-repeat;
+  image-rendering:auto;
+}
+.project-menu-avatar-frame.avatar-atlas-rendered::after{
+  left:20%;
+  right:20%;
+  bottom:2%;
+  height:6%;
+  background:rgba(62,55,42,.14);
+  filter:blur(10px)
+}
+.project-menu-avatar-frame.avatar-atlas-rendered.german-fox-avatar .project-menu-avatar-fallback.avatar-atlas-avatar{
+  height:86%!important;
+  border-color:rgba(88,111,63,.24);
+  box-shadow:0 17px 27px rgba(54,72,42,.16)
+}
+@media(max-width:760px){
+  .project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-fallback.avatar-atlas-avatar{
+    height:88%!important;
+    max-height:255px
+  }
+  .project-menu-avatar-frame.avatar-atlas-rendered.german-fox-avatar .project-menu-avatar-fallback.avatar-atlas-avatar{
+    height:84%!important
+  }
+}
+@media(max-width:430px){
+  .project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-fallback.avatar-atlas-avatar{
+    height:86%!important;
+    max-height:235px
+  }
+}
