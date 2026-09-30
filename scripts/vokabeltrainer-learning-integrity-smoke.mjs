@@ -90,13 +90,13 @@ const passed=vm.runInContext(`
   rebuildWordIndexes();
   const legacyDailyPlan=buildDailyPlan(),legacyRefs=dailyPlanRefs(legacyDailyPlan,false);
   assert(legacyRefs.length===3,'daily release regression fixture contains three required words');
-  legacyDailyPlan.signature=legacyDailyPlan.signature.replace(/^daily2:/,'0.21.20:');
+  legacyDailyPlan.signature=legacyDailyPlan.signature.replace(/^daily3:/,'0.21.20:');
   legacyDailyPlan.completedKeys=[];
   state.activity.push({id:'daily_release_valid',learnerId:learner().id,date:new Date().toISOString(),type:'recall',wordId:legacyRefs[0].wordId,correct:true,active:true,assisted:false,orthographyOk:true});
   state.activity.push({id:'daily_release_support',learnerId:learner().id,date:new Date().toISOString(),type:'recognition',wordId:legacyRefs[1].wordId,correct:true,active:false,assisted:false,orthographyOk:true});
   state.activity.push({id:'daily_release_wrong',learnerId:learner().id,date:new Date().toISOString(),type:'recall',wordId:legacyRefs[2].wordId,correct:false,active:true,assisted:false,orthographyOk:true});
   const migratedDailyPlan=buildDailyPlan(),migratedDailyStatus=dailyPlanStatus(migratedDailyPlan);
-  assert(migratedDailyPlan===legacyDailyPlan&&migratedDailyPlan.signature.startsWith('daily2:'),'app release migrates the existing same-day plan instead of replacing it');
+  assert(migratedDailyPlan===legacyDailyPlan&&migratedDailyPlan.signature.startsWith('daily3:'),'app release migrates the existing same-day plan instead of replacing it');
   assert(migratedDailyStatus.done===1&&migratedDailyStatus.remaining===2,'same-day independent correct work is recovered after a release while support and wrong answers stay open');
 
   state=defaultState();
@@ -111,7 +111,7 @@ const passed=vm.runInContext(`
   state.activity.push({id:'compact_done',learnerId:learner().id,date:new Date().toISOString(),type:'recall',wordId:oldRefs[0].wordId,correct:true,active:true,assisted:false,orthographyOk:true});
   compactWords[0].repetitions=1;compactWords[0].activePracticeDays=[today()];
   const compactPlan=buildDailyPlan('english'),compactStatus=dailyPlanStatus(compactPlan);
-  assert(compactPlan!==oldPlan&&compactPlan.signature.startsWith('daily2:'),'daily1 policy plan is rebuilt under the short-core schema');
+  assert(compactPlan!==oldPlan&&compactPlan.signature.startsWith('daily3:'),'daily1 policy plan is rebuilt under the short-core schema');
   assert(compactStatus.total<=6&&compactStatus.total>=3&&compactStatus.done===1,'12-word legacy core shrinks into the compact focus window without losing an already completed word');
 
   state=defaultState();
@@ -347,6 +347,34 @@ const passed=vm.runInContext(`
   completeTestContext(weeklyContext,'english');
   const weeklyPending=seriesScopePending('english');
   assert(weeklyPending?.date===datePlusDays(7),'completing a recurring test advances directly to preparation for the next weekly occurrence');
+
+
+  state=defaultState();
+  const exactScopeSet={id:'exact_scope_set',learnerId:'learner_demo',subject:'english',title:'Exact Scope',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:today(),testScopeMode:'selected',testFrom:1,testTo:0,testFormat:'target',testSelectedLinkIds:[],from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+  state.sets.push(exactScopeSet);
+  for(let i=1;i<=6;i++)attachVocabularyToSet(exactScopeSet.id,{term:'exact'+i,translation:'genau'+i,source:'exact-scope-smoke',verified:true});
+  rebuildWordIndexes();
+  const exactScopeWords=setWords(exactScopeSet.id);
+  exactScopeSet.testSelectedLinkIds=exactScopeWords.slice(0,2).map(w=>w.setLinkId);
+  learner().testSeries.english={enabled:true,weekday:localDateFromKey(today()).getDay(),setId:exactScopeSet.id,scopeDate:today(),scopeMode:'selected',from:1,to:6,selectedLinkIds:exactScopeWords.map(w=>w.setLinkId),testFormat:'target'};
+  const exactScopeContext=upcomingTestContext('english');
+  assert(exactScopeContext?.source==='single'&&exactScopeContext.words.length===2,'an explicit test scope wins over a same-day weekly series instead of merging old and new vocabulary');
+  assert(exactScopeContext.words.every(w=>exactScopeSet.testSelectedLinkIds.includes(w.setLinkId)),'same-day series overlap cannot add words outside the explicitly selected test scope');
+
+  state=defaultState();
+  const oldMaintenanceSet={id:'old_maintenance_set',learnerId:'learner_demo',subject:'english',title:'Alter Stoff',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+  const currentScopeSet={id:'current_scope_set',learnerId:'learner_demo',subject:'english',title:'Aktueller Test',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(5),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+  state.sets.push(oldMaintenanceSet,currentScopeSet);
+  const oldMaintenanceWord=attachVocabularyToSet(oldMaintenanceSet.id,{term:'yesterday',translation:'gestern',source:'scope-maintenance-smoke',verified:true}).word;
+  attachVocabularyToSet(currentScopeSet.id,{term:'todayone',translation:'heute eins',source:'scope-maintenance-smoke',verified:true});
+  attachVocabularyToSet(currentScopeSet.id,{term:'todaytwo',translation:'heute zwei',source:'scope-maintenance-smoke',verified:true});
+  rebuildWordIndexes();
+  oldMaintenanceWord.repetitions=2;oldMaintenanceWord.activePracticeDays=[datePlusDays(-2)];oldMaintenanceWord.dueDate=today();
+  const currentScopePlan=buildDailyPlan('english'),currentScopeStatus=dailyPlanStatus(currentScopePlan),currentScopeRefs=dailyPlanRefs(currentScopePlan,false);
+  assert(currentScopePlan.maintenanceCount===0,'a concrete test plan never backfills its mandatory block with due vocabulary from older tests');
+  assert(currentScopeStatus.total===1&&currentScopeStatus.total<currentScopePlan.dailyTarget,'the mandatory block may stay smaller than the nominal target instead of adding unrelated old vocabulary');
+  assert(currentScopeRefs.every(ref=>(ref.setLinkId?wordByLinkId(ref.setLinkId):wordById(ref.wordId))?.setId===currentScopeSet.id),'every mandatory daily word stays inside the active test scope');
+  assert(!currentScopeRefs.some(ref=>ref.wordId===oldMaintenanceWord.id),'old due vocabulary remains outside the mandatory current-test block');
 
   state=defaultState();
   assert(battleTickets('english')===0&&!battleUnlockedToday('english'),'battle action starts locked for the day');

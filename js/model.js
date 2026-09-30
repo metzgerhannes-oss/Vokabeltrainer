@@ -693,7 +693,7 @@ function upcomingTestContext(subject=state.activeSubject){
   }
   const cfg=activeSeries(subject); let recurring=null;
   if(cfg){const date=seriesOccurrenceDate(subject),set=state.sets.find(s=>s.id===cfg.setId&&s.learnerId===state.activeLearnerId&&s.subject===subject),words=scopedWordsForSeries(cfg,subject);if(date&&cfg.scopeDate===date&&!isTestCompleted(date,subject)&&set&&words.length)recurring={date,days:daysUntil(date),sets:[set],words,source:'series',planId:`series:${set.id}:${date}`,series:cfg,testFormat:cfg.testFormat||'target',scopeText:seriesScopeText(cfg)}}
-  if(single&&recurring&&single.date===recurring.date&&single.sets.some(s=>s.id===recurring.sets[0]?.id)){const sets=uniqueById([...single.sets,...recurring.sets]);const words=uniqueWords([...single.words,...recurring.words]);return {date:single.date,days:single.days,sets,words,source:'mixed',planId:single.planId,series:cfg,testFormat:single.testFormat||recurring.testFormat||'target',scopeText:[single.scopeText,recurring.scopeText].filter(Boolean).join(' + ')}}
+  if(single&&recurring&&single.date===recurring.date&&single.sets.some(s=>s.id===recurring.sets[0]?.id))return {...single,series:cfg};
   return testContextPriority(single,recurring);
 }
 function completeTestContext(ctx=upcomingTestContext(),subject=state.activeSubject){
@@ -710,7 +710,7 @@ function completeTestContext(ctx=upcomingTestContext(),subject=state.activeSubje
 }
 function uniqueById(list){const seen=new Set();return list.filter(x=>x&&!seen.has(x.id)&&seen.add(x.id))}
 function testContextLabel(ctx,subject=state.activeSubject){if(!ctx)return '';const subjectName=subjectLabel(subject);const when=ctx.days===0?'heute':ctx.days===1?'morgen':ctx.days<0?`vor ${Math.abs(ctx.days)} Tag${Math.abs(ctx.days)===1?'':'en'}`:`in ${ctx.days} Tagen`;const recurrence=ctx.source==='series'||ctx.source==='mixed'?` · wöchentlich ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]}`:'';return `${subjectName}-Test ${when}${recurrence} · ${ctx.scopeText||ctx.sets.map(s=>s.title).join(' + ')}`}
-const DAILY_PLAN_SCHEMA='daily2';
+const DAILY_PLAN_SCHEMA='daily3';
 function dailyPlanSignature(ctx,subject,sessionSize){
   const words=(ctx?ctx.words:schoolYearVerifiedWords(subject)).map(w=>w.id).sort().join(',');
   return `${DAILY_PLAN_SCHEMA}:${ctx?`test:${ctx.source||'single'}:${ctx.date}:${ctx.sets.map(s=>s.id).sort().join(',')}`:`general:${currentSchoolYear()}`}:${sessionSize}:${words}`;
@@ -820,7 +820,7 @@ function buildDailyPlan(subject=state.activeSubject){
   const seenWeak=ready.filter(w=>!isTestReady(w,testFormat)).sort((a,b)=>testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b));
   let selected=uniqueWords([...preservedDoneWords,...due,...seenWeak,...ready]).slice(0,reviewTarget),maintenanceCount=0;
 
-  if(selected.length<reviewTarget){
+  if(!ctx&&selected.length<reviewTarget){
     const maintenance=dueWords(subject).filter(w=>!poolIds.has(w.id)).slice(0,reviewTarget-selected.length);
     const before=selected.length;selected=uniqueWords([...selected,...maintenance]).slice(0,reviewTarget);maintenanceCount=selected.length-before;
   }
