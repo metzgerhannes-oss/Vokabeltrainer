@@ -119,7 +119,8 @@ try{
   assert((await page.locator('#germanFoundationFeedback').textContent()).includes('Vergleiche selbst.'),'self-check stays neutral and asks the child to compare');
   assert((await page.locator('#foundationFreeCompareLegend').textContent()).includes('Sollform'),'self-check identifies the reference form');
   const referenceText=page.locator('#foundationFreeReference text');
-  assert((await referenceText.textContent()).trim()==='A','self-check overlay contains the current target letter');
+  const currentFreeTarget=(await page.locator('.free-writing-target strong').textContent()).trim();
+  assert((await referenceText.textContent()).trim()===currentFreeTarget,'self-check overlay contains the current visible target letter');
   const referenceBox=await referenceText.boundingBox();
   const overlayBox=await page.locator('#foundationFreeReference').boundingBox();
   const checkedCanvasBox=await page.locator('#foundationFreeCanvas').boundingBox();
