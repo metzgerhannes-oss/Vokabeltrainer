@@ -26,11 +26,15 @@ for(const slug of slugs)assert(sw.includes("'./assets/audio/phonemes/de/generate
 assert(sw.includes("'./assets/audio/phonemes/de/generated/phonemes.json'"),'offline shell caches phoneme manifest');
 assert(!module.includes('.m4a')&&!module.includes('PHONEME_AUDIO_PATH')&&!module.includes('decodePhonemeAudio'),'broken M4A and Web-Audio sprite paths are no longer active');
 assert(module.includes("run={stage:'freeWriting',freePractice:true")&&module.includes('forms:[...forms]'),'free-writing queue is built only from chosen forms');
+assert(module.includes('drawFreeWritingReference')&&module.includes('foundationFreeCheck')&&module.includes('Kontrollieren'),'free-writing self-check overlay exists');
+assert(module.includes('foundationFreeRetry')&&module.includes('Nochmal schreiben')&&module.includes('foundationFreeAccept')&&module.includes('Passt für mich'),'self-check offers retry and neutral acceptance');
+assert(module.includes('Vergleiche selbst.')&&module.includes('Sollform'),'self-check uses neutral comparison language rather than right/wrong grading');
+
 const freeStart=module.indexOf('function openFreeWriting()');
 const freeEnd=module.indexOf('function task(){',freeStart);
 const freeBlock=module.slice(freeStart,freeEnd);
 assert(freeStart>=0&&freeEnd>freeStart,'free-writing implementation block is detectable');
-assert(!freeBlock.includes('bump(')&&!freeBlock.includes('saveProgress(')&&!freeBlock.includes('recordResult(')&&!freeBlock.includes('grantBattleTicket'),'free repetition has no academic or game progress mutation');
+assert(!freeBlock.includes('bump(')&&!freeBlock.includes('saveProgress(')&&!freeBlock.includes('recordResult(')&&!freeBlock.includes('grantBattleTicket'),'free repetition and self-check have no academic or game progress mutation');
 assert(css.includes('.free-letter-grid')&&css.includes('@media(max-width:520px)'),'selection and lineature are responsive for small displays');
 assert(backlog.includes('## B-018 – Freies Schreiben')&&backlog.includes('v0.21.45 Native-Audio-Hotfix'),'B-018 backlog records the current v0.21.44 practical audio hotfix');
 console.log('Vokabeltrainer B-018 free writing smoke: passed');
