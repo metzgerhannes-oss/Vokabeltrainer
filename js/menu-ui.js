@@ -11,6 +11,7 @@
     window.VTWordrealmUi?.clearHome?.();
     frame.classList.remove('wordrealm-rendered','adventure-rendered','german-fox-avatar','german-knight-avatar','world-adventure-avatar','world-battle-avatar','avatar-atlas-rendered');
     frame.removeAttribute('data-avatar-render-key');
+    frame.removeAttribute('data-avatar-art-source');
     img.removeAttribute('src');
     img.removeAttribute('data-avatar-final');
     img.removeAttribute('data-avatar-art-key');
