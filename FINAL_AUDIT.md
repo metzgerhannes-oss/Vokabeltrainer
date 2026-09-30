@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 30.09.2026 · App v0.21.45
+Stand: 30.09.2026 · App v0.21.46
 
 ## Ergebnis
+
+- v0.21.46 ergänzt B-018 um eine ausdrücklich **nicht benotende Selbstkontrolle**: eigene Schreibspur bleibt sichtbar, die Sollform wird auf derselben Lineatur eingeblendet, anschließend entscheidet das Kind zwischen „Nochmal schreiben“ und „Passt für mich“. Der Kontrollschritt schreibt keine fachliche oder spielerische Evidenz.
 
 - v0.21.45 reagiert auf den realen iPhone-Befund „kein Ton“ trotz grünem v0.21.44-WebKit-Test. Der Buchstabenlaut verlässt deshalb Web Audio vollständig: jeder der 29 Laute wird als eigene validierte PCM-WAV-Datei erzeugt und beim echten Tastendruck direkt über HTML-`Audio.play()` gestartet. Der Generator blockiert stille/zu leise Dateien per RMS-/Peak-Grenze; Pages prüft live exemplarisch `m.wav` auf hörbare PCM-Nutzdaten. Die reale Geräteabnahme bleibt der letzte Nachweis.
 
