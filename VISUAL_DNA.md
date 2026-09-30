@@ -38,6 +38,33 @@ Alle Fachwelten verwenden dieselbe illustrativ-visuelle Familie:
 Neue Grafiken müssen sich an bereits freigegebenen Referenzbildern orientieren, nicht nur
 an allgemeinen Genrebegriffen.
 
+
+### 2.1 Verbindlicher Qualitätsstandard für alle Avatare
+
+Die freigegebene **hochwertige malerisch-cinematische Figurenillustration** ist der
+Mindeststandard für jeden sichtbaren Avatar – unabhängig von Fach, Welt, Profilvariante oder
+Entwicklungsstufe.
+
+Verbindlich:
+
+- weiche, malerische digitale Illustration mit glaubwürdigen Materialien und Licht
+- erkennbare Tiefe und Volumen statt flacher Symbolgrafik
+- natürliche, ruhige Proportionen und Mimik; kindgerecht, aber nicht verniedlicht
+- keine harten Comic-Outlines, Clipart-, Emoji-, CSS-Puppen- oder einfache SVG-Anmutung als finales Design
+- keine fachfremden Figuren- oder Szenenbilder als Ersatzavatar
+- sechs Entwicklungsstufen zeigen dieselbe Figurenidentität mit nachvollziehbar wachsender Ausstattung
+- Männlich, Weiblich und Neutral/Divers sind bei menschlichen Avatarpfaden qualitativ gleichwertig
+- technische CSS-/DOM-/SVG-Figuren sind ausschließlich Lade-/Fehler-Fallback und gelten nicht als fertig
+
+Referenzniveau ist die bereits freigegebene malerische Englisch-/Latein-Qualität: detaillierte
+Figur, Stoff-/Metall-/Lederwirkung, atmosphärisches Licht und eine zusammenhängende,
+hochwertige Illustration.
+
+Für **Deutsch Grundschule** ist der persönliche Avatar auf Start/Heute verbindlich ein **Fuchs**.
+Das gilt unabhängig davon, ob als Motivationswelt Abenteuer oder Kampf/Wortreich gewählt ist.
+Die Ritterarmee gehört zur separaten Wortreich-Spielwelt und ersetzt den Fuchs nicht als
+Grundschul-Avatar.
+
 ## 3. Gemeinsame UI-Grammatik
 
 Die Fachwelt ändert die Atmosphäre, nicht die grundlegende Bedienlogik.
@@ -432,7 +459,7 @@ Die Fachwelten müssen nicht dieselbe Figurenlogik verwenden.
 - **Englisch:** Avatar, Heldengruppe oder Armee
 - **Latein:** Legionär, Standartenträger oder geordnete Legion
 - **Französisch:** Reisefigur oder stilvoller Entdecker
-- **Deutsch 1–4:** Fuchs als ruhiger Lernbegleiter im Lernmodus; Ritterheer und Burg als Leitmotive des Wortreich-Spielmodus
+- **Deutsch 1–4:** Fuchs als persönlicher Grundschul-Avatar auf Start/Heute und ruhiger Lernbegleiter; Ritterheer und Burg bleiben Leitmotive des separaten Wortreich-Spielmodus
 
 Figuren tragen den Lernprozess, dominieren ihn aber nicht.
 
@@ -519,6 +546,9 @@ beantwortet wird:
 8. Lassen sich alle temporären UI-Elemente wieder schließen?
 9. Gibt es einen eindeutigen Rückweg?
 10. Bleibt die fachliche Aufgabe auch bei deaktivierter Spielinszenierung vollständig verständlich?
+11. Erreicht jeder sichtbare Avatar die malerische Referenzqualität aus § 2.1?
+12. Wird kein fachfremdes Szenenbild oder technischer Fallback als finaler Avatar verwendet?
+13. Sind alle tatsächlich auswählbaren Avatarvarianten qualitativ gleichwertig?
 
 ## 14. Vier Master-Keyframes für Phase 2
 

@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 30.09.2026 · Basis: v0.21.49 · Release-Kandidat; Prüfschwerpunkt: B-018 robuste Schreibkontrolle auf realem iPhone
+Stand: 30.09.2026 · Basis: v0.21.50 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle und Avatar-Art-Abnahme
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -8,6 +8,8 @@ Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
 
 
 ## Aktueller Praxisfortschritt
+
+- [ ] **Avatar-Art v0.21.50:** Auf realem iPhone nacheinander Englisch, Latein und Deutsch sowie verfügbare m/w/d-Varianten prüfen. Der Startscreen muss eine hochwertige gemalte Figur zeigen; Latein darf kein englisches Armee-Szenenbild mehr verwenden. Deutsch Grundschule zeigt in allen Weltvarianten den Fuchs. Stufenwechsel 1–6 muss das passende Bild wechseln; technische CSS-/SVG-Figuren dürfen im Normalbetrieb nicht sichtbar sein.
 
 - [ ] **B-018 Praxisabnahme:** Auf realem iPhone/iPad nur „m“, danach „M/m“ und danach „a, e, m, s“ auswählen; prüfen, dass ausschließlich diese Buchstaben geübt werden, Dach/Erdgeschoss/Keller beim Schreiben sichtbar bleiben, der Buchstabenlaut funktioniert und wiederholtes freies Schreiben keinen Mastery-/Testfortschritt erzeugt.
 - [ ] **B-018 Selbstkontrolle v0.21.48:** Buchstaben schreiben → „Kontrollieren“ → direkt oberhalb der eigenen Schreibfläche muss eine sichtbare Kontrollkarte „So soll … aussehen“ mit großem blauem Sollbuchstaben auf eigener Dach-/Erdgeschoss-/Keller-Lineatur erscheinen und automatisch ins Sichtfeld scrollen → „Nochmal schreiben“ löscht die Übung → erneut schreiben/kontrollieren → „Passt für mich“ wechselt weiter. Keine Richtig/Falsch-Wertung und kein Lern-/Spielprogress.

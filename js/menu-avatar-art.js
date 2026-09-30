@@ -15,6 +15,14 @@
       neutral:Object.freeze([])
     })
   });
+  const ATLAS_PATH='assets/menu-avatar/approved-atlas-v1.webp.b64';
+  const ATLAS_ROWS=Object.freeze({
+    english:Object.freeze({female:0,neutral:1}),
+    latin:Object.freeze({male:2,female:3,neutral:4}),
+    french:Object.freeze({male:5,female:6,neutral:7}),
+    german:Object.freeze({male:8,female:8,neutral:8})
+  });
+  const ATLAS_COLUMNS=6,ATLAS_ROWS_COUNT=9;
   const urls=[];
 
   async function objectUrl(path){
@@ -29,6 +37,9 @@
     return url;
   }
 
+  function safeStyle(style){return ['male','female','neutral'].includes(style)?style:'male'}
+  function stageIndex(stage){return Math.max(0,Math.min(5,(Number(stage)||1)-1))}
+
   async function boot(){
     const art={};
     for(const [subject,styles] of Object.entries(ART_PATHS)){
@@ -39,16 +50,35 @@
         catch(error){console.warn('Menu avatar artwork unavailable for '+subject+'/'+style+'; fallback stays active.',error)}
       }
     }
+
+    let atlasUrl='';
+    try{atlasUrl=await objectUrl(ATLAS_PATH)}
+    catch(error){console.warn('Approved avatar atlas unavailable; technical fallback stays active.',error)}
+
+    const hasAtlas=(subject,style)=>!!(atlasUrl&&Number.isInteger(ATLAS_ROWS[subject]?.[safeStyle(style)]));
+    const allSubjects=['english','latin','german','french'];
+    const allStyles=['male','female','neutral'];
     window.VTMenuAvatarArt={
       ready:true,
-      readySubjects:Object.fromEntries(Object.keys(art).map(subject=>[subject,Object.values(art[subject]||{}).some(list=>list?.length===6)])),
-      readyStyles:Object.fromEntries(Object.entries(art).flatMap(([subject,styles])=>Object.entries(styles).map(([style,list])=>[`${subject}:${style}`,list?.length===6]))),
+      atlasReady:!!atlasUrl,
+      readySubjects:Object.fromEntries(allSubjects.map(subject=>[
+        subject,
+        allStyles.every(style=>!!art[subject]?.[style]?.length||hasAtlas(subject,style))
+      ])),
+      readyStyles:Object.fromEntries(allSubjects.flatMap(subject=>allStyles.map(style=>[
+        `${subject}:${style}`,
+        !!art[subject]?.[style]?.length||hasAtlas(subject,style)
+      ]))),
       get(subject,style,stage){
         if(typeof style==='number'){stage=style;style='male'}
-        const safeStyle=['male','female','neutral'].includes(style)?style:'male';
-        const list=art[subject]?.[safeStyle];
-        const index=Math.max(0,Math.min(5,(Number(stage)||1)-1));
-        return Array.isArray(list)?list[index]||'':'';
+        const list=art[subject]?.[safeStyle(style)];
+        return Array.isArray(list)?list[stageIndex(stage)]||'':'';
+      },
+      getSprite(subject,style,stage){
+        if(!atlasUrl)return null;
+        const row=ATLAS_ROWS[subject]?.[safeStyle(style)];
+        if(!Number.isInteger(row))return null;
+        return {url:atlasUrl,col:stageIndex(stage),row,cols:ATLAS_COLUMNS,rows:ATLAS_ROWS_COUNT};
       }
     };
     document.dispatchEvent(new CustomEvent('vt-menu-avatar-art-ready'));

@@ -450,3 +450,21 @@ Auswahlaufgaben müssen die Position der richtigen Antwort variieren. Eine syste
 ist unzulässig. Browser-TTS für isolierte Phoneme wird auf realen Zielgeräten praktisch geprüft; bei
 unzureichender Lautqualität sind geprüfte Audioassets vorzuziehen.
 
+### D-20260930-001 – Einheitliche malerische Avatarqualität; Deutsch Grundschule bleibt Fuchs
+**Status:** LOCKED  
+**Quelle:** [../../VISUAL_DNA.md](../../VISUAL_DNA.md) § 2.1/§ 10/§ 13; [LATIN_FRENCH_VISUAL_LAYOUT.md](LATIN_FRENCH_VISUAL_LAYOUT.md); B-019
+
+Alle sichtbaren Avatare müssen die freigegebene malerisch-cinematische Qualitätsklasse
+erreichen. Fach, Welt und Stufe unterscheiden Motive und Ausrüstung, nicht die Qualitätsstufe.
+CSS-/DOM-/einfache SVG-Figuren und fachfremde Szenenbilder sind nur technische Fallbacks.
+
+Männlich, Weiblich und Neutral/Divers werden bei menschlichen Avataren gleichwertig behandelt.
+Die sechs Stufen bleiben als dieselbe Figurenidentität erkennbar.
+
+Für Deutsch Grundschule ist der persönliche Avatar auf Start/Heute in **beiden** Weltmodi ein
+Fuchs. Das Wortreich darf weiterhin Ritterheer, Burgen und Belagerung im separaten Spielbereich
+zeigen; diese Kampfinszenierung ersetzt den Fuchs nicht als Grundschul-Avatar.
+
+v0.21.50 setzt die freigegebene Avatar-Art auf dem Startscreen technisch um. Die praktische
+Abnahme auf realem iPhone bleibt Pflicht.
+
