@@ -25,14 +25,15 @@ try{
     window.VTMenuUi?.render?.();
   });
   await page.waitForSelector('#homeView.active .project-menu-stage[data-subject="german"][data-visual-theme="wordrealm"]');
-  await page.waitForSelector('#projectMenuAvatarFallback .avatar-atlas-art');
+  await page.waitForSelector('#projectMenuScenery .wordrealm-approved-home-scene');
 
   const home=await page.evaluate(()=>({
     label:document.querySelector('#menuAvatarStageLabel')?.textContent||'',
     next:document.querySelector('#menuAvatarNextStage')?.textContent||'',
     stages:[...document.querySelectorAll('#wordrealmStageStrip .wordrealm-stage-tile span')].map(x=>x.textContent),
     foxes:document.querySelectorAll('#wordrealmStageStrip .wordrealm-fox-svg').length,
-    hero:document.querySelectorAll('#projectMenuAvatarFallback .avatar-atlas-art').length,
+    hero:document.querySelectorAll('#projectMenuScenery .wordrealm-approved-home-scene').length,
+    heroLoaded:document.querySelector('#projectMenuScenery .wordrealm-approved-home-scene')?.complete===true,
     heroSource:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarArtSource||'',
     quickActions:document.querySelectorAll('#wordrealmHomeActions .wordrealm-home-action').length,
     speakers:[...document.querySelectorAll('#homeView .read-aloud-btn')].filter(el=>getComputedStyle(el).display!=='none').length,
@@ -44,7 +45,7 @@ try{
   assert(home.next.includes('Grundausrüstung')&&home.next.includes('18%'),'current stage and next threshold are visible');
   assert(JSON.stringify(home.stages)===JSON.stringify(['Grundausrüstung','Lederzeug','Ritterlehrling','Ritter','Kronritter','König']),'all six approved stages render in order');
   assert(home.foxes===6,'stage strip keeps all six approved fox progression previews');
-  assert(home.hero===1&&home.heroSource==='approved-atlas','home hero uses the approved painterly fox artwork instead of the technical SVG hero');
+  assert(home.hero===1&&home.heroLoaded&&home.heroSource==='wordrealm-approved-scene','home uses the exact approved painterly Wortreich scene instead of the atlas tile or technical SVG hero');
   assert(home.quickActions===2,'approved Lernwörter and Wortreich quick actions are visible');
   assert(home.speakers>=5&&home.pageReadVisible,'first-grade home exposes visible read-aloud controls');
   assert(home.scrollWidth<=home.clientWidth+1,'approved German home has no horizontal iPhone overflow');
