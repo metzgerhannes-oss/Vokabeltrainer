@@ -36,5 +36,5 @@ const freeBlock=module.slice(freeStart,freeEnd);
 assert(freeStart>=0&&freeEnd>freeStart,'free-writing implementation block is detectable');
 assert(!freeBlock.includes('bump(')&&!freeBlock.includes('saveProgress(')&&!freeBlock.includes('recordResult(')&&!freeBlock.includes('grantBattleTicket'),'free repetition and self-check have no academic or game progress mutation');
 assert(css.includes('.free-letter-grid')&&css.includes('@media(max-width:520px)'),'selection and lineature are responsive for small displays');
-assert(backlog.includes('## B-018 – Freies Schreiben')&&backlog.includes('v0.21.45 Native-Audio-Hotfix'),'B-018 backlog records the current v0.21.44 practical audio hotfix');
+assert(backlog.includes('## B-018 – Freies Schreiben')&&backlog.includes('v0.21.46 Selbstkontrolle IN_IMPLEMENTATION'),'B-018 backlog records the current v0.21.46 writing self-check');
 console.log('Vokabeltrainer B-018 free writing smoke: passed');
