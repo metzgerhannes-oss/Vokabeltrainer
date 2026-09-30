@@ -6,11 +6,11 @@ Stand: 29.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.44** (B-018 Audio-Hotfix als Release-Kandidat)
-- aktueller Stand auf `main`: **v0.21.43 / Commit `1d20dded36b3a8b2bde4c51b2b2081f34c9edc9f` / PR #214 + Current-State-Korrektur**
-- jüngster vollständig live-verifizierter Release: **v0.21.43 / PR #214**
-- Produktionsnachweis v0.21.43: **main-CI #1340 success · GitHub Pages #571 inklusive Live-Verifikation success**
-- aktueller Release-Kandidat: **v0.21.44 – B-018 Buchstabenlaut-Hotfix auf `fix/deutsch-phoneme-sprite-v02144`**; MP3-Audiosprite statt fehlerhafter M4A-Einzelcontainer, echtes WebKit-Decoding als Pflichtgate; PR/CI/Live-Verifikation und reale iPhone-Wiederholungsabnahme noch offen
+- App-Version: **v0.21.45** (B-018 Native-Audio-Hotfix als Release-Kandidat)
+- aktueller Stand auf `main`: **v0.21.44 / Merge `eb3aa3c623a4d046b07f2076b60aed0e1e117331` / PR #216**
+- jüngster vollständig live-verifizierter Release: **v0.21.44 / PR #216**
+- Produktionsnachweis v0.21.44: **main-CI #1356 success · GitHub Pages #572 inklusive WAV-/Manifest-Live-Verifikation success; reale iPhone-Audioabnahme dennoch nicht bestanden**
+- aktueller Release-Kandidat: **v0.21.45 – B-018 Native-Audio-Hotfix auf `fix/deutsch-native-audio-v02145`**; 29 einzeln validierte PCM-WAV-Dateien, nativer HTML-Audio-Start im echten Tastendruck, RMS-/Peak-Gate; PR/CI/Live-Verifikation und reale iPhone-Wiederholungsabnahme offen
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv

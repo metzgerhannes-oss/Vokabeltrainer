@@ -12,9 +12,10 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.44**
+App-Version: **v0.21.45**
 
-- v0.21.44 (Release-Kandidat): **B-018 Audio-Hotfix nach realem iPhone-Fehler.** Die in v0.21.42 eingeführten M4A-Einzeldateien waren auf dem Zielgerät nicht decodierbar. Buchstabenlaute werden jetzt aus einem lokalen MP3-Audiosprite per Web Audio API decodiert und als zeitlich definierte Clips für A–Z sowie Ä/Ö/Ü abgespielt. CI muss die MP3-Nutzdaten statisch und zusätzlich durch echtes WebKit-`decodeAudioData` prüfen. Kein TTS-Fallback; praktische iPhone-Wiederholungsabnahme bleibt Pflicht.
+- v0.21.45 (Release-Kandidat): **B-018 nativer iPhone-Audio-Hotfix.** v0.21.44 decodierte und startete im WebKit-CI, blieb auf dem realen iPhone aber stumm. Deshalb verwendet die Laut-Taste jetzt keinen Web-Audio-Puffer mehr, sondern 29 einzeln erzeugte PCM-WAV-Dateien, die direkt im echten Tastendruck über das native HTML-`Audio`-Element abgespielt werden. Der Generator prüft zusätzlich Mindestdauer, RMS und Peak jeder Datei; der Live-Deploy prüft `m.wav` nochmals auf hörbare PCM-Nutzdaten. Reale iPhone-Abnahme bleibt Pflicht.
+- v0.21.44: erster WAV/Web-Audio-Ansatz; technisch grün und live verifiziert, auf dem realen iPhone jedoch ohne hörbaren Ton und damit praktisch nicht bestanden.
 - v0.21.43: Deutsch-Fuchswelt-Layout-Hotfix aus PR #214; rein visuelle/motivationale Anpassung ohne Änderung der Lernlogik.
 - v0.21.42: B-018-Lineatur-Hotfix: die missverständlichen `l / m / g`-Erklärungskarten wurden entfernt. Der damalige M4A-Audioweg bestand die automatischen Strukturtests, scheiterte aber anschließend auf dem realen iPhone und gilt deshalb für Buchstabenlaut als praktisch nicht abgenommen.
 - v0.21.41: **B-018 Freies Schreiben** ergänzt Deutsch Klasse 1 um die Grundschul-Lineatur Dachgeschoss – Erdgeschoss – Keller, freie Auswahl einzelner Groß-/Kleinbuchstaben oder mehrerer Buchstaben, Buchstabenlaut und strikt fortschrittsneutrale Wiederholungen. Die Auswahl bleibt bis Änderung oder Reset erhalten; WebKit-iPhone- und statische CI-Checks sichern Auswahlmenge, Lineatur und fehlende Mastery-/Readiness-Mutation.

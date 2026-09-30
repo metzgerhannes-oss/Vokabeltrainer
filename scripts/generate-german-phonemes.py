@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 import json
+import math
 import shutil
+import struct
 import subprocess
 import sys
-import tempfile
 import wave
 from pathlib import Path
 
 OUT_DIR = Path('assets/audio/phonemes/de/generated')
-OUT_WAV = OUT_DIR / 'phonemes.wav'
 OUT_JSON = OUT_DIR / 'phonemes.json'
 RATE = 160
 AMPLITUDE = 170
-LEAD_SECONDS = 0.15
-GAP_SECONDS = 0.12
+MIN_DURATION = 0.30
+MIN_RMS = 150.0
+MIN_PEAK = 1000
 PHONEMES = [
     ('A','a','a:'),('B','b','b'),('C','c','k'),('D','d','d'),('E','e','e:'),('F','f','f f'),('G','g','g'),('H','h','h h'),
     ('I','i','i:'),('J','j','j'),('K','k','k'),('L','l','l l'),('M','m','m m'),('N','n','n n'),('O','o','o:'),('P','p','p'),
@@ -26,82 +27,71 @@ def fail(message: str) -> None:
     print(f'phoneme generation failed: {message}', file=sys.stderr)
     raise SystemExit(1)
 
+def pcm_stats(data: bytes) -> tuple[float, int]:
+    if not data or len(data) % 2:
+        fail('invalid PCM payload')
+    values = struct.unpack('<' + 'h' * (len(data) // 2), data)
+    peak = max(abs(value) for value in values)
+    rms = math.sqrt(sum(value * value for value in values) / len(values))
+    return rms, peak
+
 def main() -> None:
     espeak = shutil.which('espeak')
     if not espeak:
         fail('espeak is required')
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    with tempfile.TemporaryDirectory(prefix='vt-phoneme-') as tmp:
-        temp = Path(tmp)
-        clips = []
-        params = None
+    expected = {f'{slug}.wav' for _, slug, _ in PHONEMES} | {'phonemes.json'}
+    for old in OUT_DIR.iterdir():
+        if old.is_file() and old.name not in expected:
+            old.unlink()
 
-        for letter, slug, phoneme in PHONEMES:
-            target = temp / f'{slug}.wav'
-            result = subprocess.run(
-                [espeak, '-v', 'de', '-s', str(RATE), '-a', str(AMPLITUDE), '-w', str(target), f'[[{phoneme}]]'],
-                capture_output=True,
-                text=True,
-            )
-            if result.returncode != 0:
-                fail(f'espeak {letter}: {result.stderr.strip()}')
+    manifest = {'version': 2, 'format': 'audio/wav', 'files': {}}
+    for letter, slug, phoneme in PHONEMES:
+        target = OUT_DIR / f'{slug}.wav'
+        result = subprocess.run(
+            [espeak, '-v', 'de', '-s', str(RATE), '-a', str(AMPLITUDE), '-w', str(target), f'[[{phoneme}]]'],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            fail(f'espeak {letter}: {result.stderr.strip()}')
 
-            with wave.open(str(target), 'rb') as wav:
-                current = (wav.getnchannels(), wav.getsampwidth(), wav.getframerate(), wav.getcomptype())
-                if params is None:
-                    params = current
-                elif current != params:
-                    fail(f'inconsistent WAV parameters for {letter}: {current} vs {params}')
-                clips.append((letter, wav.readframes(wav.getnframes()), wav.getnframes()))
+        with wave.open(str(target), 'rb') as wav:
+            channels = wav.getnchannels()
+            width = wav.getsampwidth()
+            sample_rate = wav.getframerate()
+            compression = wav.getcomptype()
+            frames = wav.getnframes()
+            data = wav.readframes(frames)
 
-        channels, width, sample_rate, compression = params
+        duration = frames / sample_rate
         if channels != 1 or width != 2 or compression != 'NONE':
-            fail(f'unexpected PCM format {params}')
+            fail(f'unexpected PCM format for {letter}')
+        rms, peak = pcm_stats(data)
+        if duration < MIN_DURATION or rms < MIN_RMS or peak < MIN_PEAK:
+            fail(f'inaudible phoneme {letter}: duration={duration:.3f}s rms={rms:.1f} peak={peak}')
 
-        lead_frames = round(sample_rate * LEAD_SECONDS)
-        gap_frames = round(sample_rate * GAP_SECONDS)
-        silent_frame = b'\x00' * (width * channels)
-        frames = bytearray(silent_frame * lead_frames)
-        manifest = {
-            'version': 1,
-            'format': 'audio/wav',
-            'sampleRate': sample_rate,
-            'channels': channels,
-            'clips': {},
+        manifest['files'][letter] = {
+            'file': f'{slug}.wav',
+            'duration': round(duration, 5),
+            'rms': round(rms, 1),
+            'peak': peak,
         }
 
-        for letter, data, frame_count in clips:
-            start = len(frames) / (width * channels * sample_rate)
-            frames.extend(data)
-            duration = frame_count / sample_rate
-            manifest['clips'][letter] = [round(start, 5), round(duration, 5)]
-            frames.extend(silent_frame * gap_frames)
-
-        manifest['duration'] = round(len(frames) / (width * channels * sample_rate), 5)
-
-        with wave.open(str(OUT_WAV), 'wb') as output:
-            output.setnchannels(channels)
-            output.setsampwidth(width)
-            output.setframerate(sample_rate)
-            output.writeframes(bytes(frames))
-
-        OUT_JSON.write_text(
-            json.dumps(manifest, ensure_ascii=False, separators=(',', ':')) + '\n',
-            encoding='utf-8',
-        )
-
-    with wave.open(str(OUT_WAV), 'rb') as check:
-        duration = check.getnframes() / check.getframerate()
-        if check.getnchannels() != 1 or check.getsampwidth() != 2 or duration < 18:
-            fail('generated WAV validation failed')
-
-    if len(manifest['clips']) != 29:
+    if len(manifest['files']) != 29:
         fail('generated manifest must contain 29 letter sounds')
 
+    OUT_JSON.write_text(
+        json.dumps(manifest, ensure_ascii=False, separators=(',', ':')) + '\n',
+        encoding='utf-8',
+    )
+
+    total = sum((OUT_DIR / entry['file']).stat().st_size for entry in manifest['files'].values())
+    quietest = min((entry['rms'], letter) for letter, entry in manifest['files'].items())
     print(
-        f'Generated {OUT_WAV} ({OUT_WAV.stat().st_size} bytes) and {OUT_JSON}; '
-        f'duration={manifest["duration"]}s clips={len(manifest["clips"])}'
+        f'Generated {len(manifest["files"])} native WAV phonemes ({total} bytes total); '
+        f'quietest={quietest[1]} rms={quietest[0]}'
     )
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 29.09.2026 · Basis: v0.21.44 · Release-Kandidat; Prüfschwerpunkt: B-018 Buchstabenlaut auf realem iPhone
+Stand: 30.09.2026 · Basis: v0.21.45 · Release-Kandidat; Prüfschwerpunkt: B-018 Buchstabenlaut auf realem iPhone
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -14,6 +14,8 @@ Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
 **Praktischer Befund v0.21.41 (nicht bestanden):** Die zusätzlichen `l/m/g`-Karten waren missverständlich; Browser-TTS war kein verlässlicher Buchstabenlaut. Die Karten sind seit v0.21.42 entfernt.
 
 **Praktischer Befund v0.21.42 (nicht bestanden):** Auf dem realen iPhone meldete die Laut-Taste „Der Buchstabenlaut konnte nicht abgespielt werden.“ Ursache: Die ausgelieferten M4A-Container bestanden nur den zu schwachen Strukturtest, waren für iOS aber nicht zuverlässig decodierbar. **Fix v0.21.44:** MP3-Audiosprite + Web-Audio-Decoding; CI muss echtes WebKit-Decoding nachweisen. Reale Wiederholungsprüfung auf demselben iPhone erforderlich.
+
+**Praktischer Befund v0.21.44 (nicht bestanden):** WebKit-CI und Live-WAV-Prüfung waren grün, auf dem realen iPhone kam beim Druck auf „Laut hören“ dennoch kein hörbarer Ton. Der WAV selbst enthält messbare Audiodaten; damit gilt der Web-Audio-Ausgabepfad auf dem Zielgerät als unzureichend. **Fix v0.21.45:** 29 einzelne PCM-WAV-Dateien + nativer HTML-`Audio`-Start direkt im Tastendruck; Generator prüft RMS/Peak. Reale Wiederholungsprüfung erforderlich.
 - [x] Praxisblock 1 – Kind-End-to-End auf realem iPhone: Einstieg, Tageslernen, Fehler/Korrektur, Tagesabschluss, Testabschluss und Schlacht praktisch durchgeführt.
 - [x] Praxisblock 2 – Elternbereich: Test anlegen, bestehenden Test verschieben/bearbeiten, Vokabelumfang ändern und mehrere zukünftige Tests praktisch durchgeführt.
 - [ ] Praxisblock 3 – v0.21.30: dynamische Anfangsarmee nach sichtbarem Wachstumsfix, monotones Wachstum und datierbare Jahresfestung praktisch prüfen.
