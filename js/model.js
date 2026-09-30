@@ -488,7 +488,7 @@ function gearFor(pct){return ['I','II','III','IV','V','VI'][gearTier(pct)-1]}
 function gearLabelFor(pct,subject=state.activeSubject){
   const tier=gearTier(pct);
   const english=['Grundausrüstung','Verstärkte Schilde','Bogenschützen-Set','Belagerungsausrüstung','Reiter-Ausrüstung','Eliteausrüstung'];
-  const latin=['Scutum & Pilum','Verstärktes Scutum','Sagittarii','Belagerungsgerät','Equites','Praetorianer-Ausrüstung'];
+  const latin=['Tiro','Legionär','Optio','Centurio','Tribun','Legat'];
   const german=['Grundausrüstung','Lederzeug','Ritterlehrling','Ritter','Kronritter','König'];
   return (subject==='latin'?latin:subject==='german'?german:english)[tier-1];
 }
