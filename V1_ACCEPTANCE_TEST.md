@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 30.09.2026 · Basis: v0.21.50 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle und Avatar-Art-Abnahme
+Stand: 30.09.2026 · Basis: v0.21.51 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle und Avatar-Art-Abnahme
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.

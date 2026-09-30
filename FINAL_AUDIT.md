@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 30.09.2026 · App v0.21.50
+Stand: 30.09.2026 · App v0.21.51
 
 ## Ergebnis
+
+- v0.21.51 schließt den verbliebenen Post-Test-Fehler: Nach „Test abschließen“ fällt der Pflichtpfad ohne nächsten aktiven Test nicht mehr auf den Jahreswortschatz zurück. Alte Testvokabeln bleiben freiwillig verfügbar; sobald ein neuer Test geplant ist, wird ausschließlich dessen Umfang verpflichtend gelernt. Das Tagesplanschema steigt auf `daily4`.
 
 - v0.21.50 integriert die freigegebene malerische Avatar-Art-Direction in den Startscreen: echte Bildassets statt fachfremder Szenen-/CSS-Fallbacks für alle aktiven Fach-/Stilpfade; Deutsch Grundschule bleibt ein Fuchs. Englisch männlich nutzt die vorhandene volle 6-Stufen-Serie, Latein männlich die neue römische Ganzkörper-Serie; weitere m/w/d-Pfade werden aus dem freigegebenen Atlas gerendert. Die Änderung bleibt rein visuell und verändert keine Lern-, Mastery-, Spacing- oder Testlogik.
   Die Deutsch-WebKit-Regression prüft dabei ausdrücklich den Bildatlas als Start-Avatar in beiden Weltmodi; die vorhandenen SVG-Füchse bleiben nur für Stufenvorschau/technische Fallback-Pfade erhalten.

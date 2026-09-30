@@ -12,8 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.50**
+App-Version: **v0.21.51**
 
+- v0.21.51 (Release-Kandidat): **Kein Rückfall auf alte Vokabeln nach Testabschluss.** Ist ein Test abgeschlossen und noch kein nächster Test aktiv, bleibt das Pflichtlernen leer. Sobald der nächste Test geplant wird, enthält der Pflichtpfad ausschließlich dessen Testumfang. Tagesplanschema `daily4` erzwingt den sauberen Neuaufbau.
 - v0.21.50 (Release-Kandidat): Das freigegebene **Avatar-Artwork** ist in den Startscreen integriert. Englisch behält die vorhandene finale männliche 6-Stufen-Serie; weiblich/neutral, Latein m/w/d, Französisch m/w/d und der Deutsch-Grundschul-Fuchs verwenden die neue fachübergreifende Atlas-Serie. Latein zeigt nun Tiro → Legionär → Optio → Centurio → Tribun → Legat. Technische CSS-/SVG-Figuren bleiben nur Fallback.
 - v0.21.50 (Release-Kandidat): **Englisch-Testumfang bleibt exakt.** Aktuelle Testwörter werden im Pflichtblock nicht mehr mit älteren fälligen Vokabeln aufgefüllt; ein explizit ausgewählter Testumfang wird nicht mehr mit einer überlappenden Wochenserie vereinigt. Tagespläne werden über Schema `daily3` sauber neu aufgebaut.
 - v0.21.48 (Release-Kandidat): **B-018 robuste Kontrollkarte.** v0.21.47 bestand den WebKit-Sichtbarkeitstest, blieb auf dem realen iPhone jedoch weiterhin ohne sichtbare Kontrolle. Die Selbstkontrolle wird deshalb nicht mehr als Canvas/SVG-Overlay umgesetzt, sondern als eigenständige HTML-Kontrollkarte direkt über der Schreibfläche: „So soll … aussehen“ mit großem blauem Sollbuchstaben auf eigener Dach-/Erdgeschoss-/Keller-Lineatur. Nach „Kontrollieren“ scrollt die App diese Karte automatisch ins sichtbare iPhone-Fenster.
