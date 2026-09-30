@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 30.09.2026 · Basis: v0.21.51 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle und Avatar-Art-Abnahme
+Stand: 30.09.2026 · Basis: v0.21.52 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle und Wortreich-Startszene
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -8,6 +8,8 @@ Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
 
 
 ## Aktueller Praxisfortschritt
+
+- [ ] **Wortreich-Startszene v0.21.52:** Auf realem iPhone muss die freigegebene malerische Szene ohne Avatar-Kachel sichtbar sein: großer Fuchs frei in der Landschaft, Burg/Brücke/Berge, Wegmarken A → M → Aa → Wörter und darunter die Pergament-Stufenleiste. Keine unscharfen Balken ober-/unterhalb des Fuchses und kein separates Bildkarten-Gefühl.
 
 - [ ] **Avatar-Art v0.21.50:** Auf realem iPhone nacheinander Englisch, Latein und Deutsch sowie verfügbare m/w/d-Varianten prüfen. Der Startscreen muss eine hochwertige gemalte Figur zeigen; Latein darf kein englisches Armee-Szenenbild mehr verwenden. Deutsch Grundschule zeigt in allen Weltvarianten den Fuchs. Stufenwechsel 1–6 muss das passende Bild wechseln; technische CSS-/SVG-Figuren dürfen im Normalbetrieb nicht sichtbar sein.
 
