@@ -63,7 +63,7 @@ try{
     };
   });
   assert(initial.mode==='battle','German legacy profile starts in battle mode');
-  assert(initial.renderKey.includes('german-battle-')&&initial.source==='approved-atlas'&&initial.fox&&!initial.knight&&initial.atlas===1,'battle mode keeps the German fox identity and renders the approved painterly fox artwork');
+  assert(initial.renderKey.includes('german-battle-')&&initial.source==='approved-atlas'&&initial.fox&&!initial.knight&&initial.atlas===1,'battle mode keeps the German fox identity and renders the approved painterly fox atlas artwork');
 
   await page.evaluate(()=>openProfileEditor(learner().id));
   await page.waitForSelector('[data-profile-world-subject="german"]:not(.hidden)');
