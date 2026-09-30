@@ -59,11 +59,12 @@ try{
       source:frame?.dataset.avatarArtSource||'',
       fox:frame?.classList.contains('german-fox-avatar'),
       knight:frame?.classList.contains('german-knight-avatar'),
-      atlas:fallback?.querySelectorAll('.avatar-atlas-art').length||0
+      atlas:fallback?.querySelectorAll('.avatar-atlas-art').length||0,
+      approvedScene:document.querySelectorAll('#projectMenuScenery .wordrealm-approved-home-scene').length
     };
   });
   assert(initial.mode==='battle','German legacy profile starts in battle mode');
-  assert(initial.renderKey.includes('german-battle-')&&initial.source==='approved-atlas'&&initial.fox&&!initial.knight&&initial.atlas===1,'battle mode keeps the German fox identity and renders the approved painterly fox atlas artwork');
+  assert(initial.renderKey.includes('german-battle-')&&initial.source==='wordrealm-approved-scene'&&initial.fox&&!initial.knight&&initial.atlas===0&&initial.approvedScene===1,'battle mode uses the exact approved Wortreich home scene and never the old fox atlas tile');
 
   await page.evaluate(()=>openProfileEditor(learner().id));
   await page.waitForSelector('[data-profile-world-subject="german"]:not(.hidden)');
