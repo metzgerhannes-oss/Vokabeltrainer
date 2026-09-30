@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 30.09.2026 · Basis: v0.21.45 · Release-Kandidat; Prüfschwerpunkt: B-018 Buchstabenlaut auf realem iPhone
+Stand: 30.09.2026 · Basis: v0.21.46 · Release-Kandidat; Prüfschwerpunkt: B-018 freie Schreibkontrolle auf realem iPhone
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
@@ -10,6 +10,7 @@ Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
 ## Aktueller Praxisfortschritt
 
 - [ ] **B-018 Praxisabnahme:** Auf realem iPhone/iPad nur „m“, danach „M/m“ und danach „a, e, m, s“ auswählen; prüfen, dass ausschließlich diese Buchstaben geübt werden, Dach/Erdgeschoss/Keller beim Schreiben sichtbar bleiben, der Buchstabenlaut funktioniert und wiederholtes freies Schreiben keinen Mastery-/Testfortschritt erzeugt.
+- [ ] **B-018 Selbstkontrolle v0.21.46:** Buchstaben schreiben → „Kontrollieren“ → eigene Spur bleibt sichtbar und Sollform erscheint auf derselben Lineatur → „Nochmal schreiben“ löscht die Übung → erneut schreiben/kontrollieren → „Passt für mich“ wechselt zum nächsten ausgewählten Buchstaben. Keine Richtig/Falsch-Wertung und kein Lern-/Spielprogress.
 
 **Praktischer Befund v0.21.41 (nicht bestanden):** Die zusätzlichen `l/m/g`-Karten waren missverständlich; Browser-TTS war kein verlässlicher Buchstabenlaut. Die Karten sind seit v0.21.42 entfernt.
 
