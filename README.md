@@ -12,7 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.57**
+App-Version: **v0.21.58**
+
+- v0.21.58 (Release-Kandidat): **B-013 Three.js-Technik-Spike.** Eine isolierte, lazy geladene Festungsenthüllung nutzt lokal gepinntes Three.js r186 mit Skip, Reduced Motion, 2D-Fallback und ohne Lern-/Battle-Zustandsänderung. Produktive 3D-Integration bleibt von der praktischen visuellen/Performance-Abnahme abhängig.
 
 - v0.21.57 (Release-Kandidat): **Phaser für alle Kampf-Fächer.** Englisch, Latein, Französisch-Kampf und Deutsch/Wortreich nutzen jetzt denselben produktiven Phaser-4-Pfad. Latein erhält eine römisch-mediterrane Farb-/Umgebungsidentität, Französisch-Kampf eine eigene französisch inspirierte fiktionale Festungsidentität. Abenteuerwelten bleiben kampffrei; fachliche Battle-Logik, Tickets und Mastery bleiben unverändert.
 
