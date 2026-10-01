@@ -12,8 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.53**
+App-Version: **v0.21.54**
 
+- v0.21.54 (Release-Kandidat): **Weltwahl Abenteuer/Kampf fachübergreifend abgeschlossen.** Englisch, Latein, Deutsch und Französisch verlangen bei neuen aktiven Fächern eine bewusste Weltwahl; beide Modi bleiben pro Fach getrennt gespeichert. Alle acht Welten besitzen sechs Stufen und kanonische Storylines; Weltwechsel verändern keinerlei fachlichen Lernzustand.
 - v0.21.53 (Release-Kandidat): **Französisch fachlich freigeschaltet.** Lokales `fra.traineddata`, `fr-FR`-Audio, accent-/apostrophsichere produktive Bewertung und französischer OCR-/Importpfad sind aktiv. `Voyage Français` sowie die fiktionale Festungswelt werden regulär über die gemeinsame Fach-/Weltarchitektur angeboten; Retrieval, Spacing und Mastery bleiben fachübergreifend unverändert.
 - v0.21.52 (Release-Kandidat): **Freigegebene Wortreich-Startszene exakt umgesetzt.** Der Deutsch-Startscreen verwendet die freigegebene malerische Szene mit großem Fuchs, Burg, Brücke, Bergen und dem Lernweg A → M → Aa → Wörter direkt als integrierte Landschaft. Die unscharfe Atlas-Kachel und die separaten Blur-Ränder sind im Wortreich-Startscreen entfernt; dynamische Stufen-/Lerninformationen bleiben echte UI.
 - v0.21.51 (Release-Kandidat): **Kein Rückfall auf alte Vokabeln nach Testabschluss.** Ist ein Test abgeschlossen und noch kein nächster Test aktiv, bleibt das Pflichtlernen leer. Sobald der nächste Test geplant wird, enthält der Pflichtpfad ausschließlich dessen Testumfang. Tagesplanschema `daily4` erzwingt den sauberen Neuaufbau.
