@@ -1,6 +1,6 @@
 # Vokabeltrainer – generisches Fachsystem
 
-Fachlich zuletzt geprüft: 27.09.2026 · Gültig für aktuellen Stand: ja
+Fachlich zuletzt geprüft: 01.10.2026 · Gültig für aktuellen Stand: ja
 
 Punkt 2 des Pre-v1-Fahrplans macht Fremdsprachen zu Konfiguration statt Sonderlogik.
 
@@ -20,20 +20,26 @@ Konfiguriert werden pro Fach:
 
 ## Aktueller Stand
 
-**Englisch**, **Latein** und **Deutsch** sind produktiv aktiv.
+**Englisch**, **Latein**, **Deutsch** und **Französisch** sind produktiv aktiv.
 
-**Französisch** ist vollständig im Fachmodell vorbereitet, aber noch `available:false`. Grund: Das lokale Offline-OCR-Paket enthält aktuell `eng.traineddata`, `deu.traineddata` und `lat.traineddata`, jedoch noch kein `fra.traineddata`. Die Oberfläche soll kein Fach freigeben, dessen Fotoimport nicht vollständig funktioniert.
+**Französisch** ist ab v0.21.53 fachlich freigeschaltet. Der frühere OCR-Blocker ist beseitigt:
+`ocr/lang/fra.traineddata` liegt lokal im Projekt und ist auf den offiziellen
+`tesseract-ocr/tessdata_fast`-Stand `87416418657359cb625c412a48b6e1d6d41c29bd`
+gepinnt (Git-Blob `d9e2b2160be0d1ca3b8f1bf2730fae476ef3b4a6`, 1.130.365 Byte).
 
-Für Französisch sind bereits konfiguriert:
+Für Französisch sind verbindlich:
 
 - `speechLang: fr-FR`
-- `ocrLang: fra`
+- `ocrLang: fra` mit lokaler OCR-Ressource
 - moderne Importlogik statt Latein-Sonderbehandlung
 - französische Funktionswörter für OCR-/Textheuristik
-- normale Retrieval-/Spacing-/Mastery-Logik
-- Lehrwerk/ISBN, Tests, Notenskala, Bibliothek und Lernstände über dasselbe generische Datenmodell
-
-Nach Bereitstellung der OCR-Ressource darf die Freischaltung nur noch eine Konfigurationsänderung sein: `available:true`.
+- Akzente bleiben Teil der Lexemidentität und der fachlich richtigen Zielschreibung
+- produktive französische Zielantworten nutzen `strictTermOrthography`: Akzente und Apostrophe werden nicht still als richtig gewertet; typografische Apostrophvarianten werden technisch normalisiert
+- Groß-/Kleinschreibung bleibt bei Französisch tolerant, sofern sie nicht fachlich als eigener Zielunterschied modelliert ist
+- `fr-FR` wird für Lernwort-Audio, Hören, Diktat und Korrektur-Audio verwendet
+- normale Retrieval-/Spacing-/Mastery-Logik bleibt fachübergreifend; Französisch erhält keine künstliche Sonder-Mastery
+- Lehrwerk/ISBN, Tests, Notenskala, Bibliothek und Lernstände verwenden dasselbe generische Datenmodell
+- `Voyage Français` und die fiktionale Festungswelt sind über die gemeinsame Weltwahl verfügbar
 
 Explizit unbekannte Fachwerte aus Importen werden verworfen statt still zu Englisch umgedeutet. Fehlende Fachangaben dürfen weiterhin auf das aktuell gewählte Fach zurückfallen.
 
@@ -61,6 +67,7 @@ Sprachspezifische Funktionen werden als Fähigkeit modelliert:
 - `hybridDictionary`: aktuell Englisch
 - `latinGrammar`: Latein
 - `extraIdentity`: Latein, wenn Zusatzformen ein Lexem disambiguieren
+- `strictTermOrthography`: Französisch, wenn produktive Zielantworten Akzente/Apostrophe exakt erhalten müssen
 
 Dadurch muss z. B. Französisch nicht mit neuen `if (subject === 'french')`-Blöcken ergänzt werden.
 
@@ -77,4 +84,6 @@ Retrieval Practice bleibt fachübergreifend der Kern. Forschung zeigt den Nutzen
 5. Fach aktivieren.
 6. CI muss ohne neue fachnamenspezifische Verzweigungen bestehen.
 
-Französisch bleibt bis Schritt 2/4 deaktiviert.
+Für Französisch ist dieser Aktivierungs-Check in v0.21.53 erfüllt: lokales `fra`-OCR,
+`fr-FR`-Audio, französischer OCR-/Import-Smoke, fachliche Bewertung und reguläre
+Profilaktivierung werden gemeinsam durch die Release-CI geschützt.
