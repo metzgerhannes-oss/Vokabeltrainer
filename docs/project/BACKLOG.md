@@ -381,7 +381,7 @@ Abschluss v0.21.54:
 - die Browser-Regression prüft die Weltwahl jetzt explizit für alle vier freigeschalteten Fächer
 
 ## B-018 – Freies Schreiben: Grundschul-Hilfslinien und freie Buchstabenauswahl
-**Status:** v0.21.47 Selbstkontrolle praktisch NICHT BESTANDEN · v0.21.48 Kontrollkarte IN_IMPLEMENTATION · reale Schreibkontrolle offen  
+**Status:** v0.21.55 neutrale Schreibspur-Plausibilitätsprüfung IN_IMPLEMENTATION · praktische Geräteabnahme offen  
 **Priorität:** P0 für Deutsch Klasse 1 / praktische v1-Abnahme  
 **Bezug:** B-001, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`
 
@@ -455,6 +455,13 @@ Praktischer Befund auf v0.21.46:
 - v0.21.47 rendert die Sollform als **separate SVG-Overlay-Ebene** exakt über der Schreibfläche
 - zusätzlich erscheint sichtbar **„Kontrolle aktiv · Blau gestrichelt = Sollform“**
 - WebKit prüft nicht nur DOM-Zustand, sondern Sichtbarkeit, tatsächliche Glyphengröße und deckungsgleiche Overlay-Lage
+
+Erweiterung v0.21.55:
+- die echte Finger-/Stiftbahn wird während des freien Schreibens punktweise erfasst
+- „Kontrollieren“ prüft neutral Größe, horizontale Lage sowie Ober-/Mittel-/Unterlängen gegen Dachgeschoss, Erdgeschoss und Keller
+- Rückmeldung lautet ausschließlich sinngemäß „ähnelt der Sollform“ oder gibt einen konkreten Lagehinweis; keine automatische Richtig/Falsch-Wertung
+- die geometrische Kontrolle schreibt keinerlei Foundation-, Mastery-, Readiness-, Tagesziel-, XP- oder Battle-Evidenz
+- die sichtbare Sollformkarte bleibt zusätzlich für den eigenen Formvergleich erhalten
 
 Erweiterung v0.21.46:
 - nach eigener Schreibspur erscheint erst auf Wunsch die Aktion **„Kontrollieren“**
