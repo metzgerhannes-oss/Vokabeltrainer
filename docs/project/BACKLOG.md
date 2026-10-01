@@ -331,7 +331,7 @@ Ein Backlog-Punkt wird nicht gelöscht, wenn er umgesetzt oder verworfen wird:
 - Ersatz → `SUPERSEDED` plus Verweis auf Nachfolger
 
 ## B-017 – Weltwahl Abenteuer oder Kampf pro Fach
-**Status:** IN_IMPLEMENTATION · v0.21.40 fachübergreifend implementiert; ab v0.21.53 sind auch die Französisch-Welten fachlich freigeschaltet; finale Produktprüfung bleibt offen  
+**Status:** IMPLEMENTED · v0.21.54 Release-Kandidat · alle vier Fächer mit unabhängiger Abenteuer-/Kampfwahl  
 **Priorität:** P1 visuelle/Profile-UX vor finaler Fachwelten-Ausarbeitung  
 **Decision:** D-20260929-001 · D-20260929-002  
 **Betroffene Quellen:** `VISUAL_DNA.md`, `docs/project/LATIN_FRENCH_VISUAL_LAYOUT.md`, Profilmodell, Profilerstellung, Profileinstellungen, Spiel-/Fortschrittsrenderer
@@ -371,6 +371,14 @@ Abnahme:
 3. Die sichtbare Jahresstufe bleibt vor und nach dem Wechsel gleichwertig.
 4. Abenteuer und Kampf sind visuell eindeutig unterscheidbar, bleiben aber innerhalb derselben Fachidentität.
 5. Bestehende Profile funktionieren ohne manuelle Migration weiter.
+
+Abschluss v0.21.54:
+- Englisch, Latein, Deutsch und Französisch sind regulär auswählbar
+- jedes aktive Fach zeigt bei neuen Profilen bewusst **keine** still vorausgewählte Welt
+- Abenteuer/Kampf wird pro Fach separat gespeichert und kann später gewechselt werden
+- alle acht Welten besitzen sechs Fortschrittsstufen und den kanonischen Storybogen
+- der Weltwechsel verändert weder Vokabeldaten, persönlichen Lernstand, Tagespläne, Testserien, Testabschlüsse noch Notenskalen
+- die Browser-Regression prüft die Weltwahl jetzt explizit für alle vier freigeschalteten Fächer
 
 ## B-018 – Freies Schreiben: Grundschul-Hilfslinien und freie Buchstabenauswahl
 **Status:** v0.21.47 Selbstkontrolle praktisch NICHT BESTANDEN · v0.21.48 Kontrollkarte IN_IMPLEMENTATION · reale Schreibkontrolle offen  
