@@ -145,11 +145,11 @@ verifiziert.
 Die praktische Checkliste auf realem Gerät/Browser muss tatsächlich durchgeführt und dokumentiert werden. Automatisierte CI ersetzt diese Abnahme nicht.
 
 ## B-006 – GitHub-Branchregel „up to date before merge“
-**Status:** VERIFIED: Ruleset aktiv, strict up-to-date = FALSE · ADMIN-ÄNDERUNG OFFEN  
-**Priorität:** vor formaler v1-Freigabe  
-**Quelle:** `FINAL_AUDIT.md`
+**Status:** VERIFIED / ERLEDIGT  
+**Priorität:** abgeschlossen  
+**Quelle:** Repository-Ruleset `Protect main`
 
-Das aktive Repository-Ruleset `Protect main` wurde am 01.10.2026 live geprüft. Der Required-Status-Check `test` ist aktiv, aber `strict_required_status_checks_policy` steht auf `false`. Die gewünschte Regel „Branch muss vor Merge auf aktuellem main sein“ ist daher noch nicht aktiv. Die vorhandene GitHub-App-Verbindung besitzt keine Admin-Schreibaktion für Rulesets; die verbleibende Änderung ist eine reine Repository-Admin-Einstellung.
+Das aktive Repository-Ruleset `Protect main` wurde am 01.10.2026 erneut live geprüft. Der Required-Status-Check `test` ist aktiv und `strict_required_status_checks_policy` steht jetzt auf `true`. Damit muss ein PR vor dem Merge auf dem aktuellen `main`-Stand sein. B-006 ist vollständig erledigt; es ist keine weitere Admin-Änderung offen.
 
 
 ## B-012 – Phaser-4-Battle-Renderer
