@@ -51,6 +51,7 @@ Französisch nutzt die gemeinsame Facharchitektur, ist ab v0.21.53 aber regulär
 - `fr-FR` für Lernwort-Audio/Hören/Diktat
 - französische Akzente bleiben Teil der Lexemidentität
 - produktive Zielantworten verlangen über die Capability `strictTermOrthography` korrekte Akzente und Apostrophe; typografische Apostrophvarianten bleiben technisch tolerant
+- Varianten/Formen werden nur akzeptiert, wenn sie als `acceptedTerms` bzw. Sense-Variante explizit hinterlegt sind; es werden keine Antwortformen erfunden
 - OCR-/Textimport bewahrt typische Formen wie `école`, `garçon`, `être`, `où`
 - Retrieval, Spacing, Mastery, Testplanung, Notenskala, Bibliothek und Family-Sync bleiben auf der generischen Facharchitektur
 - `Voyage Français` und die vorbereitete fiktionale Festungswelt werden mit der Fachaktivierung regulär erreichbar
