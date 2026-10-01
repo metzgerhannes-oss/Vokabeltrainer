@@ -1,5 +1,7 @@
 # Vokabeltrainer – Current State
 
+- v0.21.57 Release-Kandidat: produktiver Phaser-4-Kampfpfad auf Englisch, Latein, Französisch-Kampf und Deutsch/Wortreich erweitert; praktische visuelle Gesamt-Abnahme bleibt offen.
+
 - v0.21.56 Release-Kandidat: B-019 Avatar-Matrix-Gate prüft 72 Fach-/Profil-/Stufenkombinationen automatisiert; praktische Geräteabnahme bleibt offen.
 
 Stand: 01.10.2026, aktueller main-Stand direkt aus GitHub geprüft.
@@ -8,14 +10,14 @@ Stand: 01.10.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.56** (fachübergreifende Weltwahl als Release-Kandidat)
+- App-Version: **v0.21.57** (fachübergreifende Weltwahl als Release-Kandidat)
 - aktueller Stand auf `main`: **v0.21.53 / Commit `5b415a6134dd5638c824a2154f20b4e4c6266862` / PR #227**
 - jüngster vollständig live-verifizierter Release: **v0.21.47 / PR #221**
 - Produktionsnachweis v0.21.47: **PR-CI #1364 success · main-CI #1365 success · GitHub Pages #575 success; reale iPhone-Selbstkontrolle dennoch erneut ohne erkennbare Anzeige und damit praktisch nicht bestanden**
 - aktueller Release-Kandidat: **v0.21.55 – B-017 fachübergreifende Weltwahl auf `feature/world-choice-complete-v02154`**; Englisch, Latein, Deutsch und Französisch besitzen unabhängig wählbare Abenteuer-/Kampfwelten, jeweils sechs Stufen und kanonische Storylines. Weltwechsel bleiben fachlich neutral. Basis ist der gemergte v0.21.53-Stand / PR #227
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
-- Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
+- Phaser-Produktivstatus: Englisch, Latein, Französisch-Kampf und Deutsch/Wortreich laufen über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild bleiben fachlich neutral
 - fachliche Schutzlinie: Spielprogression, Battle-Choreografie und Jahresfestungsdatum verändern weder Mastery noch Vokabelbewertung oder Testbereitschaft
 - v0.21.31 schützt strittige Bewertungen: Kind meldet → Fehlwirkung wird neutralisiert → Eltern entscheiden → lokale Variante wird freigegeben oder Fehler erst dann bestätigt
 - v0.21.33 erlaubt „Vokabel überspringen“: ausschließlich ans Ende derselben Session, ohne Bewertung oder Lernstandsänderung; offene Prüffälle blockieren zugleich das Tagesziel nicht
@@ -51,7 +53,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Schutz vor System-Schreibvorschlägen | PRODUCTION | README v0.21.3 + Code/Tests |
 | Kindnavigation Lernen vs. Spiel | PRODUCTION | `PRODUCT_DNA.md`, `VISUAL_DNA.md` |
 | Battle-Viewport / Vollbild | PRODUCTION v0.21.28 | PR #187; standardmäßig scrollbar, optionaler app-eigener Vollbildmodus |
-| Phaser-4-Battle-Renderer Englisch | PRODUCTION v0.21.28; weitere Fächer/Fallbacks offen | D-20260928-004, B-012, PR #185/#187 |
+| Phaser-4-Battle-Renderer fachübergreifend | IMPLEMENTED v0.21.57; praktische visuelle Gesamt-Abnahme offen | D-20260928-004, B-012, PR #185/#187 |
 | Dauerhafte Jahresentwicklung / Jahresfestung | PRODUCTION / LIVE VERIFIED v0.21.30 | D-20260928-005, B-014, PR #188/#191 |
 | Family Sync | PRODUCTION / Beta-Grenze | `SYNC_ARCHITECTURE.md`, `FINAL_AUDIT.md` |
 | Deutsch Paket B / Fachgrundgerüst | PRODUCTION / CI VERIFIED v0.21.34 | `docs/project/DEUTSCH_WORTREICH_V1.md`, B-001, D-20260928-008, PR #201 |
