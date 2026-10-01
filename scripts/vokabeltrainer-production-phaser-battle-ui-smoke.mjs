@@ -52,8 +52,8 @@ try{
   assert(live.outcome==='capture','actual fortress state selects capture outcome');
   assert(live.profile==='MP','profile initials are passed into the capture banner');
   assert(live.sound==='web-audio'||live.sound==='silent','production bridge reports battle-sound capability');
-  assert(live.version.includes('v0.21.28'),'visible live renderer badge shows the cinematic release version');
-  assert(live.moduleVersion==='0.21.37-phaser-production.3','production bridge exposes the current cinematic renderer version');
+  assert(live.version.includes('v0.21.57'),'visible live renderer badge shows the current cross-subject Phaser release version');
+  assert(live.moduleVersion==='0.21.57-phaser-production.4','production bridge exposes the current cross-subject renderer version');
   console.log('PRODUCTION_PHASER_GEOMETRY',JSON.stringify(live));
   assert(live.stageWidth>300&&live.stageHeight>160,'battle stage keeps a cinematic mobile viewport');
   const stageRatio=live.stageWidth/live.stageHeight;
