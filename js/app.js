@@ -17,7 +17,7 @@
       updateReloading=true;
       location.reload();
     });
-    navigator.serviceWorker.register('./sw.js?v=0.21.53')
+    navigator.serviceWorker.register('./sw.js?v=0.21.54')
       .then(reg=>reg.update().catch(()=>{}))
       .catch(console.warn);
   }
