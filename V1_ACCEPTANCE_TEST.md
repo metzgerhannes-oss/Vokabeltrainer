@@ -1,6 +1,8 @@
 # V1 Acceptance Test
 
-Stand: 30.09.2026 · Basis: v0.21.54 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle und Wortreich-Startszene
+Stand: 01.10.2026 · Basis: v0.21.55 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle und Wortreich-Startszene
+
+Release-Kandidat v0.21.55 ergänzt die neutrale geometrische Schreibspur-Kontrolle für B-018; reale Geräteabnahme bleibt erforderlich.
 
 Release-Kandidat v0.21.54 schließt die fachbezogene Weltwahl Abenteuer/Kampf für alle vier freigeschalteten Fächer ab; der Wechsel bleibt fachlich neutral.
 
