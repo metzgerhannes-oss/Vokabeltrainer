@@ -1,6 +1,6 @@
 # Vokabeltrainer – Backlog
 
-Stand: 27.09.2026
+Stand: 01.10.2026
 
 Dieses Backlog enthält nur Punkte, die als Projektarbeit erhalten bleiben sollen. Reine Ideen ohne Bewertung gehören zunächst in den Status `IDEA`; als sinnvoll bestätigte, aber noch nicht umgesetzte Punkte in `APPROVED_BACKLOG`.
 
