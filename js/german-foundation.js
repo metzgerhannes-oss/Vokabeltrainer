@@ -240,13 +240,50 @@
     run={stage:'freeWriting',freePractice:true,index:0,forms:[...forms]};
     renderFreeWritingTask();
   }
+  function freeWritingShapeProfile(form){
+    const lower=String(form||'')===String(form||'').toLowerCase()&&String(form||'')!==String(form||'').toUpperCase();
+    const base=String(form||'').toLowerCase();
+    const ascenders=new Set(['b','d','f','h','k','l','t']);
+    const descenders=new Set(['g','j','p','q','y']);
+    return {lower,ascender:lower&&ascenders.has(base),descender:lower&&descenders.has(base)};
+  }
+  function analyzeFreeWritingShape(form,canvas){
+    const points=Array.isArray(drawState?.points)?drawState.points:[],profile=freeWritingShapeProfile(form);
+    if(points.length<3)return {level:'retry',message:'Schreibe den Buchstaben etwas deutlicher und versuche die Kontrolle noch einmal.'};
+    const xs=points.map(p=>p.x),ys=points.map(p=>p.y),minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+    const width=(maxX-minX)/canvas.width,height=(maxY-minY)/canvas.height,centerX=(minX+maxX)/(2*canvas.width);
+    const hints=[];
+    if(width<.07)hints.push('etwas breiter schreiben');
+    if(width>.78)hints.push('etwas schmaler schreiben');
+    if(centerX<.16||centerX>.84)hints.push('mehr in die Mitte der Schreibfläche rücken');
+    if(!profile.lower){
+      if(minY>125)hints.push('oben weiter bis ins Dachgeschoss schreiben');
+      if(maxY<175)hints.push('unten weiter bis zur Grundlinie schreiben');
+      if(height<.28)hints.push('den Großbuchstaben höher schreiben');
+    }else if(profile.ascender){
+      if(minY>130)hints.push('die Oberlänge weiter ins Dachgeschoss ziehen');
+      if(maxY<175||maxY>250)hints.push('den Hauptteil im Erdgeschoss ausrichten');
+    }else if(profile.descender){
+      if(minY<70||minY>175)hints.push('den Hauptteil im Erdgeschoss beginnen');
+      if(maxY<225)hints.push('die Unterlänge weiter in den Keller ziehen');
+    }else{
+      if(minY<65)hints.push('den Kleinbuchstaben nicht so hoch ins Dachgeschoss ziehen');
+      if(minY>175)hints.push('den Buchstaben weiter oben im Erdgeschoss beginnen');
+      if(maxY<170||maxY>250)hints.push('den Buchstaben auf der Grundlinie des Erdgeschosses ausrichten');
+      if(height>.58)hints.push('den Kleinbuchstaben etwas niedriger schreiben');
+    }
+    if((Number(drawState?.length)||0)<100)hints.push('die Form etwas vollständiger nachziehen');
+    return hints.length
+      ?{level:'compare',message:'Schau noch einmal: '+hints.slice(0,2).join(' und ')+'.'}
+      :{level:'close',message:'Höhe und Lage ähneln der Sollform schon gut. Vergleiche jetzt noch die genaue Form.'};
+  }
   function bindWritingCanvas(canvas,{onReady}={}){
-    const ctx=canvas.getContext('2d');drawState={drawing:false,last:null,length:0};drawSchoolLineature(ctx,canvas);
+    const ctx=canvas.getContext('2d');drawState={drawing:false,last:null,length:0,points:[]};drawSchoolLineature(ctx,canvas);
     const point=e=>{const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}};
-    canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture?.(e.pointerId);drawState.drawing=true;drawState.last=point(e)});
-    canvas.addEventListener('pointermove',e=>{if(!drawState?.drawing)return;const p=point(e),q=drawState.last;ctx.beginPath();ctx.moveTo(q.x,q.y);ctx.lineTo(p.x,p.y);ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#4f5d3a';ctx.lineWidth=12;ctx.stroke();drawState.length+=Math.hypot(p.x-q.x,p.y-q.y);drawState.last=p;if(drawState.length>80)onReady?.()});
+    canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture?.(e.pointerId);const p=point(e);drawState.drawing=true;drawState.last=p;drawState.points.push(p)});
+    canvas.addEventListener('pointermove',e=>{if(!drawState?.drawing)return;const p=point(e),q=drawState.last;ctx.beginPath();ctx.moveTo(q.x,q.y);ctx.lineTo(p.x,p.y);ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#4f5d3a';ctx.lineWidth=12;ctx.stroke();drawState.length+=Math.hypot(p.x-q.x,p.y-q.y);drawState.points.push(p);drawState.last=p;if(drawState.length>80)onReady?.()});
     const stop=()=>{if(drawState){drawState.drawing=false;drawState.last=null}};canvas.addEventListener('pointerup',stop);canvas.addEventListener('pointercancel',stop);
-    return ()=>{drawState={drawing:false,last:null,length:0};drawSchoolLineature(ctx,canvas)};
+    return ()=>{drawState={drawing:false,last:null,length:0,points:[]};drawSchoolLineature(ctx,canvas)};
   }
   function renderFreeWritingTask(){
     const area=document.querySelector('#studyArea');if(!area||!run?.freePractice)return;
@@ -254,14 +291,14 @@
     document.querySelector('#sessionPill').textContent=((Number(run.index)||0)%forms.length+1)+' / '+forms.length+' · frei';
     const instruction='Schreibe den ausgewählten Buchstaben in die Lineatur. Du kannst den Laut so oft anhören, wie du möchtest.';
     const neutralFeedback='Deine Wiederholung wird nicht als Test- oder Mastery-Fortschritt gespeichert.';
-    area.innerHTML='<div class="study-card german-literacy-card german-foundation-task free-writing-task"><div class="eyebrow">Freies Schreiben · ohne Bewertung</div><div class="free-writing-target"><span>Dein Buchstabe</span><strong>'+form+'</strong></div>'+readButton(instruction)+'<button id="foundationFreeSoundBtn" class="secondary" type="button">🔊 Laut hören</button><div class="study-sub">'+instruction+'</div><section id="foundationFreeCheckCard" class="free-writing-check-card hidden" tabindex="-1" aria-live="polite"><div class="free-writing-check-kicker">Kontrolle</div><strong class="free-writing-check-title">So soll <span>'+form+'</span> aussehen</strong><div class="free-writing-check-lineature" aria-label="Sollform '+form+' auf Dachgeschoss, Erdgeschoss und Keller"><span class="zone roof">Dachgeschoss</span><span class="zone middle">Erdgeschoss</span><span class="zone cellar">Keller</span><b class="free-writing-check-glyph">'+form+'</b></div><p>Vergleiche jetzt Form, Höhe und Lage mit deiner eigenen Spur direkt darunter.</p></section><div class="free-writing-canvas-stack"><canvas id="foundationFreeCanvas" class="foundation-trace-canvas foundation-school-lineature" width="640" height="320" aria-label="Freie Schreibfläche mit Dachgeschoss, Erdgeschoss und Keller für '+form+'"></canvas></div><div id="foundationFreeCompareLegend" class="free-writing-compare-legend hidden" aria-hidden="true"><span class="own">Deine Spur</span><span class="model">Sollform</span></div><div id="foundationFreeWriteActions" class="row gap wrap center-actions top-space"><button id="foundationFreeClear" class="ghost" type="button">Neu schreiben</button><button id="foundationFreeSelection" class="ghost" type="button">Auswahl ändern</button><button id="foundationFreeCheck" class="primary" type="button" disabled>Kontrollieren</button></div><div id="foundationFreeReviewActions" class="row gap wrap center-actions top-space hidden"><button id="foundationFreeRetry" class="ghost" type="button">Nochmal schreiben</button><button id="foundationFreeAccept" class="primary" type="button">Passt für mich</button></div><div id="germanFoundationFeedback" class="notice subtle">'+neutralFeedback+'</div></div>';
+    area.innerHTML='<div class="study-card german-literacy-card german-foundation-task free-writing-task"><div class="eyebrow">Freies Schreiben · ohne Bewertung</div><div class="free-writing-target"><span>Dein Buchstabe</span><strong>'+form+'</strong></div>'+readButton(instruction)+'<button id="foundationFreeSoundBtn" class="secondary" type="button">🔊 Laut hören</button><div class="study-sub">'+instruction+'</div><section id="foundationFreeCheckCard" class="free-writing-check-card hidden" tabindex="-1" aria-live="polite"><div class="free-writing-check-kicker">Kontrolle</div><strong class="free-writing-check-title">So soll <span>'+form+'</span> aussehen</strong><div class="free-writing-check-lineature" aria-label="Sollform '+form+' auf Dachgeschoss, Erdgeschoss und Keller"><span class="zone roof">Dachgeschoss</span><span class="zone middle">Erdgeschoss</span><span class="zone cellar">Keller</span><b class="free-writing-check-glyph">'+form+'</b></div><p>Vergleiche jetzt Form, Höhe und Lage mit deiner eigenen Spur direkt darunter.</p><div id="foundationFreeShapeHint" class="notice subtle">Die Kontrolle betrachtet nur Größe und Lage – sie benotet deine Handschrift nicht.</div></section><div class="free-writing-canvas-stack"><canvas id="foundationFreeCanvas" class="foundation-trace-canvas foundation-school-lineature" width="640" height="320" aria-label="Freie Schreibfläche mit Dachgeschoss, Erdgeschoss und Keller für '+form+'"></canvas></div><div id="foundationFreeCompareLegend" class="free-writing-compare-legend hidden" aria-hidden="true"><span class="own">Deine Spur</span><span class="model">Sollform</span></div><div id="foundationFreeWriteActions" class="row gap wrap center-actions top-space"><button id="foundationFreeClear" class="ghost" type="button">Neu schreiben</button><button id="foundationFreeSelection" class="ghost" type="button">Auswahl ändern</button><button id="foundationFreeCheck" class="primary" type="button" disabled>Kontrollieren</button></div><div id="foundationFreeReviewActions" class="row gap wrap center-actions top-space hidden"><button id="foundationFreeRetry" class="ghost" type="button">Nochmal schreiben</button><button id="foundationFreeAccept" class="primary" type="button">Passt für mich</button></div><div id="germanFoundationFeedback" class="notice subtle">'+neutralFeedback+'</div></div>';
     const canvas=area.querySelector('#foundationFreeCanvas'),check=area.querySelector('#foundationFreeCheck');
-    const checkCard=area.querySelector('#foundationFreeCheckCard');
+    const checkCard=area.querySelector('#foundationFreeCheckCard'),shapeHint=area.querySelector('#foundationFreeShapeHint');
     const writeActions=area.querySelector('#foundationFreeWriteActions'),reviewActions=area.querySelector('#foundationFreeReviewActions'),legend=area.querySelector('#foundationFreeCompareLegend'),feedback=area.querySelector('#germanFoundationFeedback');
     const clear=bindWritingCanvas(canvas,{onReady:()=>{check.disabled=false}});
     const resetWriting=()=>{
       clear();check.disabled=true;canvas.style.pointerEvents='';canvas.classList.remove('self-check');
-      checkCard.classList.add('hidden');
+      checkCard.classList.add('hidden');shapeHint.className='notice subtle';shapeHint.textContent='Die Kontrolle betrachtet nur Größe und Lage – sie benotet deine Handschrift nicht.';
       writeActions.classList.remove('hidden');reviewActions.classList.add('hidden');legend.classList.add('hidden');legend.setAttribute('aria-hidden','true');
       canvas.setAttribute('aria-label','Freie Schreibfläche mit Dachgeschoss, Erdgeschoss und Keller für '+form);
       feedback.className='notice subtle';feedback.textContent=neutralFeedback;
@@ -272,6 +309,7 @@
     check.onclick=()=>{
       canvas.style.pointerEvents='none';canvas.classList.add('self-check');
       checkCard.classList.remove('hidden');
+      const shape=analyzeFreeWritingShape(form,canvas);shapeHint.className='notice '+(shape.level==='close'?'good':'subtle');shapeHint.textContent=shape.message;
       writeActions.classList.add('hidden');reviewActions.classList.remove('hidden');legend.classList.remove('hidden');legend.setAttribute('aria-hidden','false');
       canvas.setAttribute('aria-label','Selbstkontrolle für '+form+': eigene Schreibspur unter sichtbarer Sollform');
       feedback.className='notice subtle';feedback.innerHTML='<strong>Vergleiche selbst.</strong> Oben siehst du die Sollform. Deine eigene Spur bleibt direkt darunter stehen.';
@@ -369,5 +407,5 @@
     area.querySelector('#foundationNext').onclick=()=>open(completion().next);
   }
 
-  window.VTGermanFoundation={available,progress,completion,renderHub,open,openFreeWriting,freeWritingState,playPhoneme,phonemeStatus,phonemeAudioPath,course:COURSE,stageTasks,freeWritingLetters:FREE_WRITING_LETTERS};
+  window.VTGermanFoundation={available,progress,completion,renderHub,open,openFreeWriting,freeWritingState,playPhoneme,phonemeStatus,phonemeAudioPath,analyzeFreeWritingShape,course:COURSE,stageTasks,freeWritingLetters:FREE_WRITING_LETTERS};
 })();

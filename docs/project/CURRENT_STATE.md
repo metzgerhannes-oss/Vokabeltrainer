@@ -6,11 +6,11 @@ Stand: 01.10.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.54** (fachübergreifende Weltwahl als Release-Kandidat)
+- App-Version: **v0.21.55** (fachübergreifende Weltwahl als Release-Kandidat)
 - aktueller Stand auf `main`: **v0.21.53 / Commit `5b415a6134dd5638c824a2154f20b4e4c6266862` / PR #227**
 - jüngster vollständig live-verifizierter Release: **v0.21.47 / PR #221**
 - Produktionsnachweis v0.21.47: **PR-CI #1364 success · main-CI #1365 success · GitHub Pages #575 success; reale iPhone-Selbstkontrolle dennoch erneut ohne erkennbare Anzeige und damit praktisch nicht bestanden**
-- aktueller Release-Kandidat: **v0.21.54 – B-017 fachübergreifende Weltwahl auf `feature/world-choice-complete-v02154`**; Englisch, Latein, Deutsch und Französisch besitzen unabhängig wählbare Abenteuer-/Kampfwelten, jeweils sechs Stufen und kanonische Storylines. Weltwechsel bleiben fachlich neutral. Basis ist der gemergte v0.21.53-Stand / PR #227
+- aktueller Release-Kandidat: **v0.21.55 – B-017 fachübergreifende Weltwahl auf `feature/world-choice-complete-v02154`**; Englisch, Latein, Deutsch und Französisch besitzen unabhängig wählbare Abenteuer-/Kampfwelten, jeweils sechs Stufen und kanonische Storylines. Weltwechsel bleiben fachlich neutral. Basis ist der gemergte v0.21.53-Stand / PR #227
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
@@ -60,7 +60,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Deutsch Weltwahl Abenteuer/Kampf | PRODUCTION / CI VERIFIED v0.21.39 | D-20260929-002, B-017, `docs/project/DEUTSCH_WORTREICH_V1.md` |
 | Französisch Fachbereich / OCR / Akzente / Audio | IMPLEMENTED im v0.21.53-Release-Kandidaten | B-003, `SUBJECT_SYSTEM.md`, `PRODUCT_DNA.md` P11 |
 | Deutsch Klasse-1-Erstlektion: Groß/Klein nachfahren → nur nach Laut selbst schreiben | IMPLEMENTED im v0.21.40-Release-Kandidaten; Praxisabnahme Lautqualität bleibt offen | D-20260929-005, B-001, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md` § 6 |
-| Fachübergreifende Weltwahl Abenteuer/Kampf + 8 vollständige Storylines | IMPLEMENTED im v0.21.54-Release-Kandidaten; alle vier Fächer aktiv, bewusste Wahl pro Fach, fachlich neutraler Wechsel | D-20260929-001, D-20260929-004, B-017, `docs/project/WORLD_STORYLINES_V1.md` |
+| Fachübergreifende Weltwahl Abenteuer/Kampf + 8 vollständige Storylines | IMPLEMENTED im v0.21.55-Release-Kandidaten; alle vier Fächer aktiv, bewusste Wahl pro Fach, fachlich neutraler Wechsel | D-20260929-001, D-20260929-004, B-017, `docs/project/WORLD_STORYLINES_V1.md` |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 
 ## Offene Verifikationsgrenzen

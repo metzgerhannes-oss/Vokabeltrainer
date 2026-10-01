@@ -12,7 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.54**
+App-Version: **v0.21.55**
+
+- v0.21.55 (Release-Kandidat): **Neutrale Schreibspur-Kontrolle.** Freies Schreiben erfasst die Finger-/Stiftbahn und gibt ausschließlich geometrische Hinweise zu Größe und Lage in Dachgeschoss, Erdgeschoss und Keller. Keine automatische Richtig/Falsch-Wertung und keine fachliche oder spielerische Fortschrittswirkung.
 
 - v0.21.54 (Release-Kandidat): **Weltwahl Abenteuer/Kampf fachübergreifend abgeschlossen.** Englisch, Latein, Deutsch und Französisch verlangen bei neuen aktiven Fächern eine bewusste Weltwahl; beide Modi bleiben pro Fach getrennt gespeichert. Alle acht Welten besitzen sechs Stufen und kanonische Storylines; Weltwechsel verändern keinerlei fachlichen Lernzustand.
 - v0.21.53 (Release-Kandidat): **Französisch fachlich freigeschaltet.** Lokales `fra.traineddata`, `fr-FR`-Audio, accent-/apostrophsichere produktive Bewertung und französischer OCR-/Importpfad sind aktiv. `Voyage Français` sowie die fiktionale Festungswelt werden regulär über die gemeinsame Fach-/Weltarchitektur angeboten; Retrieval, Spacing und Mastery bleiben fachübergreifend unverändert.
