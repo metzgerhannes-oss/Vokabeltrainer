@@ -75,7 +75,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 
 Die praktische v1-Abnahme ist noch nicht als abgeschlossen dokumentiert. Die zahlreichen `[ ]`-Punkte in [../../V1_ACCEPTANCE_TEST.md](../../V1_ACCEPTANCE_TEST.md) sind daher **nicht** als erledigt zu interpretieren, nur weil zugehörige automatisierte Tests existieren.
 
-Aus [../../FINAL_AUDIT.md](../../FINAL_AUDIT.md) bleibt außerdem als administrative Infrastrukturgrenze dokumentiert, dass das aktive Ruleset `Protect main` zwar den Statuscheck `test` verlangt, `strict_required_status_checks_policy` aber auf `false` steht; die Up-to-date-Regel ist damit noch administrativ zu aktivieren.
+Die frühere administrative Infrastrukturgrenze B-006 ist erledigt: Das aktive Ruleset `Protect main` verlangt den Statuscheck `test` und `strict_required_status_checks_policy` steht seit der Live-Prüfung vom 01.10.2026 auf `true`. PRs müssen damit vor dem Merge auf dem aktuellen `main`-Stand sein.
 
 ## Aktueller produktiver Release
 
