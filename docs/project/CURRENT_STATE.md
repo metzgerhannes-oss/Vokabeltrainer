@@ -1,12 +1,14 @@
 # Vokabeltrainer – Current State
 
+- v0.21.56 Release-Kandidat: B-019 Avatar-Matrix-Gate prüft 72 Fach-/Profil-/Stufenkombinationen automatisiert; praktische Geräteabnahme bleibt offen.
+
 Stand: 01.10.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 ## Produktionsbaseline
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.55** (fachübergreifende Weltwahl als Release-Kandidat)
+- App-Version: **v0.21.56** (fachübergreifende Weltwahl als Release-Kandidat)
 - aktueller Stand auf `main`: **v0.21.53 / Commit `5b415a6134dd5638c824a2154f20b4e4c6266862` / PR #227**
 - jüngster vollständig live-verifizierter Release: **v0.21.47 / PR #221**
 - Produktionsnachweis v0.21.47: **PR-CI #1364 success · main-CI #1365 success · GitHub Pages #575 success; reale iPhone-Selbstkontrolle dennoch erneut ohne erkennbare Anzeige und damit praktisch nicht bestanden**
