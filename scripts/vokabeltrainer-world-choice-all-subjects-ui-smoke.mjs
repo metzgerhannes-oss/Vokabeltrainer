@@ -63,6 +63,16 @@ try{
   await page.locator('#profileName').fill('Welten Kind');
   assert(await page.locator('[data-profile-world-subject="english"]:not(.hidden)').count()===1,'English world choice is visible for the default active subject');
   assert(await page.locator('input[name="profileWorldMode-english"]:checked').count()===0,'new English profile has no silent world default');
+  for(const subject of ['latin','german','french']){
+    const subjectInput=page.locator('[data-profile-subject="'+subject+'"]');
+    assert(await subjectInput.isEnabled(),subject+' is a selectable released subject');
+    await subjectInput.check();
+    assert(await page.locator('[data-profile-world-subject="'+subject+'"]:not(.hidden)').count()===1,subject+' world choice appears when the subject is activated');
+    assert(await page.locator('input[name="profileWorldMode-'+subject+'"]').count()===2,subject+' exposes exactly adventure and battle');
+    assert(await page.locator('input[name="profileWorldMode-'+subject+'"]:checked').count()===0,subject+' has no silent world default for a new profile');
+    await subjectInput.uncheck();
+    assert(await page.locator('[data-profile-world-subject="'+subject+'"].hidden').count()===1,subject+' world choice hides again when the subject is removed');
+  }
   await page.locator('#saveProfile').click();
   assert((await page.locator('#profileError').textContent())?.includes('Englisch'),'missing English world choice blocks creation');
   await page.locator('input[name="profileWorldMode-english"][value="adventure"]').check();
@@ -142,6 +152,35 @@ try{
   });
   assert(french.adventureTheme==='voyage'&&french.adventurePresentation==='voyage','French adventure keeps Voyage Français');
   assert(french.battleTheme==='french-battle'&&french.battlePresentationTheme==='french-battle','French battle is a separate fictional fortress world');
+
+  const neutrality=await page.evaluate(()=>{
+    state=defaultState();
+    const l=learner();
+    l.activeSubjects=availableSubjectIds();
+    const snapshot=()=>JSON.stringify({
+      vocabulary:state.vocabulary,
+      setVocabulary:state.setVocabulary,
+      learnerVocabulary:state.learnerVocabulary,
+      dailyPlans:l.dailyPlans,
+      testSeries:l.testSeries,
+      completedTests:l.completedTests,
+      gradeScales:l.gradeScales
+    });
+    const before=snapshot();
+    const modes={};
+    for(const subject of availableSubjectIds()){
+      setLearnerWorldMode(l,subject,'adventure');
+      const adventure=learnerWorldMode(subject,l);
+      setLearnerWorldMode(l,subject,'battle');
+      const battle=learnerWorldMode(subject,l);
+      modes[subject]={adventure,battle};
+    }
+    return {before,after:snapshot(),modes};
+  });
+  assert(neutrality.before===neutrality.after,'world changes across all released subjects leave academic state untouched');
+  for(const subject of ['english','latin','german','french']){
+    assert(neutrality.modes[subject].adventure==='adventure'&&neutrality.modes[subject].battle==='battle',subject+' stores both world modes independently');
+  }
 
   const stories=await page.evaluate(()=>({
     germanBattle:VTWorldStory.chapter('german','battle','outpost').title,
