@@ -12,8 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.52**
+App-Version: **v0.21.53**
 
+- v0.21.53 (Release-Kandidat): **Französisch fachlich freigeschaltet.** Lokales `fra.traineddata`, `fr-FR`-Audio, accent-/apostrophsichere produktive Bewertung und französischer OCR-/Importpfad sind aktiv. `Voyage Français` sowie die fiktionale Festungswelt werden regulär über die gemeinsame Fach-/Weltarchitektur angeboten; Retrieval, Spacing und Mastery bleiben fachübergreifend unverändert.
 - v0.21.52 (Release-Kandidat): **Freigegebene Wortreich-Startszene exakt umgesetzt.** Der Deutsch-Startscreen verwendet die freigegebene malerische Szene mit großem Fuchs, Burg, Brücke, Bergen und dem Lernweg A → M → Aa → Wörter direkt als integrierte Landschaft. Die unscharfe Atlas-Kachel und die separaten Blur-Ränder sind im Wortreich-Startscreen entfernt; dynamische Stufen-/Lerninformationen bleiben echte UI.
 - v0.21.51 (Release-Kandidat): **Kein Rückfall auf alte Vokabeln nach Testabschluss.** Ist ein Test abgeschlossen und noch kein nächster Test aktiv, bleibt das Pflichtlernen leer. Sobald der nächste Test geplant wird, enthält der Pflichtpfad ausschließlich dessen Testumfang. Tagesplanschema `daily4` erzwingt den sauberen Neuaufbau.
 - v0.21.50 (Release-Kandidat): Das freigegebene **Avatar-Artwork** ist in den Startscreen integriert. Englisch behält die vorhandene finale männliche 6-Stufen-Serie; weiblich/neutral, Latein m/w/d, Französisch m/w/d und der Deutsch-Grundschul-Fuchs verwenden die neue fachübergreifende Atlas-Serie. Latein zeigt nun Tiro → Legionär → Optio → Centurio → Tribun → Legat. Technische CSS-/SVG-Figuren bleiben nur Fallback.
