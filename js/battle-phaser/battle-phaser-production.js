@@ -1,7 +1,7 @@
 'use strict';
 
-import Phaser from '../vendor/phaser-4.2.1.esm.min.js?v=0.21.28';
-import { createBattleSceneClass } from './battle-phaser-scene.js?v=0.21.38';
+import Phaser from '../vendor/phaser-4.2.1.esm.min.js?v=0.21.57';
+import { createBattleSceneClass } from './battle-phaser-scene.js?v=0.21.57';
 
 let activeGame = null;
 let activeMount = null;
@@ -132,8 +132,8 @@ export function playProductionBattle({
   wrap?.classList.add('phaser-production-layout');
 
   const mount = document.createElement('div');
-  const safeTheme = theme === 'wordrealm' ? 'wordrealm' : 'campaign';
-  const safeSubject = subject === 'german' ? 'german' : 'english';
+  const safeTheme = ['campaign','wordrealm','roman','french-battle'].includes(theme) ? theme : 'campaign';
+  const safeSubject = ['english','latin','french','german'].includes(subject) ? subject : 'english';
   mount.className = 'battle-phaser-production theme-' + safeTheme;
   mount.setAttribute('aria-hidden', 'true');
   stage.prepend(mount);
@@ -144,7 +144,13 @@ export function playProductionBattle({
   stage.dataset.phaserProfile = initialsFor(profileName);
   stage.dataset.phaserSubject = safeSubject;
   stage.dataset.phaserTheme = safeTheme;
-  mount.dataset.version = safeTheme === 'wordrealm' ? 'v0.21.37 · Wortreich Phaser' : 'v0.21.28 · Phaser Cinematic';
+  mount.dataset.version = safeTheme === 'wordrealm'
+    ? 'v0.21.57 · Wortreich Phaser'
+    : safeTheme === 'roman'
+      ? 'v0.21.57 · Roman Phaser'
+      : safeTheme === 'french-battle'
+        ? 'v0.21.57 · Français Phaser'
+        : 'v0.21.57 · Phaser Cinematic';
   const audio = createBattleAudio();
   activeAudio = audio;
   stage.dataset.phaserSound = audio.available ? 'web-audio' : 'silent';
@@ -245,6 +251,6 @@ if (typeof window !== 'undefined') {
   window.VTBattlePhaserProduction = {
     playProductionBattle,
     destroyProductionBattle,
-    version: '0.21.37-phaser-production.3'
+    version: '0.21.57-phaser-production.4'
   };
 }
