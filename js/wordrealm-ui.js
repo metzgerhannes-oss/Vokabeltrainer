@@ -206,13 +206,16 @@
     const strip=document.querySelector('#wordrealmStageStrip');
     const brand=document.querySelector('#wordrealmHomeBrand');
     if(frame&&fallback){
-      fallback.innerHTML=foxSvg(level);
-      fallback.classList.add('wordrealm-svg-avatar');
-      frame.classList.add('wordrealm-rendered');
+      fallback.innerHTML='';
+      fallback.classList.remove('wordrealm-svg-avatar','avatar-atlas-avatar');
+      frame.classList.add('wordrealm-rendered','wordrealm-approved-scene');
     }
-    if(scenery)scenery.innerHTML=castleSvg()+'<span class="wordrealm-sun"></span><span class="wordrealm-cloud cloud-one"></span><span class="wordrealm-cloud cloud-two"></span>';
+    if(scenery){
+      scenery.classList.add('wordrealm-approved-scenery');
+      scenery.innerHTML='<img class="wordrealm-approved-home-scene" src="assets/wordrealm/home-approved-v1.webp" alt="">';
+    }
     if(strip){strip.innerHTML=stageStrip(level);strip.classList.remove('hidden')}
-    brand?.classList.remove('hidden');
+    brand?.classList.add('hidden');
   }
 
   function renderAdventureHome(level=1){
@@ -232,12 +235,12 @@
     const scenery=document.querySelector('#projectMenuScenery');
     const strip=document.querySelector('#wordrealmStageStrip');
     const brand=document.querySelector('#wordrealmHomeBrand');
-    if(frame)frame.classList.remove('wordrealm-rendered','adventure-rendered');
+    if(frame)frame.classList.remove('wordrealm-rendered','adventure-rendered','wordrealm-approved-scene');
     if(fallback){
       fallback.classList.remove('wordrealm-svg-avatar');
       fallback.innerHTML='<span class="avatar-head"></span><span class="avatar-body"></span><span class="avatar-shield">V</span>';
     }
-    if(scenery)scenery.innerHTML='<span class="project-menu-cloud cloud-a"></span><span class="project-menu-cloud cloud-b"></span><span class="project-menu-castle"><i></i><i></i><i></i></span>';
+    if(scenery){scenery.classList.remove('wordrealm-approved-scenery');scenery.innerHTML='<span class="project-menu-cloud cloud-a"></span><span class="project-menu-cloud cloud-b"></span><span class="project-menu-castle"><i></i><i></i><i></i></span>'}
     if(strip){strip.innerHTML='';strip.classList.add('hidden')}
     brand?.classList.add('hidden');
   }

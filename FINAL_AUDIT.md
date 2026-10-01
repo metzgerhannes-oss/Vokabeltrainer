@@ -1,8 +1,10 @@
 # Finales Audit
 
-Stand: 30.09.2026 · App v0.21.51
+Stand: 30.09.2026 · App v0.21.52
 
 ## Ergebnis
+
+- v0.21.52 setzt die bereits freigegebene Wortreich-Startansicht als echte integrierte Szene um: Fuchs, Burg, Brücke, Berge und der Lernweg A → M → Aa → Wörter bilden eine gemeinsame malerische Landschaft. Der Deutsch-Wortreich-Start verwendet dafür nicht mehr die unscharfe Avatar-Atlas-Kachel; Stufenname, Fortschritt, Vorlesen und Lernkarten bleiben dynamische UI und verändern keine Fachlogik.
 
 - v0.21.51 schließt den verbliebenen Post-Test-Fehler: Nach „Test abschließen“ fällt der Pflichtpfad ohne nächsten aktiven Test nicht mehr auf den Jahreswortschatz zurück. Alte Testvokabeln bleiben freiwillig verfügbar; sobald ein neuer Test geplant ist, wird ausschließlich dessen Umfang verpflichtend gelernt. Das Tagesplanschema steigt auf `daily4`.
 

@@ -425,6 +425,8 @@ Im Lernmodus gilt weiterhin:
 
 **Fuchs/Orientierung links → Lernpfad in der Mitte → nächste Lernstation rechts**
 
+Für **Start / Heute im Wortreich** ist diese Raumlogik als **eine zusammenhängende malerische Illustration** umzusetzen. Verbindliche Referenz ist `assets/wordrealm/home-approved-v1.webp`: großer Fuchs frei links/vorne in der Landschaft, Lernweg mit **A → M → Aa → Wörter** in der Mitte/rechts sowie Burg, Brücke und Berge als gemeinsamer Bildraum. Eine separate Avatar-Kachel, unscharfe obere/untere Bildstreifen oder ein eingebrannt wirkendes Vorschaubild um den Fuchs sind dort unzulässig. Name, Stufe, Fortschritt und Vorlesefunktion bleiben dynamische UI und dürfen die Szene nicht ersetzen.
+
 ### Farb- und Lichtwelt
 
 Lernmodus:

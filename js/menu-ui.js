@@ -42,6 +42,10 @@
       if(adventure)window.VTWordrealmUi?.renderAdventureHome?.(level);
       else window.VTWordrealmUi?.renderHome?.(level);
       frame.dataset.avatarRenderKey=key;
+      if(!adventure){
+        frame.dataset.avatarArtSource='wordrealm-approved-scene';
+        return;
+      }
     }
 
     const finalUrl=window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'';

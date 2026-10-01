@@ -781,3 +781,204 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
     max-height:235px
   }
 }
+
+
+/* v0.21.52 – exakt freigegebene Wortreich-Startszene */
+.project-menu-stage[data-visual-theme="wordrealm"]{
+  background:#f2f4e8;
+  border-color:#c8d5a5;
+  overflow:hidden;
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-scenery.wordrealm-approved-scenery{
+  inset:0 0 auto 0;
+  height:58%;
+  min-height:330px;
+  overflow:hidden;
+  opacity:1;
+  border-radius:28px 28px 0 0;
+  background:#dfe9d2;
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .wordrealm-approved-home-scene{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center center;
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .wordrealm-home-brand,
+.project-menu-stage[data-visual-theme="wordrealm"] .wordrealm-signpost{display:none!important}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-panel{
+  z-index:8;
+  pointer-events:none;
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-frame.wordrealm-approved-scene{
+  visibility:hidden;
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-frame.wordrealm-approved-scene .project-menu-avatar-fallback,
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-frame.wordrealm-approved-scene .project-menu-avatar-art,
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-frame.wordrealm-approved-scene .project-menu-avatar-aura,
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-frame.wordrealm-approved-scene .project-menu-avatar-standard,
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-frame.wordrealm-approved-scene .project-menu-avatar-crest{display:none!important}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution{
+  pointer-events:auto;
+  background:linear-gradient(180deg,rgba(255,253,246,.985),rgba(248,236,207,.985));
+  border:2px solid #d6b779;
+  border-radius:21px;
+  box-shadow:0 10px 24px rgba(75,52,25,.20);
+  color:#243047;
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution strong{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:.9rem;
+  color:#253047;
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution small{
+  color:#76664f;
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .wordrealm-stage-strip{display:none!important}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-head{
+  background:linear-gradient(180deg,#fffdf8,#fff9ed);
+  border:1px solid #dfcfaa;
+  border-radius:19px;
+  box-shadow:0 5px 13px rgba(73,54,32,.08);
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-head .eyebrow{
+  color:#6d7689;
+  font-size:.72rem;
+  font-weight:950;
+  letter-spacing:.16em;
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-head h2{
+  font-family:Georgia,"Times New Roman",serif;
+  color:#243047;
+  line-height:.95;
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-subject-context>.pill{
+  background:#fffdf7;
+  border:1px solid #bfcf95;
+  color:#557144;
+  box-shadow:0 2px 7px rgba(74,82,48,.07);
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card{
+  background:linear-gradient(180deg,#fffdf8,#fffaf0);
+  border:1px solid #ddcfad;
+  box-shadow:0 7px 17px rgba(67,54,36,.08);
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card h2{
+  font-family:Georgia,"Times New Roman",serif;
+  color:#243047;
+}
+.project-menu-stage[data-visual-theme="wordrealm"] .wordrealm-home-action{
+  background:linear-gradient(180deg,#fffdf8,#fffaf0);
+  border:1px solid #ddcfad;
+}
+
+@media(max-width:760px){
+  .project-menu-stage[data-visual-theme="wordrealm"]{
+    padding:0 8px 12px;
+    border-radius:24px;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-scenery.wordrealm-approved-scenery{
+    left:0;right:0;top:0;
+    height:255px;
+    min-height:255px;
+    border-radius:22px 22px 0 0;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .wordrealm-approved-home-scene{
+    object-position:center center;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-panel{
+    position:relative;
+    inset:auto;
+    width:100%;
+    height:325px;
+    margin:0 0 10px;
+    padding:0;
+    display:block;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-frame{
+    width:100%;
+    height:252px;
+    min-height:252px;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution{
+    position:absolute;
+    left:3%;
+    right:3%;
+    bottom:0;
+    width:auto;
+    max-width:none;
+    margin:0;
+    padding:11px 46px 12px 14px;
+    z-index:9;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution strong{font-size:.9rem}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution small{font-size:.68rem}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-stage-pips{
+    gap:5px;
+    margin-top:7px;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-stage-pips i{
+    width:23px;
+    height:6px;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .wordrealm-stage-read{
+    top:50%;
+    right:11px;
+    transform:translateY(-50%);
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-main{
+    width:100%;
+    gap:10px;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-head{
+    padding:15px 14px;
+    min-height:112px;
+    align-items:flex-start;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-head h2{
+    margin-top:.18rem;
+    max-width:220px;
+    font-size:clamp(1.75rem,8vw,2.15rem);
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-subject-context{
+    padding-top:1px;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card{
+    min-height:154px;
+    padding:16px 14px;
+    border-radius:19px;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card h2{
+    font-size:1.12rem;
+  }
+}
+
+@media(max-width:430px){
+  .project-menu-stage[data-visual-theme="wordrealm"]{padding:0 7px 11px}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-scenery.wordrealm-approved-scenery{
+    height:245px;
+    min-height:245px;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-panel{height:315px}
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-frame{
+    height:242px;
+    min-height:242px;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-avatar-evolution{
+    left:2.5%;right:2.5%;padding:10px 44px 11px 12px;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-head{
+    min-height:108px;
+    padding:14px 12px;
+    flex-direction:row;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-head h2{
+    max-width:210px;
+    font-size:1.9rem;
+  }
+  .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card{
+    min-height:148px;
+    padding:14px 11px;
+  }
+}
