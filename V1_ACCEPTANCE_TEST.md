@@ -1,6 +1,8 @@
 # V1 Acceptance Test
 
-Stand: 01.10.2026 · Basis: v0.21.58 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle und Wortreich-Startszene
+Stand: 01.10.2026 · Basis: v0.21.59 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle, Wortreich-Startszene und strikter Testscope
+
+Release-Kandidat v0.21.59 hält abgeschlossene Testvokabeln vollständig aus Pflichtplan, adaptiven Nachrückern und Pflicht-Fälligkeitsanzeige heraus; historische Wörter bleiben nur bewusst freiwillig erreichbar.
 
 Release-Kandidat v0.21.55 ergänzt die neutrale geometrische Schreibspur-Kontrolle für B-018; reale Geräteabnahme bleibt erforderlich.
 
