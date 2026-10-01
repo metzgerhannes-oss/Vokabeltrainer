@@ -620,6 +620,7 @@ function isTestCompleted(date,subject=state.activeSubject){return isTestComplete
 function completedTestsForSubject(subject=state.activeSubject){return Object.values(testCompletions()).filter(x=>x?.subject===subject&&x?.date).sort((a,b)=>String(a.date).localeCompare(String(b.date)))}
 function latestTestCompletion(subject=state.activeSubject){const rows=completedTestsForSubject(subject);return rows[rows.length-1]||null}
 function mandatoryDailyPool(subject=state.activeSubject,ctx=null){if(ctx)return ctx.words||[];return latestTestCompletion(subject)?[]:schoolYearVerifiedWords(subject)}
+function mandatoryDueWords(subject=state.activeSubject,ctx=null){const key=today();return mandatoryDailyPool(subject,ctx).filter(w=>!w.dueDate||w.dueDate<=key).sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||''))}
 function seriesOccurrenceDate(subject=state.activeSubject){
   const cfg=activeSeries(subject);if(!cfg)return '';
   const scoped=String(cfg.scopeDate||'');
@@ -902,7 +903,8 @@ function dailyPlanReplacementCandidate(plan=buildDailyPlan()){
   if(plan.extraRefs.length>=plan.extraLimit)return null;
   const used=new Set(dailyPlanRefs(plan,true).map(dailyPlanRefKey).filter(Boolean));
   const available=w=>{const key=dailyPlanRefKey({wordId:w?.id,setLinkId:w?.setLinkId||''});return !!key&&!used.has(key)};
-  const ctx=upcomingTestContext(plan.subject),testFormat=ctx?.testFormat||plan.testFormat||'target',scope=ctx?.words?.length?ctx.words:schoolYearVerifiedWords(plan.subject);
+  const ctx=upcomingTestContext(plan.subject),testFormat=ctx?.testFormat||plan.testFormat||'target',scope=mandatoryDailyPool(plan.subject,ctx);
+  if(!scope.length)return null;
   const extraNewCount=Object.values(plan.extraSources||{}).filter(source=>source==='new').length;
   const introducedNewCount=Math.max(0,Number(plan.introCount)||0)+extraNewCount,newDailyLimit=reducedLoadEnabled()?4:6;
   const allowNew=(!ctx||Number(ctx.days)>3)&&introducedNewCount<newDailyLimit;
@@ -915,7 +917,7 @@ function dailyPlanReplacementCandidate(plan=buildDailyPlan()){
       .sort((a,b)=>testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b))[0];
     if(weak)return {ref:{wordId:weak.id,setLinkId:weak.setLinkId||''},source:'weak-test'};
   }
-  const due=dueWords(plan.subject).filter(w=>available(w)&&dailyPlanHasLearningContact(w))
+  const due=scope.filter(w=>available(w)&&dailyPlanHasLearningContact(w)&&(!w.dueDate||w.dueDate<=today()))
     .sort((a,b)=>String(a.dueDate||'').localeCompare(String(b.dueDate||''))||testReadinessScore(a)-testReadinessScore(b)||masteryScore(a)-masteryScore(b))[0];
   return due?{ref:{wordId:due.id,setLinkId:due.setLinkId||''},source:'due'}:null;
 }

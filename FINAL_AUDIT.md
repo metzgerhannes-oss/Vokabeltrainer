@@ -1,5 +1,7 @@
 # Finales Audit
 
+> v0.21.59: Der Pflichtlernweg ist jetzt vollständig auf den aktuellen Testscope begrenzt. Auch adaptive Nachrücker und der sichtbare Pflicht-Fälligkeitszähler können keine Vokabeln aus abgeschlossenen Tests mehr zurückholen; zwischen Tests bleibt der Pflichtpfad leer.
+
 > v0.21.58: B-013 Phase-1-Technik-Spike ist als isolierte Three.js-r186-Festungsenthüllung implementiert. Skip, Reduced Motion, Fallback und fachliche Neutralität sind automatisiert abgesichert; reale Performance-/Sichtabnahme bleibt offen.
 
 > v0.21.57: Der produktive Phaser-4-Kampfpfad ist auf Englisch, Latein, Französisch-Kampf und Deutsch/Wortreich erweitert. Latein und Französisch erhalten eigene Theme-Identitäten; Abenteuerwelten bleiben ohne Battle-Screen.
@@ -13,9 +15,11 @@
 
 > v0.21.53: Französisch ist regulär aktiviert. Der lokale OCR-Blocker ist mit gepinntem `fra.traineddata` beseitigt; produktive Zielantworten schützen Akzente/Apostrophe über eine fachliche Capability, TTS nutzt `fr-FR`.
 
-Stand: 01.10.2026 · App v0.21.58
+Stand: 01.10.2026 · App v0.21.59
 
 ## Ergebnis
+
+- v0.21.59 schließt den nach v0.21.51 verbliebenen Leckpfad: `dailyPlanReplacementCandidate()` darf Nachrücker nur noch aus `mandatoryDailyPool()` wählen; ohne Folgetest gibt es keine Pflicht-Nachrücker. Der Startscreen zählt bei „fällig“ ebenfalls nur Wörter des aktuellen Pflichtpools. Alte Testvokabeln bleiben ausschließlich freiwillig erreichbar.
 
 - v0.21.52 setzt die bereits freigegebene Wortreich-Startansicht als echte integrierte Szene um: Fuchs, Burg, Brücke, Berge und der Lernweg A → M → Aa → Wörter bilden eine gemeinsame malerische Landschaft. Der Deutsch-Wortreich-Start verwendet dafür nicht mehr die unscharfe Avatar-Atlas-Kachel; Stufenname, Fortschritt, Vorlesen und Lernkarten bleiben dynamische UI und verändern keine Fachlogik.
 
