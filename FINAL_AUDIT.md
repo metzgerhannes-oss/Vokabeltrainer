@@ -1,5 +1,7 @@
 # Finales Audit
 
+> v0.21.56: B-019 erhält ein vollständiges WebKit-Qualitätsgate für 4 Fächer × 3 Profilvarianten × 6 Stufen. Technische Asset-Zuordnung und Fachtrennung sind damit automatisiert prüfbar; Praxisabnahme bleibt erforderlich.
+
 > v0.21.55: B-018 ergänzt eine neutrale geometrische Schreibspur-Kontrolle für Größe und Lage in der Grundschul-Lineatur; keine automatische Richtig/Falsch-Wertung und keine Fortschrittswirkung.
 
 > v0.21.54: B-017 ist fachübergreifend abgeschlossen: unabhängige Abenteuer-/Kampfwahl für Englisch, Latein, Deutsch und Französisch, sechs Stufen je Welt und fachlich neutraler Weltwechsel.
@@ -7,7 +9,7 @@
 
 > v0.21.53: Französisch ist regulär aktiviert. Der lokale OCR-Blocker ist mit gepinntem `fra.traineddata` beseitigt; produktive Zielantworten schützen Akzente/Apostrophe über eine fachliche Capability, TTS nutzt `fr-FR`.
 
-Stand: 01.10.2026 · App v0.21.55
+Stand: 01.10.2026 · App v0.21.56
 
 ## Ergebnis
 
