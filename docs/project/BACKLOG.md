@@ -470,7 +470,7 @@ Erweiterung v0.21.46:
 - keine automatische Handschriftbewertung, kein Richtig/Falsch und keine fachliche oder spielerische Fortschrittsevidenz
 
 ## B-019 – Finale Avatarserien in einheitlicher Referenzqualität
-**Status:** IMPLEMENTED v0.21.50 / CI- UND PRAXISABNAHME OFFEN  
+**Status:** IMPLEMENTED v0.21.50 · vollständiges CI-Matrix-Gate v0.21.56 · PRAXISABNAHME OFFEN  
 **Priorität:** P0 visuelle Produktqualität  
 **Decision:** D-20260930-001  
 **Betroffene Quellen:** `VISUAL_DNA.md § 2.1/§ 10/§ 13`, `docs/project/LATIN_FRENCH_VISUAL_LAYOUT.md`, `js/menu-avatar-art.js`
