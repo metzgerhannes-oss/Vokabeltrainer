@@ -12,7 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.58**
+App-Version: **v0.21.59**
+
+- v0.21.59 (Release-Kandidat): **Strikter Testscope ohne alte Pflichtvokabeln.** Adaptive Nachrücker und der Pflicht-„fällig“-Zähler verwenden ausschließlich den aktuellen Pflichtpool. Zwischen abgeschlossenem und nächstem Test bleibt der Pflichtpfad leer; bei geplantem Test können alte fällige Wörter nicht mehr als Nachrücker in den Lernweg gelangen. Historische Wörter bleiben nur über bewusst freiwillige Übungen erreichbar.
 
 - v0.21.58 (Release-Kandidat): **B-013 Three.js-Technik-Spike.** Eine isolierte, lazy geladene Festungsenthüllung nutzt lokal gepinntes Three.js r186 mit Skip, Reduced Motion, 2D-Fallback und ohne Lern-/Battle-Zustandsänderung. Produktive 3D-Integration bleibt von der praktischen visuellen/Performance-Abnahme abhängig.
 
