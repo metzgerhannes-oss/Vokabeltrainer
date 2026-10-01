@@ -35,6 +35,7 @@ Für Französisch sind verbindlich:
 - französische Funktionswörter für OCR-/Textheuristik
 - Akzente bleiben Teil der Lexemidentität und der fachlich richtigen Zielschreibung
 - produktive französische Zielantworten nutzen `strictTermOrthography`: Akzente und Apostrophe werden nicht still als richtig gewertet; typografische Apostrophvarianten werden technisch normalisiert
+- schulbuchseitige Formen/Varianten werden ausschließlich über explizite `acceptedTerms`/Sense-Daten akzeptiert; die Bewertung erfindet keine Varianten durch Slash-, Komma- oder Flexionsheuristiken
 - Groß-/Kleinschreibung bleibt bei Französisch tolerant, sofern sie nicht fachlich als eigener Zielunterschied modelliert ist
 - `fr-FR` wird für Lernwort-Audio, Hören, Diktat und Korrektur-Audio verwendet
 - normale Retrieval-/Spacing-/Mastery-Logik bleibt fachübergreifend; Französisch erhält keine künstliche Sonder-Mastery
