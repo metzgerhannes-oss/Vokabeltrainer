@@ -1,7 +1,7 @@
 # 3D-Storyszenen – Konzept und technische Projektierung
 
 Stand: 28.09.2026  
-Status: **APPROVED_BACKLOG / noch nicht implementieren**  
+Status: **PHASE 1 TECHNIK-SPIKE IMPLEMENTED v0.21.58 · praktische visuelle/Performance-Abnahme offen**  
 Backlog: **B-013**  
 Decision: **D-20260928-004**  
 Verbindliche Leitplanken: `PRODUCT_DNA.md` P9, `VISUAL_DNA.md` §§ 4–9
@@ -347,16 +347,28 @@ Pflichtprüfungen:
 
 ## 14. Projektphasen
 
-### Phase 0 – jetzt
-**Nur Projektierung. Keine Implementierung.**
+### Phase 0 – abgeschlossen
+**Projektierung abgeschlossen.**
 
 Ergebnis:
 - dieses Konzept
 - Backlog B-013
 - Architekturgrenze in D-20260928-004
 
-### Phase 1 – späterer Technik-Spike
-Eine einzige Szene: **Festungsenthüllung Englisch**.
+### Phase 1 – Technik-Spike v0.21.58
+**IMPLEMENTED.** Eine einzige isolierte Szene: **Festungsenthüllung Englisch**.
+
+Umgesetzt in v0.21.58:
+- Three.js **r186** lokal und versionsgepinnt unter `js/vendor/three-r186.module.js`
+- isolierte Vorschauseite `story-3d-spike.html`; kein automatischer Einstieg aus Lernen oder Battle
+- lazy geladener Controller/Renderer unter `js/story-3d/`
+- stilisierte Festung aus einfachen wiederverwendbaren Geometrien, Landschaft, Banner und kontrollierte Kamerafahrt
+- sichtbares **Überspringen** und **Nochmal**
+- `prefers-reduced-motion` verkürzt die Kamerafahrt deutlich
+- Fallback auf statisches 2D-Keyvisual, falls der Three.js-Start fehlschlägt
+- Renderer enthält keinerlei Mastery-, Ticket-, Battle-, Persistenz- oder Testabschluss-Schreibpfad
+- WebKit-Spike-Smoke prüft Lazy-Load-Grenze, Skip, Reduced Motion, Abschlusszustand und Renderer-Neutralität
+- Browser-FPS wird nur als technische CI-Metrik erfasst; reale Geräteperformance bleibt ausdrücklich Teil der späteren praktischen Abnahme
 
 Ziel:
 - Three.js lokal einbinden
@@ -367,7 +379,7 @@ Ziel:
 - Performance messen
 
 ### Phase 2 – visuelle Abnahme
-Nur weiter, wenn die Szene gegenüber 2D erkennbaren Mehrwert bietet.
+**OFFEN / bewusst nicht automatisierbar.** Nur weiter, wenn die Szene gegenüber 2D erkennbaren Mehrwert bietet.
 
 Entscheidung:
 - Three.js fortführen

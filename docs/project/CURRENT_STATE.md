@@ -1,5 +1,7 @@
 # Vokabeltrainer – Current State
 
+- v0.21.58 Release-Kandidat: isolierter B-013-Festungsenthüllungs-Spike mit lokalem Three.js r186, Skip, Reduced Motion und 2D-Fallback; praktische visuelle/Performance-Abnahme bleibt offen.
+
 - v0.21.57 Release-Kandidat: produktiver Phaser-4-Kampfpfad auf Englisch, Latein, Französisch-Kampf und Deutsch/Wortreich erweitert; praktische visuelle Gesamt-Abnahme bleibt offen.
 
 - v0.21.56 Release-Kandidat: B-019 Avatar-Matrix-Gate prüft 72 Fach-/Profil-/Stufenkombinationen automatisiert; praktische Geräteabnahme bleibt offen.
@@ -10,11 +12,11 @@ Stand: 01.10.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.57** (fachübergreifende Weltwahl als Release-Kandidat)
-- aktueller Stand auf `main`: **v0.21.53 / Commit `5b415a6134dd5638c824a2154f20b4e4c6266862` / PR #227**
+- App-Version: **v0.21.58** (B-013 Three.js-Technik-Spike als Release-Kandidat)
+- aktueller bestätigter Stand auf `main` vor den offenen Folge-PRs: **v0.21.56 / PR #230**
 - jüngster vollständig live-verifizierter Release: **v0.21.47 / PR #221**
 - Produktionsnachweis v0.21.47: **PR-CI #1364 success · main-CI #1365 success · GitHub Pages #575 success; reale iPhone-Selbstkontrolle dennoch erneut ohne erkennbare Anzeige und damit praktisch nicht bestanden**
-- aktueller Release-Kandidat: **v0.21.55 – B-017 fachübergreifende Weltwahl auf `feature/world-choice-complete-v02154`**; Englisch, Latein, Deutsch und Französisch besitzen unabhängig wählbare Abenteuer-/Kampfwelten, jeweils sechs Stufen und kanonische Storylines. Weltwechsel bleiben fachlich neutral. Basis ist der gemergte v0.21.53-Stand / PR #227
+- aktueller Release-Kandidat: **v0.21.58 / PR #232**, aufbauend auf **v0.21.57 / PR #231**; #231 erweitert Phaser auf alle Kampf-Fächer, #232 ergänzt den isolierten B-013-Three.js-Technik-Spikende Weltwahl auf `feature/world-choice-complete-v02154`**; Englisch, Latein, Deutsch und Französisch besitzen unabhängig wählbare Abenteuer-/Kampfwelten, jeweils sechs Stufen und kanonische Storylines. Weltwechsel bleiben fachlich neutral. Basis ist der gemergte v0.21.53-Stand / PR #227
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: Englisch, Latein, Französisch-Kampf und Deutsch/Wortreich laufen über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild bleiben fachlich neutral
@@ -71,7 +73,7 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 
 Die praktische v1-Abnahme ist noch nicht als abgeschlossen dokumentiert. Die zahlreichen `[ ]`-Punkte in [../../V1_ACCEPTANCE_TEST.md](../../V1_ACCEPTANCE_TEST.md) sind daher **nicht** als erledigt zu interpretieren, nur weil zugehörige automatisierte Tests existieren.
 
-Aus [../../FINAL_AUDIT.md](../../FINAL_AUDIT.md) bleibt außerdem als administrative Infrastrukturgrenze dokumentiert, dass die GitHub-Regel „Branch muss vor Merge auf aktuellem main sein“ noch separat administrativ zu aktivieren ist.
+Aus [../../FINAL_AUDIT.md](../../FINAL_AUDIT.md) bleibt außerdem als administrative Infrastrukturgrenze dokumentiert, dass das aktive Ruleset `Protect main` zwar den Statuscheck `test` verlangt, `strict_required_status_checks_policy` aber auf `false` steht; die Up-to-date-Regel ist damit noch administrativ zu aktivieren.
 
 ## Aktueller produktiver Release
 

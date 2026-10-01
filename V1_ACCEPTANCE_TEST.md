@@ -1,6 +1,6 @@
 # V1 Acceptance Test
 
-Stand: 01.10.2026 · Basis: v0.21.57 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle und Wortreich-Startszene
+Stand: 01.10.2026 · Basis: v0.21.58 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle und Wortreich-Startszene
 
 Release-Kandidat v0.21.55 ergänzt die neutrale geometrische Schreibspur-Kontrolle für B-018; reale Geräteabnahme bleibt erforderlich.
 
@@ -11,6 +11,8 @@ Release-Kandidat v0.21.53 aktiviert Französisch mit lokalem OCR-Modell, `fr-FR`
 Release-Kandidat v0.21.56 ergänzt das vollständige B-019-Avatar-Matrix-Gate; die visuelle Praxisabnahme auf realem iPhone/Desktop bleibt erforderlich.
 
 Release-Kandidat v0.21.57 erweitert den produktiven Phaser-4-Kampf auf Latein und Französisch-Kampf; reale visuelle Gesamt-Abnahme bleibt erforderlich.
+
+Release-Kandidat v0.21.58 ergänzt ausschließlich den isolierten B-013-Three.js-Technik-Spike; produktive 3D-Freigabe bleibt von praktischer Sicht-/Performance-Abnahme abhängig.
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.

@@ -338,6 +338,9 @@ jobs:
       - name: WebKit Deutsch Paket E Wortreich
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-deutsch-paket-e-ui-smoke.mjs
 
+      - name: WebKit B-013 isolated Story 3D spike
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-story-3d-spike-ui-smoke.mjs
+
       - name: WebKit My Army overview
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-army-ui-smoke.mjs
 
