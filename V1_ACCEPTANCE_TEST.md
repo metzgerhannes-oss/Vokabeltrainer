@@ -1,6 +1,8 @@
 # V1 Acceptance Test
 
-Stand: 30.09.2026 · Basis: v0.21.52 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle und Wortreich-Startszene
+Stand: 30.09.2026 · Basis: v0.21.53 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle und Wortreich-Startszene
+
+Release-Kandidat v0.21.53 aktiviert Französisch mit lokalem OCR-Modell, `fr-FR`-Audio und fachlich strikter Zielorthografie für Akzente/Apostrophe.
 
 Ziel dieses Dokuments ist die verbindliche praktische Abnahme vor v1.0.
 Der Test ergänzt die automatisierten CI-, Browser-, Security- und Fachtests.
