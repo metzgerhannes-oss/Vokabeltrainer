@@ -145,11 +145,11 @@ verifiziert.
 Die praktische Checkliste auf realem Gerät/Browser muss tatsächlich durchgeführt und dokumentiert werden. Automatisierte CI ersetzt diese Abnahme nicht.
 
 ## B-006 – GitHub-Branchregel „up to date before merge“
-**Status:** APPROVED_BACKLOG / INFRA  
-**Priorität:** vor formaler v1-Freigabe prüfen  
+**Status:** VERIFIED: Ruleset aktiv, strict up-to-date = FALSE · ADMIN-ÄNDERUNG OFFEN  
+**Priorität:** vor formaler v1-Freigabe  
 **Quelle:** `FINAL_AUDIT.md`
 
-Die administrative Repository-Regel ist laut Final Audit noch gesondert zu aktivieren bzw. zu verifizieren.
+Das aktive Repository-Ruleset `Protect main` wurde am 01.10.2026 live geprüft. Der Required-Status-Check `test` ist aktiv, aber `strict_required_status_checks_policy` steht auf `false`. Die gewünschte Regel „Branch muss vor Merge auf aktuellem main sein“ ist daher noch nicht aktiv. Die vorhandene GitHub-App-Verbindung besitzt keine Admin-Schreibaktion für Rulesets; die verbleibende Änderung ist eine reine Repository-Admin-Einstellung.
 
 
 ## B-012 – Phaser-4-Battle-Renderer
@@ -241,14 +241,13 @@ Produktionsnachweis der isolierten Vorschau:
 - offen bleibt die praktische visuelle Gesamt-Abnahme auf realen Geräten
 
 ## B-013 – Kurze 3D-Storyszenen prüfen
-**Status:** APPROVED_BACKLOG  
+**Status:** PHASE-1-SPIKE IMPLEMENTED v0.21.58 · praktische visuelle/Performance-Abnahme offen  
 **Priorität:** nach stabilem Phaser-Battle  
 **Decision:** D-20260928-004  
 **Kanonische Konzeptquelle:** `docs/project/STORY_3D_CONCEPT.md`  
 **Weitere Quelle:** `VISUAL_DNA.md`
 
-3D ist als optionaler Cinematic Layer projektiert, aber ausdrücklich noch nicht zur
-Implementierung freigegeben. Geplant sind sehr kurze Storymomente wie Festungsenthüllung,
+3D ist als optionaler Cinematic Layer projektiert. Der ursprünglich vorgesehene einzelne Festungsenthüllungs-Spike ist in v0.21.58 technisch umgesetzt; eine produktive Integration weiterer 3D-Szenen bleibt von der praktischen visuellen/Performance-Abnahme dieses Spikes abhängig. Geplant sind sehr kurze Storymomente wie Festungsenthüllung,
 Eroberung, Rang-/Ausrüstungsaufstieg, Kampagnenübergang und Jahresfinale.
 
 Technischer Kandidat ist ein isolierter Three.js/WebGL-Renderer mit lokal ausgelieferten
@@ -256,9 +255,15 @@ glTF/GLB-Assets. Für feste Sequenzen wird weiterhin gegen vorgerendertes Video 
 Der normale Kampf bleibt Phaser 2D/2.5D; Lern- und Battle-Logik bleiben vollständig außerhalb
 des 3D-Moduls.
 
-Vor einer Umsetzung ist genau ein Festungsenthüllungs-Spike vorgesehen. Erst nach Messung von
-Ladezeit, Framerate, Speicherbedarf, Offline-/Fallback-Verhalten und älteren iPhones wird
-entschieden, ob Three.js, Video oder kein 3D die produktive Richtung ist.
+Technik-Spike v0.21.58:
+- lokale, gepinnte Three.js-r186-Version
+- isolierte Festungsenthüllung ohne Produktivtrigger
+- Lazy Load, Skip, Reduced Motion und 2D-Fallback
+- keine fachlichen oder spielmechanischen Zustandsänderungen im Renderer
+- WebKit-CI misst technisch Start/Abschluss und einen Browser-FPS-Wert
+- reale iPhone-/Desktop-Performance und visueller Mehrwert bleiben praktische Abnahme
+
+Erst nach dieser praktischen Abnahme wird entschieden, ob Three.js, Video oder kein 3D die produktive Richtung ist.
 
 
 ## B-014 – Dauerhafte Jahresentwicklung & Jahresfestung
