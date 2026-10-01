@@ -42,19 +42,19 @@ const passed=vm.runInContext(`
   const set={id:'fr_set',learnerId:learner().id,subject:'french',title:'Unité 1',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:'',testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
   state.sets.push(set);
   const attached=attachVocabularyToSet(set.id,{term:"l'école",translation:'die Schule',acceptedTerms:["l'école"],source:'french-smoke',verified:true});
-  const word=wordByLinkId(attached.link.id);
+  const word=attached.word;
   const recall=makeQuizQuestion(word,'recall');
   check(recall.answerSide==='term'&&recall.strictOrthography===true,'productive French recall is orthographically strict');
   check(gradeQuizQuestion(recall,'lecole').correct===false,'missing French apostrophe is rejected');
   check(gradeQuizQuestion(recall,"l’école").correct===true,'typographic apostrophe variant is normalized safely');
 
   const accent=attachVocabularyToSet(set.id,{term:'école',translation:'Schule',acceptedTerms:['école'],source:'french-smoke',verified:true});
-  const accentWord=wordByLinkId(accent.link.id);
+  const accentWord=accent.word;
   check(gradeQuizQuestion(makeQuizQuestion(accentWord,'recall'),'ecole').correct===false,'missing acute accent is rejected');
   check(gradeQuizQuestion(makeQuizQuestion(accentWord,'recall'),'école').correct===true,'correct accented spelling is accepted');
 
   const forms=attachVocabularyToSet(set.id,{term:'beau',translation:'schön',acceptedTerms:['beau','belle'],source:'french-smoke',verified:true});
-  const formWord=wordByLinkId(forms.link.id);
+  const formWord=forms.word;
   const formRecall=makeQuizQuestion(formWord,'recall');
   check(gradeQuizQuestion(formRecall,'belle').correct===true,'explicitly stored French form variant is accepted');
   check(gradeQuizQuestion(formRecall,'bele').correct===false,'unstored French form is not invented by tolerant grading');
