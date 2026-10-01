@@ -71,7 +71,39 @@ const WORDREALM = {
   smoke: 0x4d4943
 };
 
-function pc(scene,key){return scene?.__theme==='wordrealm'?(WORDREALM[key]??C[key]):C[key]}
+
+const ROMAN = {
+  skyTop: 0x9fb9c8, skyBottom: 0xe7d2ad, haze: 0xf5e4c6,
+  mountainFar: 0x8d8a75, mountainNear: 0x6e6b58,
+  grassFar: 0x8b8a5c, grassNear: 0x626744, earth: 0x9b7651, path: 0xc9ad7d,
+  stone: 0xa69a82, stoneDark: 0x746853, stoneLight: 0xd0c2a5,
+  wood: 0x70472f, woodDark: 0x493020,
+  blue: 0x8b3d32, blueLight: 0xb35a49, gold: 0xb98a45, goldLight: 0xe5c675,
+  red: 0x8e3f35, redDark: 0x642d27, steel: 0x8a8c84, steelLight: 0xc2c1b5,
+  leather: 0x71503b, skin: 0xd8aa82, horse: 0x8b7865, horseDark: 0x5c4a3d,
+  dust: 0xd1b17d, fire: 0xe4722e, fireLight: 0xffd87a, ember: 0xffa642, smoke: 0x504b45
+};
+
+const FRENCH_BATTLE = {
+  skyTop: 0xa9bfd0, skyBottom: 0xead9bd, haze: 0xf6ead7,
+  mountainFar: 0x83918b, mountainNear: 0x64746c,
+  grassFar: 0x7f916d, grassNear: 0x52694f, earth: 0x8d7155, path: 0xc7aa84,
+  stone: 0xa09a91, stoneDark: 0x706b65, stoneLight: 0xc9c3ba,
+  wood: 0x674936, woodDark: 0x463226,
+  blue: 0x596f8e, blueLight: 0x7f98b8, gold: 0xc09c55, goldLight: 0xe7cd89,
+  red: 0x8b4f58, redDark: 0x663942, steel: 0x89949b, steelLight: 0xc0c8cc,
+  leather: 0x73543f, skin: 0xd9ac86, horse: 0x8a796b, horseDark: 0x5a4d45,
+  dust: 0xcfb28b, fire: 0xdd6f31, fireLight: 0xffd77c, ember: 0xffa746, smoke: 0x514c49
+};
+
+function paletteFor(scene){
+  if(scene?.__theme==='wordrealm')return WORDREALM;
+  if(scene?.__theme==='roman')return ROMAN;
+  if(scene?.__theme==='french-battle')return FRENCH_BATTLE;
+  return C;
+}
+function pc(scene,key){const palette=paletteFor(scene);return palette[key]??C[key]}
+
 
 function g(scene) {
   return scene.add.graphics();
@@ -164,7 +196,7 @@ function drawBackdrop(scene) {
     const x = 18 + ((i * 97) % 1420);
     const y = 474 + ((i * 43) % 205);
     const h = 5 + (i % 4) * 2;
-    detail.lineStyle(1 + (i % 2), scene?.__theme==='wordrealm'?0x829064:0x91a16c, 0.5);
+    detail.lineStyle(1 + (i % 2), scene?.__theme==='wordrealm'?0x829064:scene?.__theme==='roman'?0x9b8d62:scene?.__theme==='french-battle'?0x8ba17a:0x91a16c, 0.5);
     detail.lineBetween(x, y, x - 2, y - h);
     detail.lineBetween(x + 2, y, x + 4, y - h + 1);
   }
@@ -178,6 +210,23 @@ function drawBackdrop(scene) {
       forest.fillStyle(pc(scene,'woodDark'),0.9).fillRect(x-2,y-3,4,22);
     }
     const marker=scene.add.text(892,428,'DAS WORTREICH',{fontFamily:'Georgia, serif',fontSize:'25px',fontStyle:'bold',color:'#5b4328',stroke:'#f1dfba',strokeThickness:5}).setRotation(-0.035).setDepth(-53);
+    marker.setAlpha(0.78);
+  }else if(scene?.__theme==='roman'){
+    const ruins=g(scene).setDepth(-54);
+    ruins.fillStyle(0xc5b28e,0.8).fillRect(820,388,150,18);
+    for(let i=0;i<5;i+=1)ruins.fillStyle(0xb49f7c,0.82).fillRect(835+i*27,342,12,64);
+    ruins.lineStyle(5,0xb49f7c,0.8).strokeRect(820,334,150,72);
+    const marker=scene.add.text(900,424,'VIA ROMANA',{fontFamily:'Georgia, serif',fontSize:'24px',fontStyle:'bold',color:'#6e4a31',stroke:'#f0dfbd',strokeThickness:5}).setDepth(-53);
+    marker.setAlpha(0.8);
+  }else if(scene?.__theme==='french-battle'){
+    const town=g(scene).setDepth(-54);
+    for(let i=0;i<6;i+=1){
+      const x=785+i*58,h=46+(i%3)*17;
+      town.fillStyle(i%2?0xd7c5ab:0xcab79f,0.82).fillRect(x,405-h,42,h);
+      town.fillStyle(0x73584b,0.72).fillTriangle(x-4,405-h,x+21,383-h,x+46,405-h);
+      town.fillStyle(0x6e8193,0.55).fillRect(x+10,392-h,8,11);
+    }
+    const marker=scene.add.text(882,430,'FORT DES MOTS',{fontFamily:'Georgia, serif',fontSize:'23px',fontStyle:'bold',color:'#56677d',stroke:'#f3e6d1',strokeThickness:5}).setDepth(-53);
     marker.setAlpha(0.78);
   }
   return { sky, sun, sunCore, far, near, mid, ground, path, detail };
@@ -769,13 +818,13 @@ export function createBattleSceneClass(PhaserArg, hooks = {}) {
       this.__phase = 'ready';
       this.__friendlyLosses = 0;
       this.__onBeat = hooks.onBeat || null;
-      this.__subject = hooks.subject === 'german' ? 'german' : 'english';
-      this.__theme = hooks.theme === 'wordrealm' ? 'wordrealm' : 'campaign';
+      this.__subject = ['english','latin','french','german'].includes(hooks.subject) ? hooks.subject : 'english';
+      this.__theme = ['campaign','wordrealm','roman','french-battle'].includes(hooks.theme) ? hooks.theme : 'campaign';
     }
 
     create() {
       this.cameras.main.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
-      this.cameras.main.setBackgroundColor(this.__theme==='wordrealm'?'#394735':'#263944');
+      this.cameras.main.setBackgroundColor(this.__theme==='wordrealm'?'#394735':this.__theme==='roman'?'#4c4638':this.__theme==='french-battle'?'#394754':'#263944');
       this.__reduced = !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
       drawBackdrop(this);
       this.__props = createCampProps(this);
