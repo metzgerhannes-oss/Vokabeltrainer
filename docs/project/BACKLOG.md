@@ -5,7 +5,7 @@ Stand: 27.09.2026
 Dieses Backlog enthält nur Punkte, die als Projektarbeit erhalten bleiben sollen. Reine Ideen ohne Bewertung gehören zunächst in den Status `IDEA`; als sinnvoll bestätigte, aber noch nicht umgesetzte Punkte in `APPROVED_BACKLOG`.
 
 ## B-001 – Deutsch Grundschule 1–4 / Das Wortreich
-**Status:** IN_IMPLEMENTATION  
+**Status:** IMPLEMENTED / TECHNISCH VERIFIZIERT · praktische v1-Abnahme offen  
 **Priorität:** P0 / Release-Blocker vor v1.0  
 **Decisions:** D-20260927-009, D-20260928-008  
 **Kanonische Fachquelle:** `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md`  
@@ -31,8 +31,8 @@ Verbindliche Leitlinien:
 **Paket B – Fachgrundgerüst:** PRODUCTION / CI VERIFIED v0.21.34 (PR #201, main-CI #1233, Pages #559).  
 **Paket C – Klasse-1-Kern:** PRODUCTION / LIVE VERIFIED v0.21.35 (PR #202, PR-CI #1235, main-CI #1236, Pages #560).  
 **Paket D – Lernwörter/Rechtschreibung:** PRODUCTION / LIVE VERIFIED v0.21.36 (PR #203, PR-CI #1239, main-CI #1240, Pages #561).  
-**Paket E – Wortreich:** IMPLEMENTED im Release-Kandidaten v0.21.37; echter deutscher Phaser-Belagerungskampf mit eigener Wortreich-Optik, CI-/Browser-Verifikation läuft.  
-**Paket F:** praktische v1-Abnahme folgt.
+**Paket E – Wortreich:** PRODUCTION / LIVE VERIFIED v0.21.37 (PR #204, CI #1247, Pages #562).  
+**Paket F:** praktische v1-Abnahme bleibt offen; technische Mindestanforderungen sind umgesetzt.
 
 ## B-002 – Eigene finale Latein-Grafikserie
 **Status:** SUPERSEDED durch B-019 / v0.21.50  
@@ -153,7 +153,7 @@ Die administrative Repository-Regel ist laut Final Audit noch gesondert zu aktiv
 
 
 ## B-012 – Phaser-4-Battle-Renderer
-**Status:** IN_IMPLEMENTATION  
+**Status:** v0.21.57 fachübergreifender produktiver Phaser-Pfad IMPLEMENTED · praktische visuelle Gesamt-Abnahme offen  
 **Priorität:** P1 visuelle Kampfüberarbeitung  
 **Decision:** D-20260928-004  
 **Betroffene Quellen:** `VISUAL_DNA.md` §§ 4–6, `PRODUCT_DNA.md` P9, Battle-UI/Renderer
@@ -230,6 +230,15 @@ Produktionsnachweis der isolierten Vorschau:
 - Schlachtansicht bleibt standardmäßig scrollbar; Vollbild ist eine optionale app-eigene Ansicht und lässt sich wieder verlassen, ohne die Schlacht zu schließen
 - Browser-Smokes decken Gegenwehr, visuelle Verluste, Sound-Fähigkeit, unveränderte fachliche Mastery sowie optionales Vollbild ab
 - Produktionsnachweis: PR #187 gemergt auf `main`; CI #1166 vollständig grün
+
+**Iteration 6 – Fachübergreifender Produktivpfad v0.21.57:**
+- produktiver Phaser-4-Angriff für Englisch, Latein, Französisch-Kampf und Deutsch/Wortreich
+- Latein nutzt Theme `roman` mit mediterran-römischer Farb-/Umgebungsidentität
+- Französisch-Kampf nutzt Theme `french-battle` mit eigener fiktionaler Festungsidentität
+- Abenteuerwelten bleiben ohne Battle-Screen
+- Subject/Theme werden im Phaser-Bridge nicht mehr auf Englisch/Kampagne reduziert
+- Browser-Regression prüft für Latein und Französisch Renderer, Subject/Theme, Gegenwehr, Capture, Ticketverbrauch und unveränderte Mastery
+- offen bleibt die praktische visuelle Gesamt-Abnahme auf realen Geräten
 
 ## B-013 – Kurze 3D-Storyszenen prüfen
 **Status:** APPROVED_BACKLOG  

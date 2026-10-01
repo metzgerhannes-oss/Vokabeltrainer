@@ -479,11 +479,11 @@ function scheduleBattleStep(generation,delay,callback){
 }
 let battlePhaserProductionModulePromise=null;
 function useProductionPhaserBattle(secureBefore=false){
-  return ['english','german'].includes(state.activeSubject)&&!secureBefore&&window.__VT_BATTLE_TEST_MODE__!==true;
+  return ['english','latin','french','german'].includes(state.activeSubject)&&!secureBefore&&window.__VT_BATTLE_TEST_MODE__!==true;
 }
 function loadProductionPhaserBattle(){
   if(!battlePhaserProductionModulePromise){
-    const moduleUrl=new URL('js/battle-phaser/battle-phaser-production.js?v=0.21.37',document.baseURI).href;
+    const moduleUrl=new URL('js/battle-phaser/battle-phaser-production.js?v=0.21.57',document.baseURI).href;
     battlePhaserProductionModulePromise=import(moduleUrl).catch(error=>{
       battlePhaserProductionModulePromise=null;
       throw error;

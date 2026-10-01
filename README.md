@@ -12,7 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.56**
+App-Version: **v0.21.57**
+
+- v0.21.57 (Release-Kandidat): **Phaser für alle Kampf-Fächer.** Englisch, Latein, Französisch-Kampf und Deutsch/Wortreich nutzen jetzt denselben produktiven Phaser-4-Pfad. Latein erhält eine römisch-mediterrane Farb-/Umgebungsidentität, Französisch-Kampf eine eigene französisch inspirierte fiktionale Festungsidentität. Abenteuerwelten bleiben kampffrei; fachliche Battle-Logik, Tickets und Mastery bleiben unverändert.
 
 - v0.21.56 (Release-Kandidat): **B-019 Avatar-Matrix-Gate.** WebKit prüft jetzt alle 72 Kombinationen aus vier Fächern, drei Profilvarianten und sechs Entwicklungsstufen auf echte Bildassets, korrekte Atlaszeilen und fachliche Trennung. Praktische iPhone-/Desktop-Abnahme bleibt separat offen.
 

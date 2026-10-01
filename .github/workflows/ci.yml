@@ -332,6 +332,9 @@ jobs:
       - name: WebKit production Phaser battle
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-production-phaser-battle-ui-smoke.mjs
 
+      - name: WebKit Latin/French production Phaser
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-phaser-all-subjects-ui-smoke.mjs
+
       - name: WebKit Deutsch Paket E Wortreich
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-deutsch-paket-e-ui-smoke.mjs
 
