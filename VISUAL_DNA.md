@@ -341,8 +341,8 @@ Paris darf eine besondere Etappe sein, aber nicht die gesamte visuelle Welt best
 - auch in der Kampfvariante keine realen Länder/Völker als Gegner
 - keine historische Frankreich-Kriegsrekonstruktion als Grundwelt
 
-Hinweis: Französisch ist visuell bereits definiert, auch wenn die fachliche Freischaltung
-technisch weiterhin den vollständigen Aktivierungs-Check aus `SUBJECT_SYSTEM.md` erfüllen muss.
+Hinweis: Französisch ist ab v0.21.53 auch fachlich freigeschaltet. Der Aktivierungs-Check aus
+`SUBJECT_SYSTEM.md` ist erfüllt; beide Motivationswelten nutzen dieselbe französische Fachlogik.
 
 ## 9. Deutsch Grundschule 1–4 – Das Wortreich
 

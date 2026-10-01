@@ -1,16 +1,16 @@
 # Vokabeltrainer – Current State
 
-Stand: 30.09.2026, aktueller main-Stand direkt aus GitHub geprüft.
+Stand: 01.10.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 ## Produktionsbaseline
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.52** (freigegebene Wortreich-Startszene als Release-Kandidat)
-- aktueller Stand auf `main`: **v0.21.51 / Commit `e49f0d854eb6538121feeb9f3e76a8a407c4c934` / PR #225**
+- App-Version: **v0.21.53** (Französisch-Freischaltung als Release-Kandidat)
+- aktueller Stand auf `main`: **v0.21.52 / Commit `65535f292268c733110a760cdf3ea435b32fb1f2` / PR #226**
 - jüngster vollständig live-verifizierter Release: **v0.21.47 / PR #221**
 - Produktionsnachweis v0.21.47: **PR-CI #1364 success · main-CI #1365 success · GitHub Pages #575 success; reale iPhone-Selbstkontrolle dennoch erneut ohne erkennbare Anzeige und damit praktisch nicht bestanden**
-- aktueller Release-Kandidat: **v0.21.52 – freigegebene Wortreich-Startszene auf `feat/wordrealm-approved-home-v02152` / PR #226**; Deutsch Wortreich nutzt die freigegebene integrierte Fuchs-/Burg-/Lernweg-Szene statt der unscharfen Atlas-Kachel. Basis ist der gemergte fachliche P0-Fix v0.21.51 / PR #225
+- aktueller Release-Kandidat: **v0.21.53 – Französisch als regulärer Fachbereich auf `feature/french-b003-v02153`**; lokales `fra.traineddata`, `fr-FR`-Audio, strikte produktive Zielorthografie für Akzente/Apostrophe und reguläre Fach-/Weltaktivierung. Basis ist der gemergte v0.21.52-Stand / PR #226
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: echter Englisch-Tagesangriff läuft über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild sind produktiv
@@ -58,8 +58,9 @@ Die visuelle Leitlinie steht in [../../VISUAL_DNA.md](../../VISUAL_DNA.md). Fach
 | Deutsch Paket E / Wortreich-Phaser-Belagerung | PRODUCTION / LIVE VERIFIED v0.21.37 · PR #204 · CI #1247 · Pages #562 | `docs/project/DEUTSCH_WORTREICH_V1.md`, D-20260928-008, D-20260928-004 |
 | Deutsch Startlayout / Stufen / Vorlesen / m/w/d | PRODUCTION / LIVE VERIFIED v0.21.38 | `docs/project/DEUTSCH_WORTREICH_LAYOUT_V1.md`, D-20260929-003, PR #206 |
 | Deutsch Weltwahl Abenteuer/Kampf | PRODUCTION / CI VERIFIED v0.21.39 | D-20260929-002, B-017, `docs/project/DEUTSCH_WORTREICH_V1.md` |
+| Französisch Fachbereich / OCR / Akzente / Audio | IMPLEMENTED im v0.21.53-Release-Kandidaten | B-003, `SUBJECT_SYSTEM.md`, `PRODUCT_DNA.md` P11 |
 | Deutsch Klasse-1-Erstlektion: Groß/Klein nachfahren → nur nach Laut selbst schreiben | IMPLEMENTED im v0.21.40-Release-Kandidaten; Praxisabnahme Lautqualität bleibt offen | D-20260929-005, B-001, `docs/project/DEUTSCH_GRUNDSCHULE_1_4_EVIDENZKONZEPT.md` § 6 |
-| Fachübergreifende Weltwahl Abenteuer/Kampf + 8 vollständige Storylines | IMPLEMENTED im v0.21.40-Release-Kandidaten; Englisch/Latein aktiv, Deutsch integriert, Französisch-Welten vorbereitet bis Fachfreischaltung B-003; CI läuft | D-20260929-001, D-20260929-004, B-017, `docs/project/WORLD_STORYLINES_V1.md` |
+| Fachübergreifende Weltwahl Abenteuer/Kampf + 8 vollständige Storylines | IMPLEMENTED; Englisch/Latein/Deutsch aktiv, Französisch ab v0.21.53 fachlich freigeschaltet; finale Produktprüfung B-017 offen | D-20260929-001, D-20260929-004, B-017, `docs/project/WORLD_STORYLINES_V1.md` |
 | praktische v1-Abnahme | OFFEN | `V1_ACCEPTANCE_TEST.md` |
 
 ## Offene Verifikationsgrenzen

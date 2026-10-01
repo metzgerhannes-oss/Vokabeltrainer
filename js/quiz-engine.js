@@ -123,6 +123,10 @@ function makeQuizQuestion(w,mode,opts={}){
   }else{
     base.prompt=base.translation;base.targets=terms;base.answerSide='term';base.trackOrthography=true;
   }
+  if(base.answerSide==='term'&&subjectHasCapability(base.subject,'strictTermOrthography')){
+    base.strictOrthography=true;
+    base.trackOrthography=true;
+  }
   if(opts.prompt!=null)base.prompt=String(opts.prompt);
   if(opts.targets)base.targets=quizUnique(opts.targets);
   if(opts.strictOrthography!=null)base.strictOrthography=!!opts.strictOrthography;
