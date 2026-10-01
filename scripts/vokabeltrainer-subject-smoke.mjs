@@ -14,7 +14,7 @@ const result=vm.runInContext(`
 (()=>{
   const passed=[];const assert=(v,n)=>{if(!v)throw new Error('Subject smoke failed: '+n);passed.push(n)};
   assert(knownSubjectIds().join(',')==='english,latin,german,french','all subjects come from metadata');
-  assert(availableSubjectIds().join(',')==='english,latin,german','Deutsch is released while French remains gated');
+  assert(availableSubjectIds().join(',')==='english,latin,german,french','English, Latin, German and French are released');
   assert(subjectFromExternal('FR')==='french'&&subjectFromExternal('Französisch')==='french'&&subjectFromExternal('DE')==='german'&&subjectFromExternal('Deutsch')==='german','external subject aliases resolve');
   assert(subjectFromExternal('Spanisch')===''&&normalizeSubjectId('unknown','')==='','unknown subjects are rejected instead of silently becoming English');
   assert(normalizeLearnerSubjects({activeSubjects:['unknown','latin']}).join(',')==='latin','invalid profile subjects are dropped');
@@ -26,6 +26,7 @@ const result=vm.runInContext(`
   assert(subjectSpeechLang('french')==='fr-FR','French speech locale configured');
   assert(subjectOcrLang('french')==='fra','French OCR code configured');
   assert(subjectHasCapability('latin','latinGrammar')&&!subjectHasCapability('french','latinGrammar'),'capabilities are metadata driven');
+  assert(subjectHasCapability('french','strictTermOrthography'),'French productive answers require configured strict term orthography');
   assert(lexicalKey('ou','french')!==lexicalKey('où','french'),'French accent can distinguish lexemes');
   assert(lexicalKey('cote','french')!==lexicalKey('côte','french'),'French circumflex remains part of lexical identity');
   assert(Object.keys(defaultGradeScales()).includes('german')&&Object.keys(defaultTestSeries()).includes('german'),'German per-subject state is generated');
@@ -37,7 +38,14 @@ const result=vm.runInContext(`
   const dp=makeLearnerVocabulary('learner_demo',de.id,primarySense(de).id);assert(Object.keys(dp.literacySkills).includes('orthographicSpelling')&&Object.keys(dp.literacySkills).includes('sentenceUse'),'German literacy evidence is stored separately from foreign-language skills');
   state=defaultState();state.vocabulary=[de];state.learners[0].activeSubjects=['german'];state.activeSubject='german';const germanGrade=gradeQuizQuestion({subject:'german',targets:['Haus'],strictOrthography:true,trackOrthography:true,caseSensitiveOrthography:true},'haus');assert(germanGrade.correct===false,'German spelling respects fachlich relevant capitalization');
   assert(gradeQuizQuestion({subject:'german',targets:['Haus'],strictOrthography:true,trackOrthography:true,caseSensitiveOrthography:true},'Haus').correct===true,'German spelling accepts the exact orthographic form');
-  SUBJECT_META.french.available=true;state=defaultState();state.learners[0].activeSubjects=['french'];state.activeSubject='french';ensureActiveSubject();assert(state.activeSubject==='french','enabling metadata is sufficient for profile activation');
+  state=defaultState();state.learners[0].activeSubjects=['french'];state.activeSubject='french';ensureActiveSubject();assert(state.activeSubject==='french','released French subject activates through generic profile metadata');
+  const fr=makeVocabulary('french',"l'école",'die Schule');
+  const frp=makeLearnerVocabulary('learner_demo',fr.id,primarySense(fr).id);const frw={...frp,...fr,...primarySense(fr),setLinkId:'fr_link',setId:'fr_set'};
+  const frRecall=makeQuizQuestion(frw,'recall');
+  assert(frRecall.strictOrthography===true&&frRecall.answerSide==='term','French productive recall is orthographically strict');
+  assert(gradeQuizQuestion(frRecall,'lecole').correct===false,'French recall rejects a missing apostrophe');
+  assert(gradeQuizQuestion(makeQuizQuestion({...frw,term:'école',acceptedTerms:['école']},'recall'),'ecole').correct===false,'French recall rejects a missing accent');
+  assert(gradeQuizQuestion(frRecall,"l’école").correct===true,'French recall accepts typographic apostrophe normalization');
   assert(rankFor(100,'french')===subjectCampaign('french').ranks.at(-1),'campaign metadata works without French branch');
   return passed;
 })()
