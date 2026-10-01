@@ -12,7 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.55**
+App-Version: **v0.21.56**
+
+- v0.21.56 (Release-Kandidat): **B-019 Avatar-Matrix-Gate.** WebKit prüft jetzt alle 72 Kombinationen aus vier Fächern, drei Profilvarianten und sechs Entwicklungsstufen auf echte Bildassets, korrekte Atlaszeilen und fachliche Trennung. Praktische iPhone-/Desktop-Abnahme bleibt separat offen.
 
 - v0.21.55 (Release-Kandidat): **Neutrale Schreibspur-Kontrolle.** Freies Schreiben erfasst die Finger-/Stiftbahn und gibt ausschließlich geometrische Hinweise zu Größe und Lage in Dachgeschoss, Erdgeschoss und Keller. Keine automatische Richtig/Falsch-Wertung und keine fachliche oder spielerische Fortschrittswirkung.
 
