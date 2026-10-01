@@ -29,7 +29,7 @@ try{
   });
   assert(live.subject==='german'&&live.theme==='wordrealm','German battle mounts the Wortreich Phaser renderer');
   assert(live.attack==='ram'&&live.outcome==='capture','Wortreich receives selected ram attack and real capture outcome');
-  assert(live.version.includes('v0.21.37 · Wortreich Phaser'),'Wortreich renderer exposes its release marker');
+  assert(live.version.includes('v0.21.57 · Wortreich Phaser'),'Wortreich renderer exposes the current cross-subject release marker');
   assert(live.width>0&&live.height>0,'Wortreich Phaser canvas is visible on iPhone');
 
   const resultState=await waitForBattleResult({timeout:30000});
