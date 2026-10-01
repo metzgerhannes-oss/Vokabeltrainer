@@ -375,6 +375,9 @@ const passed=vm.runInContext(`
   assert(currentScopeStatus.total===1&&currentScopeStatus.total<currentScopePlan.dailyTarget,'the mandatory block may stay smaller than the nominal target instead of adding unrelated old vocabulary');
   assert(currentScopeRefs.every(ref=>(ref.setLinkId?wordByLinkId(ref.setLinkId):wordById(ref.wordId))?.setId===currentScopeSet.id),'every mandatory daily word stays inside the active test scope');
   assert(!currentScopeRefs.some(ref=>ref.wordId===oldMaintenanceWord.id),'old due vocabulary remains outside the mandatory current-test block');
+  const currentScopeReplacement=dailyPlanReplacementCandidate(currentScopePlan);
+  assert(!currentScopeReplacement||((currentScopeReplacement.ref.setLinkId?wordByLinkId(currentScopeReplacement.ref.setLinkId):wordById(currentScopeReplacement.ref.wordId))?.setId===currentScopeSet.id),'adaptive replacements stay inside the active test scope');
+  assert(currentScopeReplacement?.ref?.wordId!==oldMaintenanceWord.id,'old due vocabulary cannot re-enter through adaptive replacement');
 
   state=defaultState();
   const finishedSet={id:'finished_test_set',learnerId:'learner_demo',subject:'english',title:'Abgeschlossener Test',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:today(),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
@@ -389,6 +392,8 @@ const passed=vm.runInContext(`
   const postTestPlan=buildDailyPlan('english'),postTestStatus=dailyPlanStatus(postTestPlan),postTestRefs=dailyPlanRefs(postTestPlan,false);
   assert(postTestStatus.total===0,'after a completed test there is no mandatory fallback to the old annual vocabulary pool');
   assert(!postTestRefs.some(ref=>ref.wordId===finishedWord.id),'completed-test vocabulary stays out of mandatory learning until the next test is planned');
+  assert(mandatoryDueWords('english').length===0,'completed-test vocabulary no longer contributes to the mandatory due counter');
+  assert(dailyPlanReplacementCandidate(postTestPlan)===null,'after a completed test with no next test there is no adaptive mandatory replacement');
 
   const nextSet={id:'next_test_set',learnerId:'learner_demo',subject:'english',title:'Nächster Test',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(6),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
   state.sets.push(nextSet);
@@ -398,6 +403,9 @@ const passed=vm.runInContext(`
   assert(upcomingTestContext('english')?.sets?.some(set=>set.id===nextSet.id),'planning the next test immediately activates its scope');
   assert(nextRefs.every(ref=>ref.wordId===nextWord.id),'after completion the mandatory path switches only to the next planned test vocabulary');
   assert(!nextRefs.some(ref=>ref.wordId===finishedWord.id),'the previous test vocabulary does not leak into the next mandatory plan');
+  const nextReplacement=dailyPlanReplacementCandidate(nextPlan);
+  assert(!nextReplacement||((nextReplacement.ref.setLinkId?wordByLinkId(nextReplacement.ref.setLinkId):wordById(nextReplacement.ref.wordId))?.setId===nextSet.id),'adaptive replacements for the next test remain inside its exact vocabulary scope');
+  assert(nextReplacement?.ref?.wordId!==finishedWord.id,'completed-test vocabulary cannot return as an adaptive extra in the next test cycle');
 
   state=defaultState();
   assert(battleTickets('english')===0&&!battleUnlockedToday('english'),'battle action starts locked for the day');
