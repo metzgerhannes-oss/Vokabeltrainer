@@ -42,11 +42,20 @@ Verbindliche Leitlinien:
 Latein ist fachlich eigenständig. Der technische Stand verwendet an einzelnen Stellen noch bewusste Fallbacks, bis die eigene finale Legion-/Avatarserie vollständig vorliegt.
 
 ## B-003 – Französisch als eigener Fachbereich
-**Status:** APPROVED_BACKLOG  
-**Priorität:** nach Englisch/Latein-Stabilisierung  
+**Status:** IMPLEMENTED · v0.21.53 Release-Kandidat  
+**Priorität:** P0/P1 · fachliche Freischaltung  
 **Betroffene Quellen:** `PRODUCT_DNA.md` P11, `SUBJECT_SYSTEM.md`, `VISUAL_DNA.md`
 
-Französisch soll gemeinsame technische Grundlagen nutzen, aber eigene Fachregeln für Akzente, Formen, Aussprache und eine eigene visuelle Reise-/Sprachwelt erhalten. Die visuelle Vorbereitung ist nicht mit fachlicher Freischaltung gleichzusetzen.
+Französisch nutzt die gemeinsame Facharchitektur, ist ab v0.21.53 aber regulär freigeschaltet:
+- lokales `fra.traineddata` aus dem gepinnten offiziellen Tesseract-`tessdata_fast`-Stand
+- `fr-FR` für Lernwort-Audio/Hören/Diktat
+- französische Akzente bleiben Teil der Lexemidentität
+- produktive Zielantworten verlangen über die Capability `strictTermOrthography` korrekte Akzente und Apostrophe; typografische Apostrophvarianten bleiben technisch tolerant
+- OCR-/Textimport bewahrt typische Formen wie `école`, `garçon`, `être`, `où`
+- Retrieval, Spacing, Mastery, Testplanung, Notenskala, Bibliothek und Family-Sync bleiben auf der generischen Facharchitektur
+- `Voyage Français` und die vorbereitete fiktionale Festungswelt werden mit der Fachaktivierung regulär erreichbar
+
+Die visuelle Weltwahl bleibt als eigener Produktpunkt B-017 geführt; ihre fachliche Sperre durch B-003 ist beseitigt.
 
 ## B-004 – Adaptives Nachrücken innerhalb desselben Tages
 **Status:** PRODUCTION  
@@ -321,7 +330,7 @@ Ein Backlog-Punkt wird nicht gelöscht, wenn er umgesetzt oder verworfen wird:
 - Ersatz → `SUPERSEDED` plus Verweis auf Nachfolger
 
 ## B-017 – Weltwahl Abenteuer oder Kampf pro Fach
-**Status:** IN_IMPLEMENTATION · v0.21.40 fachübergreifend implementiert; Englisch/Latein aktiv, Französisch-Welten vorbereitet bis B-003-Fachfreischaltung; PR-/CI-Verifikation folgt  
+**Status:** IN_IMPLEMENTATION · v0.21.40 fachübergreifend implementiert; ab v0.21.53 sind auch die Französisch-Welten fachlich freigeschaltet; finale Produktprüfung bleibt offen  
 **Priorität:** P1 visuelle/Profile-UX vor finaler Fachwelten-Ausarbeitung  
 **Decision:** D-20260929-001 · D-20260929-002  
 **Betroffene Quellen:** `VISUAL_DNA.md`, `docs/project/LATIN_FRENCH_VISUAL_LAYOUT.md`, Profilmodell, Profilerstellung, Profileinstellungen, Spiel-/Fortschrittsrenderer
@@ -339,7 +348,7 @@ Umsetzungspaket:
 - Deutsch-Abenteuer besitzt eine eigene nicht-militärische Sechsstufen-Fuchsserie
 - Englisch v0.21.40: Expedition vs. Armee/Feldzug; Abenteuer bleibt kampffrei
 - Latein v0.21.40: zivile mediterrane Entdeckungsreise vs. Legion/Kastelle; Abenteuer bleibt kampffrei
-- Französisch v0.21.40: Voyage Français vs. fiktionale Gefährten-/Festungswelt technisch vorbereitet; Fachfreischaltung bleibt B-003
+- Französisch v0.21.40: Voyage Français vs. fiktionale Gefährten-/Festungswelt technisch vorbereitet; ab v0.21.53 durch B-003 fachlich freigeschaltet
 - Avatar- und Deutsch-Weltwahl sind vorlesbar; m/w/d und Weltpräferenz werden gemeinsam über Family Sync übertragen
 - Profileinstellungen erlauben denselben Wechsel später
 - bestehende Profile behalten zunächst ihre bisherige Darstellung; keine überraschende Migration
