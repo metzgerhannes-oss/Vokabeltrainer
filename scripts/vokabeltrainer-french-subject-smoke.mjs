@@ -88,7 +88,7 @@ const passed=vm.runInContext(`
 
 const io=fs.readFileSync('js/io.js','utf8');
 assert(io.includes('subjectOcrLang(state.activeSubject)'),'OCR worker language stays metadata driven');
-assert(io.includes("langPath:new URL('ocr/lang/',document.baseURI).href"),'OCR worker uses bundled local language path');
+assert(io.includes("const ocrBase=new URL('ocr/',window.location.href)")&&io.includes("langPath:new URL('lang',ocrBase).href"),'OCR worker uses bundled local language path');
 const learning=fs.readFileSync('js/learning.js','utf8');
 assert(learning.includes("subjectSpeechLang(state.activeSubject)||'en-GB'"),'learning audio takes locale from subject metadata');
 
