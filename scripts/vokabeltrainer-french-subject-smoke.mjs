@@ -53,6 +53,12 @@ const passed=vm.runInContext(`
   check(gradeQuizQuestion(makeQuizQuestion(accentWord,'recall'),'ecole').correct===false,'missing acute accent is rejected');
   check(gradeQuizQuestion(makeQuizQuestion(accentWord,'recall'),'école').correct===true,'correct accented spelling is accepted');
 
+  const forms=attachVocabularyToSet(set.id,{term:'beau',translation:'schön',acceptedTerms:['beau','belle'],source:'french-smoke',verified:true});
+  const formWord=wordByLinkId(forms.link.id);
+  const formRecall=makeQuizQuestion(formWord,'recall');
+  check(gradeQuizQuestion(formRecall,'belle').correct===true,'explicitly stored French form variant is accepted');
+  check(gradeQuizQuestion(formRecall,'bele').correct===false,'unstored French form is not invented by tolerant grading');
+
   const reverse=makeQuizQuestion(accentWord,'reverseRecall');
   check(reverse.answerSide==='translation'&&reverse.strictOrthography===false,'German meaning recall remains semantically tolerant');
   const spelling=makeQuizQuestion(accentWord,'spelling');
