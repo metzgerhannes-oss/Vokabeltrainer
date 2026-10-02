@@ -191,9 +191,7 @@
     const sprite=window.VTMenuAvatarArt?.getSprite?.('german',style,safeLevel)||null;
     let fox='';
     if(sprite){
-      const x=sprite.cols<=1?0:(sprite.col/(sprite.cols-1))*100;
-      const y=sprite.rows<=1?0:(sprite.row/(sprite.rows-1))*100;
-      fox='<span class="wordrealm-approved-scene-fox" aria-hidden="true" style="background-image:url(&quot;'+sprite.url+'&quot;);background-size:'+sprite.cols*100+'% '+sprite.rows*100+'%;background-position:'+x+'% '+y+'%"></span>';
+      fox='<span class="wordrealm-approved-scene-fox stage-'+safeLevel+'" aria-hidden="true"><img src="'+sprite.url+'" alt="" decoding="async"></span>';
     }else{
       fox='<span class="wordrealm-approved-scene-fox-fallback" aria-hidden="true">'+adventureFoxSvg(safeLevel)+'</span>';
     }
