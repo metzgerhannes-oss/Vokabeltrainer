@@ -1,5 +1,7 @@
 # Finales Audit
 
+> v0.21.60: Die Startseitenpfade aller vier Fächer werden in Abenteuer und Kampf als 8er-Matrix geprüft. Der Deutsch-Fuchspfad integriert das freigegebene malerische Fuchs-Artwork ohne Portraitkarten-Chrome in die Landschaft; German-only Vorlesefunktionen bleiben in beiden Welten sichtbar und die themenspezifischen hellen Fortschrittsflächen werden nicht mehr von generischen CSS-Regeln überschrieben.
+
 > v0.21.59: Der Pflichtlernweg ist jetzt vollständig auf den aktuellen Testscope begrenzt. Auch adaptive Nachrücker und der sichtbare Pflicht-Fälligkeitszähler können keine Vokabeln aus abgeschlossenen Tests mehr zurückholen; zwischen Tests bleibt der Pflichtpfad leer.
 
 > v0.21.58: B-013 Phase-1-Technik-Spike ist als isolierte Three.js-r186-Festungsenthüllung implementiert. Skip, Reduced Motion, Fallback und fachliche Neutralität sind automatisiert abgesichert; reale Performance-/Sichtabnahme bleibt offen.
@@ -15,9 +17,12 @@
 
 > v0.21.53: Französisch ist regulär aktiviert. Der lokale OCR-Blocker ist mit gepinntem `fra.traineddata` beseitigt; produktive Zielantworten schützen Akzente/Apostrophe über eine fachliche Capability, TTS nutzt `fr-FR`.
 
-Stand: 01.10.2026 · App v0.21.59
+Stand: 02.10.2026 · App v0.21.60
 
 ## Ergebnis
+
+- v0.21.60 härtet Start/Heute als eigene visuelle Qualitätsgrenze: alle 8 Fach-/Weltkombinationen erhalten einen WebKit-iPhone-Check auf korrekte Theme-Zuordnung, reale Avatar-Art statt technischem Fallback, fehlenden Horizontal-Overflow und Trennung von Avatar-/Szenenbereich und Lerninhalt. Für Deutsch Abenteuer wird die malerische Atlas-Fuchsserie ohne sichtbaren Portraitkarten-Rahmen in die Fuchspfad-Landschaft eingeblendet; Wortreich/Kampf bleibt die einzelne freigegebene Gesamtszene.
+
 
 - v0.21.59 schließt den nach v0.21.51 verbliebenen Leckpfad: `dailyPlanReplacementCandidate()` darf Nachrücker nur noch aus `mandatoryDailyPool()` wählen; ohne Folgetest gibt es keine Pflicht-Nachrücker. Der Startscreen zählt bei „fällig“ ebenfalls nur Wörter des aktuellen Pflichtpools. Alte Testvokabeln bleiben ausschließlich freiwillig erreichbar.
 
@@ -26,7 +31,7 @@ Stand: 01.10.2026 · App v0.21.59
 - v0.21.51 schließt den verbliebenen Post-Test-Fehler: Nach „Test abschließen“ fällt der Pflichtpfad ohne nächsten aktiven Test nicht mehr auf den Jahreswortschatz zurück. Alte Testvokabeln bleiben freiwillig verfügbar; sobald ein neuer Test geplant ist, wird ausschließlich dessen Umfang verpflichtend gelernt. Das Tagesplanschema steigt auf `daily4`.
 
 - v0.21.50 integriert die freigegebene malerische Avatar-Art-Direction in den Startscreen: echte Bildassets statt fachfremder Szenen-/CSS-Fallbacks für alle aktiven Fach-/Stilpfade; Deutsch Grundschule bleibt ein Fuchs. Englisch männlich nutzt die vorhandene volle 6-Stufen-Serie, Latein männlich die neue römische Ganzkörper-Serie; weitere m/w/d-Pfade werden aus dem freigegebenen Atlas gerendert. Die Änderung bleibt rein visuell und verändert keine Lern-, Mastery-, Spacing- oder Testlogik.
-  Die Deutsch-WebKit-Regression prüft dabei ausdrücklich den Bildatlas als Start-Avatar in beiden Weltmodi; die vorhandenen SVG-Füchse bleiben nur für Stufenvorschau/technische Fallback-Pfade erhalten.
+  Die Deutsch-WebKit-Regression prüft den Fuchs in beiden Weltmodi: Wortreich/Kampf nutzt die integrierte freigegebene Gesamtszene; Fuchs-Abenteuer nutzt das freigegebene malerische Atlas-Artwork ohne sichtbaren Portraitkarten-Rahmen. Die vorhandenen SVG-Füchse bleiben nur für Stufenvorschau/technische Fallback-Pfade erhalten.
 
 - v0.21.50 trennt den verpflichtenden Englisch-Testumfang von älteren fälligen Vokabeln und verhindert die Vereinigung eines expliziten Testumfangs mit einer überlappenden Wochenserie. Alte Lernhistorie bleibt erhalten und optionale Wiederholung bleibt verfügbar.
 - v0.21.48 ersetzt nach erneut negativem realem iPhone-Befund die Overlay-Technik vollständig durch eine normale HTML-Kontrollkarte. Diese Karte liegt im Dokumentfluss direkt über der Schreibfläche, enthält einen großen Sollbuchstaben auf eigener Grundschul-Lineatur und wird nach dem Kontrollklick automatisch ins sichtbare Viewport gescrollt. Der WebKit-Test muss Sichtbarkeit, Mindestgröße und Viewport-Lage der Karte nachweisen. Reale Geräteabnahme bleibt zwingend.
