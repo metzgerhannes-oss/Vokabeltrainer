@@ -767,32 +767,38 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
 }
 @media(min-width:761px){
   .project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-fallback.avatar-atlas-avatar{
-    width:min(76%,300px)!important;
-    height:auto!important;
-    aspect-ratio:11/15;
-    min-height:0!important;
+    width:220px!important;
+    height:300px!important;
+    min-width:220px!important;
+    min-height:300px!important;
+    max-width:76%!important;
+    max-height:92%!important;
     align-self:flex-end;
   }
 }
 @media(max-width:760px){
   .project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-fallback.avatar-atlas-avatar{
-    width:min(48%,165px)!important;
-    height:auto!important;
-    aspect-ratio:11/15;
-    max-height:none;
+    width:150px!important;
+    height:205px!important;
+    min-width:150px!important;
+    min-height:205px!important;
+    max-width:60%!important;
+    max-height:96%!important;
     align-self:flex-end
   }
   .project-menu-avatar-frame.avatar-atlas-rendered.german-fox-avatar .project-menu-avatar-fallback.avatar-atlas-avatar{
-    width:min(48%,165px)!important;
-    height:auto!important
+    width:150px!important;
+    height:205px!important
   }
 }
 @media(max-width:430px){
   .project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-fallback.avatar-atlas-avatar{
-    width:min(46%,145px)!important;
-    height:auto!important;
-    aspect-ratio:11/15;
-    max-height:none
+    width:135px!important;
+    height:184px!important;
+    min-width:135px!important;
+    min-height:184px!important;
+    max-width:52%!important;
+    max-height:96%!important
   }
 }
 
