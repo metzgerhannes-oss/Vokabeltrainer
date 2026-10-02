@@ -153,9 +153,13 @@
     const worldEntryTitle=document.querySelector('#wordrealmEnterTitle');
     const worldEntryHint=document.querySelector('#wordrealmEnterHint');
     const worldEntryBtn=document.querySelector('#wordrealmEnterBtn');
-    if(worldEntryTitle)worldEntryTitle.textContent=germanAdventure?'Fuchs-Abenteuer fortsetzen':'Das Wortreich betreten';
-    if(worldEntryHint)worldEntryHint.textContent=germanAdventure?'Deine Wortreise und Entdeckeretappen öffnen':'Spannende Aufgaben und Abenteuer erwarten dich';
+    const worldEntryCard=worldEntryBtn?.closest('.wordrealm-home-action');
+    const worldTitle=germanAdventure?'Fuchs-Abenteuer fortsetzen':'Das Wortreich betreten';
+    const worldHint=germanAdventure?'Deine Wortreise und Entdeckeretappen öffnen':'Spannende Aufgaben und Abenteuer erwarten dich';
+    if(worldEntryTitle)worldEntryTitle.textContent=worldTitle;
+    if(worldEntryHint)worldEntryHint.textContent=worldHint;
     if(worldEntryBtn)worldEntryBtn.setAttribute('aria-label',germanAdventure?'Fuchs-Abenteuer öffnen':'Das Wortreich öffnen');
+    if(worldEntryCard)worldEntryCard.dataset.pageRead=worldTitle+'. '+worldHint+'.';
     const navGame=document.querySelector('.nav-btn[data-view="armyView"]');
     const world=typeof subjectWorldPresentation==='function'?subjectWorldPresentation(state.activeSubject):{icon:'⚔',short:'Armee'};
     if(navGame)navGame.innerHTML=`<span aria-hidden="true">${esc(world.icon||'⚔')}</span>${esc(world.short||world.title||'Spiel')}`;
