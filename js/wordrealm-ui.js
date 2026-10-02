@@ -220,16 +220,10 @@
 
   function renderAdventureHome(level=1){
     const frame=document.querySelector('#projectMenuAvatarFrame');
-    const fallback=document.querySelector('#projectMenuAvatarFallback');
     const scenery=document.querySelector('#projectMenuScenery');
     const strip=document.querySelector('#wordrealmStageStrip');
     const brand=document.querySelector('#wordrealmHomeBrand');
-    if(frame&&fallback){
-      frame.classList.add('adventure-rendered');
-      fallback.classList.remove('avatar-atlas-avatar','wordrealm-svg-avatar');
-      fallback.classList.add('adventure-svg-avatar');
-      fallback.innerHTML=adventureFoxSvg(level);
-    }
+    if(frame)frame.classList.add('adventure-rendered');
     if(scenery){
       scenery.classList.remove('wordrealm-approved-scenery');
       scenery.innerHTML=adventureScenerySvg(level);
