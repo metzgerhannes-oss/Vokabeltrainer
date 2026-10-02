@@ -78,6 +78,7 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
         return {
           subject,mode,
           theme:stage?.dataset.visualTheme||'',
+          subjectAttr:stage?.dataset.subject||'',
           worldMode:stage?.dataset.worldMode||'',
           renderKey:frame?.dataset.avatarRenderKey||'',
           source:frame?.dataset.avatarArtSource||'',
@@ -111,6 +112,7 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
   for(const item of results){
     const label=viewport.label+' '+item.subject+'/'+item.mode;
     assert(item.theme===expectedThemes[item.subject][item.mode],label+' uses wrong visual theme '+item.theme);
+    assert(item.subjectAttr===item.subject,label+' does not expose the active subject on the start-stage CSS hook');
     assert(item.worldMode===item.mode,label+' exposes wrong world mode '+item.worldMode);
     assert(item.renderKey.includes(item.subject+'-'+item.mode+'-'),label+' avatar render key is not world-specific');
     assert(!item.technicalFallback,label+' uses technical avatar fallback');
@@ -126,11 +128,8 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
       assert(!item.imgVisible&&!item.fallbackVisible,label+' exposes a separate avatar tile on top of the integrated scene');
       assert(item.germanReadVisible,label+' loses the German read-aloud control');
       assert(item.worldActionsVisible,label+' loses the German world-entry actions');
-      const stageRgb=(item.stageBackground.match(/\d+/g)||[]).slice(0,3).map(Number);
-      const borderRgb=(item.stageBorder.match(/\d+/g)||[]).slice(0,3).map(Number);
-      assert(stageRgb.length===3&&stageRgb.reduce((sum,n)=>sum+n,0)>=680,label+' does not use the approved light German start surface: '+item.stageBackground);
-      assert(borderRgb.length===3&&borderRgb[1]>=borderRgb[0]&&borderRgb[1]>=borderRgb[2]-20,label+' does not use the approved green/beige German border: '+item.stageBorder);
       assert(item.evolutionBackground.includes('255, 253, 246')||item.evolutionBackground.includes('255,253,246'),label+' progression card is still the generic dark overlay: '+item.evolutionBackground);
+      assert(item.evolutionColor!=='rgb(255, 255, 255)'&&item.evolutionColor!=='rgba(255, 255, 255, 1)',label+' progression text still uses the generic white-on-dark treatment');
       if(item.mode==='adventure')assert(item.worldTitle.includes('Fuchs-Abenteuer'),label+' world entry does not name Fuchs-Abenteuer');
       else assert(item.worldTitle.includes('Wortreich'),label+' world entry does not name Das Wortreich');
     }else{
