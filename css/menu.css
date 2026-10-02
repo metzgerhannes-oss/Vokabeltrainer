@@ -491,7 +491,7 @@
 .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card #todayEstimate{display:none}
 .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card .today-progress-row{margin-top:6px}
 .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card .today-actions{display:grid;grid-template-columns:auto auto;gap:7px;align-items:center}
-.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card .today-cta{grid-column:1/-1;min-width:112px;min-height:42px;padding:8px 12px;font-size:.86rem;background:#6c3cb4}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card .today-cta{grid-column:1/-1;min-width:112px;min-height:44px;padding:8px 12px;font-size:.86rem;background:#6c3cb4}
 .wordrealm-today-icon{position:relative;width:58px;height:56px}
 .wordrealm-today-icon i{
   position:absolute;display:grid;place-items:center;width:31px;height:31px;border-radius:7px;border:2px solid rgba(74,48,24,.28);
