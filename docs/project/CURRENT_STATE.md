@@ -1,5 +1,7 @@
 # Vokabeltrainer – Current State
 
+- v0.21.61 Release-Kandidat: Start/Heute wird als 8er-Matrix aus vier Fächern × Abenteuer/Kampf auf iPhone und Desktop geprüft. Die noch vorhandene CSS-Spezifitätsabweichung des Deutsch-Fortschrittsbalkens ist korrigiert; die freigegebene helle Pergamentfläche kann die generischen Menüregeln wieder zuverlässig überschreiben.
+
 - v0.21.60 Release-Kandidat: Deutsch Start/Heute nutzt in Fuchs-Abenteuer und Wortreich/Kampf wieder die verbindliche integrierte malerische Szene. Die separate Atlas-Avatar-Kachel mit Blur-Rändern ist aus dem Deutsch-Startscreen entfernt; Weltmodus, Abenteuer-Stufenname und Ziel-CTA bleiben getrennt.
 
 - v0.21.59 Release-Kandidat: alte Testvokabeln sind vollständig aus dem Pflichtpfad entfernt. Adaptive Nachrücker und der Pflicht-Fälligkeitszähler sind auf den aktuellen Testscope begrenzt; zwischen abgeschlossenem und nächstem Test bleibt der Pflichtpfad leer. Historische Wörter bleiben nur freiwillig verfügbar.
@@ -16,11 +18,11 @@ Stand: 02.10.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.60** (Deutsch Start/Heute im freigegebenen integrierten Layout als Release-Kandidat)
-- aktueller bestätigter App-Stand auf `main`: **v0.21.59 / PR #233**; PR #234 aktualisiert ausschließlich die erledigte B-006-Dokumentation.
+- App-Version: **v0.21.61** (fachübergreifende Startseiten-Layoutmatrix + CSS-Prioritätsfix als Release-Kandidat)
+- aktueller bestätigter App-Stand auf `main`: **v0.21.60 / PR #235**; Deutsch Start/Heute nutzt dort bereits in beiden Weltmodi die integrierte freigegebene Szene.
 - jüngster vollständig live-verifizierter Release: **v0.21.59 / PR #233**
 - Produktionsnachweis v0.21.59: **PR-CI #1440 success · main-CI #1441 success · GitHub Pages #589 success inklusive Live-Verifikation**
-- aktueller Release-Kandidat: **v0.21.60** auf Basis von **v0.21.59 / PR #233**; Schwerpunkt ist die Rückkehr des Deutsch-Startscreens zur freigegebenen integrierten Szene in beiden Weltmodi.
+- aktueller Release-Kandidat: **v0.21.61** auf Basis von **v0.21.60 / PR #235**; Schwerpunkt ist die automatisierte Prüfung aller acht Startseitenpfade und die Korrektur der verbliebenen CSS-Prioritätsabweichung im Deutsch-Statusbereich.
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: Englisch, Latein, Französisch-Kampf und Deutsch/Wortreich laufen über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild bleiben fachlich neutral
