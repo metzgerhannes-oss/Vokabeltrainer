@@ -312,16 +312,16 @@
 #homeView .project-menu-stage[data-visual-theme="roman"]{border-color:#dfcfb8}
 #homeView .project-menu-stage[data-visual-theme="voyage"]{border-color:#d5e0de}
 #homeView .project-menu-stage .project-menu-head{color:var(--menu-ink)}
-#homeView .project-menu-stage .project-menu-subject-context>.pill{border-color:var(--menu-accent-border);color:var(--menu-accent)}
+.project-menu-stage .project-menu-subject-context>.pill{border-color:var(--menu-accent-border);color:var(--menu-accent)}
 #homeView .project-menu-stage .project-menu-subjects button.active{background:var(--menu-accent);color:#fff}
-#homeView .project-menu-stage .project-menu-avatar-evolution{background:var(--menu-evolution-bg)}
-#homeView .project-menu-stage .project-menu-avatar-stage-pips i.filled{background:var(--menu-pip)}
+.project-menu-stage .project-menu-avatar-evolution{background:var(--menu-evolution-bg)}
+.project-menu-stage .project-menu-avatar-stage-pips i.filled{background:var(--menu-pip)}
 #homeView .project-menu-stage .project-menu-learning-card .today-cta{box-shadow:0 9px 22px var(--menu-cta-shadow)}
 #homeView .project-menu-stage[data-visual-theme="roman"] .project-menu-avatar-standard::before{background:linear-gradient(145deg,#7d3026,#a84c3c)}
 #homeView .project-menu-stage[data-visual-theme="roman"] .project-menu-avatar-crest{border-color:#8a6224;background:linear-gradient(145deg,#dfc47d,#b78032);color:#4b3517}
 #homeView .project-menu-stage[data-visual-theme="voyage"] .project-menu-avatar-standard,
 #homeView .project-menu-stage[data-visual-theme="voyage"] .project-menu-avatar-crest{display:none}
-#homeView .project-menu-avatar-frame::after{background:rgba(23,32,51,.12)}
+.project-menu-avatar-frame::after{background:rgba(23,32,51,.12)}
 #homeView .project-menu-head .eyebrow{color:#667085}
 #homeView .project-menu-learning-card{align-self:center}
 .learning-status-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:14px;align-items:start}
@@ -382,7 +382,7 @@
 .project-menu-avatar-frame.german-knight-avatar .avatar-shield{background:linear-gradient(145deg,#86633c,#5f472d);border-color:#4c3924;color:#f7e8bb}
 
 /* v0.21.38 – freigegebenes Deutsch-Layout: Das Wortreich */
-.project-menu-stage:not([data-subject="german"]) .wordrealm-only{display:none!important}\n.project-menu-stage[data-visual-theme="german-adventure"] .wordrealm-only{display:none!important}
+.project-menu-stage:not([data-subject="german"]) .wordrealm-only,\n.project-menu-stage:not([data-subject="german"]) .german-only{display:none!important}\n.project-menu-stage[data-visual-theme="german-adventure"] .wordrealm-only{display:none!important}
 .project-menu-stage[data-visual-theme="wordrealm"]{
   --menu-accent:#6d43b6;
   --menu-accent-soft:rgba(112,73,178,.16);
