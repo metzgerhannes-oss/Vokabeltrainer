@@ -57,6 +57,7 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
         const panel=document.querySelector('.project-menu-avatar-panel');
         const main=document.querySelector('.project-menu-main');
         const learning=document.querySelector('.project-menu-learning-card');
+        const atlasArt=fallback?.querySelector('.avatar-atlas-art');
         const evolution=document.querySelector('.project-menu-avatar-evolution');
         const evolutionStrong=document.querySelector('#menuAvatarStageLabel');
         const evolutionSmall=document.querySelector('#menuAvatarNextStage');
@@ -86,8 +87,16 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
           source:frame?.dataset.avatarArtSource||'',
           technicalFallback:frame?.dataset.avatarArtSource==='technical-fallback',
           imgVisible:visible(img),
-          atlasVisible:visible(fallback?.querySelector('.avatar-atlas-art')),
+          atlasVisible:visible(atlasArt),
           fallbackVisible:visible(fallback),
+          fallbackRect:rect(fallback),
+          atlasRect:rect(atlasArt),
+          fallbackClass:fallback?.className||'',
+          fallbackDisplay:fallback?getComputedStyle(fallback).display:'',
+          fallbackOpacity:fallback?getComputedStyle(fallback).opacity:'',
+          atlasDisplay:atlasArt?getComputedStyle(atlasArt).display:'',
+          atlasOpacity:atlasArt?getComputedStyle(atlasArt).opacity:'',
+          atlasBackground:atlasArt?getComputedStyle(atlasArt).backgroundImage:'',
           sceneVisible:visible(scene),
           frameVisible:visible(frame),
           worldActionsVisible:visible(worldActions),
@@ -136,7 +145,7 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
       else assert(item.worldTitle.includes('Wortreich'),label+' world entry does not name Das Wortreich');
     }else{
       assert(item.source===expectedSources[item.subject],label+' uses unexpected avatar source '+item.source);
-      assert(item.imgVisible||item.atlasVisible,label+' approved avatar art is not visible');
+      assert(item.imgVisible||item.atlasVisible,label+' approved avatar art is not visible '+JSON.stringify({source:item.source,fallbackRect:item.fallbackRect,atlasRect:item.atlasRect,fallbackClass:item.fallbackClass,fallbackDisplay:item.fallbackDisplay,fallbackOpacity:item.fallbackOpacity,atlasDisplay:item.atlasDisplay,atlasOpacity:item.atlasOpacity,atlasBackground:item.atlasBackground}));
       assert(!item.sceneVisible,label+' leaks the German integrated scene');
       assert(!item.worldActionsVisible,label+' leaks German-only start actions');
     }
