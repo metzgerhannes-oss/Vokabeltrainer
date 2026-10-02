@@ -852,14 +852,32 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
   left:3.5%;
   bottom:3%;
   width:34%;
-  height:88%;
+  height:auto;
+  aspect-ratio:11/15;
   display:block;
-  background-repeat:no-repeat;
+  overflow:hidden;
   mix-blend-mode:multiply;
   filter:drop-shadow(0 13px 14px rgba(52,69,43,.18)) saturate(1.04);
   -webkit-mask-image:radial-gradient(ellipse 57% 64% at 50% 56%,#000 0 61%,rgba(0,0,0,.94) 68%,rgba(0,0,0,.56) 76%,transparent 90%);
   mask-image:radial-gradient(ellipse 57% 64% at 50% 56%,#000 0 61%,rgba(0,0,0,.94) 68%,rgba(0,0,0,.56) 76%,transparent 90%);
 }
+.project-menu-stage[data-subject="german"] .wordrealm-approved-scene-fox>img{
+  position:absolute;
+  display:block;
+  width:600%;
+  height:900%;
+  max-width:none;
+  max-height:none;
+  top:-800%;
+  left:0;
+  object-fit:fill;
+}
+.project-menu-stage[data-subject="german"] .wordrealm-approved-scene-fox.stage-1>img{left:0}
+.project-menu-stage[data-subject="german"] .wordrealm-approved-scene-fox.stage-2>img{left:-100%}
+.project-menu-stage[data-subject="german"] .wordrealm-approved-scene-fox.stage-3>img{left:-200%}
+.project-menu-stage[data-subject="german"] .wordrealm-approved-scene-fox.stage-4>img{left:-300%}
+.project-menu-stage[data-subject="german"] .wordrealm-approved-scene-fox.stage-5>img{left:-400%}
+.project-menu-stage[data-subject="german"] .wordrealm-approved-scene-fox.stage-6>img{left:-500%}
 .project-menu-stage[data-subject="german"] .wordrealm-approved-scene-fox-fallback{
   position:absolute;
   z-index:3;
@@ -1029,7 +1047,7 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
     left:2%;
     bottom:1%;
     width:39%;
-    height:91%;
+    height:auto;
   }
   .project-menu-stage[data-subject="german"] .wordrealm-approved-scene-fox-fallback{
     left:3%;
