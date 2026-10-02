@@ -42,10 +42,8 @@
       if(adventure)window.VTWordrealmUi?.renderAdventureHome?.(level);
       else window.VTWordrealmUi?.renderHome?.(level);
       frame.dataset.avatarRenderKey=key;
-      if(!adventure){
-        frame.dataset.avatarArtSource='wordrealm-approved-scene';
-        return;
-      }
+      frame.dataset.avatarArtSource='wordrealm-approved-scene';
+      return;
     }
 
     const finalUrl=window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'';
@@ -143,12 +141,24 @@
     if(stageRoot){
       stageRoot.dataset.visualTheme=visualTheme;
       stageRoot.dataset.subject=state.activeSubject;
+      stageRoot.dataset.worldMode=typeof learnerWorldMode==='function'?learnerWorldMode(state.activeSubject):'battle';
     }
     document.body.dataset.activeSubject=state.activeSubject;
     if(subject)subject.textContent=subjectLabel(state.activeSubject);
     if(rank)rank.textContent=avatarStage?.rank||rankFor(growth.pct,state.activeSubject);
     if(learned)learned.textContent=String(p.mastered||0);
     if(castles)castles.textContent=String(currentCapturedFortresses());
+    const germanAdventure=state.activeSubject==='german'&&typeof learnerWorldMode==='function'&&learnerWorldMode('german')==='adventure';
+    const worldEntryTitle=document.querySelector('#wordrealmEnterTitle');
+    const worldEntryHint=document.querySelector('#wordrealmEnterHint');
+    const worldEntryBtn=document.querySelector('#wordrealmEnterBtn');
+    const worldEntryCard=worldEntryBtn?.closest('.wordrealm-home-action');
+    const worldTitle=germanAdventure?'Fuchs-Abenteuer fortsetzen':'Das Wortreich betreten';
+    const worldHint=germanAdventure?'Deine Wortreise und Entdeckeretappen öffnen':'Spannende Aufgaben und Abenteuer erwarten dich';
+    if(worldEntryTitle)worldEntryTitle.textContent=worldTitle;
+    if(worldEntryHint)worldEntryHint.textContent=worldHint;
+    if(worldEntryBtn)worldEntryBtn.setAttribute('aria-label',germanAdventure?'Fuchs-Abenteuer öffnen':'Das Wortreich öffnen');
+    if(worldEntryCard)worldEntryCard.dataset.pageRead=worldTitle+'. '+worldHint+'.';
     const navGame=document.querySelector('.nav-btn[data-view="armyView"]');
     const world=typeof subjectWorldPresentation==='function'?subjectWorldPresentation(state.activeSubject):{icon:'⚔',short:'Armee'};
     if(navGame)navGame.innerHTML=`<span aria-hidden="true">${esc(world.icon||'⚔')}</span>${esc(world.short||world.title||'Spiel')}`;

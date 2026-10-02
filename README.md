@@ -12,7 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.59**
+App-Version: **v0.21.60**
+
+- v0.21.60 (Release-Kandidat): **Deutsch Start/Heute wieder exakt im freigegebenen Layout.** Fuchs-Abenteuer und Wortreich/Kampf verwenden auf Start/Heute dieselbe integrierte malerische Referenz `assets/wordrealm/home-approved-v1.webp`. Der Fuchs wird dort nicht mehr als separate Atlas-Kachel mit Blur-Rändern gerendert; Weltwahl, Stufenbezeichnung und Spielziel bleiben trotzdem getrennt erhalten.
 
 - v0.21.59 (Release-Kandidat): **Strikter Testscope ohne alte Pflichtvokabeln.** Adaptive Nachrücker und der Pflicht-„fällig“-Zähler verwenden ausschließlich den aktuellen Pflichtpool. Zwischen abgeschlossenem und nächstem Test bleibt der Pflichtpfad leer; bei geplantem Test können alte fällige Wörter nicht mehr als Nachrücker in den Lernweg gelangen. Historische Wörter bleiben nur über bewusst freiwillige Übungen erreichbar.
 

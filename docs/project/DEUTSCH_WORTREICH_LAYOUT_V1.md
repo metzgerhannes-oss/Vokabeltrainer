@@ -60,6 +60,7 @@ Die Startseite enthält für Deutsch:
 - der Fuchs steht **frei in der Landschaft**; keine separate Avatar-Kachel, keine Blur-Balken und kein eingebranntes Karten-Fenster um die Figur
 - Name + „Stufe X/6“ liegt als dynamische Pergament-UI unterhalb der Szene
 - die sechs Entwicklungsstufen bleiben fachlich und technisch erhalten; die Startansicht zeigt ihre kompakte Fortschrittsleiste
+- diese integrierte Start-/Heute-Komposition gilt **in beiden Deutsch-Weltmodi**; Abenteuer/Kampf verändern Stufenbezeichnung und Spielziel, aber erzeugen auf Start/Heute keine separate Avatar-Kachel
 - „Heute / Was steht heute an?“ als helle Pergament-/Papierkarte
 - aktuelle Lernaufgabe als dominante Karte
 - „Lernwörter üben“
