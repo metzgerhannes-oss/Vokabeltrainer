@@ -308,22 +308,22 @@
 
 
 /* v0.20.0 – klare Trennung zwischen Lernen und Spiel */
-#homeView .project-menu-stage{border-color:#d8e0ea}
-#homeView .project-menu-stage[data-visual-theme="roman"]{border-color:#dfcfb8}
-#homeView .project-menu-stage[data-visual-theme="voyage"]{border-color:#d5e0de}
-#homeView .project-menu-stage .project-menu-head{color:var(--menu-ink)}
-#homeView .project-menu-stage .project-menu-subject-context>.pill{border-color:var(--menu-accent-border);color:var(--menu-accent)}
-#homeView .project-menu-stage .project-menu-subjects button.active{background:var(--menu-accent);color:#fff}
-#homeView .project-menu-stage .project-menu-avatar-evolution{background:var(--menu-evolution-bg)}
-#homeView .project-menu-stage .project-menu-avatar-stage-pips i.filled{background:var(--menu-pip)}
-#homeView .project-menu-stage .project-menu-learning-card .today-cta{box-shadow:0 9px 22px var(--menu-cta-shadow)}
-#homeView .project-menu-stage[data-visual-theme="roman"] .project-menu-avatar-standard::before{background:linear-gradient(145deg,#7d3026,#a84c3c)}
-#homeView .project-menu-stage[data-visual-theme="roman"] .project-menu-avatar-crest{border-color:#8a6224;background:linear-gradient(145deg,#dfc47d,#b78032);color:#4b3517}
-#homeView .project-menu-stage[data-visual-theme="voyage"] .project-menu-avatar-standard,
-#homeView .project-menu-stage[data-visual-theme="voyage"] .project-menu-avatar-crest{display:none}
-#homeView .project-menu-avatar-frame::after{background:rgba(23,32,51,.12)}
-#homeView .project-menu-head .eyebrow{color:#667085}
-#homeView .project-menu-learning-card{align-self:center}
+.project-menu-stage{border-color:#d8e0ea}
+.project-menu-stage[data-visual-theme="roman"]{border-color:#dfcfb8}
+.project-menu-stage[data-visual-theme="voyage"]{border-color:#d5e0de}
+.project-menu-stage .project-menu-head{color:var(--menu-ink)}
+.project-menu-stage .project-menu-subject-context>.pill{border-color:var(--menu-accent-border);color:var(--menu-accent)}
+.project-menu-stage .project-menu-subjects button.active{background:var(--menu-accent);color:#fff}
+.project-menu-stage .project-menu-avatar-evolution{background:var(--menu-evolution-bg)}
+.project-menu-stage .project-menu-avatar-stage-pips i.filled{background:var(--menu-pip)}
+.project-menu-stage .project-menu-learning-card .today-cta{box-shadow:0 9px 22px var(--menu-cta-shadow)}
+.project-menu-stage[data-visual-theme="roman"] .project-menu-avatar-standard::before{background:linear-gradient(145deg,#7d3026,#a84c3c)}
+.project-menu-stage[data-visual-theme="roman"] .project-menu-avatar-crest{border-color:#8a6224;background:linear-gradient(145deg,#dfc47d,#b78032);color:#4b3517}
+.project-menu-stage[data-visual-theme="voyage"] .project-menu-avatar-standard,
+.project-menu-stage[data-visual-theme="voyage"] .project-menu-avatar-crest{display:none}
+.project-menu-avatar-frame::after{background:rgba(23,32,51,.12)}
+.project-menu-head .eyebrow{color:#667085}
+.project-menu-learning-card{align-self:center}
 .learning-status-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:14px;align-items:start}
 .learning-status-grid>.card{margin:0}
 @media(max-width:760px){.learning-status-grid{grid-template-columns:1fr}}
@@ -367,14 +367,14 @@
 .project-menu-avatar-frame.german-fox-avatar .avatar-shield::after{
   content:"";position:absolute;left:2px;bottom:-13px;width:7px;height:16px;border-radius:3px;background:#67452b
 }
-#homeView .project-menu-stage[data-visual-theme="wordrealm"]{border-color:#dcc9a8}
-#homeView .project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card{
+.project-menu-stage[data-visual-theme="wordrealm"]{border-color:#dcc9a8}
+.project-menu-stage[data-visual-theme="wordrealm"] .project-menu-learning-card{
   border-color:#ddcbaa;background:linear-gradient(180deg,rgba(255,253,247,.96),rgba(248,241,228,.96))
 }
 
 /* Deutsch-Weltwahl v0.21.38 */
-#homeView .project-menu-stage[data-visual-theme="german-adventure"]{border-color:#c8d5ad}
-#homeView .project-menu-stage[data-visual-theme="german-adventure"] .project-menu-learning-card{
+.project-menu-stage[data-visual-theme="german-adventure"]{border-color:#c8d5ad}
+.project-menu-stage[data-visual-theme="german-adventure"] .project-menu-learning-card{
   border-color:#cbd7b5;background:linear-gradient(180deg,rgba(255,254,248,.97),rgba(241,246,229,.96))
 }
 .project-menu-avatar-frame.german-knight-avatar .avatar-body{background:linear-gradient(160deg,#66734b,#4c5b3a)}
