@@ -75,6 +75,10 @@ try{
           stageRect:rect(stage),panelRect:rect(panel),mainRect:rect(main),learnRect:rect(learn),
           evolutionColor:evolution?getComputedStyle(evolution).color:'',
           evolutionBackground:evolution?getComputedStyle(evolution).backgroundImage:'',
+          fallbackBorder:fallback?getComputedStyle(fallback).borderTopWidth:'',
+          fallbackShadow:fallback?getComputedStyle(fallback).boxShadow:'',
+          fallbackRadius:fallback?getComputedStyle(fallback).borderTopLeftRadius:'',
+          fallbackMask:fallback?(getComputedStyle(fallback).webkitMaskImage||getComputedStyle(fallback).maskImage||''):'',
           scrollWidth:document.documentElement.scrollWidth,
           innerWidth:window.innerWidth
         });
@@ -96,8 +100,10 @@ try{
       assert(item.evolutionColor!=='rgb(255, 255, 255)',item.subject+'/'+item.mode+' uses the light German progression card instead of the generic dark overlay');
       assert(item.evolutionBackground!=='none',item.subject+'/'+item.mode+' keeps the themed progression surface');
       if(item.mode==='adventure'){
-        assert(item.source==='german-adventure-illustration','German adventure uses its integrated fox illustration');
-        assert(item.adventureSvg&&!item.atlas&&!item.imgVisible,'German adventure does not fall back to a portrait/atlas card');
+        assert(item.source==='german-adventure-integrated','German adventure integrates the approved painterly fox artwork into the Fuchspfad scene');
+        assert(item.atlas&&!item.imgVisible&&!item.adventureSvg,'German adventure keeps the approved atlas artwork without switching to a technical SVG or image fallback');
+        assert(item.fallbackBorder==='0px'&&item.fallbackShadow==='none'&&item.fallbackRadius==='0px','German adventure removes the portrait-card frame, shadow and rounded tile');
+        assert(item.fallbackMask&&item.fallbackMask!=='none','German adventure feathers the artwork into the landscape instead of exposing rectangular image edges');
         assert(!item.wordrealmActionsVisible,'German adventure hides Wortreich-only action cards');
       }else{
         assert(item.source==='wordrealm-approved-scene','German battle uses the approved Wortreich home scene');
@@ -121,7 +127,7 @@ try{
   assert(errors.length===0,'browser errors: '+errors.join(' | '));
   console.log('Vokabeltrainer start layout all worlds: passed');
   console.log('✓ 4 subjects × 2 worlds checked at iPhone width');
-  console.log('✓ German fox stays integrated in adventure and Wortreich scene stays single-layered');
+  console.log('✓ German painterly fox is integrated without a portrait card; Wortreich stays single-layered');
   console.log('✓ no technical avatar fallback, overflow or avatar/content overlap');
 }finally{
   await browser.close();
