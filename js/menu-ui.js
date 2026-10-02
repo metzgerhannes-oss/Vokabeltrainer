@@ -39,13 +39,15 @@
     frame.dataset.avatarStyle=style;
     frame.dataset.worldMode=worldMode;
     if(isGerman){
-      if(adventure)window.VTWordrealmUi?.renderAdventureHome?.(level);
-      else window.VTWordrealmUi?.renderHome?.(level);
-      frame.dataset.avatarRenderKey=key;
-      if(!adventure){
+      if(adventure){
+        window.VTWordrealmUi?.renderAdventureHome?.(level);
+        frame.dataset.avatarArtSource='german-adventure-illustration';
+      }else{
+        window.VTWordrealmUi?.renderHome?.(level);
         frame.dataset.avatarArtSource='wordrealm-approved-scene';
-        return;
       }
+      frame.dataset.avatarRenderKey=key;
+      return;
     }
 
     const finalUrl=window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'';
