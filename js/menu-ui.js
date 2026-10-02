@@ -137,8 +137,7 @@
     const castles=document.querySelector('#menuFortressCount');
     const avatarStage=renderAvatarStage(growth.pct);
     const stageRoot=document.querySelector('.project-menu-stage');
-    const subjectTheme=typeof subjectVisualTheme==='function'?subjectVisualTheme(state.activeSubject):'campaign';
-    const visualTheme=state.activeSubject==='german'?'wordrealm':subjectTheme;
+    const visualTheme=typeof subjectVisualTheme==='function'?subjectVisualTheme(state.activeSubject):'campaign';
     if(stageRoot){
       stageRoot.dataset.visualTheme=visualTheme;
       stageRoot.dataset.subject=state.activeSubject;
