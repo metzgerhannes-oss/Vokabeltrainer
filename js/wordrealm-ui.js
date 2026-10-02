@@ -185,6 +185,21 @@
       '</svg>';
   }
 
+  function approvedHomeScene(level=1){
+    const safeLevel=Math.max(1,Math.min(6,Number(level)||1));
+    const style=['male','female','neutral'].includes(typeof learner==='function'?learner()?.avatarStyle:'')?learner().avatarStyle:'male';
+    const sprite=window.VTMenuAvatarArt?.getSprite?.('german',style,safeLevel)||null;
+    let fox='';
+    if(sprite){
+      const x=sprite.cols<=1?0:(sprite.col/(sprite.cols-1))*100;
+      const y=sprite.rows<=1?0:(sprite.row/(sprite.rows-1))*100;
+      fox='<span class="wordrealm-approved-scene-fox" aria-hidden="true" style="background-image:url(&quot;'+sprite.url+'&quot;);background-size:'+sprite.cols*100+'% '+sprite.rows*100+'%;background-position:'+x+'% '+y+'%"></span>';
+    }else{
+      fox='<span class="wordrealm-approved-scene-fox-fallback" aria-hidden="true">'+adventureFoxSvg(safeLevel)+'</span>';
+    }
+    return '<div class="wordrealm-approved-home-scene wordrealm-composed-home-scene" aria-hidden="true">'+adventureScenerySvg(safeLevel)+fox+'</div>';
+  }
+
   function castleSvg(){
     const trees=[];
     for(let i=0;i<14;i+=1){
@@ -212,7 +227,7 @@
     }
     if(scenery){
       scenery.classList.add('wordrealm-approved-scenery');
-      scenery.innerHTML='<img class="wordrealm-approved-home-scene" src="assets/wordrealm/home-approved-v1.webp" alt="">';
+      scenery.innerHTML=approvedHomeScene(level);
     }
     if(strip){strip.innerHTML=stageStrip(level);strip.classList.remove('hidden')}
     brand?.classList.add('hidden');
@@ -231,7 +246,7 @@
     }
     if(scenery){
       scenery.classList.add('wordrealm-approved-scenery');
-      scenery.innerHTML='<img class="wordrealm-approved-home-scene" src="assets/wordrealm/home-approved-v1.webp" alt="">';
+      scenery.innerHTML=approvedHomeScene(level);
     }
     if(strip){strip.innerHTML='';strip.classList.add('hidden')}
     brand?.classList.add('hidden');
