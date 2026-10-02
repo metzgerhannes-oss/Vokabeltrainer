@@ -776,17 +776,23 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
 }
 @media(max-width:760px){
   .project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-fallback.avatar-atlas-avatar{
-    height:88%!important;
-    max-height:255px
+    width:min(48%,165px)!important;
+    height:auto!important;
+    aspect-ratio:11/15;
+    max-height:none;
+    align-self:flex-end
   }
   .project-menu-avatar-frame.avatar-atlas-rendered.german-fox-avatar .project-menu-avatar-fallback.avatar-atlas-avatar{
-    height:84%!important
+    width:min(48%,165px)!important;
+    height:auto!important
   }
 }
 @media(max-width:430px){
   .project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-fallback.avatar-atlas-avatar{
-    height:86%!important;
-    max-height:235px
+    width:min(46%,145px)!important;
+    height:auto!important;
+    aspect-ratio:11/15;
+    max-height:none
   }
 }
 
