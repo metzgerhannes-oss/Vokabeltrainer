@@ -88,7 +88,6 @@ try{
       renderKey:frame?.dataset.avatarRenderKey||'',
       source:frame?.dataset.avatarArtSource||'',
       atlas:fallback?.querySelectorAll('.avatar-atlas-art').length||0,
-      adventureFox:fallback?.querySelectorAll('.wordrealm-fox-svg.adventure').length||0,
       knight:frame?.classList.contains('german-knight-avatar'),
       scenery:document.querySelectorAll('#projectMenuScenery .german-adventure-scenery-svg').length,
       stageLabel:document.querySelector('#menuAvatarNextStage')?.textContent||''
@@ -97,7 +96,7 @@ try{
   assert(home.mode==='adventure','profile saves adventure mode');
   assert(home.fox,'adventure mode uses the fox avatar');
   assert(home.renderKey.includes('german-adventure-')&&home.renderKey!==initial.renderKey,'world switch creates a distinct adventure avatar render key');
-  assert(home.source==='german-adventure-illustration'&&home.atlas===0&&home.adventureFox===1&&!home.knight,'adventure switch keeps the fox integrated in the Fuchspfad scene instead of restoring the atlas portrait card or a knight');
+  assert(home.source==='german-adventure-integrated'&&home.atlas===1&&!home.knight,'adventure switch keeps the approved painterly fox artwork but integrates it into the Fuchspfad scene instead of rendering a framed portrait card or a knight');
   assert(home.scenery===1,'German adventure home renders the dedicated Fuchswelt learning-path scenery');
   assert(home.stageLabel.includes('Wegstarter'),'German adventure home uses the adventure progression label instead of battle equipment');
   assert(home.nav.includes('Abenteuer'),'child navigation names the adventure world');
