@@ -425,7 +425,7 @@ Im Lernmodus gilt weiterhin:
 
 **Fuchs/Orientierung links → Lernpfad in der Mitte → nächste Lernstation rechts**
 
-Für **Start / Heute im Wortreich** ist diese Raumlogik als **eine zusammenhängende malerische Illustration** umzusetzen. Verbindliche Referenz ist `assets/wordrealm/home-approved-v1.webp`: großer Fuchs frei links/vorne in der Landschaft, Lernweg mit **A → M → Aa → Wörter** in der Mitte/rechts sowie Burg, Brücke und Berge als gemeinsamer Bildraum. Eine separate Avatar-Kachel, unscharfe obere/untere Bildstreifen oder ein eingebrannt wirkendes Vorschaubild um den Fuchs sind dort unzulässig. Name, Stufe, Fortschritt und Vorlesefunktion bleiben dynamische UI und dürfen die Szene nicht ersetzen.
+Für **Start / Heute im Wortreich** ist diese Raumlogik als **eine zusammenhängende malerische Illustration** umzusetzen. Technisch wird sie robust aus der Lernpfad-Landschaft und dem bereits freigegebenen malerischen Fuchs-Atlas zusammengesetzt: großer Fuchs frei links/vorne in der Landschaft, Lernweg mit **A → M → Aa → Wörter** in der Mitte/rechts sowie Burg/Stationen und Landschaft als gemeinsamer Bildraum. Eine standalone Bilddatei darf nicht Voraussetzung für die Startseite sein; ein Decode-/404-Fehler darf niemals als Broken-Image-Symbol sichtbar werden. Eine separate Avatar-Kachel, unscharfe obere/untere Bildstreifen oder ein eingebrannt wirkendes Vorschaubild um den Fuchs sind unzulässig. Name, Stufe, Fortschritt und Vorlesefunktion bleiben dynamische UI und dürfen die Szene nicht ersetzen.
 
 ### Farb- und Lichtwelt
 
