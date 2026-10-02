@@ -830,6 +830,51 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
   object-fit:cover;
   object-position:center center;
 }
+.project-menu-stage[data-subject="german"] .project-menu-scenery.wordrealm-approved-scenery::before,
+.project-menu-stage[data-subject="german"] .project-menu-scenery.wordrealm-approved-scenery::after{
+  display:none;
+}
+.project-menu-stage[data-subject="german"] .wordrealm-composed-home-scene{
+  position:relative;
+  overflow:hidden;
+  background:#dfe9d2;
+}
+.project-menu-stage[data-subject="german"] .wordrealm-composed-home-scene>.german-adventure-scenery-svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+.project-menu-stage[data-subject="german"] .wordrealm-approved-scene-fox{
+  position:absolute;
+  z-index:3;
+  left:3.5%;
+  bottom:3%;
+  width:34%;
+  height:88%;
+  display:block;
+  background-repeat:no-repeat;
+  mix-blend-mode:multiply;
+  filter:drop-shadow(0 13px 14px rgba(52,69,43,.18)) saturate(1.04);
+  -webkit-mask-image:radial-gradient(ellipse 57% 64% at 50% 56%,#000 0 61%,rgba(0,0,0,.94) 68%,rgba(0,0,0,.56) 76%,transparent 90%);
+  mask-image:radial-gradient(ellipse 57% 64% at 50% 56%,#000 0 61%,rgba(0,0,0,.94) 68%,rgba(0,0,0,.56) 76%,transparent 90%);
+}
+.project-menu-stage[data-subject="german"] .wordrealm-approved-scene-fox-fallback{
+  position:absolute;
+  z-index:3;
+  left:5%;
+  bottom:3%;
+  width:30%;
+  height:84%;
+  display:grid;
+  place-items:end center;
+}
+.project-menu-stage[data-subject="german"] .wordrealm-approved-scene-fox-fallback>.wordrealm-fox-svg{
+  width:100%;
+  height:100%;
+  filter:drop-shadow(0 12px 13px rgba(52,69,43,.18));
+}
 .project-menu-stage[data-subject="german"] .wordrealm-home-brand,
 .project-menu-stage[data-subject="german"] .wordrealm-signpost{display:none!important}
 .project-menu-stage[data-subject="german"] .project-menu-avatar-panel{
@@ -980,6 +1025,18 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
 }
 
 @media(max-width:430px){
+  .project-menu-stage[data-subject="german"] .wordrealm-approved-scene-fox{
+    left:2%;
+    bottom:1%;
+    width:39%;
+    height:91%;
+  }
+  .project-menu-stage[data-subject="german"] .wordrealm-approved-scene-fox-fallback{
+    left:3%;
+    bottom:1%;
+    width:35%;
+    height:88%;
+  }
   .project-menu-stage[data-subject="german"]{padding:0 7px 11px}
   .project-menu-stage[data-subject="german"] .project-menu-scenery.wordrealm-approved-scenery{
     height:245px;
