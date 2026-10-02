@@ -382,7 +382,9 @@
 .project-menu-avatar-frame.german-knight-avatar .avatar-shield{background:linear-gradient(145deg,#86633c,#5f472d);border-color:#4c3924;color:#f7e8bb}
 
 /* v0.21.38 – freigegebenes Deutsch-Layout: Das Wortreich */
-.project-menu-stage:not([data-subject="german"]) .wordrealm-only,\n.project-menu-stage:not([data-subject="german"]) .german-only{display:none!important}\n.project-menu-stage[data-visual-theme="german-adventure"] .wordrealm-only{display:none!important}
+.project-menu-stage:not([data-subject="german"]) .wordrealm-only,
+.project-menu-stage:not([data-subject="german"]) .german-only{display:none!important}
+.project-menu-stage[data-visual-theme="german-adventure"] .wordrealm-only{display:none!important}
 .project-menu-stage[data-visual-theme="wordrealm"]{
   --menu-accent:#6d43b6;
   --menu-accent-soft:rgba(112,73,178,.16);
