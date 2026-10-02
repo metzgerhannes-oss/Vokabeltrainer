@@ -528,5 +528,6 @@ v0.21.61:
 - Deutsch in beiden Weltmodi: integrierte freigegebene Fuchs-Szene ohne separate Avatar-Kachel
 - Deutsch Abenteuer/Kampf bleiben über Weltmodus, Stufenbezeichnung und Weltziel getrennt
 - CSS-Spezifität ist so korrigiert, dass fach-/weltbezogene Layoutregeln die generische Menügestaltung tatsächlich überschreiben können
+- Englisch Abenteuer zeigt das bereits geladene finale Avatar-Artwork wieder sichtbar; die alte globale Abenteuer-Ausblendregel ist entfernt
 
 Die reale visuelle Geräteabnahme bleibt zusätzlich erforderlich; das automatische Gate verhindert jedoch die jetzt gefundene Klasse struktureller Startseiten-Regressionsfehler.
