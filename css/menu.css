@@ -768,6 +768,30 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
   border-color:rgba(88,111,63,.24);
   box-shadow:0 17px 27px rgba(54,72,42,.16)
 }
+
+/* v0.21.60 – Deutsch-Abenteuer: malerischen Fuchs frei in die Landschaft integrieren */
+.project-menu-avatar-frame.avatar-atlas-rendered.german-fox-avatar.german-adventure-integrated .project-menu-avatar-fallback.avatar-atlas-avatar{
+  width:auto!important;
+  height:94%!important;
+  aspect-ratio:11/15;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+  -webkit-mask-image:radial-gradient(ellipse 58% 64% at 50% 56%,#000 0 62%,rgba(0,0,0,.92) 68%,transparent 88%);
+  mask-image:radial-gradient(ellipse 58% 64% at 50% 56%,#000 0 62%,rgba(0,0,0,.92) 68%,transparent 88%);
+}
+.project-menu-avatar-frame.avatar-atlas-rendered.german-fox-avatar.german-adventure-integrated .avatar-atlas-art{
+  border-radius:0!important;
+  transform:scale(1.12);
+  transform-origin:50% 58%;
+  filter:drop-shadow(0 14px 14px rgba(54,72,42,.18)) saturate(1.04);
+}
+.project-menu-avatar-frame.german-fox-avatar.german-adventure-integrated::after{
+  left:14%;right:38%;bottom:4%;height:7%;
+  background:rgba(61,78,49,.13);filter:blur(10px)
+}
 @media(max-width:760px){
   .project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-fallback.avatar-atlas-avatar{
     height:88%!important;
