@@ -55,6 +55,7 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
         const img=document.querySelector('#projectMenuAvatarArt');
         const scene=document.querySelector('#projectMenuScenery .wordrealm-approved-home-scene');
         const sceneFox=document.querySelector('#projectMenuScenery .wordrealm-approved-scene-fox');
+        const sceneFoxImg=sceneFox?.querySelector('img');
         const sceneFoxFallback=document.querySelector('#projectMenuScenery .wordrealm-approved-scene-fox-fallback');
         const panel=document.querySelector('.project-menu-avatar-panel');
         const main=document.querySelector('.project-menu-main');
@@ -102,8 +103,9 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
           sceneVisible:visible(scene),
           sceneTag:scene?.tagName||'',
           sceneFoxVisible:visible(sceneFox),
+          sceneFoxImageVisible:visible(sceneFoxImg)&&!!sceneFoxImg?.complete&&sceneFoxImg?.naturalWidth>0,
+          sceneFoxSrc:sceneFoxImg?.getAttribute('src')||'',
           sceneFoxFallbackVisible:visible(sceneFoxFallback),
-          sceneFoxBackground:sceneFox?getComputedStyle(sceneFox).backgroundImage:'',
           brokenImages:[...document.images].filter(node=>node.complete&&node.naturalWidth===0).map(node=>node.getAttribute('src')||''),
           frameVisible:visible(frame),
           worldActionsVisible:visible(worldActions),
@@ -145,8 +147,8 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
     if(item.subject==='german'){
       assert(item.source==='wordrealm-approved-scene',label+' does not use the approved integrated German scene');
       assert(item.sceneVisible&&item.sceneTag==='DIV',label+' approved German scene is not a composed, visible scene');
-      assert(item.sceneFoxVisible&&!item.sceneFoxFallbackVisible,label+' does not use the approved painterly fox from the atlas inside the scene');
-      assert(item.sceneFoxBackground.includes('blob:'),label+' integrated fox has no decoded atlas artwork');
+      assert(item.sceneFoxVisible&&item.sceneFoxImageVisible&&!item.sceneFoxFallbackVisible,label+' does not use the decoded approved painterly fox from the atlas inside the scene');
+      assert(item.sceneFoxSrc.startsWith('blob:'),label+' integrated fox does not use the decoded atlas blob');
       assert(!item.imgVisible&&!item.fallbackVisible,label+' exposes a separate avatar tile on top of the integrated scene');
       assert(item.germanReadVisible,label+' loses the German read-aloud control');
       assert(item.worldActionsVisible,label+' loses the German world-entry actions');
