@@ -1,6 +1,6 @@
 # Vokabeltrainer – Backlog
 
-Stand: 01.10.2026
+Stand: 02.10.2026
 
 Dieses Backlog enthält nur Punkte, die als Projektarbeit erhalten bleiben sollen. Reine Ideen ohne Bewertung gehören zunächst in den Status `IDEA`; als sinnvoll bestätigte, aber noch nicht umgesetzte Punkte in `APPROVED_BACKLOG`.
 
@@ -510,3 +510,18 @@ Abnahme:
 5. Weltwechsel verändert keinen fachlichen Lernstand.
 6. Keine regulär erreichbare Profilvariante fällt auf die technische CSS-/SVG-Figur zurück.
 
+## B-020 – Startseiten-Layoutmatrix aller Fachwelten
+**Status:** IMPLEMENTED v0.21.60 · AUTOMATISCHE VERIFIKATION IM RELEASE-PR · PRAXISABNAHME OFFEN  
+**Priorität:** P0 visuelle Produktqualität  
+**Betroffene Quellen:** `VISUAL_DNA.md § 3/§ 6–§ 11`, `docs/project/DEUTSCH_WORTREICH_LAYOUT_V1.md`, `docs/project/LATIN_FRENCH_VISUAL_LAYOUT.md`, `js/menu-ui.js`, `css/menu.css`
+
+Auslöser war ein realer iPhone-Befund im Deutsch-Fuchspfad: Das korrekte Landschaftslayout wurde nachträglich von der Avatarlogik wieder mit einer rechteckigen Atlas-Portraitkarte überlagert. Zusätzlich überstimmten generische `#homeView`-Regeln die vorgesehenen hellen Deutsch-Fortschrittsflächen.
+
+v0.21.60:
+- Deutsch Abenteuer behält das freigegebene malerische Fuchs-Artwork, integriert es aber ohne Kartenrahmen/Schlagschatten als Teil der Fuchspfad-Landschaft.
+- Deutsch Wortreich/Kampf bleibt eine einzige integrierte Startszene ohne zweite Avatarfläche.
+- Vorlesefunktionen sind als `german-only` von Wortreich-spezifischen Aktionskarten getrennt und bleiben in beiden Deutsch-Welten verfügbar.
+- CSS-Spezifität lässt fach-/weltbezogene Oberflächen wieder tatsächlich die generischen Startseitenregeln überschreiben.
+- Ein neues WebKit-iPhone-Gate prüft **4 Fächer × 2 Welten** auf Theme-Zuordnung, reale Avatar-Art, fehlenden technischen Fallback, Overflow, Avatar-/Lernbereichs-Überlappung und die Deutsch-Sonderregeln.
+
+Die reale visuelle iPhone-/Desktop-Abnahme bleibt gemäß Projektregel separat offen.
