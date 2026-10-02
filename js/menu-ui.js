@@ -9,7 +9,7 @@
 
   function resetAvatarSurface(img,fallback,frame){
     window.VTWordrealmUi?.clearHome?.();
-    frame.classList.remove('wordrealm-rendered','adventure-rendered','german-fox-avatar','german-knight-avatar','world-adventure-avatar','world-battle-avatar','avatar-atlas-rendered');
+    frame.classList.remove('wordrealm-rendered','adventure-rendered','german-fox-avatar','german-knight-avatar','world-adventure-avatar','world-battle-avatar','avatar-atlas-rendered','german-adventure-integrated');
     frame.removeAttribute('data-avatar-render-key');
     frame.removeAttribute('data-avatar-art-source');
     img.removeAttribute('src');
@@ -41,13 +41,14 @@
     if(isGerman){
       if(adventure){
         window.VTWordrealmUi?.renderAdventureHome?.(level);
-        frame.dataset.avatarArtSource='german-adventure-illustration';
+        frame.classList.add('german-adventure-integrated');
       }else{
         window.VTWordrealmUi?.renderHome?.(level);
         frame.dataset.avatarArtSource='wordrealm-approved-scene';
+        frame.dataset.avatarRenderKey=key;
+        return;
       }
       frame.dataset.avatarRenderKey=key;
-      return;
     }
 
     const finalUrl=window.VTMenuAvatarArt?.get?.(state.activeSubject,style,level)||'';
@@ -79,7 +80,7 @@
         atlas.style.backgroundPosition=`${x}% ${y}%`;
       }
       frame.classList.add('avatar-atlas-rendered');
-      frame.dataset.avatarArtSource='approved-atlas';
+      frame.dataset.avatarArtSource=isGerman&&adventure?'german-adventure-integrated':'approved-atlas';
     }else{
       img.removeAttribute('data-avatar-final');
       img.removeAttribute('data-avatar-art-key');
