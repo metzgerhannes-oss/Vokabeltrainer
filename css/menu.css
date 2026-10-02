@@ -981,3 +981,12 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
     padding:14px 11px;
   }
 }
+
+/* v0.21.61 – Deutsch-Statuslabels auf heller Pergamentfläche kontrastsicher */
+.project-menu-stage[data-subject="german"] #menuAvatarStageLabel{
+  color:#253047!important;
+}
+.project-menu-stage[data-subject="german"] #menuAvatarNextStage{
+  color:#76664f!important;
+}
+
