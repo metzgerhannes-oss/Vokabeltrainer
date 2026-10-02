@@ -1,6 +1,8 @@
 # V1 Acceptance Test
 
-Stand: 01.10.2026 · Basis: v0.21.59 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle, Wortreich-Startszene und strikter Testscope
+Stand: 02.10.2026 · Basis: v0.21.60 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle, integrierte Deutsch-Startszene und strikter Testscope
+
+Release-Kandidat v0.21.60 stellt die freigegebene integrierte Deutsch-Startszene auch im Fuchs-Abenteuer wieder her; Start/Heute darf dort keine separate Avatar-/Atlas-Kachel oder Blur-Ränder zeigen.
 
 Release-Kandidat v0.21.59 hält abgeschlossene Testvokabeln vollständig aus Pflichtplan, adaptiven Nachrückern und Pflicht-Fälligkeitsanzeige heraus; historische Wörter bleiben nur bewusst freiwillig erreichbar.
 
