@@ -1,6 +1,6 @@
 # Vokabeltrainer – Current State
 
-- v0.21.61 Release-Kandidat: Start/Heute wird als 8er-Matrix aus vier Fächern × Abenteuer/Kampf auf iPhone und Desktop geprüft. Die noch vorhandene CSS-Spezifitätsabweichung des Deutsch-Fortschrittsbalkens ist korrigiert; die freigegebene helle Pergamentfläche kann die generischen Menüregeln wieder zuverlässig überschreiben.
+- v0.21.61 Release-Kandidat: Start/Heute wird als 8er-Matrix aus vier Fächern × Abenteuer/Kampf auf iPhone und Desktop geprüft. Die noch vorhandene CSS-Spezifitätsabweichung des Deutsch-Fortschrittsbalkens ist korrigiert; die freigegebene helle Pergamentfläche kann die generischen Menüregeln wieder zuverlässig überschreiben. Der Matrix-Test fand außerdem einen versteckten Englisch-Abenteuerfehler: Das finale Avatarbild war geladen, wurde aber durch eine alte CSS-Regel ausgeblendet; auch das ist korrigiert.
 
 - v0.21.60 Release-Kandidat: Deutsch Start/Heute nutzt in Fuchs-Abenteuer und Wortreich/Kampf wieder die verbindliche integrierte malerische Szene. Die separate Atlas-Avatar-Kachel mit Blur-Rändern ist aus dem Deutsch-Startscreen entfernt; Weltmodus, Abenteuer-Stufenname und Ziel-CTA bleiben getrennt.
 
