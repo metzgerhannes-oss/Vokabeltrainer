@@ -1,6 +1,6 @@
 # Finales Audit
 
-> v0.21.61: Start/Heute erhält ein eigenes 8er-Layout-Gate für vier Fächer × Abenteuer/Kampf auf iPhone und Desktop. Die nach v0.21.60 noch durch CSS-Spezifität verdunkelte Deutsch-Fortschrittsfläche wird wieder als freigegebene helle Pergamentkarte gerendert. Das Matrix-Gate deckte zusätzlich auf, dass eine alte Abenteuer-CSS-Regel den finalen Englisch-Avatar unsichtbar machte; diese Regel ist entfernt. Der primäre Deutsch-Lernbutton bleibt mindestens 44 px hoch.
+> v0.21.61: Start/Heute erhält ein eigenes 8er-Layout-Gate für vier Fächer × Abenteuer/Kampf auf iPhone und Desktop. Die nach v0.21.60 noch durch CSS-Spezifität verdunkelte Deutsch-Fortschrittsfläche wird wieder als freigegebene helle Pergamentkarte gerendert. Das Matrix-Gate deckte zusätzlich auf, dass eine alte Abenteuer-CSS-Regel den finalen Englisch-Avatar unsichtbar machte; diese Regel ist entfernt. Nach realem iPhone-Befund mit Broken-Image-Symbol wurde außerdem die standalone Deutsch-WebP aus dem Renderpfad und Service-Worker-Precache entfernt. Die Deutsch-Startszene wird nun aus der Lernpfad-Landschaft und dem bereits bewährten malerischen Fuchs-Atlas als eine gemeinsame Szene aufgebaut; CI prüft zusätzlich auf gebrochene Bildressourcen. Der primäre Deutsch-Lernbutton bleibt mindestens 44 px hoch.
 
 > v0.21.60: Deutsch Start/Heute hält die freigegebene integrierte Fuchs-Landschaft jetzt in beiden Weltmodi ein. Die separate Atlas-Kachel ist im Fuchs-Abenteuer entfernt; Weltmodus, Stufenname und Spielziel bleiben getrennt.
 >
