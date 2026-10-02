@@ -1,5 +1,7 @@
 # Finales Audit
 
+> v0.21.60: Deutsch Start/Heute hält die freigegebene integrierte Fuchs-Landschaft jetzt in beiden Weltmodi ein. Die separate Atlas-Kachel ist im Fuchs-Abenteuer entfernt; Weltmodus, Stufenname und Spielziel bleiben getrennt.
+>
 > v0.21.59: Der Pflichtlernweg ist jetzt vollständig auf den aktuellen Testscope begrenzt. Auch adaptive Nachrücker und der sichtbare Pflicht-Fälligkeitszähler können keine Vokabeln aus abgeschlossenen Tests mehr zurückholen; zwischen Tests bleibt der Pflichtpfad leer.
 
 > v0.21.58: B-013 Phase-1-Technik-Spike ist als isolierte Three.js-r186-Festungsenthüllung implementiert. Skip, Reduced Motion, Fallback und fachliche Neutralität sind automatisiert abgesichert; reale Performance-/Sichtabnahme bleibt offen.
@@ -15,7 +17,7 @@
 
 > v0.21.53: Französisch ist regulär aktiviert. Der lokale OCR-Blocker ist mit gepinntem `fra.traineddata` beseitigt; produktive Zielantworten schützen Akzente/Apostrophe über eine fachliche Capability, TTS nutzt `fr-FR`.
 
-Stand: 01.10.2026 · App v0.21.59
+Stand: 02.10.2026 · App v0.21.60
 
 ## Ergebnis
 
