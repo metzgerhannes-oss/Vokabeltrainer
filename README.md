@@ -12,7 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.60**
+App-Version: **v0.21.61**
+
+- v0.21.61 (Release-Kandidat): **Startseiten-Matrix für alle acht Fachwelten.** Englisch, Latein, Deutsch und Französisch werden auf Start/Heute jeweils in Abenteuer und Kampf automatisiert auf korrekte Welt-/Avatarquelle, technische Fallbacks, horizontalen Overflow und Avatar-/Lernbereichs-Überlagerung geprüft – auf iPhone- und Desktop-Breite. Der nach v0.21.60 noch sichtbare dunkle Deutsch-Fortschrittsbalken wird durch korrigierte CSS-Priorität wieder zur freigegebenen hellen Pergamentfläche; der primäre Deutsch-Lernbutton erfüllt mindestens 44 px Touchhöhe.
 
 - v0.21.60 (Release-Kandidat): **Deutsch Start/Heute wieder exakt im freigegebenen Layout.** Fuchs-Abenteuer und Wortreich/Kampf verwenden auf Start/Heute dieselbe integrierte malerische Referenz `assets/wordrealm/home-approved-v1.webp`. Der Fuchs wird dort nicht mehr als separate Atlas-Kachel mit Blur-Rändern gerendert; Weltwahl, Stufenbezeichnung und Spielziel bleiben trotzdem getrennt erhalten.
 
