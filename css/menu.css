@@ -765,6 +765,15 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
   border-color:rgba(88,111,63,.24);
   box-shadow:0 17px 27px rgba(54,72,42,.16)
 }
+@media(min-width:761px){
+  .project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-fallback.avatar-atlas-avatar{
+    width:min(76%,300px)!important;
+    height:auto!important;
+    aspect-ratio:11/15;
+    min-height:0!important;
+    align-self:flex-end;
+  }
+}
 @media(max-width:760px){
   .project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-fallback.avatar-atlas-avatar{
     height:88%!important;
