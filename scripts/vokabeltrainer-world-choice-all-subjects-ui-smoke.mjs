@@ -52,7 +52,7 @@ try{
     if(subject==='english'){
       assert(avatarMatrix[subject].battleSource==='final'&&avatarMatrix[subject].adventureSource==='final','English male keeps the existing final six-stage portrait series in both worlds');
     }else if(subject==='german'){
-      assert(avatarMatrix[subject].battleSource==='wordrealm-approved-scene'&&avatarMatrix[subject].adventureSource==='german-adventure-illustration','German Wortreich uses the approved home scene while Fuchspfad keeps the fox integrated in its own landscape');
+      assert(avatarMatrix[subject].battleSource==='wordrealm-approved-scene'&&avatarMatrix[subject].adventureSource==='german-adventure-integrated','German Wortreich uses the approved home scene while Fuchspfad integrates the approved fox artwork into its own landscape');
     }else{
       assert(avatarMatrix[subject].battleSource==='approved-atlas'&&avatarMatrix[subject].adventureSource==='approved-atlas',subject+' uses approved painterly atlas artwork in both worlds');
     }
@@ -139,7 +139,7 @@ try{
     const adventure={source:frame?.dataset.avatarArtSource||'',fox:frame?.classList.contains('german-fox-avatar'),knight:frame?.classList.contains('german-knight-avatar')};
     return {battle,adventure};
   });
-  assert(germanAvatar.battle.source==='wordrealm-approved-scene'&&germanAvatar.adventure.source==='german-adventure-illustration','German Wortreich uses the approved scene while adventure keeps the fox integrated in its landscape');
+  assert(germanAvatar.battle.source==='wordrealm-approved-scene'&&germanAvatar.adventure.source==='german-adventure-integrated','German Wortreich uses the approved scene while adventure integrates the approved fox artwork in its landscape');
   assert(germanAvatar.battle.fox&&germanAvatar.adventure.fox&&!germanAvatar.battle.knight&&!germanAvatar.adventure.knight,'German primary-school home avatar stays a fox in every world mode');
 
   const french=await page.evaluate(()=>{
