@@ -27,7 +27,7 @@ Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
 
 ## Aktueller Praxisfortschritt
 
-- [ ] **Startseiten-Matrix v0.21.61:** Auf realem iPhone die acht Kombinationen Englisch/Latein/Deutsch/Französisch × Abenteuer/Kampf öffnen. Avatar bzw. integrierte Szene müssen vor der Lernkarte klar erkennbar sein, dürfen diese nicht überlagern und dürfen nicht auf technische CSS-/SVG-Fallbacks zurückfallen. Deutsch muss in beiden Welten die integrierte Fuchs-Landschaft mit heller Pergament-Stufenkarte zeigen; Abenteuer und Kampf bleiben über Stufenbezeichnung/Weltziel getrennt.
+- [ ] **Startseiten-Matrix v0.21.61:** Auf realem iPhone die acht Kombinationen Englisch/Latein/Deutsch/Französisch × Abenteuer/Kampf öffnen. Avatar bzw. integrierte Szene müssen vor der Lernkarte klar erkennbar sein, dürfen diese nicht überlagern und dürfen nicht auf technische CSS-/SVG-Fallbacks zurückfallen. Deutsch muss in beiden Welten die integrierte Fuchs-Landschaft mit heller Pergament-Stufenkarte zeigen; Abenteuer und Kampf bleiben über Stufenbezeichnung/Weltziel getrennt. Englisch Abenteuer muss den finalen Avatar sichtbar zeigen und darf nicht nur dessen unsichtbar geladenes Asset im DOM tragen.
 
 - [ ] **Wortreich-Startszene v0.21.52:** Auf realem iPhone muss die freigegebene malerische Szene ohne Avatar-Kachel sichtbar sein: großer Fuchs frei in der Landschaft, Burg/Brücke/Berge, Wegmarken A → M → Aa → Wörter und darunter die Pergament-Stufenleiste. Keine unscharfen Balken ober-/unterhalb des Fuchses und kein separates Bildkarten-Gefühl.
 
