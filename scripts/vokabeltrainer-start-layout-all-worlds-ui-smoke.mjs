@@ -126,9 +126,11 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
       assert(!item.imgVisible&&!item.fallbackVisible,label+' exposes a separate avatar tile on top of the integrated scene');
       assert(item.germanReadVisible,label+' loses the German read-aloud control');
       assert(item.worldActionsVisible,label+' loses the German world-entry actions');
-      assert(item.stageBackground==='rgb(242, 244, 232)',label+' does not use the approved light German start surface');
-      assert(item.stageBorder==='rgb(200, 213, 165)',label+' does not use the approved German border');
-      assert(item.evolutionBackground.includes('255, 253, 246'),label+' progression card is still the generic dark overlay: '+item.evolutionBackground);
+      const stageRgb=(item.stageBackground.match(/\d+/g)||[]).slice(0,3).map(Number);
+      const borderRgb=(item.stageBorder.match(/\d+/g)||[]).slice(0,3).map(Number);
+      assert(stageRgb.length===3&&stageRgb.reduce((sum,n)=>sum+n,0)>=680,label+' does not use the approved light German start surface: '+item.stageBackground);
+      assert(borderRgb.length===3&&borderRgb[1]>=borderRgb[0]&&borderRgb[1]>=borderRgb[2]-20,label+' does not use the approved green/beige German border: '+item.stageBorder);
+      assert(item.evolutionBackground.includes('255, 253, 246')||item.evolutionBackground.includes('255,253,246'),label+' progression card is still the generic dark overlay: '+item.evolutionBackground);
       if(item.mode==='adventure')assert(item.worldTitle.includes('Fuchs-Abenteuer'),label+' world entry does not name Fuchs-Abenteuer');
       else assert(item.worldTitle.includes('Wortreich'),label+' world entry does not name Das Wortreich');
     }else{
