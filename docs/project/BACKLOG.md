@@ -525,7 +525,7 @@ v0.21.61:
 - kein horizontaler Overflow
 - kein geometrisches Überlappen von Avatar-/Szenenbereich und Lerninhalt
 - primäre Lernaktion mindestens 44 px hoch
-- Deutsch in beiden Weltmodi: integrierte freigegebene Fuchs-Szene ohne separate Avatar-Kachel
+- Deutsch in beiden Weltmodi: integrierte freigegebene Fuchs-Szene ohne separate Avatar-Kachel; nach realem iPhone-Broken-Image-Befund wird die Szene ohne standalone WebP aus Lernpfad-Landschaft + freigegebenem Fuchs-Atlas zusammengesetzt
 - Deutsch Abenteuer/Kampf bleiben über Weltmodus, Stufenbezeichnung und Weltziel getrennt
 - CSS-Spezifität ist so korrigiert, dass fach-/weltbezogene Layoutregeln die generische Menügestaltung tatsächlich überschreiben können
 - Englisch Abenteuer zeigt das bereits geladene finale Avatar-Artwork wieder sichtbar; die alte globale Abenteuer-Ausblendregel ist entfernt
