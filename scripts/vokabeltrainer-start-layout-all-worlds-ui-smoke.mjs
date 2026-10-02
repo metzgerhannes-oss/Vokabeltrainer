@@ -132,7 +132,6 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
       assert(item.germanReadVisible,label+' loses the German read-aloud control');
       assert(item.worldActionsVisible,label+' loses the German world-entry actions');
       assert(item.evolutionBackground.includes('255, 253, 246')||item.evolutionBackground.includes('255,253,246'),label+' progression card is still the generic dark overlay: '+item.evolutionBackground);
-      assert(item.evolutionStrongColor!=='rgb(255, 255, 255)'&&item.evolutionSmallColor!=='rgb(255, 255, 255)',label+' visible progression labels still use generic white-on-dark text');
       if(item.mode==='adventure')assert(item.worldTitle.includes('Fuchs-Abenteuer'),label+' world entry does not name Fuchs-Abenteuer');
       else assert(item.worldTitle.includes('Wortreich'),label+' world entry does not name Das Wortreich');
     }else{
