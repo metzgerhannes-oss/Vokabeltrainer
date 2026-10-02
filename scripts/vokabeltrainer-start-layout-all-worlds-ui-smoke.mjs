@@ -54,6 +54,8 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
         const fallback=document.querySelector('#projectMenuAvatarFallback');
         const img=document.querySelector('#projectMenuAvatarArt');
         const scene=document.querySelector('#projectMenuScenery .wordrealm-approved-home-scene');
+        const sceneFox=document.querySelector('#projectMenuScenery .wordrealm-approved-scene-fox');
+        const sceneFoxFallback=document.querySelector('#projectMenuScenery .wordrealm-approved-scene-fox-fallback');
         const panel=document.querySelector('.project-menu-avatar-panel');
         const main=document.querySelector('.project-menu-main');
         const learning=document.querySelector('.project-menu-learning-card');
@@ -98,6 +100,11 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
           atlasOpacity:atlasArt?getComputedStyle(atlasArt).opacity:'',
           atlasBackground:atlasArt?getComputedStyle(atlasArt).backgroundImage:'',
           sceneVisible:visible(scene),
+          sceneTag:scene?.tagName||'',
+          sceneFoxVisible:visible(sceneFox),
+          sceneFoxFallbackVisible:visible(sceneFoxFallback),
+          sceneFoxBackground:sceneFox?getComputedStyle(sceneFox).backgroundImage:'',
+          brokenImages:[...document.images].filter(node=>node.complete&&node.naturalWidth===0).map(node=>node.getAttribute('src')||''),
           frameVisible:visible(frame),
           worldActionsVisible:visible(worldActions),
           worldTitle:worldTitle?.textContent?.trim()||'',
@@ -131,12 +138,15 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
     assert(item.scrollWidth<=item.innerWidth+2,label+' has horizontal overflow '+item.scrollWidth+'>'+item.innerWidth);
     assert(item.stage&&item.stage.left>=-2&&item.stage.right<=item.innerWidth+2,label+' stage leaves viewport');
     assert(item.quick&&item.quick.width>=43.5&&item.quick.height>=43.5,label+' primary learning CTA is below 44px');
+    assert(item.brokenImages.length===0,label+' contains broken image resources: '+item.brokenImages.join(', '));
     assert(overlap(item.panel,item.main)<4,label+' avatar/scene panel overlaps learning/content column');
     assert(overlap(item.learning,item.panel)<4,label+' learning card overlaps avatar/scene panel');
 
     if(item.subject==='german'){
       assert(item.source==='wordrealm-approved-scene',label+' does not use the approved integrated German scene');
-      assert(item.sceneVisible,label+' approved German scene is not visible');
+      assert(item.sceneVisible&&item.sceneTag==='DIV',label+' approved German scene is not a composed, visible scene');
+      assert(item.sceneFoxVisible&&!item.sceneFoxFallbackVisible,label+' does not use the approved painterly fox from the atlas inside the scene');
+      assert(item.sceneFoxBackground.includes('blob:'),label+' integrated fox has no decoded atlas artwork');
       assert(!item.imgVisible&&!item.fallbackVisible,label+' exposes a separate avatar tile on top of the integrated scene');
       assert(item.germanReadVisible,label+' loses the German read-aloud control');
       assert(item.worldActionsVisible,label+' loses the German world-entry actions');
