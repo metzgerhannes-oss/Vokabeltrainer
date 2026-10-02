@@ -220,11 +220,19 @@
 
   function renderAdventureHome(level=1){
     const frame=document.querySelector('#projectMenuAvatarFrame');
+    const fallback=document.querySelector('#projectMenuAvatarFallback');
     const scenery=document.querySelector('#projectMenuScenery');
     const strip=document.querySelector('#wordrealmStageStrip');
     const brand=document.querySelector('#wordrealmHomeBrand');
-    if(frame)frame.classList.add('adventure-rendered');
-    if(scenery)scenery.innerHTML=adventureScenerySvg(level);
+    if(frame&&fallback){
+      fallback.innerHTML='';
+      fallback.classList.remove('wordrealm-svg-avatar','adventure-svg-avatar','avatar-atlas-avatar');
+      frame.classList.add('adventure-rendered','wordrealm-approved-scene');
+    }
+    if(scenery){
+      scenery.classList.add('wordrealm-approved-scenery');
+      scenery.innerHTML='<img class="wordrealm-approved-home-scene" src="assets/wordrealm/home-approved-v1.webp" alt="">';
+    }
     if(strip){strip.innerHTML='';strip.classList.add('hidden')}
     brand?.classList.add('hidden');
   }
