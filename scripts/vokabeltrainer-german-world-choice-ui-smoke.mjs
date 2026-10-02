@@ -99,7 +99,7 @@ try{
   assert(home.fox,'adventure mode uses the fox avatar');
   assert(home.renderKey.includes('german-adventure-')&&home.renderKey!==initial.renderKey,'world switch creates a distinct adventure avatar render key');
   assert(home.source==='wordrealm-approved-scene'&&home.atlas===0&&!home.knight,'adventure switch keeps the fox integrated in the approved German home scene instead of restoring a separate portrait tile');
-  assert(home.approvedScene===1&&home.theme==='wordrealm','German adventure home uses the same approved integrated Start/Heute composition as the released German layout');
+  assert(home.approvedScene===1&&home.theme==='german-adventure','German adventure keeps its own world identity while using the approved integrated Start/Heute composition');
   assert(home.stageLabel.includes('Wegstarter'),'German adventure home preserves the adventure progression label instead of battle equipment');
   assert(home.entryTitle.includes('Fuchs-Abenteuer'),'German adventure home keeps the selected non-combat world explicit in the world-entry action');
   assert(home.nav.includes('Abenteuer'),'child navigation names the adventure world');
