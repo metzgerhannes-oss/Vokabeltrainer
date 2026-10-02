@@ -32,8 +32,9 @@ try{
 
   await page.waitForSelector('#homeView.active .project-menu-stage[data-visual-theme="german-adventure"]');
   assert(await page.locator('#projectMenuAvatarFrame').evaluate(el=>el.classList.contains('german-fox-avatar')),'German home uses the fox companion');
-  assert(await page.locator('#projectMenuAvatarFallback').isVisible(),'fox fallback is visible on German home');
+  assert(await page.locator('#projectMenuAvatarFallback').isHidden(),'German Start/Heute does not show a separate fox/avatar tile');
   assert(await page.locator('#projectMenuAvatarArt').isHidden(),'German home never reuses the English army avatar artwork');
+  assert(await page.locator('#projectMenuScenery .wordrealm-approved-home-scene').count()===1,'German adventure uses the approved integrated fox landscape');
   assert((await page.locator('.nav-btn[data-view="armyView"]').textContent())?.includes('Abenteuer'),'German child navigation names the selected adventure world');
 
   const mobileLayout=await page.evaluate(()=>{
@@ -101,12 +102,12 @@ try{
   await page.setViewportSize({width:1200,height:800});
   await page.evaluate(()=>{setLearnerWorldMode(learner(),'german','adventure');window.VTMenuUi.openHome();renderAll()});
   await page.waitForSelector('#homeView.active .project-menu-stage[data-visual-theme="german-adventure"]');
-  const desktop=await page.evaluate(()=>({scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,foxVisible:!!document.querySelector('#projectMenuAvatarFallback')?.getBoundingClientRect().width}));
-  assert(desktop.scrollWidth<=desktop.clientWidth+1&&desktop.foxVisible,'German home remains visible and overflow-free on desktop');
+  const desktop=await page.evaluate(()=>({scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,sceneVisible:!!document.querySelector('#projectMenuScenery .wordrealm-approved-home-scene')?.getBoundingClientRect().width,avatarTileVisible:!!document.querySelector('#projectMenuAvatarFallback')?.getBoundingClientRect().width}));
+  assert(desktop.scrollWidth<=desktop.clientWidth+1&&desktop.sceneVisible&&!desktop.avatarTileVisible,'German approved home scene remains visible and overflow-free on desktop without a separate avatar tile');
 
   assert(errors.length===0,'German UI produces no browser errors: '+errors.join(' | '));
   console.log('Vokabeltrainer Deutsch Paket B UI smoke: passed');
-  console.log('✓ Fuchs-Abenteuerwelt and wooden-sword learning stations');
+  console.log('✓ approved integrated German Start/Heute scene and wooden-sword learning stations');
   console.log('✓ de-DE audio and case-sensitive German spelling question');
   console.log('✓ Wortreich Ritterheer and Burg campaign shell');
   console.log('✓ iPhone and desktop layout remain overflow-free');
