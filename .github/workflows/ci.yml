@@ -191,6 +191,9 @@ jobs:
       - name: WebKit all-subject world choice
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-world-choice-all-subjects-ui-smoke.mjs
 
+      - name: WebKit all start-page world layouts
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-start-layout-all-worlds-ui-smoke.mjs
+
       - name: WebKit dialog and keyboard accessibility
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-accessibility-ui-smoke.mjs
 
