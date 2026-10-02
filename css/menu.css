@@ -625,8 +625,7 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
   background:rgba(61,78,49,.15);
   filter:blur(10px);
 }
-.project-menu-avatar-frame[data-avatar-render-key*="-adventure-"] .project-menu-avatar-art,
-.project-menu-avatar-frame[data-avatar-render-key*="-battle-"] .adventure-svg-avatar:not(.wordrealm-svg-avatar){display:none}
+.project-menu-avatar-frame.german-fox-avatar[data-avatar-render-key*="-battle-"] .adventure-svg-avatar:not(.wordrealm-svg-avatar){display:none}
 @media(max-width:760px){
   .project-menu-avatar-frame.german-fox-avatar .adventure-svg-avatar{width:min(82%,300px);height:82%}
 }
