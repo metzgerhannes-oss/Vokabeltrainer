@@ -58,6 +58,8 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
         const main=document.querySelector('.project-menu-main');
         const learning=document.querySelector('.project-menu-learning-card');
         const evolution=document.querySelector('.project-menu-avatar-evolution');
+        const evolutionStrong=document.querySelector('#menuAvatarStageLabel');
+        const evolutionSmall=document.querySelector('#menuAvatarNextStage');
         const quick=document.querySelector('#quickLearnHeroBtn');
         const worldActions=document.querySelector('#wordrealmHomeActions');
         const worldTitle=document.querySelector('#wordrealmEnterTitle');
@@ -102,7 +104,8 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
           stageBackground:stageStyle?.backgroundColor||'',
           stageBorder:stageStyle?.borderTopColor||'',
           evolutionBackground:evolutionStyle?.backgroundImage||'',
-          evolutionColor:evolutionStyle?.color||''
+          evolutionStrongColor:evolutionStrong?getComputedStyle(evolutionStrong).color:'',
+          evolutionSmallColor:evolutionSmall?getComputedStyle(evolutionSmall).color:''
         };
       },{subject,mode});
       results.push(result);
@@ -129,7 +132,7 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
       assert(item.germanReadVisible,label+' loses the German read-aloud control');
       assert(item.worldActionsVisible,label+' loses the German world-entry actions');
       assert(item.evolutionBackground.includes('255, 253, 246')||item.evolutionBackground.includes('255,253,246'),label+' progression card is still the generic dark overlay: '+item.evolutionBackground);
-      assert(item.evolutionColor!=='rgb(255, 255, 255)'&&item.evolutionColor!=='rgba(255, 255, 255, 1)',label+' progression text still uses the generic white-on-dark treatment');
+      assert(item.evolutionStrongColor!=='rgb(255, 255, 255)'&&item.evolutionSmallColor!=='rgb(255, 255, 255)',label+' visible progression labels still use generic white-on-dark text');
       if(item.mode==='adventure')assert(item.worldTitle.includes('Fuchs-Abenteuer'),label+' world entry does not name Fuchs-Abenteuer');
       else assert(item.worldTitle.includes('Wortreich'),label+' world entry does not name Das Wortreich');
     }else{
