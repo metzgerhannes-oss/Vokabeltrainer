@@ -724,6 +724,11 @@ body[data-active-subject="german"] .bottom-nav{border-color:#ddc99f;background:r
 .project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-standard,
 .project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-crest,
 .project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-aura{display:none!important}
+.project-menu-avatar-frame.avatar-atlas-rendered,
+.project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-fallback.avatar-atlas-avatar,
+.project-menu-avatar-frame.avatar-atlas-rendered .avatar-atlas-art{
+  visibility:visible!important;
+}
 .project-menu-avatar-frame.avatar-atlas-rendered .project-menu-avatar-fallback.avatar-atlas-avatar{
   position:relative;
   width:auto!important;
