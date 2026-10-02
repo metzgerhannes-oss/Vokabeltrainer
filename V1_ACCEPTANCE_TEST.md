@@ -1,6 +1,8 @@
 # V1 Acceptance Test
 
-Stand: 01.10.2026 · Basis: v0.21.59 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle, Wortreich-Startszene und strikter Testscope
+Stand: 02.10.2026 · Basis: v0.21.60 · Release-Kandidat; Prüfschwerpunkte: Startseiten aller acht Fachwelten, B-018 Schreibkontrolle, Wortreich-Startszene und strikter Testscope
+
+Release-Kandidat v0.21.60 korrigiert den Deutsch-Fuchspfad auf Start/Heute: kein sichtbarer Portraitkarten-Rahmen mehr, malerischer Fuchs in der Landschaft, helle thematische Fortschrittskarte und Vorlesen in Abenteuer wie Kampf. Zusätzlich prüft CI alle acht Fach-/Welt-Startseiten strukturell auf korrekte Welt, Avatarquelle, Überlappung und Overflow.
 
 Release-Kandidat v0.21.59 hält abgeschlossene Testvokabeln vollständig aus Pflichtplan, adaptiven Nachrückern und Pflicht-Fälligkeitsanzeige heraus; historische Wörter bleiben nur bewusst freiwillig erreichbar.
 
@@ -22,6 +24,8 @@ Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
 
 
 ## Aktueller Praxisfortschritt
+
+- [ ] **Startseiten-Matrix v0.21.60:** Auf realem iPhone Englisch, Latein, Deutsch und Französisch jeweils einmal in Abenteuer und Kampf öffnen. Avatar/Szene dürfen keine Lernkarte überdecken, der jeweilige Weltstil muss erkennbar bleiben und es darf kein technischer Fallback erscheinen. Im Deutsch-Fuchspfad muss der malerische Fuchs ohne sichtbare rechteckige Portraitkarte in der Landschaft stehen; Vorlese-Buttons bleiben verfügbar.
 
 - [ ] **Wortreich-Startszene v0.21.52:** Auf realem iPhone muss die freigegebene malerische Szene ohne Avatar-Kachel sichtbar sein: großer Fuchs frei in der Landschaft, Burg/Brücke/Berge, Wegmarken A → M → Aa → Wörter und darunter die Pergament-Stufenleiste. Keine unscharfen Balken ober-/unterhalb des Fuchses und kein separates Bildkarten-Gefühl.
 
