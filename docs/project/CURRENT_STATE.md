@@ -1,5 +1,7 @@
 # Vokabeltrainer – Current State
 
+- v0.21.60 Release-Kandidat: Start/Heute ist über alle 8 Fach-/Weltkombinationen als eigene Layout-Matrix abgesichert. Deutsch/Fuchs-Abenteuer verwendet weiterhin das freigegebene malerische Fuchs-Artwork, aber ohne Portraitkarten-Chrome und mit korrekt angewendeter heller Themen-UI; Wortreich/Kampf bleibt die integrierte freigegebene Gesamtszene.
+
 - v0.21.59 Release-Kandidat: alte Testvokabeln sind vollständig aus dem Pflichtpfad entfernt. Adaptive Nachrücker und der Pflicht-Fälligkeitszähler sind auf den aktuellen Testscope begrenzt; zwischen abgeschlossenem und nächstem Test bleibt der Pflichtpfad leer. Historische Wörter bleiben nur freiwillig verfügbar.
 
 - v0.21.58 Release-Kandidat: isolierter B-013-Festungsenthüllungs-Spike mit lokalem Three.js r186, Skip, Reduced Motion und 2D-Fallback; praktische visuelle/Performance-Abnahme bleibt offen.
@@ -8,17 +10,17 @@
 
 - v0.21.56 Release-Kandidat: B-019 Avatar-Matrix-Gate prüft 72 Fach-/Profil-/Stufenkombinationen automatisiert; praktische Geräteabnahme bleibt offen.
 
-Stand: 01.10.2026, aktueller main-Stand direkt aus GitHub geprüft.
+Stand: 02.10.2026, aktueller main-Stand direkt aus GitHub geprüft.
 
 ## Produktionsbaseline
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.59** (strikter Testscope ohne alte Pflichtvokabeln als Release-Kandidat)
-- aktueller bestätigter Stand auf `main` vor den offenen Folge-PRs: **v0.21.56 / PR #230**
-- jüngster vollständig live-verifizierter Release: **v0.21.47 / PR #221**
+- App-Version: **v0.21.60** (Startseiten-Layoutmatrix + Deutsch-Fuchspfad-Fix als Release-Kandidat)
+- aktueller bestätigter Stand auf `main` vor dem offenen v0.21.60-Folge-PR: **v0.21.59 / PR #233**; B-006-Dokumentationskorrektur aus PR #234 ist ebenfalls gemergt
+- jüngster vollständig live-verifizierter Release: **v0.21.59 / PR #233** (main-CI #1441, Pages #589, Live-Verifikation erfolgreich)
 - Produktionsnachweis v0.21.47: **PR-CI #1364 success · main-CI #1365 success · GitHub Pages #575 success; reale iPhone-Selbstkontrolle dennoch erneut ohne erkennbare Anzeige und damit praktisch nicht bestanden**
-- aktueller Release-Kandidat: **v0.21.59 / PR #233**, aufbauend auf **v0.21.58 / PR #232**; #231 erweitert Phaser auf alle Kampf-Fächer, #232 ergänzt den isolierten B-013-Three.js-Technik-Spikende Weltwahl auf `feature/world-choice-complete-v02154`**; Englisch, Latein, Deutsch und Französisch besitzen unabhängig wählbare Abenteuer-/Kampfwelten, jeweils sechs Stufen und kanonische Storylines. Weltwechsel bleiben fachlich neutral. Basis ist der gemergte v0.21.53-Stand / PR #227
+- aktueller Release-Kandidat: **v0.21.60**, aufbauend auf **v0.21.58 / PR #232**; #231 erweitert Phaser auf alle Kampf-Fächer, #232 ergänzt den isolierten B-013-Three.js-Technik-Spikende Weltwahl auf `feature/world-choice-complete-v02154`**; Englisch, Latein, Deutsch und Französisch besitzen unabhängig wählbare Abenteuer-/Kampfwelten, jeweils sechs Stufen und kanonische Storylines. Weltwechsel bleiben fachlich neutral. Basis ist der gemergte v0.21.53-Stand / PR #227
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: Englisch, Latein, Französisch-Kampf und Deutsch/Wortreich laufen über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild bleiben fachlich neutral
