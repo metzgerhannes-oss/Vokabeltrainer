@@ -38,7 +38,7 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
   const results=[];
   for(const subject of Object.keys(expectedThemes)){
     for(const mode of ['adventure','battle']){
-      const result=await page.evaluate(({subject,mode})=>{
+      const result=await page.evaluate(async ({subject,mode})=>{
         state=defaultState();
         const l=learner();
         l.activeSubjects=['english','latin','german','french'];
@@ -48,6 +48,14 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
         renderAll();
         showView('homeView');
         window.VTMenuUi.render();
+        await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+        const pendingFox=document.querySelector('#projectMenuScenery .wordrealm-approved-scene-fox img');
+        if(pendingFox?.src&&typeof pendingFox.decode==='function'){
+          await Promise.race([
+            pendingFox.decode().catch(()=>{}),
+            new Promise(resolve=>setTimeout(resolve,1500))
+          ]);
+        }
 
         const stage=document.querySelector('.project-menu-stage');
         const frame=document.querySelector('#projectMenuAvatarFrame');
