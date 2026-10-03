@@ -145,6 +145,15 @@
     }
     document.body.dataset.activeSubject=state.activeSubject;
     if(subject)subject.textContent=subjectLabel(state.activeSubject);
+    const stageLabel=document.querySelector('#menuAvatarStageLabel');
+    const nextStageLabel=document.querySelector('#menuAvatarNextStage');
+    if(state.activeSubject==='german'){
+      stageLabel?.style.setProperty('color','#253047','important');
+      nextStageLabel?.style.setProperty('color','#76664f','important');
+    }else{
+      stageLabel?.style.removeProperty('color');
+      nextStageLabel?.style.removeProperty('color');
+    }
     if(rank)rank.textContent=avatarStage?.rank||rankFor(growth.pct,state.activeSubject);
     if(learned)learned.textContent=String(p.mastered||0);
     if(castles)castles.textContent=String(currentCapturedFortresses());

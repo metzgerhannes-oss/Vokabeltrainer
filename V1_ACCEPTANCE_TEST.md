@@ -1,6 +1,8 @@
 # V1 Acceptance Test
 
-Stand: 02.10.2026 · Basis: v0.21.60 · Release-Kandidat; Prüfschwerpunkte: B-018 Schreibkontrolle, integrierte Deutsch-Startszene und strikter Testscope
+Stand: 02.10.2026 · Basis: v0.21.61 · Release-Kandidat; Prüfschwerpunkte: Startseiten aller acht Fachwelten, B-018 Schreibkontrolle, integrierte Deutsch-Startszene und strikter Testscope
+
+Release-Kandidat v0.21.61 ergänzt ein automatisiertes Startseiten-Gate für Englisch, Latein, Deutsch und Französisch jeweils in Abenteuer und Kampf auf iPhone- und Desktop-Breite. Zusätzlich wird die nach v0.21.60 noch zu dunkle Deutsch-Fortschrittsfläche wieder als helle Pergamentkarte gerendert.
 
 Release-Kandidat v0.21.60 stellt die freigegebene integrierte Deutsch-Startszene auch im Fuchs-Abenteuer wieder her; Start/Heute darf dort keine separate Avatar-/Atlas-Kachel oder Blur-Ränder zeigen.
 
@@ -24,6 +26,8 @@ Ein grüner automatisierter Testlauf ersetzt diesen Praxistest nicht.
 
 
 ## Aktueller Praxisfortschritt
+
+- [ ] **Startseiten-Matrix v0.21.61:** Auf realem iPhone die acht Kombinationen Englisch/Latein/Deutsch/Französisch × Abenteuer/Kampf öffnen. Avatar bzw. integrierte Szene müssen vor der Lernkarte klar erkennbar sein, dürfen diese nicht überlagern und dürfen nicht auf technische CSS-/SVG-Fallbacks zurückfallen. Deutsch muss in beiden Welten die integrierte Fuchs-Landschaft mit heller Pergament-Stufenkarte zeigen; der malerische Fuchs muss direkt in der Landschaft stehen und es darf weder eine separate Portraitkarte noch ein Broken-Image-Symbol erscheinen. Abenteuer und Kampf bleiben über Stufenbezeichnung/Weltziel getrennt. Englisch Abenteuer muss den finalen Avatar sichtbar zeigen und darf nicht nur dessen unsichtbar geladenes Asset im DOM tragen.
 
 - [ ] **Wortreich-Startszene v0.21.52:** Auf realem iPhone muss die freigegebene malerische Szene ohne Avatar-Kachel sichtbar sein: großer Fuchs frei in der Landschaft, Burg/Brücke/Berge, Wegmarken A → M → Aa → Wörter und darunter die Pergament-Stufenleiste. Keine unscharfen Balken ober-/unterhalb des Fuchses und kein separates Bildkarten-Gefühl.
 

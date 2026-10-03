@@ -34,7 +34,7 @@ assert(model.includes("if(subject==='german')return arr[Math.max(0,Math.min(arr.
 assert(wordrealm.includes("function foxSvg(stage=1")&&wordrealm.includes("function castleSvg()")&&wordrealm.includes("function stageStrip(activeLevel=1)"),'Wortreich UI owns real fox, scenery and progression renderers');
 assert(wordrealm.includes("if(crownKnight)")&&wordrealm.includes("if(king)")&&wordrealm.includes("fill=\"#f6c84b\""),'upper stages build incrementally and reserve crown rendering for the king branch');
 assert(html.includes('id="wordrealmStageStrip"')&&html.includes('id="wordrealmLearningWordsBtn"')&&html.includes('id="wordrealmEnterBtn"'),'German home exposes stage strip and the two approved quick actions');
-assert(wordrealm.includes('assets/wordrealm/home-approved-v1.webp')&&menu.includes("avatarArtSource='wordrealm-approved-scene'"),'Wortreich home renders the exact approved scene and bypasses the atlas tile');
+assert(wordrealm.includes('function approvedHomeScene')&&wordrealm.includes("getSprite?.('german'")&&wordrealm.includes('wordrealm-composed-home-scene')&&menu.includes("avatarArtSource='wordrealm-approved-scene'"),'Wortreich home composes the approved integrated scene from the learning landscape and painterly fox atlas without a separate tile');
 assert(html.includes('js/read-aloud-ui.js?v='+version)&&html.includes('js/wordrealm-ui.js?v='+version),'approved layout modules load in the current versioned shell');
 assert(readAloud.includes("view.id!=='learnView'"),'global page read-aloud stays out of focused learning');
 assert(readAloud.includes("button.dataset.readTargets")&&readAloud.includes("speechSynthesis")&&html.includes("data-read-targets="),'read-aloud layer supports target-based German narration');
@@ -52,7 +52,7 @@ assert(decisions.includes('D-20260929-003')&&layout.includes('Status: **VERBINDL
 assert(layout.includes('Ritterlehrling → Ritter → Kronritter → König'),'canonical layout records the approved upper-stage progression');
 assert(layout.includes('Audio darf **nicht** vor der Antwort angeboten werden'),'canonical layout preserves evidence-safe audio');
 assert(layout.includes('**Neutral / Divers**')&&layout.includes('nicht** still auf die männliche Bildserie'),'canonical layout records the m/w/d fallback rule');
-assert(visual.includes('assets/wordrealm/home-approved-v1.webp')&&visual.includes('Eine separate Avatar-Kachel'),'Visual DNA locks the approved integrated Wortreich scene and forbids the old avatar tile');
+assert(visual.includes('freigegebenen malerischen Fuchs-Atlas')&&visual.includes('Eine separate Avatar-Kachel'),'Visual DNA locks the approved integrated Wortreich composition and forbids the old avatar tile');
 
 console.log('Vokabeltrainer Deutsch Wortreich layout smoke: '+ok.length+' checks passed');
 for(const name of ok)console.log('✓ '+name);

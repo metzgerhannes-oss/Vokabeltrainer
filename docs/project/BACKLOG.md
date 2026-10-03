@@ -1,6 +1,6 @@
 # Vokabeltrainer – Backlog
 
-Stand: 01.10.2026
+Stand: 02.10.2026
 
 Dieses Backlog enthält nur Punkte, die als Projektarbeit erhalten bleiben sollen. Reine Ideen ohne Bewertung gehören zunächst in den Status `IDEA`; als sinnvoll bestätigte, aber noch nicht umgesetzte Punkte in `APPROVED_BACKLOG`.
 
@@ -510,3 +510,24 @@ Abnahme:
 5. Weltwechsel verändert keinen fachlichen Lernstand.
 6. Keine regulär erreichbare Profilvariante fällt auf die technische CSS-/SVG-Figur zurück.
 
+## B-020 – Startseiten-Layoutmatrix aller Fachwelten
+**Status:** IMPLEMENTED v0.21.61 · AUTOMATISCHE RELEASE-VERIFIKATION  
+**Priorität:** P0 visuelle Produktqualität  
+**Betroffene Quellen:** `VISUAL_DNA.md § 3/§ 6–§ 11`, `docs/project/DEUTSCH_WORTREICH_LAYOUT_V1.md`, `docs/project/LATIN_FRENCH_VISUAL_LAYOUT.md`, `css/menu.css`, `scripts/vokabeltrainer-start-layout-all-worlds-ui-smoke.mjs`
+
+Nach dem realen iPhone-Befund auf Deutsch Start/Heute werden nicht mehr nur Avatar-Assets, sondern die vollständigen Startseitenpfade geprüft.
+
+v0.21.61:
+- Matrix aus **Englisch, Latein, Deutsch, Französisch × Abenteuer/Kampf**
+- Prüfung auf iPhone- und Desktop-Breite
+- korrekte Welt-/Theme-Zuordnung und weltbezogener Render-Key
+- echte freigegebene Avatar-/Szenenquelle; technischer Fallback ist Release-Fehler
+- kein horizontaler Overflow
+- kein geometrisches Überlappen von Avatar-/Szenenbereich und Lerninhalt
+- primäre Lernaktion mindestens 44 px hoch
+- Deutsch in beiden Weltmodi: integrierte freigegebene Fuchs-Szene ohne separate Avatar-Kachel; nach realem iPhone-Broken-Image-Befund wird die Szene ohne standalone WebP aus Lernpfad-Landschaft + freigegebenem Fuchs-Atlas zusammengesetzt
+- Deutsch Abenteuer/Kampf bleiben über Weltmodus, Stufenbezeichnung und Weltziel getrennt
+- CSS-Spezifität ist so korrigiert, dass fach-/weltbezogene Layoutregeln die generische Menügestaltung tatsächlich überschreiben können
+- Englisch Abenteuer zeigt das bereits geladene finale Avatar-Artwork wieder sichtbar; die alte globale Abenteuer-Ausblendregel ist entfernt
+
+Die reale visuelle Geräteabnahme bleibt zusätzlich erforderlich; das automatische Gate verhindert jedoch die jetzt gefundene Klasse struktureller Startseiten-Regressionsfehler.

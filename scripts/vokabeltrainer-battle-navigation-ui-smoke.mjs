@@ -10,6 +10,24 @@ try{
 
   await activate('#attackBtn','battle entry');
   await page.waitForSelector('#battleView.active');
+  await page.waitForFunction(()=>{
+    const f=currentTestFortress(),stage=document.querySelector('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
+    return !!f?.revealedAt&&stage?.dataset.revealKey===f.key&&!!overlay&&overlay.hidden===false;
+  });
+  const first=await page.evaluate(()=>{
+    const f=currentTestFortress(),stage=document.querySelector('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
+    return {
+      seenAt:f?.revealedAt||'',
+      key:f?.key||'',
+      revealKey:stage?.dataset.revealKey||'',
+      copy:overlay?.textContent||'',
+      hidden:overlay?.hidden??true
+    };
+  });
+  assert(first.seenAt,'first opening records fortress reveal');
+  assert(first.key===first.revealKey,'reveal belongs to current fortress');
+  assert(first.copy.includes('NEUES TESTZIEL ENTDECKT')&&first.copy.includes('Vokabel'),'reveal explains target and learning scope');
+  assert(first.hidden===false,'first fortress reveal is visible immediately after opening');
   await page.waitForFunction(()=>window.VTBattleArt?.ready===true&&document.querySelector('#battleStage')?.classList.contains('battle-art-ready'));
   assert(await page.locator('#battleStage [data-battle-scene-art]').evaluate(img=>img.naturalWidth>0),'painted battle artwork loads on the iPhone path');
   assert(!(await page.evaluate(()=>document.body.classList.contains('battle-immersive'))),'fortress preview opens in normal scrollable mode');
@@ -39,20 +57,6 @@ try{
   assert(await page.locator('#battleStorySpeakBtn').getAttribute('aria-pressed')==='true','battle story narration exposes active state');
   assert((await page.locator('#battleStorySpeakBtn').textContent()).includes('Stop'),'battle story narration offers an explicit stop control');
   await page.evaluate(()=>updateBattleStoryNarrationUi(false));
-  const first=await page.evaluate(()=>{
-    const f=currentTestFortress(),stage=document.querySelector('#battleStage'),overlay=stage?.querySelector('[data-battle-target-reveal]');
-    return {
-      seenAt:f?.revealedAt||'',
-      key:f?.key||'',
-      revealKey:stage?.dataset.revealKey||'',
-      copy:overlay?.textContent||'',
-      hidden:overlay?.hidden??true
-    };
-  });
-  assert(first.seenAt,'first opening records fortress reveal');
-  assert(first.key===first.revealKey,'reveal belongs to current fortress');
-  assert(first.copy.includes('NEUES TESTZIEL ENTDECKT')&&first.copy.includes('Vokabel'),'reveal explains target and learning scope');
-  assert(first.hidden===false,'first fortress reveal is visible');
   assert(await page.locator('#battleAttackBtn').isDisabled(),'attack remains locked before daily goal');
 
   await page.evaluate(()=>{

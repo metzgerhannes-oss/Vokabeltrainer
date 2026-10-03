@@ -1,5 +1,7 @@
 # Finales Audit
 
+> v0.21.61: Start/Heute erhält ein eigenes 8er-Layout-Gate für vier Fächer × Abenteuer/Kampf auf iPhone und Desktop. Die nach v0.21.60 noch durch CSS-Spezifität verdunkelte Deutsch-Fortschrittsfläche wird wieder als freigegebene helle Pergamentkarte gerendert. Das Matrix-Gate deckte zusätzlich auf, dass eine alte Abenteuer-CSS-Regel den finalen Englisch-Avatar unsichtbar machte; diese Regel ist entfernt. Nach realem iPhone-Befund mit Broken-Image-Symbol wurde außerdem die standalone Deutsch-WebP aus dem Renderpfad und Service-Worker-Precache entfernt. Die Deutsch-Startszene wird nun aus der Lernpfad-Landschaft und dem bereits bewährten malerischen Fuchs-Atlas als eine gemeinsame Szene aufgebaut; CI prüft zusätzlich auf gebrochene Bildressourcen. Der primäre Deutsch-Lernbutton bleibt mindestens 44 px hoch.
+
 > v0.21.60: Deutsch Start/Heute hält die freigegebene integrierte Fuchs-Landschaft jetzt in beiden Weltmodi ein. Die separate Atlas-Kachel ist im Fuchs-Abenteuer entfernt; Weltmodus, Stufenname und Spielziel bleiben getrennt.
 >
 > v0.21.59: Der Pflichtlernweg ist jetzt vollständig auf den aktuellen Testscope begrenzt. Auch adaptive Nachrücker und der sichtbare Pflicht-Fälligkeitszähler können keine Vokabeln aus abgeschlossenen Tests mehr zurückholen; zwischen Tests bleibt der Pflichtpfad leer.
@@ -17,9 +19,12 @@
 
 > v0.21.53: Französisch ist regulär aktiviert. Der lokale OCR-Blocker ist mit gepinntem `fra.traineddata` beseitigt; produktive Zielantworten schützen Akzente/Apostrophe über eine fachliche Capability, TTS nutzt `fr-FR`.
 
-Stand: 02.10.2026 · App v0.21.60
+Stand: 02.10.2026 · App v0.21.61
 
 ## Ergebnis
+
+- v0.21.61 prüft Start/Heute erstmals als vollständige Matrix aus Englisch, Latein, Deutsch und Französisch × Abenteuer/Kampf auf iPhone- und Desktop-Breite. Das Gate kontrolliert Theme und Weltmodus, reale Avatar-/Szenenquelle statt technischem Fallback, horizontalen Overflow, geometrische Trennung von Avatar-/Szenenbereich und Lerninhalt sowie die Deutsch-Sonderregeln. CSS-Regeln des generischen Menüs besitzen nun keine künstlich höhere `#homeView`-Spezifität mehr und können deshalb die freigegebenen Fach-/Weltdesigns nicht mehr überstimmen.
+
 
 - v0.21.59 schließt den nach v0.21.51 verbliebenen Leckpfad: `dailyPlanReplacementCandidate()` darf Nachrücker nur noch aus `mandatoryDailyPool()` wählen; ohne Folgetest gibt es keine Pflicht-Nachrücker. Der Startscreen zählt bei „fällig“ ebenfalls nur Wörter des aktuellen Pflichtpools. Alte Testvokabeln bleiben ausschließlich freiwillig erreichbar.
 
@@ -28,7 +33,7 @@ Stand: 02.10.2026 · App v0.21.60
 - v0.21.51 schließt den verbliebenen Post-Test-Fehler: Nach „Test abschließen“ fällt der Pflichtpfad ohne nächsten aktiven Test nicht mehr auf den Jahreswortschatz zurück. Alte Testvokabeln bleiben freiwillig verfügbar; sobald ein neuer Test geplant ist, wird ausschließlich dessen Umfang verpflichtend gelernt. Das Tagesplanschema steigt auf `daily4`.
 
 - v0.21.50 integriert die freigegebene malerische Avatar-Art-Direction in den Startscreen: echte Bildassets statt fachfremder Szenen-/CSS-Fallbacks für alle aktiven Fach-/Stilpfade; Deutsch Grundschule bleibt ein Fuchs. Englisch männlich nutzt die vorhandene volle 6-Stufen-Serie, Latein männlich die neue römische Ganzkörper-Serie; weitere m/w/d-Pfade werden aus dem freigegebenen Atlas gerendert. Die Änderung bleibt rein visuell und verändert keine Lern-, Mastery-, Spacing- oder Testlogik.
-  Die Deutsch-WebKit-Regression prüft dabei ausdrücklich den Bildatlas als Start-Avatar in beiden Weltmodi; die vorhandenen SVG-Füchse bleiben nur für Stufenvorschau/technische Fallback-Pfade erhalten.
+  Seit v0.21.60 verwendet Deutsch Start/Heute in beiden Weltmodi die freigegebene integrierte Fuchs-Landschaft statt einer separaten Avatar-/Atlas-Kachel; vorhandene SVG-/CSS-Figuren bleiben nur technische Fallback-/Vorschaupfade.
 
 - v0.21.50 trennt den verpflichtenden Englisch-Testumfang von älteren fälligen Vokabeln und verhindert die Vereinigung eines expliziten Testumfangs mit einer überlappenden Wochenserie. Alte Lernhistorie bleibt erhalten und optionale Wiederholung bleibt verfügbar.
 - v0.21.48 ersetzt nach erneut negativem realem iPhone-Befund die Overlay-Technik vollständig durch eine normale HTML-Kontrollkarte. Diese Karte liegt im Dokumentfluss direkt über der Schreibfläche, enthält einen großen Sollbuchstaben auf eigener Grundschul-Lineatur und wird nach dem Kontrollklick automatisch ins sichtbare Viewport gescrollt. Der WebKit-Test muss Sichtbarkeit, Mindestgröße und Viewport-Lage der Karte nachweisen. Reale Geräteabnahme bleibt zwingend.

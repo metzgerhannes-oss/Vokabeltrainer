@@ -26,6 +26,10 @@ try{
   });
   await page.waitForSelector('#homeView.active .project-menu-stage[data-subject="german"][data-visual-theme="wordrealm"]');
   await page.waitForSelector('#projectMenuScenery .wordrealm-approved-home-scene');
+  await page.waitForFunction(()=>{
+    const img=document.querySelector('#projectMenuScenery .wordrealm-approved-scene-fox img');
+    return !!img&&img.complete&&img.naturalWidth>0;
+  });
 
   const home=await page.evaluate(()=>({
     label:document.querySelector('#menuAvatarStageLabel')?.textContent||'',
@@ -33,7 +37,8 @@ try{
     stages:[...document.querySelectorAll('#wordrealmStageStrip .wordrealm-stage-tile span')].map(x=>x.textContent),
     foxes:document.querySelectorAll('#wordrealmStageStrip .wordrealm-fox-svg').length,
     hero:document.querySelectorAll('#projectMenuScenery .wordrealm-approved-home-scene').length,
-    heroLoaded:document.querySelector('#projectMenuScenery .wordrealm-approved-home-scene')?.complete===true,
+    heroComposed:document.querySelector('#projectMenuScenery .wordrealm-approved-home-scene')?.classList.contains('wordrealm-composed-home-scene')===true,
+    heroFoxLoaded:(()=>{const img=document.querySelector('#projectMenuScenery .wordrealm-approved-scene-fox img');return !!img&&img.complete&&img.naturalWidth>0})(),
     heroSource:document.querySelector('#projectMenuAvatarFrame')?.dataset.avatarArtSource||'',
     quickActions:document.querySelectorAll('#wordrealmHomeActions .wordrealm-home-action').length,
     speakers:[...document.querySelectorAll('#homeView .read-aloud-btn')].filter(el=>getComputedStyle(el).display!=='none').length,
@@ -45,7 +50,7 @@ try{
   assert(home.next.includes('Grundausrüstung')&&home.next.includes('18%'),'current stage and next threshold are visible');
   assert(JSON.stringify(home.stages)===JSON.stringify(['Grundausrüstung','Lederzeug','Ritterlehrling','Ritter','Kronritter','König']),'all six approved stages render in order');
   assert(home.foxes===6,'stage strip keeps all six approved fox progression previews');
-  assert(home.hero===1&&home.heroLoaded&&home.heroSource==='wordrealm-approved-scene','home uses the exact approved painterly Wortreich scene instead of the atlas tile or technical SVG hero');
+  assert(home.hero===1&&home.heroComposed&&home.heroFoxLoaded&&home.heroSource==='wordrealm-approved-scene','home uses the composed approved Wortreich scene with decoded painterly fox instead of a broken standalone image, atlas tile or technical SVG hero');
   assert(home.quickActions===2,'approved Lernwörter and Wortreich quick actions are visible');
   assert(home.speakers>=5&&home.pageReadVisible,'first-grade home exposes visible read-aloud controls');
   assert(home.scrollWidth<=home.clientWidth+1,'approved German home has no horizontal iPhone overflow');
