@@ -3,18 +3,22 @@ import { webkit, devices } from 'playwright';
 const base=process.env.APP_BASE||'http://127.0.0.1:4173';
 const browser=await webkit.launch({headless:true});
 const context=await browser.newContext({...devices['iPhone 13'],reducedMotion:'reduce'});
-const page=await context.newPage();
-page.setDefaultTimeout(15000);
-const errors=[];
-page.on('pageerror',e=>errors.push(String(e?.message||e)));
-page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
 const assert=(v,m)=>{if(!v)throw new Error('B-013 story 3D spike failed: '+m)};
 
 try{
-  const index=await page.goto(base+'/index.html',{waitUntil:'domcontentloaded'});
+  const mainPage=await context.newPage();
+  mainPage.setDefaultTimeout(15000);
+  const index=await mainPage.goto(base+'/index.html',{waitUntil:'domcontentloaded'});
   assert(index?.ok(),'main app loads');
-  const mainScripts=await page.evaluate(()=>Array.from(document.scripts).map(s=>s.src).join('\n'));
+  const mainScripts=await mainPage.evaluate(()=>Array.from(document.scripts).map(s=>s.src).join('\n'));
   assert(!mainScripts.includes('three-r186'),'main app does not eagerly load Three.js');
+  await mainPage.close();
+
+  const page=await context.newPage();
+  page.setDefaultTimeout(15000);
+  const errors=[];
+  page.on('pageerror',e=>errors.push(String(e?.message||e)));
+  page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
 
   const response=await page.goto(base+'/story-3d-spike.html?subject=english',{waitUntil:'domcontentloaded'});
   assert(response?.ok(),'isolated spike page loads');
