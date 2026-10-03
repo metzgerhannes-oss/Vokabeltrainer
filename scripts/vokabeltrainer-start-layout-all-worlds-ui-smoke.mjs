@@ -106,7 +106,7 @@ for(const viewport of [{width:390,height:844,label:'iPhone'},{width:1200,height:
           sceneFoxImageVisible:visible(sceneFoxImg)&&!!sceneFoxImg?.complete&&sceneFoxImg?.naturalWidth>0,
           sceneFoxSrc:sceneFoxImg?.getAttribute('src')||'',
           sceneFoxFallbackVisible:visible(sceneFoxFallback),
-          brokenImages:[...document.images].filter(node=>node.complete&&node.naturalWidth===0).map(node=>node.getAttribute('src')||''),
+          brokenImages:[...document.images].map(node=>({node,src:node.currentSrc||node.getAttribute('src')||''})).filter(item=>item.src&&item.node.complete&&item.node.naturalWidth===0).map(item=>item.src),
           frameVisible:visible(frame),
           worldActionsVisible:visible(worldActions),
           worldTitle:worldTitle?.textContent?.trim()||'',
