@@ -379,6 +379,13 @@ const passed=vm.runInContext(`
   assert(!currentScopeReplacement||((currentScopeReplacement.ref.setLinkId?wordByLinkId(currentScopeReplacement.ref.setLinkId):wordById(currentScopeReplacement.ref.wordId))?.setId===currentScopeSet.id),'adaptive replacements stay inside the active test scope');
   assert(currentScopeReplacement?.ref?.wordId!==oldMaintenanceWord.id,'old due vocabulary cannot re-enter through adaptive replacement');
 
+  const leakedExtraRef={wordId:oldMaintenanceWord.id,setLinkId:oldMaintenanceWord.setLinkId||''};
+  currentScopePlan.extraRefs.push(leakedExtraRef);
+  currentScopePlan.extraSources[dailyPlanRefKey(leakedExtraRef)]='legacy-due';
+  const sanitizedScopePlan=buildDailyPlan('english'),sanitizedScopeRefs=dailyPlanRefs(sanitizedScopePlan,true);
+  assert(!sanitizedScopeRefs.some(ref=>ref.wordId===oldMaintenanceWord.id),'persisted legacy extra vocabulary outside the current test scope is removed when the daily plan is reopened');
+  assert(sanitizedScopeRefs.every(ref=>dailyPlanRefAllowedInPool(ref,mandatoryDailyPool('english',upcomingTestContext('english')))),'every persisted daily ref, including extras, is validated against the exact current test scope');
+
   state=defaultState();
   const finishedSet={id:'finished_test_set',learnerId:'learner_demo',subject:'english',title:'Abgeschlossener Test',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:today(),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
   state.sets.push(finishedSet);
