@@ -90,13 +90,13 @@ const passed=vm.runInContext(`
   rebuildWordIndexes();
   const legacyDailyPlan=buildDailyPlan(),legacyRefs=dailyPlanRefs(legacyDailyPlan,false);
   assert(legacyRefs.length===3,'daily release regression fixture contains three required words');
-  legacyDailyPlan.signature=legacyDailyPlan.signature.replace(/^daily4:/,'0.21.20:');
+  legacyDailyPlan.signature=legacyDailyPlan.signature.replace(/^daily5:/,'0.21.20:');
   legacyDailyPlan.completedKeys=[];
   state.activity.push({id:'daily_release_valid',learnerId:learner().id,date:new Date().toISOString(),type:'recall',wordId:legacyRefs[0].wordId,correct:true,active:true,assisted:false,orthographyOk:true});
   state.activity.push({id:'daily_release_support',learnerId:learner().id,date:new Date().toISOString(),type:'recognition',wordId:legacyRefs[1].wordId,correct:true,active:false,assisted:false,orthographyOk:true});
   state.activity.push({id:'daily_release_wrong',learnerId:learner().id,date:new Date().toISOString(),type:'recall',wordId:legacyRefs[2].wordId,correct:false,active:true,assisted:false,orthographyOk:true});
   const migratedDailyPlan=buildDailyPlan(),migratedDailyStatus=dailyPlanStatus(migratedDailyPlan);
-  assert(migratedDailyPlan===legacyDailyPlan&&migratedDailyPlan.signature.startsWith('daily4:'),'app release migrates the existing same-day plan instead of replacing it');
+  assert(migratedDailyPlan===legacyDailyPlan&&migratedDailyPlan.signature.startsWith('daily5:'),'app release migrates the existing same-day plan instead of replacing it');
   assert(migratedDailyStatus.done===1&&migratedDailyStatus.remaining===2,'same-day independent correct work is recovered after a release while support and wrong answers stay open');
 
   state=defaultState();
@@ -111,7 +111,7 @@ const passed=vm.runInContext(`
   state.activity.push({id:'compact_done',learnerId:learner().id,date:new Date().toISOString(),type:'recall',wordId:oldRefs[0].wordId,correct:true,active:true,assisted:false,orthographyOk:true});
   compactWords[0].repetitions=1;compactWords[0].activePracticeDays=[today()];
   const compactPlan=buildDailyPlan('english'),compactStatus=dailyPlanStatus(compactPlan);
-  assert(compactPlan!==oldPlan&&compactPlan.signature.startsWith('daily4:'),'daily1 policy plan is rebuilt under the short-core schema');
+  assert(compactPlan!==oldPlan&&compactPlan.signature.startsWith('daily5:'),'daily1 policy plan is rebuilt under the short-core schema');
   assert(compactStatus.total<=6&&compactStatus.total>=3&&compactStatus.done===1,'12-word legacy core shrinks into the compact focus window without losing an already completed word');
 
   state=defaultState();
