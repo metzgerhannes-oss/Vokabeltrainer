@@ -47,14 +47,46 @@ try{
   await page.waitForSelector('#continueStudyBtn');
   await page.click('#continueStudyBtn');
   await page.waitForFunction(term=>currentWord()?.term===term,before.term);
-  assert(await page.locator('#skipVocabularyBtn').isDisabled(),'when deferred vocabulary is last, skip is disabled instead of removing it');
-  assert((await page.locator('.skip-vocabulary-action').textContent())?.includes('bereits am Ende'),'UI explains that the word remains in the session');
+  assert(await page.locator('#skipVocabularyBtn').isDisabled(),'when deferred vocabulary is the only remaining non-daily item, skip is disabled instead of removing it');
+  assert((await page.locator('.skip-vocabulary-action').textContent())?.includes('Nur noch diese Vokabel offen'),'UI explains that no later position exists in this session');
+
+  await page.evaluate(()=>{
+    state=defaultState();
+    const set={id:'daily_skip_set',learnerId:'learner_demo',subject:'english',title:'Daily Skip Test',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(5),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
+    state.sets.push(set);
+    for(const [term,tr] of [['river','Fluss'],['forest','Wald'],['bridge','Brücke']])attachVocabularyToSet(set.id,{term,translation:tr,source:'daily-skip-test',verified:true,firstContactCopiedAt:'x',firstContactRecalledAt:'x',firstContactCompletedAt:'x'});
+    set.pairVerifiedSignature=pairReviewSignatureForSet(set.id);
+    rebuildWordIndexes();
+    for(const w of setWords(set.id)){w.repetitions=1;w.activePracticeDays=[datePlusDays(-1)];w.dueDate=today()}
+    const plan=buildDailyPlan('english'),refs=dailyPlanRefs(plan,false);
+    window.__dailySkipRef=refs[0];
+    startSession('adaptive',null,[refs[0]],true);
+  });
+  await page.waitForSelector('#skipVocabularyBtn');
+  const dailyBefore=await page.evaluate(()=>{
+    const w=currentWord(),status=dailyPlanStatus(buildDailyPlan());
+    return {key:dailyPlanRefKey({wordId:w.id,setLinkId:w.setLinkId||''}),remaining:status.remaining,queue:session.queue.map(dailyPlanRefKey),index:session.index,answered:session.answered,correct:session.correct,xp:learner().xp,results:session.results.length};
+  });
+  assert(dailyBefore.queue.length===1&&dailyBefore.index===0&&dailyBefore.remaining>=2,'daily regression fixture is at the end of its current round while later focus words remain');
+  assert(!(await page.locator('#skipVocabularyBtn').isDisabled()),'daily last-item skip stays available while another focus word can move ahead');
+  assert((await page.locator('.skip-vocabulary-action').textContent())?.includes('nächsten Durchgang'),'UI explains that the word is deferred across the round boundary');
+  await page.click('#skipVocabularyBtn');
+  await page.waitForFunction(()=>session?.roomRound>=2);
+  const dailyAfter=await page.evaluate(()=>({
+    current:dailyPlanRefKey(quizQueueRef(currentWord())),
+    queue:session.queue.map(dailyPlanRefKey),
+    answered:session.answered,correct:session.correct,xp:learner().xp,results:session.results.length
+  }));
+  assert(dailyAfter.current!==dailyBefore.key,'daily skip advances to another unresolved focus word');
+  assert(dailyAfter.queue.at(-1)===dailyBefore.key,'daily skip moves the word to the end of the next unresolved round');
+  assert(dailyAfter.answered===dailyBefore.answered&&dailyAfter.correct===dailyBefore.correct&&dailyAfter.xp===dailyBefore.xp&&dailyAfter.results===dailyBefore.results,'daily round-boundary skip remains neutral for grading, XP and results');
 
   if(errors.length)throw new Error(errors.join(' | '));
   console.log('Vokabeltrainer skip vocabulary UI smoke: passed');
   console.log('✓ skip moves current vocabulary to session end');
   console.log('✓ skip is neutral for grading, XP and results');
   console.log('✓ deferred vocabulary returns as the final item');
+  console.log('✓ daily skip remains available across a round boundary while other focus words are still open');
 }finally{
   await browser.close();
 }
