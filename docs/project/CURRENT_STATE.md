@@ -1,5 +1,7 @@
 # Vokabeltrainer – Current State
 
+- v0.21.62 Release-Kandidat: Bestands-Tagespläne werden inklusive adaptiver `extraRefs` gegen den exakten aktuellen Testscope validiert; Schema `daily5` verwirft alte Planreste. „Vokabel überspringen“ bleibt im Übungsraum am Ende eines Teil-Durchgangs verfügbar, wenn weitere Fokuswörter offen sind, und verschiebt das Wort neutral ans Ende des nächsten Durchgangs.
+
 - v0.21.61 Release-Kandidat: Start/Heute wird als 8er-Matrix aus vier Fächern × Abenteuer/Kampf auf iPhone und Desktop geprüft. Die noch vorhandene CSS-Spezifitätsabweichung des Deutsch-Fortschrittsbalkens ist korrigiert; die freigegebene helle Pergamentfläche kann die generischen Menüregeln wieder zuverlässig überschreiben. Der Matrix-Test fand außerdem einen versteckten Englisch-Abenteuerfehler: Das finale Avatarbild war geladen, wurde aber durch eine alte CSS-Regel ausgeblendet; auch das ist korrigiert. Nach realem iPhone-Befund mit Broken-Image-Symbol wurde die standalone `home-approved-v1.webp` vollständig aus Renderpfad und Precache entfernt. Deutsch komponiert die Startszene jetzt aus der vorhandenen Lernpfad-Landschaft und dem freigegebenen, bereits zuverlässig geladenen malerischen Fuchs-Atlas; gebrochene `<img>`-Ressourcen sind im neuen Gate explizit verboten.
 
 - v0.21.60 Release-Kandidat: Deutsch Start/Heute nutzt in Fuchs-Abenteuer und Wortreich/Kampf wieder die verbindliche integrierte malerische Szene. Die separate Atlas-Avatar-Kachel mit Blur-Rändern ist aus dem Deutsch-Startscreen entfernt; Weltmodus, Abenteuer-Stufenname und Ziel-CTA bleiben getrennt.
@@ -12,17 +14,17 @@
 
 - v0.21.56 Release-Kandidat: B-019 Avatar-Matrix-Gate prüft 72 Fach-/Profil-/Stufenkombinationen automatisiert; praktische Geräteabnahme bleibt offen.
 
-Stand: 02.10.2026, aktueller main-Stand direkt aus GitHub geprüft.
+Stand: 04.10.2026, aktueller Branch-Stand direkt aus GitHub geprüft.
 
 ## Produktionsbaseline
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.61** (fachübergreifende Startseiten-Layoutmatrix + CSS-Prioritätsfix als Release-Kandidat)
-- aktueller bestätigter App-Stand auf `main`: **v0.21.60 / PR #235**; Deutsch Start/Heute nutzt dort bereits in beiden Weltmodi die integrierte freigegebene Szene.
+- App-Version: **v0.21.62** (Tagesplan-Scope-/Skip-Hotfix als Release-Kandidat)
+- aktueller bestätigter App-Stand auf `main`: **v0.21.61 / PR #237**; die Startseiten-Matrix und die korrigierten Fach-/Weltdesigns sind dort integriert.
 - jüngster vollständig live-verifizierter Release: **v0.21.59 / PR #233**
 - Produktionsnachweis v0.21.59: **PR-CI #1440 success · main-CI #1441 success · GitHub Pages #589 success inklusive Live-Verifikation**
-- aktueller Release-Kandidat: **v0.21.61** auf Basis von **v0.21.60 / PR #235**; Schwerpunkt ist die automatisierte Prüfung aller acht Startseitenpfade und die Korrektur der verbliebenen CSS-Prioritätsabweichung im Deutsch-Statusbereich.
+- aktueller Release-Kandidat: **v0.21.62** auf Basis von **v0.21.61 / PR #237**; Schwerpunkt ist das vollständige Entfernen persistierter Altvokabel-Planreste und die korrekte Skip-Verschiebung über Übungsraum-Teilrunden hinweg.
 - v0.21.30 behebt den praktischen Befund der optisch vollständigen Anfangsarmee; nur tatsächlich freigeschaltete Einheiten stehen im Heerlager
 - Phaser-Cinematic v0.21.28: **PR #187 gemergt**, PR-CI **#1166 vollständig grün**
 - Phaser-Produktivstatus: Englisch, Latein, Französisch-Kampf und Deutsch/Wortreich laufen über lokal ausgeliefertes Phaser 4; Festungs-Gegenwehr, Sound, visuelle Verluste und optionales Vollbild bleiben fachlich neutral
