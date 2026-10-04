@@ -1,6 +1,8 @@
 # V1 Acceptance Test
 
-Stand: 02.10.2026 · Basis: v0.21.61 · Release-Kandidat; Prüfschwerpunkte: Startseiten aller acht Fachwelten, B-018 Schreibkontrolle, integrierte Deutsch-Startszene und strikter Testscope
+Stand: 04.10.2026 · Basis: v0.21.62 · Release-Kandidat; Prüfschwerpunkte: strikter Testscope in Bestandsdaten, Überspringen im Übungsraum, Startseiten aller acht Fachwelten und B-018 Schreibkontrolle
+
+Release-Kandidat v0.21.62 verwirft persistierte Tagesplan-Refs außerhalb des aktuellen Testumfangs einschließlich alter adaptiver `extraRefs`. Im Übungsraum muss „Vokabel überspringen“ bei einem Teilrundenende weiter funktionieren, sofern noch andere Fokuswörter offen sind; das übersprungene Wort bleibt erhalten und kommt am Ende des nächsten Durchgangs wieder.
 
 Release-Kandidat v0.21.61 ergänzt ein automatisiertes Startseiten-Gate für Englisch, Latein, Deutsch und Französisch jeweils in Abenteuer und Kampf auf iPhone- und Desktop-Breite. Zusätzlich wird die nach v0.21.60 noch zu dunkle Deutsch-Fortschrittsfläche wieder als helle Pergamentkarte gerendert.
 
@@ -292,6 +294,8 @@ Mit einem realistischen Lehrbuchfoto testen.
 - [ ] letzter Tag vor dem Test ist bei ausreichendem Vorlauf Wiederholungstag
 - [ ] am Testtag werden keine neuen Wörter eingeführt
 - [ ] fällige / unsichere Wörter werden priorisiert
+- [ ] gespeicherte Alt-/Extra-Refs außerhalb des aktuellen Testumfangs werden beim Öffnen des Tagesplans verworfen
+- [ ] „Vokabel überspringen“ verschiebt auch am Ende einer Teilrunde nur nach hinten und bleibt bewertungsneutral
 - [ ] falsche oder mit Hinweis gelöste aktive Versuche markieren das Pflichtwort nicht als erledigt
 - [ ] erst ein richtiger unassistierter aktiver Abruf lässt den Pflichtfortschritt steigen
 - [ ] bei Testformat `target` zählt ein Wort erst mit unabhängigem Bedeutung→Fremdsprachenwort-Abruf als testbereit

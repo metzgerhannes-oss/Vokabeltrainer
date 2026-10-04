@@ -12,7 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.61**
+App-Version: **v0.21.62**
+
+- v0.21.62 (Release-Kandidat): **Altvokabel-Leck im gespeicherten Tagesplan geschlossen + Überspringen am Rundenende korrigiert.** Tagespläne werden auf Schema `daily5` neu aufgebaut; beim Wiederverwenden eines gespeicherten Plans werden jetzt auch `extraRefs` exakt gegen den aktuellen Testumfang geprüft. Damit können alte, bereits lokal oder per Family-Sync gespeicherte Nachrücker nicht mehr in den Pflichtpfad gelangen. Im Übungsraum bleibt „Vokabel überspringen“ auch am Ende eines Teil-Durchgangs aktiv, solange andere Fokuswörter noch offen sind; die Vokabel wird neutral ans Ende des nächsten Durchgangs verschoben und weder bewertet noch entfernt.
 
 - v0.21.61 (Release-Kandidat): **Startseiten-Matrix für alle acht Fachwelten.** Englisch, Latein, Deutsch und Französisch werden auf Start/Heute jeweils in Abenteuer und Kampf automatisiert auf korrekte Welt-/Avatarquelle, technische Fallbacks, horizontalen Overflow und Avatar-/Lernbereichs-Überlagerung geprüft – auf iPhone- und Desktop-Breite. Der nach v0.21.60 noch sichtbare dunkle Deutsch-Fortschrittsbalken wird durch korrigierte CSS-Priorität wieder zur freigegebenen hellen Pergamentfläche; zusätzlich bleibt der finale Englisch-Avatar nun auch im Abenteuer-Start sichtbar. Der reale iPhone-Befund mit Broken-Image-Symbol führte außerdem zur Entfernung der fehleranfälligen Einzeldatei `home-approved-v1.webp`: Die Deutsch-Startszene wird jetzt aus der bestehenden Lernpfad-Landschaft und dem bereits zuverlässig dekodierten malerischen Fuchs aus dem freigegebenen Atlas zusammengesetzt – ohne separate Portraitkarte. Das Gate verwirft künftig auch gebrochene Bildressourcen. Der primäre Deutsch-Lernbutton erfüllt mindestens 44 px Touchhöhe.
 

@@ -90,13 +90,13 @@ const passed=vm.runInContext(`
   rebuildWordIndexes();
   const legacyDailyPlan=buildDailyPlan(),legacyRefs=dailyPlanRefs(legacyDailyPlan,false);
   assert(legacyRefs.length===3,'daily release regression fixture contains three required words');
-  legacyDailyPlan.signature=legacyDailyPlan.signature.replace(/^daily4:/,'0.21.20:');
+  legacyDailyPlan.signature=legacyDailyPlan.signature.replace(/^daily5:/,'0.21.20:');
   legacyDailyPlan.completedKeys=[];
   state.activity.push({id:'daily_release_valid',learnerId:learner().id,date:new Date().toISOString(),type:'recall',wordId:legacyRefs[0].wordId,correct:true,active:true,assisted:false,orthographyOk:true});
   state.activity.push({id:'daily_release_support',learnerId:learner().id,date:new Date().toISOString(),type:'recognition',wordId:legacyRefs[1].wordId,correct:true,active:false,assisted:false,orthographyOk:true});
   state.activity.push({id:'daily_release_wrong',learnerId:learner().id,date:new Date().toISOString(),type:'recall',wordId:legacyRefs[2].wordId,correct:false,active:true,assisted:false,orthographyOk:true});
   const migratedDailyPlan=buildDailyPlan(),migratedDailyStatus=dailyPlanStatus(migratedDailyPlan);
-  assert(migratedDailyPlan===legacyDailyPlan&&migratedDailyPlan.signature.startsWith('daily4:'),'app release migrates the existing same-day plan instead of replacing it');
+  assert(migratedDailyPlan===legacyDailyPlan&&migratedDailyPlan.signature.startsWith('daily5:'),'app release migrates the existing same-day plan instead of replacing it');
   assert(migratedDailyStatus.done===1&&migratedDailyStatus.remaining===2,'same-day independent correct work is recovered after a release while support and wrong answers stay open');
 
   state=defaultState();
@@ -111,7 +111,7 @@ const passed=vm.runInContext(`
   state.activity.push({id:'compact_done',learnerId:learner().id,date:new Date().toISOString(),type:'recall',wordId:oldRefs[0].wordId,correct:true,active:true,assisted:false,orthographyOk:true});
   compactWords[0].repetitions=1;compactWords[0].activePracticeDays=[today()];
   const compactPlan=buildDailyPlan('english'),compactStatus=dailyPlanStatus(compactPlan);
-  assert(compactPlan!==oldPlan&&compactPlan.signature.startsWith('daily4:'),'daily1 policy plan is rebuilt under the short-core schema');
+  assert(compactPlan!==oldPlan&&compactPlan.signature.startsWith('daily5:'),'daily1 policy plan is rebuilt under the short-core schema');
   assert(compactStatus.total<=6&&compactStatus.total>=3&&compactStatus.done===1,'12-word legacy core shrinks into the compact focus window without losing an already completed word');
 
   state=defaultState();
@@ -378,6 +378,13 @@ const passed=vm.runInContext(`
   const currentScopeReplacement=dailyPlanReplacementCandidate(currentScopePlan);
   assert(!currentScopeReplacement||((currentScopeReplacement.ref.setLinkId?wordByLinkId(currentScopeReplacement.ref.setLinkId):wordById(currentScopeReplacement.ref.wordId))?.setId===currentScopeSet.id),'adaptive replacements stay inside the active test scope');
   assert(currentScopeReplacement?.ref?.wordId!==oldMaintenanceWord.id,'old due vocabulary cannot re-enter through adaptive replacement');
+
+  const leakedExtraRef={wordId:oldMaintenanceWord.id,setLinkId:oldMaintenanceWord.setLinkId||''};
+  currentScopePlan.extraRefs.push(leakedExtraRef);
+  currentScopePlan.extraSources[dailyPlanRefKey(leakedExtraRef)]='legacy-due';
+  const sanitizedScopePlan=buildDailyPlan('english'),sanitizedScopeRefs=dailyPlanRefs(sanitizedScopePlan,true);
+  assert(!sanitizedScopeRefs.some(ref=>ref.wordId===oldMaintenanceWord.id),'persisted legacy extra vocabulary outside the current test scope is removed when the daily plan is reopened');
+  assert(sanitizedScopeRefs.every(ref=>dailyPlanRefAllowedInPool(ref,mandatoryDailyPool('english',upcomingTestContext('english')))),'every persisted daily ref, including extras, is validated against the exact current test scope');
 
   state=defaultState();
   const finishedSet={id:'finished_test_set',learnerId:'learner_demo',subject:'english',title:'Abgeschlossener Test',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:today(),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'target',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};

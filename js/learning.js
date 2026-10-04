@@ -299,19 +299,34 @@ function startSession(mode='adaptive',setId=null,wordIds=null,isDaily=false,opts
 }
 function modeLabel(m){return ({adaptive:'Adaptiv',allWords:'Alle Wörter',weakWords:'Unsichere Wörter',flash:'Wortblitz',shower:'Wortdusche',chunks:'Wortbausteine',handwriting:'Handschrift',firstContact:'Abschreiben',recognition:'Erkennen',recall:'Abrufen',reverseRecall:'Bedeutung abrufen',spelling:'Schreiben',listening:'Hören & erkennen',context:'Im Satz',latinGrammar:'Latein Formen',practiceTest:'Prüfung',cards:'Karteikarten'})[m]||m}
 function currentWord(){const token=session?.queue?.[session.index];return resolveQuizQueueRef(token,session?.setId||'')}
+function dailySkipCanDeferPastRoundEnd(){
+  if(!session?.isDaily||session?.rescueMode||session?.bonusMode)return false;
+  const w=currentWord();if(!w)return false;
+  const currentKey=dailyPlanRefKey({wordId:w.id,setLinkId:w.setLinkId||''}),status=dailyPlanStatus(buildDailyPlan());
+  return dailyRoomRemainingRefs(status).some(ref=>dailyPlanRefKey(ref)!==currentKey);
+}
 function canSkipCurrentVocabulary(){
-  return !!(session&&!session.locked&&!['practiceTest','flash','shower','firstContact'].includes(session.mode)&&session.index<session.queue.length-1);
+  return !!(session&&!session.locked&&!['practiceTest','flash','shower','firstContact'].includes(session.mode)&&(session.index<session.queue.length-1||dailySkipCanDeferPastRoundEnd()));
 }
 function skipCurrentVocabulary(){
-  if(!canSkipCurrentVocabulary()){toast('Diese Vokabel steht bereits am Ende der aktuellen Abfrage.','subtle');return false}
-  const [token]=session.queue.splice(session.index,1);session.queue.push(token);session.currentQuestion=null;session.currentQuestionIssues=[];session.hintUsed=false;
-  recordActivity('skipVocabulary',{wordId:typeof token==='string'?token:(token?.wordId||''),neutral:true});persistOnly();renderStudy();return true;
+  if(!canSkipCurrentVocabulary()){toast('Nur noch diese Vokabel ist in der aktuellen Abfrage offen.','subtle');return false}
+  const token=session.queue[session.index],w=currentWord(),atRoundEnd=session.index>=session.queue.length-1;
+  session.currentQuestion=null;session.currentQuestionIssues=[];session.hintUsed=false;
+  if(atRoundEnd&&dailySkipCanDeferPastRoundEnd()){
+    const key=w?dailyPlanRefKey({wordId:w.id,setLinkId:w.setLinkId||''}):'';
+    session.deferredSkipKeys=[...new Set([...(session.deferredSkipKeys||[]),key].filter(Boolean))];
+    session.index++;
+  }else{
+    const [moved]=session.queue.splice(session.index,1);session.queue.push(moved);
+  }
+  recordActivity('skipVocabulary',{wordId:w?.id||(typeof token==='string'?token:(token?.wordId||'')),neutral:true});persistOnly();renderStudy();return true;
 }
 function mountSkipCurrentVocabulary(){
   if(!session||['practiceTest','flash','shower','firstContact'].includes(session.mode)||$('#skipVocabularyBtn'))return;
   const card=$('#studyArea .study-card');if(!card)return;
-  const available=canSkipCurrentVocabulary();
-  card.insertAdjacentHTML('beforeend',`<div class="skip-vocabulary-action"><button type="button" id="skipVocabularyBtn" class="ghost" ${available?'':'disabled'}>Vokabel überspringen</button><small>${available?'Kommt am Ende dieser Abfrage noch einmal.':'Steht bereits am Ende dieser Abfrage.'}</small></div>`);
+  const available=canSkipCurrentVocabulary(),pastRoundEnd=session.index>=session.queue.length-1&&dailySkipCanDeferPastRoundEnd();
+  const note=available?(pastRoundEnd?'Kommt im nächsten Durchgang am Ende noch einmal.':'Kommt am Ende dieser Abfrage noch einmal.'):'Nur noch diese Vokabel offen.';
+  card.insertAdjacentHTML('beforeend',`<div class="skip-vocabulary-action"><button type="button" id="skipVocabularyBtn" class="ghost" ${available?'':'disabled'}>Vokabel überspringen</button><small>${note}</small></div>`);
   $('#skipVocabularyBtn').onclick=skipCurrentVocabulary;
 }
 function renderStudy(){
@@ -669,7 +684,8 @@ function dailyRoomSummaryHtml(results=[],status=null){
 }
 function continueDailyRoom(plan,status){
   if(!session?.isDaily||session?.rescueMode||session?.bonusMode||!status?.remaining)return false;
-  const refs=dailyRoomRemainingRefs(status),limit=Math.max(1,Number(plan?.sessionSize)||6);if(!refs.length)return false;
+  const rawRefs=dailyRoomRemainingRefs(status),deferred=new Set(session?.deferredSkipKeys||[]);
+  const refs=[...rawRefs.filter(ref=>!deferred.has(dailyPlanRefKey(ref))),...rawRefs.filter(ref=>deferred.has(dailyPlanRefKey(ref)))],limit=Math.max(1,Number(plan?.sessionSize)||6);if(!refs.length)return false;
   const target=session;
   target.roomRound=Math.max(1,Number(target.roomRound)||1)+1;
   target.queue=refs.slice(0,limit);target.index=0;target.currentSubmode=null;target.locked=false;target.retryCounts={};target.followupCounts={};target.hintUsed=false;target.currentQuestion=null;target.currentQuestionIssues=[];
