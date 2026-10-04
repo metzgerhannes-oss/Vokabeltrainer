@@ -712,7 +712,23 @@ function completeTestContext(ctx=upcomingTestContext(),subject=state.activeSubje
 }
 function uniqueById(list){const seen=new Set();return list.filter(x=>x&&!seen.has(x.id)&&seen.add(x.id))}
 function testContextLabel(ctx,subject=state.activeSubject){if(!ctx)return '';const subjectName=subjectLabel(subject);const when=ctx.days===0?'heute':ctx.days===1?'morgen':ctx.days<0?`vor ${Math.abs(ctx.days)} Tag${Math.abs(ctx.days)===1?'':'en'}`:`in ${ctx.days} Tagen`;const recurrence=ctx.source==='series'||ctx.source==='mixed'?` · wöchentlich ${WEEKDAYS_SHORT[Number(ctx.series?.weekday)||0]}`:'';return `${subjectName}-Test ${when}${recurrence} · ${ctx.scopeText||ctx.sets.map(s=>s.title).join(' + ')}`}
-const DAILY_PLAN_SCHEMA='daily4';
+const DAILY_PLAN_SCHEMA='daily5';
+function dailyPlanRefAllowedInPool(ref,pool=[]){
+  if(!ref)return false;
+  if(ref.setLinkId)return pool.some(w=>w?.setLinkId===ref.setLinkId);
+  return !!ref.wordId&&pool.some(w=>w?.id===ref.wordId);
+}
+function dailyPlanStoredRefs(plan){
+  if(!plan)return [];
+  const review=Array.isArray(plan.wordRefs)&&plan.wordRefs.length?plan.wordRefs:(plan.wordIds||[]).map(id=>({wordId:id,setLinkId:''}));
+  const intro=Array.isArray(plan.introRefs)?plan.introRefs:[];
+  const extra=Array.isArray(plan.extraRefs)?plan.extraRefs:[];
+  return [...review,...intro,...extra];
+}
+function dailyPlanRefsStayInMandatoryPool(plan,subject=state.activeSubject,ctx=upcomingTestContext(subject)){
+  const pool=mandatoryDailyPool(subject,ctx);
+  return dailyPlanStoredRefs(plan).every(ref=>dailyPlanRefAllowedInPool(ref,pool));
+}
 function dailyPlanSignature(ctx,subject,sessionSize){
   const words=mandatoryDailyPool(subject,ctx).map(w=>w.id).sort().join(',');
   return `${DAILY_PLAN_SCHEMA}:${ctx?`test:${ctx.source||'single'}:${ctx.date}:${ctx.sets.map(s=>s.id).sort().join(',')}`:`general:${currentSchoolYear()}`}:${sessionSize}:${words}`;
@@ -794,8 +810,8 @@ function buildDailyPlan(subject=state.activeSubject){
   const existing=l.dailyPlans[key];
   if(existing&&dailyPlanSignatureCompatible(existing.signature,signature)){
     normalizeDailyAdaptivePlan(existing,l);
-    const refs=[...(existing.wordRefs||[]),...(existing.introRefs||[])];
-    if(refs.every(r=>r.setLinkId?!!wordByLinkId(r.setLinkId):!!wordById(r.wordId))){
+    const refs=dailyPlanStoredRefs(existing);
+    if(refs.every(r=>r.setLinkId?!!wordByLinkId(r.setLinkId):!!wordById(r.wordId))&&dailyPlanRefsStayInMandatoryPool(existing,subject,ctx)){
       if(existing.signature!==signature){
         recoverLegacyDailyPlanCompletion(existing,l);
         existing.signature=signature;
