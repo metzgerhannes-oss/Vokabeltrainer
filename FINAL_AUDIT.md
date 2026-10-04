@@ -1,5 +1,7 @@
 # Finales Audit
 
+> v0.21.62: Gespeicherte Tagespläne werden nicht mehr allein über die Kern-Refs wiederverwendet, sondern inklusive adaptiver `extraRefs` gegen den exakten aktuellen Pflicht-/Testscope validiert. Schema `daily5` erzwingt einmalig einen sauberen Neuaufbau. Zusätzlich kann „Vokabel überspringen“ im Übungsraum über das Ende eines Teil-Durchgangs hinweg verschieben, solange noch andere Fokuswörter offen sind; der Skip bleibt vollständig neutral.
+
 > v0.21.61: Start/Heute erhält ein eigenes 8er-Layout-Gate für vier Fächer × Abenteuer/Kampf auf iPhone und Desktop. Die nach v0.21.60 noch durch CSS-Spezifität verdunkelte Deutsch-Fortschrittsfläche wird wieder als freigegebene helle Pergamentkarte gerendert. Das Matrix-Gate deckte zusätzlich auf, dass eine alte Abenteuer-CSS-Regel den finalen Englisch-Avatar unsichtbar machte; diese Regel ist entfernt. Nach realem iPhone-Befund mit Broken-Image-Symbol wurde außerdem die standalone Deutsch-WebP aus dem Renderpfad und Service-Worker-Precache entfernt. Die Deutsch-Startszene wird nun aus der Lernpfad-Landschaft und dem bereits bewährten malerischen Fuchs-Atlas als eine gemeinsame Szene aufgebaut; CI prüft zusätzlich auf gebrochene Bildressourcen. Der primäre Deutsch-Lernbutton bleibt mindestens 44 px hoch.
 
 > v0.21.60: Deutsch Start/Heute hält die freigegebene integrierte Fuchs-Landschaft jetzt in beiden Weltmodi ein. Die separate Atlas-Kachel ist im Fuchs-Abenteuer entfernt; Weltmodus, Stufenname und Spielziel bleiben getrennt.
@@ -19,9 +21,11 @@
 
 > v0.21.53: Französisch ist regulär aktiviert. Der lokale OCR-Blocker ist mit gepinntem `fra.traineddata` beseitigt; produktive Zielantworten schützen Akzente/Apostrophe über eine fachliche Capability, TTS nutzt `fr-FR`.
 
-Stand: 02.10.2026 · App v0.21.61
+Stand: 04.10.2026 · App v0.21.62
 
 ## Ergebnis
+
+- v0.21.62 schließt den in realen Bestandsdaten sichtbaren Restpfad: bereits gespeicherte `extraRefs` aus älteren Tagesplänen werden beim Öffnen nicht mehr übernommen, wenn sie außerhalb des aktuellen Testumfangs liegen. Der Übungsraum behandelt einen Skip am Ende der aktuellen Queue als echte Verschiebung in den nächsten Durchgang und hält das Wort dort bis zum Ende zurück.
 
 - v0.21.61 prüft Start/Heute erstmals als vollständige Matrix aus Englisch, Latein, Deutsch und Französisch × Abenteuer/Kampf auf iPhone- und Desktop-Breite. Das Gate kontrolliert Theme und Weltmodus, reale Avatar-/Szenenquelle statt technischem Fallback, horizontalen Overflow, geometrische Trennung von Avatar-/Szenenbereich und Lerninhalt sowie die Deutsch-Sonderregeln. CSS-Regeln des generischen Menüs besitzen nun keine künstlich höhere `#homeView`-Spezifität mehr und können deshalb die freigegebenen Fach-/Weltdesigns nicht mehr überstimmen.
 
