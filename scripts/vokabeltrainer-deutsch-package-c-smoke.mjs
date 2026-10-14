@@ -8,7 +8,7 @@ const family=fs.readFileSync('js/family-sync.js','utf8');
 const html=fs.readFileSync('index.html','utf8');
 const version=(core.match(/const VERSION = '([^']+)'/)||[])[1]||'';
 
-assert(core.includes('const defaultGermanFoundation = () => ({version:1,letters:{},words:{},sentences:{},completedStages:{},updatedAt:null});'),'separate German foundation state exists');
+assert(core.includes('const defaultGermanFoundation = () => ({version:2,letters:{},words:{},sentences:{},completedStages:{},completedScopes:{},letterPlan:{configured:false,learned:[],current:[],updatedAt:null},updatedAt:null});'),'separate German foundation state exists');
 assert(core.includes('germanFoundation:defaultGermanFoundation()'),'new profiles receive foundation state');
 assert(storage.includes('function safeGermanFoundation(raw)')&&storage.includes("['letters','sounds','handwriting','words','sentences']"),'foundation progress is hardened and stage allow-listed');
 assert(module.includes("id:'letters'")&&module.includes("id:'sounds'")&&module.includes("id:'handwriting'")&&module.includes("id:'words'")&&module.includes("id:'sentences'"),'five Paket-C stages exist');
