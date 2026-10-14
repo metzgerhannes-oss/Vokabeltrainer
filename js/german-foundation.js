@@ -128,7 +128,7 @@
   }
   function letterPlan(){return progress().letterPlan}
   function schoolLetterScope(){
-    const plan=letterPlan();return plan.configured?plan.learned.join(',')+'|'+plan.current.join(','):'';
+    const plan=letterPlan();return plan.configured?cleanSchoolLetters([...plan.learned,...plan.current]).join(','):'';
   }
   function learningLetters(){
     const plan=letterPlan();if(!plan.configured)return [];
