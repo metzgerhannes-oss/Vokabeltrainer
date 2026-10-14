@@ -1,5 +1,7 @@
 # Vokabeltrainer – Current State
 
+- v0.21.63 Release-Kandidat: Deutsch Klasse 1 fragt einmalig je Kind nach bereits bekannten und aktuell behandelten Buchstaben. Das Buchstabenraster ist später änderbar, Lernaufgaben und Wort-/Satzfreigabe werden auf den Schulstand begrenzt; freie Schreibübungen bleiben separat. Persistenz nutzt vorhandenen Family Sync. Technische Testgates ergänzt, reale Sichtprüfung offen.
+
 - v0.21.62 Release-Kandidat: Bestands-Tagespläne werden inklusive adaptiver `extraRefs` gegen den exakten aktuellen Testscope validiert; Schema `daily5` verwirft alte Planreste. „Vokabel überspringen“ bleibt im Übungsraum am Ende eines Teil-Durchgangs verfügbar, wenn weitere Fokuswörter offen sind, und verschiebt das Wort neutral ans Ende des nächsten Durchgangs.
 
 - v0.21.61 Release-Kandidat: Start/Heute wird als 8er-Matrix aus vier Fächern × Abenteuer/Kampf auf iPhone und Desktop geprüft. Die noch vorhandene CSS-Spezifitätsabweichung des Deutsch-Fortschrittsbalkens ist korrigiert; die freigegebene helle Pergamentfläche kann die generischen Menüregeln wieder zuverlässig überschreiben. Der Matrix-Test fand außerdem einen versteckten Englisch-Abenteuerfehler: Das finale Avatarbild war geladen, wurde aber durch eine alte CSS-Regel ausgeblendet; auch das ist korrigiert. Nach realem iPhone-Befund mit Broken-Image-Symbol wurde die standalone `home-approved-v1.webp` vollständig aus Renderpfad und Precache entfernt. Deutsch komponiert die Startszene jetzt aus der vorhandenen Lernpfad-Landschaft und dem freigegebenen, bereits zuverlässig geladenen malerischen Fuchs-Atlas; gebrochene `<img>`-Ressourcen sind im neuen Gate explizit verboten.
@@ -20,7 +22,7 @@ Stand: 04.10.2026, aktueller Branch-Stand direkt aus GitHub geprüft.
 
 - Repository: `metzgerhannes-oss/Vokabeltrainer`
 - produktiver Branch: `main`
-- App-Version: **v0.21.62** (Tagesplan-Scope-/Skip-Hotfix als Release-Kandidat)
+- App-Version: **v0.21.63** (Tagesplan-Scope-/Skip-Hotfix als Release-Kandidat)
 - aktueller bestätigter App-Stand auf `main`: **v0.21.61 / PR #237**; die Startseiten-Matrix und die korrigierten Fach-/Weltdesigns sind dort integriert.
 - jüngster vollständig live-verifizierter Release: **v0.21.59 / PR #233**
 - Produktionsnachweis v0.21.59: **PR-CI #1440 success · main-CI #1441 success · GitHub Pages #589 success inklusive Live-Verifikation**
