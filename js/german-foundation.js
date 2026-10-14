@@ -98,33 +98,57 @@
     {id:'mama_malt',sentence:'Mama malt.',tokens:['Mama','malt','.']}
   ];
   let run=null,drawState=null,previewTimer=null,freeWritingSelection=new Set();
+  let letterSetupDraft=null,letterSetupStep=0,letterSetupLearnerId=null;
+  const SCHOOL_LETTER_KEYS=FREE_WRITING_LETTERS.map(x=>x.letter);
   function readButton(text,label='Anweisung vorlesen'){
     return window.VTReadAloud?.button?.(text,label,'foundation-read')||'';
   }
 
-  function blankProgress(){return {version:1,letters:{},words:{},sentences:{},completedStages:{},updatedAt:null}}
+  function cleanSchoolLetters(values){
+    const wanted=new Set(Array.isArray(values)?values.map(x=>String(x||'').toLocaleUpperCase('de-DE')):[]);
+    return SCHOOL_LETTER_KEYS.filter(letter=>wanted.has(letter));
+  }
+  function blankProgress(){return {version:2,letters:{},words:{},sentences:{},completedStages:{},completedScopes:{},letterPlan:{configured:false,learned:[],current:[],updatedAt:null},updatedAt:null}}
   function progress(){
     const l=typeof learner==='function'?learner():null;if(!l)return blankProgress();
     const raw=l.germanFoundation&&typeof l.germanFoundation==='object'&&!Array.isArray(l.germanFoundation)?l.germanFoundation:{};
+    const plan=raw.letterPlan&&typeof raw.letterPlan==='object'&&!Array.isArray(raw.letterPlan)?raw.letterPlan:{};
+    const current=cleanSchoolLetters(plan.current),currentSet=new Set(current);
     l.germanFoundation={
-      version:1,
+      version:2,
       letters:raw.letters&&typeof raw.letters==='object'&&!Array.isArray(raw.letters)?raw.letters:{},
       words:raw.words&&typeof raw.words==='object'&&!Array.isArray(raw.words)?raw.words:{},
       sentences:raw.sentences&&typeof raw.sentences==='object'&&!Array.isArray(raw.sentences)?raw.sentences:{},
       completedStages:raw.completedStages&&typeof raw.completedStages==='object'&&!Array.isArray(raw.completedStages)?raw.completedStages:{},
+      completedScopes:raw.completedScopes&&typeof raw.completedScopes==='object'&&!Array.isArray(raw.completedScopes)?raw.completedScopes:{},
+      letterPlan:{configured:plan.configured===true,learned:cleanSchoolLetters(plan.learned).filter(x=>!currentSet.has(x)),current,updatedAt:plan.updatedAt||null},
       updatedAt:raw.updatedAt||null
     };
     return l.germanFoundation;
+  }
+  function letterPlan(){return progress().letterPlan}
+  function schoolLetterScope(){
+    const plan=letterPlan();return plan.configured?plan.learned.join(',')+'|'+plan.current.join(','):'';
+  }
+  function learningLetters(){
+    const plan=letterPlan();if(!plan.configured)return [];
+    return [...plan.current,...plan.learned].map(k=>FREE_WRITING_LETTERS.find(x=>x.letter===k)).filter(Boolean);
+  }
+  function usesSchoolLetters(value,allowed){
+    const letters=String(value||'').normalize('NFC').toLocaleUpperCase('de-DE').match(/[A-ZÄÖÜẞ]/g)||[];
+    return letters.length>0&&letters.every(x=>allowed.has(x));
   }
   function bump(section,id,key,amount=1){
     const p=progress();p[section][id]=p[section][id]&&typeof p[section][id]==='object'?p[section][id]:{};
     p[section][id][key]=Math.min(4,Math.max(0,(Number(p[section][id][key])||0)+amount));p.updatedAt=new Date().toISOString();
   }
   function saveProgress(){const p=progress();p.updatedAt=new Date().toISOString();if(typeof save==='function')save()}
-  function stageDone(id){return !!progress().completedStages[id]}
+  function stageDone(id){const p=progress();return !!p.completedStages[id]&&!!p.letterPlan.configured&&p.completedScopes[id]===schoolLetterScope()}
   function completion(){
-    const done=COURSE.filter(x=>stageDone(x.id)).length;
-    return {done,total:COURSE.length,pct:Math.round(done/COURSE.length*100),next:(COURSE.find(x=>!stageDone(x.id))||COURSE[0]).id};
+    const selectable=COURSE.filter(x=>stageTasks(x.id).length>0);
+    const done=selectable.filter(x=>stageDone(x.id)).length;
+    const next=(selectable.find(x=>!stageDone(x.id))||selectable[0])?.id||null;
+    return {done,total:selectable.length,pct:selectable.length?Math.round(done/selectable.length*100):0,next};
   }
   function available(){return state?.activeSubject==='german'}
   function freeWritingMeta(form){
@@ -162,42 +186,82 @@
     return arr.slice(offset).concat(arr.slice(0,offset));
   }
   function stageTasks(stage){
-    if(stage==='handwriting')return LETTERS.map(x=>({kind:'drawPair',id:x.letter,upper:x.letter,lower:x.lower,sound:x.sound,word:x.word}));
-    if(stage==='letters')return LETTERS.map((x,i)=>{
+    const letters=learningLetters(),allowed=new Set(letters.map(x=>x.letter)),count=letters.length;
+    if(stage==='handwriting')return letters.map(x=>({kind:'drawPair',id:x.letter,upper:x.letter,lower:x.lower,sound:x.sound}));
+    if(stage==='letters')return letters.map((x,i)=>{
       const lower=(i%2)===1,target=lower?x.lower:x.letter;
-      const raw=[target,lower?LETTERS[(i+2)%LETTERS.length].lower:LETTERS[(i+2)%LETTERS.length].letter,lower?LETTERS[(i+5)%LETTERS.length].lower:LETTERS[(i+5)%LETTERS.length].letter];
+      const variants=letters.filter(v=>v.letter!==x.letter);
+      const raw=count===1?[x.letter,x.lower]:[target,...variants.slice(0,2).map(v=>lower?v.lower:v.letter)];
       return {kind:'letterChoice',id:x.letter,target,options:mixOptions(raw,'letter-'+x.letter)};
     });
-    if(stage==='sounds')return LETTERS.slice(0,6).map((x,i)=>{
-      const pair=v=>v.letter+' '+v.lower,target=pair(x),raw=[target,pair(LETTERS[(i+3)%LETTERS.length]),pair(LETTERS[(i+6)%LETTERS.length])];
-      return {kind:'soundChoice',id:x.letter,target,sound:x.sound,word:x.word,options:mixOptions(raw,'sound-'+x.letter)};
+    if(stage==='sounds')return count<2?[]:letters.map((x,i)=>{
+      const pair=v=>v.letter+' '+v.lower,target=pair(x);
+      const variants=letters.filter(v=>v.letter!==x.letter);
+      return {kind:'soundChoice',id:x.letter,target,sound:x.sound,options:mixOptions([target,...variants.slice(0,2).map(pair)],'sound-'+x.letter)};
     });
-    if(stage==='words')return [
-      {kind:'wordPicture',id:'oma',word:'Oma',icon:'👵',options:mixOptions(WORDS,'word-oma')},
-      {kind:'wordPicture',id:'nase',word:'Nase',icon:'👃',options:mixOptions(WORDS,'word-nase')},
-      {kind:'wordWrite',id:'rose',word:'Rose'}
-    ];
-    if(stage==='sentences')return [
-      {kind:'sentencePicture',id:'oma_malt',sentence:'Oma malt.',icon:'👵🎨',options:mixOptions(['👵🎨','👃🌹','🦙🍎'],'sentence-oma-malt')},
-      {kind:'sentenceBuild',id:'mama_malt',sentence:'Mama malt.',tokens:['malt','Mama','.']}
-    ];
+    if(stage==='words'){
+      const availableWords=WORDS.filter(x=>usesSchoolLetters(x.word,allowed));
+      const tasks=availableWords.length>1?availableWords.map(x=>({kind:'wordPicture',id:x.id,word:x.word,icon:x.icon,options:mixOptions(availableWords,'word-'+x.id)})):[];
+      return tasks.concat(availableWords.map(x=>({kind:'wordWrite',id:x.id,word:x.word})));
+    }
+    if(stage==='sentences'){
+      const tasks=[];
+      if(usesSchoolLetters(SENTENCES[0].sentence,allowed))tasks.push({kind:'sentencePicture',id:'oma_malt',sentence:'Oma malt.',icon:'👵🎨',options:mixOptions(['👵🎨','👃🌹','🦙🍎'],'sentence-oma-malt')});
+      if(usesSchoolLetters(SENTENCES[1].sentence,allowed))tasks.push({kind:'sentenceBuild',id:'mama_malt',sentence:'Mama malt.',tokens:['malt','Mama','.']});
+      return tasks;
+    }
     return [];
+  }
+  function renderLetterSetup(root){
+    const draft=letterSetupDraft,learned=letterSetupStep===0;
+    const chosen=new Set(learned?draft.learned:draft.current),other=new Set(learned?[]:draft.learned);
+    const title=learned?'Welche Buchstaben wurden schon gelernt?':'Welche Buchstaben werden gerade gelernt?';
+    const instruction=learned?'Wähle alle Buchstaben aus, die das Kind in der Schule bereits kennengelernt hat.':'Wähle die Buchstaben, die gerade neu in der Schule behandelt werden. Bereits gelernte Buchstaben bleiben erhalten.';
+    const grid=FREE_WRITING_LETTERS.map(x=>'<button type="button" class="german-school-letter '+(chosen.has(x.letter)?'selected':'')+'" data-school-letter="'+x.letter+'" aria-pressed="'+chosen.has(x.letter)+'" '+(other.has(x.letter)?'disabled title="Bereits gelernt"':'')+'><strong>'+x.letter+'</strong><small>'+x.lower+'</small></button>').join('');
+    const summary=()=>draft.learned.length+' schon gelernt · '+draft.current.length+' gerade dran';
+    root.innerHTML='<div class="german-letter-plan"><div class="eyebrow">Deutsch · Klasse 1 · Schritt '+(letterSetupStep+1)+' von 2</div><div class="row gap align-center wrap"><h3>'+title+'</h3>'+readButton(title+' '+instruction,'Buchstabenfrage vorlesen')+'</div><p>'+instruction+'</p><div class="german-school-letter-grid" role="group" aria-label="'+title+'">'+grid+'</div><p id="germanLetterPlanSummary" class="muted-line" aria-live="polite">'+summary()+'</p><div class="row gap wrap german-school-plan-actions">'+(letterSetupStep===1?'<button type="button" id="germanSchoolBack" class="ghost">Zurück</button>':'')+(letterPlan().configured?'<button type="button" id="germanSchoolCancel" class="ghost">Abbrechen</button>':'')+'<button type="button" id="germanSchoolNext" class="primary">'+(learned?'Weiter: aktuelle Buchstaben':'Buchstabenstand speichern')+'</button></div><p class="notice subtle">Der Schulstand bestimmt die Pflichtübungen – nicht die Bewertung der Lernleistung. Du kannst die Auswahl jederzeit ändern.</p></div><div class="german-free-writing-launch"><div><strong>Freies Schreiben</strong><small>Auch unabhängig vom Schulstand üben</small></div><button id="germanFreeWritingBtn" type="button" class="secondary">Freies Schreiben</button></div>';
+    root.querySelectorAll('[data-school-letter]').forEach(b=>b.addEventListener('click',()=>{
+      const key=b.dataset.schoolLetter,source=learned?draft.learned:draft.current,idx=source.indexOf(key);
+      if(idx<0)source.push(key);else source.splice(idx,1);
+      if(learned&&idx<0)draft.current=draft.current.filter(x=>x!==key);
+      b.classList.toggle('selected',idx<0);b.setAttribute('aria-pressed',String(idx<0));
+      root.querySelector('#germanLetterPlanSummary').textContent=summary();
+    }));
+    root.querySelector('#germanSchoolBack')?.addEventListener('click',()=>{letterSetupStep=0;renderHub()});
+    root.querySelector('#germanSchoolCancel')?.addEventListener('click',()=>{letterSetupDraft=null;renderHub()});
+    root.querySelector('#germanSchoolNext').addEventListener('click',()=>{
+      if(learned){letterSetupStep=1;renderHub();return}
+      const current=cleanSchoolLetters(draft.current),currentSet=new Set(current),already=cleanSchoolLetters(draft.learned).filter(x=>!currentSet.has(x));
+      if(!current.length&&!already.length){if(typeof toast==='function')toast('Bitte wähle mindestens einen Buchstaben aus.','subtle');return}
+      const p=progress();p.letterPlan={configured:true,learned:already,current,updatedAt:new Date().toISOString()};
+      saveProgress();letterSetupDraft=null;renderHub();
+    });
+    root.querySelector('#germanFreeWritingBtn')?.addEventListener('click',openFreeWriting);
   }
   function renderHub(){
     const root=document.querySelector('#germanFoundationCard');if(!root)return;
     const active=available();root.classList.toggle('hidden',!active);if(!active)return;
-    const c=completion();const stageHtml=COURSE.map((s,i)=>{
-      const done=stageDone(s.id),current=s.id===c.next;
-      return '<button type="button" class="german-foundation-stage '+(done?'done ':'')+(current?'current':'')+'" data-german-stage="'+s.id+'"><span>'+(done?'✓':(i+1))+'</span><strong>'+s.label+'</strong><small>'+s.short+'</small></button>';
+    const profile=typeof learner==='function'?learner():null,profileId=profile?.id||'';
+    if(letterSetupLearnerId!==profileId){letterSetupLearnerId=profileId;letterSetupDraft=null;letterSetupStep=0}
+    const plan=letterPlan();
+    if(!plan.configured&&!letterSetupDraft){letterSetupDraft={learned:[],current:[]};letterSetupStep=0}
+    if(letterSetupDraft){renderLetterSetup(root);return}
+    const c=completion(),summary='Schon gelernt: '+(plan.learned.join(', ')||'–')+' · Gerade dran: '+(plan.current.join(', ')||'–');
+    const stageHtml=COURSE.map((entry,i)=>{
+      const tasks=stageTasks(entry.id),done=stageDone(entry.id),current=entry.id===c.next,blocked=tasks.length===0;
+      return '<button type="button" class="german-foundation-stage '+(done?'done ':'')+(current?'current':'')+'" data-german-stage="'+entry.id+'" '+(blocked?'disabled':'')+'><span>'+(done?'✓':(i+1))+'</span><strong>'+entry.label+'</strong><small>'+(blocked?'Noch keine passenden Aufgaben mit diesen Buchstaben':entry.short)+'</small></button>';
     }).join('');
-    root.innerHTML='<div class="german-foundation-head"><div><div class="eyebrow">Klasse 1 · Grundlagen</div><div class="row gap align-center"><h3>Buchstaben, Laute und erste Sätze</h3>'+readButton('Buchstaben, Laute und erste Sätze. Ruhig lernen, ohne Battle-Wertung.','Grundlagen vorlesen')+'</div><p>Ruhig lernen – ohne Battle-Wertung. Schreibübungen werden nicht automatisch als richtig oder falsch beurteilt.</p></div><div class="german-foundation-progress"><strong>'+c.done+' / '+c.total+'</strong><span>Stationen</span></div></div><progress max="'+c.total+'" value="'+c.done+'" aria-label="'+c.done+' von '+c.total+' Grundlagenstationen abgeschlossen"></progress><div class="german-foundation-stages">'+stageHtml+'</div><div class="german-free-writing-launch"><div><strong>Freies Schreiben</strong><small>Buchstaben selbst auswählen · mit Dach, Erdgeschoss und Keller · ohne Testfortschritt</small></div><button id="germanFreeWritingBtn" type="button" class="secondary">Freies Schreiben</button></div><div class="row end top-space"><button id="germanFoundationStartBtn" type="button" class="primary">'+(c.done?'Weiterlernen':'Grundlagen starten')+'</button></div>';
+    root.innerHTML='<div class="german-foundation-head"><div><div class="eyebrow">Klasse 1 · Grundlagen</div><div class="row gap align-center"><h3>Buchstaben, Laute und erste Sätze</h3>'+readButton('Buchstaben, Laute und erste Sätze. Ruhig lernen, ohne Battle-Wertung.','Grundlagen vorlesen')+'</div><p>Ruhig lernen – ohne Battle-Wertung. Schreibübungen werden nicht automatisch als richtig oder falsch beurteilt.</p></div><div class="german-foundation-progress"><strong>'+c.done+' / '+c.total+'</strong><span>verfügbare Stationen</span></div></div><div class="german-letter-plan-summary"><div><strong>Unser Buchstabenstand</strong><small>'+summary+'</small></div><button type="button" id="germanSchoolEdit" class="secondary">Ändern</button></div><progress max="'+(c.total||1)+'" value="'+c.done+'" aria-label="'+c.done+' von '+c.total+' verfügbaren Grundlagenstationen abgeschlossen"></progress><div class="german-foundation-stages">'+stageHtml+'</div><div class="german-free-writing-launch"><div><strong>Freies Schreiben</strong><small>Buchstaben selbst auswählen · mit Dach, Erdgeschoss und Keller · ohne Testfortschritt</small></div><button id="germanFreeWritingBtn" type="button" class="secondary">Freies Schreiben</button></div><div class="row end top-space"><button id="germanFoundationStartBtn" type="button" class="primary" '+(!c.next?'disabled':'')+'>'+(c.done?'Weiterlernen':'Grundlagen starten')+'</button></div>';
     root.querySelectorAll('[data-german-stage]').forEach(b=>b.addEventListener('click',()=>open(b.dataset.germanStage)));
     root.querySelector('#germanFoundationStartBtn')?.addEventListener('click',()=>open(c.next));
+    root.querySelector('#germanSchoolEdit')?.addEventListener('click',()=>{letterSetupDraft={learned:[...plan.learned],current:[...plan.current]};letterSetupStep=0;renderHub()});
     root.querySelector('#germanFreeWritingBtn')?.addEventListener('click',openFreeWriting);
   }
   function open(stage=''){
     if(!available())return;
+    const plan=letterPlan();if(!plan.configured){showView('practiceView');renderHub();return}
     const selected=COURSE.some(x=>x.id===stage)?stage:completion().next;
+    if(!selected||!stageTasks(selected).length){showView('practiceView');renderHub();return}
     run={stage:selected,index:0,tasks:stageTasks(selected),wrong:0,assembled:[],drawPhase:'trace'};
     if(typeof session!=='undefined')session=null;
     showView('learnView');
@@ -329,7 +393,7 @@
   function advance(){
     if(!run)return;run.index++;run.drawPhase='trace';
     if(run.index>=run.tasks.length){
-      progress().completedStages[run.stage]=new Date().toISOString();saveProgress();renderFinish();return;
+      const p=progress();p.completedStages[run.stage]=new Date().toISOString();p.completedScopes[run.stage]=schoolLetterScope();saveProgress();renderFinish();return;
     }
     renderTask();
   }
@@ -407,5 +471,5 @@
     area.querySelector('#foundationNext').onclick=()=>open(completion().next);
   }
 
-  window.VTGermanFoundation={available,progress,completion,renderHub,open,openFreeWriting,freeWritingState,playPhoneme,phonemeStatus,phonemeAudioPath,analyzeFreeWritingShape,course:COURSE,stageTasks,freeWritingLetters:FREE_WRITING_LETTERS};
+  window.VTGermanFoundation={available,progress,letterPlan,completion,renderHub,open,openFreeWriting,freeWritingState,playPhoneme,phonemeStatus,phonemeAudioPath,analyzeFreeWritingShape,course:COURSE,stageTasks,freeWritingLetters:FREE_WRITING_LETTERS};
 })();
