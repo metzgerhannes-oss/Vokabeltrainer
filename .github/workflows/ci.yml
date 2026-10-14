@@ -62,8 +62,14 @@ jobs:
       - name: Deutsch Paket C smoke
         run: node scripts/vokabeltrainer-deutsch-package-c-smoke.mjs
 
+      - name: Deutsch Schulbuchstaben smoke
+        run: node scripts/vokabeltrainer-schulbuchstaben-smoke.mjs
+
       - name: B-018 free writing smoke
         run: node scripts/vokabeltrainer-b018-free-writing-smoke.mjs
+
+      - name: German school letter level smoke
+        run: node scripts/vokabeltrainer-german-school-letters-smoke.mjs
 
       - name: Deutsch Paket D smoke
         run: node scripts/vokabeltrainer-deutsch-package-d-smoke.mjs
@@ -178,6 +184,12 @@ jobs:
 
       - name: WebKit Deutsch Paket C
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-deutsch-paket-c-ui-smoke.mjs
+
+      - name: WebKit school letter level setup
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-german-school-letters-ui-smoke.mjs
+
+      - name: WebKit Deutsch Schulbuchstaben
+        run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-schulbuchstaben-ui-smoke.mjs
 
       - name: WebKit Deutsch Paket D
         run: APP_BASE=http://127.0.0.1:4173 node scripts/vokabeltrainer-deutsch-paket-d-ui-smoke.mjs

@@ -12,7 +12,9 @@ Arbeits- und Archivregeln für Projektchats: **[docs/project/CHAT_LIFECYCLE.md](
 
 ## Aktueller Stand
 
-App-Version: **v0.21.62**
+App-Version: **v0.21.63**
+
+- v0.21.63 (Release-Kandidat): **Deutsch Klasse 1 – Schulbuchstabenstand.** Die App fragt bei der ersten Nutzung je Kind nach bereits gelernten und gerade in der Schule behandelten Buchstaben. Neue Buchstaben erhalten Priorität; Buchstaben, Laute, erste Wörter und Sätze bleiben auf das Schulwissen begrenzt. Der Stand ist jederzeit editierbar und reist mit dem Familienprofil; freie Schreibübungen bleiben separat. Node-/WebKit-Abnahmetests sichern die Funktion ab.
 
 - v0.21.62 (Release-Kandidat): **Altvokabel-Leck im gespeicherten Tagesplan geschlossen + Überspringen am Rundenende korrigiert.** Tagespläne werden auf Schema `daily5` neu aufgebaut; beim Wiederverwenden eines gespeicherten Plans werden jetzt auch `extraRefs` exakt gegen den aktuellen Testumfang geprüft. Damit können alte, bereits lokal oder per Family-Sync gespeicherte Nachrücker nicht mehr in den Pflichtpfad gelangen. Im Übungsraum bleibt „Vokabel überspringen“ auch am Ende eines Teil-Durchgangs aktiv, solange andere Fokuswörter noch offen sind; die Vokabel wird neutral ans Ende des nächsten Durchgangs verschoben und weder bewertet noch entfernt.
 

@@ -21,6 +21,7 @@ try{
     learner().worldModeBySubject=normalizeWorldModeBySubject({german:'adventure'});
     learner().gradeLevel='1';
     state.activeSubject='german';
+    learner().germanFoundation.letterPlan={configured:true,learned:['A','O','L','S','E','N','I','R','T'],current:['M'],updatedAt:'2026-10-14T12:00:00Z'};
     const set={id:'de_b_set',learnerId:'learner_demo',subject:'german',title:'Lernwörter 1',schoolYear:currentSchoolYear(),bookId:'',bookSection:'',testDate:datePlusDays(5),testScopeMode:'set',testFrom:1,testTo:0,testFormat:'dictation',from:'',to:'',pairReviewRequired:false,pairVerifiedAt:new Date().toISOString()};
     state.sets.push(set);
     attachVocabularyToSet(set.id,{term:'Haus',translation:'Gebäude',source:'deutsch-paket-b-smoke',verified:true,firstContactCopiedAt:'x',firstContactRecalledAt:'x',firstContactCompletedAt:'x'});

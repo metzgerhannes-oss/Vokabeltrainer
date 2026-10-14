@@ -19,6 +19,7 @@ try{
     learner().name='Olli';
     learner().activeSubjects=['german'];
     state.activeSubject='german';
+    learner().germanFoundation.letterPlan={configured:true,learned:['A','O','L','S','E','N','I','R','T'],current:['M'],updatedAt:'2026-10-14T12:00:00Z'};
     rebuildWordIndexes();
     renderAll();
     showView('homeView');

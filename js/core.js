@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.21.62';
+const VERSION = '0.21.63';
 const STORAGE_KEY = 'vokabeltrainer_v07';
 const DB_NAME = 'vokabeltrainer-db';
 const DB_STORE = 'app-state';
@@ -31,7 +31,7 @@ const currentSchoolYear = () => {
 const defaultSkills = () => ({recognition:0,listening:0,retrieval:0,spelling:0,reading:0,context:0});
 const defaultLiteracySkills = () => ({recognized:0,decoded:0,fluency:0,meaning:0,phonologicalSpelling:0,orthographicSpelling:0,dictation:0,sentenceUse:0});
 const defaultLiteracyErrors = () => ({capitalization:0,letterSequence:0,wordStructure:0,sentenceContext:0});
-const defaultGermanFoundation = () => ({version:1,letters:{},words:{},sentences:{},completedStages:{},updatedAt:null});
+const defaultGermanFoundation = () => ({version:2,letters:{},words:{},sentences:{},completedStages:{},completedScopes:{},letterPlan:{configured:false,learned:[],current:[],updatedAt:null},updatedAt:null});
 const defaultDirectionalRecall = () => ({
   target:{successDays:[],lastCorrect:null,lastAt:null},
   source:{successDays:[],lastCorrect:null,lastAt:null}

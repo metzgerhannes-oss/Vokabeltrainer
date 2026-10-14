@@ -4627,3 +4627,20 @@ body[data-active-subject="german"] .topbar .ghost{
 
 .profile-choice-legend{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
 .profile-choice-legend .read-aloud-btn{vertical-align:middle}
+
+/* Klasse 1: Schulbuchstabenstand – touchfreundliche Auswahl auf kleinen Displays. */
+.german-letter-plan{display:grid;gap:12px;padding:clamp(12px,3vw,20px);border:1px solid rgba(116,94,53,.28);border-radius:18px;background:rgba(255,251,235,.72)}
+.german-letter-plan h3{margin:0}
+.german-letter-plan p{margin:0}
+.german-school-letter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:9px}
+.german-school-letter{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;min-height:65px;padding:6px;border:2px solid rgba(117,85,47,.35);border-radius:12px;background:#fffdf6;color:#392e21;cursor:pointer}
+.german-school-letter strong{font-size:1.5rem;line-height:1.2}
+.german-school-letter small{font-size:1rem;line-height:1.1}
+.german-school-letter.selected{background:#d9eacc;border-color:#487446;color:#1f4629}
+.german-school-letter[disabled]{opacity:.4;cursor:not-allowed}
+.german-school-letter:focus-visible{outline:3px solid #386d39;outline-offset:2px}
+.german-school-plan-actions{justify-content:flex-end}
+.german-letter-plan-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px;margin-bottom:12px;background:rgba(255,251,235,.8);border:1px solid rgba(116,94,53,.25);border-radius:12px}
+.german-letter-plan-summary div{display:grid;gap:4px;min-width:0;flex:1}
+.german-letter-plan-summary small{overflow-wrap:anywhere;line-height:1.6}
+@media(max-width:520px){.german-school-letter-grid{grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:7px}.german-school-letter{min-height:60px}.german-school-plan-actions button{flex:1}}
