@@ -1,5 +1,7 @@
 # Finales Audit
 
+> v0.21.63: Der Schulbuchstabenstand wird für Deutsch Klasse 1 pro Profil mit zwei getrennten Mengen erfasst und über Family Sync transportiert. Pflichtaufgaben werden auf bekannte und aktuelle Buchstaben begrenzt; unverfügbare Wörter und Sätze bleiben gesperrt. Ergänzende Node- und iPhone-WebKit-Gates sind verpflichtend; echte Geräteabnahme bleibt separat offen.
+
 > v0.21.62: Gespeicherte Tagespläne werden nicht mehr allein über die Kern-Refs wiederverwendet, sondern inklusive adaptiver `extraRefs` gegen den exakten aktuellen Pflicht-/Testscope validiert. Schema `daily5` erzwingt einmalig einen sauberen Neuaufbau. Zusätzlich kann „Vokabel überspringen“ im Übungsraum über das Ende eines Teil-Durchgangs hinweg verschieben, solange noch andere Fokuswörter offen sind; der Skip bleibt vollständig neutral.
 
 > v0.21.61: Start/Heute erhält ein eigenes 8er-Layout-Gate für vier Fächer × Abenteuer/Kampf auf iPhone und Desktop. Die nach v0.21.60 noch durch CSS-Spezifität verdunkelte Deutsch-Fortschrittsfläche wird wieder als freigegebene helle Pergamentkarte gerendert. Das Matrix-Gate deckte zusätzlich auf, dass eine alte Abenteuer-CSS-Regel den finalen Englisch-Avatar unsichtbar machte; diese Regel ist entfernt. Nach realem iPhone-Befund mit Broken-Image-Symbol wurde außerdem die standalone Deutsch-WebP aus dem Renderpfad und Service-Worker-Precache entfernt. Die Deutsch-Startszene wird nun aus der Lernpfad-Landschaft und dem bereits bewährten malerischen Fuchs-Atlas als eine gemeinsame Szene aufgebaut; CI prüft zusätzlich auf gebrochene Bildressourcen. Der primäre Deutsch-Lernbutton bleibt mindestens 44 px hoch.
@@ -21,7 +23,7 @@
 
 > v0.21.53: Französisch ist regulär aktiviert. Der lokale OCR-Blocker ist mit gepinntem `fra.traineddata` beseitigt; produktive Zielantworten schützen Akzente/Apostrophe über eine fachliche Capability, TTS nutzt `fr-FR`.
 
-Stand: 04.10.2026 · App v0.21.62
+Stand: 04.10.2026 · App v0.21.63
 
 ## Ergebnis
 
