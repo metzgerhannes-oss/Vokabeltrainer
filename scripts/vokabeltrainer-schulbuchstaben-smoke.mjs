@@ -23,8 +23,11 @@ progress.germanFoundation.letterPlan={configured:true,learned:['A','O','L','T'],
 assert(api.stageTasks('words').some(t=>t.word==='Oma'),'whole words are enabled once all required graphemes are known');
 assert(api.stageTasks('sentences').length===2,'only readable complete sentences are enabled');
 progress.germanFoundation.completedStages.handwriting='2026-10-14T00:00:00Z';
-progress.germanFoundation.completedScopes.handwriting='A,L,O,T|M';
+progress.germanFoundation.completedScopes.handwriting='A,L,M,O,T';
 assert(api.completion().done===1,'completion counts the current letter scope');
+progress.germanFoundation.letterPlan.current=[];
+progress.germanFoundation.letterPlan.learned.push('M');
+assert(api.completion().done===1,'a school letter moving from current to learned retains its completion');
 progress.germanFoundation.letterPlan.learned.push('S');
 assert(api.completion().done===0,'expanding the letter scope does not falsely complete new exercises');
 assert(!!progress.germanFoundation.completedStages.handwriting,'old academic evidence is preserved');
