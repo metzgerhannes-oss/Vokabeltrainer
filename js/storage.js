@@ -147,18 +147,25 @@ function safeLiteracyErrors(raw){
   return out;
 }
 function safeGermanFoundation(raw){
-  const source=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{},metric=(v)=>safeNumber(v,0,4,0),clean=(input,keys,max=80)=>{
+  const source=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{},metric=v=>safeNumber(v,0,4,0),clean=(input,keys,max=80)=>{
     const out={},rows=input&&typeof input==='object'&&!Array.isArray(input)?Object.entries(input).slice(0,max):[];
     for(const [rawId,rawRow] of rows){
       const id=safeText(rawId,80),row=rawRow&&typeof rawRow==='object'&&!Array.isArray(rawRow)?rawRow:{};
       if(!id)continue;out[id]={};for(const key of keys)if(row[key]!==undefined)out[id][key]=metric(row[key]);
     }
     return out;
-  },done={};
+  },done={},completedScopes={};
+  const stages=['letters','sounds','handwriting','words','sentences'];
   for(const [key,value] of Object.entries(source.completedStages&&typeof source.completedStages==='object'?source.completedStages:{}).slice(0,12)){
-    if(['letters','sounds','handwriting','words','sentences'].includes(key)&&value)done[key]=safeText(value,40);
+    if(stages.includes(key)&&value)done[key]=safeText(value,40);
   }
-  return {version:1,letters:clean(source.letters,['recognized','phonemeGrapheme','traced','guided','freeProduction'],40),words:clean(source.words,['decoded','meaning','written'],80),sentences:clean(source.sentences,['comprehension','formation'],40),completedStages:done,updatedAt:source.updatedAt?safeText(source.updatedAt,40):null};
+  for(const [key,value] of Object.entries(source.completedScopes&&typeof source.completedScopes==='object'?source.completedScopes:{}).slice(0,12)){
+    if(stages.includes(key)&&typeof value==='string')completedScopes[key]=safeText(value,250);
+  }
+  const validSchoolLetters=new Set('ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ'.split('')),plan=source.letterPlan&&typeof source.letterPlan==='object'&&!Array.isArray(source.letterPlan)?source.letterPlan:{};
+  const sanitizeList=items=>[...new Set((Array.isArray(items)?items:[]).slice(0,40).map(x=>String(x||'').toLocaleUpperCase('de-DE')).filter(x=>validSchoolLetters.has(x)))];
+  const current=sanitizeList(plan.current),currentSet=new Set(current),learned=sanitizeList(plan.learned).filter(x=>!currentSet.has(x));
+  return {version:2,letters:clean(source.letters,['recognized','phonemeGrapheme','traced','guided','freeProduction'],40),words:clean(source.words,['decoded','meaning','written'],80),sentences:clean(source.sentences,['comprehension','formation'],40),completedStages:done,completedScopes,letterPlan:{configured:plan.configured===true,learned,current,updatedAt:plan.updatedAt?safeText(plan.updatedAt,40):null},updatedAt:source.updatedAt?safeText(source.updatedAt,40):null};
 }
 function safeYearFortresses(raw){
   const source=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{},out={};
