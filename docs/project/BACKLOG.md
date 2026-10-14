@@ -34,6 +34,8 @@ Verbindliche Leitlinien:
 **Paket E – Wortreich:** PRODUCTION / LIVE VERIFIED v0.21.37 (PR #204, CI #1247, Pages #562).  
 **Paket F:** praktische v1-Abnahme bleibt offen; technische Mindestanforderungen sind umgesetzt.
 
+**Erweiterung Klasse 1 – Schulbuchstabenstand (v0.21.63):** Beim ersten Aufruf wird pro Kinderprofil in zwei Schritten abgefragt, welche Buchstaben bereits gelernt wurden und welche gerade im Unterricht behandelt werden. Die Auswahl ist jederzeit änderbar. Der Schulstand steuert den Pflichtumfang von Buchstaben-, Laut-, Wort- und Satzaufgaben (neu behandelte Buchstaben zuerst); unbekannte Zeichen erscheinen auch nicht als Antwortalternativen. Erste Wörter/Sätze erscheinen erst, wenn alle enthaltenen Buchstaben bekannt sind. Freies Schreiben bleibt frei wählbar. Vor der ersten Auswahl startet keine uneingeschränkte Standardliste. Der Plan wird über bestehende Profilfortschritts-/Family-Sync-Dokumente gespeichert. Neue Buchstaben lassen bereits erworbene Evidenz bestehen, rechnen alte Stationsabschlüsse aber nicht pauschal auf den erweiterten Umfang an. Eigene Node- und WebKit-Tests wurden in die CI aufgenommen; praktische Sichtprüfung bleibt offen.
+
 ## B-002 – Eigene finale Latein-Grafikserie
 **Status:** SUPERSEDED durch B-019 / v0.21.50  
 **Priorität:** nach Kernstabilität / im Rahmen der visuellen Ausarbeitung  
