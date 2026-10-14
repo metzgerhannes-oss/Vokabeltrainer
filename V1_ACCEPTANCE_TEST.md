@@ -1,6 +1,8 @@
 # V1 Acceptance Test
 
-Stand: 04.10.2026 · Basis: v0.21.62 · Release-Kandidat; Prüfschwerpunkte: strikter Testscope in Bestandsdaten, Überspringen im Übungsraum, Startseiten aller acht Fachwelten und B-018 Schreibkontrolle
+Stand: 14.10.2026 · Basis: v0.21.63 · Release-Kandidat; Prüfschwerpunkte: strikter Testscope in Bestandsdaten, Überspringen im Übungsraum, Startseiten aller acht Fachwelten und B-018 Schreibkontrolle
+
+Release-Kandidat v0.21.63 fragt bei der Deutsch-Klasse-1-Ersteinrichtung die schon bekannten und die gerade neu behandelten Buchstaben pro Profil ab. Beim Ändern des Schulstandes darf kein noch unbekanntes Zeichen in Pflichtaufgaben, Auswahlantworten, Wörtern oder Sätzen erscheinen; freie Schreibübungen bleiben separat. Eltern-/Kindergerät und Profilwechsel sowie der Zugriff auf die bisherigen Fortschritte sind zu prüfen.
 
 Release-Kandidat v0.21.62 verwirft persistierte Tagesplan-Refs außerhalb des aktuellen Testumfangs einschließlich alter adaptiver `extraRefs`. Im Übungsraum muss „Vokabel überspringen“ bei einem Teilrundenende weiter funktionieren, sofern noch andere Fokuswörter offen sind; das übersprungene Wort bleibt erhalten und kommt am Ende des nächsten Durchgangs wieder.
 
