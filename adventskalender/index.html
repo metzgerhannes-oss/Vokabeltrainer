@@ -54,7 +54,7 @@ async function loadVillage(){
     const {GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js');
     const gltf=await new GLTFLoader().loadAsync('renders/winterdorf.glb');
     renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'low-power'});
-    renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.setClearColor(0x40536f);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMappingExposure=1.12;
+    renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.setClearColor(0x40536f);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;renderer.toneMappingExposure=1.12;
     renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;
     const scene=new THREE.Scene();scene.add(gltf.scene);
     scene.fog=new THREE.FogExp2(0x8998ba,.007);
@@ -71,7 +71,7 @@ async function loadVillage(){
       const w=o.name.match(/^House_(\d{2})_window/);if(w&&o.isMesh){o.material=o.material.clone();if(!windows.has(+w[1]))windows.set(+w[1],[]);windows.get(+w[1]).push(o.material);}
     });
     if(hinges.size!==24)throw Error('Invalid village model');
-    gltf.scene.traverse(o=>{if(o.isMesh){o.receiveShadow=true;o.castShadow=!/ground|Walkway|lanes|street|mountain|Snowy branches/i.test(o.name);if(/Alpine mountains|Snow-covered peaks/.test(o.name))o.visible=false;}});
+    gltf.scene.traverse(o=>{if(o.isMesh){o.receiveShadow=true;o.castShadow=/House_\d{2}_(body|roof|gable)|Chapel|Clock tower|Evergreen|Christmas star/i.test(o.name);if(/Alpine mountains|Snow-covered peaks/.test(o.name))o.visible=false;}});
 // Story props are real, individually animated 3D objects, placed by the corresponding house.
     const storyProps=new Map(),storyTypes=["gear","snowman","toilet","sock","star","boot","spider","pot","clock","signal","comb","gift","rocket","cheese","roll","deer","sled","cookie","ice","safe","bell","mouse","bean","finale"];
     const colors3={gold:0xffd34e,red:0xc94448,green:0x4c9550,blue:0x478dc5,brown:0x805139,white:0xf9f5eb,dark:0x263645,orange:0xe98a27,pink:0xe981a5};
@@ -100,7 +100,7 @@ async function loadVillage(){
     for(let i=0;i<24;i++){const x=(i%2?-1:1)*(21+rnd()*5),z=-23+rnd()*48;fir(x,z,1+rnd()*1.35);}
     for(let i=0;i<45;i++){const side=i%2?-1:1,x=side*(19+rnd()*8),z=-19+rnd()*39;instance(snowBallGeo,i%3?paleSnow:whiteSnow,x,-.20,z,1+rnd()*2,.35+rnd()*.7,1+rnd()*2);}
     // Warm candy-cane posts, garlands, wreaths, hanging icicles and colourful ornaments.
-    function cane(x,y,z,s=1){const curve=new THREE.CatmullRomCurve3([new THREE.Vector3(x,y,z),new THREE.Vector3(x,y+.65*s,z),new THREE.Vector3(x,y+.94*s,z),new THREE.Vector3(x+.18*s,y+1.06*s,z),new THREE.Vector3(x+.35*s,y+.90*s,z),new THREE.Vector3(x+.35*s,y+.79*s,z)]);const points=curve.getPoints(16);for(let j=0;j<points.length-1;j++){const a=points[j],b=points[j+1],dir=b.clone().sub(a);const mesh=new THREE.Mesh(geometries.cylinder,j%2?candyWhite:candyRed);mesh.position.copy(a).add(b).multiplyScalar(.5);mesh.scale.set(.073*s,dir.length()+.025*s,.073*s);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());detail.add(mesh);}}
+    function cane(x,y,z,s=1){const curve=new THREE.CatmullRomCurve3([new THREE.Vector3(x,y,z),new THREE.Vector3(x,y+.65*s,z),new THREE.Vector3(x,y+.94*s,z),new THREE.Vector3(x+.18*s,y+1.06*s,z),new THREE.Vector3(x+.35*s,y+.90*s,z),new THREE.Vector3(x+.35*s,y+.79*s,z)]);const points=curve.getPoints(16);for(let j=0;j<points.length-1;j++){const a=points[j],b=points[j+1],dir=b.clone().sub(a);const mid=a.clone().add(b).multiplyScalar(.5),length=dir.length(),rot=new THREE.Euler().setFromQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize()));instance(geometries.cylinder,j%2?candyWhite:candyRed,mid.x,mid.y,mid.z,.073*s,length+.025*s,.073*s,rot.x,rot.y,rot.z);}}
     const wreathGeo=new THREE.TorusGeometry(.22,.065,7,18);
     for(const [n,h] of hinges){const p=h.obj.getWorldPosition(new THREE.Vector3()),x=p.x+.35,z=p.z-.04;
       // Keep the actual door and its number clear; wreaths live above side windows.
@@ -212,7 +212,7 @@ async function loadVillage(){
       }
       if(!active){if(p.userData.lid)p.userData.lid.rotation.x=q>=length-1.1?-.85:0;if(p.userData.safeDoor)p.userData.safeDoor.rotation.y=q>=length-1.1?-1.65:0;if(p.userData.hand)p.userData.hand.rotation.z=-Math.PI/2;if(n===19&&q>=length-1.1)p.scale.setScalar(.72);}
       stageSpark.visible=q>=length-1.15;for(let i=0;i<stageSpark.children.length;i++){const a=i*Math.PI*2/9+(reduce?0:q*.7);stageSpark.children[i].position.set(.42+Math.cos(a)*1.25,1.28+Math.sin(a)*.8,.15);}
-      const phase=q<.8?'reveal':q<length-1.1?'action':'reward';canvas.dataset.eventPhase=phase;canvas.dataset.activeAnimations='1';canvas.dataset.stageVisibleProps=String([...stageProps.values()].filter(x=>x.visible).length);canvas.dataset.eventComplete=String(q>=length);if(q>=length)document.getElementById('eventContinue').disabled=false;
+      const phase=q<.8?'reveal':q<length-1.1?'action':'reward';canvas.dataset.eventPhase=phase;canvas.dataset.activeAnimations=q>=length?'0':'1';canvas.dataset.stageVisibleProps=String([...stageProps.values()].filter(x=>x.visible).length);canvas.dataset.eventComplete=String(q>=length);if(q>=length)document.getElementById('eventContinue').disabled=false;
     }
 
     let eventDay=0,eventStart=0;
