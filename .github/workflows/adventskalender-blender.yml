@@ -1,10 +1,5 @@
 name: Adventskalender Blender
 on:
-  push:
-    branches: [adventskalender-bender]
-    paths:
-      - '.github/workflows/adventskalender-blender.yml'
-      - 'adventskalender/blender/**'
   workflow_dispatch:
     inputs:
       all_days:
