@@ -20,3 +20,6 @@ Rendert eine ca. 3 Sekunden lange Kamerafahrt und Türanimation. Für alle Tage 
 
 ## Prüfstatus
 24 eindeutige Türchen und Rätsel mit je 3 verschiedenen Antworten, JavaScript-Syntax geprüft. Blender-Rendering und Browser-End-to-End-Test stehen aus. Keine gerenderten Blender-Dateien enthalten. Kein Release und keine zusätzlichen GitHub-Actions eingerichtet.
+
+## Interaktive Alpenlandschaft
+Das Blender-Skript erzeugt echte Geometrie für 24 Fachwerkhäuser mit individuellen Türen, Bergkulisse, verschneiten Wald, gepflasterte Wege, Kirche, Eisfläche, Brücke, Weihnachtsbaum, Geschenke und Laternen. Wiederholte kleine Landschaftselemente werden nach Material zu Meshes zusammengefasst. Die Webanwendung animiert Schnee, Rauch, Lichter und Türen in Echtzeit. Der GLB-Workflow prüft alle 24 Türscharniere, Landschaftsobjekte und eine Größenobergrenze von 20 MiB vor der Veröffentlichung. Optionale MP4-Renderings werden nur manuell ausgelöst. Der bisherige SVG-Modus bleibt als Fallback erhalten.
