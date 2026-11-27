@@ -1,0 +1,55 @@
+name: Adventskalender Blender
+on:
+  push:
+    branches: [adventskalender-bender]
+    paths:
+      - '.github/workflows/adventskalender-blender.yml'
+      - 'adventskalender/blender/**'
+  workflow_dispatch:
+    inputs:
+      all_days:
+        description: Render all 24 door clips instead of day 1
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: adventskalender-blender-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      LIBGL_ALWAYS_SOFTWARE: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install Blender 4.5 LTS and software renderer
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libgl1-mesa-dri libegl1 libxkbcommon0 libxi6 libxrender1 libxfixes3 libx11-6 libsm6 xvfb ffmpeg
+          curl --fail --location --retry 3 https://download.blender.org/release/Blender4.5/blender-4.5.0-linux-x64.tar.xz -o /tmp/blender.tar.xz
+          mkdir -p /tmp/blender
+          tar -xJf /tmp/blender.tar.xz --strip-components=1 -C /tmp/blender
+          /tmp/blender/blender --version
+      - name: Render actual Blender scene
+        working-directory: adventskalender
+        run: |
+          set -e
+          if [ "${{ inputs.all_days }}" = "true" ]; then
+            MODE=--all
+            xvfb-run -a /tmp/blender/blender -b -t 4 --python-exit-code 1 --python blender/create_village.py -- "$MODE"
+          else
+            xvfb-run -a /tmp/blender/blender -b -t 4 --python-exit-code 1 --python blender/create_village.py -- --day 1
+          fi
+          test -s renders/winterdorf.blend
+          test -s renders/door-01.mp4
+          ffprobe -v error -show_entries stream=codec_name,width,height,nb_frames -of json renders/door-01.mp4
+          python3 -c 'import json; assert 1 in json.load(open("renders/manifest.json"))'
+      - name: Upload Blender source and rendered clips
+        uses: actions/upload-artifact@v4
+        with:
+          name: adventskalender-blender
+          path: adventskalender/renders/
+          if-no-files-found: error
+          retention-days: 7
