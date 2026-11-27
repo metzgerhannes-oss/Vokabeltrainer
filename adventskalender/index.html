@@ -195,61 +195,175 @@ async function loadVillage(){
     const finaleStars=new THREE.Group();for(let i=0;i<24;i++){const s=star(finaleStars,0,0,0,.21+(i%3)*.08);s.rotation.y=i*.5;}finaleStars.visible=false;scene.add(finaleStars);
     const burstCount=120,burstArray=new Float32Array(burstCount*3),burstColors=new Float32Array(burstCount*3),burstGeo=new THREE.BufferGeometry();burstGeo.setAttribute('position',new THREE.BufferAttribute(burstArray,3));for(let i=0;i<burstCount;i++){const c=new THREE.Color([0xffcf54,0xff8a8b,0x8ce5ff,0xfaf8e9][i%4]);burstColors.set([c.r,c.g,c.b],i*3)}burstGeo.setAttribute('color',new THREE.BufferAttribute(burstColors,3));const burst=new THREE.Points(burstGeo,new THREE.PointsMaterial({size:.17,vertexColors:true,transparent:true,opacity:.9}));burst.visible=false;scene.add(burst);
     const puffGeo=new THREE.SphereGeometry(.15,10,8),puffMat=new THREE.MeshStandardMaterial({color:0x98c866,transparent:true,opacity:.65,depthWrite:false}),puffs=new THREE.Group();for(let i=0;i<7;i++)puffs.add(new THREE.Mesh(puffGeo,puffMat));puffs.visible=false;scene.add(puffs);
-    // Exclusive reward scene: one object and one camera. No village geometry can intersect it.
-    const stageScene=new THREE.Scene();stageScene.background=new THREE.Color(0x263956);stageScene.fog=new THREE.Fog(0x263956,12,35);
-    stageScene.add(new THREE.HemisphereLight(0xfff4df,0x6b779d,2.5));
-    const stageKey=new THREE.DirectionalLight(0xffd6a1,3.1);stageKey.position.set(-4,7,5);stageScene.add(stageKey);
-    const stageFill=new THREE.DirectionalLight(0xa6d7ff,1.2);stageFill.position.set(4,4,-3);stageScene.add(stageFill);
-    stageScene.background=new THREE.Color(0x273751);
-    const stageCamera=new THREE.PerspectiveCamera(38,960/700,.1,60);stageCamera.position.set(.55,2.55,6.9);stageCamera.lookAt(0,1.04,0);
-    const dais=new THREE.Group();stageScene.add(dais);cyl(dais,'dark',0,-.17,0,2.45,.30);cyl(dais,'gold',0,-.025,0,2.38,.075);cyl(dais,'white',0,.045,0,2.32,.10);
-    for(let i=0;i<16;i++){const a=i*Math.PI/8;ball(dais,'gold',Math.sin(a)*2.37,.03,Math.cos(a)*2.37,.055);}
-    const setDressing=new THREE.Group();stageScene.add(setDressing);
-    // Backdrop arch is deliberately behind all moving objects.
-    for(const x of [-2.55,2.55]){box(setDressing,'brown',x,1.38,-1.66,.15,2.77,.18);for(let i=0;i<7;i++)box(setDressing,i%2?'red':'white',x,.30+i*.34,-1.55,.18,.18,.12);for(let k=0;k<3;k++){const cy=.37+k*.37;part(setDressing,'cone','green',x*.95,cy,-2.0,.43-k*.085,.76,.43-k*.085);part(setDressing,'cone','white',x*.95,cy+.09,-2.0,.37-k*.075,.65,.37-k*.075);}}
-    for(let i=0;i<17;i++){const x=-2.6+i*.325,y=2.78-.18*Math.cos(x*.63);ball(setDressing,i%3?'gold':'red',x,y,-1.61,.065);if(i%4===0)star(setDressing,x,y-.25,-1.52,.11);}
-    for(let i=0;i<18;i++){const x=-3.7+(i*1.71)%7.4,y=1.3+(i*.73)%2.7;star(setDressing,x,y,-4.5,.035+(i%3)*.018);}
-    const stageElf=elf();stageElf.position.set(-1.48,.10,-.25);stageElf.scale.setScalar(.85);stageScene.add(stageElf);
-    const stageObject=new THREE.Group();stageObject.position.set(.42,.12,0);stageScene.add(stageObject);
-    const stageProps=new Map(),initialTransforms=new Map();for(let n=1;n<=24;n++){const obj=buildProp(storyTypes[n-1]);obj.visible=false;stageObject.add(obj);stageProps.set(n,obj);const saved=[];obj.traverse(o=>{if(o!==obj)saved.push([o,o.position.clone(),o.quaternion.clone(),o.scale.clone()]);});initialTransforms.set(n,saved);}
-    const stageCloud=new THREE.Group();for(let i=0;i<6;i++){const m=new THREE.Mesh(puffGeo,puffMat);stageCloud.add(m);}stageCloud.visible=false;stageScene.add(stageCloud);
-    const stageSpark=new THREE.Group();for(let i=0;i<9;i++)star(stageSpark,0,0,0,.09);stageSpark.visible=false;stageScene.add(stageSpark);
-    const stageBase=new THREE.Vector3(.55,.12,0);let activeScene='village',lastPhase='';
-    const durations=[0,5.8,5.7,6.2,6.0,5.6,5.9,6.1,6.2,6.0,5.8,5.7,6.0,6.6,5.7,6.4,5.9,6.4,5.7,6.2,6.2,5.7,6.1,5.8,14];
+    // Furzipups cartoon studio: isolated real-time 3D scenes with hand-authored action beats.
+    const stageScene=new THREE.Scene();stageScene.background=new THREE.Color(0x223b5b);stageScene.fog=new THREE.Fog(0x223b5b,13,29);
+    stageScene.add(new THREE.HemisphereLight(0xe4efff,0xa18087,1.65));
+    const stageKey=new THREE.DirectionalLight(0xffdeb2,3.3);stageKey.position.set(-3,6,5);stageScene.add(stageKey);
+    const stageFill=new THREE.DirectionalLight(0xa6d7ff,1.8);stageFill.position.set(4,3,-2);stageScene.add(stageFill);
+    const stageCamera=new THREE.PerspectiveCamera(36,960/700,.1,65);
+    const floor=new THREE.Mesh(new THREE.PlaneGeometry(70,55),new THREE.MeshStandardMaterial({color:0xd8e6f4,roughness:.84}));floor.rotation.x=-Math.PI/2;floor.position.y=-.035;stageScene.add(floor);
+    const studio=new THREE.Group();stageScene.add(studio);
+    const woodMat=new THREE.MeshStandardMaterial({color:0x855341,roughness:.82});
+    // Actual snowy cottage wall, not a presentation plinth.
+    const wall=new THREE.Mesh(new THREE.BoxGeometry(8.7,3.8,.3),woodMat);wall.position.set(0,1.65,-2.7);studio.add(wall);
+    for(let i=0;i<9;i++)box(studio,i%2?'brown':'orange',0,-.02+i*.43,-2.49,8.6,.036,.07);
+    for(const x of [-3.35,3.35]){box(studio,'dark',x,1.45,-2.43,.15,3.0,.19);box(studio,'white',x,2.96,-2.35,.30,.19,.35);}
+    for(const x of [-2.45,2.45]){box(studio,'dark',x,1.85,-2.48,1.25,1.38,.12);box(studio,'gold',x,1.85,-2.40,1.07,1.18,.045);box(studio,'brown',x,1.85,-2.36,.07,1.18,.055);box(studio,'brown',x,1.85,-2.36,1.07,.07,.055);box(studio,'white',x,1.18,-2.30,1.41,.11,.34);for(let j=0;j<5;j++)part(studio,'cone','white',x-.5+j*.25,1.04,-2.18,.042,.21,.042,0,0,Math.PI);}
+    box(studio,'dark',0,1.24,-2.42,1.4,2.48,.18);box(studio,'green',0,1.24,-2.30,1.20,2.32,.10);ring(studio,'green',0,1.78,-2.18,.32);for(let i=0;i<7;i++){const a=i*Math.PI*2/7;ball(studio,'red',.3*Math.cos(a),1.78+.3*Math.sin(a),-2.09,.055);}ball(studio,'gold',.45,1.10,-2.17,.064);
+    for(let i=0;i<23;i++){const x=-4.2+i*.38,y=3.11-.20*Math.cos(x*.65);ball(studio,i%3?'gold':'red',x,y,-2.16,.065);if(i%4===0)star(studio,x,y-.23,-2.13,.10);}
+    for(const x of [-3.9,3.9]){for(let k=0;k<4;k++){part(studio,'cone','green',x,.42+k*.40,-1.65,.57-k*.105,.9,.57-k*.105);part(studio,'cone','white',x,.54+k*.4,-1.65,.49-k*.09,.78,.49-k*.09);}gift(studio,x*.91,.16,-.9,.31,x<0?'red':'blue');}
+    const shadowTex=document.createElement('canvas');shadowTex.width=shadowTex.height=64;const sc=shadowTex.getContext('2d'),sg=sc.createRadialGradient(32,32,2,32,32,31);sg.addColorStop(0,'rgba(20,32,52,.40)');sg.addColorStop(1,'rgba(20,32,52,0)');sc.fillStyle=sg;sc.fillRect(0,0,64,64);
+    const shadowMat=new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(shadowTex),transparent:true,depthWrite:false});
+    function shadow(g,w=1.1,d=.72){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),shadowMat);m.rotation.x=-Math.PI/2;m.position.y=.005;g.add(m);return m;}
+    const actorShadow=shadow(stageScene,1.6,1),propShadow=shadow(stageScene,1.65,1.05);
+    // Rig with separately movable head, torso, upper arms, forearms, hips, legs, pupils and mouth.
+    function cartoonElf(){
+      const g=new THREE.Group(),body=new THREE.Group(),head=new THREE.Group();g.add(body);body.position.y=.55;body.add(head);head.position.y=.65;
+      const skin=new THREE.MeshStandardMaterial({color:0xffc79a,roughness:.68});function skinBall(parent,x,y,z,sx,sy=sx,sz=sx){const o=new THREE.Mesh(geometries.ball,skin);o.position.set(x,y,z);o.scale.set(sx,sy,sz);parent.add(o);return o;}
+      ball(body,'green',0,.10,0,.33,.43,.25);box(body,'red',0,-.15,.015,.56,.115,.44);box(body,'gold',0,-.15,.245,.13,.12,.055);for(let i=0;i<3;i++)ball(body,'gold',0,.13+i*.14,.244,.037);
+      ring(body,'red',0,.41,0,.24,.24,.24,Math.PI/2);box(body,'red',.22,.20,.23,.12,.34,.08);
+      skinBall(head,0,.05,0,.30,.33,.285);for(const x of [-1,1]){const e=skinBall(head,x*.31,.07,0,.11,.16,.075);e.rotation.z=x*-.40;ball(head,'pink',x*.18,-.04,.22,.065,.045,.036);}
+      skinBall(head,0,.005,.277,.080,.071,.075);const pupils=[],eyes=[],brows=[];for(const x of [-.114,.114]){eyes.push(ball(head,'white',x,.145,.236,.084,.104,.062));pupils.push(ball(head,'dark',x,.14,.287,.038,.046,.025));ball(head,'white',x-.01,.158,.310,.012);const b=box(head,'brown',x,.265,.235,.145,.039,.054);brows.push(b);}
+      const mouth=ball(head,'dark',0,-.13,.25,.100,.043,.025);const tooth=box(head,'white',0,-.112,.273,.11,.033,.018);
+      cyl(head,'white',0,.355,0,.321,.12);part(head,'cone','red',.035,.60,0,.29,.49,.29,0,0,-.24);ball(head,'white',.105,.86,0,.105);
+      const arms=[],fore=[],legs=[];
+      for(const side of [-1,1]){const a=new THREE.Group();body.add(a);a.position.set(side*.30,.28,0);ball(a,'green',0,-.14,0,.10,.21,.10);const e=new THREE.Group();e.position.y=-.29;a.add(e);ball(e,'green',0,-.10,0,.088,.15,.088);ball(e,'white',0,-.23,0,.107,.11,.105);ball(e,'white',-side*.073,-.18,.04,.045);arms.push(a);fore.push(e);
+        const leg=new THREE.Group();g.add(leg);leg.position.set(side*.16,.50,0);ball(leg,'green',0,-.18,0,.10,.25,.10);box(leg,'white',0,-.32,0,.21,.08,.19);ball(leg,'dark',0,-.42,.08,.15,.105,.23);legs.push(leg);}
+      g.userData={body,head,arms,fore,legs,eyes,pupils,brows,mouth,tooth};return g;
+    }
+    const stageElf=cartoonElf();stageScene.add(stageElf);
+    // Props remain separate; secondary action pieces provide visible cause-and-effect.
+    const stageObject=new THREE.Group();stageScene.add(stageObject);
+    const stageProps=new Map(),initialTransforms=new Map();
+    for(let n=1;n<=23;n++){const obj=buildProp(storyTypes[n-1]);obj.visible=false;stageObject.add(obj);stageProps.set(n,obj);}
+    const extra=new THREE.Group();stageScene.add(extra);const extras=new Map();
+    function secondary(n,obj){obj.visible=false;extra.add(obj);if(!extras.has(n))extras.set(n,[]);extras.get(n).push(obj);return obj;}
+    const screw=new THREE.Group();cyl(screw,'gold',0,0,0,.10,.38);box(screw,'dark',0,.19,0,.23,.055,.11);secondary(1,screw);
+    const carrot=new THREE.Group();part(carrot,'cone','orange',0,0,0,.085,.39,.085,Math.PI/2);part(carrot,'cone','green',0,0,-.20,.08,.17,.08,-Math.PI/2);secondary(2,carrot);stageProps.get(2).children.find(o=>o.material===mats.orange).visible=false;
+    const keyProp=new THREE.Group();ring(keyProp,'gold',0,.17,0,.14);box(keyProp,'gold',0,-.04,0,.08,.30,.08);box(keyProp,'gold',.08,-.17,0,.16,.08,.08);secondary(4,keyProp);
+    const nuts=new THREE.Group();for(let i=0;i<5;i++)ball(nuts,'brown',Math.cos(i*2)*.23,0,Math.sin(i*2)*.17,.075);secondary(6,nuts);
+    const thread=new THREE.Group();ring(thread,'white',0,0,0,.20,.20,.20);secondary(7,thread);
+    const spoon=new THREE.Group();box(spoon,'brown',0,0,0,.06,.65,.06);ball(spoon,'brown',0,-.33,0,.12,.15,.045);secondary(8,spoon);
+    const button=new THREE.Group();cyl(button,'red',0,0,0,.21,.14);secondary(10,button);
+    const tail=new THREE.Group();const tailAnimal=animal;animal(tail);secondary(11,tail);
+    const paper=new THREE.Group();box(paper,'white',0,0,0,.8,.045,.48);secondary(12,paper);
+    const helmet=new THREE.Group();cyl(helmet,'dark',0,0,0,.33,.27);ring(helmet,'gold',0,-.12,0,.33,.33,.33,Math.PI/2);secondary(13,helmet);
+    const cheeseCrumbs=new THREE.Group();for(let i=0;i<4;i++)ball(cheeseCrumbs,'gold',Math.sin(i*2)*.18,0,Math.cos(i*2)*.15,.055);secondary(14,cheeseCrumbs);
+    const paperWrap=new THREE.Group();for(let i=0;i<5;i++)ring(paperWrap,'white',0,i*.19,0,.38,.38,.38,Math.PI/2);secondary(15,paperWrap);
+    const deer2=new THREE.Group();animal(deer2);secondary(16,deer2);
+    const cookie=new THREE.Group();cyl(cookie,'orange',0,0,0,.18,.085);for(let i=0;i<5;i++)ball(cookie,'brown',Math.cos(i*2)*.11,.047,Math.sin(i*2)*.11,.027);secondary(18,cookie);
+    const puddle=new THREE.Group();ball(puddle,'blue',0,0,0,.53,.024,.36);secondary(19,puddle);
+    const dial=new THREE.Group();ring(dial,'gold',0,0,0,.17);box(dial,'gold',0,0,.02,.30,.04,.04);secondary(20,dial);
+    const deer3=new THREE.Group();animal(deer3);secondary(21,deer3);
+    const machineMini=new THREE.Group();box(machineMini,'brown',0,.43,0,.65,.85,.6);box(machineMini,'gold',0,.93,0,.78,.15,.76);box(machineMini,'dark',0,.55,.31,.28,.31,.03);secondary(23,machineMini);
+    for(const [n,obj] of stageProps){const saved=[];obj.traverse(o=>saved.push([o,o.position.clone(),o.quaternion.clone(),o.scale.clone(),o.visible]));initialTransforms.set(n,saved);}
+    const stageCloud=new THREE.Group();for(let i=0;i<9;i++)stageCloud.add(new THREE.Mesh(puffGeo,puffMat));stageCloud.visible=false;stageScene.add(stageCloud);
+    const stageSpark=new THREE.Group();for(let i=0;i<12;i++)star(stageSpark,0,0,0,.085);stageSpark.visible=false;stageScene.add(stageSpark);
+    const rewardToken=new THREE.Group();star(rewardToken,0,0,0,.22);rewardToken.visible=false;stageScene.add(rewardToken);
+    let activeScene='village',lastPhase='';
+    const durations=[0,8.0,8.0,9.0,8.7,7.5,8.3,8.1,8.7,8.0,7.5,8.1,8.0,9.5,7.5,8.8,8.5,9.0,8.0,8.4,9.0,8.1,8.0,8.9,20];
     const smooth=v=>{v=Math.max(0,Math.min(1,v));return v*v*(3-2*v);};
-    function resetStage(){for(const [n,p] of stageProps){for(const [o,pos,rot,scale] of initialTransforms.get(n)){o.position.copy(pos);o.quaternion.copy(rot);o.scale.copy(scale);}p.visible=false;p.position.set(0,0,0);p.rotation.set(0,0,0);p.scale.setScalar(1.7);if(p.userData.lid)p.userData.lid.rotation.x=0;if(p.userData.hand)p.userData.hand.rotation.z=0;if(p.userData.safeDoor)p.userData.safeDoor.rotation.y=0;}stageObject.position.copy(stageBase);stageObject.rotation.set(0,0,0);stageCloud.visible=false;stageSpark.visible=false;stageElf.rotation.set(0,0,0);stageElf.position.set(-1.48,.10,-.25);}
-    function stageFrame(sec,reduce){const n=eventDay,p=stageProps.get(n);if(!p)return;const length=durations[n],q=reduce?length:Math.max(0,Math.min(length,sec)),intro=smooth(q/.65),action=Math.max(0,q-.85),end=smooth((q-(length-1.1))/1.1),wave=Math.sin(action*4);p.visible=true;p.position.set(0,0,0);p.rotation.set(0,0,0);p.scale.setScalar(1.7*intro);stageObject.position.copy(stageBase);stageElf.rotation.z=reduce?0:.06*Math.sin(q*3);stageElf.userData.arms[0].rotation.z=-.55-.35*Math.sin(q*4)*(1-end);stageElf.userData.arms[1].rotation.z=.55+.25*Math.sin(q*3)*(1-end);
-      const stink=[1,3,4,8,9,13,17,18,23].includes(n),effectStart=length-2.45,effectEnd=length-1.1,inEffect=stink&&q>=effectStart&&q<effectEnd&&!reduce,active=q>.8&&q<(stink?effectStart:effectEnd)&&!reduce;
-      stageCloud.visible=inEffect;
-      if(stageCloud.visible){const a=q-effectStart;for(let i=0;i<stageCloud.children.length;i++){const b=stageCloud.children[i],v=Math.max(0,Math.min(1,(a-i*.10)/1.4));b.position.set(1.30+v*.85,.45+v*.73, .10+Math.sin(i*1.7)*.18);b.scale.setScalar(.25+v*1.45);}}
-      if(active)switch(n){
-      case 1:p.rotation.z=action*3.2;break;
-      case 2:p.rotation.z=wave*.27;p.position.y=Math.abs(wave)*.22;break;
-      case 3:p.userData.lid.rotation.x=-Math.abs(wave)*1.48;break;
-      case 4:p.rotation.z=wave*.36;p.rotation.y=Math.sin(action*2)*.6;break;
-      case 5:p.rotation.y=action*3.1;p.position.y=Math.sin(action*1.8)*.2+.2;break;
-      case 6:p.rotation.x=action*2.25;p.position.y=Math.sin(Math.min(1,action/4)*Math.PI)*.55;break;
-      case 7:p.position.x=Math.sin(action*2.2)*.48;p.rotation.y=Math.sin(action*2.2)*.45;p.position.y=Math.abs(wave)*.09;break;
-      case 8:for(const [i,b] of p.children.entries())if(i>2)b.position.y=.53+(i-3)*.10+Math.abs(Math.sin(action*4+i))*.15;break;
-      case 9:p.userData.hand.rotation.z=-action*5;p.rotation.z=wave*.11;break;
-      case 10:for(let i=2;i<5;i++)p.children[i].scale.setScalar(.072*(i-2===Math.floor(action*3)%3?1.65:.75));break;
-      case 11:p.rotation.z=wave*.4;p.position.y=Math.abs(wave)*.12;break;
-      case 12:p.position.y=Math.abs(Math.sin(action*2.8))*.40;p.rotation.y=action*.8;break;
-      case 13:p.position.y=Math.sin(Math.min(1,action/4)*Math.PI)*1.1;p.rotation.z=-.13*Math.sin(action*2);break;
-      case 14:p.rotation.y=action*2.3;break;
-      case 15:p.position.x=Math.sin(action*1.1)*.52;p.rotation.x=action*2.6;break;
-      case 16:p.position.y=Math.abs(wave)*.40;p.rotation.y=.35*Math.sin(action*2);break;
-      case 17:p.position.x=Math.sin(action*1.15)*.65;p.rotation.y=.35*Math.cos(action*1.15);break;
-      case 18:p.rotation.z=wave*.20;p.position.y=Math.abs(wave)*.15;break;
-      case 19:p.scale.setScalar(1.7*(1-.62*smooth(action/4)));break;
-      case 20:p.userData.safeDoor.rotation.y=-1.65*smooth(action/.9);break;
-      case 21:p.rotation.z=wave*.48;break;
-      case 22:p.position.x=Math.sin(action*2.2)*.50;p.rotation.y=Math.cos(action*2.2)*.60;break;
-      case 23:p.rotation.y=action*2.6;p.position.y=.25+.18*Math.sin(action*2);break;
+    // Each row is four authored story beats, not a shared rotating-object loop.
+    const dialogue=[
+      ['Drei Bohnenbrote. Was soll schon passieren?','Der Druck steigt …','PFFFFRT! Mein Zahnrad!','Ein Teil gerettet!'],
+      ['Wo ist die Nase?','Ups. Falsche Seite!','Jetzt aber richtig!','Der Schneemann ist glücklich.'],
+      ['Hallo? Ist da jemand im Klo?','KLONK. KLONK.','PLOPP! Das Klo pupst zurück!','Ein goldenes Ventil!'],
+      ['Wer hat diese Socke versteckt?','Die klebt ja fest!','Huch! Nase zu!','Da ist der Schlüssel!'],
+      ['Spieglein, Spieglein …','Was steht denn da?','Oh! Ein echter Stern!','Der Spiegelstern gehört uns.'],
+      ['Ist das meine Unterhose?','Mal kräftig ausschütteln …','Nüsse im Anflug!','Das Kabel ist gerettet.'],
+      ['Igitt, was liegt da im Schnee?','Eine Spinne!','Die hat ja acht Beine!','Danke für den Draht!'],
+      ['Ein bisschen Farbe …','Rühr, rühr, rühr …','BLUBB! Nicht überlaufen!','Kühlmittel gefunden!'],
+      ['Aufstehen! Schon 14 Uhr!','Der Wecker hängt fest.','RÜÜÜLPS!','Endlich die richtige Zeit.'],
+      ['Rot. Blau. Rot …','Ich drücke den Knopf.','Jetzt geht es weiter!','Freie Fahrt!'],
+      ['Was für ein haariger Schwanz!','Stillhalten, Rentier!','Zupp! Eine Feder!','Frisch gekämmt.'],
+      ['Bloß kein braunes Paket!','Die Maschine klemmt.','Plopp! Die Geschenke sind frei!','Drei echte Geschenke.'],
+      ['Helm auf! Rakete bereit!','Die Zündung … nichts?','PFFFRT! Ab ins All!','Der Chip ist zurück.'],
+      ['Wer hat hier Käse versteckt?','Ein bisschen daran ziehen …','Krümelregen!','Der Formenschlüssel!'],
+      ['Wer hat mich eingewickelt?','Hilfe, ich bin eine Mumie!','Rrrrrroll! Endlich frei!','Das letzte Stück Papier!'],
+      ['Rentier-Stau! Keiner rührt sich.','Wer von euch hat gepupst?','Hopp! Der Weg ist frei!','Weiter zur Werkstatt.'],
+      ['Ein Schlitten mit Pups-Antrieb!','Drei, zwei, eins …','TURBOPOPOOO!','Ein neues Turboteil!'],
+      ['Bohnenkekse? Nein danke.','Ich nehme Schoko.','Krümel überall!','Der Motor-Knopf!'],
+      ['Gelber Schnee? Nicht essen!','Das Eis muss weg.','Wasser! Und da glitzert etwas.','Der Motorsplitter!'],
+      ['37. Das müsste stimmen.','Klick … klack …','Klonk! Der Tresor geht auf!','Ein großer Baustein!'],
+      ['Das Rentier ist ganz nervös.','Seine Glocke klingelt.','DING DING! Wackelpopo!','Die Glocke ist gerettet.'],
+      ['Haus … Kacka? Nein!','Haus … Maus!','Da rennt sie schon!','Das Passwort stimmt.'],
+      ['Die allerletzte goldene Bohne!','Nicht essen, Furzipups!','Rein in die Maschine!','Morgen ist der große Start!']
+    ];
+    // Pose keys: [x,y,lean,body yaw,head tilt,arm L,arm R,elbow L,elbow R,leg L,leg R,mouth].
+    const poses={
+      idle:[-1.45,0,0,.45,0,-.27,.27,0,0,0,0,.5],
+      sneak:[-.80,0,-.17,.92,-.16,-.65,.82,-.75,-.7,-.28,.28,.3],
+      reach:[-.64,0,-.26,1.05,-.12,-.78,1.15,-.9,-1.1,.15,-.15,.35],
+      pull:[-1.02,0,.32,1.1,.15,-.85,1.32,-1.05,-1.05,-.25,.22,.85],
+      press:[-.75,0,-.16,.90,-.07,-.30,1.50,-.25,-.72,0,0,.4],
+      stare:[-1.08,0,.08,.62,-.22,-.2,.30,-.25,-.20,0,0,1.25],
+      crouch:[-.93,-.14,-.18,.72,.10,-.55,.8,-.4,-.6,.45,-.40,.6],
+      recoil:[-1.55,.14,.43,.2,.24,-1.30,1.25,-.2,-.2,-.60,.55,1.85],
+      fall:[-1.88,.12,1.10,.05,.28,-1.35,1.20,-.4,-.4,-.35,.5,1.8],
+      nose:[-1.40,0,.11,.02,.05,-.37,.78,-.30,-2.25,0,0,.3],
+      jump:[-1.15,.62,-.13,.15,-.10,-2.45,2.45,-.4,-.4,-.42,.42,1.3],
+      celebrate:[-1.05,0,0,.05,0,-2.45,2.45,-.20,-.20,0,0,1.0],
+      catch:[-.83,.13,-.13,.20,-.12,-1.9,1.9,-.4,-.6,-.30,.30,1.3],
+      inspect:[-1.02,0,-.11,.50,.28,-.35,1.1,-.5,-1.2,0,0,.40],
+      run:[-1.15,0,-.22,1.25,-.1,-.95,.95,-.6,-.65,-.65,.65,.9],
+      sit:[-.72,.10,.10,.25,.04,-.6,.65,-.6,-.55,-1.0,-1.0,.6]
+    };
+    const choreography=[
+      ['idle','crouch','recoil','nose','celebrate'],['sneak','reach','stare','catch','celebrate'],['sneak','press','stare','recoil','catch'],['reach','pull','pull','fall','nose'],['inspect','stare','reach','catch','celebrate'],['inspect','pull','reach','recoil','catch'],['crouch','inspect','recoil','reach','celebrate'],['reach','press','crouch','recoil','nose'],['sneak','press','stare','recoil','celebrate'],['inspect','press','stare','jump','celebrate'],['sneak','reach','pull','recoil','catch'],['crouch','pull','press','catch','celebrate'],['inspect','crouch','sit','recoil','catch'],['inspect','reach','pull','recoil','celebrate'],['idle','pull','fall','jump','celebrate'],['sneak','nose','press','recoil','celebrate'],['inspect','sit','crouch','jump','catch'],['inspect','reach','press','recoil','celebrate'],['crouch','reach','stare','catch','celebrate'],['sneak','press','stare','recoil','catch'],['inspect','reach','recoil','nose','celebrate'],['inspect','crouch','run','catch','celebrate'],['inspect','reach','nose','press','celebrate']
+    ];
+    function poseActor(q,n){const seq=choreography[n-1],times=[0,.19,.41,.67,.88,1],p=q;let k=0;while(k<4&&p>times[k+1])k++;const from=poses[seq[k]],to=poses[seq[Math.min(4,k+1)]],u=smooth((p-times[k])/(times[k+1]-times[k])),v=from.map((x,i)=>x+(to[i]-x)*u);const rig=stageElf.userData;
+      stageElf.position.set(v[0],v[1],.25);stageElf.rotation.set(0,v[3],v[2]);stageElf.scale.setScalar(1.0);
+      rig.body.rotation.z=v[2]*.18;rig.head.rotation.set(v[4]*.55,-v[3]*.33,v[4]);rig.head.position.y=.65;
+      for(let i=0;i<2;i++){rig.arms[i].rotation.set(-.32*Math.abs(v[5+i]),0,v[5+i]);rig.fore[i].rotation.set(v[7+i],0,0);rig.legs[i].rotation.x=v[9+i];rig.legs[i].rotation.z=0;rig.brows[i].rotation.z=(i===0?1:-1)*Math.min(.5,v[11]*.17);rig.pupils[i].position.x=(i===0?-.114:.114)+.019*Math.sin(v[3]);rig.eyes[i].scale.y=(p>.38&&p<.42)?.015:.104;}
+      rig.mouth.scale.set(.088,.032+.041*v[11],.027);rig.tooth.visible=v[11]<1.2;
+      actorShadow.position.set(v[0],.006,.25);actorShadow.scale.setScalar(1-Math.min(.35,v[1]*.35));
+    }
+    function resetStage(){for(const [n,p] of stageProps){for(const [o,pos,rot,scale,visible] of initialTransforms.get(n)){o.position.copy(pos);o.quaternion.copy(rot);o.scale.copy(scale);o.visible=visible;}p.visible=false;}for(const o of extra.children)o.visible=false;stageCloud.visible=false;stageSpark.visible=false;rewardToken.visible=false;}
+    function showExtra(n,i,x,y,z,rx=0,ry=0,rz=0,s=1){const o=extras.get(n)?.[i];if(!o)return;o.visible=true;o.position.set(x,y,z);o.rotation.set(rx,ry,rz);o.scale.setScalar(s);}
+    function stageFrame(sec,reduce){
+      const n=eventDay,p=stageProps.get(n);if(!p)return;
+      const length=durations[n],q=reduce?length:Math.max(0,Math.min(length,sec)),u=q/length,A=smooth((u-.18)/.20),B=smooth((u-.40)/.21),C=smooth((u-.61)/.20),D=smooth((u-.82)/.18),hit=Math.sin(Math.PI*B);
+      const phase=u<.18?'reveal':u<.40?'setup':u<.61?'action':u<.82?'effect':'reward';
+      const caption=dialogue[n-1][u<.40?0:u<.61?1:u<.82?2:3];const eventText=document.getElementById('eventText');if(eventText.textContent!==caption)eventText.textContent=caption;
+      poseActor(u,n);for(const o of extra.children)o.visible=false;
+      p.visible=true;p.position.set(0,0,0);p.rotation.set(0,0,0);p.scale.setScalar(1.62);
+      stageObject.position.set(.87,.035,.06);stageObject.rotation.set(0,-.12,0);
+      const arc=Math.sin(Math.PI*C),move=smooth((u-.23)/.30);
+      switch(n){
+      case 1:p.rotation.z=-B*Math.PI*1.8;p.position.set(C*.28,hit*.38+arc*.25,0);showExtra(1,0,.85-B*.45,.6+hit*1.5,.6,0,0,B*5);break;
+      case 2:p.rotation.y=Math.PI*(1-B);showExtra(2,0,-.60+A*1.4,.75+hit*.55+C*.55,.4,0,-Math.PI*(1-B),-.22*hit);break;
+      case 3:p.userData.lid.rotation.x=-(.20*A+1.35*B-.25*C);p.rotation.z=.035*hit;break;
+      case 4:p.position.x=-A*.32+B*.64;p.rotation.z=-A*.36+B*.68;showExtra(4,0,.9-B*1.15,.40+hit*1.65+C*.48,.55,0,0,B*5);break;
+      case 5:p.rotation.y=Math.PI*(1-A)+B*Math.PI*2;p.position.y=hit*.55+C*.14;break;
+      case 6:p.rotation.z=-A*.23+B*Math.PI*1.75;p.position.y=hit*.45;showExtra(6,0,.90+B*.33,.72+hit*1.3,.4,0,B*3,0);break;
+      case 7:p.position.x=-.25+B*.40;p.rotation.y=.50*Math.sin(B*Math.PI*2);p.position.y=hit*.12;showExtra(7,0,.7-B*.9,.5+hit*.8,.55,0,0,B*5);break;
+      case 8:showExtra(8,0,.42+.38*A,.80,.25,0,0,-.65+Math.sin(B*Math.PI*4)*.55);for(let i=3;i<p.children.length;i++){p.children[i].position.y=.53+(i-3)*.10+hit*(.28+i*.04);}break;
+      case 9:p.userData.hand.rotation.z=-A*.5-B*Math.PI*3.5;p.rotation.z=.15*hit;break;
+      case 10:showExtra(10,0,-.08,.20,.4);for(let i=2;i<5;i++){const z=(i-2===Math.min(2,Math.floor(B*3)))?.105:.057;p.children[i].scale.setScalar(z);}break;
+      case 11:showExtra(11,0,1.25,.02,-.45,0,-1.1,0,1.35);p.rotation.z=-A*1.1+B*1.6;p.position.set(-.40+A*.4,.35+hit*.3,0);break;
+      case 12:showExtra(12,0,.22,.08,.65,0,0,0);for(let i=0;i<p.children.length;i++){const base=initialTransforms.get(n).find(row=>row[0]===p.children[i]);if(base)p.children[i].position.y=base[1].y+hit*(.22+(Math.floor(i/3)%3)*.12);}break;
+      case 13:showExtra(13,0,-.95,.88+.57*A,.28,0,0,-.05,1.0);p.position.set(B*.26,hit*.92+C*.12,0);p.rotation.z=-.16*A+.28*hit;break;
+      case 14:p.rotation.z=-A*.25+B*.38;p.rotation.y=B*Math.PI;showExtra(14,0,.95,.47+hit*1.04,.5,0,0,B*5);break;
+      case 15:showExtra(15,0,-1.1,.12,.25,0,0,.32*A,Math.max(.01,1-C));p.position.x=-.45+A*.25+B*1.1;p.rotation.x=B*Math.PI*3;break;
+      case 16:showExtra(16,0,-.40-A*.15-B*.60,hit*.32,-.75,0,1.1,0,1.30);p.position.x=A*.1+B*.63;p.position.y=hit*.35;p.rotation.y=-.60;break;
+      case 17:p.position.set(-.47+A*.30+B*1.20,hit*.20,0);p.rotation.y=.50+B*.45;p.rotation.z=-.13*hit;break;
+      case 18:showExtra(18,0,-.73,.70+hit*.30,.35,0,0,A*Math.PI/2);for(let i=0;i<p.children.length;i++){const base=initialTransforms.get(n).find(row=>row[0]===p.children[i]);if(base)p.children[i].position.y=base[1].y+hit*(Math.floor(i/6)*.09); }break;
+      case 19:p.scale.set(1.62*(1-.82*B),1.62*(1-.92*B),1.62*(1-.82*B));showExtra(19,0,.87,.025,.06,0,0,0,.04+1.5*B);break;
+      case 20:p.userData.safeDoor.rotation.y=-B*1.75;showExtra(20,0,.87,.66,.60,0,0,-A*Math.PI*2);break;
+      case 21:showExtra(21,0,1.29,.02,-.45,0,-1.1,0,1.4);p.position.y=.25;p.rotation.z=hit*Math.sin(B*Math.PI*5)*.8;break;
+      case 22:p.position.x=-.45+A*.15+B*.70;p.position.y=.07*hit;p.rotation.y=-.65+B*.95;break;
+      case 23:showExtra(23,0,1.22,.01,-.38,0,0,0,1.4);p.position.x=-.70+A*.22+B*.61;p.position.y=.42+hit*.42;p.rotation.z=-.3*hit;break;
       }
-      if(!active){if(p.userData.lid)p.userData.lid.rotation.x=q>=length-1.1?-.85:0;if(p.userData.safeDoor)p.userData.safeDoor.rotation.y=q>=length-1.1?-1.65:0;if(p.userData.hand)p.userData.hand.rotation.z=-Math.PI/2;if(n===19&&q>=length-1.1)p.scale.setScalar(.72);}
-      stageSpark.visible=q>=length-1.15;for(let i=0;i<stageSpark.children.length;i++){const a=i*Math.PI*2/9+(reduce?0:q*.7);stageSpark.children[i].position.set(.42+Math.cos(a)*1.25,1.28+Math.sin(a)*.8,.15);}
-      const phase=q<.8?'reveal':inEffect?'effect':q<length-1.1?'action':'reward';canvas.dataset.eventPhase=phase;canvas.dataset.activeAnimations=q>=length?'0':'1';canvas.dataset.stageVisibleProps=String([...stageProps.values()].filter(x=>x.visible).length);canvas.dataset.eventComplete=String(q>=length);if(q>=length)document.getElementById('eventContinue').disabled=false;
+      // Character follows the physical object during the two riding scenes.
+      if((n===13||n===17)&&u>=.40&&u<.61){stageElf.position.x=n===17?stageObject.position.x+p.position.x-.05:stageObject.position.x+p.position.x-.13;stageElf.position.y=n===17?.28+p.position.y:.70+p.position.y;stageElf.position.z=.05;stageElf.scale.setScalar(.68);}
+      const gags=[1,3,4,8,9,13,17,18,23],puff=phase==='effect'&&gags.includes(n)&&!reduce;stageCloud.visible=puff;
+      if(puff){for(let i=0;i<stageCloud.children.length;i++){const m=stageCloud.children[i],v=smooth(C-i*.055);m.position.set(1.52+v*.88,.40+v*.85,.30+Math.sin(i*1.7)*.17);m.scale.setScalar(Math.max(.001,v*(.8+i*.08)));}}
+      rewardToken.visible=u>=.82;rewardToken.position.set(-.05,1.32+D*.83,.55);rewardToken.rotation.y=D*2.4;rewardToken.scale.setScalar(Math.max(.01,smooth(D*3)));
+      stageSpark.visible=u>=.88;for(let i=0;i<stageSpark.children.length;i++){const a=i*Math.PI*2/12+D*.55;stageSpark.children[i].position.set(Math.cos(a)*.75,2.05+Math.sin(a)*.44,.28);}
+      propShadow.position.set(stageObject.position.x+p.position.x,.007,stageObject.position.z);propShadow.scale.setScalar(1-Math.min(.45,p.position.y*.18));
+      // Small purposeful camera shifts, and a hold on the punchline.
+      stageCamera.position.set(.18+A*.16,2.36-.14*A,7.50-.48*A+.24*C);stageCamera.lookAt(.05,.99+.12*B,.0);
+      canvas.dataset.eventPhase=phase;canvas.dataset.activeAnimations=q>=length?'0':'1';canvas.dataset.stageVisibleProps=String([...stageProps.values()].filter(o=>o.visible).length);canvas.dataset.eventComplete=String(q>=length);if(q>=length)document.getElementById('eventContinue').disabled=false;
     }
 
     let eventDay=0,eventStart=0;
@@ -259,18 +373,18 @@ async function loadVillage(){
       const sec=Math.max(0,(t-eventStart)/1000);canvas.dataset.visibleProps=String(days.length);canvas.dataset.machineParts=String(days.length);
       for(const [n,p] of storyProps){p.obj.visible=days.includes(n);p.obj.position.copy(p.base);p.obj.scale.setScalar(.68);p.obj.rotation.set(0,0,0);}
       for(let i=0;i<24;i++)machineLights[i].material=days.includes(i+1)?indicatorLit:indicatorMat;machineStar.visible=days.length===24;
-      const finale=eventDay===24&&days.includes(24);canvas.dataset.finaleActive=String(finale);
+      const finale=eventDay===24&&days.includes(24);if(!finale){villageElf.rotation.z=0;villageElf.userData.arms[0].rotation.z=-.5;villageElf.userData.arms[1].rotation.z=.5;}canvas.dataset.finaleActive=String(finale);
       if(activeScene==='reward'){stageFrame(sec,reduce);return;}
       puffs.visible=false;finaleSleigh.visible=false;finaleStars.visible=false;burst.visible=false;
       if(!finale){canvas.dataset.activeAnimations='0';machineWheel.rotation.x=days.length*.2;return;}
-      const q=reduce?14:Math.min(sec,14),phase=q<3?'machine':q<8?'flight':q<12?'fireworks':'complete';
-      canvas.dataset.eventPhase=phase;canvas.dataset.activeAnimations=phase==='complete'?'0':'1';canvas.dataset.eventComplete=String(q>=14);
+      const q=reduce?20:Math.min(sec,20),phase=q<5?'machine':q<12?'flight':q<17?'fireworks':'complete';
+      canvas.dataset.eventPhase=phase;canvas.dataset.activeAnimations=phase==='complete'?'0':'1';canvas.dataset.eventComplete=String(q>=20);
       if(phase!==lastPhase){lastPhase=phase;if(phase==='machine'){destination.set(3.5,4.5,20);focus.set(-.2,1.6,12.3);}else if(phase==='flight'){destination.set(0,21,34);focus.set(0,6,0);}else{destination.copy(home);focus.set(0,3,-3);}}
-      machineWheel.rotation.x=phase==='machine'?q*7:days.length*.2;
-      finaleSleigh.visible=phase==='flight';if(finaleSleigh.visible){const u=smooth((q-3)/5);finaleSleigh.position.set(-.2+u*11,1.3+u*12,13.5-u*24);finaleSleigh.rotation.y=-.7;camera.lookAt(target);}
-      burst.visible=phase==='fireworks';if(burst.visible){for(let i=0;i<burstCount;i++){const b=i%5,a=i*2.39996,p=((q-8)*.55+b*.19)%1,r=p*4;burstArray[i*3]=Math.sin(b*2.1)*12+Math.cos(a)*r;burstArray[i*3+1]=9+(b%2)*3+Math.sin(a)*r-p*p*2;burstArray[i*3+2]=-8+b*3+Math.sin(i*1.1)*r*.5;}burstGeo.attributes.position.needsUpdate=true;}
+      machineWheel.rotation.x=phase==='machine'?q*q*1.8:days.length*.2;villageElf.rotation.z=phase==='machine'?.17*Math.sin(q*3):0;villageElf.userData.arms[0].rotation.z=phase==='machine'?-.85-.5*Math.sin(q*3):-.5;villageElf.userData.arms[1].rotation.z=phase==='machine'?.85+.5*Math.sin(q*3):.5;
+      finaleSleigh.visible=phase==='flight';if(finaleSleigh.visible){const u=smooth((q-5)/7);finaleSleigh.position.set(-.2+u*11,1.3+u*12,13.5-u*24);finaleSleigh.rotation.y=-.7;camera.lookAt(target);}
+      burst.visible=phase==='fireworks';if(burst.visible){for(let i=0;i<burstCount;i++){const b=i%5,a=i*2.39996,p=((q-12)*.55+b*.19)%1,r=p*4;burstArray[i*3]=Math.sin(b*2.1)*12+Math.cos(a)*r;burstArray[i*3+1]=9+(b%2)*3+Math.sin(a)*r-p*p*2;burstArray[i*3+2]=-8+b*3+Math.sin(i*1.1)*r*.5;}burstGeo.attributes.position.needsUpdate=true;}
       finaleStars.visible=phase==='complete';if(finaleStars.visible){for(let i=0;i<24;i++){const a=i*Math.PI*2/24,rad=4.7+(i%2)*1.2;finaleStars.children[i].position.set(-4.4+Math.cos(a)*rad,5.2+(i%4)*.45,12.2+Math.sin(a)*rad);finaleStars.children[i].rotation.y=a;}}
-      const label=phase==='machine'?'Die Weihnachtsmaschine rattert. Furzipups holt tief Luft …':phase==='flight'?'PFFFFFFFFRT! Der Turboschlitten hebt ab!':phase==='fireworks'?'Die Sterne explodieren am Himmel!':'Weihnachten ist gerettet! Furzipups sagt: Das war bestimmt das Rentier.';if(document.getElementById('eventText').textContent!==label)document.getElementById('eventText').textContent=label;if(q>=14)document.getElementById('eventContinue').disabled=false;
+      const label=phase==='machine'?'Die Weihnachtsmaschine rattert. Furzipups holt tief Luft …':phase==='flight'?'PFFFFFFFFRT! Der Turboschlitten hebt ab!':phase==='fireworks'?'Die Sterne explodieren am Himmel!':'Weihnachten ist gerettet! Furzipups sagt: Das war bestimmt das Rentier.';if(document.getElementById('eventText').textContent!==label)document.getElementById('eventText').textContent=label;if(q>=20)document.getElementById('eventContinue').disabled=false;
     }
 
     const canvas=renderer.domElement;canvas.dataset.storyProps=String(storyProps.size);canvas.dataset.machineParts='0';canvas.setAttribute('aria-label','Blender-Weihnachtsdorf in 3D; Häuser auch über die Nummern erreichbar');container.append(canvas);
