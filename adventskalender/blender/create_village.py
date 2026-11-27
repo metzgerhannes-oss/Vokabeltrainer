@@ -8,6 +8,7 @@ import bpy
 import math
 import sys
 import argparse
+import json
 from pathlib import Path
 from mathutils import Vector
 
@@ -222,8 +223,21 @@ def render_day(n):
     scene.render.ffmpeg.format="MPEG4"
     scene.render.ffmpeg.codec="H264"
     scene.render.ffmpeg.constant_rate_factor="MEDIUM"
-    scene.render.filepath=str(OUT/f"door-{n:02}.mp4")
+    # Blender may append the frame range to animation filenames.
+    prefix=f"tmp-door-{n:02}-"
+    for stale in OUT.glob(prefix+"*.mp4"):
+        stale.unlink()
+    scene.render.filepath=str(OUT/prefix)
     bpy.ops.render.render(animation=True)
+    clips=list(OUT.glob(prefix+"*.mp4"))
+    if len(clips)!=1:
+        raise RuntimeError(f"Expected one MP4 for day {n}, got {clips}")
+    clips[0].replace(OUT/f"door-{n:02}.mp4")
+    available=[d for d in range(1,25) if (OUT/f"door-{d:02}.mp4").is_file()]
+    manifest=OUT/"manifest.json"
+    tmp=OUT/"manifest.tmp"
+    tmp.write_text(json.dumps(available),encoding="utf-8")
+    tmp.replace(manifest)
 
 if args.all:
     for n in range(1,25):
