@@ -4,13 +4,14 @@ on:
     branches: [adventskalender-bender]
     paths:
       - '.github/workflows/adventskalender-3d.yml'
+      - 'adventskalender/blender/**'
   workflow_dispatch:
 permissions:
   contents: write
 jobs:
   export:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Install Blender
@@ -34,7 +35,10 @@ jobs:
           model=json.loads(raw[20:20+length])
           names={n.get('name','') for n in model['nodes']}
           assert all(f'House_{i:02}_hinge' in names for i in range(1,25))
-          print('Validated',len(names),'nodes;',len(raw),'bytes')
+          assert any('Alpine mountains' in name for name in names)
+          assert any('Oval skating rink' in name for name in names)
+          assert len(raw) < 20*1024*1024
+          print('Validated detailed alpine scene:',len(names),'nodes;',len(raw),'bytes')
           PY
       - name: Publish Blender model to dedicated project branch
         run: |
