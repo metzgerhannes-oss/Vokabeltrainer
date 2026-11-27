@@ -158,7 +158,7 @@ def forest_tree(x,y,scale):
         z=(.42+j*.53)*scale;r=(.87-j*.15)*scale;h=1.18*scale
         tapered("Layered firs",fir if j%2 else cedar,x,y,z,r,h,.025*scale,12,.11)
         tapered("Snowy branches",snow,x,y,z+.18*scale,r*.76,h*.83,.018*scale,12,.09)
-def lamp(x,y):
+def street_lamp(x,y):
     box("Lantern posts",timber,(x,y,.76),(.10,.10,1.52))
     box("Lantern bases",stone,(x,y,.10),(.34,.34,.20))
     box("Lantern glow",gold,(x,y,1.66),(.23,.23,.32))
@@ -282,7 +282,7 @@ for row in range(3):
         if abs(x)<1.1:continue
         for j in range(3):
             box("Cobbled lanes",pavers[(i+j)%3],(x,yy+(j-1)*.41+.13*math.sin(x*.4),.016),(.45,.37,.052),rng.uniform(-.08,.08))
-    for x in (-16.8,-5.35,5.35,16.8):lamp(x,yy-.95)
+    for x in (-16.8,-5.35,5.35,16.8):street_lamp(x,yy-.95)
 for i in range(55):
     y=-15+i*.52;x=.48*math.sin(y*.31)
     for j in range(4):
@@ -296,15 +296,14 @@ for j in range(13):
     a=j*math.tau/13;gift(-4.4+1.8*math.cos(a),-12.2+1.8*math.sin(a),rng.uniform(.28,.53),[red,fir,cream][j%3])
 # Frozen pond with a snow-rim and skating traces.
 mound("Pond snow bank",snow,7.4,-12.8,-.04,5.0,3.5,.16,48)
-tapered("Frozen pond",ice,7.4,-12.8,.125,1,.014,1,40)
 # Build the oval ice sheet using explicit geometry rather than a texture.
-v=[(7.4,-12.8,.15)]+[(7.4+4.7*math.cos(i*math.tau/72),-12.8+3.15*math.sin(i*math.tau/72),.15) for i in range(72)]
+v=[(7.4,-12.8,.19)]+[(7.4+4.7*math.cos(i*math.tau/72),-12.8+3.15*math.sin(i*math.tau/72),.19) for i in range(72)]
 geo("Oval skating rink",ice,v,[(0,i+1,(i+1)%72+1) for i in range(72)])
 for j in range(4):
     for i in range(36):
         a=i*math.tau/36;r=1.1+j*.65
         px=7.4+r*math.cos(a);py=-12.8+r*.62*math.sin(a)
-        box("Skating marks",icewhite,(px,py,.158),(.19,.014,.008),a+math.pi/2)
+        box("Skating marks",icewhite,(px,py,.198),(.19,.014,.008),a+math.pi/2)
 for i in range(16):
     a=i*math.tau/16
     mound("Snowy pond rocks",snow,7.4+4.85*math.cos(a),-12.8+3.24*math.sin(a),.03,.35,.25,.24,8)
@@ -316,7 +315,7 @@ for i in range(12):
         if i%3==0:box("Bridge posts",timber,(1.9+sign*.69,yy,zz+.32),(.10,.10,.65))
         box("Bridge rails",timber,(1.9+sign*.69,yy,zz+.59),(.09,.23,.10))
 for x,y in [(-7.6,-12.4),(3.2,-16.2),(12.6,-11.5),(-1.9,-15.0)]:
-    lamp(x,y)
+    street_lamp(x,y)
 for x,y in [(-9.0,-14.5),(-1.8,-16.2),(12.7,-14.5)]:
     fence(x,y,2.3)
 for x,y in [(-7,-10.8),(10.9,-9.6)]:
