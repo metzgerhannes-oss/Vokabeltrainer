@@ -1,0 +1,54 @@
+name: Adventskalender 3D-Modell
+on:
+  push:
+    branches: [adventskalender-bender]
+    paths:
+      - '.github/workflows/adventskalender-3d.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install Blender
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libgl1-mesa-dri libegl1 libxkbcommon0 libxi6 libxrender1 libxfixes3 libx11-6 libsm6 xvfb
+          curl -fsSL --retry 3 https://download.blender.org/release/Blender4.5/blender-4.5.0-linux-x64.tar.xz -o /tmp/blender.tar.xz
+          mkdir -p /tmp/blender
+          tar -xJf /tmp/blender.tar.xz --strip-components=1 -C /tmp/blender
+      - name: Generate editable Blender scene and export GLB
+        working-directory: adventskalender
+        run: |
+          xvfb-run -a /tmp/blender/blender -b -t 4 --python-exit-code 1 --python blender/create_village.py -- --scene-only
+          xvfb-run -a /tmp/blender/blender -b -t 4 renders/winterdorf.blend --python-exit-code 1 --python-expr "import bpy; bpy.ops.export_scene.gltf(filepath='renders/winterdorf.glb', export_format='GLB', export_cameras=False, export_lights=False)"
+          python3 - <<'PY'
+          import json,struct,pathlib
+          p=pathlib.Path('renders/winterdorf.glb')
+          raw=p.read_bytes()
+          assert raw[:4]==b'glTF'
+          length=struct.unpack_from('<I',raw,12)[0]
+          model=json.loads(raw[20:20+length])
+          names={n.get('name','') for n in model['nodes']}
+          assert all(f'House_{i:02}_hinge' in names for i in range(1,25))
+          print('Validated',len(names),'nodes;',len(raw),'bytes')
+          PY
+      - name: Publish Blender model to dedicated project branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add adventskalender/renders/winterdorf.glb
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Publish Blender-generated interactive winter village'
+          git pull --rebase origin adventskalender-bender
+          git push origin HEAD:adventskalender-bender
+      - uses: actions/upload-artifact@v4
+        with:
+          name: winterdorf-3d
+          path: |
+            adventskalender/renders/winterdorf.blend
+            adventskalender/renders/winterdorf.glb
+          retention-days: 7
