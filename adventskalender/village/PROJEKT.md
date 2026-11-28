@@ -40,7 +40,10 @@ Designfreigabe 28.11.2026: die original generierte detailreiche viktorianische W
 1. Bilddatei und village.html unter adventskalender/village/ bereitstellen. Lokale vollständige Designvorschau mit Tagesschieber ist getrennt von Produktion.
 2. Worker-Routen /village/ und /village/village.webp hinzufügen; Kalenderbutton dorthin verlinken. Keine Änderung an Datumssperre oder Video-Routen.
 3. Prüfen: Fortschritt 0, 1, 6, 12, 23, 24; zukünftige Hotspots unsichtbar; Bildauflösung, Zoom, Rückkehr, Ton-Stummschaltung; iPhone und Desktop.
-4. Wimmelbild-Effekte sind bewusst kleine 2D-Overlays und Bildausschnittbewegungen, keine komplett neu gezeichneten Charakter-Cutscenes. Weitere individuelle Bewegungen nach visueller Abnahme.
+4. Wimmelbild-Effekte sind eigenständige Partikel, Licht, Schnee, Rauch und Audio. Bewegte Kopien von Ausschnitten der Grundillustration sind ausdrücklich untersagt. Bewegungen von Figuren oder Gegenständen erst dann aktivieren, wenn ein separater sauberer Hintergrund und freigestellte, bewegliche Elemente oder ein eigenständig animierter Film vorliegen. Keine Doppelbilder, keine statische Kopie am Ausgangspunkt. Bis dahin bleiben die betreffenden Motive statisch. Visuelle Abnahme jeder neuen Bewegungsanimation erforderlich.
 5. Veröffentlichung erst nach bestätigtem Bildtransfer und erfolgreichem Browsercheck. Die 24 Kapitelvideos bleiben unabhängig.
 
 Status: Design freigegeben; lokaler klickbarer Prototyp mit Originalgrafik erstellt und Chromium-Mobiltest durchgeführt (0/6/24, Zoom, Hotspots, keine JS-Fehler). Bildtransfer aus der lokalen ChatGPT-Dateiumgebung in GitHub steht aus.
+
+## Qualitätskorrektur 28.11.2026
+Pups-Schlitten: Bildausschnittbewegung entfernt; nur unabhängiger Partikeleffekt und echte Tonaufnahme. Wichtelunterhose, Geschenkestapel, Eis-Rutscher, Enten, Schneemann, Hund und Rentier: alle kopierten Bildausschnittbewegungen entfernt. Hotspots und Zoom bleiben verfügbar; keine vorgetäuschte Figurenbewegung. Diese Regel gilt auch in der Designvorschau.
