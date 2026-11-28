@@ -369,13 +369,13 @@ async function loadVillage(){
     let eventDay=0,eventStart=0;
     // Native Blender clip playback. All character, prop and camera animation is baked into GLB.
     let cinema=null,cinemaToken=0,cinemaRequest=null,manifestPromise=null,cinemaPending=false;
-    let cartoon=null,cartoonManifestPromise=null;const cartoonVideo=document.getElementById('cartoonMovie');const cartoonPreview=new URLSearchParams(location.search).get('cartoon')==='1';
+    let cartoon=null,cartoonManifestPromise=null;const cartoonVideo=document.getElementById('cartoonMovie');const cartoonPreview=new URLSearchParams(location.search).get('cartoon')!=='0';
     // Original cartoon sound design. Sampled pressure/noise synthesis, not a beep.
     let audioCtx=null,audioBus=null,audioEnabled=true,playingFoley=[],soundCache=new Map();
     try{audioEnabled=localStorage.getItem('furzipups-sound')!=='off';}catch{}
     const soundButton=document.getElementById('movieSound');
     function soundLabel(){soundButton.textContent=audioEnabled?'Ton an':'Ton aus';soundButton.setAttribute('aria-pressed',String(audioEnabled));}
-    async function unlockAudio(){if(!audioEnabled)return;try{if(!audioCtx){const AC=window.AudioContext||window.webkitAudioContext;audioCtx=new AC();audioBus=audioCtx.createDynamicsCompressor();audioBus.threshold.value=-17;audioBus.ratio.value=5;audioBus.attack.value=.005;audioBus.release.value=.18;const volume=audioCtx.createGain();volume.gain.value=.68;audioBus.connect(volume);volume.connect(audioCtx.destination);}if(audioCtx.state!=='running')await audioCtx.resume();}catch{}}
+    async function unlockAudio(){if(!audioEnabled)return;try{if(!audioCtx){const AC=window.AudioContext||window.webkitAudioContext;audioCtx=new AC();audioBus=audioCtx.createDynamicsCompressor();audioBus.threshold.value=-9;audioBus.ratio.value=4;audioBus.attack.value=.005;audioBus.release.value=.18;const volume=audioCtx.createGain();volume.gain.value=.82;audioBus.connect(volume);volume.connect(audioCtx.destination);}if(audioCtx.state!=='running')await audioCtx.resume();}catch{}}
     // iOS requires a real tap before audio playback. Unlock on the answer/continue tap.
     document.addEventListener('click',e=>{if(e.target.closest('#answers button,#next,#cinemaReplay,#chapterGo,#days button'))unlockAudio();},true);
     function stopFoley(){for(const o of playingFoley){try{o.stop();}catch{}}playingFoley=[];}
@@ -396,10 +396,10 @@ async function loadVillage(){
         const attack=Math.min(1,t/.023),release=Math.pow(Math.max(0,1-u),.60)*Math.min(1,(dur-t)/.045);
         const amp=attack*release*wobble*(.79+.21*Math.sin(t*13));let x=(pulse*.68+rough*hiss*.76+Math.sin(phase*Math.PI*2)*.16)*amp;
         // Add the audible upper buzz on small phone speakers and remove DC.
-        x=Math.tanh(x*1.7)*.70;dc+=.003*(x-dc);const hp=x-dc;out[i]=Math.max(-.94,Math.min(.94,hp+.18*(hp-prev)));prev=hp;
+        x=Math.tanh(x*1.7)*.70;dc+=.003*(x-dc);const hp=x-dc;out[i]=Math.max(-.94,Math.min(.94,hp+.46*(hp-prev)));prev=hp;
       }soundCache.set(cacheKey,buffer);return buffer;
     }
-    function fart(style,offset=0,vol=.87){if(!audioCtx)return false;return playBuffer(fartBuffer(style),vol,offset);}
+    function fart(style,offset=0,vol=1.65){if(!audioCtx)return false;return playBuffer(fartBuffer(style),vol,offset);}
     function tone(freq,end,dur,offset=0,type='sine',vol=.055){if(!audioEnabled||!audioCtx||audioCtx.state!=='running')return false;const t=audioCtx.currentTime+offset,o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);o.frequency.exponentialRampToValueAtTime(Math.max(30,end),t+dur);g.gain.setValueAtTime(.001,t);g.gain.linearRampToValueAtTime(vol,t+.012);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g);g.connect(audioBus);o.start(t);o.stop(t+dur+.025);playingFoley.push(o);o.onended=()=>{playingFoley=playingFoley.filter(a=>a!==o);o.disconnect();g.disconnect();};return true;}
     function noiseHit(kind,offset=0){if(!audioCtx)return;const defs={knock:[.13,390,.32],clack:[.10,1100,.28],snow:[.24,550,.24],whoosh:[.55,980,.17],firework:[.40,1800,.23],splash:[.30,1300,.21]},[dur,cut,vol]=defs[kind];const key='noise:'+kind;let buf=soundCache.get(key);if(!buf){const sr=audioCtx.sampleRate,N=Math.floor(sr*dur);buf=audioCtx.createBuffer(1,N,sr);const out=buf.getChannelData(0);let v=0,rng=213;for(let i=0;i<N;i++){rng=(Math.imul(rng,1664525)+1013904223)>>>0;v+=Math.min(.6,2*Math.PI*cut/sr)*((rng/2147483648-1)-v);const u=i/N;out[i]=v*Math.min(1,u*36)*Math.pow(1-u,kind==='whoosh'?1.2:3.5);}soundCache.set(key,buf);}playBuffer(buf,vol,offset);}
     function jingle(){[523.25,659.25,783.99,1046.5].forEach((f,i)=>{tone(f,f,.36,i*.105,'sine',.065);tone(f*2,f*2,.16,i*.105,'sine',.015);});}
