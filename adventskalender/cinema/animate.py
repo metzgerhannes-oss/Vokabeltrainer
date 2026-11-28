@@ -327,10 +327,14 @@ def animate(n):
     dest=OUT/f"chapter-{n:02}.glb"
     bpy.ops.export_scene.gltf(filepath=str(dest),export_format="GLB",export_cameras=True,export_lights=True,export_animations=True,export_animation_mode="SCENE",export_frame_range=True,export_force_sampling=True,export_apply=True)
     raw=dest.read_bytes();length=struct.unpack_from("<I",raw,12)[0];doc=json.loads(raw[20:20+length]);assert raw[:4]==b"glTF" and doc.get("animations") and doc.get("cameras"),f"Invalid chapter {n}"
-    assert len(doc["animations"][0]["channels"])>=12 and len(raw)<12*1024*1024
-    print("VALIDATED",n,len(raw),len(doc["animations"][0]["channels"]),flush=True)
+    channels=[c for clip in doc["animations"] for c in clip["channels"]]
+    names={doc["nodes"][c["target"]["node"]].get("name","") for c in channels if "node" in c["target"]}
+    print("EXPORT",n,len(raw),"clips",len(doc["animations"]),"channels",len(channels),"animated nodes",sorted(names),flush=True)
+    assert len(channels)>=12 and len(raw)<12*1024*1024,(n,len(channels),len(raw))
+    assert any("Furzipups_Root" in name for name in names) and any("FilmCamera" in name for name in names),(n,names)
+    print("VALIDATED",n,len(raw),len(channels),flush=True)
     if n==3:bpy.ops.wm.save_as_mainfile(filepath=str(OUT/"chapter-03.blend"))
-    return dict(day=n,file=dest.name,seconds=LENGTHS[n],bytes=len(raw),channels=len(doc["animations"][0]["channels"]))
+    return dict(day=n,file=dest.name,seconds=LENGTHS[n],bytes=len(raw),channels=len(channels))
 manifest=[]
 for n in DAYS:manifest.append(animate(n))
 (OUT/"manifest.json").write_text(json.dumps({"version":"blender-cinema-v1","chapters":manifest},ensure_ascii=False),encoding="utf-8")
