@@ -1,0 +1,60 @@
+name: Adventskalender 2D Cartoon Probe
+on:
+  push:
+    branches: [adventskalender-bender]
+    paths:
+      - '.github/workflows/adventskalender-cartoon.yml'
+      - 'adventskalender/cartoon/draw_klo.py'
+      - 'adventskalender/cartoon/grease_pencil.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: adventskalender-cartoon
+  cancel-in-progress: true
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install free vector and video rendering dependencies
+        run: |
+          python3 -m venv /tmp/cartoon
+          /tmp/cartoon/bin/pip -q install cairosvg svgpathtools
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg libgl1-mesa-dri libegl1 libxkbcommon0 libxi6 libxrender1 libxfixes3 libx11-6 libsm6 xvfb
+      - name: Draw and encode 108 original 2D poses
+        run: /tmp/cartoon/bin/python adventskalender/cartoon/draw_klo.py
+      - name: Install Blender 4.5 LTS
+        run: |
+          curl -fsSL --retry 3 https://download.blender.org/release/Blender4.5/blender-4.5.0-linux-x64.tar.xz -o /tmp/blender.tar.xz
+          mkdir -p /tmp/blender
+          tar -xJf /tmp/blender.tar.xz --strip-components=1 -C /tmp/blender
+      - name: Create and validate native Grease Pencil animation
+        run: xvfb-run -a /tmp/blender/blender -b -t 4 --python-exit-code 1 --python adventskalender/cartoon/grease_pencil.py
+      - name: Validate playable sample
+        run: |
+          ffprobe -v error -show_entries stream=codec_name,width,height,r_frame_rate -show_entries format=duration -of json adventskalender/renders/cartoon/chapter-03.mp4
+          test -s adventskalender/renders/cartoon/chapter-03.blend
+          python3 - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('adventskalender/renders/cartoon')
+          m=json.loads((p/'manifest.json').read_text())
+          assert m['chapters'][0]['bytes']==(p/'chapter-03.mp4').stat().st_size
+          PY
+      - name: Publish preview only
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add adventskalender/renders/cartoon/chapter-03.mp4 adventskalender/renders/cartoon/chapter-03-style.svg adventskalender/renders/cartoon/manifest.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Publish 2D cartoon quality sample for chapter 3'
+          git pull --rebase origin adventskalender-bender
+          git push origin HEAD:adventskalender-bender
+      - uses: actions/upload-artifact@v4
+        with:
+          name: editable-2d-grease-pencil
+          path: adventskalender/renders/cartoon/chapter-03.blend
+          if-no-files-found: error
+          retention-days: 7
