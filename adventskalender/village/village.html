@@ -68,7 +68,7 @@ async function startSled(){
  const t=++sledToken;cancelAnimationFrame(sledRaf);stopSledAudio();sledPlayed=false;delete sledFilm.dataset.sound;
  unlockSled();sledReplay.disabled=true;sledStatus.textContent='Der Schlitten holt Schwung …';
  try{
-  if(!sledFilm.getAttribute('src')){sledFilm.src="/village/pups-schlitten.mp4";sledFilm.load()}else sledFilm.currentTime=0;
+  if(!sledFilm.getAttribute('src')){sledFilm.src="/village/pups-schlitten-v2.mp4";sledFilm.load()}else sledFilm.currentTime=0;
   await sledFilm.play();if(t!==sledToken)return;sledStatus.textContent='';sledRaf=requestAnimationFrame(()=>tickSled(t));
  }catch{if(t!==sledToken)return;sledStatus.textContent='Zum Abspielen auf den Film tippen.';sledReplay.disabled=false}
 }
