@@ -43,7 +43,100 @@ function render(){const a=allowed();$('demo').hidden=true;$('date').textContent=
 const next=Array.from({length:a},(_,i)=>i+1).filter(n=>!done.has(n)&&!blocked(n)).reverse()[0];const chapter=next||Math.min(Math.max(a,1),24);$('chapterLabel').textContent=done.size===24?'MISSION GESCHAFFT':next?'KAPITEL '+next+' VON 24':'DEINE WEIHNACHTSMISSION';$('chapterTitle').textContent=done.size===24?'Der Weihnachts-Pups ist geglückt!':chapters[chapter-1][0];$('chapterText').textContent=done.size===24?'Das Finale kannst du jederzeit noch einmal ansehen.':next?(next<=6?'Kapitel 1–6 · Die Suche beginnt':next<=12?'Kapitel 7–12 · Die Werkstatt erwacht':next<=18?'Kapitel 13–18 · Die verrückte Testfahrt':'Kapitel 19–24 · Der Countdown läuft'):a===0?'Das erste Abenteuer beginnt am 1. Dezember.':'Heute ist alles geschafft. Morgen geht die Geschichte weiter.';$('chapterGo').disabled=!next&&done.size!==24;$('chapterGo').textContent=done.size===24?'Finale ansehen':'Kapitel öffnen';$('chapterGo').onclick=()=>select(next||24);}
 function openDoor(n){if(!Number.isInteger(n)||n<1||n>24)return;const p=chapters[n-1],locked=blocked(n),solved=done.has(n);replayDay=0;$('day').textContent=n+'. DEZEMBER · KAPITEL '+n;$('title').textContent=locked?'Dieses Kapitel schläft noch':p[0];$('intro').hidden=locked;$('intro').textContent=locked?'':p[1];$('question').textContent=locked?(n>allowed()?'Komm am '+n+'. Dezember wieder.':'Löse zuerst Kapitel '+Array.from({length:n-1},(_,i)=>i+1).find(i=>!done.has(i))+'. Die Geschichte geht der Reihe nach weiter.'):solved?'Du hast dieses Abenteuer schon geschafft.':p[2];$('answers').replaceChildren();$('hint').hidden=locked||solved;$('next').hidden=!locked&&!solved;$('next').textContent=locked?'Zurück zum Dorf':solved?'Überraschung noch einmal ansehen':'Überraschung ansehen!';$('feedback').textContent=solved&&!locked?p[6]:'';$('reward').hidden=true;$('hint').onclick=()=>{$('feedback').textContent=p[5]};if(solved&&!locked)replayDay=n;if(!locked&&!solved)p[3].split('|').forEach((a,i)=>{const b=document.createElement('button');b.textContent=a;b.onclick=()=>{if(done.has(n)||blocked(n))return;if(i!==p[4]){b.classList.add('wrong');$('feedback').textContent='Hoppla, daneben! Versuch es noch einmal oder hole dir einen Tipp.';return}pendingDoor=n;done.add(n);let saved=true;try{localStorage.setItem(key,JSON.stringify([...done]))}catch{saved=false}for(const e of $('answers').children)e.disabled=true;b.classList.add('correct');$('hint').hidden=true;$('feedback').textContent='Richtig! '+(n===24?'Zeit für das große Finale.':'Genau! '+p[3].split('|')[p[4]]+'. Sieh dir jetzt an, was passiert!')+(saved?'':' Der Spielstand konnte nicht gespeichert werden.');$('next').hidden=false;render();};$('answers').append(b)});$('modal').showModal()}
 let confettiTimer=0;function celebrate(){const c=document.querySelector('.confetti');clearTimeout(confettiTimer);c.replaceChildren();for(let i=0;i<32;i++){const e=document.createElement('i');e.style.left=Math.random()*100+'%';e.style.background=['#ffe095','#62dcc3','#ef829e','#8dcfff'][i%4];e.style.animationDelay=Math.random()*.4+'s';c.append(e)}confettiTimer=setTimeout(()=>c.replaceChildren(),2600)}
-$('close').onclick=$('next').onclick=()=>$('modal').close();$('modal').addEventListener('close',()=>{const opened=pendingDoor||replayDay;pendingDoor=0;replayDay=0;selection++;render();if(opened&&!blocked(opened)&&done.has(opened)){$('cinemaStatus').textContent='';$('cinemaReplay').hidden=true;const p=chapters[opened-1];$('eventTitle').textContent=p[0];$('eventText').textContent=p[10][0];$('eventBanner').hidden=false;$('scene').scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'start'});window.dispatchEvent(new CustomEvent('village-event',{detail:opened}));if(opened===24){$('eventTitle').textContent='Operation Weihnachts-Pups';}if(!$('scene').classList.contains('is3d')){$('eventTitle').textContent=opened===24?'WEIHNACHTEN GERETTET!':'Sternensplitter '+opened+' gefunden!';$('eventText').textContent=p[6];celebrate();}}else camera([0,0,960,700])});document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshCalendar()});setInterval(()=>{if(!$('modal').open)refreshCalendar()},60000);render();refreshCalendar();
+$('close').onclick=()=>{replayDay=0;$('modal').close()};$('next').onclick=()=>$('modal').close();$('modal').addEventListener('close',()=>{const opened=pendingDoor||replayDay;pendingDoor=0;replayDay=0;selection++;render();if(opened&&!blocked(opened)&&done.has(opened)){$('cinemaStatus').textContent='';$('cinemaReplay').hidden=true;const p=chapters[opened-1];$('eventTitle').textContent=p[0];$('eventText').textContent=p[10][0];$('eventBanner').hidden=false;$('scene').scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'start'});window.dispatchEvent(new CustomEvent('village-event',{detail:opened}));if(opened===24){$('eventTitle').textContent='Operation Weihnachts-Pups';}}else camera([0,0,960,700])});document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshCalendar()});setInterval(()=>{if(!$('modal').open)refreshCalendar()},60000);render();refreshCalendar();
+</script><script>
+(() => {
+'use strict';
+const canvas=$('cartoonMovie'),cartoonVideo=canvas,loader=$('cinemaLoader'),status=$('cinemaStatus'),replay=$('cinemaReplay');
+let cartoon=null,token=0,raf=0;
+let audioCtx=null,audioBus=null,audioEnabled=true,playingFoley=[],soundCache=new Map();
+    try{audioEnabled=localStorage.getItem('furzipups-sound')!=='off';}catch{}
+    const soundButton=document.getElementById('movieSound');
+    function soundLabel(){soundButton.textContent=audioEnabled?'Ton an':'Ton aus';soundButton.setAttribute('aria-pressed',String(audioEnabled));}
+    async function unlockAudio(){if(!audioEnabled)return;try{if(!audioCtx){const AC=window.AudioContext||window.webkitAudioContext;audioCtx=new AC();audioBus=audioCtx.createDynamicsCompressor();audioBus.threshold.value=-9;audioBus.ratio.value=4;audioBus.attack.value=.005;audioBus.release.value=.18;const volume=audioCtx.createGain();volume.gain.value=.82;audioBus.connect(volume);volume.connect(audioCtx.destination);}if(audioCtx.state!=='running')await audioCtx.resume();loadRealFart();}catch{}}
+    // iOS requires a real tap before audio playback. Unlock on the answer/continue tap.
+    document.addEventListener('click',e=>{if(e.target.closest('#answers button,#next,#cinemaReplay,#chapterGo,#days button'))unlockAudio();},true);
+    function stopFoley(){for(const o of playingFoley){try{o.stop();}catch{}}playingFoley=[];}
+    soundButton.onclick=async()=>{audioEnabled=!audioEnabled;try{localStorage.setItem('furzipups-sound',audioEnabled?'on':'off');}catch{}if(audioEnabled)await unlockAudio();else stopFoley();soundLabel();if(cartoon)cartoonVideo.muted=!audioEnabled||cartoon.entry.audio==='app';};
+    soundLabel();
+    function playBuffer(buf,vol=.8,offset=0){if(!audioEnabled||!audioCtx||audioCtx.state!=='running')return false;const src=audioCtx.createBufferSource(),gain=audioCtx.createGain();src.buffer=buf;gain.gain.value=vol;src.connect(gain);gain.connect(audioBus);playingFoley.push(src);src.onended=()=>{playingFoley=playingFoley.filter(a=>a!==src);src.disconnect();gain.disconnect();};src.start(audioCtx.currentTime+offset);return true;}
+    // Authentic recorded flatulence, not a synthesized oscillator. Source credits in footer.
+    let realFart=null,realFartLoading=null;
+    const recordedFartBytes=fetch('/renders/audio/fart.mp3',{cache:'force-cache'}).then(r=>{if(!r.ok)throw Error('Recording unavailable');return r.arrayBuffer();}).catch(()=>null);
+    const fartStyles={bean:[.91,1,0],klo:[1.12,1,0],sock:[1.65,.74,0],bubble:[1.85,.66,0],belch:[.78,.82,0],rocket:[.90,1,.32],turbo:[.82,1,.65],tiny:[2.05,.50,0],nervous:[1.38,.80,0],final:[.74,1,.86]};
+    function loadRealFart(){if(!audioCtx)return;if(!realFartLoading)realFartLoading=recordedFartBytes.then(bytes=>{if(!bytes)throw Error('No recording');return audioCtx.decodeAudioData(bytes.slice(0));}).then(buf=>{let peak=0;for(let i=0;i<buf.numberOfChannels;i++)for(const s of buf.getChannelData(i))peak=Math.max(peak,Math.abs(s));const norm=Math.min(5,.84/Math.max(.02,peak));for(let i=0;i<buf.numberOfChannels;i++){const channel=buf.getChannelData(i);for(let j=0;j<channel.length;j++)channel[j]*=norm;}realFart=buf;canvas.dataset.realFartReady='true';return buf;}).catch(()=>{canvas.dataset.realFartReady='false';return null;});return realFartLoading;}
+    function fart(style,offset=0,vol=1.38){if(!audioEnabled||!audioCtx||audioCtx.state!=='running'||!realFart)return false;const [rate,fraction,repeat]=fartStyles[style];const duration=realFart.duration*fraction;function part(delay,playback,level){const src=audioCtx.createBufferSource(),gain=audioCtx.createGain();src.buffer=realFart;src.playbackRate.value=playback;const start=audioCtx.currentTime+offset+delay;gain.gain.setValueAtTime(level,start);gain.gain.setValueAtTime(level,Math.max(start,start+duration/playback-.035));gain.gain.linearRampToValueAtTime(0,start+duration/playback);src.connect(gain);gain.connect(audioBus);playingFoley.push(src);src.onended=()=>{playingFoley=playingFoley.filter(x=>x!==src);src.disconnect();gain.disconnect();};src.start(start,0,duration);}part(0,rate,vol);if(repeat)part(repeat,rate*.91,vol*.75);canvas.dataset.fartSource='recording';return true;}
+    function tone(freq,end,dur,offset=0,type='sine',vol=.055){if(!audioEnabled||!audioCtx||audioCtx.state!=='running')return false;const t=audioCtx.currentTime+offset,o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);o.frequency.exponentialRampToValueAtTime(Math.max(30,end),t+dur);g.gain.setValueAtTime(.001,t);g.gain.linearRampToValueAtTime(vol,t+.012);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g);g.connect(audioBus);o.start(t);o.stop(t+dur+.025);playingFoley.push(o);o.onended=()=>{playingFoley=playingFoley.filter(a=>a!==o);o.disconnect();g.disconnect();};return true;}
+    function noiseHit(kind,offset=0){if(!audioCtx)return;const defs={knock:[.13,390,.32],clack:[.10,1100,.28],snow:[.24,550,.24],whoosh:[.55,980,.17],firework:[.40,1800,.23],splash:[.30,1300,.21],bubble:[.19,420,.13]},[dur,cut,vol]=defs[kind];const key='noise:'+kind;let buf=soundCache.get(key);if(!buf){const sr=audioCtx.sampleRate,N=Math.floor(sr*dur);buf=audioCtx.createBuffer(1,N,sr);const out=buf.getChannelData(0);let v=0,rng=213;for(let i=0;i<N;i++){rng=(Math.imul(rng,1664525)+1013904223)>>>0;v+=Math.min(.6,2*Math.PI*cut/sr)*((rng/2147483648-1)-v);const u=i/N;out[i]=v*Math.min(1,u*36)*Math.pow(1-u,kind==='whoosh'?1.2:3.5);}soundCache.set(key,buf);}playBuffer(buf,vol,offset);}
+    function jingle(){[523.25,659.25,783.99,1046.5].forEach((f,i)=>{tone(f,f,.36,i*.105,'sine',.065);tone(f*2,f*2,.16,i*.105,'sine',.015);});}
+    function ding(){tone(1100,1070,.35,0,'sine',.085);tone(1700,1670,.21,.015,'sine',.028);}
+    // Cue times match the actual Blender keyframes (normalized by clip duration).
+    const soundCues=[
+      [[.54,'bean'],[.70,'snow']],[[.48,'whoosh'],[.72,'snow']],[[.33,'knock'],[.44,'knock'],[.53,'clack'],[.56,'klo'],[.70,'snow']],
+      [[.46,'whoosh'],[.56,'sock'],[.72,'snow']],[[.50,'ding']],[[.49,'whoosh'],[.66,'snow']],[[.45,'tiny']],[[.47,'bubble'],[.57,'bubble'],[.67,'splash']],
+      [[.44,'clack'],[.55,'belch']],[[.42,'ding'],[.58,'ding']],[[.47,'whoosh'],[.60,'clack']],[[.54,'clack'],[.62,'clack'],[.70,'snow']],
+      [[.48,'tiny'],[.53,'rocket'],[.65,'whoosh']],[[.48,'whoosh'],[.70,'clack']],[[.43,'whoosh'],[.60,'whoosh']],[[.50,'nervous'],[.70,'snow']],
+      [[.47,'turbo'],[.73,'snow']],[[.49,'clack'],[.57,'tiny'],[.70,'snow']],[[.58,'splash']],[[.43,'clack'],[.49,'clack'],[.56,'knock']],
+      [[.45,'ding'],[.55,'ding'],[.65,'ding']],[[.46,'tiny'],[.65,'whoosh']],[[.53,'whoosh'],[.66,'nervous'],[.73,'clack']],
+      [[.24,'clack'],[.30,'nervous'],[.42,'final'],[.57,'whoosh'],[.72,'firework'],[.77,'firework'],[.82,'firework']]
+    ];
+    function cue(name){if(!audioEnabled||!audioCtx||audioCtx.state!=='running')return false;if(fartStyles[name])return fart(name);if(name==='ding'){ding();return true;}if(name==='reward'){jingle();return true;}noiseHit(name);return true;}
+    function filmSounds(c,u,reduce){const list=c.entry&&c.n===3?[[.29,'knock'],[.41,'knock'],[.475,'clack'],[.48,'klo'],[.55,'snow'],[.77,'reward']]:[...soundCues[c.n-1],[.86,'reward']];if(!c.playedCues)c.playedCues=new Set();for(let i=0;i<list.length;i++){const [at,name]=list[i];if(u>=at&&!c.playedCues.has(i)){if(u-at>=.12){c.playedCues.add(i);continue;}if(cue(name)){c.playedCues.add(i);canvas.dataset.lastSound=name;canvas.dataset.soundCount=String(Number(canvas.dataset.soundCount||0)+1);}}}}
+    function foley(day,phase){if(phase==='village'&&audioEnabled){jingle();noiseHit('firework',.55);noiseHit('firework',1.15);noiseHit('firework',1.95);}}
+    function movieCaption(day,caption,progress){const el=document.getElementById('movieCaption');el.hidden=false;document.getElementById('movieChapter').textContent=day===24?'FINALE · HEILIGABEND':'FURZIPUPS · KAPITEL '+day;document.getElementById('movieLine').textContent=caption;document.getElementById('movieProgress').style.width=Math.round(100*Math.max(0,Math.min(1,progress)))+'%';}
+
+    
+function reset(){
+  token++;cancelAnimationFrame(raf);stopFoley();cartoon=null;
+  cartoonVideo.onloadedmetadata=null;cartoonVideo.onerror=null;cartoonVideo.onended=null;cartoonVideo.onpause=null;cartoonVideo.onclick=null;
+  cartoonVideo.pause();cartoonVideo.removeAttribute('src');cartoonVideo.load();cartoonVideo.hidden=true;
+  $('movieCaption').hidden=true;soundButton.hidden=true;loader.hidden=true;replay.hidden=true;
+  canvas.dataset.sceneMode='village';canvas.dataset.eventComplete='false';
+}
+function fail(n,t){
+  if(t!==token)return;
+  reset();canvas.dataset.animationSource='unavailable';
+  $('eventTitle').textContent=chapters[n-1][0];$('eventText').textContent=chapters[n-1][6];
+  status.textContent='Film konnte nicht geladen werden. Dein Sternensplitter ist gespeichert.';
+  replay.textContent='Film erneut laden';replay.hidden=false;
+  replay.onclick=()=>{unlockAudio();start(n)};
+}
+function frame(t){
+  if(t!==token||!cartoon)return;
+  const c=cartoon,u=Math.min(1,cartoonVideo.currentTime/(cartoonVideo.duration||1));
+  const caption=chapters[c.n-1][10][c.n===3?(u<.28?0:u<.48?1:u<.77?2:3):(u<.4?0:u<.61?1:u<.82?2:3)];
+  movieCaption(c.n,caption,u);$('eventText').textContent=caption;canvas.dataset.eventPhase=u<.18?'reveal':u<.4?'setup':u<.61?'action':u<.82?'effect':'reward';
+  if(!cartoonVideo.paused&&!c.complete)filmSounds(c,u,false);
+  if(!c.complete)raf=requestAnimationFrame(()=>frame(t));
+}
+async function start(n){
+  if(blocked(n)||!done.has(n))return;
+  reset();const t=token;
+  canvas.dataset.soundCount='0';canvas.dataset.lastSound='';canvas.dataset.eventDay=String(n);canvas.dataset.eventComplete='false';
+  loader.hidden=false;status.textContent='';$('eventContinue').disabled=false;
+  try{
+    const res=await fetch('/renders/cartoon/manifest.json',{cache:'no-store'});
+    if(!res.ok)throw Error('Manifest unavailable');
+    const m=await res.json(),entry=m?.chapters?.find(c=>c.day===n&&c.approved===true);
+    if(t!==token||blocked(n)||!done.has(n))return;
+    if(m.version!=='cartoon-v1'||!entry||entry.file!=='chapter-'+String(n).padStart(2,'0')+'.mp4'||!['app','embedded'].includes(entry.audio))throw Error('Film unavailable');
+    cartoon={entry,n,playedCues:new Set(),complete:false};cartoonVideo.muted=entry.audio==='app'||!audioEnabled;
+    const ready=new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('Video load timeout')),12000);cartoonVideo.onloadedmetadata=()=>{clearTimeout(timer);resolve()};cartoonVideo.onerror=()=>{clearTimeout(timer);reject(Error('Video unavailable'))}});
+    cartoonVideo.preload='auto';cartoonVideo.src='/renders/cartoon/'+entry.file;cartoonVideo.load();
+    await ready;if(t!==token)return;
+    if(!Number.isFinite(cartoonVideo.duration)||Math.abs(cartoonVideo.duration-entry.seconds)>.5)throw Error('Invalid duration');
+    cartoonVideo.hidden=false;loader.hidden=true;soundButton.hidden=false;status.textContent='2D-Cartoon';canvas.dataset.sceneMode='cartoon';canvas.dataset.animationSource='Cartoon';
+    cartoonVideo.onerror=()=>fail(n,t);
+    cartoonVideo.onpause=()=>stopFoley();
+    cartoonVideo.onended=()=>{if(t!==token||!cartoon)return;cartoon.complete=true;frame(t);canvas.dataset.eventComplete='true';$('eventTitle').textContent=n===24?'WEIHNACHTEN GERETTET!':'Sternensplitter '+n+' gefunden!';replay.textContent='Nochmal ansehen';replay.hidden=false;};
+    cartoonVideo.onclick=()=>{unlockAudio();if(cartoonVideo.paused&&!cartoon.complete)cartoonVideo.play().catch(()=>{});else if(!cartoonVideo.paused)cartoonVideo.pause()};
+    replay.onclick=()=>{if(t!==token||!cartoon)return;unlockAudio();stopFoley();cartoon.playedCues=new Set();cartoon.complete=false;cartoonVideo.currentTime=0;canvas.dataset.eventComplete='false';canvas.dataset.soundCount='0';replay.hidden=true;cancelAnimationFrame(raf);frame(t);cartoonVideo.play().catch(()=>{status.textContent='Zum Abspielen auf den Film tippen.'})};
+    frame(t);try{await cartoonVideo.play()}catch{if(t===token)status.textContent='Zum Abspielen auf den Film tippen.'}
+  }catch(e){fail(n,t)}
+}
+window.addEventListener('village-event',e=>{if(e.detail)start(e.detail);else reset()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){cartoonVideo.pause();stopFoley()}});
+})();
 </script><script type="module">
 const container=document.getElementById('scene');
 async function loadVillage(){
@@ -372,20 +465,19 @@ async function loadVillage(){
     let cinema=null,cinemaToken=0,cinemaRequest=null,manifestPromise=null,cinemaPending=false;
     let cartoon=null,cartoonManifestPromise=null;const cartoonVideo=document.getElementById('cartoonMovie');const cartoonPreview=true;
     // Original cartoon sound design. Sampled pressure/noise synthesis, not a beep.
-    let audioCtx=null,audioBus=null,audioEnabled=true,playingFoley=[],soundCache=new Map();
-    try{audioEnabled=localStorage.getItem('furzipups-sound')!=='off';}catch{}
+    let audioCtx=null,audioBus=null,audioEnabled=false,playingFoley=[],soundCache=new Map();
+    
     const soundButton=document.getElementById('movieSound');
     function soundLabel(){soundButton.textContent=audioEnabled?'Ton an':'Ton aus';soundButton.setAttribute('aria-pressed',String(audioEnabled));}
     async function unlockAudio(){if(!audioEnabled)return;try{if(!audioCtx){const AC=window.AudioContext||window.webkitAudioContext;audioCtx=new AC();audioBus=audioCtx.createDynamicsCompressor();audioBus.threshold.value=-9;audioBus.ratio.value=4;audioBus.attack.value=.005;audioBus.release.value=.18;const volume=audioCtx.createGain();volume.gain.value=.82;audioBus.connect(volume);volume.connect(audioCtx.destination);}if(audioCtx.state!=='running')await audioCtx.resume();loadRealFart();}catch{}}
     // iOS requires a real tap before audio playback. Unlock on the answer/continue tap.
-    document.addEventListener('click',e=>{if(e.target.closest('#answers button,#next,#cinemaReplay,#chapterGo,#days button'))unlockAudio();},true);
+    
     function stopFoley(){for(const o of playingFoley){try{o.stop();}catch{}}playingFoley=[];}
-    soundButton.onclick=async()=>{audioEnabled=!audioEnabled;try{localStorage.setItem('furzipups-sound',audioEnabled?'on':'off');}catch{}if(audioEnabled)await unlockAudio();else stopFoley();soundLabel();if(cartoon)cartoonVideo.muted=!audioEnabled||cartoon.entry.audio==='app';};
-    soundLabel();
+    
     function playBuffer(buf,vol=.8,offset=0){if(!audioEnabled||!audioCtx||audioCtx.state!=='running')return false;const src=audioCtx.createBufferSource(),gain=audioCtx.createGain();src.buffer=buf;gain.gain.value=vol;src.connect(gain);gain.connect(audioBus);playingFoley.push(src);src.onended=()=>{playingFoley=playingFoley.filter(a=>a!==src);src.disconnect();gain.disconnect();};src.start(audioCtx.currentTime+offset);return true;}
     // Authentic recorded flatulence, not a synthesized oscillator. Source credits in footer.
     let realFart=null,realFartLoading=null;
-    const recordedFartBytes=fetch('/renders/audio/fart.mp3',{cache:'force-cache'}).then(r=>{if(!r.ok)throw Error('Recording unavailable');return r.arrayBuffer();}).catch(()=>null);
+    const recordedFartBytes=Promise.resolve(null);
     const fartStyles={bean:[.91,1,0],klo:[1.12,1,0],sock:[1.65,.74,0],bubble:[1.85,.66,0],belch:[.78,.82,0],rocket:[.90,1,.32],turbo:[.82,1,.65],tiny:[2.05,.50,0],nervous:[1.38,.80,0],final:[.74,1,.86]};
     function loadRealFart(){if(!audioCtx)return;if(!realFartLoading)realFartLoading=recordedFartBytes.then(bytes=>{if(!bytes)throw Error('No recording');return audioCtx.decodeAudioData(bytes.slice(0));}).then(buf=>{let peak=0;for(let i=0;i<buf.numberOfChannels;i++)for(const s of buf.getChannelData(i))peak=Math.max(peak,Math.abs(s));const norm=Math.min(5,.84/Math.max(.02,peak));for(let i=0;i<buf.numberOfChannels;i++){const channel=buf.getChannelData(i);for(let j=0;j<channel.length;j++)channel[j]*=norm;}realFart=buf;canvas.dataset.realFartReady='true';return buf;}).catch(()=>{canvas.dataset.realFartReady='false';return null;});return realFartLoading;}
     function fart(style,offset=0,vol=1.38){if(!audioEnabled||!audioCtx||audioCtx.state!=='running'||!realFart)return false;const [rate,fraction,repeat]=fartStyles[style];const duration=realFart.duration*fraction;function part(delay,playback,level){const src=audioCtx.createBufferSource(),gain=audioCtx.createGain();src.buffer=realFart;src.playbackRate.value=playback;const start=audioCtx.currentTime+offset+delay;gain.gain.setValueAtTime(level,start);gain.gain.setValueAtTime(level,Math.max(start,start+duration/playback-.035));gain.gain.linearRampToValueAtTime(0,start+duration/playback);src.connect(gain);gain.connect(audioBus);playingFoley.push(src);src.onended=()=>{playingFoley=playingFoley.filter(x=>x!==src);src.disconnect();gain.disconnect();};src.start(start,0,duration);}part(0,rate,vol);if(repeat)part(repeat,rate*.91,vol*.75);canvas.dataset.fartSource='recording';return true;}
@@ -470,10 +562,10 @@ async function loadVillage(){
       renderer.shadowMap.needsUpdate=true;renderer.render(c.scene,c.camera);
     }
     function villageFinale(c,reduce){const sec=Math.min(6,c.elapsed-c.duration);if(!c.villageStarted){c.villageStarted=true;activeScene='finale-village';canvas.dataset.sceneMode='finale-village';destination.copy(home);focus.set(0,3,-3);camera.position.copy(home);target.copy(focus);camera.lookAt(target);foley(24,'village');}const count=reduce?24:Math.min(24,Math.floor(sec*8));for(const [n,materials] of windows)for(const mat of materials){mat.emissive.setHex(n<=count?0xffba54:0x000000);mat.emissiveIntensity=n<=count?2.1:0;}burst.visible=!reduce&&sec<5.4;finaleStars.visible=sec>=2.4;for(let i=0;i<24;i++){const a=i*Math.PI*2/24,rad=4.7+(i%2)*1.2;finaleStars.children[i].position.set(-4.4+Math.cos(a)*rad,5.2+(i%4)*.45,12.2+Math.sin(a)*rad);finaleStars.children[i].rotation.y=a;}if(burst.visible){for(let i=0;i<burstCount;i++){const b=i%5,a=i*2.39996,p=(sec*.55+b*.19)%1,r=p*4;burstArray[i*3]=Math.sin(b*2.1)*12+Math.cos(a)*r;burstArray[i*3+1]=9+(b%2)*3+Math.sin(a)*r-p*p*2;burstArray[i*3+2]=-8+b*3+Math.sin(i*1.1)*r*.5;}burstGeo.attributes.position.needsUpdate=true;}const caption=sec<3?'Ein Licht nach dem anderen geht an!':'Frohe Weihnachten! Das war bestimmt das Rentier.';movieCaption(24,caption,c.elapsed/(c.duration+6));document.getElementById('eventText').textContent=caption;canvas.dataset.eventPhase=sec>=6?'reward':'village';canvas.dataset.eventComplete=String(sec>=6);canvas.dataset.activeAnimations=sec>=6?'0':'1';if(sec>=6){document.getElementById('eventTitle').textContent='WEIHNACHTEN GERETTET!';document.getElementById('cinemaReplay').hidden=false;document.getElementById('eventContinue').disabled=false;}renderer.render(scene,camera);}
-    document.getElementById('cinemaReplay').onclick=()=>{if(cartoon){stopFoley();cartoon.playedCues=new Set();cartoon.complete=false;cartoonVideo.currentTime=0;cartoonVideo.play().catch(()=>{});document.getElementById('cinemaReplay').hidden=true;canvas.dataset.eventComplete='false';return;}if(cinema){stopFoley();cinema.elapsed=0;cinema.last=null;cinema.lastCue='';cinema.playedCues=new Set();cinema.villageStarted=false;activeScene='cinema';canvas.dataset.sceneMode='cinema';burst.visible=false;finaleStars.visible=false;state(solved);for(const action of cinema.actions)action.reset().play();cinema.mixer.setTime(0);document.getElementById('cinemaReplay').hidden=true;canvas.dataset.eventComplete='false';}};
+    
 
     function playEvent(n){if(n&&(blocked(n)||!done.has(n)))return;cancelCinema();canvas.dataset.soundCount='0';canvas.dataset.lastSound='';eventDay=n;eventStart=performance.now();canvas.dataset.animationSource='fallback';canvas.dataset.eventDay=String(n);canvas.dataset.eventComplete='false';canvas.dataset.eventPhase='idle';lastPhase='';resetStage();activeScene=n&&n!==24?'reward':'village';canvas.dataset.sceneMode=activeScene;if(n===24){destination.copy(home);focus.set(0,3,-3);}if(!n){puffs.visible=false;burst.visible=false;finaleSleigh.visible=false;finaleStars.visible=false;canvas.dataset.activeAnimations='0';canvas.dataset.stageVisibleProps='0';}else loadCinema(n);}
-    window.addEventListener('village-event',e=>playEvent(e.detail));
+    // Cartoon playback is independent of WebGL. The 3D scene remains an idle map.
     function updateStory(t,days,reduce){
       const sec=Math.max(0,(t-eventStart)/1000);canvas.dataset.visibleProps=String(days.length);canvas.dataset.machineParts=String(days.length);
       for(const [n,p] of storyProps){p.obj.visible=days.includes(n);p.obj.position.copy(p.base);p.obj.scale.setScalar(.68);p.obj.rotation.set(0,0,0);}
@@ -507,7 +599,7 @@ async function loadVillage(){
     const smokeCount=chimneys.length*4, smokePositions=new Float32Array(smokeCount*3),smokeGeo=new THREE.BufferGeometry();smokeGeo.setAttribute('position',new THREE.BufferAttribute(smokePositions,3));const smokeTex=document.createElement('canvas');smokeTex.width=smokeTex.height=32;const ctx=smokeTex.getContext('2d');const grad=ctx.createRadialGradient(16,16,0,16,16,16);grad.addColorStop(0,'rgba(255,255,255,.65)');grad.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=grad;ctx.fillRect(0,0,32,32);const smoke=new THREE.Points(smokeGeo,new THREE.PointsMaterial({color:0xd8dce3,map:new THREE.CanvasTexture(smokeTex),size:.42,transparent:true,opacity:.32,depthWrite:false}));scene.add(smoke);
     container.classList.add('is3d');const preferReduced=matchMedia('(prefers-reduced-motion: reduce)');
     let last=0;renderer.setAnimationLoop(t=>{if(document.hidden)return;const dt=Math.min(.05,((t-last)||16)/1000);last=t;const f=preferReduced.matches?1:1-Math.exp(-dt*5);camera.position.lerp(destination,f);target.lerp(focus,f);camera.lookAt(target);for(const h of hinges.values()){h.angle+=(h.goal-h.angle)*f;h.obj.quaternion.copy(h.base).multiply(quat.setFromAxisAngle(axis,h.angle));}snow.visible=!preferReduced.matches;if(snow.visible){for(let i=0;i<300;i++){snowPositions[i*3+1]-=dt*.65;snowPositions[i*3]+=.09*dt;if(snowPositions[i*3+1]<0)snowPositions[i*3+1]=19;if(snowPositions[i*3]>26)snowPositions[i*3]=-26;}snowGeo.attributes.position.needsUpdate=true;}smoke.visible=!preferReduced.matches;if(smoke.visible){for(let i=0;i<smokeCount;i++){const p=chimneys[Math.floor(i/4)],a=((t*.00024+(i%4)*.25)%1);smokePositions[i*3]=p.x+a*.7;smokePositions[i*3+1]=p.y+.09+a*1.55;smokePositions[i*3+2]=p.z+Math.sin(a*4+i)*.15;}smokeGeo.attributes.position.needsUpdate=true;for(let i=0;i<festive.length;i++)festive[i].emissiveIntensity=1.35+.30*Math.sin(t*.002+i*.7);}updateStory(t,solved,preferReduced.matches);ambientFrame(t,activeScene==='village'&&!eventDay&&!preferReduced.matches);if(cartoon){cartoonFrame(preferReduced.matches);}else if(cinema){cinemaFrame(t,preferReduced.matches);}else if(activeScene==='reward'){renderer.render(stageScene,stageCamera);}else{renderer.render(scene,camera);}});
-    canvas.addEventListener('webglcontextlost',()=>{cancelCinema();renderer.setAnimationLoop(null);observer.disconnect();container.classList.remove('is3d');canvas.remove();});
+    canvas.addEventListener('webglcontextlost',()=>{renderer.setAnimationLoop(null);observer.disconnect();container.classList.remove('is3d');canvas.remove();});
   }catch(e){if(renderer)renderer.dispose();container.classList.remove('is3d');console.warn('3D-Dorf nicht verfügbar; animierte Dorfansicht bleibt aktiv.',e);}
 }
 loadVillage();
