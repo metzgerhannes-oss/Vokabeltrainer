@@ -372,7 +372,7 @@ async function loadVillage(){
     function manifest(){if(!manifestPromise)manifestPromise=fetch('renders/cinema/manifest.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(m=>m?.version==='blender-cinema-v1'&&m.chapters?.length===24?m:null).catch(()=>null);return manifestPromise;}
     manifest();
     function disposeMovie(m){if(!m)return;m.mixer.stopAllAction();m.mixer.uncacheRoot(m.root);const geos=new Set(),mats2=new Set(),textures=new Set();m.root.traverse(o=>{if(o.geometry)geos.add(o.geometry);for(const mat of Array.isArray(o.material)?o.material:o.material?[o.material]:[]){mats2.add(mat);for(const v of Object.values(mat))if(v?.isTexture)textures.add(v);}});for(const x of geos)x.dispose();for(const x of mats2)x.dispose();for(const x of textures)x.dispose();}
-    function cancelCinema(){cinemaToken++;cinemaRequest?.abort();cinemaRequest=null;cinemaPending=false;disposeMovie(cinema);cinema=null;document.getElementById('cinemaLoader').hidden=true;document.getElementById('cinemaReplay').hidden=true;}
+    function cancelCinema(){renderer.shadowMap.needsUpdate=true;cinemaToken++;cinemaRequest?.abort();cinemaRequest=null;cinemaPending=false;disposeMovie(cinema);cinema=null;document.getElementById('cinemaLoader').hidden=true;document.getElementById('cinemaReplay').hidden=true;}
     async function loadCinema(n){
       const token=++cinemaToken;cinemaPending=true;const loader=document.getElementById('cinemaLoader'),status=document.getElementById('cinemaStatus');loader.hidden=false;status.textContent='';document.getElementById('eventContinue').disabled=false;document.getElementById('cinemaReplay').hidden=true;
       try{
@@ -386,9 +386,11 @@ async function loadVillage(){
         if(!filmCamera||!clips.length){disposeMovie({root,mixer});throw Error('Film enthält keine Kamera oder Animation');}
         // Cameras exported with Blender have animated parents: retain the actual exported camera.
         const movieScene=new THREE.Scene();movieScene.background=new THREE.Color(0x314d76);movieScene.add(root);
-        movieScene.add(new THREE.HemisphereLight(0xe7f0ff,0x8a6d69,1.9));
-        const fill=new THREE.DirectionalLight(0xffe2b8,2.3);fill.position.set(-4,7,5);movieScene.add(fill);
-        const edge=new THREE.DirectionalLight(0xc4e1ff,1.3);edge.position.set(5,4,-4);movieScene.add(edge);
+        // Blender punctual light wattage is not directly comparable with browser exposure. Use calibrated cinematic lighting.
+        root.traverse(o=>{if(o.isLight){o.intensity=0;o.visible=false;}if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+        movieScene.add(new THREE.HemisphereLight(0xe7f0ff,0x8a6d69,1.25));
+        const fill=new THREE.DirectionalLight(0xffe2b8,2.0);fill.position.set(-4,7,5);fill.castShadow=true;fill.shadow.mapSize.set(1024,1024);fill.shadow.camera.left=-6;fill.shadow.camera.right=6;fill.shadow.camera.top=5;fill.shadow.camera.bottom=-5;fill.shadow.camera.far=30;fill.shadow.bias=-.0003;fill.shadow.normalBias=.025;movieScene.add(fill);
+        const edge=new THREE.DirectionalLight(0xc4e1ff,.75);edge.position.set(5,4,-4);movieScene.add(edge);
         let duration=0;const actions=[];for(const clip of clips){duration=Math.max(duration,clip.duration);const action=mixer.clipAction(clip);action.setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.play();actions.push(action);}
         if(duration<1){disposeMovie({root,mixer});throw Error('Film ohne Laufzeit');}
         filmCamera.aspect=960/700;filmCamera.updateProjectionMatrix();mixer.setTime(0);movieScene.updateMatrixWorld(true);
@@ -400,7 +402,7 @@ async function loadVillage(){
       const caption=c.n<24?dialogue[c.n-1][u<.40?0:u<.61?1:u<.82?2:3]:u<.24?'Die Weihnachtsmaschine wartet auf Furzipups.':u<.40?'Die goldene Bohne – und jetzt den Startknopf!':u<.66?'PFFFFFFFFRT! Der Turboschlitten hebt ab!':u<.82?'Alle 24 Sterne leuchten!':'Weihnachten ist gerettet! Das war bestimmt das Rentier.';
       const el=document.getElementById('eventText');if(el.textContent!==caption)el.textContent=caption;
       if(u>=1){document.getElementById('eventContinue').disabled=false;document.getElementById('cinemaReplay').hidden=false;}
-      renderer.render(c.scene,c.camera);
+      renderer.shadowMap.needsUpdate=true;renderer.render(c.scene,c.camera);
     }
     document.getElementById('cinemaReplay').onclick=()=>{if(cinema){cinema.elapsed=0;cinema.last=null;for(const action of cinema.actions)action.reset().play();cinema.mixer.setTime(0);document.getElementById('cinemaReplay').hidden=true;canvas.dataset.eventComplete='false';}};
 
