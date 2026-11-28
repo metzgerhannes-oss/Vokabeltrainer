@@ -434,7 +434,7 @@ async function loadVillage(){
       try{
         cartoon={entry,n,playedCues:new Set(),complete:false};cartoonVideo.muted=!audioEnabled||entry.audio==='app';cartoonVideo.hidden=false;
         const ready=new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('Video load timeout')),12000);cartoonVideo.onloadedmetadata=()=>{clearTimeout(timer);resolve();};cartoonVideo.onerror=()=>{clearTimeout(timer);reject(Error('Video unavailable'));};});
-        cartoonVideo.src='renders/cartoon/'+entry.file;
+        cartoonVideo.preload='auto';cartoonVideo.src='renders/cartoon/'+entry.file;cartoonVideo.load();
         await ready;
         if(token!==cinemaToken||eventDay!==n)return true;
         if(!Number.isFinite(cartoonVideo.duration)||cartoonVideo.duration<3||cartoonVideo.duration>60)throw Error('Invalid runtime');
@@ -443,7 +443,7 @@ async function loadVillage(){
         cartoonVideo.onclick=()=>{unlockAudio();if(cartoonVideo.paused&&!cartoon.complete)cartoonVideo.play().catch(()=>{});else if(!cartoonVideo.paused)cartoonVideo.pause();};
         try{await cartoonVideo.play();}catch{document.getElementById('cinemaStatus').textContent='Zum Abspielen auf den Cartoon tippen.';}
         return true;
-      }catch(e){if(token!==cinemaToken||eventDay!==n)return true;clearCartoon();return false;}
+      }catch(e){if(token!==cinemaToken||eventDay!==n)return true;canvas.dataset.cartoonError=String(e);clearCartoon();return false;}
     }
     function cartoonFrame(reduce){if(!cartoon)return;const c=cartoon,d=cartoonVideo.duration||1,u=Math.min(1,cartoonVideo.currentTime/d),phase=u<.18?'reveal':u<.4?'setup':u<.61?'action':u<.82?'effect':'reward';const caption=chapters[c.n-1][10][c.n===3?(u<.28?0:u<.48?1:u<.77?2:3):(u<.4?0:u<.61?1:u<.82?2:3)];movieCaption(c.n,caption,u);document.getElementById('eventText').textContent=caption;canvas.dataset.eventPhase=phase;canvas.dataset.activeAnimations=c.complete?'0':'1';if(c.entry.audio==='app'&&!cartoonVideo.paused)filmSounds(c,u,reduce);}
     async function loadCinema(n){
