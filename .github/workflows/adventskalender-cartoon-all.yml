@@ -37,6 +37,8 @@ jobs:
         run: |
           python3 -m venv /tmp/cartoon
           /tmp/cartoon/bin/pip -q install cairosvg svgpathtools
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
           command -v ffmpeg
       - name: Validate key poses
         run: /tmp/cartoon/bin/python adventskalender/cartoon/draw_all.py --days "${{ matrix.days }}" --check
