@@ -7,7 +7,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 10,
-      "bytes": 478636
+      "bytes": 436170
     },
     {
       "day": 2,
@@ -15,7 +15,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 9,
-      "bytes": 347269
+      "bytes": 315353
     },
     {
       "day": 3,
@@ -31,7 +31,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 9,
-      "bytes": 426388
+      "bytes": 383993
     },
     {
       "day": 5,
@@ -39,7 +39,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 8,
-      "bytes": 352767
+      "bytes": 310460
     },
     {
       "day": 6,
@@ -47,7 +47,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 9,
-      "bytes": 411522
+      "bytes": 374272
     },
     {
       "day": 7,
@@ -55,7 +55,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 9,
-      "bytes": 387901
+      "bytes": 358437
     },
     {
       "day": 8,
@@ -63,7 +63,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 9,
-      "bytes": 389159
+      "bytes": 352543
     },
     {
       "day": 9,
@@ -71,7 +71,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 9,
-      "bytes": 424216
+      "bytes": 373104
     },
     {
       "day": 10,
@@ -79,7 +79,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 8,
-      "bytes": 321544
+      "bytes": 283481
     },
     {
       "day": 11,
@@ -87,7 +87,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 9,
-      "bytes": 488927
+      "bytes": 439967
     },
     {
       "day": 12,
@@ -95,7 +95,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 9,
-      "bytes": 359951
+      "bytes": 315887
     },
     {
       "day": 13,
@@ -103,7 +103,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 10,
-      "bytes": 487428
+      "bytes": 447355
     },
     {
       "day": 14,
@@ -111,7 +111,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 9,
-      "bytes": 392752
+      "bytes": 360405
     },
     {
       "day": 15,
@@ -119,7 +119,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 9,
-      "bytes": 408828
+      "bytes": 359364
     },
     {
       "day": 16,
@@ -127,7 +127,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 9,
-      "bytes": 399673
+      "bytes": 356616
     },
     {
       "day": 17,
@@ -135,7 +135,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 10,
-      "bytes": 343936
+      "bytes": 316815
     },
     {
       "day": 18,
@@ -143,7 +143,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 9,
-      "bytes": 357825
+      "bytes": 325429
     },
     {
       "day": 19,
@@ -151,7 +151,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 9,
-      "bytes": 342865
+      "bytes": 308808
     },
     {
       "day": 20,
@@ -159,7 +159,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 9,
-      "bytes": 328295
+      "bytes": 285108
     },
     {
       "day": 21,
@@ -167,7 +167,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 9,
-      "bytes": 389896
+      "bytes": 346082
     },
     {
       "day": 22,
@@ -175,7 +175,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 9,
-      "bytes": 326728
+      "bytes": 296214
     },
     {
       "day": 23,
@@ -183,7 +183,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 10,
-      "bytes": 344536
+      "bytes": 304696
     },
     {
       "day": 24,
@@ -191,7 +191,7 @@
       "audio": "app",
       "approved": true,
       "seconds": 22,
-      "bytes": 1214214
+      "bytes": 1126144
     }
   ]
 }
