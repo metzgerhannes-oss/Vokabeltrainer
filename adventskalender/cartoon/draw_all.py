@@ -6,7 +6,7 @@ import argparse, math, json, shutil, subprocess, functools
 from pathlib import Path
 import cairosvg
 import draw_klo as k
-from draw_klo import Art,INK,clamp,smooth,ease,mix,track,elf
+from draw_klo import Art,INK,clamp,smooth,ease,mix,track,elf as base_elf
 OUT=k.OUT
 # Cache identical path tessellations (painted backgrounds and character parts).
 from svgpathtools import parse_path
@@ -261,6 +261,14 @@ def reward(a,x,y,t,start=.66,end=.83):
     for j in range(7):
         an=j*math.tau/7+t*7;r=33+5*math.sin(t*15+j);cx=xx+math.cos(an)*r;cy=yy+math.sin(an)*r
         a.line(f"M{cx-4},{cy} h8 M{cx},{cy-4} v8",CREAM,2.4)
+def elf(a,t,pose,scale=.85):
+    # Keep the entire expressive character, including hat, inside the frame.
+    # Scale around the foot anchor; the pose and timing remain unchanged.
+    x,y=pose[:2]
+    a.push(x*(1-scale),y*(1-scale),0,scale)
+    base_elf(a,t,pose)
+    a.pop()
+
 def actor(a,t,kind="reach",x=320):
     approach=ease(t,0,.27);act=ease(t,.39,.53);react=ease(t,.53,.64);recover=ease(t,.65,.78)
     xx=mix(x-110,x,approach);yy=431;tilt=7*approach;stretch=1;left=-16;right=65*ease(t,.28,.43);shocked=False
@@ -362,9 +370,9 @@ def finale(t):
         actor(a,u,"lift",325)
     elif t<.71:
         u=(t-.35)/.36;backdrop(a,"snow",t*22)
-        x=mix(110,870,smooth(u));y=398-230*smooth(u)
+        x=mix(135,700,smooth(u));y=410-190*smooth(u)
         sled(a,x,y,1.12);deer(a,x+144,y-4,.68,1,15*math.sin(u*35),5*math.sin(u*42))
-        elf(a,u*9,(x-15,y-29,-10,1,0,-65,60,False,False,True))
+        elf(a,u*9,(x-15,y-29,-10,1,0,-65,60,False,False,True),scale=.48)
         puff(a,x-70,y-5,(u-.10)/.62,True)
         for j in range(9):
             q=clamp(u*1.5-j*.08);a.star(x-j*48,y+25+math.sin(j)*19,9+6*q,j*20)
