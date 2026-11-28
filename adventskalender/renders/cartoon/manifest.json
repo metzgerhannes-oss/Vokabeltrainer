@@ -1,0 +1,14 @@
+{
+  "version": "cartoon-v1",
+  "chapters": [
+    {
+      "day": 3,
+      "file": "chapter-03.mp4",
+      "audio": "app",
+      "approved": true,
+      "preview": true,
+      "seconds": 9,
+      "bytes": 560840
+    }
+  ]
+}
