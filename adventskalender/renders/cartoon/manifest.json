@@ -2,13 +2,196 @@
   "version": "cartoon-v1",
   "chapters": [
     {
+      "day": 1,
+      "file": "chapter-01.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 10,
+      "bytes": 478636
+    },
+    {
+      "day": 2,
+      "file": "chapter-02.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 9,
+      "bytes": 347269
+    },
+    {
       "day": 3,
       "file": "chapter-03.mp4",
       "audio": "app",
       "approved": true,
-      "preview": true,
       "seconds": 9,
       "bytes": 560840
+    },
+    {
+      "day": 4,
+      "file": "chapter-04.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 9,
+      "bytes": 426388
+    },
+    {
+      "day": 5,
+      "file": "chapter-05.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 8,
+      "bytes": 352767
+    },
+    {
+      "day": 6,
+      "file": "chapter-06.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 9,
+      "bytes": 411522
+    },
+    {
+      "day": 7,
+      "file": "chapter-07.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 9,
+      "bytes": 387901
+    },
+    {
+      "day": 8,
+      "file": "chapter-08.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 9,
+      "bytes": 389159
+    },
+    {
+      "day": 9,
+      "file": "chapter-09.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 9,
+      "bytes": 424216
+    },
+    {
+      "day": 10,
+      "file": "chapter-10.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 8,
+      "bytes": 321544
+    },
+    {
+      "day": 11,
+      "file": "chapter-11.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 9,
+      "bytes": 488927
+    },
+    {
+      "day": 12,
+      "file": "chapter-12.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 9,
+      "bytes": 359951
+    },
+    {
+      "day": 13,
+      "file": "chapter-13.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 10,
+      "bytes": 487428
+    },
+    {
+      "day": 14,
+      "file": "chapter-14.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 9,
+      "bytes": 392752
+    },
+    {
+      "day": 15,
+      "file": "chapter-15.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 9,
+      "bytes": 408828
+    },
+    {
+      "day": 16,
+      "file": "chapter-16.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 9,
+      "bytes": 399673
+    },
+    {
+      "day": 17,
+      "file": "chapter-17.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 10,
+      "bytes": 343936
+    },
+    {
+      "day": 18,
+      "file": "chapter-18.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 9,
+      "bytes": 357825
+    },
+    {
+      "day": 19,
+      "file": "chapter-19.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 9,
+      "bytes": 342865
+    },
+    {
+      "day": 20,
+      "file": "chapter-20.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 9,
+      "bytes": 328295
+    },
+    {
+      "day": 21,
+      "file": "chapter-21.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 9,
+      "bytes": 389896
+    },
+    {
+      "day": 22,
+      "file": "chapter-22.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 9,
+      "bytes": 326728
+    },
+    {
+      "day": 23,
+      "file": "chapter-23.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 10,
+      "bytes": 344536
+    },
+    {
+      "day": 24,
+      "file": "chapter-24.mp4",
+      "audio": "app",
+      "approved": true,
+      "seconds": 22,
+      "bytes": 1214214
     }
   ]
 }
