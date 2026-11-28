@@ -140,13 +140,14 @@ def toilet(a,t):
     a.pop()
     a.ellipse(59,-89,9,7,"#c7a77b",INK,2)
     a.pop()
-def elf(a,t):
+def elf(a,t,pose=None):
     # Whole-body pose with distinct lean, walk cycle, shock, fall, recovery.
     x=track(t,[(0,205),(1.4,341),(2.25,402),(3.7,426),(4.1,444),(4.40,380),(4.90,250),(5.3,220),(6.3,267),(7.2,340),(9,340)])
     y=track(t,[(0,430),(2.4,430),(4.14,432),(4.43,368),(4.93,454),(5.7,454),(6.7,430),(9,430)])
     tilt=track(t,[(0,0),(1.3,7),(2.4,12),(3.7,17),(4.08,22),(4.42,-33),(4.97,-70),(5.45,-52),(6.6,0),(9,0)])
     squash=track(t,[(0,1),(2.8,1),(4.02,.92),(4.32,1.1),(4.95,.82),(5.4,.9),(6.6,1),(9,1)])
     step=math.sin(t*13)*(.85 if t<1.6 else 0)
+    if pose is not None:x,y,tilt,squash,step=pose[:5]
     a.ellipse(x,448,68 if t<4.4 or t>6.6 else 95,13,"#8c5b54","none",0)
     a.push(x,y,tilt,1.05/squash,1.05*squash)
     # boots, stockings and coat silhouette.
@@ -173,6 +174,7 @@ def elf(a,t):
         angle=(side*18+step*side*20) if side<0 else reach
         if t>4.35 and t<6:angle=side*70
         if t>7:angle=side*80
+        if pose is not None:angle=pose[5] if side<0 else pose[6]
         a.push(side*47,-114,-side*angle)
         a.path("M-12,-8 Q0,-17 13,-7 L15,36 Q0,47 -15,36 Z","#398e78",INK,3)
         a.path("M-11,4 L-8,29 L0,31 L-1,4 Z","#62b89e","none",0)
@@ -190,6 +192,7 @@ def elf(a,t):
     a.path("M-46,-36 Q-31,-48 -18,-51 Q-24,-31 -39,-19 Z","#8d554b",INK,2)
     a.path("M37,-51 Q55,-40 56,-21 L43,-24 Z","#8d554b",INK,2)
     shocked=4.18<t<5.6;blink=abs(t-1.85)<.08 or abs(t-6.35)<.08
+    if pose is not None:shocked=pose[7];blink=pose[8]
     for xx in [-19,20]:
         a.ellipse(xx,-8,15,20 if shocked else (2 if blink else 16),"#fff9ea",INK,2.7)
         if not blink:
@@ -201,7 +204,7 @@ def elf(a,t):
     a.ellipse(-36,17,10,6,"#e98e82","none",0);a.ellipse(38,17,10,6,"#e98e82","none",0)
     for xx in [-36,-31,-26,27,32,37]:a.ellipse(xx,14+(xx%3),1.3,1.3,"#b97662","none",0)
     if shocked:a.ellipse(4,29,12,16,"#703e4b",INK,2.7);a.ellipse(4,36,6,4,"#d77a77","none",0)
-    elif t>6.6:a.path("M-17,22 Q4,33 24,17 Q22,38 4,38 Q-10,38 -17,22 Z","#803f4b",INK,2.5);a.path("M-12,24 Q4,30 19,22 L15,29 Q2,32 -8,29 Z","#fff3dd","none",0)
+    elif (pose is not None and pose[9]) or (pose is None and t>6.6):a.path("M-17,22 Q4,33 24,17 Q22,38 4,38 Q-10,38 -17,22 Z","#803f4b",INK,2.5);a.path("M-12,24 Q4,30 19,22 L15,29 Q2,32 -8,29 Z","#fff3dd","none",0)
     else:a.line("M-12,27 Q4,32 17,23","#713f49",2.8)
     # Red floppy hat, cream fur brim, stitched fabric and pompom.
     a.path("M-59,-51 Q-64,-101 -15,-131 Q18,-154 34,-197 Q69,-172 65,-129 Q63,-98 54,-52 Z","#c84b58",INK,4)
