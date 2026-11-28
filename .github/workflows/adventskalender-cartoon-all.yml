@@ -1,0 +1,95 @@
+name: Adventskalender 24 Cartoon Filme
+on:
+  push:
+    branches: [adventskalender-bender]
+    paths:
+      - '.github/workflows/adventskalender-cartoon-all.yml'
+      - 'adventskalender/cartoon/draw_all.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: adventskalender-cartoon-all
+  cancel-in-progress: true
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - part: a
+            days: '1,2,4,5'
+          - part: b
+            days: '6,7,8,9'
+          - part: c
+            days: '10,11,12,13'
+          - part: d
+            days: '14,15,16,17'
+          - part: e
+            days: '18,19,20,21'
+          - part: f
+            days: '22,23,24'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install open source renderer
+        run: |
+          python3 -m venv /tmp/cartoon
+          /tmp/cartoon/bin/pip -q install cairosvg svgpathtools
+          command -v ffmpeg
+      - name: Validate key poses
+        run: /tmp/cartoon/bin/python adventskalender/cartoon/draw_all.py --days "${{ matrix.days }}" --check
+      - name: Render and validate chapter films
+        run: /tmp/cartoon/bin/python adventskalender/cartoon/draw_all.py --days "${{ matrix.days }}"
+      - name: Stage only this batch
+        run: |
+          mkdir -p /tmp/batch
+          cp adventskalender/renders/cartoon/batch.json /tmp/batch/
+          for day in $(echo "${{ matrix.days }}" | tr ',' ' '); do
+            num=$(printf '%02d' "$day")
+            cp adventskalender/renders/cartoon/chapter-"$num".mp4 adventskalender/renders/cartoon/chapter-"$num"-style.svg /tmp/batch/
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cartoon-${{ matrix.part }}
+          path: /tmp/batch/
+          retention-days: 2
+          if-no-files-found: error
+  publish:
+    needs: render
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: cartoon-*
+          path: /tmp/batches
+      - name: Merge and validate all 24 films
+        run: |
+          python3 - <<'PY'
+          import json,pathlib,shutil
+          p=pathlib.Path('adventskalender/renders/cartoon')
+          old=json.loads((p/'manifest.json').read_text())
+          entries=[next(c for c in old['chapters'] if c['day']==3)]
+          for b in pathlib.Path('/tmp/batches').glob('cartoon-*'):
+              entries.extend(json.loads((b/'batch.json').read_text()))
+              for f in b.glob('chapter-*'):shutil.copy2(f,p/f.name)
+          entries.sort(key=lambda c:c['day'])
+          assert [c['day'] for c in entries]==list(range(1,25))
+          for c in entries:
+              assert (p/c['file']).stat().st_size==c['bytes']
+              c.pop('preview',None)
+          assert sum(c['bytes'] for c in entries)<120*1024*1024
+          (p/'manifest.json').write_text(json.dumps({'version':'cartoon-v1','chapters':entries},indent=2))
+          print('ALL 24 CARTOONS VALIDATED',sum(c['bytes'] for c in entries))
+          PY
+      - name: Publish complete bundle atomically
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add adventskalender/renders/cartoon/chapter-*.mp4 adventskalender/renders/cartoon/chapter-*-style.svg adventskalender/renders/cartoon/manifest.json
+          git commit -m 'Publish complete 24-chapter 2D cartoon bundle'
+          git pull --rebase origin adventskalender-bender
+          git push origin HEAD:adventskalender-bender
