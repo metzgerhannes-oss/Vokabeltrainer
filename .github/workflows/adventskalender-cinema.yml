@@ -42,12 +42,15 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add adventskalender/renders/cinema-v2/*.glb adventskalender/renders/cinema-v2/manifest.json
-          if git diff --cached --quiet; then exit 0; fi
-          git commit -m 'Publish 24 Blender-authored animated cutscenes'
-          git pull --rebase origin adventskalender-bender
-          git push origin HEAD:adventskalender-bender
+          if git diff --cached --quiet; then echo 'Bundle unchanged'; else
+            git commit -m 'Publish 24 Blender v2 story cutscenes'
+            git pull --rebase origin adventskalender-bender
+            git push origin HEAD:adventskalender-bender
+          fi
+          test -s adventskalender/renders/cinema-v2/manifest.json
       - uses: actions/upload-artifact@v4
         with:
           name: furzipups-editable-blender-scene
           path: adventskalender/renders/cinema-v2/chapter-03.blend
           retention-days: 3
+          if-no-files-found: error
