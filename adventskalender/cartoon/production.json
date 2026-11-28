@@ -1,0 +1,481 @@
+{
+  "version": "cartoon-production-v1",
+  "status": "planned-not-generated",
+  "style": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.",
+  "format": {
+    "container": "mp4",
+    "video": "H.264",
+    "audio": "AAC or existing timed app effects, never both",
+    "width": 1280,
+    "height": 720,
+    "frameRate": 24,
+    "delivery": "same-origin /renders/cartoon/chapter-NN.mp4",
+    "limitBytesPerClip": 12582912,
+    "finaleLimitBytes": 25165824
+  },
+  "qualityGate": [
+    "Use a single approved character reference for all 24 clips.",
+    "Review first sample (day 3) before spending credits on the rest.",
+    "Review every clip: recognizable action demonstrates exact answer, no prop/limb clipping, no character drift, no inaccurate counts or text; composite exact numbers/letters in post as needed.",
+    "Verify timing of audio cues against final video; avoid double audio; provide captions and mute.",
+    "Only switch default playback after all 24 approved clips exist and pass mobile playback tests."
+  ],
+  "scenes": [
+    {
+      "day": 1,
+      "title": "Die Bohnen-Katastrophe",
+      "intro": "Furzipups hat mit einem Riesenpups den Sternenmotor zerlegt. Das erste Zahnrad steckt im Schnee. Auf dem Bauplan steht: Das passende Rad hat zweimal sechs Zähne.",
+      "question": "Wie viele Zähne muss das Zahnrad haben?",
+      "answer": "12",
+      "hint": "6 + 6.",
+      "payoff": "Das Rad springt aus dem Schnee. Darin glitzert Splitter 1!",
+      "captions": [
+        "Oh nein! Der Sternenmotor ist kaputt!",
+        "Das Zahnrad braucht 12 Zähne.",
+        "PFFFFRT! Das Rad fliegt los!",
+        "Splitter 1 gerettet!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Show the broken motor, a clearly visible twelve-tooth gear in the snow (count fixed in reference), elf finds it, his cheeks inflate, a huge comic fart shoots him backwards and the gear springs into his mittens.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nShow the broken motor, a clearly visible twelve-tooth gear in the snow (count fixed in reference), elf finds it, his cheeks inflate, a huge comic fart shoots him backwards and the gear springs into his mittens. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 2,
+      "title": "Die Karotte im Po",
+      "intro": "Das Zahnrad rollte zum Schneemann. Der hat den nächsten Splitter gesehen, kann aber vor lauter Verwirrung nicht richtig schauen: Seine Nase steckt hinten!",
+      "question": "Was muss Furzipups tun, damit der Schneemann wieder richtig aussieht?",
+      "answer": "Die Karotte vorne ins Gesicht stecken",
+      "hint": "Eine Nase gehört ins Gesicht.",
+      "payoff": "Die Karotte wandert von hinten nach vorne. Der Schneemann verrät das Versteck des Splitters.",
+      "captions": [
+        "Wo ist denn seine Nase?",
+        "Ach du heiliger Schneepopo!",
+        "Die Karotte gehört nach vorne!",
+        "Danke, Schneemann! Splitter 2!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Snowman turns around to reveal a carrot stuck in its back at waist height; elf removes it, inserts it at the front as nose, snowman smiles and hands over the golden fragment.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nSnowman turns around to reveal a carrot stuck in its back at waist height; elf removes it, inserts it at the front as nose, snowman smiles and hands over the golden fragment. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 3,
+      "title": "Das Klo-Konzert",
+      "intro": "Der Schneemann hat einen Splitter ins Wichtelklo kullern sehen. Die Klobrille ist geschlossen. Beim Klopfen antwortet das Klo mit einem verdächtigen Geräusch.",
+      "question": "Wie kommt Furzipups an den Splitter in der Schüssel?",
+      "answer": "Die Klobrille vorsichtig hochklappen",
+      "hint": "Man muss in die Schüssel sehen können.",
+      "payoff": "Die Klobrille springt hoch. PLOPP! Der Splitter fliegt heraus und Furzipups landet im Schnee.",
+      "captions": [
+        "Hallo? Ist da jemand drin?",
+        "Ich klappe die Klobrille hoch …",
+        "PLOPP! Das Klo pupst zurück!",
+        "Splitter 3 ist da. Nase zu!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Elf cautiously opens the toilet lid, knocks twice, leans in, lid flies up, green puff shoots sideways, elf lands sitting in a snowbank, catches the fragment. No bodily waste.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nElf cautiously opens the toilet lid, knocks twice, leans in, lid flies up, green puff shoots sideways, elf lands sitting in a snowbank, catches the fragment. No bodily waste. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 4,
+      "title": "Die Stinkesocke",
+      "intro": "Beim Klo lag eine Socke. Darin steckt ein Splitter, aber das Bündchen ist umgeklappt. Furzipups will ihn herausbekommen, ohne die Socke an seine Nase zu halten.",
+      "question": "Welche Bewegung hilft am besten?",
+      "answer": "Die Öffnung nach unten drehen und ausschütteln",
+      "hint": "Wenn die Öffnung nach unten zeigt, kann etwas herausfallen.",
+      "payoff": "Die Socke wirbelt durch die Luft und gibt den Splitter frei. Die Stinkewolke gibt es gratis.",
+      "captions": [
+        "Uff! Wer hat die Socke getragen?",
+        "Ich drehe sie um und schüttle …",
+        "Huch! Stinkalarm!",
+        "Splitter 4 gerettet!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Elf pinches his nose, turns the sock opening downward and shakes it; sock sticks to his glove, suddenly releases, green cloud curls away, fragment tumbles into hand.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nElf pinches his nose, turns the sock opening downward and shakes it; sock sticks to his glove, suddenly releases, green cloud curls away, fragment tumbles into hand. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 5,
+      "title": "Der Popo-Spiegel",
+      "intro": "Der Sockensplitter leuchtet vor einem Zauberspiegel. Auf ihm erscheint NRETS. Nur wer das Wort richtig liest, kann den nächsten Splitter aus dem Spiegel holen.",
+      "question": "Wie lautet NRETS rückwärts?",
+      "answer": "STERN",
+      "hint": "Lies von rechts nach links.",
+      "payoff": "Der Spiegel dreht sich. Ein goldener Stern kommt zum Vorschein.",
+      "captions": [
+        "Da steht NRETS!",
+        "Von hinten nach vorne … STERN!",
+        "Der Spiegel dreht sich!",
+        "Splitter 5 leuchtet!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Elf looks at magic mirror, points along the reversed letters NRETS (add precise text in post), mirror spins and reveals a golden star fragment, elf catches it.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nElf looks at magic mirror, points along the reversed letters NRETS (add precise text in post), mirror spins and reveals a golden star fragment, elf catches it. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 6,
+      "title": "Nikolaus im Stiefel",
+      "intro": "Nikolaus hat den nächsten Splitter in seinem Stiefel versteckt. Er ist ganz unten. Furzipups will ihn herausbekommen, ohne mit der Hand in den müffelnden Stiefel zu greifen.",
+      "question": "Wie hält Furzipups den Stiefel, damit der Splitter herausfallen kann?",
+      "answer": "Mit der Öffnung nach unten",
+      "hint": "Die Schwerkraft zieht Dinge nach unten.",
+      "payoff": "Der Stiefel macht einen Salto und gibt den Splitter frei.",
+      "captions": [
+        "Ho ho … was riecht hier so?",
+        "Stiefel umdrehen!",
+        "Hui! Er macht einen Salto!",
+        "Splitter 6 ist frei!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Elf turns boot opening down, shakes it, nuts tumble out, one bounces off his hat, fragment falls into palm.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nElf turns boot opening down, shakes it, nuts tumble out, one bounces off his hat, fragment falls into palm. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 7,
+      "title": "Die Köttel-Spur",
+      "intro": "Die Spur vom Stiefel führt in den Stall. Dort krabbelt ein Tier zwischen Rentierkötteln. Der Splitter hängt an einem Faden. Furzipups muss wissen, welches Tier ihn gefunden hat.",
+      "question": "Das Tier hat acht Beine und spinnt Fäden. Welches ist es?",
+      "answer": "Spinne",
+      "hint": "Ameisen und Käfer haben sechs Beine.",
+      "payoff": "Die Spinne krabbelt aus ihrem Versteck und gibt den Splitter her.",
+      "captions": [
+        "Igitt, Rentierköttel!",
+        "Acht Beine und ein Faden … eine Spinne!",
+        "Sie kommt zu mir gekrabbelt!",
+        "Splitter 7! Danke, Spinne."
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Eight-legged friendly spider crawls from behind a log beside harmless round reindeer droppings, lowers the fragment on a silk thread, elf thanks it.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nEight-legged friendly spider crawls from behind a log beside harmless round reindeer droppings, lowers the fragment on a silk thread, elf thanks it. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 8,
+      "title": "Die grüne Pupssuppe",
+      "intro": "Die Spinne führt Furzipups ins Labor. Ein Splitter steckt im Kessel. Laut Rezept löst nur grüne Zauberfarbe den Verschluss. Es gibt blaue und gelbe Farbe.",
+      "question": "Welche Farbe entsteht beim Mischen von blauer und gelber Malfarbe?",
+      "answer": "Grün",
+      "hint": "Denk an die Farbe von Gras.",
+      "payoff": "Grüne Blasen steigen aus der Suppe. Der Verschluss löst sich und der Splitter kommt frei.",
+      "captions": [
+        "Blau und Gelb … was ergibt das?",
+        "Grün! Richtig gemischt.",
+        "BLUBB! Die Pupssuppe brodelt!",
+        "Splitter 8 ist frei!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Elf pours clearly blue and yellow paint from two little bottles into cauldron, liquid turns green, bubbles erupt, one pops on his nose, fragment floats out.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nElf pours clearly blue and yellow paint from two little bottles into cauldron, liquid turns green, bubbles erupt, one pops on his nose, fragment floats out. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 9,
+      "title": "Der Rülps-Wecker",
+      "intro": "Im Labor steckt ein Hinweis auf den Wecker des Weihnachtsmanns. Der lange Zeiger klemmt. Furzipups soll ihn im Uhrzeigersinn wieder in Gang setzen.",
+      "question": "Wie viele Minuten vergehen bei einer ganzen Umdrehung des langen Zeigers?",
+      "answer": "60 Minuten",
+      "hint": "Eine Stunde hat 60 Minuten.",
+      "payoff": "Der Zeiger dreht sich. Der Wecker rülpst und wirft den Splitter aus.",
+      "captions": [
+        "Der Wecker klemmt!",
+        "60 Minuten sind eine ganze Runde.",
+        "RÜÜÜLPS! Der Zeiger saust los!",
+        "Splitter 9 gerettet!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Elf frees long hand of clock, hand spins a complete turn clockwise, clock gives a ridiculous belch, elf's hat lifts, fragment falls.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nElf frees long hand of clock, hand spins a complete turn clockwise, clock gives a ridiculous belch, elf's hat lifts, fragment falls. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 10,
+      "title": "Die verrückte Rentierampel",
+      "intro": "Der Wecker verrät den Weg zur Werkstatt. Eine Zauberampel sperrt ihn. Sie blinkt in dieser Reihenfolge: Rot, Gold, Blau, Rot, Gold, Blau. Furzipups muss das Muster fortsetzen.",
+      "question": "Welche Farbe kommt als Nächstes?",
+      "answer": "Rot",
+      "hint": "Das Muster beginnt immer wieder von vorn.",
+      "payoff": "Die Ampel blinkt richtig weiter und gibt den Weg zum nächsten Splitter frei.",
+      "captions": [
+        "Rot, Gold, Blau …",
+        "Nach Blau kommt Rot!",
+        "Die Ampel blinkt wieder richtig!",
+        "Splitter 10! Der Weg ist frei."
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Elf checks the three-light sequence red gold blue, presses red button, red light flashes, little barrier opens, golden fragment slides down.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nElf checks the three-light sequence red gold blue, presses red button, red light flashes, little barrier opens, golden fragment slides down. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 11,
+      "title": "Der haarige Rentierpopo",
+      "intro": "In der Werkstatt wartet ein Rentier mit einem verfilzten Schwanz. Der nächste Splitter steckt zwischen den Haaren. Furzipups braucht etwas mit vielen Zähnen, das nicht beißt.",
+      "question": "Welches Werkzeug kann die Haare entwirren?",
+      "answer": "Kamm",
+      "hint": "Damit kämmst du deine Haare.",
+      "payoff": "Der Rentierschwanz wackelt. Der Splitter löst sich, als Furzipups ihn kämmt.",
+      "captions": [
+        "Was für ein haariger Popo!",
+        "Ein Kamm hilft!",
+        "Zupp! Der Schwanz wackelt!",
+        "Splitter 11 ist frei."
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Elf holds a comb and gently combs the reindeer's tangled tail, reindeer wiggles its backside, comb catches a fragment and elf extracts it.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nElf holds a comb and gently combs the reindeer's tangled tail, reindeer wiggles its backside, comb catches a fragment and elf extracts it. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 12,
+      "title": "Die Geschenkepackmaschine",
+      "intro": "Der Rentiersplitter bringt Furzipups zur Packmaschine. In ihr stecken ein rotes, ein grünes und ein blaues Geschenk. Jede Farbe kommt genau einmal vor.",
+      "question": "Wie viele Geschenke muss die Maschine auswerfen?",
+      "answer": "3",
+      "hint": "Zähle die drei verschiedenen Farben.",
+      "payoff": "Alle drei Geschenke hüpfen heraus. Der nächste Splitter glitzert dazwischen.",
+      "captions": [
+        "Hoffentlich keine braunen Pakete!",
+        "Rot, Grün, Blau: drei Geschenke.",
+        "PLOPP! Alle drei fliegen heraus!",
+        "Splitter 12 gefunden!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Elf pushes lever, jammed wrapping machine rattles, exactly three gifts red green blue pop out one at a time, third bounces, fragment appears.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nElf pushes lever, jammed wrapping machine rattles, exactly three gifts red green blue pop out one at a time, third bounces, fragment appears. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 13,
+      "title": "Die Unterhosen-Rakete",
+      "intro": "Halbzeit! Die Geschenke sind gerettet. Ein Splitter steckt in einer Mini-Rakete mit Unterhosen-Deko. Furzipups will sie in den Himmel starten lassen.",
+      "question": "Wohin muss die Raketenspitze zeigen, damit sie gerade nach oben startet?",
+      "answer": "Nach oben",
+      "hint": "Die Spitze zeigt in die Richtung, in die sie fliegt.",
+      "payoff": "Die Rakete hebt mit einem Pups ab. Furzipups plumpst in den Schnee und fängt den Splitter.",
+      "captions": [
+        "Unterhosen-Rakete bereit!",
+        "Spitze nach oben!",
+        "PFFFFRT! Ab ins All!",
+        "Splitter 13 ist zurück!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Elf straightens goofy rocket so the tip points straight up, puts on a cooking-pot helmet, fuse sputters, fart blast sends rocket up, elf drops into snow, fragment falls safely into his mittens.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nElf straightens goofy rocket so the tip points straight up, puts on a cooking-pot helmet, fuse sputters, fart blast sends rocket up, elf drops into snow, fragment falls safely into his mittens. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 14,
+      "title": "Der Käse-Klopfer",
+      "intro": "Die Rakete landet beim Käsehändler. Ein Zauberkäse hält den nächsten Splitter fest. Auf seiner Vorderseite sind fünf dunkle Löcher. Zwei davon sind schon kontrolliert. In den übrigen Löchern muss Furzipups noch suchen.",
+      "question": "Wie viele Löcher muss er noch kontrollieren, wenn zwei von fünf erledigt sind?",
+      "answer": "3",
+      "hint": "5 minus 2.",
+      "payoff": "Der Käse dreht sich und lässt seinen Splitter herausfallen.",
+      "captions": [
+        "Wer hat hier Stinkekäse versteckt?",
+        "Fünf minus zwei sind drei!",
+        "Der Zauberkäse dreht sich!",
+        "Splitter 14 glitzert!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Show cheese with five clearly visible holes, two marked as checked in reference/post, elf searches remaining three, cheese rotates, fragment tumbles out with crumbs.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nShow cheese with five clearly visible holes, two marked as checked in reference/post, elf searches remaining three, cheese rotates, fragment tumbles out with crumbs. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 15,
+      "title": "Die Klopapier-Mumie",
+      "intro": "Hinter dem Käseladen hat sich der nächste Splitter in einer Klopapierrolle verfangen. Das Papier soll sich abwickeln, ohne zu reißen.",
+      "question": "Was muss die Rolle tun, damit das Papier sich abwickelt?",
+      "answer": "Rollen und Papier abgeben",
+      "hint": "Beim Abrollen wird das lose Papier länger.",
+      "payoff": "Die Rolle rollt davon und der Papierstreifen wird länger. Der Splitter kommt heraus.",
+      "captions": [
+        "Wer hat hier alles eingewickelt?",
+        "Abrollen statt aufrollen!",
+        "Rrrrrroll! Das Papier wird länger!",
+        "Splitter 15 ist frei!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Elf wrapped in toilet paper gently pushes the roll, roll unwinds as it moves away, paper falls free, elf spins once and catches fragment.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nElf wrapped in toilet paper gently pushes the roll, roll unwinds as it moves away, paper falls free, elf spins once and catches fragment. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 16,
+      "title": "Der Rentier-Stau",
+      "intro": "Vor dem Stall versperren zwei Rentiere den Weg. Der nächste Splitter liegt zwischen ihnen. Beide wollen gleichzeitig nach vorne springen.",
+      "question": "Wie müssen sich die Rentiere bewegen, damit der Platz zwischen ihnen größer wird?",
+      "answer": "In entgegengesetzte Richtungen",
+      "hint": "Sie müssen Abstand voneinander gewinnen.",
+      "payoff": "Die beiden Rentiere springen auseinander. Der Splitter wird sichtbar.",
+      "captions": [
+        "Rentier-Stau! Keiner kommt durch!",
+        "Ihr müsst auseinander springen!",
+        "Hopp! Jetzt ist Platz!",
+        "Splitter 16 gefunden!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Two reindeer block lane, elf gestures outward, reindeer jump in opposite directions leaving clear gap; one looks embarrassed after tiny fart; fragment visible in middle.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nTwo reindeer block lane, elf gestures outward, reindeer jump in opposite directions leaving clear gap; one looks embarrassed after tiny fart; fragment visible in middle. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 17,
+      "title": "Die Pups-Rennbahn",
+      "intro": "Die Rentiere machen die Teststrecke frei. Furzipups hat einen Schlitten mit Pups-Antrieb. Er startet links und soll über die Ziellinie rechts fahren.",
+      "question": "In welche Richtung muss der Schlitten fahren?",
+      "answer": "Nach rechts",
+      "hint": "Das Ziel liegt rechts vom Start.",
+      "payoff": "Der Schlitten zischt nach rechts. Furzipups purzelt herunter und entdeckt den Splitter.",
+      "captions": [
+        "Der Pups-Schlitten ist bereit!",
+        "Das Ziel liegt rechts!",
+        "TURBOPOPOOO!",
+        "Splitter 17!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Show sled facing right with finish flag at right, elf starts, turbo fart pushes sled right across finish, elf slides into soft snow, fragment lands next to him.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nShow sled facing right with finish flag at right, elf starts, turbo fart pushes sled right across finish, elf slides into soft snow, fragment lands next to him. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 18,
+      "title": "Die Furz-Keks-Fabrik",
+      "intro": "Die Testfahrt endet am Keksstand. Der Händler stapelt zwei Portionen mit jeweils zwei Keksen übereinander. Ein Splitter steckt unter dem Stapel.",
+      "question": "Wie viele Kekse sind im Stapel?",
+      "answer": "4",
+      "hint": "2 + 2.",
+      "payoff": "Vier Kekse purzeln auseinander. Unter ihnen kommt der Splitter zum Vorschein.",
+      "captions": [
+        "Bohnenkekse? Nein danke!",
+        "Zwei plus zwei sind vier.",
+        "Vier Kekse purzeln durcheinander!",
+        "Splitter 18!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Show exactly four cookies in a two-by-two stack, elf lifts top two and lower two, stack tumbles comically, fragment underneath.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nShow exactly four cookies in a two-by-two stack, elf lifts top two and lower two, stack tumbles comically, fragment underneath. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 19,
+      "title": "Der gelbe Schnee",
+      "intro": "Am Keksstand liegt ein Eiswürfel. Darin funkelt der nächste Splitter. Daneben ist ein gelber Schneefleck. Furzipups soll den Eiswürfel befreien, nicht den gelben Schnee essen.",
+      "question": "Wie wird aus dem Eiswürfel Wasser?",
+      "answer": "Durch Wärme",
+      "hint": "Eis schmilzt, wenn es warm wird.",
+      "payoff": "Der Eiswürfel schmilzt zu einer Pfütze. Der Splitter bleibt übrig.",
+      "captions": [
+        "Gelber Schnee? Nicht essen!",
+        "Wärme lässt Eis schmelzen.",
+        "Das Eis wird zu Wasser!",
+        "Splitter 19 gerettet!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Elf warms ice cube with magical warm lamp, cube melts visibly into puddle, gold fragment remains, elf avoids separate yellow snow patch.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nElf warms ice cube with magical warm lamp, cube melts visibly into puddle, gold fragment remains, elf avoids separate yellow snow patch. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 20,
+      "title": "Der Klo-Tresor",
+      "intro": "Die Pfütze legt einen Zettel frei: Der Tresor in der Werkstatt hat die Geheimzahl zwischen 30 und 40, die auf 7 endet. Im Tresor liegt ein Splitter.",
+      "question": "Welche Zahl öffnet den Tresor?",
+      "answer": "37",
+      "hint": "Die Zehnerstelle ist eine 3.",
+      "payoff": "Die Tresortür schwingt auf und gibt den Splitter frei.",
+      "captions": [
+        "Der Tresor wartet auf den Code.",
+        "37! Das müsste stimmen.",
+        "KLONK! Die Tür springt auf!",
+        "Splitter 20 ist frei!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Elf taps keypad 3 then 7 (digits composited in post), safe rattles, door swings open, fragment pops out, elf celebrates.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nElf taps keypad 3 then 7 (digits composited in post), safe rattles, door swings open, fragment pops out, elf celebrates. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 21,
+      "title": "Das Rentier mit dem Wackelpo",
+      "intro": "Im Tresor lag der Hinweis auf die Rentierglocke. Der nächste Splitter steckt am Halsband. Das Rentier muss den Kopf bewegen, damit die Glocke schwingt.",
+      "question": "Welche Bewegung bringt die Glocke zum Klingeln?",
+      "answer": "Den Kopf hin und her bewegen",
+      "hint": "Die Glocke muss schwingen.",
+      "payoff": "Das Rentier schüttelt den Kopf und wackelt mit dem Schwanz. Der Splitter löst sich.",
+      "captions": [
+        "Das Rentier ist ganz nervös!",
+        "Kopf schütteln, dann klingelt's!",
+        "DING DING! Wackelpopo!",
+        "Splitter 21 gefunden!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Reindeer shakes head left and right, neck bell swings and rings; its tail wiggles, fragment slips from collar and elf catches it.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nReindeer shakes head left and right, neck bell swings and rings; its tail wiggles, fragment slips from collar and elf catches it. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 22,
+      "title": "Die Pups-Sprache",
+      "intro": "Nur noch drei Splitter fehlen. Die Werkstatttür reagiert auf Reime. Furzipups sagt Haus. Das richtige Tier muss mit seinem Namen darauf antworten.",
+      "question": "Welches Tier reimt sich auf Haus?",
+      "answer": "Maus",
+      "hint": "Haus und …",
+      "payoff": "Eine kleine Maus läuft los und bringt den Splitter zur Maschine.",
+      "captions": [
+        "Haus … Kacka? Nein!",
+        "Haus und Maus reimen sich!",
+        "Da rennt die Maus schon!",
+        "Splitter 22 ist da!"
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Elf calls for a rhyme, a little mouse emerges, scurries with fragment toward motor, elf waves. Exact German words in subtitles.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nElf calls for a rhyme, a little mouse emerges, scurries with fragment toward motor, elf waves. Exact German words in subtitles. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 23,
+      "title": "Die letzte Bohne",
+      "intro": "Furzipups hat 22 Splitter. Der vorletzte steckt in der goldenen Zauberbohne. Diese gehört in die Einfüllöffnung oben auf der Maschine – nicht in seinen Bauch.",
+      "question": "Wie kommt die Bohne in den Motor?",
+      "answer": "Von oben in die Öffnung fallen lassen",
+      "hint": "Die Einfüllöffnung ist oben.",
+      "payoff": "Die Bohne schwebt zur Öffnung, fällt hinein und gibt den Splitter frei.",
+      "captions": [
+        "Die allerletzte goldene Bohne!",
+        "Nicht essen! In die Öffnung damit!",
+        "PLUMPS! Die Bohne fällt hinein!",
+        "Splitter 23! Morgen wird gestartet."
+      ],
+      "seconds": 8,
+      "shots": 1,
+      "action": "Elf lifts golden bean above motor opening, drops it in instead of eating, motor rattles, elf pinches nose, fragment pops out.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nElf lifts golden bean above motor opening, drops it in instead of eating, motor rattles, elf pinches nose, fragment pops out. Finish on the elf proudly showing the gold fragment, hold final pose."
+    },
+    {
+      "day": 24,
+      "title": "Operation Weihnachts-Pups",
+      "intro": "Endlich: 23 Sternensplitter sind gerettet. Der letzte steckt im Startknopf der Weihnachtsmaschine. Erst mit ihm ist der Motor vollständig und der Schlitten kann fliegen.",
+      "question": "23 Splitter plus der letzte: Wie viele sind es zusammen?",
+      "answer": "24",
+      "hint": "23 + 1.",
+      "payoff": "Der Motor startet, der Schlitten fliegt und das Dorf erstrahlt. Weihnachten ist gerettet!",
+      "captions": [
+        "23 Splitter sind schon da.",
+        "24! Der Motor ist vollständig!",
+        "PFFFFFFFFRT! Der Schlitten hebt ab!",
+        "Weihnachten ist gerettet! Das war bestimmt das Rentier."
+      ],
+      "seconds": 22,
+      "shots": 3,
+      "action": "Three distinct shots: elf inserts final fragment into complete motor; huge turbo fart sends sleigh with reindeer across sky; return to wide village as windows light up in waves and golden stars sparkle. Elf grins, reindeer gives innocent expression.",
+      "prompt": "Original hand-drawn 2D children's Christmas cartoon, warm expressive storybook animation, thick-soft ink outlines, painted gouache backgrounds with subtle paper grain, rich jewel colors, warm amber windows and cool snowy blue shadows. Same character in every shot: short round cheerful elf Furzipups, oversized red pointed hat with white pompom, green coat, red scarf, brown boots, peach cheeks, freckles, large expressive brown eyes, white mittens. Always fully clothed. Side-on three-quarter camera, clear silhouette, exaggerated anticipation, squash-and-stretch, reaction and payoff. No 3D render, no plastic CGI, no flat slide or mere camera pan, no text, watermark, logos or random extra characters. Innocent slapstick toilet humor only. Keep props recognizable, continuity of costume and scale. Golden five-point star fragment is the recurring reward. Landscape 16:9, keep all story-critical action inside central 80%, clean space along bottom for German subtitles.\nThree distinct shots: elf inserts final fragment into complete motor; huge turbo fart sends sleigh with reindeer across sky; return to wide village as windows light up in waves and golden stars sparkle. Elf grins, reindeer gives innocent expression. Finish on village celebration."
+    }
+  ]
+}
