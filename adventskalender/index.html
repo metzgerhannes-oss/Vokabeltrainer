@@ -415,7 +415,7 @@ async function loadVillage(){
       [[.24,'clack'],[.30,'nervous'],[.42,'final'],[.57,'whoosh'],[.72,'firework'],[.77,'firework'],[.82,'firework']]
     ];
     function cue(name){if(!audioEnabled||!audioCtx||audioCtx.state!=='running')return false;if(fartStyles[name])return fart(name);if(name==='ding'){ding();return true;}if(name==='reward'){jingle();return true;}noiseHit(name);return true;}
-    function filmSounds(c,u,reduce){if(reduce)return;const list=[...soundCues[c.n-1],[.86,'reward']];if(!c.playedCues)c.playedCues=new Set();for(let i=0;i<list.length;i++){const [at,name]=list[i];if(u>=at&&!c.playedCues.has(i)){c.playedCues.add(i);if(u-at<.12&&cue(name)){canvas.dataset.lastSound=name;canvas.dataset.soundCount=String(Number(canvas.dataset.soundCount||0)+1);}}}}
+    function filmSounds(c,u,reduce){if(reduce)return;const list=c.entry&&c.n===3?[[.29,'knock'],[.41,'knock'],[.475,'clack'],[.48,'klo'],[.55,'snow'],[.77,'reward']]:[...soundCues[c.n-1],[.86,'reward']];if(!c.playedCues)c.playedCues=new Set();for(let i=0;i<list.length;i++){const [at,name]=list[i];if(u>=at&&!c.playedCues.has(i)){c.playedCues.add(i);if(u-at<.12&&cue(name)){canvas.dataset.lastSound=name;canvas.dataset.soundCount=String(Number(canvas.dataset.soundCount||0)+1);}}}}
     function foley(day,phase){if(phase==='village'&&audioEnabled){jingle();noiseHit('firework',.55);noiseHit('firework',1.15);noiseHit('firework',1.95);}}
     function movieCaption(day,caption,progress){const el=document.getElementById('movieCaption');el.hidden=false;document.getElementById('movieChapter').textContent=day===24?'FINALE · HEILIGABEND':'FURZIPUPS · KAPITEL '+day;document.getElementById('movieLine').textContent=caption;document.getElementById('movieProgress').style.width=Math.round(100*Math.max(0,Math.min(1,progress)))+'%';}
 
@@ -432,8 +432,9 @@ async function loadVillage(){
       if(token!==cinemaToken||eventDay!==n)return true;
       if(!entry||entry.file!=='chapter-'+String(n).padStart(2,'0')+'.mp4'||!['app','embedded'].includes(entry.audio))return false;
       try{
-        cartoon={entry,n,playedCues:new Set(),complete:false};cartoonVideo.src='renders/cartoon/'+entry.file;cartoonVideo.muted=!audioEnabled||entry.audio==='app';cartoonVideo.hidden=false;
+        cartoon={entry,n,playedCues:new Set(),complete:false};cartoonVideo.muted=!audioEnabled||entry.audio==='app';cartoonVideo.hidden=false;
         const ready=new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('Video load timeout')),12000);cartoonVideo.onloadedmetadata=()=>{clearTimeout(timer);resolve();};cartoonVideo.onerror=()=>{clearTimeout(timer);reject(Error('Video unavailable'));};});
+        cartoonVideo.src='renders/cartoon/'+entry.file;
         await ready;
         if(token!==cinemaToken||eventDay!==n)return true;
         if(!Number.isFinite(cartoonVideo.duration)||cartoonVideo.duration<3||cartoonVideo.duration>60)throw Error('Invalid runtime');
@@ -444,7 +445,7 @@ async function loadVillage(){
         return true;
       }catch(e){if(token!==cinemaToken||eventDay!==n)return true;clearCartoon();return false;}
     }
-    function cartoonFrame(reduce){if(!cartoon)return;const c=cartoon,d=cartoonVideo.duration||1,u=Math.min(1,cartoonVideo.currentTime/d),phase=u<.18?'reveal':u<.4?'setup':u<.61?'action':u<.82?'effect':'reward';const caption=chapters[c.n-1][10][u<.4?0:u<.61?1:u<.82?2:3];movieCaption(c.n,caption,u);document.getElementById('eventText').textContent=caption;canvas.dataset.eventPhase=phase;canvas.dataset.activeAnimations=c.complete?'0':'1';if(c.entry.audio==='app'&&!cartoonVideo.paused)filmSounds(c,u,reduce);}
+    function cartoonFrame(reduce){if(!cartoon)return;const c=cartoon,d=cartoonVideo.duration||1,u=Math.min(1,cartoonVideo.currentTime/d),phase=u<.18?'reveal':u<.4?'setup':u<.61?'action':u<.82?'effect':'reward';const caption=chapters[c.n-1][10][c.n===3?(u<.28?0:u<.48?1:u<.77?2:3):(u<.4?0:u<.61?1:u<.82?2:3)];movieCaption(c.n,caption,u);document.getElementById('eventText').textContent=caption;canvas.dataset.eventPhase=phase;canvas.dataset.activeAnimations=c.complete?'0':'1';if(c.entry.audio==='app'&&!cartoonVideo.paused)filmSounds(c,u,reduce);}
     async function loadCinema(n){
       const token=++cinemaToken;cinemaPending=true;const loader=document.getElementById('cinemaLoader'),status=document.getElementById('cinemaStatus');loader.hidden=false;status.textContent='';document.getElementById('eventContinue').disabled=false;document.getElementById('cinemaReplay').hidden=true;
       try{
